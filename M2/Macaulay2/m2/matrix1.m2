@@ -599,6 +599,7 @@ ideal Matrix := Ideal => (f) -> (
      	  g := map(R^1,,f);			  -- in case the degrees are wrong
      	  if isHomogeneous g then f = g;
 	  );
+     if instance(R,PolynomialRing) and (options R).Inverses then f=matrix applyTable(entries f, x->x*R_(-min\transpose exponents x)); -- temporary fix to general inability to deal with Laurent polynomial rings
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
 ideal Module := Ideal => (M) -> (

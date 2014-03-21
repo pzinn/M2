@@ -403,9 +403,10 @@ rank Module := (cacheValue symbol rank) (M -> (
 		    else numgens M))
 	  else if dim M < dim ring M then 0
 	  else (
-	       -- note: degrees can be rational
-	       r := degree M / degree ring M;
-	       if liftable(r,ZZ) then lift(r,ZZ) else r
+	       -- note: degrees can't be rational any more
+	       --r := degree M / degree ring M;
+	       --if liftable(r,ZZ) then lift(r,ZZ) else r
+	       degree M
 	       )))
 
 ambient Module := Module => M -> (

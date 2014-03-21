@@ -61,7 +61,10 @@ monoidDefaults = (
 	  Join => null {* true *},			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
       	  DegreeMap => null {* identity *},		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
      	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
-	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
+	  Constants => false,				    -- whether to use rawTowerRing when making a monoid ring
+	  DegreesRing => null,                              -- experimental: provide a preexisting degrees ring
+	  FactorizedForm => false,                          -- should be an option for polynomial rings...
+	  FactorInverses => false                           -- same. should always be false if Inverses is false 
 	  }
      )
 
@@ -275,7 +278,10 @@ makeit1 := (opts) -> (
 	  )
      else (
      	  M.degreesRing = (
-	       if opts.Heft =!= null 
+	       if opts.DegreesRing =!= null then 
+	       if isPolynomialRing opts.DegreesRing and (options opts.DegreesRing).Inverses and coefficientRing opts.DegreesRing===ZZ then opts.DegreesRing -- experimental
+	       else error "invalid ring of degrees"
+	       else if opts.Heft =!= null 
 	       then degreesRing opts.Heft 
 	       else degreesRing degrk {* shouldn't really be needed *} 
 	       );
@@ -327,7 +333,7 @@ makeit1 := (opts) -> (
      if opts.Global and not opts.Inverses then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
      M)
 
-processDegrees := (degs,degrk,nvars) -> (
+processDegrees := (degs,degrk,nvars,degring) -> (
      if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
      if degs === null then degs = (
 	  if degrk === null then (
@@ -339,10 +345,17 @@ processDegrees := (degs,degrk,nvars) -> (
      else (
      	  if not instance(degs,List) then error "Degrees: expected a list";
      	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
-     	  scan(degs, d -> if not (instance(d,List) and all(d, i -> instance(i,ZZ))) then error "expected degree to be an integer or list of integers");
+	  degs = apply(degs, d -> (
+		  if degring =!= null and instance(d,degring) then d=(exponents d)#0; -- experimental
+		  if instance(d,List) and all(d,i->instance(i,ZZ)) then d 
+	      	  else error "expected degree to be an integer or list of integers or a monomial of the degrees ring"));
      	  if degrk === null then (
-	       if not same(length \ degs) then error "expected degrees all of the same rank";
- 	       degrk = if #degs > 0 then #degs#0 else 1;
+	       if degring =!= null then degrk=numgens degring
+	       else 
+	       (
+		   if not same(length \ degs) then error "expected degrees all of the same rank";
+ 	       	   degrk = if #degs > 0 then #degs#0 else 1; -- why 1 ?? hopefully should never get here
+		   )
 	       )
 	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
 	  );
@@ -440,7 +453,7 @@ makeMonoid := (opts) -> (
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
-     (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables );
+     (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables, opts.DegreesRing );
      opts.Degrees = degs;
      opts.DegreeRank = degrk;
 
@@ -544,7 +557,7 @@ tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
 	       )
 	  else error "tensor: expected Join option to be true, false, or null")
      else (
-     	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);
+     	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables, null);
 	  opts.Degrees = degs;
 	  opts.DegreeRank = degrk;
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;

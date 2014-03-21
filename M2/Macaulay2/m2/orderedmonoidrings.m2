@@ -244,13 +244,17 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       toString raw f
 	       )
 	  else expression RM := f -> (
-	       (
+		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1) then fac
+		   else
+	       	   (
+		   (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
 			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,R)) * expression (if m == 1 then 1 else new M from m))
 			 )
 		    ) rawPairs(raw R, raw f)
+		)
 --	       new Holder2 from {(
 --		    (coeffs,monoms) -> (
 --			 if #coeffs === 0
@@ -274,7 +278,11 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       (facs,exps) := rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
 	       conv := x->substitute(x,QQ);
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
-     	       facs = apply(facs, p -> (pp:=new RM from p; if conv(leadCoefficient pp) > 0 then pp else (c=-c; -pp)));
+	       facs = apply(facs, p -> (
+		       pp:=new RM from p; 
+    	       	       if (options RM).FactorInverses and pp!=0 then ( c=c*leadMonomial pp; pp=pp*(leadMonomial pp)^(-1); );
+		       if conv(leadCoefficient pp) >= 0 then pp else (c=-c; -pp)
+		   ));
 	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
 	       	    assert(exps#0 == 1);
