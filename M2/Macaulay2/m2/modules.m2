@@ -402,12 +402,8 @@ rank Module := (cacheValue symbol rank) (M -> (
 			 numgens source generators gb M.generators)
 		    else numgens M))
 	  else if dim M < dim ring M then 0
-	  else (
-	       -- note: degrees can't be rational any more
-	       --r := degree M / degree ring M;
-	       --if liftable(r,ZZ) then lift(r,ZZ) else r
-	       degree M
-	       )))
+	  else degree M
+	       ))
 
 ambient Module := Module => M -> (
      if M.?generators then M.generators.target
