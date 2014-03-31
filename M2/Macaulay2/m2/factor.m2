@@ -100,14 +100,17 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
+reduce1 = f -> ( v:=factor f; p:=1; scan(v,x->if not isUnit(x#0) then p=p*(x#0)); p);
+reducegens = I -> trim ideal(reduce1\(flatten entries generators I)); -- should it be a method?
+
 minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  R := ring I;
 	  (I',F) := flattenRing I; -- F is not needed
 	  A := ring I';
 	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
-     	  --I = trim I';	  
-	  I = I';
+     	  --I = trim I';
+	  I = reducegens I';
 	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
 	  if not isCommutative A then
 	    error "expected commutative polynomial ring";
