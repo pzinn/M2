@@ -268,7 +268,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
-	  factor RM := opts -> f -> (
+	  factorValues := new MutableHashTable;
+	  factor RM := opts -> f -> ( 
+	       if factorValues#?f then return factorValues#f;
 	       c := 1_R; ff:=f;
 	       if (options RM).Inverses then (
 		   minexps:=min \ transpose exponents f;
@@ -296,7 +298,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    facs = append(facs,c);
 		    exps = append(exps,1);
 		    );
-	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
+	       scan(facs,x -> factorValues#x=new Product from {new Power from {x,1}});
+	       factorValues#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
