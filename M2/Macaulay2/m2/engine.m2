@@ -86,26 +86,18 @@ fixSize := key -> if optionSizes#?(key,MonSize) then optionSizes#(key,MonSize) e
 optionInverses := hashTable {
      Lex => key -> GroupLex,
      RevLex => key -> GroupRevLex,
-     GroupRevLex => key -> GroupRevLex,
-     GroupLex => key -> GroupLex
---     GRevLex => key -> (
---	  newkey := GroupRevLex;
---	  stderr << "--warning: for rawMonomialOrdering, replacing monomial ordering " << key << " by " << newkey << endl;
---	  newkey)
+     GRevLex => key -> GroupRevLex
      }
 fix1 := key -> (
      if invert then (
-	  if not optionInverses#?key then error ("Inverses => true not compatible with ",toString key);
-	  optionInverses#key key)
+	  if not optionInverses#?key then key else optionInverses#key key)
      else key)
 intOption := (key,n) -> (
-     key = fix1 key;
      checkCount n;
      bump n;
      key => n)
 fixList := v -> if instance(v,List) then spliceInside v else v
 grevOption := (key,v) -> (
-     key = fix1 key;
      if instance(v,ZZ) 
      then v = getdegs ( varcount, varcount + v - 1 )
      else (
@@ -143,6 +135,7 @@ fixup1 Symbol := o -> if symbolFixes#?o then symbolFixes#o o else err o
 fixup1 ZZ := n -> fixup1( GRevLex => n )
 fixup1 Option := o -> (
      key := o#0;
+     key = fix1 key;
      val := o#1;
      if optionFixes#?key then optionFixes#key (key,val)
      else error ("unrecognized ordering item keyword : " | toString key)

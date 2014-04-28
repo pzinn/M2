@@ -63,8 +63,6 @@ monoidDefaults = (
      	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
 	  Constants => false,				    -- whether to use rawTowerRing when making a monoid ring
 	  DegreesRing => null,                              -- experimental: provide a preexisting degrees ring
-	  FactorizedForm => false,                          -- should be an option for polynomial rings...
-	  FactorInverses => false                           -- same. should always be false if Inverses is false 
 	  }
      )
 
@@ -151,7 +149,7 @@ tensorDefaults = merge(monoidDefaults,
 
 monoid = method(Dispatch => Thing, Options => monoidDefaults, TypicalValue => GeneralOrderedMonoid)
 monoid PolynomialRing := o -> R -> R.monoid
-options PolynomialRing := options @@ monoid
+--options PolynomialRing := options @@ monoid
 
 generators GeneralOrderedMonoid := opts -> M -> M.generators
 vars GeneralOrderedMonoid := M -> M.generators

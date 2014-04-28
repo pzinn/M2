@@ -130,6 +130,15 @@ protect generatorSymbols
 protect generatorExpressions
 protect indexSymbols
 
+--
+polynomialRingDefaults = (
+     new OptionTable from {
+	  FactorizedForm => false,                          -- should be an option for polynomial rings...
+	  FactorInverses => false                           -- same. should always be false if Inverses is false 
+}
+);
+--
+
 InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
      (R,M) -> (
@@ -232,6 +241,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
+	  RM.Options=M.Options; -- provisional
 	  if flatmonoid.?degreesRing then RM.degreesRing = flatmonoid.degreesRing;
 	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
@@ -244,7 +254,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       toString raw f
 	       )
 	  else expression RM := f -> (
-		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1) then fac
+		   if RM.Options.FactorizedForm and (fac:=factor f; #fac>1) then fac
 		   else
 	       	   (
 		   (
@@ -272,7 +282,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  factor RM := opts -> f -> ( 
 	       if factorValues#?f then return factorValues#f;
 	       c := 1_R; ff:=f;
-	       if (options RM).Inverses then (
+	       if M.Options.Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
@@ -282,7 +292,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
      	       facs = apply(#facs, i -> (
 		       pp:=new RM from facs#i; 
-		       if (options RM).FactorInverses and pp!=0 then ( c=c*(leadMonomial pp)^(exps#i); pp=pp*(leadMonomial pp)^(-1); );
+		       if RM.Options.FactorInverses and pp!=0 then ( c=c*(leadMonomial pp)^(exps#i); pp=pp*(leadMonomial pp)^(-1); );
 		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
 		       ));
 	       if liftable(facs#0,R) then (
@@ -323,8 +333,20 @@ samering := (f,g) -> (
      if ring f =!= ring g then error "expected elements from the same ring";
      )
 
-Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
-Ring List := PolynomialRing => (R,variables) -> use R monoid (variables,Local => true)
+--Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
+Ring Array := PolynomialRing => (R,variables) -> (
+    -- first get rid of ring specific options
+    vars:=select(variables,x->not instance(x,Option) or not member(x#0,keys polynomialRingDefaults));
+    RM:=R monoid vars;
+    -- then reintroduce them (yes, it's a bit painful)
+    RM.Options= ((monoidDefaults++polynomialRingDefaults) >> opts -> x -> opts++(monoid RM).Options) (toSequence variables);
+    use RM
+    )
+
+Ring List := PolynomialRing => (R,variables) -> R ([Local=>true]|new Array from variables)
+
+options PolynomialRing := R -> R.Options;
+
 PolynomialRing _ List := (R,v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0
