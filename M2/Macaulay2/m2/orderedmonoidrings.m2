@@ -133,8 +133,8 @@ protect indexSymbols
 --
 polynomialRingDefaults = (
      new OptionTable from {
-	  FactorizedForm => false,                          -- should be an option for polynomial rings...
-	  FactorInverses => false                           -- same. should always be false if Inverses is false 
+	  FactorizedForm => false,
+	  FactorInverses => false                           -- should always be false if monoid Inverses is false 
 }
 );
 --
@@ -241,7 +241,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
-	  RM.Options=M.Options; -- provisional
+	  RM.Options=polynomialRingDefaults;
 	  if flatmonoid.?degreesRing then RM.degreesRing = flatmonoid.degreesRing;
 	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
@@ -335,17 +335,17 @@ samering := (f,g) -> (
 
 --Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
 Ring Array := PolynomialRing => (R,variables) -> (
-    -- first get rid of ring specific options
-    vars:=select(variables,x->not instance(x,Option) or not member(x#0,keys polynomialRingDefaults));
-    RM:=R monoid vars;
-    -- then reintroduce them (yes, it's a bit painful)
-    RM.Options= ((monoidDefaults++polynomialRingDefaults) >> opts -> x -> opts++(monoid RM).Options) (toSequence variables);
+    -- first separate ring specific options
+    tal:=partition(x->(instance(x,Option) and member(x#0,keys polynomialRingDefaults)),variables);
+    RM:=R monoid if tal#?false then tal#false else [];
+    -- then record them
+    if tal#?true then RM.Options= RM.Options ++ new OptionTable from toList(tal#true);
     use RM
     )
 
 Ring List := PolynomialRing => (R,variables) -> R ([Local=>true]|new Array from variables)
 
-options PolynomialRing := R -> R.Options;
+options PolynomialRing := R -> (monoid R).Options ++ R.Options;
 
 PolynomialRing _ List := (R,v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
