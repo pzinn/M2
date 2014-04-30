@@ -9,9 +9,10 @@ newRing = method( Options => applyValues(monoidDefaults, x -> nothing), TypicalV
 newRing PolynomialRing := opts -> (R) -> (
      opts = new MutableHashTable from select(opts, v -> v =!= nothing);
      nullify := k -> if not opts#?k then opts#k = monoidDefaults#k;
-     if opts.?DegreeRank then (nullify Degrees;    nullify Heft; nullify DegreesRing);
-     if opts.?Degrees and opts.Degrees =!= {} then (nullify DegreeRank; nullify Heft; nullify DegreesRing);
-     if opts.?DegreesRing then (nullify DegreeRank; nullify Degrees; nullify Heft);
+     if opts.?DegreeRank then (nullify Degrees;    nullify Heft; nullify DegreesRing; nullify AddDegreesRing);
+     if opts.?Degrees and opts.Degrees =!= {} then (nullify DegreeRank; nullify Heft; nullify DegreesRing; nullify AddDegreesRing);
+     if opts.?DegreesRing then (nullify DegreeRank; nullify Degrees; nullify Heft; nullify AddDegreesRing);
+     if opts.?AddDegreesRing then (nullify DegreeRank; nullify Degrees; nullify Heft; nullify DegreesRing);
      if opts.?Variables then (
 	  if instance(opts.Variables,List) then (
 	       opts.Variables = splice opts.Variables;

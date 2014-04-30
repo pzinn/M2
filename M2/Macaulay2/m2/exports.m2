@@ -583,6 +583,8 @@ export {
 	symbol degreesMonoid,
 	symbol degreesRing,
 	symbol DegreesRing,
+	symbol addDegreesRing,
+	symbol AddDegreesRing,
 	symbol FactorizedForm,
 	symbol FactorInverses,
 	symbol delete,

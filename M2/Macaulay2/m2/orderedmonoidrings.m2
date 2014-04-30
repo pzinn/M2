@@ -94,7 +94,7 @@ standardForm RingElement := (f) -> (
      (cc,mm) := rawPairs(raw k, raw f);
      new HashTable from toList apply(cc, mm, (c,m) -> (standardForm m, new k from c)))
 
--- this way turns out to be much slower by a factor of 10
+-- this way turns out to be much slower by x10
 -- standardForm RingElement := (f) -> (
 --      R := ring f;
 --      k := coefficientRing R;
@@ -112,7 +112,7 @@ listForm RingElement := (f) -> (
      (cc,mm) := rawPairs(raw k, raw f);
      toList apply(cc, mm, (c,m) -> (exponents(n,m), promote(c,k))))
 
--- this way turns out to be much slower by a factor of 10
+-- this way turns out to be much slower by x10
 -- listForm RingElement := (f) -> (
 --      R := ring f;
 --      k := coefficientRing R;
@@ -130,14 +130,6 @@ protect generatorSymbols
 protect generatorExpressions
 protect indexSymbols
 
---
-polynomialRingDefaults = (
-     new OptionTable from {
-	  FactorizedForm => false,
-	  FactorInverses => false                           -- should always be false if monoid Inverses is false 
-}
-);
---
 
 InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
@@ -241,8 +233,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.baseRings = append(R.baseRings,R);
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
-	  RM.Options=polynomialRingDefaults;
 	  if flatmonoid.?degreesRing then RM.degreesRing = flatmonoid.degreesRing;
+	  if flatmonoid.?addDegreesRing then RM.addDegreesRing = flatmonoid.addDegreesRing;
 	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
@@ -254,7 +246,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       toString raw f
 	       )
 	  else expression RM := f -> (
-		   if RM.Options.FactorizedForm and (fac:=factor f; #fac>1) then fac
+		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1) then fac
 		   else
 	       	   (
 		   (
@@ -292,7 +284,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
      	       facs = apply(#facs, i -> (
 		       pp:=new RM from facs#i; 
-		       if RM.Options.FactorInverses and pp!=0 then ( c=c*(leadMonomial pp)^(exps#i); pp=pp*(leadMonomial pp)^(-1); );
+		       if (options RM).FactorInverses and pp!=0 then ( c=c*(leadMonomial pp)^(exps#i); pp=pp*(leadMonomial pp)^(-1); );
 		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
 		       ));
 	       if liftable(facs#0,R) then (
@@ -333,19 +325,8 @@ samering := (f,g) -> (
      if ring f =!= ring g then error "expected elements from the same ring";
      )
 
---Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
-Ring Array := PolynomialRing => (R,variables) -> (
-    -- first separate ring specific options
-    tal:=partition(x->(instance(x,Option) and member(x#0,keys polynomialRingDefaults)),variables);
-    RM:=R monoid if tal#?false then tal#false else [];
-    -- then record them
-    if tal#?true then RM.Options= RM.Options ++ new OptionTable from toList(tal#true);
-    use RM
-    )
-
-Ring List := PolynomialRing => (R,variables) -> R ([Local=>true]|new Array from variables)
-
-options PolynomialRing := R -> (monoid R).Options ++ R.Options;
+Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
+Ring List := PolynomialRing => (R,variables) -> use R monoid(variables,local => true)
 
 PolynomialRing _ List := (R,v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
