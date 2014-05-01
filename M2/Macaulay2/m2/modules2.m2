@@ -344,9 +344,8 @@ degree Module := (
 	       ev hn)))()
 
 multidegree Module := M -> (
-     R := ring M;
-     A := degreesRing R;
-     B := try R.addDegreesRing else A;
+     A := degreesRing M;
+     B := addDegreesRing M;
      onem := map(B,A,apply(generators B, t -> 1-t));
      c := codim M;
      if c === infinity then 0_B else part(c,onem numerator poincare M))

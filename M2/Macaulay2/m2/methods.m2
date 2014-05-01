@@ -176,7 +176,7 @@ setupMethods((), {
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
+	  leadComponent, degreesRing, addDegreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  determinant, presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
