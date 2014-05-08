@@ -248,7 +248,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       toString raw f
 	       )
 	  else expression RM := f -> (
-		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1) then fac
+		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1 or (#fac==1 and fac#0#1>1)) then fac
 		   else
 	       	   (
 		   (
