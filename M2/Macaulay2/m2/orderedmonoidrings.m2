@@ -298,9 +298,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    );
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       if c != 1 then (
-		    -- we put the possible constant (and monomial for Laurent polynomials) at the end
-		    facs = append(facs,c);
-		    exps = append(exps,1);
+		    -- we put the possible constant (and monomial for Laurent polynomials) at the beginning (EXPERIMENTAL CHANGE)
+		    facs = prepend(c,facs);
+		    exps = prepend(1,exps);
 		    );
 	       scan(facs,x -> factorValues#x=new Product from {new Power from {x,1}});
 	       factorValues#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));

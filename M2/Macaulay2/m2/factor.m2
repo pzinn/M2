@@ -104,7 +104,7 @@ topCoefficients RingElement := f -> (
      	  (monoms_(0,0), coeffs_(0,0))))
 
 reduce1 = f -> ( v:=factor f; p:=1_(ring f); scan(v,x->if not isUnit(x#0) then p=p*(x#0)); p);
-reducegens = I -> trim ideal(reduce1\(flatten entries generators I)); -- should it be a method?
+reducegens = I -> trim ideal(reduce1\({0_(ring I)}|(flatten entries generators I))); -- should it be a method?
 
 minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      (I) -> (
