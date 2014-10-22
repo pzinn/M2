@@ -3,9 +3,10 @@ dnl This is the only place in the code where the Macaulay2 version number
 dnl appears as a literal value.
 
 dnl Things to do when incrementing the version number:
+dnl    - make a git branch of the form release-X.Y.Z, if it's for final development of a binary release
 dnl    - make a git tag of the form version-X.Y.Z, if it's stable
 dnl    - add an entry to distributions/deb/changelog
-AC_INIT(Macaulay2, 1.6.1.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.7.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 12 months, stable, made into binary distributions
@@ -14,6 +15,7 @@ dnl   1.3.1.1 : a development version, with no binary distributions
 dnl   2.0     : this just means we've gotten bored seeing "1" at the beginning of the number
 dnl =============================================================================
 
+AC_CONFIG_SRCDIR(INSTALL)
 AC_CONFIG_HEADERS(include/M2/config.h)
 AC_CONFIG_FILES(m4_include(config/files))
 AC_SUBST(CONFIGURED_FILES,"$ac_config_files")
@@ -136,6 +138,8 @@ AC_SUBST(REL,"`  uname -r | sed -e s=/=-=g -e 's= =+=' -e 's=[()]==g'  `")
 AC_SUBST(UNAME_INFO_COMMAND," uname -pmso 2>/dev/null || uname -pms ")
 AC_SUBST(UNAME_INFO,"` eval $UNAME_INFO_COMMAND `")
 
+# Here we translate OS and REL into something the user can understand, because the names of the binary
+# distribution tar files on the web site contain those strings.
 case $OS-$REL in
   Darwin-7.*) REL=10.3 ; OS=MacOS ;;
   Darwin-8.*) REL=10.4 ; OS=MacOS ;;
@@ -408,6 +412,14 @@ AC_SEARCH_LIBS(socket,socket ws2_32) dnl ws2_32 is used under mingw64
 AC_SEARCH_LIBS(hstrerror,resolv)
 AC_SEARCH_LIBS(dlopen,dl)
 AC_SEARCH_LIBS(gethostbyname,nsl)
+AC_SUBST(HAVE_LIBTBB,no)
+AC_SUBST(LIBTBB,)
+   AC_LANG(C++)
+   AC_CHECK_HEADER(tbb/tbb.h,
+      [AC_SEARCH_LIBS(TBB_runtime_interface_version,tbb,
+	 LIBTBB=$ac_cv_search_TBB_runtime_interface_version
+	 HAVE_LIBTBB=yes)])
+   AC_LANG(C)
 AC_CHECK_FUNCS([somesillyfunction sys_errlist herror error backtrace clock_gettime gnu_get_libc_version __environ _environ environ _setmode getaddrinfo hstrerror sync getpgrp setpgid fchmod pipe waitpid setrlimit alarm fork sigprocmask kill longjmp siglongjmp sigaction wait4 readlink lstat realpath mkdir link symlink socket accept fcntl personality ioctl])
 
 AC_SUBST(HAVE_PERSONALITY,$ac_cv_func_personality)
@@ -778,7 +790,7 @@ AC_SUBST(BUILTLIBS,)
 #	we always build it, and every program should link with it
 #	"gdbm" calls sync(), so its test programs need to link with it
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz nauty cddplus lrslib gftables")
-AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest memtailor mathic mathicgb ")
+AC_SUBST(LIBLIST, " missing atomic_ops gc gdbm mpir mpfr pari readline ntl flint factory lapack frobby glpk cddlib fplll givaro fflas_ffpack linbox boost mpc qd mpack gtest ")
 
 # a library is listed in BUILD_ALWAYS if and only if we *always* build it, 
 # even if the option "--disable-building" is specified:
@@ -798,12 +810,14 @@ BUILD_lrslib=no
 BUILD_cddplus=no
 
 BUILD_mpir=yes
+BUILD_ALWAYS="mpir $BUILD_ALWAYS"
 # We always build mpir so we can patch the routine mp_set_memory_functions() in it so
 # it does nothing; that prevents libraries such as pari from telling it what memory
 # allocation functions to use.  But we should instead patch pari, so we can use the
 # gmp library that comes with many linux distributions.
 
 BUILD_mpfr=yes
+BUILD_ALWAYS="mpfr $BUILD_ALWAYS"
 # We always build mpfr because we tell mpir (which is impersonating gmp) to use libgc for its
 # memory allocation.  But mpfr puts pointers to gmp numbers in thread local variables, unless
 # specially configured, which libgc can't find, so libgc regards them as garbage and ultimately
@@ -839,37 +853,6 @@ AC_ARG_ENABLE(fflas-ffpack,
     )
 
 BUILD_gtest=yes
-
-AC_SUBST(ENABLE_MEMTAILOR,no)
-AC_ARG_ENABLE(memtailor,
-    [AS_HELP_STRING(--enable-memtailor,enable building the memtailor library and linking with it)],
-    AC_DEFINE(HAVE_MEMTAILOR,1,[whether we are linking with the memtailor library])
-    BUILD_memtailor=yes
-    ENABLE_MEMTAILOR=yes
-    )
-
-AC_SUBST(ENABLE_MATHIC,no)
-AC_ARG_ENABLE(mathic,
-    [AS_HELP_STRING(--enable-mathic,enable building the mathic library and linking with it)],
-    AC_DEFINE(HAVE_MATHIC,1,[whether we are linking with the mathic library])
-    BUILD_mathic=yes
-    ENABLE_MATHIC=yes
-    BUILD_memtailor=yes
-    ENABLE_MEMTAILOR=yes
-    )
-
-AC_SUBST(ENABLE_MATHICGB,no)
-AC_ARG_ENABLE(mathicgb,
-    [AS_HELP_STRING(--enable-mathicgb,enable building the mathicgb library and linking with it)],
-    AC_DEFINE(HAVE_MATHICGB,1,[whether we are linking with the mathicgb library])
-    BUILD_mathicgb=yes
-    ENABLE_MATHICGB=yes
-    BUILD_mathic=yes
-    ENABLE_MATHIC=yes
-    BUILD_memtailor=yes
-    ENABLE_MEMTAILOR=yes
-    )
-
 
 PROGLIST=" $PROGLIST "
 AC_ARG_WITH(unbuilt-programs, 
@@ -1030,8 +1013,9 @@ if test "$FROBBY" = yes
 then if test $BUILD_frobby = no
      then AC_MSG_CHECKING(for frobby library)
 	  AC_LANG(C++)
+	  # We can't use AC_SEARCH_LIBS, because the C++ routine names in frobby are mangled
           SAVELIBS=$LIBS
-	  LIBS="-lfrobby $LIBS"
+	  LIBS="-lfrobby -lgmpxx -lgmp $LIBS"
 	  AC_LINK_IFELSE([AC_LANG_SOURCE([
 	  	#include <frobby.h>
 		int main () {
@@ -1059,6 +1043,8 @@ if test $BUILD_boost = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
 fi
+
+
 
 if test $BUILD_cddlib = no
 then AC_LANG(C)
@@ -1166,7 +1152,7 @@ if test $BUILD_flint = no
 then AC_LANG(C)
      AC_CHECK_HEADER(flint/flint.h,,BUILD_flint=yes)
      if test $BUILD_flint = no
-     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes)
+     then AC_SEARCH_LIBS(flint_malloc,flint,,BUILD_flint=yes,-lmpfr -lgmp)
      fi
      if test $BUILD_flint = no
      then AC_MSG_CHECKING([whether flint library is version at least 2.4.3])
@@ -1185,8 +1171,9 @@ test $BUILD_flint = yes && BUILTLIBS="-lflint $BUILTLIBS"
 AC_SUBST(BUILD_flint)		dnl factory needs to know
 
 # We are using mpir.  If ntl is present, and sharable, then it depends
-# explicitly on gmp instead of mpir, which can cause a conflict.
-
+# explicitly on gmp instead of mpir, which can cause a conflict, so we build
+# it, just in case.
+if test $BUILD_mpir = yes; then BUILD_ntl=yes; BUILD_ALWAYS="ntl $BUILD_ALWAYS"; fi
 if test $BUILD_ntl = no
 then AC_LANG(C++)
      AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
@@ -1368,18 +1355,6 @@ then # test whether the fortran compiler can handle lapack, which, starting with
     AC_COMPILE_IFELSE([instrinsic maxloc],
 	AC_MSG_ERROR(the fortran compiler ($FC) does not support the Fortran 90 language required for compiling lapack),
 	AC_MSG_RESULT(yes))
-fi
-
-if test $BUILD_memtailor = yes
-then BUILTLIBS="-lmemtailor $BUILTLIBS"
-fi
-
-if test $BUILD_mathic = yes
-then BUILTLIBS="-lmathic $BUILTLIBS"
-fi
-
-if test $BUILD_mathicgb = yes
-then BUILTLIBS="-lmathicgb $BUILTLIBS"
 fi
 
 test "$USE_FCLIBS" = no && FCLIBS=
@@ -1769,15 +1744,15 @@ AC_SUBST(tail_datarootdir)
 AC_SUBST(MACHINE,"$ARCH-$OS-$ISSUE")
 AC_DEFINE_UNQUOTED(MACHINE,"$MACHINE",[complete machine description (to appear in name of tar file)])
 
-AC_SUBST(COMMONSTAGINGAREA,StagingArea) # staging area for common files
-AC_SUBST(LOCALSTAGINGAREA,StagingArea) # staging area for arch. dep. files
+AC_SUBST(COMMONSTAGINGAREA,usr-dist) # staging area for common files
+AC_SUBST(LOCALSTAGINGAREA,usr-dist) # staging area for arch. dep. files
 AC_ARG_WITH(staging-area,
-    AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (StagingArea)),
+    AS_HELP_STRING(--with-staging-area=...,directory for pre-installation of architecture-independent files (usr-dist)),
     COMMONSTAGINGAREA=$withval)
 AC_ARG_ENABLE(common-staging-area,
     AS_HELP_STRING(--enable-common-staging-area,use the common staging area),
     if test "$enableval" = yes
-    then if test "$COMMONSTAGINGAREA" != StagingArea
+    then if test "$COMMONSTAGINGAREA" != usr-dist
 	 then AC_MSG_ERROR(--with-staging-area and --enable-common-staging-area options both provided)
 	 fi
 	 COMMONSTAGINGAREA=\${abs_top_srcdir}/BUILD/CommonStagingArea # this depends on config.Makefile.in setting abs_top_srcdir

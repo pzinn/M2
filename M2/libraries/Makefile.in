@@ -2,7 +2,6 @@ VPATH = @srcdir@
 include ../include/config.Makefile
 BUILT_TARGETS = untar fetch all check unconfigure reinstall
 ALL_TARGETS = $(BUILT_TARGETS) clean distclean
-export LD_LIBRARY_PATH=$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH
 all:fetch
 $(ALL_TARGETS): Makefile.library
 $(foreach d,@LIBLIST@ @PROGLIST@ libtool M2,			\
@@ -18,27 +17,20 @@ $(foreach d,@LIBLIST@ @PROGLIST@,				\
 		$(eval $t: $t-in-$d)		\
 		$(eval .PHONY: $t $t-in-$d)))
 
-uninstall:; rm -rf */.installed* final
-all:install-programs install-licenses
+uninstall:; rm -rf */.installed* $(BUILTLIBPATH)
+all:install-programs
 install-programs:
 	: installing programs in @pre_programsdir@
-	if [ -d final/bin/. ] ; \
+	if [ -d $(BUILTLIBPATH)/bin/. ] ; \
 	then rm -rf @pre_programsdir@ ; \
 	     @INSTALL@ -d @pre_programsdir@ ; \
-	     @TAR@ cf - -C final/bin/. . | @TAR@ xf - -C @pre_programsdir@ ; \
-	fi
-install-licenses:
-	: installing program licenses in @pre_licensesdir@
-	if [ -d final/licenses/. ] ; \
-	then rm -rf @pre_licensesdir@ ; \
-	     @INSTALL@ -d @pre_licensesdir@ ; \
-	     @TAR@ cf - -C final/licenses/. . | @TAR@ xf - -C @pre_licensesdir@ ; \
+	     @TAR@ cf - -C $(BUILTLIBPATH)/bin/. . | @TAR@ xf - -C @pre_programsdir@ ; \
 	fi
 install-dynamic-libraries:
-	: installing sharable library files in @pre_librariesdir@/lib
+	: installing sharable library files in @pre_librariesdir@
 	rm -rf @pre_librariesdir@
 	@INSTALL@ -d @pre_librariesdir@
-	cd final/lib &&							\
+	cd $(BUILTLIBPATH)/lib &&							\
 	   for i in *.dll *.so.* *[0-9].dylib ;				\
 	   do if [ -e $$i ] ;						\
 	      then @TAR@ cf - $$i | @TAR@ xfv - -C @pre_librariesdir@ ;	\

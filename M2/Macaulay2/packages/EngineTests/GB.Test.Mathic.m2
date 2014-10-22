@@ -61,7 +61,6 @@ testRawMGB Ideal := (I) -> (
      assert G2 == G4;
      )
 
-if hasMGB then
 TEST ///
   R = ZZ/101[a..d]
   I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
@@ -70,15 +69,17 @@ TEST ///
   assert(g1 == g2)
 
   -- the following cases are not covered by MGB
+  -- But: it quietly changes to the default algorithm.
   R = QQ[a..d]
   I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
-  assert (try (g1 = groebnerBasis(I, Strategy=>"MGB"); false) else true)
+  assert (try (g1 = groebnerBasis(I, Strategy=>"MGB"); true) else false)
+  
+  -- This one quietly uses the default algorithm too
   R = ZZ/101[a..d]/(a^2+b^2)
   I = ideal(a^2*b-c^2-1, 2*a*d-c, a^4-1)
-  assert try (g1 = groebnerBasis(I, Strategy=>"MGB"); false) else true
+  assert (try (g1 = groebnerBasis(I, Strategy=>"MGB"); true) else false)
 ///
 
-if hasMGB then
 TEST ///
   -- module orders
   R = ZZ/101[a..d]
@@ -103,7 +104,7 @@ TEST ///
   time g3 = groebnerBasis(m, Strategy=>"MGB", "MGBOptions"=>{"Log"=>"all"})
 ///
 
-if hasMGB then
+if false then
 TEST ///
   -- module orders
   R = ZZ/101[a..d,z]
@@ -124,7 +125,7 @@ TEST ///
   assert(g1 == g3)
 ///
 
-if hasMGB and false then
+if false then
 TEST ///
   -- let's compute syzygies using module orders
   R = ZZ/101[vars(0..7)]
@@ -157,7 +158,6 @@ TEST ///
     ae2<3>-cd2<3>-<2>
 ///
 
-if hasMGB then
 TEST ///
   R1 = ZZ/32003[w,x,y,z,MonomialOrder => Lex]
   J1 = ideal"

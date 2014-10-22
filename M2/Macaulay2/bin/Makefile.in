@@ -155,10 +155,13 @@ endif
 ###################### libraries
 
 # the order of this list should agree with that in ../../configure.ac
-
 M2_LIBRARIES +=  @BUILTLIBS@
 M2_LIBRARIES +=  $(TOSTATIC) @LIBS_STATIC@
 M2_LIBRARIES +=  $(MAYBESTATIC) @LIBS_EITHER@
+
+# it's an error that mathicgb doesn't get -ltbb into its pkg-config file:
+M2_LIBRARIES += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs mathicgb) @LIBTBB@
+
 # I'm not sure whether compiling statically with libstdc++ is a good idea
 M2_LIBRARIES += -lstdc++
 
@@ -180,7 +183,7 @@ M2_LIBRARIES := -L../d -lM2inits2 $(M2_LIBRARIES)
 else
 M2_LIBRARIES := $(M2_LIBRARIES) -L../d -lM2inits2
 endif
-M2_LIBDEPS += ../d/libM2inits2.a
+M2_LIBDEPS += ../d/libM2inits2.a $(BUILTLIBPATH)/lib/libmemtailor.a $(BUILTLIBPATH)/lib/libmathic.a $(BUILTLIBPATH)/lib/libmathicgb.a
 ifeq (@CONSTRUCTOR_ORDER_OBJ@,LR)
 M2_OBJECTS := ../d/M2inits.o $(M2_OBJECTS)
 else
@@ -207,7 +210,7 @@ ifneq ("$(EXECSTACK)","no")
 endif
 	- printenv LD_LIBRARY_PATH
 ifneq (@LDD@,false)
-	@LDD@ $@.tmp
+	LD_LIBRARY_PATH="$(BUILTLIBPATH)/lib:$$LD_LIBRARY_PATH" @LDD@ $@.tmp
 endif
 ifneq (@OTOOL@,false)
 	@OTOOL@ -L $@.tmp

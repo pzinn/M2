@@ -80,19 +80,27 @@ document {
 		    LI { star, " ", TO "InvariantRing::InvariantRing", ", a package by Thomas Hawes
 			 for constructing the invariant ring of a finite group, has been published." },
 		    LI { star, " ", TO "MonomialAlgebras::MonomialAlgebras", ", a package by David Eisenbud,
-			 Janko Boehm, and Max Nitsche for decomposing a monomial algebra as a module over a subalgebra, has been published." }
+			 Janko Boehm, and Max Nitsche for decomposing a monomial algebra as a module over a subalgebra, has been published." },
+		    LI { star, " ", TO "CodepthThree::CodepthThree", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been published." }
 	       	    }
 	       },
 	  LI { "new packages:",
 	       UL {
 		    -- LI { TO "::", ", a package by ... for ..., has been added." },
 		    LI { TO "Book3264Examples::Book3264Examples", ", a package by Charley Crissman containing
-			 Schubert2 code for some of the examples and exercises in 
+			 Schubert2 code for some of the examples and exercises in
 			 the book '3264 and all that', by Eisenbud and Harris,
-			 has been added." 
+			 has been added."
 			 },
 		    LI { TO "EnumerationCurves::EnumerationCurves", ", a package by Hiep Dang for enumeration of rational curves via torus actions, has been added." },
-		    LI { TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been added." }
+		    LI { TO "Divisor::Divisor", ", a package by Karl Schwede and Zhaoning Yang for working with Weil divisors, has been added." },
+		    LI { TO "EllipticCurves::EllipticCurves", ", a package by Alessandro Oneto and Stefano Marseglia for addition on elliptic curves and point counting, has been added." },		
+		    LI { TO "HighestWeights::HighestWeights", ", a package by Federico Galetto for decomposing free resolutions and graded modules with a semisimple Lie group action, has been added." },		
+		    LI { TO "NumericalHilbert::NumericalHilbert", ", a package by Robert Krone for numerically computing local dual spaces and Hilbert functions, has been added." },		
+		    LI { TO "MinimalPrimes::MinimalPrimes", ", an experimental package by Frank Moore, Mike Stillman and Franziska Hinkelmann for finding the minimal primes of an ideal, has been added." },
+		    LI { TO "Bertini::Bertini", ", a package by Elizabeth Gross, Jose Israel Rodriguez, Dan Bates and Anton Leykin for providing an interface to Bertini, has been added." },
+		    LI { TO "CodepthThree::CodepthThree", ", a package by Lars Winther Christensen and Oana Veliche for classification of codepth 3 local rings based on multiplication in homology, has been added." },
+		    LI { TO "Permanents::Permanents", ", a package by Tair Akhmejanov for computing the permanents of a matrix, has been added." }
 	  	    }
 	       },
 	  LI { "improved packages:",
@@ -158,9 +166,10 @@ document {
 		    LI {"Linear algebra for mutable matrices over arbitrary precision RR and CC approximate fields has been included.
 			Functions which handle extended precision include determinant, rank, inverse, LUdecomposition, and solve.
 			Functions SVD, eigenvalues, eigenvectors have not yet been extended"},
-		    LI {TEX ///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: {\tt ZZp(p, Strategy=>"Flint")},
-			{\tt ZZp(p, Strategy=>"Ffpack")}, {\tt ZZp(p, Strategy=>"Engine")}.///},
+--		    LI {TEX ///A new function 'ZZp p' has been added.  This is simply ZZ/p, but allows options: {\tt ZZp(p, Strategy=>"Flint")},
+--			{\tt ZZp(p, Strategy=>"Ffpack")}, {\tt ZZp(p, Strategy=>"Engine")}.///},
 		    LI {"Extensive changes to numerical algebraic geometry code in the engine"},
+            LI {"The ", TO "groebnerBasis", " function includes new experimental Groebner code, which is much faster in some cases."},
 		    -- LI {"mathicgb Groebner basis code is used when it applies.  Actually, right now this is not accurate:
 		    -- 	it can be used, but is not done so automatically."},
 		    LI {"The {\tt Macaulay2/e} engine directory now compiles cleanly, with a few warning messages left."},

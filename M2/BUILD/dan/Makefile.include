@@ -1,6 +1,9 @@
 # -*- makefile-gmake -*-
 
 TARGETS = default everything world configure all install check-links distclean clean arch-chk install-it rebuild-world check
+CC ?= gcc
+CXX ?= g++
+FC ?= gfortran
 .PHONY : $(TARGETS)
 .NOTPARALLEL:
 $(TARGETS): banner
@@ -49,7 +52,7 @@ pre-install post-install:
 rebuild-world: rebuild-world1 rebuild-world2 rebuild-world3
 rebuild-world1: arch-chk distclean-or-rm-rf
 distclean-or-rm-rf:
-	$(MAKE) -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
+	@set -x ; $(MAKE) -f GNUmakefile -C "builds.tmp/$(DIRECTORY)" distclean || rm -rf "builds.tmp/$(DIRECTORY)"
 rebuild-world2:make-configure
 make-configure:; $(MAKE) -C ../.. -o helpful
 rebuild-world3: configure all check check-links
@@ -58,12 +61,16 @@ check-info:; $(MAKE) -C builds.tmp/$(DIRECTORY)/Macaulay2/packages $@
 rm-dep:; find builds.tmp/$(DIRECTORY) -name \*.dep -delete
 find-M2:
 	: : : : : : : : : : : : : : : : : : M2s : : : : : : : : : : : : : : 
-	@for i in `pwd`/builds.tmp/*/StagingArea/*/bin/M2 ; do echo $$i ; done
+	@for i in `pwd`/builds.tmp/*/usr-dist/*/bin/M2 ; do echo $$i ; done
 	: : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : : 
 CONFIGOPTIONS := --enable-encap --enable-download --enable-common-staging-area $(CONFIGOPTIONS)
+CONFIGOPTIONS += CC="$(CC)" CXX="$(CXX)" FC="$(FC)"
 AM_DEFAULT_VERBOSITY = 1
 PREFIX ?= /usr
 CONFIGOPTIONS += --prefix=$(PREFIX)
+ifeq ($(NTL_WIZARD),no)
+   CONFIGOPTIONS += --disable-ntl-wizard 
+endif
 # Local Variables:
 # compile-command: "time make -f Makefile.include find-M2 DIRECTORY=none"
 # End:
