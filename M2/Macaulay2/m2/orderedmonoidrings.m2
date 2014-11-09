@@ -247,7 +247,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       -- later we'll put in something prettier, maybe
 	       toString raw f
 	       )
-	  else expression RM := f -> (
+	  else expression RM := f -> ( 
 		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1 or (#fac==1 and fac#0#1>1)) then fac
 		   else
 	       	   (
@@ -272,16 +272,43 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
-	  factorValues := new MutableHashTable;
+	  fullFactors := new MutableHashTable; 
+	  partialFactors := new MutableHashTable; 
 	  factor RM := opts -> f -> ( 
-	       if factorValues#?f then return factorValues#f;
-	       c := 1_R; ff:=f;
+	       if fullFactors#?f then return fullFactors#f;
+	       c:=1_R; local facs; local exps;
+	       if partialFactors#?f then (
+    	    	 -- use the fact that we know some partial factorization to optimize  
+		  pf:=partialFactors#f;
+		  remove(partialFactors,f); -- no need any more -- we'll have the full factorization soon. and avoid potential nasty infinite loop
+		  genliftable := x -> if M.Options.Inverses then liftable(x*RM_(-min\transpose exponents x),R) else liftable(x,R);
+		  if class pf === Product then (
+		      f1:=factor pf#0;
+		      f2:=factor pf#1;
+		      -- reverse engineer constant/monomial
+		      if genliftable(f1#0#0) then ( c=c*(f1#0#0)^(f1#0#1); f1=drop(f1,1); );
+		      if genliftable(f2#0#0) then ( c=c*(f2#0#0)^(f2#0#1); f2=drop(f2,1); );
+		      -- now combine the rest
+		      h:=hashTable(plus,apply(f1*f2,x-> x#0 => x#1));
+    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h);
+		      if c != 1 then (
+			  facs = prepend(c,facs);
+		    	  exps = prepend(1,exps);
+		      );
+	       	      return fullFactors#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n})
+		  )
+		  else if class pf === Power then ( 
+		      f0:=factor pf#0;
+		      return fullFactors#f=new Product from apply(f0,x -> new Power from if genliftable(x#0) then {x#0^(pf#1*x#1),1} else {x#0,(pf#1)*(x#1)}); 
+		      ); 
+		   );
+	       ff:=f;
 	       if M.Options.Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
 		   );
-	       (facs,exps) := rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	       (facs,exps) = rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
 	       conv := x->substitute(x,QQ);
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
      	       facs = apply(#facs, i -> (
@@ -291,19 +318,18 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		       ));
 	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
-	       	    assert(exps#0 == 1);
-		    c = c*(facs#0);
+		    c = c*(facs#0)^(exps#0);
 		    facs = drop(facs,1);
 		    exps = drop(exps,1);
 		    );
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
+	       scan(facs,x -> fullFactors#x=new Product from {new Power from {x,1}});
 	       if c != 1 then (
 		    -- we put the possible constant (and monomial for Laurent polynomials) at the beginning (EXPERIMENTAL CHANGE)
 		    facs = prepend(c,facs);
 		    exps = prepend(1,exps);
 		    );
-	       scan(facs,x -> factorValues#x=new Product from {new Power from {x,1}});
-	       factorValues#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
+	       fullFactors#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
@@ -321,6 +347,18 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
      	  RM.indexStrings = hashTable apply(pairs RM.indexSymbols, (k,v) -> (toString k, v));
+	  -- there's a small risk that what follows will slow down computations quite a bit. maybe turn on only for rings with factorizedform on?
+     	  RM * RM := (x,y) -> (
+	      z:=new RM from raw x * raw y;
+              if #exponents x>1 and #exponents y>1 and not fullFactors#?z then partialFactors#z=new Product from {x,y};
+	      z 
+	      );
+	  RM ^ ZZ := (x,i) -> (
+	      y:=new RM from (raw x)^i;
+	      if i>1 and #exponents x>1 and not fullFactors#?y then partialFactors#y=new Power from {x,i}; 
+	      y
+	      );
+	  -- 
 	  RM))
 
 samering := (f,g) -> (

@@ -350,7 +350,16 @@ multidegree Module := M -> (
      c := codim M;
      if c === infinity then 0_B else part(c,onem numerator poincare M))
 multidegree Ring := R -> multidegree R^1
-multidegree Ideal := I -> multidegree cokernel generators I
+--multidegree Ideal := I -> multidegree cokernel generators I
+multidegree Ideal := I -> (
+--      weight := x -> (vars:=generators addDegreesRing ring x; sum(#vars,i->vars_i*(degree x)_i)); -- additive weight
+      vars:=generators addDegreesRing ring I;
+      weight := x -> sum(#vars,i->vars_i*(degree x)_i); -- additive weight
+      J:=prune I;
+      f:=flatten entries matrix I.cache.minimalPresentationMap;
+      (multidegree comodule J)*product(#(generators ring I),i->if f_i==0 then weight (ring I)_i else 1)
+     ); -- what about complete intersection?
+
 
 length Module := M -> (
      if not isHomogeneous M then notImplemented();

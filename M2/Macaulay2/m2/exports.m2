@@ -29,6 +29,7 @@ export {
 	"res" => symbol resolution,
 	"sub" => symbol substitute,
 	"top" => symbol topComponents,
+	"mdeg" => symbol multidegree,
 	symbol Test, -- for MES Groebner basis testing
 	symbol log1p,
 	symbol expm1,
