@@ -274,7 +274,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       );
 	  fullFactors := new MutableHashTable; 
 	  partialFactors := new MutableHashTable; 
-	  factor RM := opts -> f -> ( 
+	  factor RM := opts -> f -> ( --print fullFactors; print partialFactors;
 	       if fullFactors#?f then return fullFactors#f;
 	       c:=1_R; local facs; local exps;
 	       if partialFactors#?f then (
@@ -282,15 +282,18 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		  pf:=partialFactors#f;
 		  remove(partialFactors,f); -- no need any more -- we'll have the full factorization soon. and avoid potential nasty infinite loop
 		  genliftable := x -> if M.Options.Inverses then liftable(x*RM_(-min\transpose exponents x),R) else liftable(x,R);
+		  -- unfortunately liftable is buggy for Laurent polynomials so this attempt is doomed...
 		  if class pf === Product then (
-		      f1:=factor pf#0;
-		      f2:=factor pf#1;
+		      f1:=factor pf#0; 
+		      f2:=factor pf#1; 
 		      -- reverse engineer constant/monomial
 		      if genliftable(f1#0#0) then ( c=c*(f1#0#0)^(f1#0#1); f1=drop(f1,1); );
 		      if genliftable(f2#0#0) then ( c=c*(f2#0#0)^(f2#0#1); f2=drop(f2,1); );
 		      -- now combine the rest
-		      h:=hashTable(plus,apply(f1*f2,x-> x#0 => x#1));
-    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h);
+		      --print (f1,f2);
+		      --print f1*f2;
+		      h:=hashTable(plus,apply(f1*f2,x-> x#0 => x#1)); --print h;
+    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h);--print"test2";
 		      if c != 1 then (
 			  facs = prepend(c,facs);
 		    	  exps = prepend(1,exps);
