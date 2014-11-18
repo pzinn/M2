@@ -274,7 +274,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       );
 	  fullFactors := new MutableHashTable; 
 	  partialFactors := new MutableHashTable; 
-	  factor RM := opts -> f -> ( --print fullFactors; print partialFactors;
+	  factor RM := opts -> f -> ( 
 	       if fullFactors#?f then return fullFactors#f;
 	       c:=1_R; local facs; local exps;
 	       if partialFactors#?f then (
@@ -285,15 +285,13 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		  -- unfortunately liftable is buggy for Laurent polynomials so this attempt is doomed...
 		  if class pf === Product then (
 		      f1:=factor pf#0; 
-		      f2:=factor pf#1; 
+		      f2:=factor pf#1;
 		      -- reverse engineer constant/monomial
 		      if genliftable(f1#0#0) then ( c=c*(f1#0#0)^(f1#0#1); f1=drop(f1,1); );
 		      if genliftable(f2#0#0) then ( c=c*(f2#0#0)^(f2#0#1); f2=drop(f2,1); );
 		      -- now combine the rest
-		      --print (f1,f2);
-		      --print f1*f2;
-		      h:=hashTable(plus,apply(f1*f2,x-> x#0 => x#1)); --print h;
-    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h);--print"test2";
+		      h:=hashTable(plus,apply(f1*f2,x-> x#0 => x#1)); 
+    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h);
 		      if c != 1 then (
 			  facs = prepend(c,facs);
 		    	  exps = prepend(1,exps);
@@ -319,7 +317,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		       if (options RM).FactorInverses and pp!=0 then ( c=c*(leadMonomial pp)^(exps#i); pp=pp*(leadMonomial pp)^(-1); );
 		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
 		       ));
-	       if liftable(facs#0,R) then (
+	       if liftable(facs#0,R) then (  -- liftable is buggy but doesn't really matter here -- answer is always true anyway
 		    -- factory returns the possible constant factor in front
 		    c = c*(facs#0)^(exps#0);
 		    facs = drop(facs,1);
@@ -328,7 +326,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       scan(facs,x -> fullFactors#x=new Product from {new Power from {x,1}});
 	       if c != 1 then (
-		    -- we put the possible constant (and monomial for Laurent polynomials) at the beginning (EXPERIMENTAL CHANGE)
+		    -- we put the possible constant (and monomial for Laurent polynomials) at the beginning
 		    facs = prepend(c,facs);
 		    exps = prepend(1,exps);
 		    );
