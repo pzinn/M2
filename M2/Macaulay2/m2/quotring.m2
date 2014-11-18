@@ -171,7 +171,7 @@ ZZquotient := (R,I) -> (
 	  lift(S,QQ) := opts -> liftZZmodQQ;
 	  S))
 
-Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
+Ring / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = ( 
      if ring I =!= R then error "expected ideal of the same ring";
      if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
@@ -183,7 +183,7 @@ predecessors := method()
 predecessors Ring := R -> {R}
 predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
 
-EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
+EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = ( 
      if ring I =!= R then error "expected ideal of the same ring";
      if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
@@ -191,7 +191,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      A := R;
      while class A === QuotientRing do A = last A.baseRings;
      gensI := generators I;
-     gensgbI := generators gb gensI;
+     gensgbI := generators gb gensI; 
      S := new QuotientRing from rawQuotientRing(raw R, raw gensgbI);
      S#"raw creation log" = Bag { FunctionApplication {rawQuotientRing, (raw R, raw gensgbI)} };
      S.cache = new CacheTable;
@@ -231,6 +231,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
 --	       );
 	  );
      runHooks(R,QuotientRingHook,S);
+     factor S := opts -> f -> substitute(factor lift(f,R),S); -- experimental
      S)
 
 Ring / ZZ := (R,f) -> R / ideal f_R
