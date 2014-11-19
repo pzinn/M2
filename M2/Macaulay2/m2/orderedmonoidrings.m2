@@ -281,7 +281,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
     	    	 -- use the fact that we know some partial factorization to optimize  
 		  pf:=partialFactors#f;
 		  remove(partialFactors,f); -- no need any more -- we'll have the full factorization soon. and avoid potential nasty infinite loop
-		  genliftable := x -> if M.Options.Inverses then liftable(x*RM_(-min\transpose exponents x),R) else liftable(x,R);
+		  genliftable := x -> if M.Options.Inverses then false and liftable(x*RM_(-min\transpose exponents x),R) else liftable(x,R);
 		  -- unfortunately liftable is buggy for Laurent polynomials so this attempt is doomed...
 		  if class pf === Product then (
 		      f1:=factor pf#0; 
