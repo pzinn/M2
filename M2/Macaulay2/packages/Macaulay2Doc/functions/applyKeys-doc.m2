@@ -31,11 +31,19 @@ document {
 document { 
      Key => (applyKeys,HashTable,Function,Function),
      Headline => "apply a function to each key in a hash table with collision handling",
+<<<<<<< HEAD
      Usage => "applyKeys(H,f)",
      Inputs => {
   	  "H" => HashTable,
   	  "f" => Function => "with one argument",
 	  "g" => Function => {"with two arguments, used to combine values when keys coincide after applying ", TT "f"}
+=======
+     Usage => "applyKeys(H,f,g)",
+     Inputs => {
+  	  "H" => HashTable,
+  	  "f" => Function => "with one argument",
+	  "g" => Function => {"with two arguments to be used to combine values when keys coincide after applying", TT "f"}
+>>>>>>> 41e0e10f1af541a70ca6abe93181cd9dfebf025d
   	  },
      Outputs => {
   	  HashTable => {"obtained by applying ", TT "f", " to each key ", 

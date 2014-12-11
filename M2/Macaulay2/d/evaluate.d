@@ -1572,7 +1572,6 @@ export mapkeys(f:Expr,o:HashTable):Expr := (
 	  while true do (
 	       if p == p.next then break;
 	       newkey := applyEE(f,p.key);
-	       if newkey == nullE then return buildErrorPacket("null key encountered"); -- remove soon!!!
 	       when newkey is Error do return newkey else nothing;
 	       when storeInHashTableNoClobber(x,newkey,p.value)
 	       is err:Error do return Expr(err) else nothing;
@@ -1587,18 +1586,14 @@ export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (
 	  while true do (
 	       if p == p.next then break;
 	       newkey := applyEE(f,p.key);
-	       if newkey == nullE then return buildErrorPacket("null key encountered"); -- remove soon!!!
 	       when newkey is Error do return newkey else nothing;
 	       h := hash(newkey);
 	       val := lookup1(x,newkey,h);
 	       if val != notfoundE then (
-	       	  t := applyEEE(g,val,p.value);
+		  t := applyEEE(g,val,p.value);
 		  when t is err:Error do (
-			      	   if err.message != continueMessage then return t else remove(x,newkey);
-			      	   )
-			      else (
-				   storeInHashTable(x,newkey,h,t);
-				   )
+			      if err.message != continueMessage then return t else remove(x,newkey); 
+			      -- in case "continue" is executed in g,  remove the key
 			      )
 			 else (
 			      storeInHashTable(x,newkey,h,p.value);
