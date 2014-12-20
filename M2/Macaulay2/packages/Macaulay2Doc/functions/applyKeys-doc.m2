@@ -35,7 +35,7 @@ document {
      Inputs => {
   	  "H" => HashTable,
   	  "f" => Function => "with one argument",
-	  "g" => Function => {"with two arguments to be used to combine values when keys coincide after applying", TT "f"}
+	  "g" => Function => {"with two arguments to be used to combine values when keys coincide after applying ", TT "f"}
   	  },
      Outputs => {
   	  HashTable => {"obtained by applying ", TT "f", " to each key ", 
