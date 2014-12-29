@@ -1553,7 +1553,7 @@ mappairs(f:Expr,o:HashTable):Expr := (
      Expr(sethash(x,o.Mutable)));
 mappairsfun(e:Expr):Expr := (
      when      e is a:Sequence do
-     if        length(a) == 2 
+     if        length(a) == 2
      then when a.0 is o:HashTable 
      do
      if        o.Mutable 
@@ -1594,10 +1594,14 @@ export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (
 		  when t is err:Error do (
 			      if err.message != continueMessage then return t else remove(x,newkey); 
 			      -- in case "continue" is executed in g,  remove the key
-			      )
-			 else (
-			      storeInHashTable(x,newkey,h,p.value);
-			      );
+			      	   )
+			      else (
+				   storeInHashTable(x,newkey,h,t);
+				   )
+		  )
+	       else (
+		     storeInHashTable(x,newkey,h,p.value);
+	       );
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
