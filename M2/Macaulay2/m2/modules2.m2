@@ -76,6 +76,19 @@ poincare Module := (cacheValue symbol poincare) (
 	  -- see the comment in the documentation for (degree,Ideal) about what this means when M is not homogeneous
 	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M))
 
+--poincare Ideal := (I) -> poincare comodule I
+poincare Ideal := I -> (
+--      weight := x -> (vars:=generators DegreesRing ring x; 1-product(#vars,i->vars_i^((degree x)_i))); -- multiplicative weight
+      vars:=generators degreesRing ring I;
+      weight := x -> 1-product(#vars,i->vars_i^((degree x)_i)); -- multiplicative weight
+      J:=prune I;
+--      f:=flatten entries matrix I.cache.minimalPresentationMap;
+      (poincare comodule J)*product(generators ring I,x->if substitute(x,ring J)==0 then weight x else 1)
+     ); -- what about complete intersection?
+
+-- poincare quotientRing
+
+
 recipN = (n,wts,f) -> (
      -- n is a positive integer
      -- wts is a weight vector
@@ -349,15 +362,16 @@ multidegree Module := M -> (
      onem := map(B,A,apply(generators B, t -> 1-t));
      c := codim M;
      if c === infinity then 0_B else part(c,onem numerator poincare M))
-multidegree Ring := R -> multidegree R^1
---multidegree Ideal := I -> multidegree cokernel generators I
+
+multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
+
 multidegree Ideal := I -> (
 --      weight := x -> (vars:=generators addDegreesRing ring x; sum(#vars,i->vars_i*(degree x)_i)); -- additive weight
       vars:=generators addDegreesRing ring I;
       weight := x -> sum(#vars,i->vars_i*(degree x)_i); -- additive weight
       J:=prune I;
-      f:=flatten entries matrix I.cache.minimalPresentationMap;
-      (multidegree comodule J)*product(#(generators ring I),i->if f_i==0 then weight (ring I)_i else 1)
+--      f:=flatten entries matrix I.cache.minimalPresentationMap;
+      (multidegree comodule J)*product(generators ring I,x->if substitute(x,ring J)==0 then weight x else 1)
      ); -- what about complete intersection?
 
 

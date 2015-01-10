@@ -557,16 +557,6 @@ numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
---poincare Ideal := (I) -> poincare comodule I
-poincare Ideal := I -> (
---      weight := x -> (vars:=generators DegreesRing ring x; 1-product(#vars,i->vars_i^((degree x)_i))); -- multiplicative weight
-      vars:=generators degreesRing ring I;
-      weight := x -> 1-product(#vars,i->vars_i^((degree x)_i)); -- multiplicative weight
-      J:=prune I;
-      f:=flatten entries matrix I.cache.minimalPresentationMap;
-      (poincare comodule J)*product(#(generators ring I),i->if f_i==0 then weight (ring I)_i else 1)
-     ); -- what about complete intersection?
-
 
 Ideal _ List := (I,w) -> (module I)_w
 
