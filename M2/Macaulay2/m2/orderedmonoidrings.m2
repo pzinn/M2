@@ -247,7 +247,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       -- later we'll put in something prettier, maybe
 	       toString raw f
 	       )
-	  else expression RM := f -> ( 
+	  else expression RM := f -> (  
 		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1 or (#fac==1 and fac#0#1>1)) then fac
 		   else
 	       	   (
@@ -272,8 +272,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
-	  fullFactors := new MutableHashTable; 
-	  partialFactors := new MutableHashTable; 
+	  fullFactors := new MutableHashTable; --RM.ff=fullFactors;
+	  partialFactors := new MutableHashTable; --RM.pf=partialFactors;
 	  factor RM := opts -> f -> ( 
 	       if fullFactors#?f then return fullFactors#f;
 	       c:=1_R; local facs; local exps;
@@ -283,15 +283,15 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		  remove(partialFactors,f); -- no need any more -- we'll have the full factorization soon. and avoid potential nasty infinite loop
 		  genliftable := x -> if M.Options.Inverses then false and liftable(x*RM_(-min\transpose exponents x),R) else liftable(x,R);
 		  -- unfortunately liftable is buggy for Laurent polynomials so this attempt is doomed...
-		  if class pf === Product then (
-		      f1:=factor pf#0; 
-		      f2:=factor pf#1;
-		      -- reverse engineer constant/monomial
-		      if genliftable(f1#0#0) then ( c=c*(f1#0#0)^(f1#0#1); f1=drop(f1,1); );
-		      if genliftable(f2#0#0) then ( c=c*(f2#0#0)^(f2#0#1); f2=drop(f2,1); );
-		      -- now combine the rest
-		      h:=hashTable(plus,apply(f1*f2,x-> x#0 => x#1)); 
-    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h);
+		  if class pf === Product then ( 
+		      pf2:=product(toList pf,x->(
+			      ff:=factor x;
+		      	      -- reverse engineer constant/monomial
+		      	      if genliftable(ff#0#0) then ( c=c*(ff#0#0)^(ff#0#1); drop(ff,1) ) else ff
+			      ));
+		      -- now combine (product of expressions doesn't automatically add up powers; there *may* be a shorter way to do this)
+		      h:=hashTable(plus,apply(pf2,x-> x#0 => x#1)); 
+    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h); -- needs to be converted once more for sorting purposes
 		      if c != 1 then (
 			  facs = prepend(c,facs);
 		    	  exps = prepend(1,exps);
@@ -348,17 +348,19 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
      	  RM.indexStrings = hashTable apply(pairs RM.indexSymbols, (k,v) -> (toString k, v));
+--	  if (options RM).FactorizedForm then (
 	  -- there's a small risk that what follows will slow down computations quite a bit. maybe turn on only for rings with factorizedform on?
      	  RM * RM := (x,y) -> (
 	      z:=new RM from raw x * raw y;
-              if #exponents x>1 and #exponents y>1 and not fullFactors#?z then partialFactors#z=new Product from {x,y};
+              if #exponents z>1 and not fullFactors#?z then partialFactors#z=new Product from {x,y};
 	      z 
 	      );
 	  RM ^ ZZ := (x,i) -> (
 	      y:=new RM from (raw x)^i;
 	      if i>1 and #exponents x>1 and not fullFactors#?y then partialFactors#y=new Power from {x,i}; 
 	      y
-	      );
+--	      );
+	  );
 	  -- 
 	  RM))
 
