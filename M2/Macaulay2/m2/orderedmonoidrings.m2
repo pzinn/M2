@@ -325,7 +325,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    );
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       scan(facs,x -> fullFactors#x=new Product from {new Power from {x,1}});
-	       if c != 1 then (
+	       if c != 1 or #facs == 0 then ( -- subtle modif: I want 1 to be 1, not the empty product
 		    -- we put the possible constant (and monomial for Laurent polynomials) at the beginning
 		    facs = prepend(c,facs);
 		    exps = prepend(1,exps);
@@ -348,7 +348,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
      	  RM.indexStrings = hashTable apply(pairs RM.indexSymbols, (k,v) -> (toString k, v));
---	  if (options RM).FactorizedForm then (
+	  if (options RM).FactorizedForm then (
 	  -- there's a small risk that what follows will slow down computations quite a bit. maybe turn on only for rings with factorizedform on?
      	  RM * RM := (x,y) -> (
 	      z:=new RM from raw x * raw y;
@@ -359,7 +359,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	      y:=new RM from (raw x)^i;
 	      if i>1 and #exponents x>1 and not fullFactors#?y then partialFactors#y=new Power from {x,i}; 
 	      y
---	      );
+	      );
 	  );
 	  -- 
 	  RM))
