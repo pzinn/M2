@@ -867,6 +867,8 @@ export {
 	symbol memoize,
 	symbol merge,
 	symbol mergePairs,
+	symbol commonPairs,
+	symbol combinePairs,
 	symbol method,
 	symbol methodOptions,
 	symbol methods,
