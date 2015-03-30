@@ -248,7 +248,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       toString raw f
 	       )
 	  else expression RM := f -> (  
-		   if (options RM).FactorizedForm and (print("start expr",raw f); fac:=factor f; print("fac expr",raw f,#fac); #fac>1 or (#fac==1 and fac#0#1>1)) then fac
+		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1 or (#fac==1 and fac#0#1>1)) then fac
 		   else
 	       	   (
 		   (
@@ -303,14 +303,13 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		      return fullFactors#f=new Product from apply(f0,x -> new Power from if genliftable(x#0) then {x#0^(pf#1*x#1),1} else {x#0,(pf#1)*(x#1)}); 
 		      ); 
 		   );
-	       ff:=f;  print("factor",raw ff);
+	       ff:=f;
 	       if M.Options.Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
 		   );
 	       (facs,exps) = rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
-	       print("A:",raw ff,facs,exps);
 	       conv := x->substitute(x,QQ);
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
      	       facs = apply(#facs, i -> (
@@ -324,7 +323,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    facs = drop(facs,1);
 		    exps = drop(exps,1);
 		    );
-	       print("B:",raw ff,raw c,#facs);
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
 	       scan(facs,x -> fullFactors#x=new Product from {new Power from {x,1}});
 	       if c != 1 or #facs == 0 then ( -- subtle modif: I want 1 to be 1, not the empty product
@@ -332,7 +330,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    facs = prepend(c,facs);
 		    exps = prepend(1,exps);
 		    );
-	       print("C:",raw ff,raw c,#facs);
 	       fullFactors#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
 	      v := factor f;
