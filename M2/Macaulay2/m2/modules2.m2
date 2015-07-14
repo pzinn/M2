@@ -78,8 +78,8 @@ poincare Module := (cacheValue symbol poincare) (
 
 --poincare Ideal := (I) -> poincare comodule I
 poincare Ideal := I -> (
-      vars := generators degreesRing ring I;
-      weight := x -> 1-product(#vars,i->vars_i^((degree x)_i)); -- multiplicative weight
+      vrs := generators degreesRing ring I;
+      weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
       J:=prune I;
       (poincare comodule J)*product(generators ambient ring I,x->if substitute(x,ring J)==0 then weight x else 1) -- ambient to give the same (somewhat arbitrary?) answer as before for quotient rings
      ); -- what about complete intersection?
@@ -364,8 +364,8 @@ multidegree Module := M -> (
 multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
 
 multidegree Ideal := I -> (
-      vars := generators addDegreesRing ring I;
-      weight := x -> sum(#vars,i->vars_i*(degree x)_i); -- additive weight
+      vrs := generators addDegreesRing ring I;
+      weight := x -> sum(#vrs,i->vrs_i*(degree x)_i); -- additive weight
       J:=prune I;
       (multidegree comodule J)*product(generators ambient ring I,x->if substitute(x,ring J)==0 then weight x else 1)
      ); -- what about complete intersection?
