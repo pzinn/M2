@@ -1178,8 +1178,8 @@ export {
         "numrows" => "numRows",
         "res" => "resolution",
         "sub" => "substitute",
-        "top" => "topComponents"
-	"mdeg" => "multidegree",
+        "top" => "topComponents",
+	"mdeg" => "multidegree"
 }
 
 exportMutable {
