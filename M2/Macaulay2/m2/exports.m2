@@ -1179,7 +1179,7 @@ export {
         "res" => "resolution",
         "sub" => "substitute",
         "top" => "topComponents"
->>>>>>> 000bbbe8de9ec613051c84b2c4a2463fc2f6103d
+	"mdeg" => "multidegree",
 }
 
 exportMutable {
