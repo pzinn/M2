@@ -546,6 +546,8 @@ tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
 	       )
 	  else if opts.Join === false then (
 	       opts.DegreeRank = Mopts.DegreeRank;
+	       opts.DegreesRing = Mopts.DegreesRing;
+	       opts.AddDegreesRing = Mopts.AddDegreesRing;
 	       dm := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
 	       opts.DegreeMap = d -> degreePad(opts.DegreeRank,dm d);
 	       lm := if opts.DegreeLift =!= null then opts.DegreeLift else if Mopts.DegreeLift =!= null then Mopts.DegreeLift;
@@ -562,7 +564,7 @@ tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
 	       )
 	  else error "tensor: expected Join option to be true, false, or null")
      else (
-     	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables, null, null); -- temp: might want to improve last two "null"
+     	  (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables, opts.DegreesRing, opts.AddDegreesRing );
 	  opts.Degrees = degs;
 	  opts.DegreeRank = degrk;
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;

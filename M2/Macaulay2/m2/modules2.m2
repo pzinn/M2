@@ -88,6 +88,7 @@ poincare Ideal := I -> (
       J:=prune I;
       (poincare comodule J)*product(generators ambient ring I,x->if substitute(x,ring J)==0 then weight x else 1) -- ambient to give the same (somewhat arbitrary?) answer as before for quotient rings
      ); -- what about complete intersection?
+-- and the whole prune thing could be used for modules too
 
 -- poincare quotientRing
 
