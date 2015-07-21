@@ -424,17 +424,23 @@ antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
 -- factorized stuff
-FactPolynomialRing = new Type of PolynomialRing; -- almost useless...
+FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
 FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
 fact=method(TypicalValue => FactPolynomialRing,Options=>{LeadingOne=>false});
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
-expression FactPolynomialRing := F -> (expression fact) (expression last F.baseRings)
+expression FactPolynomialRing := R -> ( 
+     if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
+     (expression fact) (expression last R.baseRings)
+     );
 describe FactPolynomialRing := F -> "fact "|(describe last F.baseRings);
 options FactPolynomialRing := R -> options(monoid R)++R.Options;
 fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
-fact PolynomialRing := opts -> R -> if R.?fact then R.fact else ( -- (note that at this stage, can't change options any more?)
+fact PolynomialRing := opts -> R -> if R.?fact then (
+    R.fact.Options=R.fact.Options++opts; -- we allow change of options
+    R.fact 
+    ) else ( 
     Rf:=new FactPolynomialRing of RingElement from R; -- not R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
     Rf.Options=opts;
     R.fact=Rf;
