@@ -85,10 +85,13 @@ poincare Module := (cacheValue symbol poincare) (
 poincare Ideal := I -> (
       vrs := generators degreesRing ring I;
       weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
-      J:=prune I;
-      (poincare comodule J)*product(generators ambient ring I,x->if substitute(x,ring J)==0 then weight x else 1) -- ambient to give the same (somewhat arbitrary?) answer as before for quotient rings
+      J:=prune I; 
+      F:=matrix I.cache.minimalPresentationMap; 
+      flatvars:= generators(ring (flattenRing I)#0);
+--      (poincare comodule J)*product(gens(ring (flattenRing I)#0),x->if substitute(x,ring J)==0 then weight x else 1) -- RETHINK: ambient to give the same (somewhat arbitrary?) answer as before for quotient rings
+      (poincare comodule J)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
      ); -- what about complete intersection?
--- and the whole prune thing could be used for modules too
+-- and the whole prune thing could be used for modules too -- in fact done better, current coding sucks (substitute? should use cached minpres map)
 
 -- poincare quotientRing
 
@@ -372,8 +375,11 @@ multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multi
 multidegree Ideal := I -> (
       vrs := generators addDegreesRing ring I;
       weight := x -> sum(#vrs,i->vrs_i*(degree x)_i); -- additive weight
-      J:=prune I;
-      (multidegree comodule J)*product(generators ambient ring I,x->if substitute(x,ring J)==0 then weight x else 1)
+      J:=prune I; 
+      F:=matrix I.cache.minimalPresentationMap; 
+      flatvars:= generators(ring (flattenRing I)#0);
+      (multidegree comodule J)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
+--      (multidegree comodule J)*product(generators (ambient ring I).FlatMonoid,x->if substitute(x,ring J)==0 then weight x else 1)
      ); -- what about complete intersection?
 
 

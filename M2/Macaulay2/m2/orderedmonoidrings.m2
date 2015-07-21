@@ -423,6 +423,87 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
 antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
+-- factorized stuff
+FactPolynomialRing = new Type of PolynomialRing; -- almost useless...
+FactPolynomialRing.synonym = "factorized polynomial ring";
+coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
+fact=method(TypicalValue => FactPolynomialRing,Options=>{LeadingOne=>false});
+fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
+expression FactPolynomialRing := F -> (expression fact) (expression last F.baseRings)
+describe FactPolynomialRing := F -> "fact "|(describe last F.baseRings);
+options FactPolynomialRing := R -> options(monoid R)++R.Options;
+fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
+
+fact PolynomialRing := opts -> R -> if R.?fact then R.fact else ( -- (note that at this stage, can't change options any more?)
+    Rf:=new FactPolynomialRing of RingElement from R; -- not R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
+    Rf.Options=opts;
+    R.fact=Rf;
+    Rf.baseRings=append(R.baseRings,R);
+    commonEngineRingInitializations Rf;
+    if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
+    expression Rf := a -> (a#0)*new Product from apply(a#1,u->new Power from u); -- a#0 *must* be a constant (or a monomial if Inverses=true)
+    factor Rf := opts -> identity; -- damn options
+    value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
+    raw Rf := a-> raw value a; -- !!! 
+    conv := x->substitute(x,QQ);
+    if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
+    if (options R).Inverses then (
+	denominator Rf := a -> new Rf from { denominator a#0, {} };
+	numerator Rf := a -> new Rf from { numerator a#0, a#1 };
+	);
+    new Rf from RawRingElement := (A,a) -> (
+	local aa; local c;
+	if (options R).Inverses then (
+	    rp := rawPairs(raw coefficientRing R,a);
+	    -- need to get rid of common monomial somehow. a bit painful because using raw ring elements
+	    minexps:=min\transpose apply(toList(rp#1),x->exponents(numgens R,x));
+	    c=product(numgens R,i->(raw R)_i^(minexps_i)); -- there's gotta be a better way
+	    aa=a*c^(-1); -- same
+	    c=new R from c; -- ... same
+	    ) 
+	else ( 
+	    c=1_R; aa=a;
+	    );
+	fe := toList apply append(rawFactor aa,(f,e)->(
+		ff:=new R from f; 
+		if (Rf.Options).LeadingOne and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+		if conv(leadCoefficient ff)>0 then ff else (if odd e then c=-c; -ff),e)
+	    );
+	{ fe#0#0*c, -- constant term
+	    sort drop(fe,1) }  -- technically the sort should be on f, not on fe -- but should be the same
+	);
+    new Rf from R := (A,a) -> new Rf from raw a;
+    -- various redefinitions (there might be a more clever way to automate this?)
+    Rf.generators=apply(generators R,a->new Rf from a);
+    Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
+    Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
+    -- then operations!
+    Rf * Rf := (a,b) -> new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
+    Rf ^ ZZ := (a,n) -> (
+	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else new Rf from (value a)^n -- negative value of n can only occur for monomial in which case doesn't matter how to treat it
+	);
+    - Rf := a -> new Rf from { -a#0, a#1 };
+    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
+    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+    Rf // Rf := (a,b) -> (
+	mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+	mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+      	if mn==={} and (a#0)%(b#0)==0 then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
+    );
+    Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
+    -- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
+    RingMap Rf := RingElement => fff := (p,x) -> (
+     R := source p;
+     S := target p;
+     if R =!= ring x then (
+	 x = try promote(x,R) else error "ring element not in source of ring map, and not promotable to it";
+	 );
+     promote(rawRingMapEval(raw p, raw(x#0))*product(x#1,u->(rawRingMapEval(raw p,raw(u#0)))^(u#1)),S));
+     -- what about promote???       
+    use Rf);
+
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
