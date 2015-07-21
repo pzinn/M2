@@ -247,8 +247,8 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       -- later we'll put in something prettier, maybe
 	       toString raw f
 	       )
-	  else expression RM := f -> (  
-		   (
+	  else expression RM := f -> (
+	      (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
@@ -270,7 +270,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> f -> ( 
-	       c:=1_R; ff:=f;
+	       c := 1_R; ff:=f;
 	       if M.Options.Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial

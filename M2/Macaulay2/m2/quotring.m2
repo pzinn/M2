@@ -183,7 +183,7 @@ predecessors := method()
 predecessors Ring := R -> {R}
 predecessors QuotientRing := R -> append(predecessors last R.baseRings, R)
 
-EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = ( 
+EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
      if ring I =!= R then error "expected ideal of the same ring";
      if I.cache.?QuotientRing then return I.cache.QuotientRing;
      if I == 0 then return R;
