@@ -5,8 +5,6 @@ export {
 	"DegreesRing",
 	"addDegreesRing",
 	"AddDegreesRing",
-	"FactorizedForm",
-	"FactorInverses",
 -- end experimental
 	"!",
 	"!=",

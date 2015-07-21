@@ -248,9 +248,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       toString raw f
 	       )
 	  else expression RM := f -> (  
-		   if (options RM).FactorizedForm and (fac:=factor f; #fac>1 or (#fac==1 and fac#0#1>1)) then fac
-		   else
-	       	   (
 		   (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
@@ -258,7 +255,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,R)) * expression (if m == 1 then 1 else new M from m))
 			 )
 		    ) rawPairs(raw R, raw f)
-		)
+--		)
 --	       new Holder2 from {(
 --		    (coeffs,monoms) -> (
 --			 if #coeffs === 0
@@ -272,49 +269,18 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
-	  fullFactors := new MutableHashTable; --RM.ff=fullFactors;
-	  partialFactors := new MutableHashTable; --RM.pf=partialFactors;
 	  factor RM := opts -> f -> ( 
-	       if fullFactors#?f then return fullFactors#f;
-	       c:=1_R; local facs; local exps;
-	       if partialFactors#?f then (
-    	    	 -- use the fact that we know some partial factorization to optimize  
-		  pf:=partialFactors#f;
-		  remove(partialFactors,f); -- no need any more -- we'll have the full factorization soon. and avoid potential nasty infinite loop
-		  genliftable := x -> if M.Options.Inverses then false and liftable(x*RM_(-min\transpose exponents x),R) else liftable(x,R);
-		  -- unfortunately liftable is buggy for Laurent polynomials so this attempt is doomed...
-		  if class pf === Product then ( 
-		      pf2:=product(toList pf,x->(
-			      ff:=factor x;
-		      	      -- reverse engineer constant/monomial
-		      	      if genliftable(ff#0#0) then ( c=c*(ff#0#0)^(ff#0#1); drop(ff,1) ) else ff
-			      ));
-		      -- now combine (product of expressions doesn't automatically add up powers; there *may* be a shorter way to do this)
-		      h:=hashTable(plus,apply(pf2,x-> x#0 => x#1)); 
-    	    	      (facs,exps) = toSequence transpose sort (toList\pairs h); -- needs to be converted once more for sorting purposes
-		      if c != 1 then (
-			  facs = prepend(c,facs);
-		    	  exps = prepend(1,exps);
-		      );
-	       	      return fullFactors#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n})
-		  )
-		  else if class pf === Power then ( 
-		      f0:=factor pf#0;
-		      return fullFactors#f=new Product from apply(f0,x -> new Power from if genliftable(x#0) then {x#0^(pf#1*x#1),1} else {x#0,(pf#1)*(x#1)}); 
-		      ); 
-		   );
-	       ff:=f;
+	       c:=1_R; ff:=f;
 	       if M.Options.Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
 		   );
-	       (facs,exps) = rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	       (facs,exps) := rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
 	       conv := x->substitute(x,QQ);
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
      	       facs = apply(#facs, i -> (
 		       pp:=new RM from facs#i;
-		       if (options RM).FactorInverses and pp!=0 then ( c=c*(leadMonomial pp)^(exps#i); pp=pp*(leadMonomial pp)^(-1); );
 		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
 		       ));
 	       if liftable(facs#0,R) then (  -- liftable is buggy but doesn't really matter here -- answer is always true anyway
@@ -324,13 +290,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		    exps = drop(exps,1);
 		    );
 	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
-	       scan(facs,x -> fullFactors#x=new Product from {new Power from {x,1}});
 	       if c != 1 or #facs == 0 then ( -- subtle modif: I want 1 to be 1, not the empty product
 		    -- we put the possible constant (and monomial for Laurent polynomials) at the beginning
 		    facs = prepend(c,facs);
 		    exps = prepend(1,exps);
 		    );
-	       fullFactors#f=new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
+	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
@@ -348,20 +313,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
 	       );
      	  RM.indexStrings = hashTable apply(pairs RM.indexSymbols, (k,v) -> (toString k, v));
-	  if (options RM).FactorizedForm then (
-	  -- there's a small risk that what follows will slow down computations quite a bit. maybe turn on only for rings with factorizedform on?
-     	  RM * RM := (x,y) -> (
-	      z:=new RM from raw x * raw y;
-              if #exponents z>1 and x!=1 and y!=1 and not fullFactors#?z then partialFactors#z=new Product from {x,y};
-	      z 
-	      );
-	  RM ^ ZZ := (x,i) -> (
-	      y:=new RM from (raw x)^i;
-	      if i>1 and #exponents x>1 and not fullFactors#?y then partialFactors#y=new Power from {x,i}; 
-	      y
-	      );
-	  );
-	  -- 
 	  RM))
 
 samering := (f,g) -> (
@@ -370,7 +321,6 @@ samering := (f,g) -> (
 
 Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
 Ring List := PolynomialRing => (R,variables) -> use R monoid (variables,Local => true)
-
 PolynomialRing _ List := (R,v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0

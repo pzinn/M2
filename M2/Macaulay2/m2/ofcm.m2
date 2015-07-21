@@ -64,8 +64,6 @@ monoidDefaults = (
 	  Constants => false,				    -- whether to use rawTowerRing when making a monoid ring
 	  DegreesRing => null,                              -- experimental: provide a preexisting degrees ring
 	  AddDegreesRing => null,                           -- experimental: provide a preexisting additive degrees ring
-	  FactorizedForm => false,    	      	      	    -- ideally, should be an option for poly ring, not monoid
-	  FactorInverses => false    	     	     	    -- same
 	  }
      )
 
