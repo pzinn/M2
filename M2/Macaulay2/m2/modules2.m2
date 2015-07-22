@@ -91,7 +91,7 @@ poincare Ideal := I -> (
 --      (poincare comodule J)*product(gens(ring (flattenRing I)#0),x->if substitute(x,ring J)==0 then weight x else 1) -- RETHINK: ambient to give the same (somewhat arbitrary?) answer as before for quotient rings
       (poincare comodule J)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
      ); -- what about complete intersection?
--- and the whole prune thing could be used for modules too -- in fact done better, current coding sucks (substitute? should use cached minpres map)
+-- and the whole prune thing could be used for modules too -- in fact done better, current coding sucks 
 
 -- poincare quotientRing
 

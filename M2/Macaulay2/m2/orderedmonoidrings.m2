@@ -269,9 +269,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
-	  factor RM := opts -> f -> ( 
-	       c := 1_R; ff:=f;
-	       if M.Options.Inverses then (
+	  factor RM := opts -> f -> (
+	       c := 1_R; ff := f;
+	       if (options RM).Inverses then (
 		   minexps:=min \ transpose exponents f;
 		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 		   c=RM_minexps;
@@ -283,7 +283,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 		       pp:=new RM from facs#i;
 		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
 		       ));
-	       if liftable(facs#0,R) then (  -- liftable is buggy but doesn't really matter here -- answer is always true anyway
+	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
 		    c = c*(facs#0)^(exps#0);
 		    facs = drop(facs,1);
@@ -404,8 +404,15 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     conv := x->substitute(x,QQ);
     if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
     if (options R).Inverses then (
-	denominator Rf := a -> new Rf from { denominator a#0, {} };
-	numerator Rf := a -> new Rf from { numerator a#0, a#1 };
+	if (Rf.Options).LeadingOne then (
+	    denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
+	    numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
+	    )
+	else
+	(
+	    denominator Rf := a -> new Rf from { denominator a#0, {} };
+	    numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
+	    );
 	);
     new Rf from RawRingElement := (A,a) -> (
 	local aa; local c;
