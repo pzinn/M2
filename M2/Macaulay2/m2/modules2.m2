@@ -76,22 +76,21 @@ Ring ** Matrix := Matrix => (R,f) -> (
      )
 
 -----------------------------------------------------------------------------       
-poincare Module := (cacheValue symbol poincare) (
-     M -> (
+poincare1 = M -> (
 	  -- see the comment in the documentation for (degree,Ideal) about what this means when M is not homogeneous
-	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M))
+	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M)
 
---poincare Ideal := (I) -> poincare comodule I
-poincare Ideal := I -> (
-      vrs := generators degreesRing ring I;
-      weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
-      J:=prune I; 
-      F:=matrix I.cache.minimalPresentationMap; 
-      flatvars:= generators(ring (flattenRing I)#0);
---      (poincare comodule J)*product(gens(ring (flattenRing I)#0),x->if substitute(x,ring J)==0 then weight x else 1) -- RETHINK: ambient to give the same (somewhat arbitrary?) answer as before for quotient rings
-      (poincare comodule J)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
-     ); -- what about complete intersection?
--- and the whole prune thing could be used for modules too -- in fact done better, current coding sucks 
+poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm
+    	    I:=annihilator M;
+	    vrs := generators degreesRing ring M;
+      	    weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
+	    minimalPresentation I; f:=I.cache.minimalPresentationMap;
+	    MM := minimalPresentation(f**M);
+    	    F:=matrix f;
+	    flatvars:= generators(ring (flattenRing I)#0);
+	    (poincare1 MM)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
+      ))
+
 
 -- poincare quotientRing
 
@@ -372,17 +371,6 @@ multidegree Module := M -> (
      lowestPart(c,onem numerator poincare M))
 
 multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
-
-
--- multidegree Ideal := I -> multidegree comodule I;
---TEMP
-multidegree Ideal := M -> (
-     A := degreesRing M;
-     B := addDegreesRing M;
-     onem := map(B,A,apply(generators B, t -> 1-t));
-     c := codim M;
---     if c === infinity then 0_B else part(c,onem numerator poincare M))
-     lowestPart(c,onem numerator poincare M))
 
 
 length Module := M -> (

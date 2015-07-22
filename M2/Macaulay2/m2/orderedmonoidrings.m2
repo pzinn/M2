@@ -401,8 +401,7 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     expression Rf := a -> (a#0)*new Product from apply(a#1,u->new Power from u); -- a#0 *must* be a constant (or a monomial if Inverses=true)
     factor Rf := opts -> identity; -- damn options
     value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
---    raw Rf := a-> raw value a; -- !!!
-    raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1));
+    raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
     conv := x->substitute(x,QQ);
     if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
     if (options R).Inverses then (
@@ -420,7 +419,7 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     	c:=1_R; aa:=a;
 	if (options R).Inverses then (
 	    exps := (rawPairs(raw coefficientRing R,a))#1;
-	    if #exps>0 then (
+	    if #exps>0 then ( -- we need this because we strictly require minexps to have #=numgens, unlike factor... of course we could make the product up to #minexps instead
 	    	-- need to get rid of common monomial somehow. a bit painful because using raw ring elements
 	    	minexps:=min\transpose apply(toList exps,x->exponents(numgens R,x));
 	    	c=product(numgens R,i->(raw R)_i^(minexps_i)); -- there's gotta be a better way

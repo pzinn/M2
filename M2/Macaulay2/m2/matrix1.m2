@@ -533,6 +533,8 @@ numgens Ideal := (I) -> numgens source generators I
 leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
+poincare Ideal := (I) -> poincare comodule I
+multidegree Ideal := I -> multidegree comodule I;
 
 Ideal _ List := (I,w) -> (module I)_w
 
