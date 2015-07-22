@@ -5,6 +5,7 @@ export {
 	"DegreesRing",
 	"addDegreesRing",
 	"AddDegreesRing",
+	"lowestPart",
 -- end experimental
 	"!",
 	"!=",

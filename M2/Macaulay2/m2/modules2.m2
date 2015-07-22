@@ -368,10 +368,12 @@ multidegree Module := M -> (
      B := addDegreesRing M;
      onem := map(B,A,apply(generators B, t -> 1-t));
      c := codim M;
-     if c === infinity then 0_B else part(c,onem numerator poincare M))
+--     if c === infinity then 0_B else part(c,onem numerator poincare M))
+     lowestPart(c,onem numerator poincare M))
 
 multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
 
+{*
 multidegree Ideal := I -> (
       vrs := generators addDegreesRing ring I;
       weight := x -> sum(#vrs,i->vrs_i*(degree x)_i); -- additive weight
@@ -381,6 +383,15 @@ multidegree Ideal := I -> (
       (multidegree comodule J)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
 --      (multidegree comodule J)*product(generators (ambient ring I).FlatMonoid,x->if substitute(x,ring J)==0 then weight x else 1)
      ); -- what about complete intersection?
+*}
+--TEMP
+multidegree Ideal := M -> (
+     A := degreesRing M;
+     B := addDegreesRing M;
+     onem := map(B,A,apply(generators B, t -> 1-t));
+     c := codim M;
+--     if c === infinity then 0_B else part(c,onem numerator poincare M))
+     lowestPart(c,onem numerator poincare M))
 
 
 length Module := M -> (

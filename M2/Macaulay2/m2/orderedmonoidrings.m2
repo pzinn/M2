@@ -379,7 +379,7 @@ FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
 fact=method(TypicalValue => FactPolynomialRing,Options=>{LeadingOne=>false});
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
-expression FactPolynomialRing := R -> ( 
+expression FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      (expression fact) (expression last R.baseRings)
      );
@@ -404,7 +404,7 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     conv := x->substitute(x,QQ);
     if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
     if (options R).Inverses then (
-	if (Rf.Options).LeadingOne then (
+	if (Rf.Options).LeadingOne then ( -- in principle one could always use this first option
 	    denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
 	    numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
 	    )
@@ -415,18 +415,17 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
 	    );
 	);
     new Rf from RawRingElement := (A,a) -> (
-	local aa; local c;
+    	c:=1_R; aa:=a;
 	if (options R).Inverses then (
-	    rp := rawPairs(raw coefficientRing R,a);
-	    -- need to get rid of common monomial somehow. a bit painful because using raw ring elements
-	    minexps:=min\transpose apply(toList(rp#1),x->exponents(numgens R,x));
-	    c=product(numgens R,i->(raw R)_i^(minexps_i)); -- there's gotta be a better way
-	    aa=a*c^(-1); -- same
-	    c=new R from c; -- ... same
-	    ) 
-	else ( 
-	    c=1_R; aa=a;
-	    );
+	    exps := (rawPairs(raw coefficientRing R,a))#1;
+	    if #exps>0 then (
+	    	-- need to get rid of common monomial somehow. a bit painful because using raw ring elements
+	    	minexps:=min\transpose apply(toList exps,x->exponents(numgens R,x));
+	    	c=product(numgens R,i->(raw R)_i^(minexps_i)); -- there's gotta be a better way
+	    	aa=a*c^(-1); -- same
+	    	c=new R from c; -- ... same
+	    )
+	);
 	fe := toList apply append(rawFactor aa,(f,e)->(
 		ff:=new R from f; 
 		if (Rf.Options).LeadingOne and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
@@ -455,15 +454,19 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     );
     Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
     -- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
-    RingMap Rf := RingElement => fff := (p,x) -> (
+    RingMap Rf := RingElement => fff := (p,x) -> ( -- what is fff ???????????
      R := source p;
      S := target p;
      if R =!= ring x then (
 	 x = try promote(x,R) else error "ring element not in source of ring map, and not promotable to it";
 	 );
-     promote(rawRingMapEval(raw p, raw(x#0))*product(x#1,u->(rawRingMapEval(raw p,raw(u#0)))^(u#1)),S));
-     -- what about promote???       
-    use Rf);
+     pp := a -> promote(rawRingMapEval(raw p,raw a),S);
+     (pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
+     );
+     -- experimental
+     lowestPart(ZZ,Rf) := (d,x) -> lowestPart x; -- no checking performed
+     lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e);
+     use Rf);
 
 
 

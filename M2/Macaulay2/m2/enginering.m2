@@ -405,6 +405,18 @@ part(List,RingElement) := RingElement => (d,f) -> (
      else sum u
      )
 
+--- experimental. here only allowed weighting in standard one (may change in future)
+lowestPart = method();
+lowestPart(ZZ,RingElement) := RingElement => (d,f) -> if f === 0_(ring f) then f else part(d,d,numgens ring f:1,f);
+lowestPart(RingElement) := RingElement => f -> (
+    R := ring f;
+    if f === 0_R then return f;
+    rp := rawPairs(raw coefficientRing R, raw f);
+    lowestPart(min apply(rp#1,x->sum exponents(numgens R,x)),f)
+    );
+
+
+
 Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 
 protect numallvars
