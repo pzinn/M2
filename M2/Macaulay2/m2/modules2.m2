@@ -373,17 +373,8 @@ multidegree Module := M -> (
 
 multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
 
-{*
-multidegree Ideal := I -> (
-      vrs := generators addDegreesRing ring I;
-      weight := x -> sum(#vrs,i->vrs_i*(degree x)_i); -- additive weight
-      J:=prune I; 
-      F:=matrix I.cache.minimalPresentationMap; 
-      flatvars:= generators(ring (flattenRing I)#0);
-      (multidegree comodule J)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
---      (multidegree comodule J)*product(generators (ambient ring I).FlatMonoid,x->if substitute(x,ring J)==0 then weight x else 1)
-     ); -- what about complete intersection?
-*}
+
+-- multidegree Ideal := I -> multidegree comodule I;
 --TEMP
 multidegree Ideal := M -> (
      A := degreesRing M;

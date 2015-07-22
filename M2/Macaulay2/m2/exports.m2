@@ -2,6 +2,9 @@
 
 export {
 -- begin experimental
+	"fact",
+	"LeadingOne",
+	"Use",
 	"DegreesRing",
 	"addDegreesRing",
 	"AddDegreesRing",
@@ -223,7 +226,6 @@ export {
 	"KeepZeroes",
 	"Key",
 	"Keyword",
-	"LeadingOne",
 	"LUdecomposition",
 	"Layout",
 	"Left",
@@ -619,7 +621,6 @@ export {
 	"expression",
 	"extend",
 	"exteriorPower",
-	"fact",
 	"factor",
 	"false",
 	"fileDictionaries",

@@ -61,7 +61,7 @@ protect basering
 protect FlatMonoid
 
 degreesRing List := PolynomialRing => memoize(
-     hft -> if #hft === 0 then (
+     hft -> if #hft === 0 then ( 
 	       S := new PolynomialRing from rawPolynomialRing();
 	       S.basering = ZZ;
 	       S.FlatMonoid = S.monoid = monoid[DegreeRank => 0, Inverses => true, Global => false];
@@ -72,7 +72,8 @@ degreesRing List := PolynomialRing => memoize(
 	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
 	       S.indexSymbols = S.indexStrings = new HashTable;
 	       S)
-	  else ZZ degreesMonoid hft)
+	  else fact(ZZ degreesMonoid hft,LeadingOne=>true,Use=>false)
+	  )
 
 degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
 
@@ -269,7 +270,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
-	  factor RM := opts -> f -> (
+	  factor RM := opts -> f -> ( -- ideally would be merged with fact polynomial ring code below
 	       c := 1_R; ff := f;
 	       if (options RM).Inverses then (
 		   minexps:=min \ transpose exponents f;
@@ -281,7 +282,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
      	       facs = apply(#facs, i -> (
 		       pp:=new RM from facs#i;
-		       if conv(leadCoefficient pp) > 0 then pp else (if odd(exps#i) then c=-c; -pp)
+		       if conv(leadCoefficient pp) >= 0 then pp else (if odd(exps#i) then c=-c; -pp)
 		       ));
 	       if liftable(facs#0,R) then (
 		    -- factory returns the possible constant factor in front
@@ -377,7 +378,7 @@ antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
 FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
-fact=method(TypicalValue => FactPolynomialRing,Options=>{LeadingOne=>false});
+fact=method(TypicalValue => FactPolynomialRing,Options=>{LeadingOne=>false,Use=>true});
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
 expression FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
@@ -388,7 +389,7 @@ options FactPolynomialRing := R -> options(monoid R)++R.Options;
 fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
 fact PolynomialRing := opts -> R -> if R.?fact then (
-    R.fact.Options=R.fact.Options++opts; -- we allow change of options
+    R.fact.Options=R.fact.Options++opts; -- we allow change of options. what about Use???
     R.fact 
     ) else ( 
     Rf:=new FactPolynomialRing of RingElement from R; -- not R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
@@ -400,7 +401,8 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     expression Rf := a -> (a#0)*new Product from apply(a#1,u->new Power from u); -- a#0 *must* be a constant (or a monomial if Inverses=true)
     factor Rf := opts -> identity; -- damn options
     value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
-    raw Rf := a-> raw value a; -- !!! 
+--    raw Rf := a-> raw value a; -- !!!
+    raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1));
     conv := x->substitute(x,QQ);
     if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
     if (options R).Inverses then (
@@ -414,7 +416,7 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
 	    numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
 	    );
 	);
-    new Rf from RawRingElement := (A,a) -> (
+    new Rf from RawRingElement := (A,a) -> ( --print (A,a);
     	c:=1_R; aa:=a;
 	if (options R).Inverses then (
 	    exps := (rawPairs(raw coefficientRing R,a))#1;
@@ -429,7 +431,7 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
 	fe := toList apply append(rawFactor aa,(f,e)->(
 		ff:=new R from f; 
 		if (Rf.Options).LeadingOne and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
-		if conv(leadCoefficient ff)>0 then ff else (if odd e then c=-c; -ff),e)
+		if conv(leadCoefficient ff) >= 0 then ff else (if odd e then c=-c; -ff),e)
 	    );
 	{ fe#0#0*c, -- constant term
 	    sort drop(fe,1) }  -- technically the sort should be on f, not on fe -- but should be the same
@@ -445,8 +447,11 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
 	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else new Rf from (value a)^n -- negative value of n can only occur for monomial in which case doesn't matter how to treat it
 	);
     - Rf := a -> new Rf from { -a#0, a#1 };
-    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
-    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+    -- to avoid #321
+--    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
+    lcm (Rf, Rf) := (a,b) -> new Rf from { new R from rawLCM(raw a#0,raw b#0), mergePairs(a#1,b#1,max) }; -- ha!
+--    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+    gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
     Rf // Rf := (a,b) -> (
 	mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
 	mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
@@ -459,14 +464,14 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
      S := target p;
      if R =!= ring x then (
 	 x = try promote(x,R) else error "ring element not in source of ring map, and not promotable to it";
-	 );
+	 ); -- nope. that part is wrong. the issue is whether R is a factorized ring, not ring x
      pp := a -> promote(rawRingMapEval(raw p,raw a),S);
      (pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
      );
      -- experimental
      lowestPart(ZZ,Rf) := (d,x) -> lowestPart x; -- no checking performed
      lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e);
-     use Rf);
+     if (Rf.Options).Use then use Rf else Rf);
 
 
 
