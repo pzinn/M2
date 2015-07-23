@@ -61,7 +61,7 @@ protect basering
 protect FlatMonoid
 
 degreesRing List := PolynomialRing => memoize(
-     hft -> if #hft === 0 then ( 
+     hft -> if #hft === 0 then (
 	       S := new PolynomialRing from rawPolynomialRing();
 	       S.basering = ZZ;
 	       S.FlatMonoid = S.monoid = monoid[DegreeRank => 0, Inverses => true, Global => false];
@@ -249,14 +249,13 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       toString raw f
 	       )
 	  else expression RM := f -> (
-	      (
+	       (
 		    (coeffs,monoms) -> (
 			 if #coeffs === 0
 			 then expression 0
 			 else sum(coeffs,monoms, (a,m) -> expression (if a == 1 then 1 else promote(a,R)) * expression (if m == 1 then 1 else new M from m))
 			 )
 		    ) rawPairs(raw R, raw f)
---		)
 --	       new Holder2 from {(
 --		    (coeffs,monoms) -> (
 --			 if #coeffs === 0

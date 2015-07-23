@@ -80,9 +80,9 @@ poincare1 = M -> (
 	  -- see the comment in the documentation for (degree,Ideal) about what this means when M is not homogeneous
 	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M)
 
-poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm
-    	    I:=annihilator M;
-	    vrs := generators degreesRing ring M;
+poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
+    	    I:=annihilator M;                           -- also, the current improvement could be made equally well after leadTerm gb
+	    vrs := generators degreesRing ring M;       -- on the contrary CI is *not* preserved by leadTerm gb. unfortunately gb is time-costly, so can't iterate over sub-ideals
       	    weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
 	    minimalPresentation I; f:=I.cache.minimalPresentationMap;
 	    MM := minimalPresentation(f**M);
@@ -90,6 +90,22 @@ poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving 
 	    flatvars:= generators(ring (flattenRing I)#0);
 	    (poincare1 MM)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i)
       ))
+
+--TEMP. for testing purposes only
+poincare2 = I -> ( -- slightly easier with ideals
+    	R:=ring I;
+        l:=flatten entries generators I;
+    	n:=#l;
+	vrs := generators degreesRing R;
+	weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
+	local J;
+	s:=scan(l,x->(
+		J=ideal matrix(R,{delete(x,l)});
+		if syz gb(matrix(R/J,{{x}}),Syzygies=>true,SyzygyLimit=>1) == 0 then break (poincare2 J)*(weight x);
+		));
+	if s===null then poincare1 comodule I else s
+	);
+--
 
 
 -- poincare quotientRing
