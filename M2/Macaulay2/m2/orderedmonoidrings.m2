@@ -269,37 +269,16 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
 	       numerator RM := f -> f * denominator f;
 	       );
-	  factor RM := opts -> f -> ( -- ideally would be merged with fact polynomial ring code below
-	       c := 1_R; ff := f;
-	       if (options RM).Inverses then (
-		   minexps:=min \ transpose exponents f;
-		   ff=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
-		   c=RM_minexps;
-		   );
-	       (facs,exps) := rawFactor raw ff;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
-	       conv := x->substitute(x,QQ);
-	       if instance(RM.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(RM.basering)),QQ);
-     	       facs = apply(#facs, i -> (
-		       pp:=new RM from facs#i;
-		       if conv(leadCoefficient pp) >= 0 then pp else (if odd(exps#i) then c=-c; -pp)
-		       ));
-	       if liftable(facs#0,R) then (
-		    -- factory returns the possible constant factor in front
-		    c = c*(facs#0)^(exps#0);
-		    facs = drop(facs,1);
-		    exps = drop(exps,1);
-		    );
-	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
-	       if c != 1 or #facs == 0 then ( -- subtle modif: I want 1 to be 1, not the empty product
-		    -- we put the possible constant (and monomial for Laurent polynomials) at the beginning
-		    facs = prepend(c,facs);
-		    exps = prepend(1,exps);
-		    );
-	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
+	  factor RM := opts -> a -> (
+    	       f := factor1(a,opts); local fe;
+	       if f#0 != 1 or #(f#1) == 0 then ( -- subtle modif: I want 1 to be 1, not the empty product
+    	    	  fe=prepend((f#0,1),f#1);
+		    ) else fe=f#1;
+	       new Product from apply(fe,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
-	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
+	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1; if cnt>1 then break ));
 	      cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
@@ -374,6 +353,26 @@ antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
 -- factorized stuff
+factor1 = {LeadingOne=>false} >> opts -> a -> (
+    R:=ring a;
+    c := 1_R; aa := a; -- why not use f?
+    if (options R).Inverses then (
+	minexps:=min \ transpose exponents a; -- a bit of a hack if f=0, but works
+	aa=a*R_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
+	c=R_minexps;
+	); 
+    conv := x->substitute(x,QQ);
+    if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
+    fe := toList apply append(rawFactor raw aa,(f,e)->(
+	    ff:=new R from f; 
+	    if opts.LeadingOne and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+	    if conv(leadCoefficient ff) >= 0 then ff else (if odd e then c=-c; -ff),e)
+	);
+    { fe#0#0*c, -- constant term
+	sort drop(fe,1) }  -- technically the sort should be on f, not on fe -- but should be the same
+    );
+
+
 FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
 FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
@@ -401,10 +400,8 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     factor Rf := opts -> identity; -- damn options
     value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
     raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
-    conv := x->substitute(x,QQ);
-    if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
     if (options R).Inverses then (
-	if (Rf.Options).LeadingOne then ( -- in principle one could always use this first option
+	if Rf.Options.LeadingOne then ( -- in principle one could always use this first option
 	    denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
 	    numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
 	    )
@@ -414,32 +411,13 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
 	    numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
 	    );
 	);
-    new Rf from RawRingElement := (A,a) -> ( --print (A,a);
-    	c:=1_R; aa:=a;
-	if (options R).Inverses then (
-	    exps := (rawPairs(raw coefficientRing R,a))#1;
-	    if #exps>0 then ( -- we need this because we strictly require minexps to have #=numgens, unlike factor... of course we could make the product up to #minexps instead
-	    	-- need to get rid of common monomial somehow. a bit painful because using raw ring elements
-	    	minexps:=min\transpose apply(toList exps,x->exponents(numgens R,x));
-	    	c=product(numgens R,i->(raw R)_i^(minexps_i)); -- there's gotta be a better way
-	    	aa=a*c^(-1); -- same
-	    	c=new R from c; -- ... same
-	    )
-	);
-	fe := toList apply append(rawFactor aa,(f,e)->(
-		ff:=new R from f; 
-		if (Rf.Options).LeadingOne and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
-		if conv(leadCoefficient ff) >= 0 then ff else (if odd e then c=-c; -ff),e)
-	    );
-	{ fe#0#0*c, -- constant term
-	    sort drop(fe,1) }  -- technically the sort should be on f, not on fe -- but should be the same
-	);
-    new Rf from R := (A,a) -> new Rf from raw a;
+    new Rf from R := (A,a) -> factor1(a,LeadingOne=>Rf.Options.LeadingOne);
+    new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- only promote uses this
     -- various redefinitions (there might be a more clever way to automate this?)
     Rf.generators=apply(generators R,a->new Rf from a);
     Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
     Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
-    -- then operations!
+    -- then operations! (could use internally only raw?)
     Rf * Rf := (a,b) -> new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
     Rf ^ ZZ := (a,n) -> (
 	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else new Rf from (value a)^n -- negative value of n can only occur for monomial in which case doesn't matter how to treat it
@@ -456,13 +434,14 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
       	if mn==={} and (a#0)%(b#0)==0 then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
     );
     Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
+    Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
     -- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
-    RingMap Rf := RingElement => fff := (p,x) -> ( -- what is fff ???????????
+    RingMap Rf := (p,x) -> (
      R := source p;
      S := target p;
      if R =!= ring x then (
 	 x = try promote(x,R) else error "ring element not in source of ring map, and not promotable to it";
-	 ); -- nope. that part is wrong. the issue is whether R is a factorized ring, not ring x
+	 ); -- nope. that part is wrong. the issue is whether R is a factorized ring, not ring x **TODO**
      pp := a -> promote(rawRingMapEval(raw p,raw a),S);
      (pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
      );

@@ -292,7 +292,7 @@ toExternalString Thing := x -> (
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
 setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
-factor = method( Options => { } )
+factor = method( Options => { LeadingOne => false } )
 
 cohomology = method( Options => { 
 	  Degree => 0		  -- for local cohomology and sheaf cohomology
