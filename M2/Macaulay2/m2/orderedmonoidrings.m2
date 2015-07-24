@@ -270,11 +270,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> a -> (
-    	       f := factor1(a,opts); local fe;
-	       if f#0 != 1 or #(f#1) == 0 then ( -- subtle modif: I want 1 to be 1, not the empty product
-    	    	  fe=prepend((f#0,1),f#1);
-		    ) else fe=f#1;
-	       new Product from apply(fe,(p,n) -> new Power from {p,n}));
+    	       (c,fe) := factor1(a,opts); 
+	       if c != 1 or #fe == 0 then fe=append(fe,(c,1)); -- subtle modif: I want 1 to be 1, not the empty product
+	       new Product from apply(fe,(p,n) -> new Power from {p,n})); -- of course I could just use expression of FactPolynomialRing but that might break packages using factor
 	  isPrime RM := f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
@@ -368,8 +366,8 @@ factor1 = {LeadingOne=>false} >> opts -> a -> (
 	    if opts.LeadingOne and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
 	    if conv(leadCoefficient ff) >= 0 then ff else (if odd e then c=-c; -ff),e)
 	);
-    { fe#0#0*c, -- constant term
-	sort drop(fe,1) }  -- technically the sort should be on f, not on fe -- but should be the same
+    ( fe#0#0*c, -- constant term
+	sort drop(fe,1) )  -- technically the sort should be on f, not on fe -- but should be the same
     );
 
 
@@ -411,7 +409,7 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
 	    numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
 	    );
 	);
-    new Rf from R := (A,a) -> factor1(a,LeadingOne=>Rf.Options.LeadingOne);
+    new Rf from R := (A,a) -> toList factor1(a,LeadingOne=>Rf.Options.LeadingOne);
     new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- only promote uses this
     -- various redefinitions (there might be a more clever way to automate this?)
     Rf.generators=apply(generators R,a->new Rf from a);
