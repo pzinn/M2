@@ -72,7 +72,7 @@ degreesRing List := PolynomialRing => memoize(
 	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
 	       S.indexSymbols = S.indexStrings = new HashTable;
 	       S)
-	  else fact(ZZ degreesMonoid hft,LeadingOne=>true,Use=>false)
+	  else fact(ZZ degreesMonoid hft,DegreeZero=>true,Use=>false)
 	  )
 
 degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
@@ -351,19 +351,19 @@ antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
 -- factorized stuff
-factor1 = {LeadingOne=>false} >> opts -> a -> (
-    R:=ring a;
-    c := 1_R; aa := a; -- why not use f?
+factor1 = {DegreeZero=>false} >> opts -> a -> (
+    R := ring a;
+    c := 1_R;
     if (options R).Inverses then (
 	minexps:=min \ transpose exponents a; -- a bit of a hack if f=0, but works
-	aa=a*R_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
+	a=a*R_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
 	c=R_minexps;
-	); 
+	);
     conv := x->substitute(x,QQ);
     if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
-    fe := toList apply append(rawFactor raw aa,(f,e)->(
+    fe := toList apply append(rawFactor raw a,(f,e)->(
 	    ff:=new R from f; 
-	    if opts.LeadingOne and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+	    if opts.DegreeZero and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
 	    if conv(leadCoefficient ff) >= 0 then ff else (if odd e then c=-c; -ff),e)
 	);
     ( fe#0#0*c, -- constant term
@@ -374,7 +374,7 @@ factor1 = {LeadingOne=>false} >> opts -> a -> (
 FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
 FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
-fact=method(TypicalValue => FactPolynomialRing,Options=>{LeadingOne=>false,Use=>true});
+fact=method(TypicalValue => FactPolynomialRing,Options=>{DegreeZero=>false,Use=>true});
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
 expression FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
@@ -399,7 +399,7 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
     raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
     if (options R).Inverses then (
-	if Rf.Options.LeadingOne then ( -- in principle one could always use this first option
+	if Rf.Options.DegreeZero then ( -- in principle one could always use this first option
 	    denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
 	    numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
 	    )
@@ -409,13 +409,13 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
 	    numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
 	    );
 	);
-    new Rf from R := (A,a) -> toList factor1(a,LeadingOne=>Rf.Options.LeadingOne);
+    new Rf from R := (A,a) -> toList factor1(a,DegreeZero=>Rf.Options.DegreeZero);
     new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- only promote uses this
     -- various redefinitions (there might be a more clever way to automate this?)
     Rf.generators=apply(generators R,a->new Rf from a);
     Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
     Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
-    -- then operations! (could use internally only raw?)
+    -- then operations!
     Rf * Rf := (a,b) -> new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
     Rf ^ ZZ := (a,n) -> (
 	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else new Rf from (value a)^n -- negative value of n can only occur for monomial in which case doesn't matter how to treat it
@@ -435,12 +435,11 @@ fact PolynomialRing := opts -> R -> if R.?fact then (
     Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
     -- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
     RingMap Rf := (p,x) -> (
-     R := source p;
-     S := target p;
-     if R =!= ring x then (
-	 x = try promote(x,R) else error "ring element not in source of ring map, and not promotable to it";
-	 ); -- nope. that part is wrong. the issue is whether R is a factorized ring, not ring x **TODO**
-     pp := a -> promote(rawRingMapEval(raw p,raw a),S);
+     	R := source p;
+     	S := target p;
+	local pp;
+     	if R === ring x then pp = a -> promote(rawRingMapEval(raw p,raw a),S) else pp = a -> promote(rawRingMapEval(raw p,raw promote(a,R)),S);
+    	-- should perhaps test if promote is possible, else error "ring element not in source of ring map, and not promotable to it";
      (pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
      );
      -- experimental

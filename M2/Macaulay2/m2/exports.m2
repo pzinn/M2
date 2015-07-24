@@ -3,7 +3,7 @@
 export {
 -- begin experimental
 	"fact",
-	"LeadingOne",
+	"DegreeZero",
 	"Use",
 	"DegreesRing",
 	"addDegreesRing",
