@@ -384,68 +384,74 @@ describe FactPolynomialRing := F -> "fact "|(describe last F.baseRings);
 options FactPolynomialRing := R -> options(monoid R)++R.Options;
 fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
-fact PolynomialRing := opts -> R -> if R.?fact then (
-    R.fact.Options=R.fact.Options++opts; -- we allow change of options. what about Use???
-    R.fact 
-    ) else ( 
-    Rf:=new FactPolynomialRing of RingElement from R; -- not R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
-    Rf.Options=opts;
-    R.fact=Rf;
-    Rf.baseRings=append(R.baseRings,R);
-    commonEngineRingInitializations Rf;
-    if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
-    expression Rf := a -> (a#0)*new Product from apply(a#1,u->new Power from u); -- a#0 *must* be a constant (or a monomial if Inverses=true)
-    factor Rf := opts -> identity; -- damn options
-    value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
-    raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
-    if (options R).Inverses then (
+fact PolynomialRing := opts -> R -> (
+    local Rf;
+    if R.?fact then (
+    	Rf=R.fact;
+    	Rf.Options=Rf.Options++opts; -- we allow change of options
+     	)
+    else ( 
+    	Rf=new FactPolynomialRing of RingElement from R; -- not R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
+	Rf.Options=opts;
+	R.fact=Rf;
+	Rf.baseRings=append(R.baseRings,R);
+	commonEngineRingInitializations Rf;
+	if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
+	expression Rf := a -> (a#0)*new Product from apply(a#1,u->new Power from u); -- a#0 *must* be a constant (or a monomial if Inverses=true)
+	factor Rf := opts -> identity; -- damn options. TEMP: maybe something cleverer/stupider? like factor@@value ?
+	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
+	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
+	if (options R).Inverses then (
 	if Rf.Options.DegreeZero then ( -- in principle one could always use this first option
-	    denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
-	    numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
-	    )
+	denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
+	numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
+	)
 	else
 	(
-	    denominator Rf := a -> new Rf from { denominator a#0, {} };
-	    numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
-	    );
+	denominator Rf := a -> new Rf from { denominator a#0, {} };
+	numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
 	);
-    new Rf from R := (A,a) -> toList factor1(a,DegreeZero=>Rf.Options.DegreeZero);
-    new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- only promote uses this
-    -- various redefinitions (there might be a more clever way to automate this?)
-    Rf.generators=apply(generators R,a->new Rf from a);
-    Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
-    Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
-    -- then operations!
-    Rf * Rf := (a,b) -> new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
-    Rf ^ ZZ := (a,n) -> (
+	);
+	new Rf from R := (A,a) -> toList factor1(a,DegreeZero=>Rf.Options.DegreeZero);
+	new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- only promote uses this
+	-- various redefinitions (there might be a more clever way to automate this?)
+	Rf.generators=apply(generators R,a->new Rf from a);
+	Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
+	Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
+	-- then operations!
+	Rf * Rf := (a,b) -> new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
+	Rf ^ ZZ := (a,n) -> (
 	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else new Rf from (value a)^n -- negative value of n can only occur for monomial in which case doesn't matter how to treat it
 	);
-    - Rf := a -> new Rf from { -a#0, a#1 };
-    -- to avoid #321
---    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
-    lcm (Rf, Rf) := (a,b) -> new Rf from { new R from rawLCM(raw a#0,raw b#0), mergePairs(a#1,b#1,max) }; -- ha!
---    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
-    gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
-    Rf // Rf := (a,b) -> (
+	- Rf := a -> new Rf from { -a#0, a#1 };
+	-- to avoid #321
+	--    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
+	lcm (Rf, Rf) := (a,b) -> new Rf from { new R from rawLCM(raw a#0,raw b#0), mergePairs(a#1,b#1,max) }; -- ha!
+	--    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+	gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+	Rf // Rf := (a,b) -> (
 	mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
 	mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
       	if mn==={} and (a#0)%(b#0)==0 then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
-    );
-    Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
-    Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
-    -- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
-    RingMap Rf := (p,x) -> (
+	);
+	Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
+	Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
+	Rf == Rf := (a,b) -> ( c:=gcd(a,b); value(a//c) == value(b//c) ); -- this is almost, but not quite the same as asking for equality of every factor (!) -- think about changing DegreeZero
+	-- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
+	RingMap Rf := (p,x) -> (
      	R := source p;
      	S := target p;
 	local pp;
      	if R === ring x then pp = a -> promote(rawRingMapEval(raw p,raw a),S) else pp = a -> promote(rawRingMapEval(raw p,raw promote(a,R)),S);
     	-- should perhaps test if promote is possible, else error "ring element not in source of ring map, and not promotable to it";
-     (pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
-     );
-     -- experimental
-     lowestPart(ZZ,Rf) := (d,x) -> lowestPart x; -- no checking performed
-     lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e);
-     if (Rf.Options).Use then use Rf else Rf);
+	(pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
+	);
+	-- experimental
+	lowestPart(ZZ,Rf) := (d,x) -> lowestPart x; -- no checking performed
+	lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e);
+	);
+    if (Rf.Options).Use then use Rf else Rf
+    );
 
 
 
