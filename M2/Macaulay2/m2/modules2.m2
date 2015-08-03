@@ -83,9 +83,9 @@ poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving 
 	    R:=ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
 	    if class R === QuotientRing then ( -- a bit painful
 		rels:=substitute(presentation M,ambient R);
-		n:=rank target rels;
-		scan(n,i-> rels = rels | matrix apply(n,j-> if i==j then flatten entries generators ideal R else toList((numgens ideal R):0))); -- terrible programming
-		M=cokernel rels;
+		degs:=degrees target rels;
+		rels2:=directSum apply(0..#degs-1,i->map((ambient R)^{-degs#i},,generators ideal R)); -- ha!
+		M=cokernel (rels|rels2);
 		);
     	    I:=annihilator M; 
 	    vrs := generators degreesRing R;       -- on the contrary CI is *not* preserved by leadTerm gb. unfortunately gb is time-costly, so can't iterate over sub-ideals
