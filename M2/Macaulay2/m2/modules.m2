@@ -322,8 +322,8 @@ degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees =
 Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 
 Ring ^ List := Module => (
-     (R,degs) -> (
-	  degs = - splice degs;
+     (R,degs) -> ( 
+	  degs = splice degs;
 	  if R.?RawRing then (
 	       -- check the args
 	       ndegs := degreeLength R;
@@ -331,18 +331,23 @@ Ring ^ List := Module => (
 	       else if all(degs,i -> class i === ZZ) then (
 		    if ndegs =!= 1
 	       	    then error ("expected each multidegree to be of length ", toString ndegs))
-	       else if all(degs,v -> class v === List) then (
-		    scan(degs,v -> (
-			      if #v =!= ndegs
-			      then error (
+	       else 
+		   degs=apply(degs,v -> (
+			   if class v === List then (
+			       v=splice v;
+			       if #v =!= ndegs
+			       then error (
 				   "expected each multidegree to be of length ",
 				   toString ndegs
 				   );
-			      if not all(v,i->class i === ZZ)
-			      then error "expected each multidegree to be a list of integers")))
-	       else error "expected a list of integers or a list of lists of integers";
+			       if not all(v,i->class i === ZZ)
+			       then error "expected each multidegree to be a list of integers";
+			       v) else 
+			   if class v === degreesRing R then (exponents v)#0 else
+			   if class v === addDegreesRing R then apply(flatten entries(coefficients(v,Monomials=>generators addDegreesRing R))#1,x->substitute(x,ZZ)) else	       
+	       		   error "expected a list of integers or a list of (lists of integers, monomials of the degrees ring, linear elements of the add degrees rings)"));
 	       -- then adjust the args
-	       fdegs := flatten degs;
+	       fdegs := -flatten degs;
 	       -- then do it
 	       if # fdegs === 0 
 	       then new Module from (R,rawFreeModule(R.RawRing,#degs))

@@ -355,8 +355,8 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
     R := ring a;
     c := 1_R;
     if (options R).Inverses then (
-	minexps:=min \ transpose exponents a; -- a bit of a hack if f=0, but works
-	a=a*R_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
+	minexps:=min \ transpose exponents a; -- a bit of a hack if a==0, but works
+	a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial
 	c=R_minexps;
 	);
     conv := x->substitute(x,QQ);
@@ -399,7 +399,7 @@ fact PolynomialRing := opts -> R -> (
 	if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
 	expression Rf := a -> (a#0)*new Product from apply(a#1,u->new Power from u); -- a#0 *must* be a constant (or a monomial if Inverses=true)
 	factor Rf := opts -> identity; -- damn options. TEMP: maybe something cleverer/stupider? like factor@@value ?
-	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache? each time we compute it?
+	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache it? can't really cache except in ring itself which sucks
 	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
 	if (options R).Inverses then (
 	if Rf.Options.DegreeZero then ( -- in principle one could always use this first option
