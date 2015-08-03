@@ -77,14 +77,20 @@ Ring ** Matrix := Matrix => (R,f) -> (
 
 -----------------------------------------------------------------------------       
 poincare1 = M -> (
-	  -- see the comment in the documentation for (degree,Ideal) about what this means when M is not homogeneous
 	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M)
 
 poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
-    	    I:=annihilator M;                           -- also, the current improvement could be made equally well after leadTerm gb
-	    vrs := generators degreesRing ring M;       -- on the contrary CI is *not* preserved by leadTerm gb. unfortunately gb is time-costly, so can't iterate over sub-ideals
+	    R:=ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
+	    if class R === QuotientRing then ( -- a bit painful
+		rels:=substitute(presentation M,ambient R);
+		n:=rank target rels;
+		scan(n,i-> rels = rels | matrix apply(n,j-> if i==j then flatten entries generators ideal R else toList((numgens ideal R):0))); -- terrible programming
+		M=cokernel rels;
+		);
+    	    I:=annihilator M; 
+	    vrs := generators degreesRing R;       -- on the contrary CI is *not* preserved by leadTerm gb. unfortunately gb is time-costly, so can't iterate over sub-ideals
       	    weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
-	    minimalPresentation I; f:=I.cache.minimalPresentationMap;
+	    minimalPresentation I; f:=I.cache.minimalPresentationMap; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
 	    MM := minimalPresentation(f**M);
     	    F:=matrix f;
 	    flatvars:= generators(ring (flattenRing I)#0);
@@ -105,10 +111,6 @@ poincare2 = I -> ( -- slightly easier with ideals
 		));
 	if s===null then poincare1 comodule I else s
 	);
---
-
-
--- poincare quotientRing
 
 
 recipN = (n,wts,f) -> (

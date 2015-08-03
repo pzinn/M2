@@ -344,10 +344,10 @@ Ring ^ List := Module => (
 			       then error "expected each multidegree to be a list of integers";
 			       v) else 
 			   if class v === degreesRing R then (exponents v)#0 else
-			   if class v === addDegreesRing R then apply(flatten entries(coefficients(v,Monomials=>generators addDegreesRing R))#1,x->substitute(x,ZZ)) else	       
+			   if class v === addDegreesRing R then apply(flatten entries(coefficients(v,Monomials=>generators addDegreesRing R))#1,x->substitute(x,ZZ)) else
 	       		   error "expected a list of integers or a list of (lists of integers, monomials of the degrees ring, linear elements of the add degrees rings)"));
 	       -- then adjust the args
-	       fdegs := -flatten degs;
+	       fdegs := - flatten degs;
 	       -- then do it
 	       if # fdegs === 0 
 	       then new Module from (R,rawFreeModule(R.RawRing,#degs))
