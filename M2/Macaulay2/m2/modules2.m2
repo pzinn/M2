@@ -81,13 +81,15 @@ poincare1 = M -> (
 
 poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
 	    R:=ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
-	    if class R === QuotientRing then ( -- a bit painful
-		rels:=substitute(presentation M,ambient R);
-		degs:=degrees target rels;
-		rels2:=directSum apply(0..#degs-1,i->map((ambient R)^{-degs#i},,generators ideal R)); -- ha!
-		M=cokernel (rels|rels2);
+	    while class R === QuotientRing do (
+		--rels:=lift(presentation M,ambient R); 
+		--degs:=degrees target rels;
+		--rels2:=directSum apply(0..#degs-1,i->map((ambient R)^{-degs#i},,generators ideal R)); -- ha! of course one could use lift, but this is more fun
+		--M=cokernel (rels|rels2); 
+		M=cokernel lift(presentation M,ambient R) ** (ambient R)^1/(ideal R); -- the boring way
+		R=ambient R;
 		);
-    	    I:=annihilator M; 
+    	    I:=annihilator M;
 	    vrs := generators degreesRing R;       -- on the contrary CI is *not* preserved by leadTerm gb. unfortunately gb is time-costly, so can't iterate over sub-ideals
       	    weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
 	    minimalPresentation I; f:=I.cache.minimalPresentationMap; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
