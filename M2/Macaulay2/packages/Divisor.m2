@@ -124,7 +124,7 @@ net BasicDiv := t -> (
 	j := 0;
 	genList := {};
 	if (#valList > 0) then (
-		while (i < #valList) do(
+		while (i < #valList) do (
 			if (i > 0) then myStr = myStr | " + ";
 			myStr = myStr | toString(valList#i) | "*Div(";
 			genList = first entries gens (primeList#i);
@@ -133,7 +133,7 @@ net BasicDiv := t -> (
 				myStr = myStr | toString(genList#j);
 			);
 			myStr = myStr | ")";
-			i = i+1
+			i = i+1;
 		);
 	)
 	else(
@@ -231,7 +231,8 @@ divisor(BasicList, BasicList) := o ->(l1, l2) ->
 	-- call error (and I suppose we might change it back)...
 	if (flag == true) then
 	(
-		divList = toList(apply(0..(N-1), i -> ( (first entries gens (gb idealList#i) ) => {coeffList#i, idealList#i} ) ));
+	    x:=select(0..N-1,i->coeffList#i != 0);
+		divList = toList(apply(x, i -> ( (first entries gens (gb idealList#i) ) => {coeffList#i, idealList#i} ) ));
 		divList = append(divList, "ambRing" => RTest);
 		--if we have a common coefficient ring type
 		if (o.CoeffType === ZZ) then 
