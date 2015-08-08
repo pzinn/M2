@@ -351,6 +351,11 @@ antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
 
 -- factorized stuff
+leadCoeff = x -> ( -- iterated leadCoefficient
+    R := ring x;
+    if class R === PolynomialRing then leadCoeff leadCoefficient x else
+    if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
+    x);
 factor1 = {DegreeZero=>false} >> opts -> a -> (
     R := ring a;
     c := 1_R;
@@ -359,12 +364,10 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
 	a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial
 	c=R_minexps;
 	);
-    conv := x->substitute(x,QQ);
-    if instance(R.basering,GaloisField) then conv = x-> substitute(lift(x,ambient(R.basering)),QQ);
     fe := toList apply append(rawFactor raw a,(f,e)->(
-	    ff:=new R from f; 
+	    ff:=new R from f;
 	    if opts.DegreeZero and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
-	    if conv(leadCoefficient ff) >= 0 then ff else (if odd e then c=-c; -ff),e)
+	    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
 	);
     ( fe#0#0*c, -- constant term
 	sort drop(fe,1) )  -- technically the sort should be on f, not on fe -- but should be the same
