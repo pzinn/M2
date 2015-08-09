@@ -266,7 +266,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --	       f}
 	  );
      	  if M.Options.Inverses === true then (
-	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
+--	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
+               denominator RM := f -> RM_( - min \ transpose prepend(toList(RM.numallvars:0),
+		       apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m)))); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> a -> (
@@ -362,7 +364,6 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
     if (options R).Inverses then (
 	-- a bit of a hack if a==0, but works
         minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
-	-- should we use the same trick for numerator/denominator? see also matrix1.m2, 581
 	a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial. 
 	c=R_minexps;
 	);
@@ -402,8 +403,8 @@ fact PolynomialRing := opts -> R -> (
 	Rf.baseRings=append(R.baseRings,R);
 	commonEngineRingInitializations Rf;
 	if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
-	expression Rf := a -> (a#0)*new Product from apply(a#1,u->new Power from u); -- a#0 *must* be a constant (or a monomial if Inverses=true)
-	factor Rf := opts -> identity; -- damn options. TEMP: maybe something cleverer/stupider? like factor@@value ?
+	expression Rf := a -> (expression a#0)*new Product from apply(a#1,(f,e)->new Power from (expression f,e)); -- a#0 *must* be a constant (or a monomial if Inverses=true). in principle it gets converted automatically to expression by *
+	factor Rf := opts -> a -> new Product from apply(prepend({a#0,1},a#1),u->new Power from u); -- we have to include a#0 in the product so it doesn't get expression'ed, and raise it to the power 1, to follow the convention of usual factor. for now, ignores options
 	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache it? can't really cache except in ring itself which sucks
 	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
 	if (options R).Inverses then (
