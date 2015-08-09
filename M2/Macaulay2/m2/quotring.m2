@@ -231,7 +231,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
 --	       );
 	  );
      runHooks(R,QuotientRingHook,S);
-     factor S := opts -> f -> substitute(factor lift(f,R),S); -- experimental
+     factor S := opts -> f -> substitute(factor lift(f,R,opts),S); -- experimental
      S)
 
 Ring / ZZ := (R,f) -> R / ideal f_R
