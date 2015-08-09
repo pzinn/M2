@@ -360,8 +360,9 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
     R := ring a;
     c := 1_R;
     if (options R).Inverses then (
-	minexps:=min \ transpose exponents a; -- a bit of a hack if a==0, but works
-	a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial
+	(fR,fM):=flattenRing R;
+	minexps:=min \ transpose exponents(fM a); -- a bit of a hack if a==0, but works
+	a=a*fM^(-1) fR_(-minexps); -- get rid of monomial in factor if a Laurent polynomial. should we use the same trick for numerator/denominator? see also matrix1.m2, 581
 	c=R_minexps;
 	);
     fe := toList apply append(rawFactor raw a,(f,e)->(
