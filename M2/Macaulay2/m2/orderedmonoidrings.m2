@@ -266,9 +266,9 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --	       f}
 	  );
      	  if M.Options.Inverses === true then (
---	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
-               denominator RM := f -> RM_( - min \ transpose prepend(toList(RM.numallvars:0),
-		       apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m)))); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
+	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
+--               denominator RM := f -> RM_( - min \ transpose prepend(toList(RM.numallvars:0),
+--		       apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m)))); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> a -> (
@@ -364,7 +364,7 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
     if (options R).Inverses then (
 	-- a bit of a hack if a==0, but works
         minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
-	a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial. 
+	a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial.
 	c=R_minexps;
 	);
     fe := toList apply append(rawFactor raw a,(f,e)->(

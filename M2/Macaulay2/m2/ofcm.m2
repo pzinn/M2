@@ -278,15 +278,19 @@ makeit1 := (opts) -> (
      else (
      	  M.degreesRing = (
 	       if opts.DegreesRing =!= null then 
-	       if isPolynomialRing opts.DegreesRing and (options opts.DegreesRing).Inverses and coefficientRing opts.DegreesRing===ZZ then opts.DegreesRing -- experimental
-	       else error "invalid ring of degrees"
+	       (
+	       	   R:=opts.DegreesRing;
+--	       	   if coefficientRing R===ZZ and ((isPolynomialRing R and (options R).Inverses) or (isQuotientRing R and all(generators R,isUnit))) then R -- experimental
+                   if coefficientRing R===ZZ and isPolynomialRing R and (options R).Inverses then R -- experimental
+	       	   else error "invalid ring of degrees"
+		   )
 	       else if opts.Heft =!= null 
 	       then degreesRing opts.Heft 
 	       else degreesRing degrk {* shouldn't really be needed *} 
 	       );
 	  if opts.AddDegreesRing =!= null then
 	  if isPolynomialRing opts.AddDegreesRing and coefficientRing opts.AddDegreesRing===ZZ and numgens opts.AddDegreesRing==numgens M.degreesRing then M.addDegreesRing=opts.AddDegreesRing -- experimental
-	  else error "invalid ring of additive degrees";	  
+	  else error "invalid ring of additive degrees";
      	  M.degreesMonoid = monoid M.degreesRing;
 	  M.RawMonoid = rawMonoid(
 	       M.RawMonomialOrdering,
