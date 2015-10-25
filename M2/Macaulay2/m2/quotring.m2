@@ -300,12 +300,14 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      if g == 0 then return char ring g;
      m := g_(0,0);
      if liftable(m,ZZ) then lift(m,ZZ) else 0))
+
 singularLocus(Ring) := QuotientRing => (R) -> (
      f := presentation R;
      A := ring f;
-     A / (ideal f + minors(codim(R,Generic=>true), jacobian presentation R)))
+     A / singularLocus ideal f)
 
-singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
+--singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
+singularLocus(Ideal) := QuotientRing => (I) -> ( I + minors(codim(I,Generic=>true), jacobian I) ) -- changed functionality: now returns an ideal
 
 toField = method()
 toField Ring := R -> (
