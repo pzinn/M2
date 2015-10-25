@@ -307,7 +307,7 @@ singularLocus(Ring) := QuotientRing => (R) -> (
      A / singularLocus ideal f)
 
 --singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
-singularLocus(Ideal) := QuotientRing => (I) -> ( I + minors(codim(I,Generic=>true), jacobian I) ) -- changed functionality: now returns an ideal
+singularLocus(Ideal) := Ideal => (I) -> ( I + minors(codim(I,Generic=>true), jacobian I) ) -- changed functionality: now returns an ideal
 
 toField = method()
 toField Ring := R -> (

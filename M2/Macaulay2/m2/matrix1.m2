@@ -595,6 +595,8 @@ idealPrepare Thing := x -> error "expected a list of numbers, matrices, ring ele
 ideal List := ideal Sequence := Ideal => v -> ideal matrix {flatten apply(toList splice v,idealPrepare)}
 ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
+ideal Ideal := identity;
+
 
 Ideal ^ Array := (I, e) -> (
    R := ring I;
