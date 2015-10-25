@@ -72,7 +72,8 @@ degreesRing List := PolynomialRing => memoize(
 	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
 	       S.indexSymbols = S.indexStrings = new HashTable;
 	       S)
-	  else fact(ZZ degreesMonoid hft,DegreeZero=>true,Use=>false)
+	  else fact(ZZ degreesMonoid hft,DegreeZero=>true,Use=>false) -- might create problems. need to test more thoroughly
+--	  else ZZ degreesMonoid hft
 	  )
 
 degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
