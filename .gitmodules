@@ -4,9 +4,6 @@
 [submodule "M2/submodules/mathic"]
 	path = M2/submodules/mathic
 	url = https://github.com/Macaulay2/mathic
-[submodule "M2/submodules/mathicgb"]
-	path = M2/submodules/mathicgb
-	url = https://github.com/Macaulay2/mathicgb
 [submodule "M2/submodules/bdwgc"]
 	path = M2/submodules/bdwgc
 	url = https://github.com/Macaulay2/bdwgc.git
