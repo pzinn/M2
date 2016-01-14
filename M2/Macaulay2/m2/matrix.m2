@@ -75,7 +75,7 @@ Number * Matrix := (r,m) -> (
      try r = promote(r,S) else error "can't promote scalar to ring of matrix";
      map(target m, source m, reduce(target m, raw r * raw m)))
 RingElement * Matrix := (r,m) -> (
-     r = promote(r,ring m);
+     try r = promote(r,ring m) else try m=promote(m,ring r) else "scalar and matrix have incompatible rings";
      map(target m, source m, reduce(target m, raw r * raw m)))
 Matrix * RingElement := (m,r) -> (
      r = promote(r,ring m);

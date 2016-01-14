@@ -690,7 +690,7 @@ nopar := x -> (
      -- this is like net Sequence except we omit the parentheses.
      horizontalJoin deepSplice (
 	  if #x === 0 then "()"
-	  else if #x === 1 then ("1 : (", net x#0, ")")
+--	  else if #x === 1 then ("1 : (", net x#0, ")") -- ugly
 	  else (toSequence between(",",apply(x,net)))))
 
 nopars := x -> if class x === Sequence then nopar x else net x
