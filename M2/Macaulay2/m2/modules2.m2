@@ -96,7 +96,6 @@ poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving 
 	    MM := minimalPresentation(f**M);
     	    F:=matrix f;
 	    R2:=ring (flattenRing I)#0;
---	    (poincare1 MM)*product(select(#flatvars,i-> F_(0,i)==0), i->weight flatvars_i) -- condition still wrong! linear equations!
 	    (poincare1 MM)*product(select(numgens R2,i-> substitute(F_(0,i),R2)=!=R2_i), i->weight R2_i)
       ))
 

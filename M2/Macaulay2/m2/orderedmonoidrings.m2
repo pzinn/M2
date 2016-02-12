@@ -374,7 +374,7 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
 	    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
 	);
     ( fe#0#0*c, -- constant term
-	sort drop(fe,1) )  -- technically the sort should be on f, not on fe -- but should be the same
+      sort drop(fe,1) )  -- technically the sort should be on f, not on fe -- but should be the same. warning, do not change/remove sorting, needed by mergePairs
     );
 
 
@@ -420,7 +420,7 @@ fact PolynomialRing := opts -> R -> (
 	);
 	);
 	new Rf from R := (A,a) -> toList factor1(a,DegreeZero=>Rf.Options.DegreeZero);
-	new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- only promote uses this
+	new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- promote uses this
 	-- various redefinitions (there might be a more clever way to automate this?)
 	Rf.generators=apply(generators R,a->new Rf from a);
 	Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
