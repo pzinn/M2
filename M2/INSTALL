@@ -8,7 +8,7 @@
 We thank the United States National Science Foundation for generous funding
 to develop Macaulay2.
 
-Macaulay2 is copyright 1993-2014 by Daniel R. Grayson and Michael E. Stillman.
+Macaulay2 is copyright 1993-2016 by Daniel R. Grayson and Michael E. Stillman.
 We permit you to use the source code under the terms of the GNU General Public
 License (GPL), version 2 or 3, as published by the Free Software Foundation;
 see the files Macaulay2/COPYING-*.  The packages contributed by various
@@ -87,7 +87,7 @@ various modern operating systems:
 
   Ubuntu:
     Install packages with:
-      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
+      sudo apt-get install -y -q autoconf bison emacs flex g++ gcc gfortran libc6-dev libcdd-dev libatomic-ops-dev libgc-dev libgdbm-dev libglpk-dev liblapack-dev libmpfr-dev libncurses-dev libncurses5-dev libntl-dev libpari-dev libreadline-dev libxml2-dev liblzma-dev libz-dev make openssh-server patch subversion time unzip xbase-clients zlib1g-dev libtool pkg-config
         # note: libz-dev seems to have been replaced by zlib1g-dev
         # note: libncurses-dev seems to have been replaced by libncurses5-dev
         # note: libreadline-gplv2-dev is an older GPL v2 version of libreadline
@@ -126,8 +126,9 @@ various modern operating systems:
       sudo debuginfo-install strace
 
   Scientific linux:
-    Install packages with:
-      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign subversion zlib-devel xz-devel
+    Install packages with: (SL 7.x)
+      sudo yum install -y autoconf bison boost-devel emacs flex gc-devel gcc-c++ gcc-gfortran gdbm-devel glpk-devel gmp-devel lapack-devel libatomic_ops-devel  libtool libxml2-devel mpfr-devel ncurses-devel readline-devel rpm-build rpm-sign
+      sudo yum install -y git-all zlib-devel xz-devel
     Some debugging aids:
       sudo yum install -y strace
     Note: Scientific Linux 7.1 has a modern version of gcc (version 4.8.3).  By contrast,
@@ -149,10 +150,12 @@ various modern operating systems:
       sudo pacman -S archlinux-keyring
       sudo pacman-key --populate archlinux
       sudo pacman -S make autoconf automake pkg-config gcc gcc-fortran mpfr ntl flint lapack glpk cddlib boost gtest gfan nauty bison unzip flex time
-    If the package "pari" is also installed on your system, remember to add
-    	--enable-build-libraries=pari
-    to the "configure" command line below in the section on compiling Macaulay2, because the installed library seems to
-    crash when the program terminates (when the exit handlers are executed, it dies in the function "closepari".)
+    We recommend adding
+    	 --enable-build-libraries="pari flint ntl gc"
+      to the "configure" command line below in the section on compiling Macaulay2, since it seems to
+      avoid undiagnosed problems with invalid libgc pointers.    
+    To upgrade the system:
+      pacman -Syu
 
   Mac OS X:
     Install the Xcode Command Line Tools, available from Apple.  After upgrading the OS,
