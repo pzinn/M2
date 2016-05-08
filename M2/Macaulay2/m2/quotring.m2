@@ -380,7 +380,6 @@ getPrimeWithRootOfUnity(ZZ,ZZ) := opt-> (n,r1) -> (
          );
      (p,r2)
      );
->>>>>>> 5ea9f5ec76199b98ae2f330a6bd9e90ba46b8dff
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
