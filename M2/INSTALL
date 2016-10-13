@@ -33,10 +33,15 @@ command, assuming you have installed "git" on your machine:
     git clone https://github.com/Macaulay2/M2
 
 A directory called M2, which you can move or rename, will be created, and this
-INSTALL file is in the subdirectory "M2" of it.  After cloning, you can switch
-to the branch containing version 1.6 with the following command:
+INSTALL file is in the subdirectory "M2" of it.  The "release" branches tend to
+be more stable, and if you compile from one of those, you'll have the same
+functionality as those who download our binary releases.  So, after cloning,
+you can switch to the branch containing version 1.6, for example, with the
+following command:
 
     git checkout release-1.6
+
+Instead of release-1.6 you should, of course, use the most recent one.
 
 The following command shows the list of release branches:
 
@@ -166,6 +171,9 @@ various modern operating systems:
       Adding "givaro" here ensures that we don't get the incompatible newer version 4.0 of givaro.
     To upgrade the system:
       sudo pacman --sync --refresh --sysupgrade
+    Compilation doesn't succeed with gcc 6, so install gcc 5 with
+      sudo pacman --sync --needed gcc5
+    and add "CC=gcc-5 CXX=g++-5" to the "configure" command line below.  (We succeeded with gcc 5.4.0.)
 
   Mac OS X:
     The steps described below are combined in the shell script INSTALL.mac, which you could
