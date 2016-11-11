@@ -399,7 +399,7 @@ fact PolynomialRing := opts -> R -> (
      	)
     else ( 
     	Rf=new FactPolynomialRing of RingElement from R; -- not R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
-	Rf.Options=opts;
+	Rf.Options=opts; -- these are *not* ordinary polynomial ring options (which are really monoid options) but rather DegreeZero and Use
 	R.fact=Rf;
 	Rf.baseRings=append(R.baseRings,R);
 	commonEngineRingInitializations Rf;
