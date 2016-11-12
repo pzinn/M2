@@ -373,10 +373,14 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
 	    if opts.DegreeZero and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
 	    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
 	);
-    if liftable(fe#0,R) then    (
-	)
-    ( fe#0#0*c, -- constant term
-      sort drop(fe,1) )  -- technically the sort should be on f, not on fe -- but should be the same. warning, do not change/remove sorting, needed by mergePairs
+    if liftable(fe#0#0,coefficientRing R) then (
+	-- factory returns the possible constant factor in front
+	assert(fe#0#1 == 1);
+	c = c*(fe#0#0);
+        fe=drop(fe,1);
+	);
+    ( c, -- constant term
+      sort fe )  -- technically the sort should be on f, not on fe -- but should be the same. warning, do not change/remove sorting, needed by mergePairs
     );
 
 
