@@ -213,8 +213,9 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       A := ring p;
 	       n := numgens A;
 	       M := cokernel lift(presentation module F,A) ** cokernel p;
-	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
-
+	       rank source basis(0, Ext^(n-1-i)(M,A^{-sum degrees A})))) -- Serre duality
+		       -- the first degree should be projective degree, and probably we want all variables to have first degree 1
+		       )
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
 applyMethod = (key,x) -> (
