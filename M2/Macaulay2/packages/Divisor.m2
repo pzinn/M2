@@ -1649,7 +1649,8 @@ isRegular(Ideal) := o->J1 -> (
 		if (isSubset(myMax, J1)) then (flag = true) else (flag = (dim singularLocus J1 <= 0));
 	)
 	else ( 
-		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 == -infinity));
+--		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 == -infinity));
+		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 < 0));
 	);
 
 	flag
