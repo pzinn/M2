@@ -403,8 +403,8 @@ Matrix#{Standard,AfterNoPrint} = f -> (
 
 -- precedence Matrix := x -> precedence symbol x
 
-compactMatrixForm = true
---compactMatrixForm = false
+--compactMatrixForm = true
+compactMatrixForm = false
 
 net Matrix := f -> (
      if f == 0 
