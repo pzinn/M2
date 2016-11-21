@@ -80,7 +80,7 @@ poincare1 = M -> (
 	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M)
 
 poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
-	    if isHomogeneous M then return poincare1 M; -- (to avoid trouble)
+	    if not isHomogeneous M then return poincare1 M; -- (to avoid trouble)
 	    R:=ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
 	    while class R === QuotientRing do (
 		M=cokernel lift(presentation M,ambient R) ** cokernel generators ideal R;
