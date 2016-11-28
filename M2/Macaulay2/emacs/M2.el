@@ -103,7 +103,7 @@
  (function
   (lambda (syntax-table)
     (modify-syntax-entry ?\\ "." syntax-table)
-    ;;    (modify-syntax-entry ?-  ". 12" syntax-table)
+    ;;    (modify-syntax-entry ?-  ". 12" syntax-table) ;; -- comments are now highlighted manually in M2-symbols.el
     (modify-syntax-entry ?-  "." syntax-table)
     ;;    (modify-syntax-entry ?\n ">" syntax-table)
     ;;    (modify-syntax-entry ?\^m ">" syntax-table)
