@@ -790,6 +790,7 @@ export {
 	"isTable",
 	"isUnit",
 	"isWellDefined",
+	"isWeylAlgebra",
 	"jacobian",
 	"join",
 	"kernel",
