@@ -443,6 +443,9 @@ extern "C" {
      this implements the (anti-)isomorphism of the ring and its opposite ring.
   */
 
+  const Matrix* /* or null */ rawHomogenizeMatrix(const Matrix* a, const Matrix* b, const Matrix* c);
+  /* TEST dummy function!! */
+  
   const RingElement /* or null */ *IM2_RingElement_homogenize_to_degree(
             const RingElement *a,
             int v,
@@ -1494,7 +1497,14 @@ extern "C" {
   /* Case 1: A is a dense matrix over RR.  Then so are b,x.
      Case 2: A is a dense matrix over CC.  Then so are b,x. */
 
-
+  M2_bool rawQR(const MutableMatrix* A, /* input m x n matrix */
+                MutableMatrix* Q, /* output m x n orthonormal columns matrix */
+                MutableMatrix* R, /* output R matrix: upper triangular, nonsingular if A has ker A = 0 */
+                M2_bool return_QR); /* if false, the output is instead the lapack encoded Householder transformations */
+  /* if return_QR is false, then Q will contain the encoded Householder reflections
+     and the multipliers tau_i will appear in R.
+     MES TODO: be more specific here, once we know the exact format!
+  */
 
   /**************************************************/
   /**** Monomial ideal routines *********************/
@@ -1777,6 +1787,19 @@ enum gbTraceValues
 
   MutableMatrix /* or null */ *rawResolutionGetMatrix2(Computation *G,int level,int degree);
   /* rawResolutionGetMatrix2 */
+
+  // This might be temporary!
+  MutableMatrix /* or null */ *
+  rawResolutionGetMutableMatrixB(Computation *C,
+                                 const Ring* R, // A polynomial ring with coeffs = RR, or a finite field used in C, same monoid as C's ring.
+                                 int level);
+
+  // This might be temporary!
+  MutableMatrix /* or null */ *
+  rawResolutionGetMutableMatrix2B(Computation *C,
+                           const Ring* KK, // should be RR, or a finite field used in C.
+                           int level,
+                           int degree);
 
   const FreeModule /* or null */ *rawResolutionGetFree(Computation *G, int level);
     /*drg: connected rawResolutionGetFree*/
