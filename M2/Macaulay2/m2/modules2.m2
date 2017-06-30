@@ -385,7 +385,7 @@ multidegree Module := M -> (
      onem := map(B,A,apply(generators B, t -> 1-t));
      c := codim M;
 --     if c === infinity then 0_B else part(c,onem numerator poincare M))
-     lowestPart(c,onem numerator poincare M))
+     if c === infinity then 0_B else lowestPart(c,onem numerator poincare M))
 
 multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
 
