@@ -76,6 +76,7 @@ Ring ** Matrix := Matrix => (R,f) -> (
      )
 
 -----------------------------------------------------------------------------       
+
 poincare1 = M -> (
 	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M)
 
@@ -110,7 +111,6 @@ poincare2 = I -> ( -- slightly easier with ideals
 		));
 	if s===null then poincare1 comodule I else s
 	);
-
 
 recipN = (n,wts,f) -> (
      -- n is a positive integer
