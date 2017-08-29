@@ -1767,6 +1767,7 @@ isSmooth(Ideal) := Boolean => o->J1 -> (
 	)
 	else ( 
 		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 < 0));
+		);
 	flag
 );
 

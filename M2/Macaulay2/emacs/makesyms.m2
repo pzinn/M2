@@ -41,6 +41,7 @@ f << ///
 	  )
        `(
 ;	 ("\\(--.*\\)" 1 font-lock-comment-face prepend)
+///
 
 add := (face,words) -> if #words > 0 then (
      f
