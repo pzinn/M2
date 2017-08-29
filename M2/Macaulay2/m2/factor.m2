@@ -159,7 +159,6 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  if A =!= R then (
 	       components = apply(components, P -> trim(G P));
 	       );
-	  --error "debug me";
 	  components
 	  ))
 

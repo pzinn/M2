@@ -75,9 +75,8 @@ Ring ** Matrix := Matrix => (R,f) -> (
      else map( target f ** R, source f ** R, promote(cover f, R), Degree => first promote({degree f}, A, R) )
      )
 
------------------------------------------------------------------------------       
 poincare1 = M -> (
-	  new degreesRing M from rawHilbert raw leadTerm gb {* presentation cokernel ?? *} presentation M)
+	  new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M)
 
 poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
 	    if not isHomogeneous M then return poincare1 M; -- (to avoid trouble)
@@ -110,7 +109,6 @@ poincare2 = I -> ( -- slightly easier with ideals
 		));
 	if s===null then poincare1 comodule I else s
 	);
-
 
 recipN = (n,wts,f) -> (
      -- n is a positive integer

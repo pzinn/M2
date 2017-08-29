@@ -111,7 +111,7 @@ ifeq ($(no-check-$1),)
 	+ ulimit -v 1000000 && $(MAKE) -C submodules/$1 check
 endif
 
-install-in-$1:; $(MAKE) -C submodules/$1 install
+install-in-$1:; + $(MAKE) -C submodules/$1 install
 
 # it may look odd to make submodules/$1/Makefile, but this allows recovery if the submodule
 # has been updated or cleaned, and needing scripts (such as "missing") installed by libtool 
@@ -276,12 +276,19 @@ validate-html:
 	      done						; \
 	      echo "$$i HTML files checked; $$n invalid"	; \
 	      [ $$n = 0 ] ) >&2
+announce:
+	@ echo "================================================================="
+	@ echo "    Macaulay2 version @PACKAGE_VERSION@"
+	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
+	@ echo "================================================================="
+
 help:
 	@ echo "Macaulay2 version @PACKAGE_VERSION@"
 	@ echo ""
 	@ echo "make files configured with:"
-	@ echo "    OS=@OS@ REL=@REL@ ISSUE=@ISSUE@ ARCH=@ARCH@ STATIC=@STATIC@"
-	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@"
+	@ echo "    OS=@OS@ ISSUE=@ISSUE@ ARCH=@ARCH@"
+	@ echo "    DEBUG=@DEBUG@ OPTIMIZE=@OPTIMIZE@ ENCAP=@ENCAP@ STATIC=@STATIC@"
 	@ echo ""
 	@ echo "Macaulay2 executable location:"
 	@ echo "   @pre_bindir@/M2@EXE@"
