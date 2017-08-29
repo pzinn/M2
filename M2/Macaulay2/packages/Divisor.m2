@@ -113,7 +113,7 @@ net BasicDivisor := t -> (
 	j := 0;
 	genList := {};
 	if (#valList > 0) then (
-		while (i < #valList) do (
+		while (i < #valList) do(
 			if (i > 0) then myStr = myStr | " + ";
 			if (valList#i == 1) then (
 			    myStr = myStr | "Div(";
@@ -131,7 +131,7 @@ net BasicDivisor := t -> (
 				myStr = myStr | toString(genList#j);
 			);
 			myStr = myStr | ")";
-			i = i+1;
+			i = i+1
 		);
 	)
 	else(
@@ -1766,13 +1766,7 @@ isSmooth(Ideal) := Boolean => o->J1 -> (
 		--(isSubset(myMax, (ideal singularLocus J1)*(ring J1)))
 	)
 	else ( 
-<<<<<<< HEAD
---		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 == -infinity));
-=======
->>>>>>> bb079b1f69df308be7f4552bb03e4f81f6b3a7e4
 		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 < 0));
-	);
-
 	flag
 );
 

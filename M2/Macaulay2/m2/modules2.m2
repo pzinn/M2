@@ -75,6 +75,8 @@ Ring ** Matrix := Matrix => (R,f) -> (
      else map( target f ** R, source f ** R, promote(cover f, R), Degree => first promote({degree f}, A, R) )
      )
 
+-----------------------------------------------------------------------------       
+
 poincare1 = M -> (
 	  new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M)
 
@@ -383,7 +385,7 @@ multidegree Module := M -> (
      onem := map(B,A,apply(generators B, t -> 1-t));
      c := codim M;
 --     if c === infinity then 0_B else part(c,onem numerator poincare M))
-     lowestPart(c,onem numerator poincare M))
+     if c === infinity then 0_B else lowestPart(c,onem numerator poincare M))
 
 multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
 
