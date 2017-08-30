@@ -378,11 +378,11 @@ processDegrees := (degs,degrk,nvars,degring,adddegring) -> (
      if degrk === null then ( -- then determine degrk
 	 if degring=!=null then degrk=numgens degring
 	 else if adddegring=!=null then degrk=numgens adddegring
-	 else if degs =!= null then degrk=#degs#0
+	 else if degs =!= null and #degs>0 then degrk=#degs#0
 	 else degrk=1;
 	 )
      else if not instance(degrk,ZZ) then error("DegreeRank => ... : expected an integer or null");
-     if ((degring =!= null and degrk!=numgens degring) or (adddegring =!= null and degrk!=numgens adddegring) or (degs =!= null and degrk!=#degs#0)) then error("Degrees rank mismatch");
+     if ((degring =!= null and degrk!=numgens degring) or (adddegring =!= null and degrk!=numgens adddegring) or (degs =!= null and #degs>0 and degrk!=#degs#0)) then error("Degrees rank mismatch");
      
      if degs === null then degs = (
 	  if degrk === 1 then apply(nvars,i->{1}) -- slightly changed compared to original: used to be only if degrk===null
