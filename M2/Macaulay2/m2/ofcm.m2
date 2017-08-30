@@ -364,15 +364,8 @@ makeit1 := (opts) -> (
      M)
 
 processDegrees := (degs,degrk,nvars,degring,adddegring) -> (
-     if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
-     if degs === null then degs = (
-	  if degrk === null then (
-	       degrk = 1;
-	       apply(nvars,i->{1})
-	       )
-	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
-	  )
-     else (
+    -- pre-process degs
+    if degs =!= null then (
      	  if not instance(degs,List) then error "Degrees: expected a list";
      	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
 	  degs = apply(degs, d -> (
@@ -380,15 +373,20 @@ processDegrees := (degs,degrk,nvars,degring,adddegring) -> (
 		  else if adddegring =!= null and instance(d,adddegring) then d=apply(flatten entries(coefficients(d,Monomials=>generators adddegring))#1,x->substitute(x,ZZ));
 		  if instance(d,List) and all(d,i->instance(i,ZZ)) then d 
 	      	  else error "expected degree to be an integer or list of integers or a monomial of the degrees ring or a linear element of the add degrees ring"));
-     	  if degrk === null then (
-	       if degring =!= null then degrk=numgens degring
-	       else 
-	       (
-		   if not same(length \ degs) then error "expected degrees all of the same rank";
- 	       	   degrk = if #degs > 0 then #degs#0 else 1; -- why 1 ?? hopefully should never get here
-		   )
-	       )
-	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
+	  if not same(length \ degs) then error "expected degrees all of the same rank";
+	  );
+     if degrk === null then ( -- then determine degrk
+	 if degring=!=null then degrk=numgens degring
+	 else if adddegring=!=null then degrk=numgens adddegring
+	 else if degs =!= null then degrk=#degs#0
+	 else degrk=1;
+	 )
+     else if not instance(degrk,ZZ) then error("DegreeRank => ... : expected an integer or null");
+     if ((degring =!= null and degrk!=numgens degring) or (adddegring =!= null and degrk!=numgens adddegring) or (degs =!= null and degrk!=#degs#0)) then error("Degrees rank mismatch");
+     
+     if degs === null then degs = (
+	  if degrk === 1 then apply(nvars,i->{1}) -- slightly changed compared to original: used to be only if degrk===null
+	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
 	  );
      if nvars != #degs then error "expected length of list of degrees to equal the number of variables";
      (degs,degrk));
