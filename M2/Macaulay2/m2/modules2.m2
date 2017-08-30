@@ -80,6 +80,8 @@ Ring ** Matrix := Matrix => (R,f) -> (
 poincare1 = M -> (
 	  new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M)
 
+weight := x -> 1-(degreesRing ring x)_(degree x); -- multiplicative weight
+
 poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
 	    if not isHomogeneous M then return poincare1 M; -- (to avoid trouble)
 	    R:=ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
@@ -88,8 +90,6 @@ poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving 
 		R=ambient R;
 		);
     	    I:=annihilator M;
-	    vrs := generators degreesRing R;       -- on the contrary CI is *not* preserved by leadTerm gb. unfortunately gb is time-costly, so can't iterate over sub-ideals
-      	    weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
 	    minimalPresentation I; f:=I.cache.minimalPresentationMap; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
 	    MM := minimalPresentation(f**M);
     	    F:=matrix f;
@@ -102,8 +102,6 @@ poincare2 = I -> ( -- slightly easier with ideals
     	R:=ring I;
         l:=flatten entries generators I;
     	n:=#l;
-	vrs := generators degreesRing R;
-	weight := x -> 1-product(#vrs,i->vrs_i^((degree x)_i)); -- multiplicative weight
 	local J;
 	s:=scan(l,x->(
 		J=ideal matrix(R,{delete(x,l)});
