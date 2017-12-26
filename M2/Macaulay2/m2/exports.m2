@@ -10,6 +10,9 @@ export {
 	"AddDegreesRing",
 	"lowestPart",
 -- end experimental
+    "LocalRing",
+    "localRing",
+    "MaximalIdeal",
 	"!",
 	"!=",
 	"#",

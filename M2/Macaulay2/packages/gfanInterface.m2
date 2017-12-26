@@ -21,8 +21,7 @@ newPackage(
 		"cachePolyhedralOutput" => true,
 		"tropicalMax" => false
 	},
-	PackageExports => {"Polyhedra"},
-	AuxiliaryFiles => true
+	PackageExports => {"Polyhedra"}
 )
 
 export {
