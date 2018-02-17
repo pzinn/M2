@@ -438,18 +438,21 @@ fact PolynomialRing := opts -> R -> (
 	);
 	- Rf := a -> new Rf from { -a#0, a#1 };
 	-- to avoid #321
-	--    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
-	lcm (Rf, Rf) := (a,b) -> new Rf from { new R from rawLCM(raw a#0,raw b#0), mergePairs(a#1,b#1,max) }; -- ha!
 	--    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
-	gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+	--    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
+	gcd (Rf, Rf) := (a,b) -> if a#0==0 then b else if b#0==0 then a else new Rf from { new R from rawGCD(raw a#0,raw b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+	lcm (Rf, Rf) := (a,b) -> a*(b//gcd(a,b)); -- yuck
 	Rf // Rf := (a,b) -> (
-	mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
-	mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
-      	if mn==={} and (a#0)%(b#0)==0 then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
+	    if a#0==0 then return 0_Rf;
+	    mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+	    mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+      	    if mn==={} and (a#0)%(b#0)==0 then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
 	);
 	Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
 	Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
 	Rf == Rf := (a,b) -> ( c:=gcd(a,b); value(a//c) == value(b//c) ); -- this is almost, but not quite the same as asking for equality of every factor (!) -- think about changing DegreeZero
+        --Rf == Rf := (a,b) -> ( -- understand cryptic remark above
+	--    );
 	-- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
 	RingMap Rf := (p,x) -> (
      	R := source p;
