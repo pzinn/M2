@@ -82,7 +82,6 @@ poincare1 = M -> (
 
 weight := x -> 1-(degreesRing ring x)_(degree x); -- multiplicative weight
 
-
 -- beware of issue #732
 poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
 	    if not isHomogeneous M then return poincare1 M; -- (to avoid trouble)
@@ -199,14 +198,13 @@ hilbertSeries Module := opts -> (M) -> (
      if ord === infinity then (
      	  num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
 	  local r;
-	  if class ring num === FactPolynomialRing then (
-          r= Divide { num, product(generators A,weight) }; -- much cleaner this way; of course a fraction ring would be even better
-	  ) else ( -- for compatibility
      	  denom := tally degrees A.FlatMonoid;
 	  r = Divide{
 	       num,
+	       if class ring num === FactPolynomialRing then 
+	       product(apply(pairs denom, (i,e) -> (1-T_i)^e)) -- cleaner this way (can't use weight as in poincare because ring may be a quotient...) but causes problems, see right below
+	       else
 	       Product apply(sort apply(pairs denom, (i,e) -> {1 - T_i,e}), t -> Power t)};
-	   );
 	  M.cache#exactKey = r;
 	  if reduced then M.cache#reducedKey = reduceHilbert r else r)
      else (
@@ -218,9 +216,10 @@ hilbertSeries Module := opts -> (M) -> (
 		    (lo,hi) := weightRange(wts,num);
 		    if ord <= lo then 0_T else (
 		    	 num = part(,ord-1,wts,num);
-			 scan(denominator h, denom -> (
-				   rec := recipN(ord-lo,wts,denom#0);
-				   scan(denom#1, i -> num = part(,ord-1,wts,num * rec))));
+			 denom = denominator h; if class class denom === FactPolynomialRing then denom=factor denom;
+			 scan(denom, denom2 -> (
+				   rec := recipN(ord-lo,wts,denom2#0);
+				   scan(denom2#1, i -> num = part(,ord-1,wts,num * rec))));
 			 num)));
 	  M.cache#approxKey = (ord,s);
 	  s))
