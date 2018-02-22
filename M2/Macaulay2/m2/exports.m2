@@ -9,6 +9,8 @@ export {
 	"addDegreesRing",
 	"AddDegreesRing",
 	"lowestPart",
+	"concatRows",
+	"concatCols",
 -- end experimental
     "LocalRing",
     "localRing",
