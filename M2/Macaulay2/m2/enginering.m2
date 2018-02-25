@@ -405,7 +405,7 @@ part(List,RingElement) := RingElement => (d,f) -> (
      else sum u
      )
 
---- experimental. here only allowed weighting in standard one (may change in future)
+--- experimental. here only allowed weighting is standard one (may change in future)
 lowestPart = method();
 lowestPart(ZZ,RingElement) := RingElement => (d,f) -> if f === 0_(ring f) then f else part(d,d,numgens ring f:1,f);
 lowestPart(RingElement) := RingElement => f -> (
