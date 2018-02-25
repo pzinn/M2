@@ -304,7 +304,7 @@ makeit1 := (opts) -> (
 	       (
 	       	   R:=opts.DegreesRing;
 --	       	   if coefficientRing R===ZZ and ((isPolynomialRing R and (options R).Inverses) or (isQuotientRing R and all(generators R,isUnit))) then R -- experimental
-                   if coefficientRing R===ZZ and isPolynomialRing R and (options R).Inverses then R -- experimental. needs more checks
+                   if coefficientRing R===ZZ and isPolynomialRing R and (options R).Inverses then R
 	       	   else error "invalid ring of degrees"
 		   )
 	       else if opts.Heft =!= null 

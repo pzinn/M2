@@ -76,7 +76,7 @@ degreesRing List := PolynomialRing => memoize(
 --	  else ZZ degreesMonoid hft
 	  )
 
-degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
+degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else fact(ZZ degreesMonoid n,DegreeZero=>true,Use=>false) ) -- might create problems. need to test more thoroughly
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
