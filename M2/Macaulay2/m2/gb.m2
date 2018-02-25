@@ -202,7 +202,7 @@ gb Module := GroebnerBasis => opts -> (M) -> (
 	  -- handle the Hilbert numerator later, which might be here:
 	  -- 
 
-checkHilbertHint = f -> (
+checkHilbertHint = f -> ( return false; -- TEMP workaround for issue #732
      R := ring f;
      -- Needed for using Hilbert functions to aid in Groebner basis computation:
      --    Ring is poly ring over a field (or skew commutative, or quotient ring of such, or both)
