@@ -347,6 +347,8 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o.MonomialOrder = selmo(v,o.MonomialOrder);
      o.Variables = o.Variables_v;
      o.Degrees = o.Degrees_v;
+     o.DegreesRing=degreesRing R;
+     o.AddDegreesRing=addDegreesRing R;
      o = new OptionTable from o;
      (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
 
