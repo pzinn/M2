@@ -407,7 +407,7 @@ part(List,RingElement) := RingElement => (d,f) -> (
 
 --- experimental. here only allowed weighting is standard one (may change in future)
 lowestPart = method();
-lowestPart(ZZ,RingElement) := RingElement => (d,f) -> if f === 0_(ring f) then f else part(d,d,numgens ring f:1,f);
+lowestPart(ZZ,RingElement) := RingElement => (d,f) -> if f === 0_(ring f) then f else part(d,d,numgens ring f:1,f); -- assumes min degree has already been computed
 lowestPart(RingElement) := RingElement => f -> (
     R := ring f;
     if f === 0_R then return f;
