@@ -331,14 +331,19 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 denominator F:= a -> a#1;
 	 value F := a-> value numerator a / value denominator a;
 	 raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
-	 fraction(R,R) := (r,s) -> ( g:=gcd(r,s); new F from {r//g, s//g} ); -- sign issues
+	 fraction(R,R) := (r,s) -> ( 
+	     g:=gcd(r,s);
+	     if coefficientRing R === ZZ then ( if lift(s#0,QQ)<0 then g=-g -- does this fix #740?
+		 ) else g=g*s#0; -- no constant in the denominator
+	     new F from {r//g, s//g}
+	     );
 	 fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
 	 F * F := (x,y) -> fraction(numerator x*numerator y,denominator x*denominator y);
 	 F + F := (x,y) -> fraction(numerator x*denominator y+numerator y*denominator x,denominator x*denominator y);
 	 F - F := (x,y) -> fraction(numerator x*denominator y-numerator y*denominator x,denominator x*denominator y);
 	 - F := x -> new F from { -numerator x, denominator x };
 	 F ^ ZZ := (x,n) -> if n>=0 then new F from { (numerator x)^n, (denominator x)^n } else new F from { (denominator x)^-n, (numerator x)^-n };
-	 F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- ?? only if really unique which not the case atm
+	 F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
 	 F#0=new F from { 0_R, 1_R };
 	 F#1=new F from { 1_R, 1_R };
      	 );
