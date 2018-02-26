@@ -412,7 +412,6 @@ multidegree Module := M -> (
 
 multidegree Ring := R -> 1; -- for a quotient ring, should we define it as multidegree of ideal? probably not
 
-
 length Module := M -> (
      if not isHomogeneous M then notImplemented();
      if dim M > 0 then return infinity;
