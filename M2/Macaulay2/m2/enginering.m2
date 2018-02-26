@@ -300,7 +300,7 @@ factoryGood = R -> factoryAlmostGood R and not (options R).Inverses
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      o := options R;
-     if o.Inverses then error "not implemented : fraction fields of rings with inverses";
+     if o.Inverses then error "not implemented : fraction fields of rings with inverses"; -- might want to change that with factorized
      if o.WeylAlgebra =!= {} or R.?SkewCommutative
      then error "fraction field of non-commutative ring requested";
      if not factoryGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
@@ -316,12 +316,33 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	  then error "expected a generator"
 	  else baseName numerator f);
      expression F := (f) -> if denominator f === 1_R then expression numerator f else expression numerator f / expression denominator f;
-     numerator F := (f) -> new R from rawNumerator raw f;
-     denominator F := (f) -> new R from rawDenominator raw f;
-     fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
-     fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
+     if class R =!= FactPolynomialRing then (
+     	 numerator F := (f) -> new R from rawNumerator raw f;
+     	 denominator F := (f) -> new R from rawDenominator raw f;
+     	 fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
+     	 fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
+	 )
+     else
+     (
+	 new F from R := (A,a) -> { a, 1_R };
+         new F from RawRingElement := (A,a) -> new F from { new R from rawNumerator a, new R from rawDenominator a };
+	 promote(R,F) := (x,F) -> new F from x;
+    	 numerator F := a -> a#0;
+	 denominator F:= a -> a#1;
+	 value F := a-> value numerator a / value denominator a;
+	 raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
+	 fraction(R,R) := (r,s) -> ( g:=gcd(r,s); new F from {r//g, s//g} ); -- sign issues
+	 fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
+	 F * F := (x,y) -> fraction(numerator x*numerator y,denominator x*denominator y);
+	 F + F := (x,y) -> fraction(numerator x*denominator y+numerator y*denominator x,denominator x*denominator y);
+	 F - F := (x,y) -> fraction(numerator x*denominator y-numerator y*denominator x,denominator x*denominator y);
+	 - F := x -> new F from { -numerator x, denominator x };
+	 F ^ ZZ := (x,n) -> if n>=0 then new F from { (numerator x)^n, (denominator x)^n } else new F from { (denominator x)^-n, (numerator x)^-n };
+	 F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- ?? only if really unique which not the case atm
+	 F#0=new F from { 0_R, 1_R };
+	 F#1=new F from { 1_R, 1_R };
+     	 );
      F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
-     F.generators = apply(generators R, m -> promote(m,F));
      if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
      if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
      if R.?generatorExpressions then F.generatorExpressions = (

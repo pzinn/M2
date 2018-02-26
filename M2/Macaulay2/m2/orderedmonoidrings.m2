@@ -433,6 +433,8 @@ fact PolynomialRing := opts -> R -> (
 	Rf.generators=apply(generators R,a->new Rf from a);
 	Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
 	Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
+	Rf#0=new Rf from { 0_R, {} };
+	Rf#1=new Rf from { 1_R, {} };
 	-- then operations!
 	Rf * Rf := (a,b) -> new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
 	Rf ^ ZZ := (a,n) -> (
