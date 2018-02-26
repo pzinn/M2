@@ -192,8 +192,9 @@ RingElement ^ Ring := Number ^ Ring := (x,R) -> lift(x,R)
 RingElement ^ RingFamily := Number ^ RingFamily := (x,R) -> lift(x, default R)
 Constant ^ Ring := Constant ^ RingFamily := (x,R) -> lift(x,R)
 
-RingElement _ Ring := promote
-
+RingElement _ Ring := (x,R) -> try promote(x,R) else (
+    xx:=substitute(x,R); if member(xx,R.generators) then xx else error "variable not found in ring" -- experimental, needs testing
+)
 madeTrivialMonoid := false
 
 dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )

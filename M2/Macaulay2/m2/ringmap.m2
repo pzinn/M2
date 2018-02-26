@@ -356,7 +356,7 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	  if S === null
 	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
 	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
-	  if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R );
+	  if not h#?x then ( try x=promote(x,R) else x=substitute(x,R); if not h#?x then error( "expected ", toString x, " to be a generator of ", toString R ) ); -- experimental. needs testing
 	  for i in h#x do (
 	       if m#i =!= symbol dummy and m#i =!= y then error "multiple destinations specified for a generator";
 	       m#i = y;
