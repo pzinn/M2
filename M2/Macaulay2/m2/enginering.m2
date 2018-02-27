@@ -300,11 +300,25 @@ factoryGood = R -> factoryAlmostGood R and not (options R).Inverses
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      o := options R;
-     if o.Inverses and class R =!= FactPolynomialRing then error "not implemented : fraction fields of rings with inverses"; -- might want to change that with factorized
+--     if o.Inverses then error "not implemented : fraction fields of rings with inverses"; -- might want to change that with factorized
      if o.WeylAlgebra =!= {} or R.?SkewCommutative
      then error "fraction field of non-commutative ring requested";
      if not factoryAlmostGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
-     R.frac = F := new FractionField from rawFractionRing R.RawRing;
+     local F;
+     if o.Inverses then (
+	 R1:=newRing(R,Inverses=>false);
+	 f:=map(R1,R); g:=map(R,R1);
+	 R.frac = F = frac R1; -- !!!
+	 F.baseRings=append(F.baseRings,R);
+	 promote(R,F) := (x,F) -> (f numerator x)/(f denominator x);
+	 oldnum := F#numerator; oldden := F#denominator;
+     	 numerator F := (x) -> g oldnum x;
+     	 denominator F := (x) -> g oldden x;
+	 lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
+	 fraction(R,R) := (x,y) -> (f (numerator x*denominator y))/(f (numerator y*denominator x));
+	 return F;
+	 );
+     R.frac = F = new FractionField from rawFractionRing R.RawRing;
      F.frac = F;
      F.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations F;
@@ -315,7 +329,11 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	  if denominator f != 1 
 	  then error "expected a generator"
 	  else baseName numerator f);
-     expression F := (f) -> if denominator f === 1_R then expression numerator f else expression numerator f / expression denominator f;
+     expression F := (f) -> (
+	 den := denominator f;
+	 num := numerator f;
+	 if den === 1_(ring den) then expression num else expression num / expression den
+	 );
      if class R =!= FactPolynomialRing then ( -- ordinary polynomial ring
      	 numerator F := (f) -> new R from rawNumerator raw f;
      	 denominator F := (f) -> new R from rawDenominator raw f;
@@ -327,27 +345,23 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 new F from R := (A,a) -> fraction(a,1_R);
          new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
 	 promote(R,F) := (x,F) -> new F from x;
+	 lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
     	 numerator F := a -> a#0;
 	 denominator F := a -> a#1;
 	 value F := a-> value numerator a / value denominator a;
 	 raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
 	 fraction(R,R) := (r,s) -> (
 	     g:=gcd(r,s);
-	     if coefficientRing R === ZZ then ( if lift(leadCoefficient s#0,ZZ)<0 then g=-g -- does this fix #740?
+	     if coefficientRing R === ZZ then ( if lift(s#0,ZZ)<0 then g=-g -- does this fix #740?
 		 ) else g=g*s#0; -- no constant in the denominator
-	     rr:=r//g; ss:=s//g;
-	     if (options R).Inverses then ( -- make sure we get both numerator and denominator w/o negative powers. though DegreeZero=>true will change the meaning of that... potentially creating bugs with raw
-    	    	g=denominator rr#0;
-		rr=rr*g; ss=ss*g;
-		 );
-	     new F from {rr, ss}
+	     new F from {r//g, s//g}
 	     );
 	 fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
 	 F * F := (x,y) -> fraction(numerator x*numerator y,denominator x*denominator y);
 	 F + F := (x,y) -> fraction(numerator x*denominator y+numerator y*denominator x,denominator x*denominator y);
 	 F - F := (x,y) -> fraction(numerator x*denominator y-numerator y*denominator x,denominator x*denominator y);
-	 - F := x -> new F from { -numerator x, denominator x };
-	 F ^ ZZ := (x,n) -> if n>=0 then new F from { (numerator x)^n, (denominator x)^n } else new F from { (denominator x)^-n, (numerator x)^-n };
+	 - F := x -> fraction(-numerator x, denominator x);
+	 F ^ ZZ := (x,n) -> if n>=0 then fraction( (numerator x)^n, (denominator x)^n ) else fraction( (denominator x)^-n, (numerator x)^-n );
 	 -- F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
 	 F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer
 	 F#0 = new F from { 0_R, 1_R };
