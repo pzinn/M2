@@ -371,6 +371,7 @@ minPressy = (I,excludes) -> (
      StoFlatR := map(flatR,S,vars flatR);
      J = ideal compress generators StoFlatR J; -- now in flatR
      H = apply(H, (a,b) -> (StoFlatR a, StoFlatR b)); -- everything in flatR now
+     I.cache.minimalPresentationReds = H;
 
      xs := set apply(H, index@@first); -- indices of the variables reduced out
      varskeep := sort (toList(set (generators S/index) - xs));

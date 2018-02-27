@@ -91,25 +91,10 @@ poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving 
 		R=ambient R;
 		);
     	    I:=annihilator M;
-	    minimalPresentation I; f:=I.cache.minimalPresentationMap; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
-	    MM := minimalPresentation(f**M);
-    	    F:=matrix f;
-	    R2:=ring (flattenRing I)#0;
-	    (poincare1 MM)*product(select(numgens R2,i-> substitute(F_(0,i),R2)=!=R2_i), i->weight R2_i)
+	    minimalPresentation I; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
+	    MM := minimalPresentation(I.cache.minimalPresentationMap**M);
+	    (poincare1 MM)*product(I.cache.minimalPresentationReds,s->weight s#0)
       ))
-
---TEMP. for testing purposes only
-poincare2 = I -> ( -- slightly easier with ideals
-    	R:=ring I;
-        l:=flatten entries generators I;
-    	n:=#l;
-	local J;
-	s:=scan(l,x->(
-		J=ideal matrix(R,{delete(x,l)});
-		if syz gb(matrix(R/J,{{x}}),Syzygies=>true,SyzygyLimit=>1) == 0 then break (poincare2 J)*(weight x);
-		));
-	if s===null then poincare1 comodule I else s
-	);
 
 recipN = (n,wts,f) -> (
      -- n is a positive integer

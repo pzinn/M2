@@ -861,6 +861,7 @@ export {
 	"minimalPresentation",
 	"minimalPresentationMap",
 	"minimalPresentationMapInv",
+	"minimalPresentationReds",
 	"minimalPrimes",
 	"minimizeFilename",
 	"minors",
