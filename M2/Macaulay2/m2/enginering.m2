@@ -306,7 +306,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if not factoryAlmostGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
      local F;
      if o.Inverses then (
-	 R1:=newRing(R,Inverses=>false,MonomialOrder=>GRevLex);
+	 R1:=newRing(R,Inverses=>false);
 	 f:=map(R1,R); g:=map(R,R1);
 	 R.frac = F = frac R1; -- !!!
 	 F.baseRings=append(F.baseRings,R);
@@ -314,7 +314,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 oldnum := F#numerator; oldden := F#denominator;
      	 numerator F := (x) -> g oldnum x;
      	 denominator F := (x) -> g oldden x;
-	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";
+	 lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
 	 fraction(R,R) := (x,y) -> (f (numerator x*denominator y))/(f (numerator y*denominator x));
 	 return F;
 	 );
@@ -681,12 +681,6 @@ RingElement == RingElement := (f,g) -> (
      f == g
      )
 
-frac0 = (f,g) -> f/g
-Number / RingElement := frac0 @@ promoteleftexact
-InexactNumber / RingElement := frac0 @@ promoteleftinexact
-RingElement / Number := (f,g) -> if member(QQ,(ring f).baseRings) then (1/g)*f else frac0@@promoterightexact(f,g)
-RingElement / InexactNumber := (f,g) -> (1/g) * f
---RingElement / Number := (f,g) -> (1/g) * f
 RingElement / RingElement := RingElement => (f,g) -> (
      R := class f;
      S := class g;
@@ -704,6 +698,14 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	  else error "expected pair to have a method for '/'"
 	  );
      f / g)
+frac0 = (f,g) -> f/g
+Number / RingElement := frac0 @@ promoteleftexact
+--RingElement / Number := (f,g) -> (1/g) * f
+-- we tried making this more uniform, but it broke many examples:
+-- RingElement / Number := frac0 @@ promoterightexact
+RingElement / Number := (f,g) -> if member(QQ,(ring f).baseRings) then (1/g)*f else frac0@@promoterightexact(f,g)
+InexactNumber / RingElement := frac0 @@ promoteleftinexact
+RingElement / InexactNumber := (f,g) -> (1/g) * f
 
 fraction(RingElement,RingElement) := (r,s) -> (
      R := ring r;
