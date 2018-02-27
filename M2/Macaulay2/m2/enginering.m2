@@ -325,7 +325,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      else -- factorized one: we effectively override (almost) all operations
      (
 	 new F from R := (A,a) -> { a, 1_R };
-         new F from RawRingElement := (A,a) -> new F from { new R from rawNumerator a, new R from rawDenominator a };
+         new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
 	 promote(R,F) := (x,F) -> new F from x;
     	 numerator F := a -> a#0;
 	 denominator F:= a -> a#1;
