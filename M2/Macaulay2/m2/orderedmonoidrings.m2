@@ -473,7 +473,12 @@ fact PolynomialRing := opts -> R -> (
     if (Rf.Options).Use then use Rf else Rf
     );
 
-
+-- this is an optimization: the product would take forever
+FactPolynomialRing _ List := (R,v) -> (
+    R0 := last R.baseRings;
+    if (options R).Inverses then new R from { R0_v, {} }
+    else new R from { 1_R, sort apply(#v, i-> (R0_i,v#i)) }
+    );
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
