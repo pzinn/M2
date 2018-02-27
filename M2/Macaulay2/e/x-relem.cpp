@@ -221,13 +221,13 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
               "with a non-global monomial order");
           return 0;
         }
-      if (P->getMonoid()->numInvertibleVariables() > 0)
+      /*      if (P->getMonoid()->numInvertibleVariables() > 0)
         {
           ERROR(
               "cannot currently make fraction field over a polynomial ring "
               "with Laurent variables, i.e. Inverses=>true set");
           return 0;
-        }
+          }*/ // TEMPORARY?
       if (R->get_precision() > 0)
         {
           ERROR("cannot make fraction field over approximate field base");
