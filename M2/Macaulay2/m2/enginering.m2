@@ -324,20 +324,20 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 )
      else -- factorized one: we effectively override (almost) all operations
      (
-	 new F from R := (A,a) -> { a, 1_R };
+	 new F from R := (A,a) -> fraction(a,1_R);
          new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
 	 promote(R,F) := (x,F) -> new F from x;
     	 numerator F := a -> a#0;
-	 denominator F:= a -> a#1;
+	 denominator F := a -> a#1;
 	 value F := a-> value numerator a / value denominator a;
 	 raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
-	 fraction(R,R) := (r,s) -> ( 
+	 fraction(R,R) := (r,s) -> (
 	     g:=gcd(r,s);
 	     if coefficientRing R === ZZ then ( if lift(leadCoefficient s#0,ZZ)<0 then g=-g -- does this fix #740?
 		 ) else g=g*s#0; -- no constant in the denominator
 	     rr:=r//g; ss:=s//g;
 	     if (options R).Inverses then ( -- make sure we get both numerator and denominator w/o negative powers. though DegreeZero=>true will change the meaning of that... potentially creating bugs with raw
-    	    	g=denominator ss#0;
+    	    	g=denominator rr#0;
 		rr=rr*g; ss=ss*g;
 		 );
 	     new F from {rr, ss}
@@ -348,9 +348,10 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 F - F := (x,y) -> fraction(numerator x*denominator y-numerator y*denominator x,denominator x*denominator y);
 	 - F := x -> new F from { -numerator x, denominator x };
 	 F ^ ZZ := (x,n) -> if n>=0 then new F from { (numerator x)^n, (denominator x)^n } else new F from { (denominator x)^-n, (numerator x)^-n };
-	 F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
-	 F#0=new F from { 0_R, 1_R };
-	 F#1=new F from { 1_R, 1_R };
+	 -- F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
+	 F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer
+	 F#0 = new F from { 0_R, 1_R };
+	 F#1 = new F from { 1_R, 1_R };
      	 );
      F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
      if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
