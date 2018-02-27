@@ -227,7 +227,7 @@ const Ring /* or null */ *IM2_Ring_frac(const Ring *R)
               "cannot currently make fraction field over a polynomial ring "
               "with Laurent variables, i.e. Inverses=>true set");
           return 0;
-          }
+        }
       if (R->get_precision() > 0)
         {
           ERROR("cannot make fraction field over approximate field base");
