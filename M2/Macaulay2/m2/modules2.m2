@@ -92,7 +92,7 @@ poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving 
 		);
     	    I:=annihilator M;
 	    minimalPresentation I; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
-	    MM := minimalPresentation(I.cache.minimalPresentationMap**M);
+	    MM := I.cache.minimalPresentationMap**M; -- there used to be a minimalPresentation here too, but occasionally crashes with some random examples (?)
 	    (poincare1 MM)*product(I.cache.minimalPresentationReds,s->weight s#0)
       ))
 

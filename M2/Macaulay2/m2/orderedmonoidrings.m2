@@ -442,10 +442,10 @@ fact PolynomialRing := opts -> R -> (
 	);
 	- Rf := a -> new Rf from { -a#0, a#1 };
 	-- to avoid #321
-	--    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+	--    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), if a#0==0 then b#1 else if b#0==0 then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
 	--    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
-	gcd (Rf, Rf) := (a,b) -> if a#0==0 then b else if b#0==0 then a else new Rf from { new R from rawGCD(raw a#0,raw b#0), commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
-	lcm (Rf, Rf) := (a,b) -> a*(b//gcd(a,b)); -- yuck
+	gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), if a#0==0 then b#1 else if b#0==0 then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+	lcm (Rf, Rf) := (a,b) -> a*(b//gcd(a,b)); -- yuck (there's no rawLCM)
 	Rf // Rf := (a,b) -> (
 	    if a#0==0 then return 0_Rf;
 	    mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
