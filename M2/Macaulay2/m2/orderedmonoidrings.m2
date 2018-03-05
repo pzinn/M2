@@ -287,7 +287,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.generatorExpressions = (
 	       M.generatorExpressions
 	       -- apply(M.generatorExpressions,RM.generators,(e,x) -> (new Holder2 from {e#0,x}))
-	       );
+	       ); -- never actually used
 	  RM.indexSymbols = new HashTable from join(
 	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
@@ -301,6 +301,7 @@ samering := (f,g) -> (
 
 Ring Array := PolynomialRing => (R,variables) -> use R monoid variables
 Ring List := PolynomialRing => (R,variables) -> use R monoid (variables,Local => true)
+Ring Sequence := (R,s) -> frac( R new Array from s )
 PolynomialRing _ List := (R,v) -> if #v === 0 then 1_R else product ( #v , i -> R_i^(v#i) )
 Ring _ List := RingElement => (R,w) -> product(#w, i -> (R_i)^(w_i))
 dim PolynomialRing := R -> dim coefficientRing R + # generators R - if R.?SkewCommutative then #R.SkewCommutative else 0
@@ -405,8 +406,8 @@ fact PolynomialRing := opts -> R -> (
     	Rf=R.fact;
     	Rf.Options=Rf.Options++opts; -- we allow change of options
      	)
-    else ( 
-    	Rf=new FactPolynomialRing of RingElement from R; -- not R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
+    else (
+    	Rf=new FactPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
 	Rf.Options=opts; -- these are *not* ordinary polynomial ring options (which are really monoid options) but rather DegreeZero and Use
 	R.fact=Rf;
 	Rf.baseRings=append(R.baseRings,R);

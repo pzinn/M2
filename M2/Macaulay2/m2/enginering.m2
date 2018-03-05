@@ -700,9 +700,7 @@ RingElement / RingElement := RingElement => (f,g) -> (
      f / g)
 frac0 = (f,g) -> f/g
 Number / RingElement := frac0 @@ promoteleftexact
---RingElement / Number := (f,g) -> (1/g) * f
--- we tried making this more uniform, but it broke many examples:
--- RingElement / Number := frac0 @@ promoterightexact
+--RingElement / Number := (f,g) -> try (1/g)*f else frac0@@promoterightexact(f,g)
 RingElement / Number := (f,g) -> if member(QQ,(ring f).baseRings) then (1/g)*f else frac0@@promoterightexact(f,g)
 InexactNumber / RingElement := frac0 @@ promoteleftinexact
 RingElement / InexactNumber := (f,g) -> (1/g) * f
