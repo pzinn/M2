@@ -373,7 +373,7 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
 	);
     fe := toList apply append(rawFactor raw a,(f,e)->(
 	    ff:=new R from f;
-	    if opts.DegreeZero and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+	    if opts.DegreeZero and (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
 	    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
 	);
     if liftable(fe#0#0,R.basering) then (
