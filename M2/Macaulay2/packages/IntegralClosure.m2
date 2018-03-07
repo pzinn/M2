@@ -170,7 +170,8 @@ integralClosure Ring := Ring => o -> (R) -> (
      if not isS2 and codim1only then (
 	  if verbosity >= 1 then 
 	  << "   S2-ification " << flush;
-	   t1 = (timing F'G' := makeS2 target F);
+	   t1 = (timing F'G' := makeS2(target F,Variable=>makeVariable o));
+	   nsteps = nsteps + 1;
 	   if verbosity >= 1 then
 		<< t1#0 << " seconds" << endl;
 	   if F'G' === null then (
@@ -1036,8 +1037,9 @@ prune coker F
 isIsomorphism F
 ///     
 
-makeS2 = method()
-makeS2 Ring := R -> (
+makeS2 = method(Options=>{
+	  Variable => "w"})
+makeS2 Ring := o -> R -> (
      --try to find the S2-ification of a domain (or more generally an
      --unmixed, generically Gorenstein ring) R.
      --    Input: R, an affine ring
@@ -1056,7 +1058,7 @@ makeS2 Ring := R -> (
 	  --routine...
      w := canonicalIdeal R;
      if w === null then return null;
-     if ideal(0_R):w_0 == 0 then idealizer(w,w_0)
+     if ideal(0_R):w_0 == 0 then idealizer(w,w_0,Variable=>makeVariable o)
      else (
 	  return null;
 	  error"first generator of the canonical ideal was a zerodivisor"
