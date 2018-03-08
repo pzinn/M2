@@ -170,7 +170,7 @@ integralClosure Ring := Ring => o -> (R) -> (
      if not isS2 and codim1only then (
 	  if verbosity >= 1 then 
 	  << "   S2-ification " << flush;
-	   t1 = (timing F'G' := makeS2(target F,Variable=>makeVariable o));
+	   t1 = (timing F'G' := makeS2(target F,Variable=>makeVariable o,Verbosity=>verbosity));
 	   nsteps = nsteps + 1;
 	   if verbosity >= 1 then
 		<< t1#0 << " seconds" << endl;
@@ -1038,8 +1038,10 @@ isIsomorphism F
 ///     
 
 makeS2 = method(Options=>{
-	  Variable => "w"})
+	  Variable => "w",
+	  Verbosity => 0})
 makeS2 Ring := o -> R -> (
+    verbosity = o.Verbosity;
      --try to find the S2-ification of a domain (or more generally an
      --unmixed, generically Gorenstein ring) R.
      --    Input: R, an affine ring
@@ -1084,6 +1086,16 @@ TEST ///
 
 ///
 
+TEST ///
+C = QQ[B1,B2,B3,B4,B5,B6];
+I =  ideal(B4*B5+B1*B6,B1*B4+B2*B4-B3*B6,B1^2+B1*B2+B3*B5,B2*B5^2-B6^2,B1*B2*
+       B5+B4*B6,B3*B4^2-B6^2,B3^2*B4-B1*B6-B2*B6,B2*B3*B4-B3^2*B6-B5*B6,B3^3-B1
+       *B2-B2^2+B3*B5,B1*B3^2+B1*B5+B2*B5,B1*B2*B3+B3^2*B5+B5^2,B1*B2^2+B2*B3*
+       B5+B4^2,B3^2*B5^2+B5^3-B3*B4*B6,B2^3*B4-B2^2*B3*B6-B3^2*B5*B6-B4^3-B5^2*
+       B6);
+D = C/I;
+assert(numgens integralClosure(D, Strategy=>{RadicalCodim1})==numgens D+2)
+///
 --------------------------------------------------------------------
 
 beginDocumentation()
@@ -1447,6 +1459,12 @@ doc ///
     ringFromFractions
     integralClosure
 ///
+
+document {
+     Key => [makeS2,Variable],
+     Headline=> "Sets the name of the indexed variables introduced in computing
+     the S2-ification."
+     }
 
 document {
      Key => [idealizer,Variable],
