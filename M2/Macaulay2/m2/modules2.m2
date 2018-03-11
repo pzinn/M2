@@ -83,14 +83,29 @@ poincare1 = M -> (
 weight := x -> 1-(degreesRing ring x)_(degree x); -- multiplicative weight
 
 -- beware of issue #732
-poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre. complete intersection? more generally, use resolutions?
-	    if not isHomogeneous M then return poincare1 M; -- (to avoid trouble)
+-*
+poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre.
+	    if not isHomogeneous M or isSkewCommutative ring M then return poincare1 M; -- (to avoid trouble) & TEMP workaround for issue #756
 	    R:=ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
 	    while class R === QuotientRing do (
 		M=cokernel lift(presentation M,ambient R) ** cokernel generators ideal R;
 		R=ambient R;
 		);
     	    I:=annihilator M;
+	    minimalPresentation I; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
+	    MM := I.cache.minimalPresentationMap**M; -- there used to be a minimalPresentation here too, but occasionally crashes with some random examples (?)
+	    (poincare1 MM)*product(I.cache.minimalPresentationReds,s->weight s#0)
+      ))
+*-
+poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre.
+	    if not isHomogeneous M or isSkewCommutative ring M then return poincare1 M; -- (to avoid trouble) & TEMP workaround for issue #756
+	    (R,f):=flattenRing ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
+	    M=f**M;
+	    if class R === QuotientRing then (
+		M=cokernel lift(presentation M,ambient R) ** cokernel generators ideal R;
+		R=ambient R;
+		);
+	    I:=annihilator M;
 	    minimalPresentation I; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
 	    MM := I.cache.minimalPresentationMap**M; -- there used to be a minimalPresentation here too, but occasionally crashes with some random examples (?)
 	    (poincare1 MM)*product(I.cache.minimalPresentationReds,s->weight s#0)
@@ -127,22 +142,18 @@ reduceHilbert Divide := ser -> (
      num := numerator ser;				    -- an element of the degrees ring
      if num == 0 then return Divide {num, 1_(ring num)};
      den := denominator ser;				    -- a Product of Powers
-     if class ring num === FactPolynomialRing then (
-	 g := gcd(num,den);
-	 num = num // g;
-	 den = den // g;
-	 ) else (
-     	 den = Product nonnull apply(toList den, pwr -> (
-	       fac := pwr#0;				    -- 1-T_i
-	       ex  := pwr#1;	 			    -- exponent
-	       while ex > 0
-	       and num % fac == 0			    -- this works because of Mike's magic in the engine
-	       do (
-		    num = num // fac;
-		    ex = ex - 1;
-		    );
+     --if class class num === FactPolynomialRing then num = factor num;
+     if class class den === FactPolynomialRing then den = factor den;
+     den = Product nonnull apply(toList den, pwr -> (
+	     fac := pwr#0;				    -- 1-T_i
+	     ex  := pwr#1;	 			    -- exponent
+	     while ex > 0
+	     and num % fac == 0			    -- this works because of Mike's magic in the engine
+	     do (
+		 num = num // fac;
+		 ex = ex - 1;
+		 );
 	       if ex > 0 then Power {fac,ex}));
-       );
      Divide {num, den})
 
 protect symbol Order
@@ -184,9 +195,9 @@ hilbertSeries Module := opts -> (M) -> (
      	  num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
 	  local r;
      	  denom := tally degrees A.FlatMonoid;
-	  r = Divide{
+	  r = Divide{ -- or should it be an element of the frac? worth a try
 	       num,
-	       if class ring num === FactPolynomialRing then 
+	       if class class num === FactPolynomialRing then
 	       product(apply(pairs denom, (i,e) -> (1-T_i)^e)) -- cleaner this way (can't use weight as in poincare because ring may be a quotient...) but causes problems, see right below
 	       else
 	       Product apply(sort apply(pairs denom, (i,e) -> {1 - T_i,e}), t -> Power t)};
