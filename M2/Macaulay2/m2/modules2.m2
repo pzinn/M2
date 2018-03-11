@@ -195,7 +195,7 @@ hilbertSeries Module := opts -> (M) -> (
 		   denom0 := denominator h;
 		   if class class denom0 === FactPolynomialRing then ( -- need to distinguish... <sigh>
 		       u:=(lowestPart(denom0))^(-1);
-		       num=u*num; denom0=factor(u*denom0) -- also, workaround for issue #740
+		       num=u*num; denom0=factor(u*denom0)
 		       );
 		   wts := (options ring M).Heft;
 		   (lo,hi) := weightRange(wts,num);
