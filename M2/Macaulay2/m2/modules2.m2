@@ -83,20 +83,6 @@ poincare1 = M -> (
 weight := x -> 1-(degreesRing ring x)_(degree x); -- multiplicative weight
 
 -- beware of issue #732
--*
-poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre.
-	    if not isHomogeneous M or isSkewCommutative ring M then return poincare1 M; -- (to avoid trouble) & TEMP workaround for issue #756
-	    R:=ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
-	    while class R === QuotientRing do (
-		M=cokernel lift(presentation M,ambient R) ** cokernel generators ideal R;
-		R=ambient R;
-		);
-    	    I:=annihilator M;
-	    minimalPresentation I; -- careful that we're pruning the annihilator, not the module (syntax is different, result as well)
-	    MM := I.cache.minimalPresentationMap**M; -- there used to be a minimalPresentation here too, but occasionally crashes with some random examples (?)
-	    (poincare1 MM)*product(I.cache.minimalPresentationReds,s->weight s#0)
-      ))
-*-
 poincare Module := (cacheValue symbol poincare) (M -> ( -- attempt at improving naive algorithm. still mediocre.
 	    if not isHomogeneous M or isSkewCommutative ring M then return poincare1 M; -- (to avoid trouble) & TEMP workaround for issue #756
 	    (R,f):=flattenRing ring M;                                  -- also, the current improvement could be made equally well after leadTerm gb
@@ -142,8 +128,6 @@ reduceHilbert Divide := ser -> (
      num := numerator ser;				    -- an element of the degrees ring
      if num == 0 then return Divide {num, 1_(ring num)};
      den := denominator ser;				    -- a Product of Powers
-     --if class class num === FactPolynomialRing then num = factor num;
-     if class class den === FactPolynomialRing then den = factor den;
      den = Product nonnull apply(toList den, pwr -> (
 	     fac := pwr#0;				    -- 1-T_i
 	     ex  := pwr#1;	 			    -- exponent
@@ -155,6 +139,7 @@ reduceHilbert Divide := ser -> (
 		 );
 	       if ex > 0 then Power {fac,ex}));
      Divide {num, den})
+reduceHilbert RingElement := identity; -- !
 
 protect symbol Order
 assert( class infinity === InfiniteNumber )
@@ -194,28 +179,33 @@ hilbertSeries Module := opts -> (M) -> (
      if ord === infinity then (
      	  num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
      	  denom := tally degrees A.FlatMonoid;
-	  r := Divide{ -- or should it be an element of the frac? worth a try
+	  if class T === FactPolynomialRing then -- ideally it'd be always the case
+	  r := num / product(apply(pairs denom, (i,e) -> (1-T_i)^e)) -- cleaner this way (can't use weight as in poincare because ring may be a quotient...) but causes problems, see right below
+	  else
+	  r = Divide{
 	       num,
-	       if class class num === FactPolynomialRing then
-	       product(apply(pairs denom, (i,e) -> (1-T_i)^e)) -- cleaner this way (can't use weight as in poincare because ring may be a quotient...) but causes problems, see right below
-	       else
 	       Product apply(sort apply(pairs denom, (i,e) -> {1 - T_i,e}), t -> Power t)};
 	  M.cache#exactKey = r;
 	  if reduced then M.cache#reducedKey = reduceHilbert r else r)
      else (
 	  h := hilbertSeries(M,Reduce => true);
 	  s := (
-	       num := numerator h;
+	       num = numerator h;
 	       if num == 0 then 0_T else (
-		    wts := (options ring M).Heft;
-		    (lo,hi) := weightRange(wts,num);
-		    if ord <= lo then 0_T else (
-		    	 num = part(,ord-1,wts,num);
-			 denom0 := denominator h; if class class denom0 === FactPolynomialRing then denom0=factor denom0;
-			 scan(denom0, denom -> (
-				   rec := recipN(ord-lo,wts,denom#0);
-				   scan(denom#1, i -> num = part(,ord-1,wts,num * rec))));
-			 num)));
+		   denom0 := denominator h;
+		   if class class denom0 === FactPolynomialRing then ( -- need to distinguish... <sigh>
+		       u:=(lowestPart(denom0))^(-1);
+		       num=u*num; denom0=factor(u*denom0) -- also, workaround for issue #740
+		       );
+		   wts := (options ring M).Heft;
+		   (lo,hi) := weightRange(wts,num);
+		   if ord <= lo then 0_T else (
+		       num = part(,ord-1,wts,num);
+		       scan(denom0, denom -> (
+			       rec := recipN(ord-lo,wts,denom#0);
+			       scan(denom#1, i -> num = part(,ord-1,wts,num * rec))));
+		       num))
+		);
 	  M.cache#approxKey = (ord,s);
 	  s))
 
