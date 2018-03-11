@@ -314,7 +314,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 oldnum := F#numerator; oldden := F#denominator;
      	 numerator F := (x) -> g oldnum x;
      	 denominator F := (x) -> g oldden x;
-	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";	 
+	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";
 	 fraction(R,R) := (x,y) -> (f (numerator x*denominator y))/(f (numerator y*denominator x));
 	 return F;
 	 );
@@ -353,7 +353,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 fraction(R,R) := (r,s) -> (
 	     g:=gcd(r,s);
 	     if coefficientRing R === ZZ then (
-		 rp:=rawPairs(raw ZZ,raw s);
+		 rp:=rawPairs(raw ZZ,raw (s//g));
 		 e:=apply(rp#1,x->sum exponents(numgens R,x));
 		 if rp#0#(position(e,x->x==min e))<raw 0 then g=-g; -- lame workaround for #740
 		 ) else g=g*s#0; -- no constant in the denominator
