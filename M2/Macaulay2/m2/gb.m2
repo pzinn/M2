@@ -215,19 +215,19 @@ checkHilbertHint = f -> ( return false; -- TEMP workaround for issue #732
      and isField coefficientRing R
      and (isCommutative R or isSkewCommutative R)
      and all(degree \ generators(R, CoefficientRing => ZZ), deg -> deg#0 > 0)
-     )
+ )
 
-gbGetHilbertHint := (f,opts) -> (
+gbGetHilbertHint := (f,opts) -> ( -- added value everywhere to avoid problems with Fact
      if opts.Hilbert =!= null then (
 	  if ring opts.Hilbert =!= degreesRing ring f then error "expected Hilbert option to be in the degrees ring of the ring of the matrix";
-	  opts.Hilbert)
-     else if f.cache.?cokernel and f.cache.cokernel.cache.?poincare and checkHilbertHint f then f.cache.cokernel.cache.poincare
+	  value opts.Hilbert)
+     else if f.cache.?cokernel and f.cache.cokernel.cache.?poincare and checkHilbertHint f then value f.cache.cokernel.cache.poincare
      else (
 	  if f.?generators then (
 	       g := f.generators.cache;
 	       if g.?image then (
 		    g = g.image.cache;
-	            if g.?poincare and checkHilbertHint f then  poincare target f.generators - g.poincare))))
+	            if g.?poincare and checkHilbertHint f then value(poincare target f.generators - g.poincare)))))
 
 ifSomething := method()
 ifSomething(Thing  ,Function) := (x,f) -> f x

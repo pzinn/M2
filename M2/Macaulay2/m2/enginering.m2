@@ -352,7 +352,10 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
 	 fraction(R,R) := (r,s) -> (
 	     g:=gcd(r,s);
-	     if coefficientRing R === ZZ then ( if lift(s#0,ZZ)<0 then g=-g -- does this fix #740?
+	     if coefficientRing R === ZZ then (
+		 rp:=rawPairs(raw ZZ,raw s);
+		 e:=apply(rp#1,x->sum exponents(numgens R,x));
+		 if rp#0#(position(e,x->x==min e))<raw 0 then g=-g; -- lame workaround for #740
 		 ) else g=g*s#0; -- no constant in the denominator
 	     new F from {r//g, s//g}
 	     );
