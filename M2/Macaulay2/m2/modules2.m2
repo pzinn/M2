@@ -193,9 +193,8 @@ hilbertSeries Module := opts -> (M) -> (
      T := degreesRing A;
      if ord === infinity then (
      	  num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
-	  local r;
      	  denom := tally degrees A.FlatMonoid;
-	  r = Divide{ -- or should it be an element of the frac? worth a try
+	  r := Divide{ -- or should it be an element of the frac? worth a try
 	       num,
 	       if class class num === FactPolynomialRing then
 	       product(apply(pairs denom, (i,e) -> (1-T_i)^e)) -- cleaner this way (can't use weight as in poincare because ring may be a quotient...) but causes problems, see right below
@@ -206,16 +205,16 @@ hilbertSeries Module := opts -> (M) -> (
      else (
 	  h := hilbertSeries(M,Reduce => true);
 	  s := (
-	       num = numerator h;
+	       num := numerator h;
 	       if num == 0 then 0_T else (
 		    wts := (options ring M).Heft;
 		    (lo,hi) := weightRange(wts,num);
 		    if ord <= lo then 0_T else (
 		    	 num = part(,ord-1,wts,num);
-			 denom = denominator h; if class class denom === FactPolynomialRing then denom=factor denom;
-			 scan(denom, denom2 -> (
-				   rec := recipN(ord-lo,wts,denom2#0);
-				   scan(denom2#1, i -> num = part(,ord-1,wts,num * rec))));
+			 denom0 := denominator h; if class class denom0 === FactPolynomialRing then denom0=factor denom0;
+			 scan(denom0, denom -> (
+				   rec := recipN(ord-lo,wts,denom#0);
+				   scan(denom#1, i -> num = part(,ord-1,wts,num * rec))));
 			 num)));
 	  M.cache#approxKey = (ord,s);
 	  s))

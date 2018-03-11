@@ -209,7 +209,7 @@ checkHilbertHint = f -> ( return false; -- TEMP workaround for issue #732
      --    Ring is singly graded, every variable is positive
      --    Ring is homogeneous in this grading
      --    Matrix is homogeneous in this grading
- return isHomogeneous f
+     isHomogeneous f
      and degreeLength R === 1
      and (instance(R,PolynomialRing) or isQuotientOf(PolynomialRing, R))
      and isField coefficientRing R
