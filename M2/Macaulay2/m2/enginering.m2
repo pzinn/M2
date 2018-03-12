@@ -312,6 +312,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 F.baseRings=append(F.baseRings,R);
 	 promote(R,F) := (x,F) -> (f numerator x)/(f denominator x);
 	 oldnum := F#numerator; oldden := F#denominator;
+	 if class R === FactPolynomialRing then raw F := a -> rawFraction(F.RawRing,raw oldnum a, raw oldden a); -- only for Fact!
      	 numerator F := (x) -> g oldnum x;
      	 denominator F := (x) -> g oldden x;
 	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";
