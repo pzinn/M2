@@ -437,7 +437,7 @@ fact PolynomialRing := opts -> R -> (
 	Rf#0=new Rf from { 0_R, {} };
 	Rf#1=new Rf from { 1_R, {} };
 	-- then operations!
-	Rf * Rf := (a,b) -> new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
+	Rf * Rf := (a,b) -> if a#0===0_R or b#0===0_R then 0_Rf else new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
 	Rf ^ ZZ := (a,n) -> (
 	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else new Rf from (value a)^n -- negative value of n can only occur for monomial in which case doesn't matter how to treat it
 	);
@@ -445,13 +445,13 @@ fact PolynomialRing := opts -> R -> (
 	-- to avoid #321
 	--    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), if a#0==0 then b#1 else if b#0==0 then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
 	--    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
-	gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), if a#0==0 then b#1 else if b#0==0 then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
+	gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), if a#0===0_R then b#1 else if b#0===0_R then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
 	lcm (Rf, Rf) := (a,b) -> a*(b//gcd(a,b)); -- yuck (there's no rawLCM)
 	Rf // Rf := (a,b) -> (
-	    if a#0==0 then return 0_Rf;
+	    if a#0===0_R then return 0_Rf;
 	    mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
 	    mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
-      	    if mn==={} and (a#0)%(b#0)==0 then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
+      	    if mn==={} and (a#0)%(b#0)===0_R then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
 	);
 	Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
 	Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
