@@ -439,7 +439,7 @@ fact PolynomialRing := opts -> R -> (
 	-- then operations!
 	Rf * Rf := (a,b) -> if a#0===0_R or b#0===0_R then 0_Rf else new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
 	Rf ^ ZZ := (a,n) -> (
-	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else new Rf from (value a)^n -- negative value of n can only occur for monomial in which case doesn't matter how to treat it
+	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else if a#1 =!= {} then error "division is not defined in this ring" else new Rf from {(a#0)^n,{}} -- negative value of n can only occur for constant/monomial
 	);
 	- Rf := a -> new Rf from { -a#0, a#1 };
 	-- to avoid #321
