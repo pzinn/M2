@@ -41,6 +41,7 @@ toExternalString PolynomialRing := R -> (
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
 
 texMath PolynomialRing := R -> (
+     if R.?texMath then return R.texMath;
      if hasAttribute(R,ReverseDictionary) then return texMath getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
