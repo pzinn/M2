@@ -190,6 +190,7 @@ Parenthesize.synonym = "possibly parenthesized expression"
 net Parenthesize := net @@ first
 toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
 value' Parenthesize := first
+--texMath Parenthesize := texMath @@ first
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
@@ -887,6 +888,8 @@ texMath Expression := v -> (
 	  )
      )
 
+--texMath BinaryOperation := x -> texMath x#1 | texMath x#0 | texMath x#2
+
 html Thing := toString
 
 html Expression := v -> (
@@ -1116,8 +1119,8 @@ texMath Symbol := x -> (
      if #x === 1 then x else concatenate("\\text{",x, "}")
      )
 
-tex Expression := x -> concatenate("$",texMath x,"$")
-tex Thing := x -> tex expression x
+tex Thing := x -> concatenate("$",texMath x,"$")
+texMath Thing := texMath @@ expression
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)

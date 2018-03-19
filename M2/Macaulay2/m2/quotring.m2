@@ -26,7 +26,6 @@ random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
 expression QuotientRing := S -> new Divide from { expression ambient S, expression pretty S.relations }
-tex QuotientRing := S -> "$" | texMath S | "$"
 texMath QuotientRing := S -> texMath new Divide from { last S.baseRings, pretty S.relations }
 describe QuotientRing := R -> net expression R
 pqr := f -> S -> if hasAttribute(S,ReverseDictionary) then toString getAttribute(S,ReverseDictionary) else f expression S

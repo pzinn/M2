@@ -30,8 +30,8 @@ expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (new T from (monoid R).generatorExpressions)
-     )
+     (expression k) (new T from R.generatorExpressions)
+)
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
@@ -40,13 +40,12 @@ toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
 
-tex PolynomialRing := R -> "$" | texMath R | "$"	    -- silly!
-
 texMath PolynomialRing := R -> (
-     if R.?tex then R.tex
-     else if hasAttribute(R,ReverseDictionary) then "\\text{" | toString getAttribute(R,ReverseDictionary)  | "}"
-     else (texMath last R.baseRings)|(texMath expression monoid R)
-     )
+     if hasAttribute(R,ReverseDictionary) then return texMath getAttribute(R,ReverseDictionary);
+     k := last R.baseRings;
+     T := if (options R).Local === true then List else Array;
+     (texMath k) | texMath(new T from R.generatorExpressions)
+)
 
 net PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
@@ -396,6 +395,10 @@ expression FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      (expression fact) (expression last R.baseRings)
      );
+texMath FactPolynomialRing := R -> (
+     if hasAttribute(R,ReverseDictionary) then texMath getAttribute(R,ReverseDictionary)
+     else texMath Adjacent {"fact", last R.baseRings}
+    );
 describe FactPolynomialRing := F -> "fact "|(describe last F.baseRings);
 options FactPolynomialRing := R -> options(monoid R)++R.Options;
 fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
