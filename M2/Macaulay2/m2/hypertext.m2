@@ -25,7 +25,7 @@ texLiteralTable := new MutableHashTable
 
 texJaxLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texJaxLiteralTable#c = c)
-    texJaxLiteralTable#" "="&ensp;" -- half-fix of #1953 of mathJax
+    texJaxLiteralTable#" "="|\\hphantom{\\verb|.|}\\verb|" -- ugly half-fix of #1953 of mathJax
     texJaxLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
     texJaxLiteralTable#"\n" = "|\\\\\\verb|" -- eww
 
