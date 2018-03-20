@@ -81,9 +81,10 @@ info HEADER3 := Hop(info,"-")
 html String := htmlLiteral
 tex String := texLiteral
 texMath String := s -> (
---     if #s === 1 then s else
+     if #s === 1 then s else --TEMP
      concatenate("{\\tt\\text{", texLiteral s, "}}")
      )
+texMathJax String := concatenate("{\\tt\\text{", s, "}}")
 info String := identity
 
 texMath List := x -> concatenate("\\left\\{", between(",", apply(x,texMath)), "\\right\\}")

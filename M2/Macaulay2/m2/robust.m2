@@ -143,6 +143,8 @@ Thing#{Standard,Print} = x -> (
 	  );
      << endl << oprompt << z << endl;
      printWidth = save;
+     -- HACK
+     if class texMode === Boolean and texMode then << "-*@begin*-" << toString texMath x << "-*@end*-";
      )
 
 -- Local Variables:

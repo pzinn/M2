@@ -1022,17 +1022,17 @@ html Product := v -> (
 texMath Power := v -> (
      if v#1 === 1 then texMath v#0
      else (
-	  p := precedence v;
+--	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
-	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+--	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
 	  concatenate(x,(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> (
-     p := precedence v;
+--     p := precedence v;
      x := texMath v#0;
-     y := texMath v#1;
-     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+     if class v#1 === Sequence then y:=concatenate between(",", apply(v#1,texMath)) else y = texMath v#1;
+--     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
 html Superscript := v -> (
@@ -1123,7 +1123,6 @@ texMath Symbol := x -> (
 
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ expression
-tex2 = x -> "-*@begin*-"|toString texMath x|"-*@end*-"; -- TEMP
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)

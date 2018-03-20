@@ -11,7 +11,6 @@ export {
 	"lowestPart",
 	"concatRows",
 	"concatCols",
-	"tex2",
 -- end experimental
     "LocalRing",
     "localRing",
@@ -1207,6 +1206,9 @@ export {
 }
 
 exportMutable {
+-- begin experimental
+	"texMode",
+-- end experimental
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",
