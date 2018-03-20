@@ -225,7 +225,7 @@ net Type := X -> (
 \end{matrix}}
 ///)
 *-
-texMath Net := n -> "\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\ ") | "\\end{array}"
+texMath Net := n -> "\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\[-2mm] ") | "\\end{array}"
 
 -----------------------------------------------------------------------------
 

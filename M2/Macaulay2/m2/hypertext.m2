@@ -21,7 +21,11 @@ texLiteralTable := new MutableHashTable
     texLiteralTable#"\t" = "\t"
     texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 				   -- see page 381 of TeX Book
-texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
+texLiteral = s -> if texMode.mathJax then (
+     s = replace(///\\///,///\\///,s); --!!
+     s = replace(///\$///,///\$///,s);
+     s
+     ) else concatenate apply(characters s, c -> texLiteralTable#c)
 
 HALFLINE := ///\vskip 4.75pt
 ///
@@ -36,6 +40,7 @@ texExtraLiteralTable#" " = "\\ "
 texExtraLiteral := s -> demark(ENDLINE,
      apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c))
      )
+
 -----------------------------------------------------------------------------
 -- the default case
 
@@ -80,11 +85,9 @@ info HEADER3 := Hop(info,"-")
 
 html String := htmlLiteral
 tex String := texLiteral
-texMath String := s -> (
-     if #s === 1 then s else --TEMP
-     concatenate("{\\tt\\text{", texLiteral s, "}}")
-     )
-texMathJax String := concatenate("{\\tt\\text{", s, "}}")
+
+texMath String := s -> concatenate("{\\tt\\text{", texLiteral s, "}}")
+
 info String := identity
 
 texMath List := x -> concatenate("\\left\\{", between(",", apply(x,texMath)), "\\right\\}")

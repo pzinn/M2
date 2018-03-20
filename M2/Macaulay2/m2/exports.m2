@@ -11,6 +11,8 @@ export {
 	"lowestPart",
 	"concatRows",
 	"concatCols",
+	"mathJax",
+	"TeXDisplay",
 -- end experimental
     "LocalRing",
     "localRing",
