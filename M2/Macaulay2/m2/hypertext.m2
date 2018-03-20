@@ -21,11 +21,17 @@ texLiteralTable := new MutableHashTable
     texLiteralTable#"\t" = "\t"
     texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 				   -- see page 381 of TeX Book
-texLiteral = s -> if texMode.mathJax then (
-     s = replace(///\\///,///\\///,s); --!!
-     s = replace(///\$///,///\$///,s);
-     s
-     ) else concatenate apply(characters s, c -> texLiteralTable#c)
+-- the section above is only useful when *not* using \verb
+
+texJaxLiteralTable := new MutableHashTable
+    scan(characters ascii(0 .. 255), c -> texJaxLiteralTable#c = c)
+    texJaxLiteralTable#" "="&ensp;" -- half-fix of #1953 of mathJax
+    texJaxLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
+    texJaxLiteralTable#"\n" = "|\\\\\\verb|" -- eww
+
+
+texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
+texJaxLiteral = s -> concatenate apply(characters s, c -> texJaxLiteralTable#c)
 
 HALFLINE := ///\vskip 4.75pt
 ///
@@ -86,7 +92,7 @@ info HEADER3 := Hop(info,"-")
 html String := htmlLiteral
 tex String := texLiteral
 
-texMath String := s -> concatenate("{\\tt\\text{", texLiteral s, "}}")
+texMath String := s -> if texMode.mathJax then "\\verb|"|texJaxLiteral s|"|" else concatenate("{\\tt\\text{", texLiteral s, "}}")
 
 info String := identity
 
@@ -95,11 +101,11 @@ texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\
 texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
 
 texMath HashTable := x -> if x.?texMath then x.texMath else (
-     concatenate flatten ( 
+     concatenate flatten (
      	  texMath class x,
-	  "\\left\\{", 
-	  between(",", apply(pairs x,(k,v) -> texMath k | "\\Rightarrow" | texMath v)), 
-	  "\\right\\}" 
+	  "\\left\\{",
+	  between(",", apply(pairs x,(k,v) -> texMath k | "\\Rightarrow " | texMath v)),
+	  "\\right\\}"
      	  ))
 texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
 
