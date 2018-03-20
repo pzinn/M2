@@ -21,6 +21,8 @@ raw RingMap := f -> f.RawRingMap
 
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, matrix f)}
+texMath RingMap := x -> if x.?texMath then x.texMath else texMath new FunctionApplication from {
+     map, (target x, source x, matrix x)}
 
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 

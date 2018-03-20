@@ -81,16 +81,24 @@ info HEADER3 := Hop(info,"-")
 html String := htmlLiteral
 tex String := texLiteral
 texMath String := s -> (
-     if #s === 1 then s
-     else concatenate("\\text{", texLiteral s, "}")
+--     if #s === 1 then s else
+     concatenate("{\\tt\\text{", texLiteral s, "}}")
      )
 info String := identity
 
-texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
-texMath Array := x -> concatenate("[", between(",", apply(x,texMath)), "]")
-texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
+texMath List := x -> concatenate("\\left\\{", between(",", apply(x,texMath)), "\\right\\}")
+texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
+texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
 
-texMath HashTable := x -> if x.?texMath then x.texMath else texMath expression x
+texMath HashTable := x -> if x.?texMath then x.texMath else (
+     concatenate flatten ( 
+     	  texMath class x,
+	  "\\left\\{", 
+	  between(",", apply(pairs x,(k,v) -> texMath k | "\\Rightarrow" | texMath v)), 
+	  "\\right\\}" 
+     	  ))
+texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
+
 tex HashTable := x -> (
       if x.?tex then x.tex
       else concatenate("$",texMath x,"$")
@@ -101,7 +109,7 @@ specials := new HashTable from {
      symbol ii => "&ii;"
      }
 
-texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
+texMath Function := texMath Boolean := x -> "\\text{" | toString x | "}"
 
 -*
  spacing between lines and paragraphs:

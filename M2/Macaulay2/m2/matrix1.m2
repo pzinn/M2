@@ -445,6 +445,7 @@ expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence appl
 net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
+texMath Ideal := x -> if x.?texMath then x.texMath else texMath expression x
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

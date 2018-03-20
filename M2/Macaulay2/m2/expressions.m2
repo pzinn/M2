@@ -124,7 +124,8 @@ toString'(Function, Expression) := (fmt,v) -> (
 --texMath Holder2 := v -> "{" | texMath v#0 | "}"
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
-texMath Holder := v -> toString v#0 -- may not always be right, but it will work for "texMath expression 4"
+--texMath Holder := v -> toString v#0 -- may not always be right, but it will work for "texMath expression 4"
+texMath Holder := v -> texMath v#0 -- potential for infinite loops...
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 
@@ -630,10 +631,10 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      if precedence args >= p
      then if precedence fun > p
      then concatenate (texMath fun, " ", texMath args)
-     else concatenate ("(", texMath fun, ")", texMath args)
+     else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
      else if precedence fun > p
-     then concatenate (texMath fun, "(", texMath args, ")")
-     else concatenate ("(",texMath fun,")(", texMath args, ")")
+     then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
+     else concatenate ("\\left(",texMath fun,"\\right)\\left(", texMath args, "\\right)")
      )
 -----------------------------------------------------------------------------
 
@@ -924,8 +925,9 @@ html Minus := v -> (
      else "-" | html term
      )
 
---texMath Divide := x -> "\\frac{" | texMath x#0 | "}{" | texMath x#1 | "}"
+texMath Divide := x -> "\\frac{" | texMath x#0 | "}{" | texMath x#1 | "}"
 
+-*
 texMath Divide := x -> (
      if precedence x#0 < precedence x
      then "(" | texMath x#0 | ")"
@@ -935,7 +937,7 @@ texMath Divide := x -> (
      then "(" | texMath x#1 | ")"
      else texMath x#1
      )
-
+*-
 html Divide := x -> (
      p := precedence x;
      a := html x#0;
@@ -1023,14 +1025,14 @@ texMath Power := v -> (
 	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
-	  if precedence v#0 <  p then x = "({" | x | "})";
+	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
 	  concatenate(x,(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> (
      p := precedence v;
      x := texMath v#0;
      y := texMath v#1;
-     if precedence v#0 <  p then x = "(" | x | ")";
+     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
 html Superscript := v -> (
@@ -1075,12 +1077,12 @@ texMath MatrixExpression := m -> (
      	  ncols := #m#0;
 	  if ncols > 10 then (///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///));
      concatenate(
-	  ///\bgroup///,
+          "{",--	  ///\bgroup///,
 	  s,
      	  ///\begin{pmatrix}///,
      	  apply(m, row -> (between("&"|newline,apply(row,texMath)), ///\\///|newline)),
      	  ///\end{pmatrix}///,
-	  ///\egroup///,
+          "}" --	  ///\egroup///,
 	  ))
 
 ctr := 0
@@ -1121,6 +1123,7 @@ texMath Symbol := x -> (
 
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ expression
+tex2 = x -> "-*@begin*-"|toString texMath x|"-*@end*-"; -- TEMP
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)

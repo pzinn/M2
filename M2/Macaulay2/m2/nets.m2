@@ -215,7 +215,7 @@ net Type := X -> (
 	  );
      horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
-texMath Net := n -> concatenate (
+-*texMath Net := n -> concatenate (
      ///{\arraycolsep=0pt
 \begin{matrix}
 ///,
@@ -224,6 +224,8 @@ texMath Net := n -> concatenate (
      ///
 \end{matrix}}
 ///)
+*-
+texMath Net := n -> "\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\ ") | "\\end{array}"
 
 -----------------------------------------------------------------------------
 

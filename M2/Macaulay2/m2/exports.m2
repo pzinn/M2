@@ -11,6 +11,7 @@ export {
 	"lowestPart",
 	"concatRows",
 	"concatCols",
+	"tex2",
 -- end experimental
     "LocalRing",
     "localRing",

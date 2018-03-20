@@ -288,7 +288,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
        describe FractionField := F -> net expression F
        texMath FractionField := F -> (
      	   if hasAttribute(F,ReverseDictionary) then texMath getAttribute(F,ReverseDictionary)
-     	   else texMath Adjacent {"frac", last F.baseRings}
+     	   else texMath Adjacent {frac, last F.baseRings}
     	   )
 
 -- freduce := (f) -> (numerator f)/(denominator f)
