@@ -151,7 +151,7 @@ Thing#{Standard,Print} = x -> (
 	 << "-*@begin*-";
 	 xx := texMathJax x;
 	 y := xx x;
-	 if xx === texMath then	 << "$$" | y | "\\tag{" | oprompt | "}$$" else << "$$ \\tag{" | oprompt | "}$$" | y;
+	 if xx === texMath then	<< "$$" | y | "\\tag{" | oprompt | "}$$" else << "$$ \\tag{" | oprompt | "}$$" | y;
 	 << "-*@end*-";
 	  )
      )

@@ -1034,14 +1034,14 @@ texMath Power := v -> (
 	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
-	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
-	  concatenate(x,(class v)#operator,"{",y,"}")))
+	  if precedence x <  p then x = "\\left({" | x | "}\\right)";
+	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> (
---     p := precedence v;
+     p := precedence v;
      x := texMath v#0;
      if class v#1 === Sequence then y:=concatenate between(",", apply(v#1,texMath)) else y = texMath v#1;
---     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+     if precedence x <  p then x = "\\left(" | x | "\\right)";
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
 html Superscript := v -> (
