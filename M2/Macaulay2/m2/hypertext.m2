@@ -25,9 +25,9 @@ texLiteralTable := new MutableHashTable
 
 texJaxLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texJaxLiteralTable#c = c)
-    texJaxLiteralTable#" "="|\\hphantom{\\verb|x|}\\verb|" -- ugly half-fix of #1953 of mathJax
+    texJaxLiteralTable#" "="|\\hphantom{\\tt x}\\verb|" -- ugly fix of #1953 of mathJax
     texJaxLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
-    texJaxLiteralTable#"\n" = "|\\\\\\verb|" -- eww
+    texJaxLiteralTable#"\n" = "|\\\\\\verb|" -- eww and doesn't really work outside of mathJax -- but then who cares
 
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
@@ -92,7 +92,8 @@ info HEADER3 := Hop(info,"-")
 html String := htmlLiteral
 tex String := texLiteral
 
-texMath String := s -> if texMode.mathJax then "\\verb|"|texJaxLiteral s|"|" else concatenate("{\\tt\\text{", texLiteral s, "}}")
+--texMath String := s -> if texMode.mathJax then "\\verb|"|texJaxLiteral s|"|" else concatenate("{\\tt\\text{", texLiteral s, "}}")
+texMath String := s -> "\\verb|"|texJaxLiteral s|"|"
 
 info String := identity
 
@@ -113,8 +114,6 @@ texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
 specials := new HashTable from {
      symbol ii => "&ii;"
      }
-
-texMath Function := texMath Boolean := x -> "\\text{" | toString x | "}"
 
 -*
  spacing between lines and paragraphs:
@@ -252,6 +251,7 @@ verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBA
 maximumCodeWidth = 60					    -- see also booktex.m2, an old file that sets the same variable
 
 tex TT := texMath TT := verbatim
+
 tex CODE :=
 tex PRE := x -> concatenate ( VERBATIM,
      ///\penalty-200

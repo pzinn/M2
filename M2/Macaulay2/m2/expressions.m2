@@ -1117,14 +1117,13 @@ print = x -> (<< net x << endl;)
 -----------------------------------------------------------------------------
 texMath RR := toString
 texMath ZZ := toString
-texMath Thing := x -> texMath expression x
 texMath Symbol := x -> (
      x = toString x;
      if #x === 1 then x else concatenate("\\text{",x, "}")
      )
 
 tex Thing := x -> concatenate("$",texMath x,"$")
-texMath Thing := texMath @@ expression
+texMath Thing := texMath @@ net -- if we're desperate
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)

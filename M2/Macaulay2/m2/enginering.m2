@@ -493,9 +493,12 @@ ZZ ? RingElement := (m,y) -> m_(class y) ? y
 RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
 toString RingElement := x -> toString expression x
+
 toExternalString RingElement := x -> toExternalFormat expression x
 
 net RingElement := x -> net expression x
+
+texMath RingElement := x -> texMath expression x
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 

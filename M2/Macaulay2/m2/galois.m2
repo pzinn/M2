@@ -39,6 +39,7 @@ GF = method (
      )
 
 expression GaloisField := F -> new FunctionApplication from { GF, F.order }
+texMath GaloisField := F -> "{\\mathbb F}_" | F.order
 
 lastp := 2
 
