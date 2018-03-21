@@ -55,6 +55,13 @@ net Command := toString Command := toExternalString Command := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "-*Command*-"
      )
 
+texMath BasicList := s -> concatenate(
+     if class s =!= List then texMath class s,
+    "\\left\\{",
+    between(",",apply(toList s,texMath))
+    ,"\\right\\}"
+    )
+
 toExternalString Function := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;

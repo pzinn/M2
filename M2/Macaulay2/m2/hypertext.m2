@@ -96,7 +96,6 @@ texMath String := s -> if texMode.mathJax then "\\verb|"|texJaxLiteral s|"|" els
 
 info String := identity
 
-texMath List := x -> concatenate("\\left\\{", between(",", apply(x,texMath)), "\\right\\}")
 texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
 
