@@ -127,7 +127,7 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      error toString stack(line1,commentGuard line2)));
 		    ))))
 
-texMode=new OptionTable from { mathJax => false, TeXDisplay => false}
+texMode=false
 
 Thing#{Standard,Print} = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
@@ -146,7 +146,7 @@ Thing#{Standard,Print} = x -> (
      << endl << oprompt << z << endl;
      printWidth = save;
      -- HACK
-     if texMode.TeXDisplay then << "-*@begin*-" << toString texMath x << "-*@end*-";
+     if texMode then << "-*@begin*-" << texMathJax x << "-*@end*-";
      )
 
 -- Local Variables:

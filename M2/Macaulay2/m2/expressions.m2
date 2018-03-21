@@ -1125,6 +1125,8 @@ texMath Symbol := x -> (
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate
 
+texMathJax Thing := x -> concatenate("$$",texMath x,"$$")
+
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)
 

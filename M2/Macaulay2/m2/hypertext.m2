@@ -23,15 +23,15 @@ texLiteralTable := new MutableHashTable
 				   -- see page 381 of TeX Book
 -- the section above is only useful when *not* using \verb
 
-texJaxLiteralTable := new MutableHashTable
-    scan(characters ascii(0 .. 255), c -> texJaxLiteralTable#c = c)
-    texJaxLiteralTable#" "="|\\hphantom{\\tt x}\\verb|" -- ugly fix of #1953 of mathJax
-    texJaxLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
-    texJaxLiteralTable#"\n" = "|\\\\\\verb|" -- eww and doesn't really work outside of mathJax -- but then who cares
+texVerbLiteralTable := new MutableHashTable
+    scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
+    texVerbLiteralTable#" "="|\\hphantom{\\tt x}\\verb|" -- ugly fix of #1953 of mathJax
+    texVerbLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
+    texVerbLiteralTable#"\n" = "|\\\\\\verb|" -- eww and doesn't really work outside of mathJax -- but then who cares
 
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
-texJaxLiteral = s -> concatenate apply(characters s, c -> texJaxLiteralTable#c)
+texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
 
 HALFLINE := ///\vskip 4.75pt
 ///
@@ -75,6 +75,7 @@ scan((
 -- tex Hypertext := defop(concatenate,tex)
 -- texMath Hypertext := defop(concatenate,texMath)
 -- mathML Hypertext := defop(concatenate,mathML)
+texMathJax Hypertext := html; -- aha!
 
 info TITLE := net TITLE := x -> ""
 
@@ -92,8 +93,7 @@ info HEADER3 := Hop(info,"-")
 html String := htmlLiteral
 tex String := texLiteral
 
---texMath String := s -> if texMode.mathJax then "\\verb|"|texJaxLiteral s|"|" else concatenate("{\\tt\\text{", texLiteral s, "}}")
-texMath String := s -> "\\verb|"|texJaxLiteral s|"|"
+texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
 
 info String := identity
 
