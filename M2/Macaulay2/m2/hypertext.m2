@@ -25,7 +25,7 @@ texLiteralTable := new MutableHashTable
 
 texJaxLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texJaxLiteralTable#c = c)
-    texJaxLiteralTable#" "="|\\hphantom{\\verb|.|}\\verb|" -- ugly half-fix of #1953 of mathJax
+    texJaxLiteralTable#" "="|\\hphantom{\\verb|x|}\\verb|" -- ugly half-fix of #1953 of mathJax
     texJaxLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
     texJaxLiteralTable#"\n" = "|\\\\\\verb|" -- eww
 
@@ -109,10 +109,6 @@ texMath HashTable := x -> if x.?texMath then x.texMath else (
      	  ))
 texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
 
-tex HashTable := x -> (
-      if x.?tex then x.tex
-      else concatenate("$",texMath x,"$")
-      )
 -- html HashTable := x -> html expression x
 
 specials := new HashTable from {

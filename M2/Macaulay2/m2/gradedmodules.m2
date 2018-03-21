@@ -34,6 +34,15 @@ net GradedModule := C -> (
 	       VerticalSpace => 1);
 	  printWidth = savePW;
 	  res))
+  
+texUnder = (x,y) -> "\\underset{\\vphantom{\\Big|}"|y|"}{"|x|"}"
+
+texMath GradedModule := C -> (
+     s := sort spots C;
+     if # s === 0 then "0"
+     else concatenate between("\\quad ",apply(s,i->texUnder(texMath C_i,i)))
+      )
+
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)

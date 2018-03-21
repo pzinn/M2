@@ -258,8 +258,6 @@ net Module := M -> (
 
 texMath Module := x -> if x.?texMath then x.texMath else if x.?relations or x.?generators then texMath expression x else texMath new Power from {ring x, numgens x}
 
-texMath ModuleMap := x -> if x.?texMath then x.texMath else texMath expression x
-
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it
      ring M === ring N

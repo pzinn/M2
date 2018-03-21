@@ -71,14 +71,20 @@ net ChainComplex := C -> (
 texMath ChainComplex := C -> (
      complete C;
      s := sort spots C;
+     if # s === 0 then "0" else
+     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\xleftarrow{" | texMath C.dd_i | "}" | texUnder(texMath C_i,i) )
+      )
+
+-*
+texMath ChainComplex := C -> (
+     complete C;
+     s := sort spots C;
      if # s === 0 then "0"
      else (
 	  a := s#0;
 	  b := s#-1;
-	  horizontalJoin between(" \\leftarrow ", apply(a .. b,i -> texMath C_i))))
-
-tex ChainComplex := C -> "$" | texMath C | "$"
-
+	  concatenate between(" \\leftarrow ", apply(a .. b,i -> texMath C_i))))
+*-
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of GradedModuleMap
 ChainComplexMap.synonym = "chain complex map"
@@ -133,6 +139,17 @@ net ChainComplexMap := f -> (
 	  );
      if # v === 0 then "0"
      else stack v)
+
+texMath ChainComplexMap := f -> (
+     complete f;
+     v := between(",\\quad ",
+	  apply(sort intersection(spots f.source, spots f.target / (i -> i - f.degree)),
+	       i -> texUnder(texMath target f_i,i+f.degree) | "\\xleftarrow{" | texMath f_i | "}" | texUnder(texMath source f_i,i)
+	       )
+	  );
+     if # v === 0 then "0"
+     else stack v)
+
 ring ChainComplexMap := (f) -> ring source f
 
 ChainComplexMap _ ZZ := Matrix => (f,i) -> if f#?i then f#i else (
@@ -699,7 +716,6 @@ texMath BettiTally := v -> (
 	  apply(v, row -> (between("&", apply(row,x->if not match("^[0-9]*$",x) then ("\\text{",x,"}") else x)), "\\\\")),
 	  "\\end{matrix}\n",
 	  ))
-tex BettiTally := v -> concatenate("$", texMath v, "$")
 
 betti = method(TypicalValue => BettiTally, Options => { Weights => null, Minimize => false })
 heftfun0 := wt -> d -> sum( min(#wt, #d), i -> wt#i * d#i )

@@ -121,6 +121,8 @@ toString'(Function, Expression) := (fmt,v) -> (
      else demark(op#operator,names)
      )
 
+texMath RawObject := x -> texMath net x
+
 --texMath Holder2 := v -> "{" | texMath v#0 | "}"
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
@@ -1073,12 +1075,12 @@ texMath SparseMonomialVectorExpression := v -> (
      )
 
 texMath MatrixExpression := m -> (
-     s := if m#?0 then (
-     	  ncols := #m#0;
-	  if ncols > 10 then (///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///));
+--     s := if m#?0 then (
+--     	  ncols := #m#0;
+--	  if ncols > 10 then (///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///));
      concatenate(
           "{",--	  ///\bgroup///,
-	  s,
+--	  s,
      	  ///\begin{pmatrix}///,
      	  apply(m, row -> (between("&"|newline,apply(row,texMath)), ///\\///|newline)),
      	  ///\end{pmatrix}///,
