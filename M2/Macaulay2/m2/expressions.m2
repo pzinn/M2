@@ -632,7 +632,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      args := m#1;
      if precedence args >= p
      then if precedence fun > p
-     then concatenate (texMath fun, " ", texMath args)
+     then concatenate (texMath fun, "\\ ", texMath args)
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
      else if precedence fun > p
      then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
@@ -1119,13 +1119,14 @@ texMath RR := toString
 texMath ZZ := toString
 texMath Symbol := x -> (
      x = toString x;
-     if #x === 1 then x else concatenate("\\text{",x, "}")
+     if #x === 1 then x else texMath x -- debatable choice
      )
 
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate
 
-texMathJax Thing := x -> concatenate("$$",texMath x,"$$")
+--texMathJax Thing := x -> concatenate("$$",texMath x,"$$")
+texMathJax Thing := x -> concatenate("$$",texMath x,"\\tag{",tex class x,"}$$") -- ugly hack: doing afterprint at once
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)
@@ -1140,6 +1141,8 @@ Thing#{Standard,AfterPrint} = x -> (
      y := class x;
      << " : " << y;
      << endl;
+-- HACK
+--     if texMode then << "-*@begin*-" << o() << lineNumber << " : " << texMathJax y << "-*@end*-"; -- not doing AfterPrint yet
      )
 
 -- Type#{Standard,AfterPrint} = x -> (

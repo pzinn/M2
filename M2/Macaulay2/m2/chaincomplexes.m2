@@ -40,7 +40,7 @@ ChainComplex _ ZZ = (C,i,M) -> C#i = M
 
 ChainComplex ^ ZZ := Module => (C,i) -> C_-i
 
-spots  = C -> select(keys C, i -> class i === ZZ)
+spots  = C -> select(keys C, i -> class i === ZZ) -- these defs already appear in gradedmodules.m2
 union        := (x,y) -> keys(set x + set y)
 intersection := (x,y) -> keys(set x * set y)
 
@@ -148,7 +148,7 @@ texMath ChainComplexMap := f -> (
 	       )
 	  );
      if # v === 0 then "0"
-     else stack v)
+     else concatenate v)
 
 ring ChainComplexMap := (f) -> ring source f
 

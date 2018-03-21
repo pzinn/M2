@@ -27,7 +27,7 @@ texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
     texVerbLiteralTable#" "="|\\hphantom{\\tt x}\\verb|" -- ugly fix of #1953 of mathJax
     texVerbLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
-    texVerbLiteralTable#"\n" = "|\\\\\\verb|" -- eww and doesn't really work outside of mathJax -- but then who cares
+    texVerbLiteralTable#"\n" = "|\\\\\\verb|" -- eww and only works outside of mathJax if using say \begin{gather*} -- but then who cares
 
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
