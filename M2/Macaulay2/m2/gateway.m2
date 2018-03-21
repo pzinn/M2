@@ -6,6 +6,7 @@ globalAssignment ScriptedFunctor
 precedence ScriptedFunctor := x -> 70
 net ScriptedFunctor := lookup(net,Type)
 toString ScriptedFunctor := lookup(toString,Type)
+texMath ScriptedFunctor := lookup(texMath,Type)
 methodOptions ScriptedFunctor := H -> null
 
 protect argument

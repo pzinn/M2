@@ -210,7 +210,7 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      new target u from {u})
 
 expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
-texMath Matrix := m -> if m.?texMath then m.texMath else texMath expression m
+texMath Matrix := m -> if m.?texMath then m.texMath else if m==0 then "0" else texMath expression m
 
 toExternalString Matrix := m -> concatenate (
      "map(", 

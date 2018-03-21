@@ -398,7 +398,7 @@ expression FactPolynomialRing := R -> (
      );
 texMath FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then texMath getAttribute(R,ReverseDictionary)
-     else texMath Adjacent {fact, last R.baseRings}
+     else texMath FunctionApplication {fact, last R.baseRings}
     );
 describe FactPolynomialRing := F -> "fact "|(describe last F.baseRings);
 options FactPolynomialRing := R -> options(monoid R)++R.Options;

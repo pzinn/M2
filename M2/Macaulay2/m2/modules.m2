@@ -442,21 +442,17 @@ super(Module) := Module => (M) -> (
 End = (M) -> Hom(M,M)
 
 Module#{Standard,AfterPrint} = M -> (
-     << endl;				  -- double space
      n := rank ambient M;
-     << concatenate(interpreterDepth:"o") << lineNumber << " : "
-     << ring M
-     << "-module";
+     afterPrint(ring M,"-module",
      if M.?generators then
-     if M.?relations then << ", subquotient of " << ambient M
-     else << ", submodule of " << ambient M
-     else if M.?relations then << ", quotient of " << ambient M
-     else if n > 0 then (
-	  << ", free";
+     if M.?relations then (", subquotient of ",ambient M)
+     else (", submodule of ",ambient M)
+     else if M.?relations then (", quotient of ",ambient M) 
+     else if n > 0 then
+	  (", free",
 	  if not all(degrees M, d -> all(d, zero)) 
-	  then << ", degrees " << runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M;
-	  );
-     << endl;
+	  then (", degrees ",runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M)
+	  ))
      )
 
 RingElement * Module := Module => ZZ * Module := (r,M) -> subquotient (r ** generators M, relations M)

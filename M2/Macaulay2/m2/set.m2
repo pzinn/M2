@@ -61,6 +61,8 @@ toString Set := x -> (
      then "set " | toString sort (toString \ keys x)
      else "new " | toString class x | " from " | toString sort (toString \ keys x)
      )
+texMath Set := x -> if x.?texMath then x.texMath else texMath FunctionApplication {set, sort keys x}
+
 Set + Set := Set => (x,y) -> merge(x,y,(i,j)->i)
 -- Set ++ Set := Set => (x,y) -> applyKeys(x,i->(0,i)) + applyKeys(y,j->(1,j))
 Set ** Set := Set => (x,y) -> combine(x,y,identity,(i,j)->i,)

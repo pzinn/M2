@@ -325,22 +325,7 @@ withFullPrecision = f -> (
      printingAccuracy = acc;				    -- sigh, what if an interrupt or an error occurred?
      )
 InexactNumber#{Standard,Print} = x ->  withFullPrecision ( () -> Thing#{Standard,Print} x )
-InexactNumber#{Standard,AfterPrint} = x -> (
-     << endl;                             -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber;
-     y := class x;
-     << " : " << y;
-     prec := precision x;
-     -- if prec =!= defaultPrecision then
-     << " (of precision " << prec << ")";
-     -*
-     while parent y =!= Thing do (
-	  y = parent y;
-	  << " < " << y;
-	  );
-     *-
-     << endl;
-     )
+InexactNumber#{Standard,AfterPrint} = x -> afterPrint ( class x, " (of precision ", precision x,")" )
 
 isReal = method()
 isReal RR := isReal QQ := isReal ZZ := x -> true

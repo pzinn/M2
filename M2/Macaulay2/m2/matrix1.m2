@@ -391,14 +391,9 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
+leftArrow = "<---";
 Matrix#{Standard,AfterPrint} = 
-Matrix#{Standard,AfterNoPrint} = f -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Matrix";
-     if isFreeModule target f and isFreeModule source f
-     then << " " << target f << " <--- " << source f;
-     << endl;
-     )
+Matrix#{Standard,AfterNoPrint} = f -> afterPrint(Matrix, if isFreeModule target f and isFreeModule source f then (" ", target f,  " ", leftArrow, " ", source f));
 
 -- precedence Matrix := x -> precedence symbol x
 
@@ -506,10 +501,7 @@ mingens Ideal := Matrix => options -> (I) -> mingens(module I,options)
 Ideal / Ideal := Module => (I,J) -> module I / module J
 Module / Ideal := Module => (M,J) -> M / (J * M)
 
-Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : Ideal of " << ring I << endl;
-     )
+Ideal#{Standard,AfterPrint} = Ideal#{Standard,AfterNoPrint} = (I) -> afterPrint(Ideal," of ",ring I)
 
 Ideal ^ ZZ := Ideal => (I,n) -> ideal symmetricPower(n,generators I)
 Ideal * Ideal := Ideal => ((I,J) -> ideal flatten (generators I ** generators J)) @@ samering

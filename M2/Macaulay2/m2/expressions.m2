@@ -578,6 +578,15 @@ net BinaryOperation := m -> (
      if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
      horizontalJoin( x, toString m#0, y )
      )
+
+texMath BinaryOperation := m -> (
+     x := texMath m#1;
+     y := texMath m#2;
+     if rightPrecedence m#1 < lprec m#0 then x = "\\left(" | x | "\\right)";
+     if precedence m#2 <= rprec m#0 then y = "\\left(" | y | "\\right)";
+     concatenate( x, texMath m#0, y )
+     )
+
 toString'(Function, BinaryOperation) := (fmt,m) -> (
      x := fmt m#1;
      y := fmt m#2;
@@ -632,7 +641,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      args := m#1;
      if precedence args >= p
      then if precedence fun > p
-     then concatenate (texMath fun, "\\ ", texMath args)
+     then concatenate (texMath fun, "\\,", texMath args)
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
      else if precedence fun > p
      then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
@@ -891,8 +900,6 @@ texMath Expression := v -> (
 	  )
      )
 
---texMath BinaryOperation := x -> texMath x#1 | texMath x#0 | texMath x#2
-
 html Thing := toString
 
 html Expression := v -> (
@@ -1024,10 +1031,10 @@ html Product := v -> (
 texMath Power := v -> (
      if v#1 === 1 then texMath v#0
      else (
---	  p := precedence v;
+	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
---	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
 	  concatenate(x,(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> (
@@ -1117,33 +1124,26 @@ print = x -> (<< net x << endl;)
 -----------------------------------------------------------------------------
 texMath RR := toString
 texMath ZZ := toString
-texMath Symbol := x -> (
-     x = toString x;
-     if #x === 1 then x else texMath x -- debatable choice
-     )
-
+texMath Symbol := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate
 
---texMathJax Thing := x -> concatenate("$$",texMath x,"$$")
-texMathJax Thing := x -> concatenate("$$",texMath x,"\\tag{",tex class x,"}$$") -- ugly hack: doing afterprint at once
+texMathJax Thing := x -> texMath
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)
 
-o := () -> concatenate(interpreterDepth:"o")
+o := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 symbol briefDocumentation <- identity			    -- temporary assignment
 
-Thing#{Standard,AfterPrint} = x -> (
-     << endl;				  -- double space
-     << o() << lineNumber;
-     y := class x;
-     << " : " << y;
-     << endl;
+afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
+     << endl << o() << " : " << horizontalJoin(net\y) << endl;
 -- HACK
---     if texMode then << "-*@begin*-" << o() << lineNumber << " : " << texMathJax y << "-*@end*-"; -- not doing AfterPrint yet
-     )
+     if texMode then << "-*@begin*-$$" | concatenate(texMath\y) | "\\tag{" | o() | " :}$$-*@end*-";
+)      
+
+Thing#{Standard,AfterPrint} = x -> afterPrint class x;
 
 -- Type#{Standard,AfterPrint} = x -> (
 --      << endl;				  -- double space
@@ -1154,15 +1154,14 @@ Thing#{Standard,AfterPrint} = x -> (
 --      << endl;
 --      )
 
+-*
 Function#{Standard,AfterPrint} = x -> (
      Thing#{Standard,AfterPrint} x;
      -- briefDocumentation x; -- from now on, type "?foo" to get brief documentation on foo
      )
+*-
+Expression#{Standard,AfterPrint} = x -> afterPrint(Expression, " of class ", class x );
 
-Expression#{Standard,AfterPrint} = x -> (
-     << endl;				  -- double space
-     << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
-     )
 -----------------------------------------------------------------------------
 
 expression VisibleList := v -> new Holder from {apply(v,expression)}

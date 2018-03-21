@@ -136,11 +136,7 @@ map(Ring,Ring) := RingMap => opts -> (S,R) -> map(S,R,{},opts)
 
 Ring#id = (R) -> map(R,R,vars R)
 
-RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> (
-     << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : " << class f;
-     << " " << target f << " <--- " << source f << endl;
-     )
+RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> afterPrint(class f," ",target f," ",leftArrow," ",source f)
 
 RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;

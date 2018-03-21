@@ -75,7 +75,7 @@ scan((
 -- tex Hypertext := defop(concatenate,tex)
 -- texMath Hypertext := defop(concatenate,texMath)
 -- mathML Hypertext := defop(concatenate,mathML)
-texMathJax Hypertext := html; -- aha!
+texMathJax Hypertext := x -> html -- aha!
 
 info TITLE := net TITLE := x -> ""
 

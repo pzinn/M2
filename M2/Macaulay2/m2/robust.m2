@@ -147,7 +147,13 @@ Thing#{Standard,Print} = x -> (
      printWidth = save;
      -- HACK
      --if texMode then << "-*@begin*-" | texMathJax x | "-*@end*-";
-     if texMode then << "-*@begin*-" | oprompt | texMathJax x | "-*@end*-";
+     if texMode then (
+	 << "-*@begin*-";
+	 xx := texMathJax x;
+	 y := xx x;
+	 if xx === texMath then	 << "$$" | y | "\\tag{" | oprompt | "}$$" else << "$$ \\tag{" | oprompt | "}$$" | y;
+	 << "-*@end*-";
+	  )
      )
 
 -- Local Variables:
