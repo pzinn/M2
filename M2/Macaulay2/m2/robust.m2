@@ -147,13 +147,13 @@ Thing#{Standard,Print} = x -> (
 	  );
      << endl << oprompt << z << endl;
      printWidth = save;
-     -- HACK
+     -- HACK (line 2 before should be absorbed with what follows)
      if texMode then (
-	 << "-*@2*-";
+	 << "-*@2*-" | oprompt;
 	 xx := texMathJax x;
 	 y := xx x;
-	 if xx === texMath then	<< "$$" | y | "\\tag{" | oprompt | "}$$" else << "$$ \\tag{" | oprompt | "}$$" | y;
-	 << "-*@0*-" << "-*@3*-";
+     	 if xx === texMath then << "$\\displaystyle " | y | "$" else << y;
+	 << "-*@3*-";
 	  )
      )
 
