@@ -131,7 +131,7 @@ texMode=false
 
 Thing#{Standard,Print} = x -> (
     -- HACK
-    if texMode then << "-*@1*-";
+    if texMode then << texSpecial | "1";
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
      save := printWidth;
      if printWidth != 0 then printWidth = printWidth - #oprompt;
@@ -147,13 +147,12 @@ Thing#{Standard,Print} = x -> (
 	  );
      << endl << oprompt << z << endl;
      printWidth = save;
-     -- HACK (line 2 before should be absorbed with what follows)
      if texMode then (
-	 << "-*@2*-" | oprompt;
+	 << texSpecial | "2" | oprompt;
 	 xx := texMathJax x;
 	 y := xx x;
      	 if xx === texMath then << "$\\displaystyle " | y | "$" else << y;
-	 << "-*@3*-";
+	 << texSpecial | "3";
 	  )
      )
 

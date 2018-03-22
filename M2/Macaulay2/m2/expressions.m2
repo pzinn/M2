@@ -1135,11 +1135,13 @@ o := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 symbol briefDocumentation <- identity			    -- temporary assignment
 
+texSpecial = ascii(30); -- cause why not
+
 afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
-    if texMode then << "-*@1*-";
+    if texMode then << texSpecial | "1";
      << endl << o() << " : " << horizontalJoin(net\y) << endl;
 -- HACK
-     if texMode then << "-*@2-*-" | o() | " : $" | concatenate(texMath\y) | "$-*@3*-";
+     if texMode then << texSpecial | "2" | o() | " : $" | concatenate(texMath\y) | "$" | texSpecial | "3"
 )
 
 Thing#{Standard,AfterPrint} = x -> afterPrint class x;
