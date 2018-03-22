@@ -391,9 +391,8 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-leftArrow = "<---";
 Matrix#{Standard,AfterPrint} = 
-Matrix#{Standard,AfterNoPrint} = f -> afterPrint(Matrix, if isFreeModule target f and isFreeModule source f then (" ", target f,  " ", leftArrow, " ", source f));
+Matrix#{Standard,AfterNoPrint} = f -> afterPrint(Matrix, if isFreeModule target f and isFreeModule source f then (" ", new LeftArrow from {target f,source f}));
 
 -- precedence Matrix := x -> precedence symbol x
 

@@ -121,13 +121,11 @@ toString'(Function, Expression) := (fmt,v) -> (
      else demark(op#operator,names)
      )
 
-texMath RawObject := x -> texMath net x
-
 --texMath Holder2 := v -> "{" | texMath v#0 | "}"
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
---texMath Holder := v -> toString v#0 -- may not always be right, but it will work for "texMath expression 4"
-texMath Holder := v -> texMath v#0 -- potential for infinite loops...
+
+texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 
@@ -1126,9 +1124,9 @@ texMath RR := toString
 texMath ZZ := toString
 texMath Symbol := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
-texMath Thing := texMath @@ net -- if we're desperate
+texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
-texMathJax Thing := x -> texMath
+texMathJax Thing := x -> texMath -- by default, for MathJax we use texMath (as opposed to html)
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)
@@ -1180,6 +1178,17 @@ FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
 toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1,":",toString i#2)
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
+
+-- to deal with left arrows in AfterPrint
+LeftArrow = new Type of Expression;
+toString LeftArrow := x-> toString(x#0) | " <--- " | toString(x#1)
+net LeftArrow := x-> net(x#0) | " <--- " | net(x#1)
+texMath LeftArrow := x -> texMath(x#0) | " \\longleftarrow " | texMath(x#1)
+-- might as well...
+RightArrow = new Type of Expression;
+toString RightArrow := x-> toString(x#0) | " ---> " | toString(x#1)
+net RightArrow := x-> net(x#0) | " ---> " | net(x#1)
+texMath RightArrow := x -> texMath(x#0) | " \\longrightarrow " | texMath(x#1)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

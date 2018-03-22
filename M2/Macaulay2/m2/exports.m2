@@ -12,6 +12,8 @@ export {
 	"concatRows",
 	"concatCols",
 	"texMathJax",
+	"LeftArrow",
+	"RightArrow",
 -- end experimental
     "LocalRing",
     "localRing",
