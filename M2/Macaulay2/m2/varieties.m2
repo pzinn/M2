@@ -22,6 +22,7 @@ ideal Variety := X -> ideal ring X
 Spec = method()
 
 net Variety := (X) -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else net expression X
+texMath Variety := (X) -> if hasAttribute(X,ReverseDictionary) then texMath getAttribute(X,ReverseDictionary) else texMath expression X
 
 expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
@@ -45,7 +46,8 @@ sheaf = method()
 SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
 expression SheafOfRings := O -> new Subscript from { OO, O.variety }
-net SheafOfRings := O -> net expression O
+net SheafOfRings := net @@ expression
+texMath SheafOfRings := texMath @@ expression
 Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
 sheaf(Variety,Ring) := SheafOfRings => (X,R) -> (
      if ring X =!= R then error "expected the variety of the ring";
@@ -80,6 +82,22 @@ net CoherentSheaf := F -> (
 			 if all(d, zero) then "" else 
 			 if #d === 1 then ("(", toString first d, ")")
 			 else toString toSequence d)))))
+
+texMath CoherentSheaf := F -> (
+        if F.?texMath then return F.texMath;
+	M := module F;
+	if M.?relations or M.?generators then texMath M
+    	else if numgens M === 0 then "0"
+    	else (
+	    X := variety F;
+	  concatenate between(" \\oplus ",
+	       apply(runLengthEncoding (- degrees F),
+		    (n,d) -> (
+			 texMath new Superscript from {OO_X, n},
+			 if all(d, zero) then "" else 
+			 if #d === 1 then ("(", toString first d, ")")
+			 else toString toSequence d)))))
+
 
 CoherentSheaf#{Standard,AfterPrint} = F -> (
      X := variety F;
@@ -226,6 +244,7 @@ OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,OO,class X),(OO,X)),
      argument => X -> applyMethod((symbol SPACE,OO,class X),(OO,X)),
      }
+OO.texMath = ///{\mathcal O}///
 installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)
 sheaf Variety := X -> sheaf_X ring X
 

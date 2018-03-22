@@ -239,6 +239,7 @@ reduce := (r,s) -> (
      (a,b))
 
 toString EngineRing := R -> if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary) else toString R.RawRing
+texMath EngineRing := R -> if R.?texMath then return R.texMath else if hasAttribute(R,ReverseDictionary) then return texMath getAttribute(R,ReverseDictionary) else texMath expression R
 
 ZZ _ EngineRing := 
 RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)

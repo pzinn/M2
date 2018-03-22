@@ -27,8 +27,10 @@ texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
     texVerbLiteralTable#" "="|\\hphantom{\\tt x}\\verb|" -- ugly fix of #1953 of mathJax
     texVerbLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
+    texVerbLiteralTable#"$"= "|{\\tt $}\\verb|" -- eww -- ugly fix of #375 of mathJax
     texVerbLiteralTable#"\n" = "|\\\\\\verb|" -- eww and only works outside of mathJax if using say \begin{gather*} -- but then who cares
-
+    texVerbLiteralTable#"<" = "&lt;" -- for mathJax only
+    texVerbLiteralTable#">" = "&gt; " -- same
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
 texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
@@ -108,6 +110,7 @@ texMath HashTable := x -> if x.?texMath then x.texMath else (
 	  "\\right\\}"
      	  ))
 texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
+texMath ScriptedFunctor := lookup(texMath,Type)
 
 -- html HashTable := x -> html expression x
 
