@@ -11,7 +11,7 @@ export {
 	"lowestPart",
 	"concatRows",
 	"concatCols",
-	"texMathJax",
+	"mathJax",
 	"LeftArrow",
 	"RightArrow",
 -- end experimental

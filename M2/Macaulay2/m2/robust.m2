@@ -147,13 +147,7 @@ Thing#{Standard,Print} = x -> (
 	  );
      << endl << oprompt << z << endl;
      printWidth = save;
-     if texMode then (
-	 << texSpecial | "2" | oprompt;
-	 xx := texMathJax x;
-	 y := xx x;
-     	 if xx === texMath then << "$\\displaystyle " | y | "$" else << y;
-	 << texSpecial | "3";
-	  )
+     if texMode then << texSpecial | "2" | oprompt | mathJax x << texSpecial | "3";
      )
 
 -- Local Variables:

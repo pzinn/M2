@@ -77,7 +77,7 @@ scan((
 -- tex Hypertext := defop(concatenate,tex)
 -- texMath Hypertext := defop(concatenate,texMath)
 -- mathML Hypertext := defop(concatenate,mathML)
-texMathJax Hypertext := x -> html -- aha!
+mathJax Hypertext := html -- aha!
 
 info TITLE := net TITLE := x -> ""
 
@@ -94,7 +94,6 @@ info HEADER3 := Hop(info,"-")
 
 html String := htmlLiteral
 tex String := texLiteral
-
 texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
 
 info String := identity

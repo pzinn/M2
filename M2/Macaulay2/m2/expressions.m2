@@ -992,23 +992,24 @@ html Sum := v -> (
 	       mingle(seps, names)
 	       )))
 
+
 texMath Product := v -> (
      n := # v;
      if n === 0 then "1"
      else (
      	  p := precedence v;
-     	  demark( " ",	  -- could also try \cdot in case there are integers together.
-	        apply(#v,
-		    i -> (
-			 term := v#i;
+	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and (x#1 === 1 or x#1 === ONE)));
+	  seps := apply (n-1, i-> if nums#i and nums#(i+1) then "\\cdot " else "");
+     	  boxes := apply(v,
+		    term -> (
 			 if precedence term <= p
-			 then "(" | texMath term | ")"
+			 then "\\left(" | texMath term | "\\right)"
 			 else texMath term
 			 )
-		    )
-	       )
+		    );
+	  concatenate splice mingle (boxes,seps)
 	  )
-     )
+      )
 
 html Product := v -> (
      n := # v;
@@ -1126,7 +1127,8 @@ texMath Symbol := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
-texMathJax Thing := x -> texMath -- by default, for MathJax we use texMath (as opposed to html)
+mathJax Thing := x -> concatenate("$\\displaystyle ",texMath x,"$") -- by default, for MathJax we use tex (as opposed to html)
+
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)
@@ -1141,7 +1143,7 @@ afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
     if texMode then << texSpecial | "1";
      << endl << o() << " : " << horizontalJoin(net\y) << endl;
 -- HACK
-     if texMode then << texSpecial | "2" | o() | " : $" | concatenate(texMath\y) | "$" | texSpecial | "3"
+     if texMode then << texSpecial | "2" | o() | " : $" | concatenate(texMath\y) | "$" | texSpecial | "3" -- use mathJax instead?
 )
 
 Thing#{Standard,AfterPrint} = x -> afterPrint class x;
