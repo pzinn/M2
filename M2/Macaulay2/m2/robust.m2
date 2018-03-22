@@ -130,6 +130,8 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 texMode=false
 
 Thing#{Standard,Print} = x -> (
+    -- HACK
+    if texMode then << "-*@1*-";
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
      save := printWidth;
      if printWidth != 0 then printWidth = printWidth - #oprompt;
@@ -146,13 +148,12 @@ Thing#{Standard,Print} = x -> (
      << endl << oprompt << z << endl;
      printWidth = save;
      -- HACK
-     --if texMode then << "-*@begin*-" | texMathJax x | "-*@end*-";
      if texMode then (
-	 << "-*@begin*-";
+	 << "-*@2*-";
 	 xx := texMathJax x;
 	 y := xx x;
 	 if xx === texMath then	<< "$$" | y | "\\tag{" | oprompt | "}$$" else << "$$ \\tag{" | oprompt | "}$$" | y;
-	 << "-*@end*-";
+	 << "-*@0*-" << "-*@3*-";
 	  )
      )
 
