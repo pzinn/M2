@@ -10,7 +10,6 @@ toString GaloisField := k -> (
 net GaloisField := k -> (
      if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
      else net expression k)
-describe GaloisField := F -> net expression F
 
 precision GaloisField := F -> infinity
 

@@ -25,10 +25,9 @@ toExternalString QuotientRing := S -> toString expression S
 random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
---expression QuotientRing := S -> new Divide from { expression ambient S, expression pretty S.relations }
 expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else new Divide from { expression ambient S, expression pretty S.relations }
-texMath QuotientRing := R -> if hasAttribute(R,ReverseDictionary) then texMath getAttribute(R,ReverseDictionary) else texMath new Divide from { last R.baseRings, pretty R.relations }
-describe QuotientRing := S -> net new Divide from { expression ambient S, expression pretty S.relations }
+texMath QuotientRing := texMath @@ expression
+describe QuotientRing := S -> new Divide from { expression ambient S, expression pretty S.relations }
 pqr := f -> S -> if hasAttribute(S,ReverseDictionary) then toString getAttribute(S,ReverseDictionary) else f expression S
 net QuotientRing := pqr net
 toString QuotientRing := pqr toString

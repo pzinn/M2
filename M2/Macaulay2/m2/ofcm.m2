@@ -90,7 +90,6 @@ toString GeneralOrderedMonoid := M -> (
 net GeneralOrderedMonoid := M -> (
      if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
      net expression M)
-describe GeneralOrderedMonoid := M -> net expression M
 
 degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
 degreesMonoid PolynomialRing := R -> (

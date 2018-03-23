@@ -126,9 +126,6 @@ toExternalString Sequence := s -> (
      if # s === 1 then concatenate("1:(",toExternalString s#0,")")
      else concatenate("(",mid s,")"))
 -----------------------------------------------------------------------------
-describe = method()
-describe Thing := net
-
 net Manipulator := toString
 net Thing := toString
 -----------------------------------------------------------------------------
@@ -137,6 +134,7 @@ File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
 net Option := z -> net z#0 | " => " | net z#1
+texMath Option := z -> texMath z#0 | "\\Rightarrow " | texMath z#1
 
 Net == String := (n,s) -> (				    -- should install in engine
      height n === 1 and depth n === 0 and width n === length s and n#0 === s

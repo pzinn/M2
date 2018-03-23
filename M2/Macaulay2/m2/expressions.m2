@@ -69,6 +69,9 @@ value Expression := value'
 Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
+describe = method()
+describe Thing := expression
+
 -- new Holder2 from VisibleList := (H,x) -> (
 --      assert( #x === 2 );
 --      if instance(x#0,Holder) then {x#0#0,x#1} else {x#0,x#1})
@@ -638,10 +641,10 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      fun := m#0;
      args := m#1;
      if precedence expression args >= p -- not happy with having to call expression
-     then if precedence fun > p
+     then if precedence expression fun > p
      then concatenate (texMath fun, "\\,", texMath args)
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
-     else if precedence fun > p
+     else if precedence expression fun > p
      then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
      else concatenate ("\\left(",texMath fun,"\\right)\\left(", texMath args, "\\right)")
      )
@@ -676,6 +679,7 @@ returns = t -> x -> t
 	    precedence Expression := returns strength1 symbol symbol
 	        precedence Holder := x -> precedence x#0
 --	       precedence Holder2 := x -> precedence x#0
+                precedence Ring := returns prec symbol ^ -- sort of temp. basically takes care of ZZ, QQ...
        precedence BinaryOperation := x -> lprec x#0
   rightPrecedence BinaryOperation := x -> rprec x#0
             rightPrecedence Thing := precedence
@@ -992,7 +996,6 @@ html Sum := v -> (
 	       mingle(seps, names)
 	       )))
 
-
 texMath Product := v -> (
      n := # v;
      if n === 0 then "1"
@@ -1002,7 +1005,7 @@ texMath Product := v -> (
 	  seps := apply (n-1, i-> if nums#i and nums#(i+1) then "\\cdot " else "");
      	  boxes := apply(v,
 		    term -> (
-			 if precedence expression term <= p -- not happy with having to call expression
+			 if precedence expression term <= p and class expression term =!= Divide -- not happy with having to call expression
 			 then "\\left(" | texMath term | "\\right)"
 			 else texMath term
 			 )
@@ -1128,7 +1131,7 @@ texMath Symbol := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
-mathJax Thing := x -> concatenate("\\(\\displaystyle ",texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
+mathJax Thing := x -> concatenate("\\(\\displaystyle\\vphantom{\\Big|} ",texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1169,7 +1172,8 @@ Expression#{Standard,AfterPrint} = x -> afterPrint(Expression, " of class ", cla
 -----------------------------------------------------------------------------
 
 expression VisibleList := v -> new Holder from {apply(v,expression)}
-expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
+--expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
+expression Thing := x -> new Holder from { x } -- very experimental change
 expression Symbol := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
