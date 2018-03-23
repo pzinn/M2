@@ -885,8 +885,8 @@ texMath Expression := v -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
-	       if precedence term <= p
-	       then ("{(", texMath term, ")}")
+	       if precedence expression term <= p -- not happy with having to call expression
+	       then ("{\\left(", texMath term, "\\right)}")
 	       else ("{", texMath term, "}") ) );
      if # v === 0 then (
 	  if op#?EmptyName then op#EmptyName
@@ -1036,11 +1036,12 @@ texMath Power := v -> (
 	  if precedence expression v#0 <  p then x = "\\left({" | x | "}\\right)"; -- not happy with having to call expression
 	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
 
-texMath Subscript := texMath Superscript := v -> (
-     p := precedence v;
+texMath Subscript := texMath Superscript := v -> ( -- there is a precedence issue, compare with net Superscript
+--     p := precedence v;
      x := texMath v#0;
      if class v#1 === Sequence then y:=concatenate between(",", apply(v#1,texMath)) else y = texMath v#1;
-     if precedence expression v#0 <  p then x = "\\left(" | x | "\\right)"; -- not happy with having to call expression
+--     if precedence expression v#0 <  p then x = "\\left(" | x | "\\right)"; -- not happy with having to call expression
+     if precedence expression v#0 <  prec symbol ^ then x = "\\left(" | x | "\\right)"; -- not happy with having to call expression
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
 html Superscript := v -> (
@@ -1141,9 +1142,9 @@ texSpecial = ascii(30); -- cause why not
 
 afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
     if texMode then << texSpecial | "1";
-     << endl << o() << " : " << horizontalJoin(net\y) << endl;
+    << endl << o() << " : " << horizontalJoin(net\y) << endl;
 -- HACK
-     if texMode then << texSpecial | "2" | o() | " : \\(" | concatenate(texMath\y) | "\\)" | texSpecial | "3" -- use mathJax instead?
+     if texMode then << texSpecial | "2" | o() | " : \\(" | concatenate(texMath\y) | "\\)" | texSpecial | "3"; -- use mathJax instead?
 )
 
 Thing#{Standard,AfterPrint} = x -> afterPrint class x;

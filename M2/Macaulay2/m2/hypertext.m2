@@ -25,14 +25,13 @@ texLiteralTable := new MutableHashTable
 
 texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
-    texVerbLiteralTable#"!"= ///!{\tt !}\verb!/// -- eww
+    texVerbLiteralTable#"!"= ///!{\tt{}!}\verb!/// -- eww, the extra {} is workaround for mathJax bug
+    texVerbLiteralTable#"$"= ///!{\tt $}\verb!/// -- eww ugly fix of #375 of mathJax
     texVerbLiteralTable#"\n" = ///!\\\verb!/// -- eww and only works outside of mathJax if using say \begin{gather*} -- but then who cares
-    texVerbLiteralTable#"<" = "&lt;" -- for mathJax only TEMP! to be removed once client does it
-    texVerbLiteralTable#">" = "&gt; " -- same
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
-texVerbLiteral = s -> replace(///\\)///,///\~\verb~)///, -- eww -- ugly fix of #375 of mathJax. that's assuming only \(...\) is used in mathJax. otherwise should do same for $ and \[
-concatenate apply(characters s, c -> texVerbLiteralTable#c)) 
+texVerbLiteral = s -> replace(///\\)///,///\!\verb!)///, -- eww ugly fix of #375 of mathJax
+concatenate apply(characters s, c -> texVerbLiteralTable#c))
 
 HALFLINE := ///\vskip 4.75pt
 ///
