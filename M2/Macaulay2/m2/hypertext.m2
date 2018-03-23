@@ -25,15 +25,14 @@ texLiteralTable := new MutableHashTable
 
 texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
---    texVerbLiteralTable#" "="|\\hphantom{\\tt x}\\verb|" -- ugly fix of #1953 of mathJax
-    texVerbLiteralTable#"|"= "|{\\tt |}\\verb|" -- eww
-    texVerbLiteralTable#"$"= "|{\\tt $}\\verb|" -- eww -- ugly fix of #375 of mathJax
-    texVerbLiteralTable#"\n" = "|\\\\\\verb|" -- eww and only works outside of mathJax if using say \begin{gather*} -- but then who cares
+    texVerbLiteralTable#"!"= ///!{\tt !}\verb!/// -- eww
+    texVerbLiteralTable#"\n" = ///!\\\verb!/// -- eww and only works outside of mathJax if using say \begin{gather*} -- but then who cares
     texVerbLiteralTable#"<" = "&lt;" -- for mathJax only TEMP! to be removed once client does it
     texVerbLiteralTable#">" = "&gt; " -- same
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
-texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
+texVerbLiteral = s -> replace(///\\)///,///\~\verb~)///, -- eww -- ugly fix of #375 of mathJax. that's assuming only \(...\) is used in mathJax. otherwise should do same for $ and \[
+concatenate apply(characters s, c -> texVerbLiteralTable#c)) 
 
 HALFLINE := ///\vskip 4.75pt
 ///
@@ -95,7 +94,7 @@ info HEADER3 := Hop(info,"-")
 html String := htmlLiteral
 tex String := texLiteral
 --texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
-texMath String := s -> replace(///\\verb\|\|///,"","\\verb|"|texVerbLiteral s|"|") -- to optimize compilation
+texMath String := s -> replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
 
 info String := identity
 
