@@ -637,7 +637,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
      args := m#1;
-     if precedence args >= p
+     if precedence expression args >= p -- not happy with having to call expression
      then if precedence fun > p
      then concatenate (texMath fun, "\\,", texMath args)
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
@@ -920,7 +920,7 @@ html Expression := v -> (
 
 texMath Minus := v -> (
      term := v#0;
-     if precedence term < precedence v
+     if precedence expression term < precedence v -- not happy with having to call expression
      then "{-(" | texMath term | ")}"
      else "{-" | texMath term | "}"
      )
@@ -968,7 +968,7 @@ texMath Sum := v -> (
 		    then ( seps#i = "-"; v#i#0 )
 		    else v#i ));
 	  names := apply(n, i -> (
-		    if precedence v#i <= p
+		    if precedence expression v#i <= p -- not happy with having to call expression
 		    then "(" | texMath v#i | ")"
 		    else texMath v#i ));
 	  concatenate mingle ( seps, names )))
@@ -1002,7 +1002,7 @@ texMath Product := v -> (
 	  seps := apply (n-1, i-> if nums#i and nums#(i+1) then "\\cdot " else "");
      	  boxes := apply(v,
 		    term -> (
-			 if precedence term <= p
+			 if precedence expression term <= p -- not happy with having to call expression
 			 then "\\left(" | texMath term | "\\right)"
 			 else texMath term
 			 )
@@ -1033,14 +1033,14 @@ texMath Power := v -> (
 	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
-	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+	  if precedence expression v#0 <  p then x = "\\left({" | x | "}\\right)"; -- not happy with having to call expression
 	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> (
      p := precedence v;
      x := texMath v#0;
      if class v#1 === Sequence then y:=concatenate between(",", apply(v#1,texMath)) else y = texMath v#1;
-     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+     if precedence expression v#0 <  p then x = "\\left(" | x | "\\right)"; -- not happy with having to call expression
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
 html Superscript := v -> (
