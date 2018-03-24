@@ -1131,7 +1131,7 @@ texMath Symbol := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
-mathJax Thing := x -> concatenate("\\(\\displaystyle\\vphantom{\\Big|} ",texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
+mathJax Thing := x -> concatenate("\\(\\displaystyle\\vphantom{\\Big|} ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1147,7 +1147,7 @@ afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
     if texMode then << texSpecial | "1";
     << endl << o() << " : " << horizontalJoin(net\y) << endl;
 -- HACK
-     if texMode then << texSpecial | "2" | o() | " : \\(" | concatenate(texMath\y) | "\\)" | texSpecial | "3"; -- use mathJax instead?
+     if texMode then << texSpecial | "2" | o() | " : \\(" | htmlLiteral concatenate(texMath\y) | "\\)" | texSpecial | "3"; -- use mathJax instead?
 )
 
 Thing#{Standard,AfterPrint} = x -> afterPrint class x;

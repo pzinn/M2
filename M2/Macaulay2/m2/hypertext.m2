@@ -21,17 +21,17 @@ texLiteralTable := new MutableHashTable
     texLiteralTable#"\t" = "\t"
     texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 				   -- see page 381 of TeX Book
--- the section above is only useful when *not* using \verb
+-- the section above is useful when *not* using \verb
 
 texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
-    texVerbLiteralTable#"!"= ///!{\tt{}!}\verb!/// -- eww, the extra {} is workaround for mathJax bug
-    texVerbLiteralTable#"$"= ///!{\tt $}\verb!/// -- eww ugly fix of #375 of mathJax
+    texVerbLiteralTable#"!" = ///!{\tt{}!}\verb!/// -- eww, the extra {} is workaround for mathJax bug
+    texVerbLiteralTable#"$" = ///!{\tt $}\verb!/// -- eww ugly fix of #375 of mathJax
+    texVerbLiteralTable#"\\"=///!{\tt\backslash}\verb!/// -- eww ugly fix of #375 of mathJax
     texVerbLiteralTable#"\n" = ///!\\\verb!/// -- eww and only works outside of mathJax if using say \begin{gather*} -- but then who cares
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
-texVerbLiteral = s -> replace(///\\)///,///\!\verb!)///, -- eww ugly fix of #375 of mathJax
-concatenate apply(characters s, c -> texVerbLiteralTable#c))
+texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
 
 HALFLINE := ///\vskip 4.75pt
 ///
