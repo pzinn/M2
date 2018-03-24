@@ -130,7 +130,7 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 mathJaxMode=false
 
 Thing#{Standard,Print} = x -> (
-    -- HACK
+    -- HACK. compared to normal output, I don't put and endline before
     if mathJaxMode then << texSpecial | "1";
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
      save := printWidth;
@@ -147,7 +147,7 @@ Thing#{Standard,Print} = x -> (
 	  );
      << endl << oprompt << z << endl;
      printWidth = save;
-     if mathJaxMode then << texSpecial | "2" | oprompt | mathJax x | texSpecial | "3";
+     if mathJaxMode then << texSpecial | "2" | oprompt | mathJax x | "<br/>" | texSpecial | "3";
      )
 
 -- Local Variables:

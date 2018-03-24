@@ -58,7 +58,7 @@ net Command := toString Command := toExternalString Command := f -> (
 texMath BasicList := s -> concatenate(
      if class s =!= List then texMath class s,
     "\\left\\{",
-    between(",",apply(toList s,texMath))
+    between(",\\,",apply(toList s,texMath))
     ,"\\right\\}"
     )
 

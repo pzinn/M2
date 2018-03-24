@@ -1146,8 +1146,8 @@ texSpecial = ascii(30); -- cause why not
 afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
     if mathJaxMode then << texSpecial | "1";
     << endl << o() << " : " << horizontalJoin(net\y) << endl;
--- HACK
-     if mathJaxMode then << texSpecial | "2" | o() | " : \\(" | htmlLiteral concatenate(texMath\y) | "\\)" | texSpecial | "3"; -- use mathJax instead?
+-- HACK. compared to normal output, I don't put and endline before
+     if mathJaxMode then << texSpecial | "2" | o() | " : \\(" | htmlLiteral concatenate(texMath\y) | "\\)<br/>" | texSpecial | "3"; -- use mathJax instead?
 )
 
 Thing#{Standard,AfterPrint} = x -> afterPrint class x;
