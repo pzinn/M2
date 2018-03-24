@@ -1210,7 +1210,7 @@ export {
 
 exportMutable {
 -- begin experimental
-	"texMode",
+	"mathJaxMode",
 -- end experimental
 	"allowableThreads",
 	"applicationDirectorySuffix",

@@ -450,9 +450,6 @@ document {
 	  (describe, PolynomialRing),
 	  (describe, QuotientRing),
 	  (describe, FractionField),
-	  (describe, GaloisField),
-	  (describe, GeneralOrderedMonoid),
-	  (describe, Variety),
 	  (describe, Thing)
 	  },
      Headline => "real description",

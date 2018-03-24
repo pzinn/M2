@@ -1,5 +1,9 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 
+spots  := C -> select(keys C, i -> class i === ZZ)
+union := (x,y) -> keys(set x + set y)
+intersection := (x,y) -> keys(set x * set y)
+
 Resolution = new Type of MutableHashTable
 Resolution.synonym = "resolution"
 toString Resolution := C -> toString raw C

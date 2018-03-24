@@ -127,11 +127,11 @@ scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}
 			      error toString stack(line1,commentGuard line2)));
 		    ))))
 
-texMode=false
+mathJaxMode=false
 
 Thing#{Standard,Print} = x -> (
     -- HACK
-    if texMode then << texSpecial | "1";
+    if mathJaxMode then << texSpecial | "1";
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
      save := printWidth;
      if printWidth != 0 then printWidth = printWidth - #oprompt;
@@ -147,7 +147,7 @@ Thing#{Standard,Print} = x -> (
 	  );
      << endl << oprompt << z << endl;
      printWidth = save;
-     if texMode then << texSpecial | "2" | oprompt | mathJax x | texSpecial | "3";
+     if mathJaxMode then << texSpecial | "2" | oprompt | mathJax x | texSpecial | "3";
      )
 
 -- Local Variables:

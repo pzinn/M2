@@ -1144,10 +1144,10 @@ symbol briefDocumentation <- identity			    -- temporary assignment
 texSpecial = ascii(30); -- cause why not
 
 afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
-    if texMode then << texSpecial | "1";
+    if mathJaxMode then << texSpecial | "1";
     << endl << o() << " : " << horizontalJoin(net\y) << endl;
 -- HACK
-     if texMode then << texSpecial | "2" | o() | " : \\(" | htmlLiteral concatenate(texMath\y) | "\\)" | texSpecial | "3"; -- use mathJax instead?
+     if mathJaxMode then << texSpecial | "2" | o() | " : \\(" | htmlLiteral concatenate(texMath\y) | "\\)" | texSpecial | "3"; -- use mathJax instead?
 )
 
 Thing#{Standard,AfterPrint} = x -> afterPrint class x;
