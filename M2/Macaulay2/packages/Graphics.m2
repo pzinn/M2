@@ -304,7 +304,7 @@ svgObject(Point2D,HashTable) := (mypt,opts) ->
 	(
 	opts= mergeOptions(mergeOptions(opts,possibleSVGOptions#Point2D,"keep"=>"1and2","priority"=>"1"),defaultSVGOptions#Point2D);
 	"<circle "
-	|///cx="///|toString(mypt#0)|///" cy="///|toString(mypt#1)|/// r="///|defaultSVGValues#Point2D#("r")|///" ///
+	|///cx="///|toString(mypt#0)|///" cy="///|toString(mypt#1)|///" r="///|defaultSVGValues#Point2D#("r")|///" ///
 	|concatenate(apply(pairs(opts),x->(x#0|///="///|x#1|///" ///)))
 	|"/>"
 	)
