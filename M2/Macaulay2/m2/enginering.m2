@@ -285,12 +285,9 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 		 then toString getAttribute(F,ReverseDictionary)
 		 else net new FunctionApplication from { frac, last F.baseRings }
 		 )
-     expression FractionField := F -> (Holder {frac}) (expression last F.baseRings)
+--     expression FractionField := F -> (Holder {frac}) (expression last F.baseRings) -- why no ReverseDictionary???
+     expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (Holder {frac}) (expression last F.baseRings)
      describe FractionField := F -> Describe (Holder {frac}) (describe last F.baseRings)
-       texMath FractionField := F -> (
-     	   if hasAttribute(F,ReverseDictionary) then texMath getAttribute(F,ReverseDictionary)
-     	   else texMath Adjacent {frac, last F.baseRings}
-    	   )
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 isHomogeneous EngineRing := R -> isHomogeneous 0_R
@@ -493,13 +490,10 @@ ZZ ? RingElement := (m,y) -> m_(class y) ? y
 
 RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
-toString RingElement := x -> toString expression x
-
-toExternalString RingElement := x -> toExternalFormat expression x
-
-net RingElement := x -> net expression x
-
-texMath RingElement := x -> texMath expression x
+toString RingElement := toString @@ expression
+toExternalString RingElement := toExternalFormat @@ expression
+net RingElement := net @@ expression
+texMath RingElement := texMath @@ expression
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 

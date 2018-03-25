@@ -647,12 +647,18 @@ net Adjacent := net FunctionApplication := m -> (
 texMath Adjacent := texMath FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
+     div := instance(fun,Divide);
+     pfun := if div then strength1 symbol symbol else precedence fun;
      args := m#1;
+     if instance(args,Array) then (p = p-1; div = true; );
      if precedence args >= p -- should we use precedence expression?
-     then if precedence fun > p
-     then concatenate (texMath fun, "\\,", texMath args)
+     then if pfun > p then (
+	 if div
+	 then concatenate (texMath fun, texMath args)
+	 else concatenate (texMath fun,"\\ ",texMath args)
+	 )
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
-     else if precedence fun > p
+     else if pfun > p
      then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
      else concatenate ("\\left(",texMath fun,"\\right)\\left(", texMath args, "\\right)")
      )
@@ -1146,6 +1152,7 @@ tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
 mathJax Thing := x -> concatenate("\\(\\displaystyle\\bbox[padding: 10px 0px]{",htmlLiteral texMath x,"}\\)") -- by default, for MathJax we use tex (as opposed to html)
+--mathJax Thing := x -> concatenate("\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 
 File << Thing := File => (o,x) -> printString(o,net x)
