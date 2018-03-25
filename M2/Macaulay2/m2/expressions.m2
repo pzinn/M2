@@ -760,7 +760,7 @@ isNumber RR :=
 isNumber QQ :=
 isNumber Divide := -- QQ never appears in an expression, so we take care of it this way
 isNumber ZZ := i -> true
-isNumber Holder := i -> isNumber i#1
+isNumber Holder := i -> isNumber i#0
 
 startsWithSymbol = method(TypicalValue => Boolean)
 startsWithSymbol Thing := i -> false
