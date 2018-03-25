@@ -648,11 +648,11 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
      args := m#1;
-     if precedence expression args >= p -- not happy with having to call expression
-     then if precedence expression fun > p
+     if precedence args >= p -- should we use precedence expression?
+     then if precedence fun > p
      then concatenate (texMath fun, "\\,", texMath args)
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
-     else if precedence expression fun > p
+     else if precedence fun > p
      then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
      else concatenate ("\\left(",texMath fun,"\\right)\\left(", texMath args, "\\right)")
      )
@@ -897,7 +897,7 @@ texMath Expression := v -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
-	       if precedence expression term <= p -- not happy with having to call expression
+	       if precedence term <= p -- should we use precedence expression?
 	       then ("{\\left(", texMath term, "\\right)}")
 	       else ("{", texMath term, "}") ) );
      if # v === 0 then (
@@ -932,7 +932,7 @@ html Expression := v -> (
 
 texMath Minus := v -> (
      term := v#0;
-     if precedence expression term < precedence v -- not happy with having to call expression
+     if precedence term < precedence v -- should we use precedence expression?
      then "{-(" | texMath term | ")}"
      else "{-" | texMath term | "}"
      )
@@ -980,7 +980,7 @@ texMath Sum := v -> (
 		    then ( seps#i = "-"; v#i#0 )
 		    else v#i ));
 	  names := apply(n, i -> (
-		    if precedence expression v#i <= p -- not happy with having to call expression
+		    if precedence v#i <= p -- should we use precedence expression?
 		    then "(" | texMath v#i | ")"
 		    else texMath v#i ));
 	  concatenate mingle ( seps, names )))
@@ -1013,7 +1013,7 @@ texMath Product := v -> (
 	  seps := apply (n-1, i-> if nums#i and nums#(i+1) then "\\cdot " else "");
      	  boxes := apply(v,
 		    term -> (
-			 if precedence expression term <= p and class expression term =!= Divide -- not happy with having to call expression
+			 if precedence term <= p and class expression term =!= Divide -- should we use precedence expression?
 			 then "\\left(" | texMath term | "\\right)"
 			 else texMath term
 			 )
@@ -1044,15 +1044,15 @@ texMath Power := v -> (
 	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
-	  if precedence expression v#0 <  p then x = "\\left({" | x | "}\\right)"; -- not happy with having to call expression
+	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)"; -- should we use precedence expression?
 	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> ( -- there is a precedence issue, compare with net Superscript
 --     p := precedence v;
      x := texMath v#0;
      if class v#1 === Sequence then y:=concatenate between(",", apply(v#1,texMath)) else y = texMath v#1;
---     if precedence expression v#0 <  p then x = "\\left(" | x | "\\right)"; -- not happy with having to call expression
-     if precedence expression v#0 <  prec symbol ^ then x = "\\left(" | x | "\\right)"; -- not happy with having to call expression
+--     if precedence v#0 <  p then x = "\\left(" | x | "\\right)"; -- should we use precedence expression?
+     if precedence v#0 <  prec symbol ^ then x = "\\left(" | x | "\\right)"; -- should we use precedence expression?
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
 html Superscript := v -> (
@@ -1145,7 +1145,7 @@ texMath Symbol := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
-mathJax Thing := x -> concatenate("\\(\\displaystyle\\vphantom{\\Bigg|} ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
+mathJax Thing := x -> concatenate("\\(\\displaystyle\\bbox[padding: 10px 0px]{",htmlLiteral texMath x,"}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 
 File << Thing := File => (o,x) -> printString(o,net x)

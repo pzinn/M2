@@ -40,13 +40,15 @@ toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
 
+
 texMath PolynomialRing := R -> (
      if R.?texMath then return R.texMath;
      if hasAttribute(R,ReverseDictionary) then return texMath getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (texMath k) | texMath(new T from R.generatorExpressions)
+     (texMath k) | texMath(new T from R.generatorExpressions) -- subtle difference with texMath @@ expression: no space between base ring and [...]
 )
+
 
 net PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
