@@ -705,15 +705,14 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	       (x,y) -> promote(x,S) / y
 	       )
 	  else if member(S,R.baseRings) then (
-	       (x,y) -> x / promote(y,R)
+	       (x,y) -> promote(1/y,R) * x
 	       )
 	  else error "expected pair to have a method for '/'"
 	  );
      f / g)
 frac0 = (f,g) -> f/g
 Number / RingElement := frac0 @@ promoteleftexact
---RingElement / Number := (f,g) -> try (1/g)*f else frac0@@promoterightexact(f,g)
-RingElement / Number := (f,g) -> if member(QQ,(ring f).baseRings) then (1/g)*f else frac0@@promoterightexact(f,g)
+RingElement / Number := (f,g) -> try (1/g)*f else frac0@@promoterightexact(f,g)
 InexactNumber / RingElement := frac0 @@ promoteleftinexact
 RingElement / InexactNumber := (f,g) -> (1/g) * f
 
