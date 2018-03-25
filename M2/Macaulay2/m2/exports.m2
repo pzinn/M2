@@ -14,6 +14,8 @@ export {
 	"mathJax",
 	"LeftArrow",
 	"RightArrow",
+	"DoubleLeftArrow",
+	"DoubleRightArrow",
 -- end experimental
     "LocalRing",
     "localRing",

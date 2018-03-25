@@ -133,8 +133,8 @@ net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
-net Option := z -> net z#0 | " => " | net z#1
-texMath Option := z -> texMath z#0 | "\\Rightarrow " | texMath z#1
+net Option := z -> net expression z
+texMath Option := z -> texMath expression z
 
 Net == String := (n,s) -> (				    -- should install in engine
      height n === 1 and depth n === 0 and width n === length s and n#0 === s

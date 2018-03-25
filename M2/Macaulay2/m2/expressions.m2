@@ -55,7 +55,8 @@ Expression#operator = ""
 
 value' = method(Dispatch => Thing)
 --value' Sequence := x -> apply(x,value')
-value' BasicList := x -> new class x from apply(toList x,value')
+--value' BasicList := x -> new class x from apply(toList x,value')
+value' VisibleList := x -> apply(x,value')
 value' Thing := identity
 
 -- with the following line we have no way to distinguish between "hold symbol x" and "hold x" when x has a value:
@@ -650,7 +651,8 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      args := m#1;
-     if instance(args,Array) then (p = p-1; div = true; );
+--     if instance(args,Array) then (p = p-1; div = true; );
+     if instance(args,VisibleList) then (p = p-1; div = true; );
      if precedence args >= p -- should we use precedence expression?
      then if pfun > p then (
 	 if div
@@ -1215,15 +1217,34 @@ toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- to deal with left arrows in AfterPrint
-LeftArrow = new Type of Expression;
+LeftArrow = new HeaderType of Expression;
 toString LeftArrow := x-> toString(x#0) | " <--- " | toString(x#1)
 net LeftArrow := x-> net(x#0) | " <--- " | net(x#1)
 texMath LeftArrow := x -> texMath(x#0) | " \\longleftarrow " | texMath(x#1)
+-- value?
 -- might as well...
-RightArrow = new Type of Expression;
+RightArrow = new HeaderType of Expression;
 toString RightArrow := x-> toString(x#0) | " ---> " | toString(x#1)
 net RightArrow := x-> net(x#0) | " ---> " | net(x#1)
 texMath RightArrow := x -> texMath(x#0) | " \\longrightarrow " | texMath(x#1)
+-- value?
+-- and that...
+DoubleRightArrow = new HeaderType of Expression;
+toString DoubleRightArrow := x-> toString(x#0) | " => " | toString(x#1)
+net DoubleRightArrow := x-> net(x#0) | " => " | net(x#1)
+texMath DoubleRightArrow := x -> texMath(x#0) | " \\Rightarrow " | texMath(x#1)
+value' DoubleRightArrow := x -> new Option from { x#0, x#1 }
+-- and that...
+DoubleLeftArrow = new HeaderType of Expression;
+toString DoubleLeftArrow := x-> toString(x#0) | " => " | toString(x#1)
+net DoubleLeftArrow := x-> net(x#0) | " => " | net(x#1)
+texMath DoubleLeftArrow := x -> texMath(x#0) | " \\Leftarrow " | texMath(x#1)
+-- value?
+
+-- so we can do that, for ex
+expression Option := z -> DoubleRightArrow { z#0, z#1 }
+
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
