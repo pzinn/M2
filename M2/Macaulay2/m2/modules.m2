@@ -329,7 +329,7 @@ degrees Module := N -> if N.?degrees then N.cache.degrees else N.cache.degrees =
 Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 
 Ring ^ List := Module => (
-     (R,degs) -> ( 
+     (R,degs) -> (
 	  degs = splice degs;
 	  if R.?RawRing then (
 	       -- check the args
