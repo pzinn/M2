@@ -54,7 +54,8 @@ expression Expression := identity
 Expression#operator = ""
 
 value' = method(Dispatch => Thing)
-value' Sequence := x -> apply(x,value')
+--value' Sequence := x -> apply(x,value')
+value' BasicList := x -> new class x from apply(toList x,value')
 value' Thing := identity
 
 -- with the following line we have no way to distinguish between "hold symbol x" and "hold x" when x has a value:
@@ -69,8 +70,15 @@ value Expression := value'
 Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
+Describe = new WrapperType of Expression
+Describe.synonym = "describe"
 describe = method()
-describe Thing := expression
+describe Thing := x -> Describe expression x
+net Describe := x -> net x#0
+toString Describe := x -> toString x#0
+value' Describe := x -> value' x#0
+texMath Describe := x -> texMath x#0
+Describe#{Standard,AfterPrint} = identity -- all this to suppress "o13: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
 --      assert( #x === 2 );
@@ -486,7 +494,7 @@ Expression     ..< Thing          := (x,y) -> BinaryOperation{symbol ..<,x,y}
 -----------------------------------------------------------------------------
 --value' Holder2 := x -> x#1
 --value' Holder := x -> x#1
-value' Holder := x -> x#0
+value' Holder := x -> value' x#0 -- !!!
 value' OneExpression := v -> 1
 value' ZeroExpression := v -> 0
 -----------------------------------------------------------------------------
@@ -1084,6 +1092,12 @@ texMath SparseMonomialVectorExpression := v -> (
 	  hold concatenate("<",toString i,">"))
      )
 
+texMath VerticalList := s -> concatenate(
+    "\\left\\{\\begin{array}{l}",
+    between("\\\\",apply(toList s,texMath))
+    ,"\\end{array}\\right\\}"
+    )
+
 texMath MatrixExpression := m -> (
 --     s := if m#?0 then (
 --     	  ncols := #m#0;
@@ -1131,7 +1145,7 @@ texMath Symbol := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
-mathJax Thing := x -> concatenate("\\(\\displaystyle\\vphantom{\\Big|} ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
+mathJax Thing := x -> concatenate("\\(\\displaystyle\\vphantom{\\Bigg|} ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1146,11 +1160,15 @@ texSpecial = ascii(30); -- cause why not
 afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
     if mathJaxMode then << texSpecial | "1";
     << endl << o() << " : " << horizontalJoin(net\y) << endl;
--- HACK. compared to normal output, I don't put and endline before
-     if mathJaxMode then << texSpecial | "2" | o() | " : \\(" | htmlLiteral concatenate(texMath\y) | "\\)<br/>" | texSpecial | "3"; -- use mathJax instead?
+-- HACK. compared to normal output, I don't put an endline before
+     if mathJaxMode then (
+	 << texSpecial | "3";
+	 z := htmlLiteral concatenate(texMath\y);
+	 << texSpecial | "2" | o() | " : \\(" | z | "\\)<br/>" | texSpecial | "3"; -- use mathJax instead?
+	 )
 )
 
-Thing#{Standard,AfterPrint} = x -> afterPrint class x;
+Thing#{Standard,AfterPrint} = x -> afterPrint class x
 
 -- Type#{Standard,AfterPrint} = x -> (
 --      << endl;				  -- double space
@@ -1173,7 +1191,7 @@ Expression#{Standard,AfterPrint} = x -> afterPrint(Expression, " of class ", cla
 
 expression VisibleList := v -> new Holder from {apply(v,expression)}
 --expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
-expression Thing := x -> new Holder from { x } -- very experimental change
+expression Thing := x -> new Holder from { x } -- radical change
 expression Symbol := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------

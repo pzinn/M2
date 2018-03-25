@@ -286,7 +286,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 		 else net new FunctionApplication from { frac, last F.baseRings }
 		 )
      expression FractionField := F -> (Holder {frac}) (expression last F.baseRings)
-     describe FractionField := F -> (Holder {frac}) (describe last F.baseRings)
+     describe FractionField := F -> Describe (Holder {frac}) (describe last F.baseRings)
        texMath FractionField := F -> (
      	   if hasAttribute(F,ReverseDictionary) then texMath getAttribute(F,ReverseDictionary)
      	   else texMath Adjacent {frac, last F.baseRings}

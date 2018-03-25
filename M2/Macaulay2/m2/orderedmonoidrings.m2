@@ -35,7 +35,7 @@ expression PolynomialRing := R -> (
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
-     (expression k) (expressionMonoid monoid R))
+     Describe (expression k) (expressionMonoid monoid R))
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
@@ -400,7 +400,7 @@ texMath FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then texMath getAttribute(R,ReverseDictionary)
      else texMath FunctionApplication {fact, last R.baseRings}
     );
-describe FactPolynomialRing := F -> (Holder {fact}) (describe last F.baseRings);
+describe FactPolynomialRing := F -> Describe (Holder {fact}) (describe last F.baseRings);
 options FactPolynomialRing := R -> options(monoid R)++R.Options;
 fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
