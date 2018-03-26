@@ -25,10 +25,12 @@ texLiteralTable := new MutableHashTable
 
 texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
-    texVerbLiteralTable#"!" = ///!{\tt{}!}\verb!/// -- eww, the extra {} is workaround for mathJax bug
-    texVerbLiteralTable#"$" = ///!{\tt $}\verb!/// -- eww ugly fix of #375 of mathJax
-    texVerbLiteralTable#"\\"=///!{\tt\backslash}\verb!/// -- eww ugly fix of #375 of mathJax
-    texVerbLiteralTable#"\n" = ///!\\\verb!/// -- eww and only works outside of mathJax if using say \begin{gather*} -- but then who cares
+    texVerbLiteralTable#"!" = ///!\texttt{!}\verb!///
+    --    texVerbLiteralTable#"$" = ///!\texttt{\$}\verb!/// -- eww ugly fix of #375 of mathJax. not needed if not enclosing using $
+    texVerbLiteralTable#"\\"= ///!\verb!\!\verb!/// -- eww ugly fix of #375 of mathJax.
+    -- unfortunately the next 2 (needed if the string happens to be in a {} group) may result in wrong font in normal LaTeX depending on encoding, see https://stackoverflow.com/questions/2339651/how-to-get-real-braces-in-ttfont-in-latex
+    texVerbLiteralTable#"{" =///!\texttt{\{}\verb!/// -- eww ugly fix of #375 of mathJax. 
+    texVerbLiteralTable#"}" =///!\texttt{\}}\verb!/// -- eww ugly fix of #375 of mathJax
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
 texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
@@ -114,8 +116,8 @@ texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
 texMath ScriptedFunctor := lookup(texMath,Type)
 -- for a slightly different style:
 -*
-texMath Type := x -> if x.?texMath then x.texMath else "{\\sf\\text{" | toString x | "}}"
-texMath Function := x -> "{\\sf\\text{" | toString x | "}}"
+texMath Type := x -> if x.?texMath then x.texMath else "{\\textsf{" | toString x | "}}"
+texMath Function := x -> "{\\textsf{" | toString x | "}}"
 *-
 
 -- html HashTable := x -> html expression x
