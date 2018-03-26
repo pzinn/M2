@@ -411,11 +411,13 @@ toExternalString Option := z -> concatenate splice (
      " => ",
      if precedence z > precedence z#1 then ("(",toExternalString z#1,")") else toExternalString z#1
      )
+-*
 toString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toString z#0,")") else toString z#0,
      " => ",
      if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
      )
+*-
 
 ultimate = method()
 ultimate(Function,Thing) := (f,x) -> (

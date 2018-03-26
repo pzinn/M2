@@ -133,8 +133,6 @@ net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
 File << Thing  := File => (o,s) -> o << toString s		    -- provisional
 -----------------------------------------------------------------------------
-net Option := z -> net expression z
-texMath Option := z -> texMath expression z
 
 Net == String := (n,s) -> (				    -- should install in engine
      height n === 1 and depth n === 0 and width n === length s and n#0 === s
@@ -196,7 +194,7 @@ net MutableList := x -> (
      else horizontalJoin ( net class x, "{}")
      )
 net HashTable := x -> (
-     horizontalJoin flatten ( 
+     horizontalJoin flatten (
      	  net class x,
 	  "{", 
 	  -- the first line prints the parts vertically, second: horizontally

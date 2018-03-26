@@ -1241,10 +1241,17 @@ net DoubleLeftArrow := x-> net(x#0) | " => " | net(x#1)
 texMath DoubleLeftArrow := x -> texMath(x#0) | " \\Leftarrow " | texMath(x#1)
 -- value?
 
--- so we can do that, for ex
+-- so we can do that
 expression Option := z -> DoubleRightArrow { z#0, z#1 }
+net Option := net @@ expression
+texMath Option := texMath @@ expression
+toString Option := toString @@ expression -- we should determine the priority
 
-
+-- moved from set.m2
+expression Set := x -> Adjacent {set, expression (sortByName keys x)}
+toString Set := toString @@ expression
+net Set := net @@ expression
+texMath Set := x -> if x.?texMath then x.texMath else texMath expression x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

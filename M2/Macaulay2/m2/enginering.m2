@@ -285,9 +285,9 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 		 then toString getAttribute(F,ReverseDictionary)
 		 else net new FunctionApplication from { frac, last F.baseRings }
 		 )
---     expression FractionField := F -> (Holder {frac}) (expression last F.baseRings) -- why no ReverseDictionary???
-     expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else (Holder {frac}) (expression last F.baseRings)
-     describe FractionField := F -> Describe (Holder {frac}) (describe last F.baseRings)
+--     expression FractionField := F -> Adjacent {frac, expression last F.baseRings} -- why no ReverseDictionary???
+     expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else Adjacent{frac, expression last F.baseRings}
+     describe FractionField := F -> Describe Adjacent {frac, describe last F.baseRings}
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 isHomogeneous EngineRing := R -> isHomogeneous 0_R

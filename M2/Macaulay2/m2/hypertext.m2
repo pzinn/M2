@@ -109,6 +109,11 @@ texMath HashTable := x -> if x.?texMath then x.texMath else (
      	  ))
 texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
 texMath ScriptedFunctor := lookup(texMath,Type)
+-- for a slightly different style:
+-*
+texMath Type := x -> if x.?texMath then x.texMath else "{\\sf\\text{" | toString x | "}}"
+texMath Function := x -> "{\\sf\\text{" | toString x | "}}"
+*-
 
 -- html HashTable := x -> html expression x
 
