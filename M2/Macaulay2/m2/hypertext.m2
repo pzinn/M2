@@ -93,8 +93,11 @@ info HEADER3 := Hop(info,"-")
 html String := htmlLiteral
 tex String := texLiteral
 --texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
-texMath String := s -> replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
-
+texMath String := s -> (
+    ss := separate s;
+    if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
+    else texMath stack ss
+    )
 info String := identity
 
 texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")

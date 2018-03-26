@@ -1058,7 +1058,7 @@ texMath Power := v -> (
 texMath Subscript := texMath Superscript := v -> ( -- there is a precedence issue, compare with net Superscript
 --     p := precedence v;
      x := texMath v#0;
-     if class v#1 === Sequence then y:=concatenate between(",", apply(v#1,texMath)) else y = texMath v#1;
+     if class v#1 === Sequence then y:=demark(",", apply(v#1,texMath)) else y = texMath v#1;
 --     if precedence v#0 <  p then x = "\\left(" | x | "\\right)"; -- should we use precedence expression?
      if precedence v#0 <  prec symbol ^ then x = "\\left(" | x | "\\right)"; -- should we use precedence expression?
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))

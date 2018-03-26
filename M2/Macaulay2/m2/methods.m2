@@ -6,7 +6,7 @@ between = (m,v) -> mingle(v,#v-1:m)			    -- provisional
 assert( class toString === Symbol )
 toString = x -> (					    -- provisional
      if hasAttribute(x,ReverseDictionary) then simpleToString getAttribute(x,ReverseDictionary)
-     else if class x === Net then concatenate between("\n",unstack x)
+     else if class x === Net then demark("\n",unstack x)
      else simpleToString x
      )
 silentRobustString = (wid,sec,y) -> simpleToString y

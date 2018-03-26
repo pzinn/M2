@@ -89,7 +89,7 @@ texMath CoherentSheaf := F -> (
     	else if numgens M === 0 then "0"
     	else (
 	    X := variety F;
-	  concatenate between(" \\oplus ",
+	  demark(" \\oplus ",
 	       apply(runLengthEncoding (- degrees F),
 		    (n,d) -> (
 			 texMath new Superscript from {OO_X, n},

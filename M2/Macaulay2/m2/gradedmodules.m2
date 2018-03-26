@@ -43,7 +43,7 @@ texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
 texMath GradedModule := C -> (
      s := sort spots C;
      if # s === 0 then "0"
-     else concatenate between("\\quad ",apply(s,i->texUnder(texMath C_i,i)))
+     else demark("\\quad ",apply(s,i->texUnder(texMath C_i,i)))
       )
 
 length GradedModule := (M) -> (
