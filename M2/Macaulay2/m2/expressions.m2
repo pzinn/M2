@@ -1149,7 +1149,8 @@ print = x -> (<< net x << endl;)
 -----------------------------------------------------------------------------
 texMath RR := toString
 texMath ZZ := toString
-texMath Symbol := toString
+--texMath Symbol := toString
+texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
@@ -1200,8 +1201,8 @@ Expression#{Standard,AfterPrint} = x -> afterPrint(Expression, " of class ", cla
 -----------------------------------------------------------------------------
 
 expression VisibleList := v -> new Holder from {apply(v,expression)}
---expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
-expression Thing := x -> new Holder from { x } -- radical change
+expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
+--expression Thing := x -> new Holder from { x } -- test
 expression Symbol := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
