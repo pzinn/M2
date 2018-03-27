@@ -218,7 +218,8 @@ net Type := X -> (
 	  );
      horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
-texMath Net := n -> "\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\[-2mm]") | "\\end{array}"
+--texMath Net := n -> "\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\[-2mm]") | "\\end{array}"
+texMath Net := n -> "\\raise"|toString (2.365*(-depth n+height n-1))|"mm\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\[-2mm]") | "\\end{array}"
 
 -----------------------------------------------------------------------------
 
