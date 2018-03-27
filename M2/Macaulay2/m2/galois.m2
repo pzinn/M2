@@ -3,13 +3,12 @@
 GaloisField = new Type of EngineRing
 GaloisField.synonym = "Galois field"
 
-toExternalString GaloisField := k -> toString expression k
-toString GaloisField := k -> (
-     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
-     else toExternalString k)
-net GaloisField := k -> (
-     if hasAttribute(k,ReverseDictionary) then toString getAttribute(k,ReverseDictionary)
-     else net expression k)
+toExternalString GaloisField := k -> toString describe k
+toString GaloisField := toString @@ expression
+net GaloisField := net @@ expression
+expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else new FunctionApplication from { GF, F.order }
+describe GaloisField := F -> Description new FunctionApplication from { GF, F.order }
+--texMath GaloisField := F -> "{\\mathbb F}_{" | F.order | "}"
 
 precision GaloisField := F -> infinity
 
@@ -37,8 +36,6 @@ GF = method (
 	  }
      )
 
-expression GaloisField := F -> new FunctionApplication from { GF, F.order }
-texMath GaloisField := F -> "{\\mathbb F}_{" | F.order | "}"
 
 lastp := 2
 
@@ -237,6 +234,7 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.degree = n;
      F.order = p^n;
      F.frac = F;
+--     F.texMath ="{\\mathbb F}_{" | F.order | "}"; 
      F.generators = apply(generators S, m -> promote(m,F)); -- this will be wrong if S is a tower
      if S.?generatorSymbols then F.generatorSymbols = S.generatorSymbols;
      if S.?generatorExpressions then F.generatorExpressions = (

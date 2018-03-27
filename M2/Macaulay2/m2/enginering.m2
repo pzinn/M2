@@ -239,7 +239,7 @@ reduce := (r,s) -> (
      (a,b))
 
 toString EngineRing := R -> if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary) else toString R.RawRing
-texMath EngineRing := R -> if R.?texMath then return R.texMath else if hasAttribute(R,ReverseDictionary) then return texMath getAttribute(R,ReverseDictionary) else texMath expression R
+texMath EngineRing := R -> if R.?texMath then R.texMath else if hasAttribute(R,ReverseDictionary) then texMath getAttribute(R,ReverseDictionary) else texMath expression R
 
 ZZ _ EngineRing := 
 RR _ EngineRing := RingElement => (i,R) -> new R from i_(R.RawRing)
@@ -287,7 +287,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 		 )
 --     expression FractionField := F -> Adjacent {frac, expression last F.baseRings} -- why no ReverseDictionary???
      expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else Adjacent{frac, expression last F.baseRings}
-     describe FractionField := F -> Describe Adjacent {frac, describe last F.baseRings}
+     describe FractionField := F -> Description Adjacent {frac, describe last F.baseRings}
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 isHomogeneous EngineRing := R -> isHomogeneous 0_R

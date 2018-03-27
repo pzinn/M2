@@ -54,7 +54,6 @@ expression Expression := identity
 Expression#operator = ""
 
 value' = method(Dispatch => Thing)
---value' Sequence := x -> apply(x,value')
 --value' BasicList := x -> new class x from apply(toList x,value')
 value' VisibleList := x -> apply(x,value')
 value' Thing := identity
@@ -71,15 +70,15 @@ value Expression := value'
 Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
-Describe = new WrapperType of Expression
-Describe.synonym = "describe"
+Description = new WrapperType of Expression
+Description.synonym = "describe"
 describe = method()
-describe Thing := x -> Describe expression x
-net Describe := x -> net x#0
-toString Describe := x -> toString x#0
-value' Describe := x -> value' x#0
-texMath Describe := x -> texMath x#0
-Describe#{Standard,AfterPrint} = identity -- all this to suppress "o13: class" thing
+describe Thing := x -> Description expression x
+net Description := x -> net x#0
+toString Description := x -> toString x#0
+value' Description := x -> value' x#0
+texMath Description := x -> texMath x#0
+Description#{Standard,AfterPrint} = identity -- all this to suppress "o13: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
 --      assert( #x === 2 );
@@ -1149,12 +1148,18 @@ print = x -> (<< net x << endl;)
 -----------------------------------------------------------------------------
 texMath RR := toString
 texMath ZZ := toString
---texMath Symbol := toString
-texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
+--texMath Symbol := toString -- the simplest version
+-- next version is a horrible hack
+--texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
+texVariable := x -> (
+    if #x === 2 and letters#?(x#0) and x#0 === x#1 then return "{\\mathbb "|x#0|"}"; -- effectively, makes ZZ.texMath obsolete
+    if #x > 3 and substring(x,-3) === "bar" then return "\\bar{"|texVariable substring(x,0,#x-3)|"}";
+    x
+    )
+texMath Symbol := x -> texVariable toString x;
 
---mathJax Thing := x -> concatenate("\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
 mathJax Thing := x -> concatenate("\\(\\displaystyle\\bbox[padding: 10px 0px]{",htmlLiteral texMath x,"}\\)") -- by default, for MathJax we use tex (as opposed to html)
 --mathJax Thing := x -> concatenate("\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
@@ -1235,7 +1240,7 @@ DoubleRightArrow = new HeaderType of Expression;
 toString DoubleRightArrow := x-> toString(x#0) | " => " | toString(x#1)
 net DoubleRightArrow := x-> net(x#0) | " => " | net(x#1)
 texMath DoubleRightArrow := x -> texMath(x#0) | " \\Rightarrow " | texMath(x#1)
-value' DoubleRightArrow := x -> new Option from { x#0, x#1 }
+value' DoubleRightArrow := x -> new Option from { value' x#0, value' x#1 }
 -- and that...
 DoubleLeftArrow = new HeaderType of Expression;
 toString DoubleLeftArrow := x-> toString(x#0) | " => " | toString(x#1)
