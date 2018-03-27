@@ -218,9 +218,10 @@ net Type := X -> (
 	  );
      horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
---texMath Net := n -> "\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\[-2mm]") | "\\end{array}"
-texMath Net := n -> "\\raise"|toString (2.365*(-depth n+height n-1))|"mm\\begin{array}{l}" | concatenate apply(unstack n,x->texMath x | "\\\\[-2mm]") | "\\end{array}"
-
+-- this will fail for very big nets in mathJax. also, the [-2mm] effect is somewhat unpredictable
+texMath Net := n -> "\\raise"|toString (2.65*(-depth n+height n-1))|"mm\\begin{array}{l}" | concatenate apply(unstack n,x->"\\vphantom{\\big|}" | texMath x | "\\\\[-2mm]") | "\\end{array}"
+--so we do this instead:
+mathJax Net := n -> "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | ///</span>///
 -----------------------------------------------------------------------------
 
 netList = method(Options => {

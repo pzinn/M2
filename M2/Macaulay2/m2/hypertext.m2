@@ -100,6 +100,7 @@ texMath String := s -> (
     if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
     else texMath stack ss
     )
+mathJax String := lookup(mathJax,Thing)
 info String := identity
 
 texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
