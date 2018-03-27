@@ -71,14 +71,14 @@ Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
 Description = new WrapperType of Expression
-Description.synonym = "describe"
+Description.synonym = "description"
 describe = method()
 describe Thing := x -> Description expression x
 net Description := x -> net x#0
 toString Description := x -> toString x#0
 value' Description := x -> value' x#0
 texMath Description := x -> texMath x#0
-Description#{Standard,AfterPrint} = identity -- all this to suppress "o13: class" thing
+Description#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
 --      assert( #x === 2 );
