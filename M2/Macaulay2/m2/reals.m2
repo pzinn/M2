@@ -288,8 +288,6 @@ toString ComplexField := R -> concatenate("CC_",toString R.precision)
 
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
-texMath RealField := R -> texMath new Subscript from {RR, R.precision}
-texMath ComplexField := R -> texMath new Subscript from {CC, R.precision}
 
 expression RR := x -> (
      if x < 0 
