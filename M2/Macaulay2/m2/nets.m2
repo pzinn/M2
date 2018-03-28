@@ -218,10 +218,26 @@ net Type := X -> (
 	  );
      horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
--- this will fail for very big nets in mathJax. also, the [-2mm] effect is somewhat unpredictable
-texMath Net := n -> "\\raise"|toString (2.65*(-depth n+height n-1))|"mm\\begin{array}{l}" | concatenate apply(unstack n,x->"\\vphantom{\\big|}" | texMath x | "\\\\[-2mm]") | "\\end{array}"
+-- this truncates very big nets because of mathJax
+maxlen := 3000; -- randomly chosen
+texMath Net := n -> (
+    dep := depth n; hgt := height n;
+    s:="";
+    len:=0; i:=0;
+    scan(unstack n, x->(
+	    i=i+1;
+	    len=len+#x;
+	    if i<#n and len>maxlen then (
+		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-2mm]";
+		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
+		break
+		);
+	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-2mm]";
+	    ));
+    "\\raise"|toString (2.65*(-dep+hgt-1))|"mm\\begin{array}{l}" | s | "\\end{array}"
+    )
 --so we do this instead:
-mathJax Net := n -> "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | ///</span>///
+mathJax Net := n -> "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | "</span>"
 -----------------------------------------------------------------------------
 
 netList = method(Options => {
