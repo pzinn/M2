@@ -1105,17 +1105,17 @@ texMath VerticalList := s -> concatenate(
     ,"\\end{array}\\right\\}"
     )
 
+
 texMath MatrixExpression := m -> (
---     s := if m#?0 then (
---     	  ncols := #m#0;
---	  if ncols > 10 then (///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///));
-     concatenate(
---	  "{",s,
-     	  ///\begin{pmatrix}///,newline,
-     	  apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
-     	  ///\end{pmatrix}///,
---        "}",	  
-	  ))
+     s := if m#?0 then (
+     	  ncols := #m#0;
+     	  concatenate(
+     	      ///\left(\begin{array}{@{}*{///,toString ncols,///}c@{}}///|newline,
+     	      apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
+     	      ///\end{array}\right)///
+	  )
+      )
+  )
 
 ctr := 0
 showTex = method(
