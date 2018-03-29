@@ -577,16 +577,18 @@ binaryOperatorFunctions := new HashTable from {
 
 binaryTexMath := new HashTable from {
     symbol .. => "{.}{.}",
-    symbol => => "\\Rightarrow",
-    symbol <= => "\\Leftarrow",
-    symbol ==> => "\\Longrightarrow",
-    symbol <== => "\\Longleftarrow",
-    symbol <==> => "\\Longleftrightarrow",
-    symbol ** => "\\otimes",
-    symbol ++ => "\\oplus",
-    symbol & => "\\&",
-    symbol != => "\\ne",
-    symbol == => "="
+    symbol => => "\\Rightarrow ",
+    symbol <= => "\\Leftarrow ",
+    symbol ==> => "\\Longrightarrow ",
+    symbol <== => "\\Longleftarrow ",
+    symbol <==> => "\\Longleftrightarrow ",
+    symbol ** => "\\otimes ",
+    symbol ++ => "\\oplus ",
+    symbol & => "\\& ",
+    symbol != => "\\ne ",
+    symbol == => "=",
+    symbol -> => "\\rightarrow ",
+    symbol <- => "\\leftarrow "
     }
 
 texMath Keyword := x -> if binaryTexMath#?x then binaryTexMath#x else toString x;
