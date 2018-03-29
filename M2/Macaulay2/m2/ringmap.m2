@@ -136,7 +136,7 @@ map(Ring,Ring) := RingMap => opts -> (S,R) -> map(S,R,{},opts)
 
 Ring#id = (R) -> map(R,R,vars R)
 
-RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> afterPrint(class f," ",new LeftArrow from {target f,source f})
+RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> afterPrint(class f," ",BinaryOperation {symbol <==,target f,source f})
 
 RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;

@@ -12,10 +12,9 @@ export {
 	"concatRows",
 	"concatCols",
 	"mathJax",
-	"LeftArrow",
-	"RightArrow",
-	"DoubleLeftArrow",
-	"DoubleRightArrow",
+	"Describe",
+--	"-->",
+--	"<--",
 -- end experimental
     "LocalRing",
     "localRing",

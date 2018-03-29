@@ -37,7 +37,7 @@ raw GeneralOrderedMonoid := M -> M.RawMonoid
 
 rle = method(Dispatch => Thing)
 rle VisibleList := x -> apply(runLengthEncode x, y -> if instance(y,Holder) then hold rle y#0 else y)
-rle Option := x -> DoubleRightArrow {x#0, rle x#1}
+rle Option := x -> x#0 => rle x#1
 rle Thing := identity
 
 fixbasename = s -> if instance(s,String) then getSymbol s else s

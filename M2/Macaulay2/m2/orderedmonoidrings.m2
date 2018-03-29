@@ -36,7 +36,7 @@ expression PolynomialRing := R -> (
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
-     Description (expression k) (expressionMonoid monoid R)) -- not describe k, we only expand one level
+     Describe (expression k) (expressionMonoid monoid R)) -- not describe k, we only expand one level
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
@@ -388,7 +388,7 @@ expression FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      Adjacent {fact, expression last R.baseRings}
      );
-describe FactPolynomialRing := R -> Description Adjacent {fact, describe last R.baseRings}
+describe FactPolynomialRing := R -> Describe Adjacent {fact, describe last R.baseRings}
 options FactPolynomialRing := R -> options(monoid R)++R.Options;
 fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 

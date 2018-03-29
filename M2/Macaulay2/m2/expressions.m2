@@ -70,15 +70,15 @@ value Expression := value'
 Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
-Description = new WrapperType of Expression
-Description.synonym = "description"
+Describe = new WrapperType of Expression
+Describe.synonym = "description"
 describe = method()
-describe Thing := x -> Description expression x
-net Description := x -> net x#0
-toString Description := x -> toString x#0
-value' Description := x -> value' x#0
-texMath Description := x -> texMath x#0
-Description#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
+describe Thing := x -> Describe expression x
+net Describe := x -> net x#0
+toString Describe := x -> toString x#0
+value' Describe := x -> value' x#0
+texMath Describe := x -> texMath x#0
+Describe#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
 --      assert( #x === 2 );
@@ -1177,7 +1177,8 @@ texVariable := x -> (
     )
 texMath Symbol := x -> texVariable toString x;
 
-mathJax Thing := x -> concatenate("\\(\\displaystyle\\bbox[padding: 10px 0px]{",htmlLiteral texMath x,"}\\)") -- by default, for MathJax we use tex (as opposed to html)
+mathJax Thing := x -> concatenate("\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
+--mathJax Thing := x -> concatenate("\\(\\displaystyle\\bbox[padding: 10px 0px]{",htmlLiteral texMath x,"}\\)") -- by default, for MathJax we use tex (as opposed to html)
 --mathJax Thing := x -> concatenate("\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 
@@ -1224,7 +1225,6 @@ Expression#{Standard,AfterPrint} = x -> afterPrint(Expression, " of class ", cla
 
 expression VisibleList := v -> new Holder from {apply(v,expression)}
 expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
---expression Thing := x -> new Holder from { x } -- test
 expression Symbol := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
@@ -1240,34 +1240,8 @@ FilePosition.synonym = "file position"
 toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1,":",toString i#2)
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
--- rewrite all that's below in terms of binary operators
--- to deal with left arrows in AfterPrint
-LeftArrow = new HeaderType of Expression;
-toString LeftArrow := x-> toString(x#0) | " <--- " | toString(x#1)
-net LeftArrow := x-> net(x#0) | " <--- " | net(x#1)
-texMath LeftArrow := x -> texMath(x#0) | " \\longleftarrow " | texMath(x#1)
--- value?
--- might as well...
-RightArrow = new HeaderType of Expression;
-toString RightArrow := x-> toString(x#0) | " ---> " | toString(x#1)
-net RightArrow := x-> net(x#0) | " ---> " | net(x#1)
-texMath RightArrow := x -> texMath(x#0) | " \\longrightarrow " | texMath(x#1)
--- value?
--- and that...
-DoubleRightArrow = new HeaderType of Expression;
-toString DoubleRightArrow := x-> toString(x#0) | " => " | toString(x#1)
-net DoubleRightArrow := x-> net(x#0) | " => " | net(x#1)
-texMath DoubleRightArrow := x -> texMath(x#0) | " \\Rightarrow " | texMath(x#1)
-value' DoubleRightArrow := x -> new Option from { value' x#0, value' x#1 }
--- and that...
-DoubleLeftArrow = new HeaderType of Expression;
-toString DoubleLeftArrow := x-> toString(x#0) | " => " | toString(x#1)
-net DoubleLeftArrow := x-> net(x#0) | " => " | net(x#1)
-texMath DoubleLeftArrow := x -> texMath(x#0) | " \\Leftarrow " | texMath(x#1)
--- value?
-
--- so we can do that
-expression Option := z -> DoubleRightArrow { z#0, z#1 }
+-- extra stuff
+expression Option := z -> BinaryOperation { symbol =>, expression z#0, expression z#1 }
 net Option := net @@ expression
 texMath Option := texMath @@ expression
 toString Option := toString @@ expression -- we should determine the priority

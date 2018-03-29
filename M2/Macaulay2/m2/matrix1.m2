@@ -392,7 +392,7 @@ RingElement ** Number :=
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
 Matrix#{Standard,AfterPrint} = 
-Matrix#{Standard,AfterNoPrint} = f -> afterPrint(Matrix, if isFreeModule target f and isFreeModule source f then (" ", new LeftArrow from {target f,source f}));
+Matrix#{Standard,AfterNoPrint} = f -> afterPrint(Matrix, if isFreeModule target f and isFreeModule source f then (" ", BinaryOperation {symbol <==,target f,source f}));
 
 -- precedence Matrix := x -> precedence symbol x
 
@@ -440,7 +440,7 @@ net Ideal := net @@ expression
 toString Ideal := toString @@ expression
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := (I) -> if I.?texMath then I.texMath else texMath expression I
-describe Ideal := (I) -> Description new FunctionApplication from { ideal, new VerticalList from apply(first entries generators I,expression) }
+describe Ideal := (I) -> Describe new FunctionApplication from { ideal, new VerticalList from apply(first entries generators I,expression) }
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

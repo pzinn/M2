@@ -132,27 +132,27 @@ mathJaxMode=false
 Thing#{Standard,Print} = x -> (
     -- HACK. compared to normal output, I don't put and endline before
     if mathJaxMode then << texSpecial | "1";
-     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-     save := printWidth;
-     if printWidth != 0 then printWidth = printWidth - #oprompt;
-     z := robustNet x;
-     wrapper := lookup(global Wrap,class x);
-     if wrapper =!= null then (
-	  fun := () -> z = wrapper z;
-	  try timelimit(printingTimeLimit, fun)
-	  else (
-	       alarm 0;
-	       global debugError <- fun;
-	       stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl);
-	  );
-     << endl << oprompt << z << endl;
-     printWidth = save;
-     if mathJaxMode then (
-	 << texSpecial | "3";
-	 y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-	  << texSpecial | "2" | oprompt | y | "<br/>" | texSpecial | "3";
-	  )
-     )
+    oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
+    save := printWidth;
+    if printWidth != 0 then printWidth = printWidth - #oprompt;
+    z := robustNet x;
+    wrapper := lookup(global Wrap,class x);
+    if wrapper =!= null then (
+	fun := () -> z = wrapper z;
+	try timelimit(printingTimeLimit, fun)
+	else (
+	    alarm 0;
+	    global debugError <- fun;
+	    stderr << "--error or time limit reached in applying Wrap method to output; type 'debugError()' to see it" << endl << endl);
+	);
+    << endl << oprompt << z << endl;
+    printWidth = save;
+    if mathJaxMode then (
+	<< texSpecial | "3";
+	y := mathJax x; -- we compute the mathJax now (in case it produces an error)
+	<< texSpecial | "2" | oprompt | y | "<br/>" | texSpecial | "3";
+	)
+    )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
