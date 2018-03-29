@@ -22,7 +22,7 @@ raw RingMap := f -> f.RawRingMap
 expression RingMap := f -> new FunctionApplication from {
      map, expression (target f, source f, matrix f)}
 texMath RingMap := x -> if x.?texMath then x.texMath else texMath new FunctionApplication from {
-    map, (target x, source x, matrix x)} -- not the same as texMath expression x because of some annoying Holder, cf L1201 of expressions.m2
+    map, (target x, source x, matrix x)} -- not the same as texMath expression x because of some annoying Holder, cf L1255 of expressions.m2
 
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
@@ -136,7 +136,7 @@ map(Ring,Ring) := RingMap => opts -> (S,R) -> map(S,R,{},opts)
 
 Ring#id = (R) -> map(R,R,vars R)
 
-RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> afterPrint(class f," ",BinaryOperation {symbol <==,target f,source f})
+RingMap#{Standard,AfterPrint} = RingMap#{Standard,AfterNoPrint} = f -> afterPrint(class f," ",new MapArrow from {target f,source f})
 
 RingMap RingElement := RingElement => fff := (p,m) -> (
      R := source p;

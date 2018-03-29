@@ -13,8 +13,7 @@ export {
 	"concatCols",
 	"mathJax",
 	"Describe",
---	"-->",
---	"<--",
+	"SpacedBinaryOperation",
 -- end experimental
     "LocalRing",
     "localRing",

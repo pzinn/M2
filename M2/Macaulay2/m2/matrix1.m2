@@ -392,7 +392,7 @@ RingElement ** Number :=
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
 Matrix#{Standard,AfterPrint} = 
-Matrix#{Standard,AfterNoPrint} = f -> afterPrint(Matrix, if isFreeModule target f and isFreeModule source f then (" ", BinaryOperation {symbol <==,target f,source f}));
+Matrix#{Standard,AfterNoPrint} = f -> afterPrint(Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapArrow from {target f,source f}))
 
 -- precedence Matrix := x -> precedence symbol x
 

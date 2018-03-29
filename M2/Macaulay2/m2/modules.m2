@@ -257,7 +257,7 @@ net Module := M -> (
 	  )
      )
 
-texMath Module := x -> if x.?texMath then x.texMath else if x.?relations or x.?generators then texMath expression x else if numgens x === 0 then "0" else texMath new Superscript from {ring x, numgens x}
+texMath Module := x -> if x.?texMath then x.texMath else texMath expression x
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it
