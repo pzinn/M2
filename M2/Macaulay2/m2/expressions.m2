@@ -575,6 +575,22 @@ binaryOperatorFunctions := new HashTable from {
      symbol or => ((x,y) -> x or y)
      }
 
+binaryTexMath := new HashTable from {
+    symbol .. => "{.}{.}",
+    symbol => => "\\Rightarrow",
+    symbol <= => "\\Leftarrow",
+    symbol ==> => "\\Longrightarrow",
+    symbol <== => "\\Longleftarrow",
+    symbol <==> => "\\Longleftrightarrow",
+    symbol ** => "\\otimes",
+    symbol ++ => "\\oplus",
+    symbol & => "\\&",
+    symbol != => "\\ne",
+    symbol == => "="
+    }
+
+texMath Keyword := x -> if binaryTexMath#?x then binaryTexMath#x else toString x;
+
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
 value' BinaryOperation := (m) -> (
@@ -1222,6 +1238,7 @@ FilePosition.synonym = "file position"
 toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1,":",toString i#2)
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
+-- rewrite all that's below in terms of binary operators
 -- to deal with left arrows in AfterPrint
 LeftArrow = new HeaderType of Expression;
 toString LeftArrow := x-> toString(x#0) | " <--- " | toString(x#1)

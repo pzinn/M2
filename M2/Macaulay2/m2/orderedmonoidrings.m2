@@ -30,7 +30,8 @@ expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression k) (new T from R.generatorExpressions)
+--     (expression k) (new T from R.generatorExpressions)
+     (expression k) (expression new T from runLengthEncode R.generatorSymbols)
 )
 
 describe PolynomialRing := R -> (
