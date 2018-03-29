@@ -652,7 +652,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      args := m#1;
 --     if instance(args,Array) then (p = p-1; div = true; );
      if instance(args,VisibleList) then (p = p-1; div = true; );
-     if precedence args >= p -- should we use precedence expression?
+     if precedence args >= p
      then if pfun > p then (
 	 if div
 	 then concatenate (texMath fun, texMath args)
@@ -904,7 +904,7 @@ texMath Expression := v -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
-	       if precedence term <= p -- should we use precedence expression?
+	       if precedence term <= p
 	       then ("{\\left(", texMath term, "\\right)}")
 	       else ("{", texMath term, "}") ) );
      if # v === 0 then (
@@ -939,7 +939,7 @@ html Expression := v -> (
 
 texMath Minus := v -> (
      term := v#0;
-     if precedence term < precedence v -- should we use precedence expression?
+     if precedence term < precedence v
      then "{-(" | texMath term | ")}"
      else "{-" | texMath term | "}"
      )
@@ -987,7 +987,7 @@ texMath Sum := v -> (
 		    then ( seps#i = "-"; v#i#0 )
 		    else v#i ));
 	  names := apply(n, i -> (
-		    if precedence v#i <= p -- should we use precedence expression?
+		    if precedence v#i <= p
 		    then "(" | texMath v#i | ")"
 		    else texMath v#i ));
 	  concatenate mingle ( seps, names )))
@@ -1020,7 +1020,7 @@ texMath Product := v -> (
 	  seps := apply (n-1, i-> if nums#i and nums#(i+1) then "\\cdot " else "");
      	  boxes := apply(v,
 		    term -> (
-			 if precedence term <= p and class expression term =!= Divide -- should we use precedence expression?
+			 if precedence term <= p and class expression term =!= Divide
 			 then "\\left(" | texMath term | "\\right)"
 			 else texMath term
 			 )
@@ -1051,15 +1051,15 @@ texMath Power := v -> (
 	  p := precedence v;
 	  x := texMath v#0;
 	  y := texMath v#1;
-	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)"; -- should we use precedence expression?
+	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
 	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> ( -- there is a precedence issue, compare with net Superscript
 --     p := precedence v;
      x := texMath v#0;
      if class v#1 === Sequence then y:=demark(",", apply(v#1,texMath)) else y = texMath v#1;
---     if precedence v#0 <  p then x = "\\left(" | x | "\\right)"; -- should we use precedence expression?
-     if precedence v#0 <  prec symbol ^ then x = "\\left(" | x | "\\right)"; -- should we use precedence expression?
+--     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+     if precedence v#0 <  prec symbol ^ then x = "\\left(" | x | "\\right)";
      concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
 
 html Superscript := v -> (
@@ -1172,14 +1172,14 @@ symbol briefDocumentation <- identity			    -- temporary assignment
 
 texSpecial = ascii(30); -- cause why not
 
-afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
+afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing); -- because net Nothing is "null", not nothing
     if mathJaxMode then << texSpecial | "1";
     << endl << o() << " : " << horizontalJoin(net\y) << endl;
 -- HACK. compared to normal output, I don't put an endline before
      if mathJaxMode then (
 	 << texSpecial | "3";
-	 z := htmlLiteral concatenate(texMath\y);
-	 << texSpecial | "2" | o() | " : \\(" | z | "\\)<br/>" | texSpecial | "3"; -- use mathJax instead?
+	 z := htmlLiteral concatenate(texMath\y); -- use mathJax instead?
+	 << texSpecial | "2" | o() | " : \\(" | z | "\\)<br/>" | texSpecial | "3";
 	 )
 )
 

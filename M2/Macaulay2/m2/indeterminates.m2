@@ -43,7 +43,7 @@ succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Symbol,Symbol) := (x,y) -> (
      (s,t) := (toString x, toString y);
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
-succ(IndexedVariable,IndexedVariable) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
+succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
 succ(Thing,Thing) := x -> false
 runLengthEncode = method(Dispatch => Thing)
 runLengthEncode VisibleList := x -> (
