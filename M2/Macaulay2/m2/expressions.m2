@@ -1110,12 +1110,11 @@ texMath MatrixExpression := m -> (
 --     	  ncols := #m#0;
 --	  if ncols > 10 then (///\makeatletter\c@MaxMatrixCols=///,toString ncols,///\makeatother///));
      concatenate(
-          "{",--	  ///\bgroup///,
---	  s,
-     	  ///\begin{pmatrix}///,
-     	  apply(m, row -> (between("&"|newline,apply(row,texMath)), ///\\///|newline)),
+--	  "{",s,
+     	  ///\begin{pmatrix}///,newline,
+     	  apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
      	  ///\end{pmatrix}///,
-          "}" --	  ///\egroup///,
+--        "}",	  
 	  ))
 
 ctr := 0
