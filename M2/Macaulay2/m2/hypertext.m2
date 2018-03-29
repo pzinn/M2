@@ -113,6 +113,7 @@ texMath HashTable := x -> if x.?texMath then x.texMath else (
 	  between(",", apply(pairs x,(k,v) -> texMath k | "\\Rightarrow " | texMath v)),
 	  "\\right\\}"
      	  ))
+texMath MonoidElement := texMath @@ expression
 texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
 texMath ScriptedFunctor := lookup(texMath,Type)
 -- for a slightly different style:

@@ -202,7 +202,7 @@ Parenthesize.synonym = "possibly parenthesized expression"
 net Parenthesize := net @@ first
 toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
 value' Parenthesize := first
---texMath Parenthesize := texMath @@ first
+texMath Parenthesize := texMath @@ first
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
