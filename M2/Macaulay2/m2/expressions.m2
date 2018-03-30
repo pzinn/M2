@@ -576,7 +576,7 @@ binaryOperatorFunctions := new HashTable from {
      }
 
 binaryTexMath := new HashTable from {
-    symbol .. => "{.}{.}",
+    symbol .. => "\\,{.}{.}\\,",
     symbol => => "\\Rightarrow ",
     symbol <= => "\\Leftarrow ",
     symbol ==> => "\\Longrightarrow ",

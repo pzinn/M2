@@ -150,7 +150,8 @@ Thing#{Standard,Print} = x -> (
     if mathJaxMode then (
 	<< texSpecial | "3";
 	y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-	<< texSpecial | "2" | oprompt | y | "<br/>" | texSpecial | "3";
+--	<< texSpecial | "2" | oprompt | y | "<br/>" | texSpecial | "3";
+	<< texSpecial | "2" | "<div style=\"padding:8px 0px\">" | oprompt | y | "</div>" | texSpecial | "3";
 	)
     )
 
