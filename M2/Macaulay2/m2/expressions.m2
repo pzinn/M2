@@ -1159,9 +1159,9 @@ texMath MatrixExpression := m -> (
      s := if m#?0 then (
      	  ncols := #m#0;
      	  concatenate(
-     	      ///\left(\begin{array}{@{}*{///,toString ncols,///}c@{}}///|newline,
+	      ///{\left(\begin{array}{@{}*{///,toString ncols,///}c@{}}///|newline,
      	      apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
-     	      ///\end{array}\right)///
+	      ///\end{array}\right)}/// -- the extra {} is to discourage line breaks
 	  )
       )
   )
@@ -1209,7 +1209,6 @@ texVariable := x -> (
 texMath Symbol := x -> texVariable toString x;
 
 mathJax Thing := x -> concatenate("\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
---mathJax Thing := x -> concatenate("\\(\\displaystyle\\bbox[padding: 10px 0px]{",htmlLiteral texMath x,"}\\)") -- by default, for MathJax we use tex (as opposed to html)
 --mathJax Thing := x -> concatenate("\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 
