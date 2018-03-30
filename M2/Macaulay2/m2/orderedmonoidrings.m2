@@ -464,6 +464,7 @@ fact PolynomialRing := opts -> R -> (
 	-- experimental
 	lowestPart(ZZ,Rf) := (d,x) -> lowestPart x; -- no checking performed
 	lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e);
+	remove(Rf,symbol vars); -- in case R had already cached its vars
 	);
     if (Rf.Options).Use then use Rf else Rf
     );

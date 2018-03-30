@@ -1,4 +1,5 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
+-- rewritten by P. Zinn-Justin 2018
 
 Constant = new Type of BasicList
 globalAssignment Constant
@@ -677,7 +678,8 @@ net Adjacent := net FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      args := m#1;
-     if instance(args,Array) then (p = p-1; div = true; );
+     if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then (p = p-1; div = true; );
+     -- normally Lists should be wrapped, but sadly this is not always respected
      netargs := net args;
      if precedence args >= p
      then if pfun > p
@@ -697,8 +699,8 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      args := m#1;
---     if instance(args,Array) then (p = p-1; div = true; );
-     if instance(args,VisibleList) then (p = p-1; div = true; );
+     if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then (p = p-1; div = true; );
+     -- normally Lists should be wrapped, but sadly this is not always respected
      if precedence args >= p
      then if pfun > p then (
 	 if div
