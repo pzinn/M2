@@ -1154,17 +1154,22 @@ texMath VerticalList := s -> concatenate(
     ,"\\end{array}\\right\\}"
     )
 
-
 texMath MatrixExpression := m -> (
-     s := if m#?0 then (
+     if m#?0 then (
      	  ncols := #m#0;
-     	  concatenate(
-	      ///{\left(\begin{array}{@{}*{///,toString ncols,///}c@{}}///|newline,
-     	      apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
-	      ///\end{array}\right)}/// -- the extra {} is to discourage line breaks
+	  if ncols > 10 then ( 
+	      pre := "{\\left(\\begin{array}{@{}*{" | toString ncols | "}c@{}}" | newline;
+	      post := "\\\\" | newline | "\\end{array}\\right)}"; -- the extra {} is to discourage line breaks
+      	      ) else (
+      	      pre = "\\begin{pmatrix}" | newline;
+	      post = newline | "\\end{pmatrix}"; -- notice the absence of final \\ -- so lame
+	      );
+    	    concatenate(
+    	      pre,
+     	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
+	      post)
 	  )
       )
-  )
 
 ctr := 0
 showTex = method(
