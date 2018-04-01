@@ -41,8 +41,8 @@ Eliminate = new SelfInitializingType of BasicList
 new Eliminate from ZZ := (Eliminate,n) -> Eliminate {n}
 expression Eliminate := v -> (
      if #v === 1 
-     then new FunctionApplication from {Eliminate, v#0}
-     else new FunctionApplication from {Eliminate, toList v})
+     then FunctionApplication {Eliminate, v#0}
+     else FunctionApplication {Eliminate, toList v})
 ProductOrder = new SelfInitializingType of BasicList
 
 isSmall := i -> class i === ZZ and i < 2^15 and i > -2^15
@@ -201,7 +201,7 @@ makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (
      MonSize = 0;
      varcount = 0;
      t := toList nonnull fixup2 t';
-     logmo := new FunctionApplication from {rawMonomialOrdering,t};
+     logmo := FunctionApplication {rawMonomialOrdering,t};
      (t,t',value logmo, logmo))
 
 RawMonomialOrdering ** RawMonomialOrdering := RawMonomialOrdering => rawProductMonomialOrdering

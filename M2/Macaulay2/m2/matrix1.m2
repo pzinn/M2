@@ -435,12 +435,12 @@ Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
-expression Ideal := (I) -> new FunctionApplication from { ideal, unsequence apply(toSequence first entries generators I, expression) }
+expression Ideal := (I) -> FunctionApplication { ideal, first entries generators I }
 net Ideal := net @@ expression
 toString Ideal := toString @@ expression
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := (I) -> if I.?texMath then I.texMath else texMath expression I
-describe Ideal := (I) -> Describe new FunctionApplication from { ideal, new VerticalList from apply(first entries generators I,expression) }
+describe Ideal := (I) -> Describe FunctionApplication { ideal, new VerticalList from first entries generators I }
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

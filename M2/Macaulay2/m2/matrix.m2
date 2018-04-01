@@ -209,7 +209,7 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      u := m * v#0;
      new target u from {u})
 
-expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
+expression Matrix := m -> new MatrixExpression from applyTable(entries m, expression)
 texMath Matrix := m -> if m.?texMath then m.texMath else if m==0 then "0" else texMath expression m
 
 toExternalString Matrix := m -> concatenate (

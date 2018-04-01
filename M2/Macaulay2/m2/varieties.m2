@@ -69,10 +69,10 @@ net CoherentSheaf := F -> (
      M := module F;
      if M.?relations 
      then if M.?generators
-     then net new FunctionApplication from { subquotient, (net M.generators, net M.relations) }
-     else net new FunctionApplication from { cokernel, net M.relations }
+     then net FunctionApplication { subquotient, (M.generators, M.relations) }
+     else net FunctionApplication { cokernel, M.relations }
      else if M.?generators
-     then net new FunctionApplication from { image, net M.generators }
+     then net FunctionApplication { image, M.generators }
      else if numgens M === 0 then "0"
      else (
 	  X := variety F;

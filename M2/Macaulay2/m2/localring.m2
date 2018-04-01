@@ -32,7 +32,7 @@ localRing = method(TypicalValue => LocalRing)
                                     else "localRing(" | toString ring RP.MaximalIdeal | ", " | toString RP.MaximalIdeal | ")")
             net LocalRing := RP -> (if hasAttribute(RP, ReverseDictionary)
                                     then toString getAttribute(RP, ReverseDictionary)
-                                    else net new FunctionApplication from { localRing, (ring RP.MaximalIdeal, RP.MaximalIdeal)})
+                                    else net FunctionApplication { localRing, (ring RP.MaximalIdeal, RP.MaximalIdeal)})
 coefficientRing LocalRing := RP -> coefficientRing ring RP.MaximalIdeal
   isWellDefined LocalRing := RP -> isPrime RP.MaximalIdeal
   isCommutative LocalRing := RP -> isCommutative ring RP.MaximalIdeal -- FIXME make sure this is correct

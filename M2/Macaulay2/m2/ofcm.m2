@@ -81,7 +81,7 @@ monoidParts = (M) -> (
 expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
-expression GeneralOrderedMonoid := M -> new Parenthesize from { new FunctionApplication from {monoid, expressionMonoid M} }
+expression GeneralOrderedMonoid := M -> Parenthesize { FunctionApplication {monoid, expressionMonoid M} }
 
 toExternalString GeneralOrderedMonoid := M -> toString expression M
 toString GeneralOrderedMonoid := M -> (

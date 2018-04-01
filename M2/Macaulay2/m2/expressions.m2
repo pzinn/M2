@@ -37,8 +37,9 @@ bigParenthesize = n -> (
 
 HeaderType = new Type of Type
 HeaderType.synonym = "header type"
-HeaderType List := (T,z) -> new T from z
-HeaderType Sequence := (T,z) -> new T from z
+exporkey := x -> if class x === Keyword then x else expression x -- annoying, because BinaryOperation's first argument is a keyword
+HeaderType List := (T,z) -> new T from apply(z,exporkey)
+HeaderType Sequence := (T,z) -> new T from apply(z,exporkey)
 
 WrapperType = new Type of Type
 WrapperType.synonym = "wrapper type"
@@ -521,7 +522,7 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 	  hold concatenate("<",fmt i,">"))
      )
 -----------------------------------------------------------------------------
-MatrixExpression = new HeaderType of Expression
+MatrixExpression = new Type of Expression
 MatrixExpression.synonym = "matrix expression"
 value' MatrixExpression := x -> matrix applyTable(toList x,value')
 toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
@@ -529,7 +530,7 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
-Table = new HeaderType of Expression
+Table = new Type of Expression
 Table.synonym = "table expression"
 value' Table := x -> applyTable(toList x,value')
 toString'(Function, Table) := (fmt,m) -> concatenate(
@@ -941,7 +942,7 @@ net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, Bas
 net MatrixExpression := x -> (
      if # x === 0 or # (x#0) === 0 then "|  |"
      else (
-	  m := net Table toList x;
+	  m := net new Table from toList x;
 	  side := "|" ^ (height m, depth m);
 	  horizontalJoin(side," ",m," ",side)))
 html MatrixExpression := x -> html TABLE toList x
@@ -1154,22 +1155,23 @@ texMath VerticalList := s -> concatenate(
     ,"\\end{array}\\right\\}"
     )
 
+texMath Table := m -> (
+    if m#?0 then concatenate(
+	"{\\left(\\begin{array}{@{}*{" | toString m#0 | "}c@{}}" | newline,
+    	apply(toSequence m, row -> concatenate between("&",apply(row,texMath)) | ///\\/// | newline),
+	"\\end{array}\\right)}")
+)
+	
+    
+
 texMath MatrixExpression := m -> (
-     if m#?0 then (
-     	  ncols := #m#0;
-	  if ncols > 10 then ( 
-	      pre := "{\\left(\\begin{array}{@{}*{" | toString ncols | "}c@{}}" | newline;
-	      post := "\\\\" | newline | "\\end{array}\\right)}"; -- the extra {} is to discourage line breaks
-      	      ) else (
-      	      pre = "\\begin{pmatrix}" | newline;
-	      post = newline | "\\end{pmatrix}"; -- notice the absence of final \\ -- so lame
-	      );
-    	    concatenate(
-    	      pre,
+     if m#?0 then if #m#0>10 then "{\\left(" | texMath new Table from toList m | "\\right)}" -- the extra {} is to discourage line breaks
+     else concatenate(
+      	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
-	      post)
+	      newline | "\\end{pmatrix}" -- notice the absence of final \\ -- so lame
+	      )
 	  )
-      )
 
 ctr := 0
 showTex = method(

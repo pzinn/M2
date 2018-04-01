@@ -6,8 +6,8 @@ GaloisField.synonym = "Galois field"
 toExternalString GaloisField := k -> toString describe k
 toString GaloisField := toString @@ expression
 net GaloisField := net @@ expression
-expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else new FunctionApplication from { GF, F.order }
-describe GaloisField := F -> Describe new FunctionApplication from { GF, F.order }
+expression GaloisField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else FunctionApplication { GF, F.order }
+describe GaloisField := F -> Describe FunctionApplication { GF, F.order }
 --texMath GaloisField := F -> "{\\mathbb F}_{" | F.order | "}"
 
 precision GaloisField := F -> infinity

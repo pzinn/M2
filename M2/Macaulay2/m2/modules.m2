@@ -232,30 +232,15 @@ toExternalString Module := M -> (
 expression Module := M -> (
      if M.?relations 
      then if M.?generators
-     then new FunctionApplication from { subquotient, (expression M.generators, expression M.relations) }
-     else new FunctionApplication from { cokernel, expression M.relations }
+     then FunctionApplication { subquotient, (M.generators, M.relations) }
+     else FunctionApplication { cokernel, M.relations }
      else if M.?generators
-     then new FunctionApplication from { image, expression M.generators }
+     then FunctionApplication { image, M.generators }
      else if numgens M === 0 then 0
-     else new Power from {expression ring M, numgens M}
+     else Power {ring M, numgens M}
      )
 
--- net Module := M -> net expression M
-
-net Module := M -> (
-     -- we want compactMatrixForm to govern the matrix here, also.
-     if M.?relations 
-     then if M.?generators
-     then net new FunctionApplication from { subquotient, (net M.generators, net M.relations) }
-     else net new FunctionApplication from { cokernel, net M.relations }
-     else if M.?generators
-     then net new FunctionApplication from { image, net M.generators }
-     else if numgens M === 0 then "0"
-     else (
-	  R := ring M;
-	  net new Superscript from { if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R, numgens M}
-	  )
-     )
+net Module := net @@ expression
 
 texMath Module := x -> if x.?texMath then x.texMath else texMath expression x
 
