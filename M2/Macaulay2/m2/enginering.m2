@@ -238,8 +238,7 @@ reduce := (r,s) -> (
 	  );
      (a,b))
 
-expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (describe R)#0
-describe EngineRing := R -> Describe expression toString R.RawRing -- should never be used
+expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else expression toString R.RawRing -- should never be used
 texMath EngineRing := R -> if R.?texMath then R.texMath else texMath expression R
 toString EngineRing := toString @@ expression
 net EngineRing := net @@ expression
@@ -279,7 +278,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
      expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else FunctionApplication{frac, expression last F.baseRings}
-     describe FractionField := F -> Describe Adjacent {frac, describe last F.baseRings}
+     describe FractionField := F -> Describe FunctionApplication {frac, describe last F.baseRings}
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 isHomogeneous EngineRing := R -> isHomogeneous 0_R

@@ -380,10 +380,7 @@ FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
 fact=method(TypicalValue => FactPolynomialRing,Options=>{DegreeZero=>false,Use=>true});
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
-expression FactPolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
-     FunctionApplication {fact, expression last R.baseRings}
-     );
+expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else FunctionApplication {fact, expression last R.baseRings}
 describe FactPolynomialRing := R -> Describe FunctionApplication {fact, describe last R.baseRings}
 options FactPolynomialRing := R -> options(monoid R)++R.Options;
 fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
