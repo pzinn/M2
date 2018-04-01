@@ -1157,15 +1157,13 @@ texMath VerticalList := s -> concatenate(
 
 texMath Table := m -> (
     if m#?0 then concatenate(
-	"{\\left(\\begin{array}{@{}*{" | toString m#0 | "}c@{}}" | newline,
-    	apply(toSequence m, row -> concatenate between("&",apply(row,texMath)) | ///\\/// | newline),
-	"\\end{array}\\right)}")
+	"{\\begin{array}{@{}*{" | toString m#0 | "}c@{}}" | newline,
+	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
+	"\\end{array}}")
 )
 	
-    
-
 texMath MatrixExpression := m -> (
-     if m#?0 then if #m#0>10 then "{\\left(" | texMath new Table from toList m | "\\right)}" -- the extra {} is to discourage line breaks
+     if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
