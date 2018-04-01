@@ -278,7 +278,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
      generators FractionField := opts -> F -> if opts.CoefficientRing === F then {} else generators(last F.baseRings, opts) / (r -> promote(r,F))
            char FractionField := F -> char last F.baseRings
 	    dim FractionField := F -> 0
-     expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else FunctionApplication{frac, last F.baseRings}
+     expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else FunctionApplication{frac, expression last F.baseRings}
      describe FractionField := F -> Describe Adjacent {frac, describe last F.baseRings}
 
 -- freduce := (f) -> (numerator f)/(denominator f)

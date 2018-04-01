@@ -24,7 +24,6 @@ undocumented {
     (expression, CC),
     (expression, IndexedVariable),
     (expression, MonomialIdeal),
-    (expression, GaloisField),
     (html, ExampleItem),
     (html, SPAN),
     (html, LI),

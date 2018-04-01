@@ -13,8 +13,8 @@ toString Variety := toString @@ expression
 net Variety := net @@ expression
 texMath Variety := x -> if x.?texMath then x.texMath else texMath expression x
 expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
-describe AffineVariety := (X) -> Describe FunctionApplication { expression Spec, expression X.ring }
-describe ProjectiveVariety := (X) -> Describe FunctionApplication { expression Proj, expression X.ring }
+describe AffineVariety := (X) -> Describe FunctionApplication { Spec, expression X.ring }
+describe ProjectiveVariety := (X) -> Describe FunctionApplication { Proj, expression X.ring }
 
 char AffineVariety := X -> char ring X
 char ProjectiveVariety := X -> (
@@ -46,7 +46,7 @@ sheaf = method()
 
 SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
-expression SheafOfRings := O -> Subscript { expression OO, expression O.variety }
+expression SheafOfRings := O -> Subscript { OO, expression O.variety }
 net SheafOfRings := net @@ expression
 texMath SheafOfRings := texMath @@ expression
 Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
@@ -57,7 +57,7 @@ ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-expression CoherentSheaf := F -> FunctionApplication { expression sheaf, expression F.module }
+expression CoherentSheaf := F -> FunctionApplication { sheaf, expression F.module }
 
 -- net CoherentSheaf := (F) -> net expression F
 
@@ -67,12 +67,7 @@ runLengthEncoding := x -> if #x === 0 then x else (
 
 net CoherentSheaf := F -> (
      M := module F;
-     if M.?relations 
-     then if M.?generators
-     then net FunctionApplication { subquotient, (M.generators, M.relations) }
-     else net FunctionApplication { cokernel, M.relations }
-     else if M.?generators
-     then net FunctionApplication { image, M.generators }
+     if M.?relations or M.?generators then net M
      else if numgens M === 0 then "0"
      else (
 	  X := variety F;

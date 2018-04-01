@@ -232,12 +232,12 @@ toExternalString Module := M -> (
 expression Module := M -> (
      if M.?relations 
      then if M.?generators
-     then FunctionApplication { subquotient, (M.generators, M.relations) }
-     else FunctionApplication { cokernel, M.relations }
+     then FunctionApplication { subquotient, expression (M.generators, M.relations) }
+     else FunctionApplication { cokernel, expression M.relations }
      else if M.?generators
-     then FunctionApplication { image, M.generators }
+     then FunctionApplication { image, expression M.generators }
      else if numgens M === 0 then 0
-     else Power {ring M, numgens M}
+     else Power {expression ring M, numgens M}
      )
 
 net Module := net @@ expression

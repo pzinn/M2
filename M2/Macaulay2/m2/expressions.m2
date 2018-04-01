@@ -37,9 +37,8 @@ bigParenthesize = n -> (
 
 HeaderType = new Type of Type
 HeaderType.synonym = "header type"
-exporkey := x -> if class x === Keyword then x else expression x -- annoying, because BinaryOperation's first argument is a keyword
-HeaderType List := (T,z) -> new T from apply(z,exporkey)
-HeaderType Sequence := (T,z) -> new T from apply(z,exporkey)
+HeaderType List := (T,z) -> new T from z
+HeaderType Sequence := (T,z) -> new T from z
 
 WrapperType = new Type of Type
 WrapperType.synonym = "wrapper type"
@@ -522,7 +521,7 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 	  hold concatenate("<",fmt i,">"))
      )
 -----------------------------------------------------------------------------
-MatrixExpression = new Type of Expression
+MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 value' MatrixExpression := x -> matrix applyTable(toList x,value')
 toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
@@ -530,7 +529,7 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
-Table = new Type of Expression
+Table = new HeaderType of Expression
 Table.synonym = "table expression"
 value' Table := x -> applyTable(toList x,value')
 toString'(Function, Table) := (fmt,m) -> concatenate(
@@ -942,7 +941,7 @@ net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, Bas
 net MatrixExpression := x -> (
      if # x === 0 or # (x#0) === 0 then "|  |"
      else (
-	  m := net new Table from toList x;
+	  m := net Table toList x;
 	  side := "|" ^ (height m, depth m);
 	  horizontalJoin(side," ",m," ",side)))
 html MatrixExpression := x -> html TABLE toList x

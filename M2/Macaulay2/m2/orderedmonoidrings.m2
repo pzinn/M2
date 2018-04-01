@@ -382,7 +382,7 @@ fact=method(TypicalValue => FactPolynomialRing,Options=>{DegreeZero=>false,Use=>
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
 expression FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
-     FunctionApplication {expression fact, expression last R.baseRings}
+     FunctionApplication {fact, expression last R.baseRings}
      );
 describe FactPolynomialRing := R -> Describe FunctionApplication {fact, describe last R.baseRings}
 options FactPolynomialRing := R -> options(monoid R)++R.Options;
