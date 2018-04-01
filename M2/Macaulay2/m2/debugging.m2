@@ -119,9 +119,15 @@ net Descent := x -> stack sort apply(pairs x,
 texMath Descent := x -> "\\left|\\begin{array}{l}" | concatenate sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
-	  then texMath k
-	  else texMath k | " : " | texMath v
+	  then texMath net k -- sucks but no choice
+	  else texMath net k | " : " | texMath v
 	  ) | "\\\\") | "\\end{array}\\right."
+mathJax Descent := x -> "<span style=\"display:inline-table\">" | concatenate sort apply(pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then toString k -- sucks but no choice
+	  else toString k | " : " | mathJax v
+	  ) | "<br/>") | "</span>"
 justTypes := syms -> select(apply(syms, value), s -> instance(s, Type))
 allThingsWithNames := syms -> select(apply(syms, value), s -> hasAttribute(s,ReverseDictionary))
      
