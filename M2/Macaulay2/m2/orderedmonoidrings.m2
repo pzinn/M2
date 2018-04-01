@@ -39,12 +39,6 @@ describe PolynomialRing := R -> (
 toExternalString PolynomialRing := R -> (
      k := last R.baseRings;
      toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
-net PolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else net expression R)
-toString PolynomialRing := R -> (
-     if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
-     else toString expression R)
 
 degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
 
@@ -388,7 +382,7 @@ fact=method(TypicalValue => FactPolynomialRing,Options=>{DegreeZero=>false,Use=>
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
 expression FactPolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
-     Adjacent {fact, expression last R.baseRings}
+     FunctionApplication {expression fact, expression last R.baseRings}
      );
 describe FactPolynomialRing := R -> Describe Adjacent {fact, describe last R.baseRings}
 options FactPolynomialRing := R -> options(monoid R)++R.Options;

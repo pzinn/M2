@@ -25,11 +25,7 @@ toExternalString QuotientRing := S -> toString expression S
 random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
-expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else Divide { expression ambient S, expression pretty S.relations }
 describe QuotientRing := S -> Describe Divide { expression ambient S, expression pretty S.relations }
-pqr := f -> S -> if hasAttribute(S,ReverseDictionary) then toString getAttribute(S,ReverseDictionary) else f expression S
-net QuotientRing := pqr net
-toString QuotientRing := pqr toString
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
 degrees QuotientRing := R -> degrees ambient R

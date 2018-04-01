@@ -55,13 +55,6 @@ net Command := toString Command := toExternalString Command := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "-*Command*-"
      )
 
-texMath BasicList := s -> concatenate(
-     if class s =!= List then texMath class s,
-    "\\left\\{",
-    between(",\\,",apply(toList s,texMath))
-    ,"\\right\\}"
-    )
-
 toExternalString Function := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;
@@ -171,6 +164,15 @@ net List := x -> horizontalJoin deepSplice (
      "{",
      toSequence between(comma,apply(x,netn)),
      "}")
+
+texMath BasicList := s -> concatenate(
+     if class s =!= List then texMath class s,
+    "\\left\\{",
+    between(",\\,",apply(toList s,texMath))
+    ,"\\right\\}"
+    )
+texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
+texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
 
 VerticalList = new SelfInitializingType of List
 VerticalList.synonym = "vertical list"

@@ -103,9 +103,6 @@ texMath String := s -> (
 mathJax String := lookup(mathJax,Thing)
 info String := identity
 
-texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
-texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-
 texMath HashTable := x -> if x.?texMath then x.texMath else (
      concatenate flatten (
      	  texMath class x,
@@ -115,6 +112,7 @@ texMath HashTable := x -> if x.?texMath then x.texMath else (
      	  ))
 texMath MonoidElement := texMath @@ expression
 texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
+texMath Function := x -> texMath toString x
 texMath ScriptedFunctor := lookup(texMath,Type)
 -- for a slightly different style:
 -*

@@ -9,6 +9,12 @@ AffineVariety.synonym = "affine variety"
 ProjectiveVariety = new Type of Variety
 ProjectiveVariety.synonym = "projective variety"
 ring Variety := X -> X.ring
+toString Variety := toString @@ expression
+net Variety := net @@ expression
+texMath Variety := x -> if x.?texMath then x.texMath else texMath expression x
+expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
+describe AffineVariety := (X) -> Describe FunctionApplication { expression Spec, expression X.ring }
+describe ProjectiveVariety := (X) -> Describe FunctionApplication { expression Proj, expression X.ring }
 
 char AffineVariety := X -> char ring X
 char ProjectiveVariety := X -> (
@@ -20,10 +26,6 @@ ambient     AffineVariety := X -> Spec ambient ring X
 ideal Variety := X -> ideal ring X
 Spec = method()
 
-net Variety := (X) -> if hasAttribute(X,ReverseDictionary) then toString getAttribute(X,ReverseDictionary) else net expression X
-texMath Variety := (X) -> if hasAttribute(X,ReverseDictionary) then texMath getAttribute(X,ReverseDictionary) else texMath expression X
-
-expression AffineVariety := (X) -> new FunctionApplication from { Spec, X.ring }
 Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
      new AffineVariety from {
      	  symbol ring => R,
@@ -31,7 +33,7 @@ Spec Ring := AffineVariety => (R) -> if R.?Spec then R.Spec else R.Spec = (
      	  }
      )
 Proj = method()
-expression ProjectiveVariety := (X) -> new FunctionApplication from { Proj, ring X }
+
 Proj Ring := ProjectiveVariety => (R) -> if R.?Proj then R.Proj else R.Proj = (
      if not isHomogeneous R then error "expected a homogeneous ring";
      new ProjectiveVariety from {
@@ -44,7 +46,7 @@ sheaf = method()
 
 SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
-expression SheafOfRings := O -> new Subscript from { OO, O.variety }
+expression SheafOfRings := O -> Subscript { expression OO, expression O.variety }
 net SheafOfRings := net @@ expression
 texMath SheafOfRings := texMath @@ expression
 Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
@@ -55,7 +57,7 @@ ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-expression CoherentSheaf := F -> new FunctionApplication from { sheaf, F.module }
+expression CoherentSheaf := F -> FunctionApplication { expression sheaf, expression F.module }
 
 -- net CoherentSheaf := (F) -> net expression F
 

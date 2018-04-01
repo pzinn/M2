@@ -1207,6 +1207,7 @@ texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw ob
 -- next version is a horrible hack
 --texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
 texVariable := x -> (
+    if x == "OO" then return "{\\mathcal O}";
     if #x === 2 and letters#?(x#0) and x#0 === x#1 then return "{\\mathbb "|x#0|"}"; -- effectively, makes ZZ.texMath obsolete
     if #x > 3 and substring(x,-3) === "bar" then return "\\bar{"|texVariable substring(x,0,#x-3)|"}";
     x
@@ -1261,6 +1262,7 @@ Expression#{Standard,AfterPrint} = x -> afterPrint(Expression, " of class ", cla
 expression VisibleList := v -> new Holder from {apply(v,expression)}
 expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
 expression Symbol := x -> new Holder from { x }
+expression Function := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 
