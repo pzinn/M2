@@ -440,7 +440,7 @@ net Ideal := net @@ expression
 toString Ideal := toString @@ expression
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := (I) -> if I.?texMath then I.texMath else texMath expression I
-describe Ideal := (I) -> Describe FunctionApplication { ideal, new VerticalList from apply(first entries generators I, expression) }
+describe Ideal := (I) -> Describe FunctionApplication { ideal, VerticalList apply(first entries generators I, expression) }
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

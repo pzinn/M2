@@ -576,8 +576,14 @@ binaryOperatorFunctions := new HashTable from {
      symbol or => ((x,y) -> x or y)
      }
 
-binaryTexMath := new HashTable from {
-    symbol .. => "\\,{.}{.}\\,",
+keywordTexMath := new HashTable from { -- both unary and binary keywords
+    symbol # => "\\# ",
+    symbol { => "\\{ ",
+    symbol { => "\\} ",
+    symbol ^ => "{^\\wedge}",
+    symbol % => "\\% ",
+    symbol .. => "\\,{.}{.}\\, ",
+    symbol ..< => "\\,{.}{.}{<}\\, ",
     symbol => => "\\Rightarrow ",
     symbol <= => "\\Leftarrow ",
     symbol ==> => "\\Longrightarrow ",
@@ -590,11 +596,21 @@ binaryTexMath := new HashTable from {
     symbol == => "=",
     symbol -> => "\\rightarrow ",
     symbol <- => "\\leftarrow ",
-    symbol ===> => "\\Longrightarrow ",
-    symbol <=== => "\\Longleftarrow ",
+    symbol ===> => "{\\large\\Longrightarrow}",
+    symbol <=== => "{\\large\\Longleftarrow}",
+    symbol SPACE => "\\text{SPACE}",
+    symbol << => "\\ll ",
+    symbol >> => "\\gg ",
+    symbol and => "\\text{and}",
+    symbol not => "\\text{not}",
+    symbol or => "\\text{or}",
+    symbol ~ => "\\sim ",
+    symbol ^** => "^{\\otimes}",
+    symbol _ => "\\_ ",
+    symbol ^^ => "{^{\\wedge\\wedge}}"
     }
 
-texMath Keyword := x -> if binaryTexMath#?x then binaryTexMath#x else toString x;
+texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else toString x;
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
