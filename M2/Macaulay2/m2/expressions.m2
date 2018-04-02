@@ -880,6 +880,7 @@ startsWithSymbol Holder := i -> startsWithSymbol i#0
 net Product := v -> (
      n := # v;
      if n === 0 then "1"
+     else if n === 1 then net v#0
      else (
      	  p := precedence v;
 	  seps := newClass(MutableList, splice {"", n-1 : "*", ""});
@@ -1089,6 +1090,7 @@ html Sum := v -> (
 texMath Product := v -> (
      n := # v;
      if n === 0 then "1"
+     else if n === 1 then texMath v#0
      else (
      	  p := precedence v;
 	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and (x#1 === 1 or x#1 === ONE)));
@@ -1107,6 +1109,7 @@ texMath Product := v -> (
 html Product := v -> (
      n := # v;
      if n === 0 then "1"
+     else if n === 1 then html v#0
      else (
      	  p := precedence v;
      	  concatenate apply(#v,
