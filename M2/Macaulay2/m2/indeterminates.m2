@@ -65,7 +65,7 @@ runLengthEncode VisibleList := x -> (
 		    continue)
 	       else first(
 		    if oi === symbol oi then (oi = i; m = 1 ; continue) else
-		    if m === 1 then oi else if dupin === true then hold m : expression oi else expression i0 .. expression oi,
+		    if m === 1 then hold oi else if dupin === true then hold m : expression oi else expression i0 .. expression oi,
 		    (dupin = null; oi = i; m = 1))));
      x)
 
