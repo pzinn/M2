@@ -577,11 +577,15 @@ binaryOperatorFunctions := new HashTable from {
      }
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
+    -*
     symbol # => "\\# ",
-    symbol { => "\\{ ",
-    symbol { => "\\} ",
     symbol ^ => "{^\\wedge}",
     symbol % => "\\% ",
+    symbol & => "\\& ",
+    symbol ^^ => "{^{\\wedge\\wedge}}"
+    symbol == => "=", -- ??
+    *-
+    symbol |- => "\\vdash ",
     symbol .. => "\\,{.}{.}\\, ",
     symbol ..< => "\\,{.}{.}{<}\\, ",
     symbol => => "\\Rightarrow ",
@@ -591,26 +595,31 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol <==> => "\\Longleftrightarrow ",
     symbol ** => "\\otimes ",
     symbol ++ => "\\oplus ",
-    symbol & => "\\& ",
     symbol != => "\\ne ",
-    symbol == => "=",
+    symbol = => "=",
     symbol -> => "\\rightarrow ",
     symbol <- => "\\leftarrow ",
     symbol ===> => "{\\large\\Longrightarrow}",
     symbol <=== => "{\\large\\Longleftarrow}",
-    symbol SPACE => "\\text{SPACE}",
     symbol << => "\\ll ",
     symbol >> => "\\gg ",
-    symbol and => "\\text{and}",
-    symbol not => "\\text{not}",
-    symbol or => "\\text{or}",
     symbol ~ => "\\sim ",
     symbol ^** => "^{\\otimes}",
     symbol _ => "\\_ ",
-    symbol ^^ => "{^{\\wedge\\wedge}}"
+    symbol | => "|",
+    symbol || => "||",
+    symbol * => "*",
+    symbol + => "+",
+    symbol - => "-",
+    symbol / => "/",
+    symbol // => "//",
+    symbol { => "\\{ ",
+    symbol { => "\\} ",
+    symbol \ => "\\backslash ",
+    symbol : => ":"
     }
 
-texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else toString x;
+texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
