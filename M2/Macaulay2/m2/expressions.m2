@@ -616,7 +616,8 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol { => "\\{ ",
     symbol { => "\\} ",
     symbol \ => "\\backslash ",
-    symbol : => ":"
+    symbol : => ":",
+    symbol ; => ";"
     }
 
 texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x

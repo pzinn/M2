@@ -107,7 +107,7 @@ texMath HashTable := x -> if x.?texMath then x.texMath else (
      concatenate flatten (
      	  texMath class x,
 	  "\\left\\{",
-	  between(",", apply(sortByName pairs x,(k,v) -> texMath k | "\\ \\Rightarrow\\ " | texMath v)),
+	  between(",\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\ \\Rightarrow\\ " | texMath v)),
 	  "\\right\\}"
      	  ))
 texMath MonoidElement := texMath @@ expression

@@ -81,15 +81,14 @@ monoidParts = (M) -> (
 expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
-expression GeneralOrderedMonoid := M -> Parenthesize { FunctionApplication {monoid, expressionMonoid M} }
+--expression GeneralOrderedMonoid := M -> Parenthesize { FunctionApplication {monoid, expressionMonoid M} }
+expression GeneralOrderedMonoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else FunctionApplication {monoid, expressionMonoid M}
+describe GeneralOrderedMonoid := M -> Describe FunctionApplication {monoid, expressionMonoid M}
 
-toExternalString GeneralOrderedMonoid := M -> toString expression M
-toString GeneralOrderedMonoid := M -> (
-     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
-     toExternalString M)
-net GeneralOrderedMonoid := M -> (
-     if hasAttribute(M,ReverseDictionary) then return toString getAttribute(M,ReverseDictionary);
-     net expression M)
+toExternalString GeneralOrderedMonoid := toString @@ describe
+toString GeneralOrderedMonoid := toString @@ expression
+net GeneralOrderedMonoid := net @@ expression
+texMath GeneralOrderedMonoid := texMath @@ expression
 
 degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
 degreesMonoid PolynomialRing := R -> (
