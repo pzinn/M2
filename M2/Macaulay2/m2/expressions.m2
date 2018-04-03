@@ -55,7 +55,7 @@ expression Expression := identity
 Expression#operator = ""
 
 value' = method(Dispatch => Thing)
-value' BasicList := x -> new class x from apply(toList x,value')
+value' BasicList := x -> apply(x,value')
 value' Thing := identity
 
 -- with the following line we have no way to distinguish between "hold symbol x" and "hold x" when x has a value:
