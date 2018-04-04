@@ -1252,7 +1252,7 @@ o := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 symbol briefDocumentation <- identity			    -- temporary assignment
 
-texSpecial = ascii(30); -- cause why not
+texSpecial = ascii(30); -- cause why not (TEMP, of course)
 
 afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing); -- because net Nothing is "null", not nothing
     if mathJaxMode then << texSpecial | "1";

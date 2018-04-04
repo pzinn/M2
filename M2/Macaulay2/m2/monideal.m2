@@ -172,7 +172,7 @@ expression MonomialIdeal := (I) -> (
      else FunctionApplication { monomialIdeal, unsequence apply(toSequence first entries generators I, expression) }
      )
 
-MonomialIdeal#{Standard,AfterPrint} = MonomialIdeal#{Standard,AfterNoPrint} = (I) -> afterPrint(MonomialIdeal," of ",ring I)
+afterPrint MonomialIdeal := afterNoPrint MonomialIdeal := (I) -> (MonomialIdeal," of ",ring I)
 
 monomialIdeal Ideal :=  MonomialIdeal => (I) -> monomialIdeal generators gb I
 
