@@ -238,8 +238,6 @@ texMath Net := n -> (
 	    ));
     "\\raise"|toString (2.65*(-dep+hgt-1))|"mm\\begin{array}{l}" | s | "\\end{array}"
     )
---so we do this instead:
-mathJax Net := n -> "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | "</span>"
 -----------------------------------------------------------------------------
 
 netList = method(Options => {

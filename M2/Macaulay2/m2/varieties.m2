@@ -94,23 +94,23 @@ texMath CoherentSheaf := F -> (
 			 if #d === 1 then ("(", toString first d, ")")
 			 else toString toSequence d)))))
 
-
 CoherentSheaf#{Standard,AfterPrint} = F -> (
      X := variety F;
      M := module F;
+     << endl;				  -- double space
      n := rank ambient F;
-     afterPrint("coherent sheaf on ",X,
+     << concatenate(interpreterDepth:"o") << lineNumber << " : coherent sheaf on " << X;
      if M.?generators then
-     if M.?relations then (", subquotient of ", ambient F)
-     else (", subsheaf of ", ambient F)
-     else if M.?relations then (", quotient of ", ambient F)
+     if M.?relations then << ", subquotient of " << ambient F
+     else << ", subsheaf of " << ambient F
+     else if M.?relations then << ", quotient of " << ambient F
      else if n > 0 then (
-	  ", free"
+	  << ", free";
 	  -- if not all(degrees M, d -> all(d, zero))
 	  -- then << ", degrees " << if degreeLength M === 1 then flatten degrees M else degrees M;
-	  )
+	  );
+     << endl;
      )
- )
 
 sheaf(Variety,Module) :=  CoherentSheaf => (X,M) -> if M.cache#?(sheaf,X) then M.cache#(sheaf,X) else M.cache#(sheaf,X) = (
      if ring M =!= ring X then error "expected module and variety to have the same ring";

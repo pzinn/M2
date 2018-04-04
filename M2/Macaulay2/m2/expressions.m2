@@ -1241,31 +1241,21 @@ texVariable := x -> (
     )
 texMath Symbol := x -> texVariable toString x;
 
-mathJax Thing := x -> concatenate("\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
---mathJax Thing := x -> concatenate("\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
-
 
 File << Thing := File => (o,x) -> printString(o,net x)
 List << Thing := List => (files,x) -> apply(files, o -> o << x)
 
-o := () -> concatenate(interpreterDepth:"o", toString lineNumber)
+o := () -> concatenate(interpreterDepth:"o")
 
 symbol briefDocumentation <- identity			    -- temporary assignment
 
-texSpecial = ascii(30); -- cause why not (TEMP, of course)
-
-afterPrint = y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing); -- because net Nothing is "null", not nothing
-    if mathJaxMode then << texSpecial | "1";
-    << endl << o() << " : " << horizontalJoin(net\y) << endl;
--- HACK. compared to normal output, I don't put an endline before
-     if mathJaxMode then (
-	 << texSpecial | "3";
-	 z := htmlLiteral concatenate(texMath\y); -- use mathJax instead?
-	 << texSpecial | "2" | o() | " : \\(" | z | "\\)<br/>" | texSpecial | "3";
-	 )
-)
-
-Thing#{Standard,AfterPrint} = x -> afterPrint class x
+Thing#{Standard,AfterPrint} = x -> (
+     << endl;				  -- double space
+     << o() << lineNumber;
+     y := class x;
+     << " : " << y;
+     << endl;
+     )
 
 -- Type#{Standard,AfterPrint} = x -> (
 --      << endl;				  -- double space
@@ -1282,7 +1272,12 @@ Function#{Standard,AfterPrint} = x -> (
      -- briefDocumentation x; -- from now on, type "?foo" to get brief documentation on foo
      )
 *-
-Expression#{Standard,AfterPrint} = x -> afterPrint(Expression, " of class ", class x );
+Expression#{Standard,AfterPrint} = x -> (
+     << endl;				  -- double space
+     << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
+     )
+
+
 
 -----------------------------------------------------------------------------
 

@@ -77,7 +77,6 @@ scan((
 -- tex Hypertext := defop(concatenate,tex)
 -- texMath Hypertext := defop(concatenate,texMath)
 -- mathML Hypertext := defop(concatenate,mathML)
-mathJax Hypertext := html -- aha!
 
 info TITLE := net TITLE := x -> ""
 
@@ -100,7 +99,7 @@ texMath String := s -> (
     if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
     else texMath stack ss
     )
-mathJax String := lookup(mathJax,Thing)
+
 info String := identity
 
 texMath HashTable := x -> if x.?texMath then x.texMath else (

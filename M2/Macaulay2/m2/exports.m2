@@ -15,6 +15,7 @@ export {
 	"Describe",
 	"SpacedBinaryOperation",
 	"FactPolynomialRing",
+	"MathJax",
 -- end experimental
     "LocalRing",
     "localRing",
@@ -1210,9 +1211,6 @@ export {
 }
 
 exportMutable {
--- begin experimental
-	"mathJaxMode",
--- end experimental
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",
