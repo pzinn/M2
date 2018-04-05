@@ -1,14 +1,19 @@
 -- might move some texMath stuff here as well
 
-mathJax Thing := x -> concatenate("\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
---mathJax Thing := x -> concatenate("\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
+-- comments used to help the browser app
+mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
+mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some TeX to be compiled
+mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
+
+mathJax Thing := x -> concatenate(mathJaxTexComment,"\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
+--mathJax Thing := x -> concatenate(mathJaxTexComment."\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
 -- text stuff
-mathJax Hypertext := html -- aha!
+mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
 -- see texMath Net in nets.m2
-mathJax Net := n -> "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | "</span>"
+mathJax Net := n -> mathJaxTexComment | "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | "</span>"
 mathJax String := lookup(mathJax,Thing) -- for now. might want to switch to HTML later, just like its ancestor net
-mathJax Descent := x -> "<span style=\"display:inline-table\">" | concatenate sort apply(pairs x,
+mathJax Descent := x -> mathJaxHtmlComment | "<span style=\"display:inline-table\">" | concatenate sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
@@ -23,17 +28,14 @@ ZZ#{MathJax,InputContinuationPrompt} = ZZ#{Standard,InputContinuationPrompt}
 
 Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 
-texSpecial = ascii(30); -- TEMP, of course -- will turn into a valid <>
-
 Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     -- compared to normal output, I don't put and endline before
-    << texSpecial | "3";
+    << mathJaxTextComment;
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
---	<< texSpecial | "2" | oprompt | y | "<br/>" | texSpecial | "3";
-	<< texSpecial | "2" | "<div style=\"padding:8px 0px\">" | oprompt | y | "</div>" | texSpecial | "3";
+    << oprompt | mathJaxTexComment | y | "<br/>" | mathJaxTextComment;
     )
 
 -- afterprint <sigh>
@@ -41,9 +43,9 @@ Thing#{MathJax,Print} = x -> (
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
-	 << texSpecial | "3";
+	 << mathJaxTextComment;
 	 z := htmlLiteral concatenate(texMath\y);
-	 << texSpecial | "2" | on() | " : \\(" | z | "\\)<br/>" | texSpecial | "3";
+	 << mathJaxTexComment | on() | " : \\(" | z | "\\)<br/>" | mathJaxTextComment;
 	 )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
