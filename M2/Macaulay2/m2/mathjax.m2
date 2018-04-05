@@ -32,10 +32,9 @@ Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    -- compared to normal output, I don't put and endline before
     << mathJaxTextComment;
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    << oprompt | mathJaxTexComment | y | "<br/>" | mathJaxTextComment;
+    << endl << oprompt | y | mathJaxTextComment << endl;
     )
 
 -- afterprint <sigh>
@@ -45,7 +44,7 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
 	 << mathJaxTextComment;
 	 z := htmlLiteral concatenate(texMath\y);
-	 << mathJaxTexComment | on() | " : \\(" | z | "\\)<br/>" | mathJaxTextComment;
+	 << endl << on() | " : " | mathJaxTexComment | "\\(" | z | "\\)" | mathJaxTextComment << endl;
 	 )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
