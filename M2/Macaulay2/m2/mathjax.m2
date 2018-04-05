@@ -21,7 +21,11 @@ mathJax Descent := x -> "<span style=\"display:inline-table\">" | concatenate so
 ZZ#{MathJax,InputPrompt} = ZZ#{Standard,InputPrompt}
 ZZ#{MathJax,InputContinuationPrompt} = ZZ#{Standard,InputContinuationPrompt}
 
+Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
+
 texSpecial = ascii(30); -- TEMP, of course -- will turn into a valid <>
+
+Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
