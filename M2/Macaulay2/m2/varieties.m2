@@ -57,7 +57,7 @@ ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-expression CoherentSheaf := F -> FunctionApplication { sheaf, expression F.module }
+expression CoherentSheaf := F -> new FunctionApplication from { sheaf, expression F.module }
 
 -- net CoherentSheaf := (F) -> net expression F
 
@@ -227,7 +227,7 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       n := numgens A;
 	       M := cokernel lift(presentation module F,A) ** cokernel p;
 	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
-		       
+
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
 applyMethod = (key,x) -> (

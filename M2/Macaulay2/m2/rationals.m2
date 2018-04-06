@@ -31,8 +31,8 @@ expression QQ := r -> (
      else (expression n)/(expression d)
      )
 toString QQ := r -> if denominator r === 1 then simpleToString numerator r else simpleToString r
-net QQ := net @@ expression
-texMath QQ := texMath @@ expression
+net QQ := r -> net expression r
+texMath QQ := r -> texMath expression r
 QQ.InverseMethod = x -> 1/x
 QQ.dim = 0
 QQ.Engine = true
