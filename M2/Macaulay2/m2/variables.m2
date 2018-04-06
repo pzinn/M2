@@ -34,11 +34,13 @@ IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
      )
 Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
-net IndexedVariable := v -> net expression v
-toString IndexedVariable := v -> toString expression v
+net IndexedVariable := net @@ expression
+toString IndexedVariable := toString @@ expression
+texMath IndexedVariable := texMath @@ expression
 expression IndexedVariableTable := x -> hold x
 net IndexedVariableTable :=
 toString IndexedVariableTable := x -> if x#?symbol$ then toString x#symbol$ else "-*an indexed variable table*-"
+texMath IndexedVariableTable := x -> if x#?symbol$ then texMath x#symbol$ else texMath "-*an indexed variable table*-"
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)
 Symbol _ Thing := (X,i) -> new IndexedVariable from {X,i}

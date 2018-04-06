@@ -80,29 +80,14 @@ info HEADER3 := Hop(info,"-")
 
 html String := htmlLiteral
 tex String := texLiteral
-texMath String := s -> (
-     if #s === 1 then s
-     else concatenate("\\text{", texLiteral s, "}")
-     )
+
 info String := identity
 
-texMath List := x -> concatenate("\\{", between(",", apply(x,texMath)), "\\}")
-texMath Array := x -> concatenate("[", between(",", apply(x,texMath)), "]")
-texMath Sequence := x -> concatenate("(", between(",", apply(x,texMath)), ")")
-
--- texMath HashTable := x -> if x.?texMath then x.texMath else texMath expression x
--- tex HashTable := x -> (
---      if x.?tex then x.tex 
---      else if x.?texMath then concatenate("$",x.texMath,"$")
---      else tex expression x
---      )
 -- html HashTable := x -> html expression x
 
 specials := new HashTable from {
      symbol ii => "&ii;"
      }
-
-texMath Function := texMath Boolean := x -> "\\text{" | tex x | "}"
 
 -*
  spacing between lines and paragraphs:
@@ -240,6 +225,7 @@ verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBA
 maximumCodeWidth = 60					    -- see also booktex.m2, an old file that sets the same variable
 
 tex TT := texMath TT := verbatim
+
 tex CODE :=
 tex PRE := x -> concatenate ( VERBATIM,
      ///\penalty-200

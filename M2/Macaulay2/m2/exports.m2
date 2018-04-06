@@ -1,6 +1,10 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
+    "MathJax",
+    "mathJax",
+    "Describe",
+    "SpacedBinaryOperation",
     "LocalRing",
     "localRing",
     "MaximalIdeal",

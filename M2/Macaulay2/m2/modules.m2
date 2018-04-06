@@ -79,6 +79,7 @@ entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
 toExternalString Vector := 				    -- not quite right
 toString Vector := v -> concatenate ( "vector ", toString entries super v )
+texMath Vector := v -> texMath first v
 ring Vector := v -> ring class v
 module Vector := v -> target first v
 leadTerm Vector := v -> new class v from leadTerm v#0
@@ -254,6 +255,7 @@ net Module := M -> (
 	  net new Superscript from { if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R, numgens M}
 	  )
      )
+texMath Module := x -> if x.?texMath then x.texMath else texMath expression x
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

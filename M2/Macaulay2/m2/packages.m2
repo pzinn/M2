@@ -9,6 +9,7 @@ addStartFunction(
 Package = new Type of MutableHashTable
 Package.synonym = "package"
 net Package := toString Package := p -> if p#?"title" then p#"title" else "-*package*-"
+texMath Package := x -> if x.?texMath then x.texMath else texMath toString x
 loadedPackages = {}
 options Package := p -> p.Options
 
