@@ -1,5 +1,67 @@
--- might move some texMath stuff here as well
+-- some texMath that got stranded
+texMath BasicList := s -> concatenate(
+     if class s =!= List then texMath class s,
+    "\\left\\{",
+    between(",\\,",apply(toList s,texMath))
+    ,"\\right\\}"
+    )
+texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
+texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
+texMath HashTable := x -> if x.?texMath then x.texMath else (
+     concatenate flatten (
+	 texMath class x,
+	 "\\left\\{",
+	 between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
+	 "\\right\\}"
+	 )
+      )
+texMath MonoidElement := texMath @@ expression
+texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
+texMath Function := x -> texMath toString x
+texMath ScriptedFunctor := lookup(texMath,Type)
+-- for a slightly different style:
+-*
+texMath Type := x -> if x.?texMath then x.texMath else "{\\textsf{" | toString x | "}}"
+texMath Function := x -> "{\\textsf{" | toString x | "}}"
+*-
 
+-- strings -- compare with hypertext.m2
+texVerbLiteralTable := new MutableHashTable
+    scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
+    texVerbLiteralTable#"!" = ///!\texttt{!}\verb!///
+    --texVerbLiteralTable#"$" = ///!\texttt{\$}\verb!/// -- eww ugly fix of #375 of mathJax. not needed if not enclosing using $
+    texVerbLiteralTable#"\\"= ///!\verb!\!\verb!/// -- eww ugly fix of #375 of mathJax
+    -- unfortunately the next 2 (needed if the string happens to be in a {} group) may result in wrong font in normal LaTeX depending on encoding, see https://stackoverflow.com/questions/2339651/how-to-get-real-braces-in-ttfont-in-latex
+    texVerbLiteralTable#"{" =///!\texttt{\{}\verb!/// -- eww ugly fix of #375 of mathJax
+    texVerbLiteralTable#"}" =///!\texttt{\}}\verb!/// -- eww ugly fix of #375 of mathJax
+texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
+--texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
+texMath String := s -> (
+    ss := separate s;
+    if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
+    else texMath stack ss
+    )
+
+-- this truncates very big nets
+maxlen := 3000; -- randomly chosen
+texMath Net := n -> (
+    dep := depth n; hgt := height n;
+    s:="";
+    len:=0; i:=0;
+    scan(unstack n, x->(
+	    i=i+1;
+	    len=len+#x;
+	    if i<#n and len>maxlen then (
+		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-2mm]";
+		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
+		break
+		);
+	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-2mm]";
+	    ));
+    "\\raise"|toString (2.65*(-dep+hgt-1))|"mm\\begin{array}{l}" | s | "\\end{array}"
+    )
+
+-- now the mathJax stuff per se
 -- comments used to help the browser app
 mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
 mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some TeX to be compiled
@@ -10,7 +72,7 @@ mathJax Thing := x -> concatenate(mathJaxTexComment,"\\(\\displaystyle ",htmlLit
 
 -- text stuff
 mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
--- see texMath Net in nets.m2
+-- see also texMath Net above
 mathJax Net := n -> mathJaxTexComment | "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | "</span>"
 mathJax String := lookup(mathJax,Thing) -- for now. might want to switch to HTML later, just like its ancestor net
 mathJax Descent := x -> mathJaxHtmlComment | "<span style=\"display:inline-table\">" | concatenate sort apply(pairs x,

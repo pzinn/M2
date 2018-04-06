@@ -1224,7 +1224,7 @@ showTex Thing := o -> x -> (
      )
 
 -----------------------------------------------------------------------------
-print = x -> (<< net x << endl;)
+print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
 -----------------------------------------------------------------------------
 texMath RR := toString
 texMath ZZ := toString
@@ -1311,11 +1311,19 @@ toString MapArrow := x-> toString(x#0) | " <--- " | toString(x#1)
 net MapArrow := x-> net(x#0) | " <--- " | net(x#1)
 texMath MapArrow := x -> texMath(x#0) | "\\,\\longleftarrow\\," | texMath(x#1)
 
--- moved from set.m2
+-- moved from set.m2 because of loadsequence order
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := x -> if x.?texMath then x.texMath else texMath expression x
+
+-- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(
+-- would be if HashTable was a SelfInitializingType
+expression HashTable := x -> (
+         if hasAttribute(x,ReverseDictionary) then return expression getAttribute(x,ReverseDictionary);
+	 new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
+	 )
+value' HashTable := x -> applyPairs(x, (k,v) -> (value' k, value' v))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

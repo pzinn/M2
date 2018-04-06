@@ -21,19 +21,8 @@ texLiteralTable := new MutableHashTable
     texLiteralTable#"\t" = "\t"
     texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 				   -- see page 381 of TeX Book
--- the section above is useful when *not* using \verb
-
-texVerbLiteralTable := new MutableHashTable
-    scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
-    texVerbLiteralTable#"!" = ///!\texttt{!}\verb!///
-    --texVerbLiteralTable#"$" = ///!\texttt{\$}\verb!/// -- eww ugly fix of #375 of mathJax. not needed if not enclosing using $
-    texVerbLiteralTable#"\\"= ///!\verb!\!\verb!/// -- eww ugly fix of #375 of mathJax
-    -- unfortunately the next 2 (needed if the string happens to be in a {} group) may result in wrong font in normal LaTeX depending on encoding, see https://stackoverflow.com/questions/2339651/how-to-get-real-braces-in-ttfont-in-latex
-    texVerbLiteralTable#"{" =///!\texttt{\{}\verb!/// -- eww ugly fix of #375 of mathJax
-    texVerbLiteralTable#"}" =///!\texttt{\}}\verb!/// -- eww ugly fix of #375 of mathJax
 
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
-texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
 
 HALFLINE := ///\vskip 4.75pt
 ///
@@ -93,31 +82,8 @@ info HEADER3 := Hop(info,"-")
 
 html String := htmlLiteral
 tex String := texLiteral
---texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
-texMath String := s -> (
-    ss := separate s;
-    if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
-    else texMath stack ss
-    )
 
 info String := identity
-
-texMath HashTable := x -> if x.?texMath then x.texMath else (
-     concatenate flatten (
-     	  texMath class x,
-	  "\\left\\{",
-	  between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
-	  "\\right\\}"
-     	  ))
-texMath MonoidElement := texMath @@ expression
-texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
-texMath Function := x -> texMath toString x
-texMath ScriptedFunctor := lookup(texMath,Type)
--- for a slightly different style:
--*
-texMath Type := x -> if x.?texMath then x.texMath else "{\\textsf{" | toString x | "}}"
-texMath Function := x -> "{\\textsf{" | toString x | "}}"
-*-
 
 -- html HashTable := x -> html expression x
 

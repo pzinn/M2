@@ -165,15 +165,6 @@ net List := x -> horizontalJoin deepSplice (
      toSequence between(comma,apply(x,netn)),
      "}")
 
-texMath BasicList := s -> concatenate(
-     if class s =!= List then texMath class s,
-    "\\left\\{",
-    between(",\\,",apply(toList s,texMath))
-    ,"\\right\\}"
-    )
-texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
-texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-
 VerticalList = new SelfInitializingType of List
 VerticalList.synonym = "vertical list"
 net VerticalList := x -> if #x === 0 then "{}" else (
@@ -220,24 +211,6 @@ net Type := X -> (
 	  );
      horizontalJoin ( net class X, if #X > 0 then ("{...", toString(#X), "...}") else "{}" ))
 
--- this truncates very big nets because of mathJax
-maxlen := 3000; -- randomly chosen
-texMath Net := n -> (
-    dep := depth n; hgt := height n;
-    s:="";
-    len:=0; i:=0;
-    scan(unstack n, x->(
-	    i=i+1;
-	    len=len+#x;
-	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-2mm]";
-		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
-		break
-		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-2mm]";
-	    ));
-    "\\raise"|toString (2.65*(-dep+hgt-1))|"mm\\begin{array}{l}" | s | "\\end{array}"
-    )
 -----------------------------------------------------------------------------
 
 netList = method(Options => {
