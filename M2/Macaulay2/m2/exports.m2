@@ -16,6 +16,7 @@ export {
 	"SpacedBinaryOperation",
 	"FactPolynomialRing",
 	"MathJax",
+	"ColumnExpression",
 -- end experimental
     "LocalRing",
     "localRing",

@@ -38,9 +38,8 @@ peek'(ZZ,HashTable) := (depth,s) -> (
      else RowExpression splice (
 	  expression class s,
 	  if parent s =!= Nothing 
-	  then (" of ", expression parent s)
-	  else "",
-    	  new VerticalList from
+	  then (" of ", expression parent s),
+	  new ColumnExpression from
 	  apply(
 	       sortByName pairs s,
 	       (key,value) -> SpacedBinaryOperation ( symbol =>, 

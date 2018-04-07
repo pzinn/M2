@@ -68,20 +68,20 @@ mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some T
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
 
 mathJax Thing := x -> concatenate(mathJaxTexComment,"\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
---mathJax Thing := x -> concatenate(mathJaxTexComment."\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
--- text stuff
+-- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
--- see also texMath Net above
-mathJax Net := n -> mathJaxTexComment | "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | "</span>"
-mathJax String := lookup(mathJax,Thing) -- for now. might want to switch to HTML later, just like its ancestor net
-mathJax Descent := x -> mathJaxHtmlComment | "<span style=\"display:inline-table\">" | concatenate sort apply(pairs x,
+mathJax Net := n -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table;vertical-align:", toString(5.3*(height n-1)), "mm\">", apply(unstack n, x-> mathJax x | "<br/>"), "</span>")
+mathJax String := x -> concatenate(mathJaxHtmlComment, "<tt>", htmlLiteral x, "</tt>") -- a bit naive: font wrong
+mathJax Descent := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
-	  ) | "<br/>") | "</span>"
-
+	  ) | "<br/>"), "</span>")
+mathJax RowExpression := x -> concatenate(mathJaxHtmlComment, apply(toList x,mathJax))
+-- kind of an expression analogue of Net. need to define its texMath as well
+mathJax ColumnExpression := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", apply(toList x, y->mathJax y|"<br/>"), "</span>")
 
 -- output routines
 
