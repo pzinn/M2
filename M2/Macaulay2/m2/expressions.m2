@@ -1295,7 +1295,6 @@ expression VisibleList := v -> new Holder from {apply(v,expression)}
 expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
 expression Symbol := x -> new Holder from { x }
 expression Function := x -> new Holder from { x }
-expression Type := x -> new Holder from { x }
 expression Boolean := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
@@ -1329,12 +1328,16 @@ toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := x -> if x.?texMath then x.texMath else texMath expression x
 
--- useless -- nobody uses expression HashTable at the moment, but here we go anyway
+-*
+-- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(
+-- plus creates all kinds of complications with subclasses
 expression HashTable := x -> (
-         if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary)
-	 else new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
+         if hasAttribute(x,ReverseDictionary) then return expression getAttribute(x,ReverseDictionary);
+	 new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
 	 )
 value' HashTable := x -> applyPairs(x, (k,v) -> (value' k, value' v))
+expression Type := x -> new Holder from { x }
+*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
