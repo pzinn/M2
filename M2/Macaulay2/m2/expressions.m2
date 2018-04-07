@@ -1173,7 +1173,7 @@ texMath VerticalList := s -> concatenate(
 
 texMath Table := m -> (
     if m#?0 then concatenate(
-	"{\\begin{array}{@{}*{" | toString m#0 | "}c@{}}" | newline,
+	"{\\begin{array}{", #m#0: "c", "}", newline,
 	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
 	"\\end{array}}")
 )
