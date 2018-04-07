@@ -71,7 +71,7 @@ texMath ChainComplex := C -> (
      complete C;
      s := sort spots C;
      if # s === 0 then "0" else
-     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{" | texMath C.dd_i | "}\\," | texUnder(texMath C_i,i) )
+     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptscriptstyle " | texMath C.dd_i | "}\\," | texUnder(texMath C_i,i) )
       )
 
 -*
@@ -139,7 +139,7 @@ net ChainComplexMap := f -> (
      if # v === 0 then "0"
      else stack v)
 
--- code already in graded module map
+-- code already in graded module map -- need to check if complete makes any diff
 -*
 texMath ChainComplexMap := f -> (
      complete f;
