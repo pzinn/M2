@@ -67,7 +67,10 @@ mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; defa
 mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some TeX to be compiled
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
 
-mathJax Thing := x -> concatenate(mathJaxTexComment,"\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
+texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)")
+--texWrap := x -> concatenate(mathJaxTexComment,"\\(",x,"\\)")
+
+mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
@@ -105,8 +108,8 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
 	 << mathJaxTextComment;
-	 z := htmlLiteral concatenate(texMath\y);
-	 << endl << on() | " : " | mathJaxTexComment | "\\(" | z | "\\)" | mathJaxTextComment << endl;
+	 z := concatenate(texMath\y);
+	 << endl << on() | " : " | mathJaxTexComment | texWrap z | mathJaxTextComment << endl;
 	 )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;

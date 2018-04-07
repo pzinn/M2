@@ -40,6 +40,11 @@ succS = new MutableHashTable;
 for i from 0 to 50 do succS#(varName i) = varName(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
+succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
+    i := #y-1;
+    while i>=0 and y_i == 1 do i=i-1; -- should test x_i as well
+    i>=0 and take(x,i) == take(y,i) and x_i+1 === y_i
+)
 succ(Symbol,Symbol) := (x,y) -> (
      (s,t) := (toString x, toString y);
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
