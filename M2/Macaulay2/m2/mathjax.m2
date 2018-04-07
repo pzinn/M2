@@ -118,6 +118,7 @@ Expression#{MathJax,AfterPrint} = x -> texAfterPrint (Expression," of class ",cl
 Describe#{MathJax,AfterPrint} = identity
 
 Ideal#{MathJax,AfterPrint} = Ideal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
+MonomialIdeal#{MathJax,AfterPrint} = MonomialIdeal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
 
 Module#{MathJax,AfterPrint} = M -> (
      n := rank ambient M;

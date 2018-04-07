@@ -177,7 +177,6 @@ MonomialIdeal#{Standard,AfterPrint} = MonomialIdeal#{Standard,AfterNoPrint} = (I
      << concatenate(interpreterDepth:"o") << lineNumber << " : MonomialIdeal of " 
      << ring I << endl;
      )
---afterPrint MonomialIdeal := afterNoPrint MonomialIdeal := (I) -> (MonomialIdeal," of ",ring I)
 
 monomialIdeal Ideal :=  MonomialIdeal => (I) -> monomialIdeal generators gb I
 
