@@ -63,31 +63,32 @@ texMath Net := n -> (
     )
 
 -- now the mathJax stuff per se
--- comments used to help the browser app
+-- mathJax Thing produces some valid html code with possible tex code in \( \)
+-- topLevelMode=MathJax produces that plus possible pure text coming from the system
+-- hence, requires comments to help the browser app distinguish html from text
 mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
-mathJaxTexComment := "<!--tex-->"; -- indicates what follows is TeX (to be compiled)
-mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
+mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is HTML
 
---texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)")
-texWrap := x -> concatenate(mathJaxTexComment,"\\(",x,"\\)") -- we let the web parser do the work of html-ifying
+texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster
-mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
+mathJax Hypertext := html -- !
 -- here, we assume line-height: 16px; is there a more intrinsic way to do this?
-mathJax Net := n -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table;vertical-align:", toString(16*(height n-1)), "px\">", apply(unstack n, x-> mathJax x | mathJaxHtmlComment | "<br/>"), "</span>")
-mathJax String := x -> concatenate(mathJaxHtmlComment, "<tt>" | htmlLiteral x | "</tt>")
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(16*(height n-1)), "px\">", apply(unstack n, x-> mathJax x | "<br/>"), "</span>")
+mathJax String := x -> concatenate("<tt>", htmlLiteral x, "</tt>")
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
-mathJax Descent := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", sort apply(pairs x,
+-- with katex no problem just redefine <tt> to be \tt
+mathJax Descent := x -> concatenate("<span style=\"display:inline-table\">", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
 	  ) | "<br/>"), "</span>")
-mathJax RowExpression := x -> concatenate(mathJaxHtmlComment, apply(toList x,mathJax))
+mathJax RowExpression := x -> apply(toList x,mathJax)
 -- kind of an expression analogue of Net. need to define its texMath as well
-mathJax ColumnExpression := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", apply(toList x, y->mathJax y|mathJaxHtmlComment | "<br/>"), "</span>")
+mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-table\">", apply(toList x, y->mathJax y | "<br/>"), "</span>")
 
 -- output routines
 
@@ -99,10 +100,10 @@ Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
+--    << mathJaxTextComment;
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    << mathJaxTextComment;
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    << endl << oprompt | y | mathJaxTextComment << endl;
+    << endl << oprompt | mathJaxHtmlComment | y | mathJaxTextComment << endl;
     )
 
 -- afterprint <sigh>
@@ -110,9 +111,9 @@ Thing#{MathJax,Print} = x -> (
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
-	 << mathJaxTextComment;
+--	 << mathJaxTextComment;
 	 z := concatenate(texMath\y);
-	 << endl << on() | " : " | texWrap z | mathJaxTextComment << endl;
+	 << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
 	 )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
