@@ -1274,6 +1274,7 @@ expression VisibleList := v -> new Holder from {apply(v,expression)}
 expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
 expression Symbol := x -> new Holder from { x }
 expression Function := x -> new Holder from { x }
+expression Boolean := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 

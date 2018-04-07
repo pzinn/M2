@@ -56,26 +56,28 @@ texMath Net := n -> (
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-2mm]";
+	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-1mm]";
 	    ));
-    "\\raise"|toString (2.65*(-dep+hgt-1))|"mm\\begin{array}{l}" | s | "\\end{array}"
-    )
+    --      "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- this number may have to be adjusted/defined more properly, disabling for now
+    "\\begin{array}{l}" | s | "\\end{array}"
+   )
 
 -- now the mathJax stuff per se
 -- comments used to help the browser app
 mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
-mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some TeX to be compiled
+mathJaxTexComment := "<!--tex-->"; -- indicates what follows is TeX (to be compiled)
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
 
-texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)")
---texWrap := x -> concatenate(mathJaxTexComment,"\\(",x,"\\)")
+--texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)")
+texWrap := x -> concatenate(mathJaxTexComment,"\\(",x,"\\)") -- we let the web parser do the work of html-ifying
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
-mathJax Net := n -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table;vertical-align:", toString(5.3*(height n-1)), "mm\">", apply(unstack n, x-> mathJax x | "<br/>"), "</span>")
-mathJax String := x -> concatenate(mathJaxHtmlComment, htmlLiteral x) -- a bit naive: font wrong. but then can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
+-- here, we assume line-height: 16px; is there a more intrinsic way to do this?
+mathJax Net := n -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table;vertical-align:", toString(16*(height n-1)), "px\">", apply(unstack n, x-> mathJax x | mathJaxHtmlComment | "<br/>"), "</span>")
+mathJax String := x -> concatenate(mathJaxHtmlComment, "<tt>" | htmlLiteral x | "</tt>")
 mathJax Descent := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
