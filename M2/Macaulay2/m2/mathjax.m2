@@ -68,23 +68,20 @@ mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some T
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
 
 mathJax Thing := x -> concatenate(mathJaxTexComment,"\\(\\displaystyle ",htmlLiteral texMath x,"\\)") -- by default, for MathJax we use tex (as opposed to html)
---mathJax Thing := x -> concatenate(mathJaxTexComment."\\(\\require{action}\\displaystyle\\bbox[padding: 10px 0px]{\\toggle{",htmlLiteral texMath x,"}{"|htmlLiteral texMath net x|"}\\endtoggle}\\)") -- by default, for MathJax we use tex (as opposed to html)
 
--- text stuff
+-- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
--- see also texMath Net above
-mathJax Net := n -> mathJaxTexComment | "<span style=\"display:inline-table;vertical-align:" | toString(5.3*(height n-1)) | "mm\">" | concatenate apply(unstack n, x-> "\\(" | texMath x | "\\)<br/>") | "</span>"
-mathJax String := lookup(mathJax,Thing) -- for now. might want to switch to HTML later, just like its ancestor net
-mathJax Descent := x -> mathJaxHtmlComment | "<span style=\"display:inline-table\">" | concatenate sort apply(pairs x,
+mathJax Net := n -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table;vertical-align:", toString(5.3*(height n-1)), "mm\">", apply(unstack n, x-> mathJax x | "<br/>"), "</span>")
+mathJax String := x -> concatenate(mathJaxHtmlComment, htmlLiteral x) -- a bit naive: font wrong. but then can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
+mathJax Descent := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
-	  ) | "<br/>") | "</span>"
-
+	  ) | "<br/>"), "</span>")
+mathJax RowExpression := x -> concatenate(mathJaxHtmlComment, apply(toList x,mathJax))
 
 -- output routines
-
 ZZ#{MathJax,InputPrompt} = ZZ#{Standard,InputPrompt}
 ZZ#{MathJax,InputContinuationPrompt} = ZZ#{Standard,InputContinuationPrompt}
 
@@ -118,8 +115,6 @@ Expression#{MathJax,AfterPrint} = x -> texAfterPrint (Expression," of class ",cl
 Describe#{MathJax,AfterPrint} = identity
 
 Ideal#{MathJax,AfterPrint} = Ideal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
-MonomialIdeal#{MathJax,AfterPrint} = MonomialIdeal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
-
 
 Module#{MathJax,AfterPrint} = M -> (
      n := rank ambient M;
