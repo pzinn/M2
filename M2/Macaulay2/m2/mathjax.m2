@@ -65,7 +65,7 @@ texMath Net := n -> (
 -- now the mathJax stuff per se
 -- comments used to help the browser app
 mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
-mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some TeX to be compiled
+mathJaxTexComment := "<!--tex-->"; -- indicates what follows is TeX (to be compiled)
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
 
 --texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)")
