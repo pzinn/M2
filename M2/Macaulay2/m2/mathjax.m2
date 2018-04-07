@@ -68,8 +68,8 @@ mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; defa
 mathJaxTexComment := "<!--tex-->"; -- indicates what follows is HTML with some TeX to be compiled
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
 
-texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)") -- for mathJax
---texWrap := x -> concatenate(mathJaxTexComment,"\\(",x,"\\)") -- for katex
+--texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)")
+texWrap := x -> concatenate(mathJaxTexComment,"\\(",x,"\\)") -- we let the web parser do the work of html-ifying
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
