@@ -1313,6 +1313,7 @@ expression HashTable := x -> (
 	 new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
 	 )
 value' HashTable := x -> applyPairs(x, (k,v) -> (value' k, value' v))
+expression Type := x -> new Holder from { x }
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
