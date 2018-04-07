@@ -4,14 +4,14 @@ peek' = method(TypicalValue => Net)
 
 peek'(ZZ,ZZ) := (depth,n) -> toString n
 peek'(ZZ,Nothing) := (depth,s) -> "null"
-peek'(ZZ,Symbol) := (depth,s) -> toString s
-peek'(ZZ,Thing) := (depth,s) -> net s
+peek'(ZZ,Symbol) := (depth,s) -> expression s
+peek'(ZZ,Thing) := (depth,s) -> expression s
 
 peek'(ZZ,BasicList) := (depth,s) -> (
-     if depth === 0 then net s
-     else horizontalJoin(
-	  net class s,
-	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(depth-1,value))), "}" ) )
+     if depth === 0 then expression s
+     else RowExpression (
+	  expression class s,
+	  apply(toList s, value -> peek'(depth-1,value))))
 
 peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
      if depth === 0 then net s
@@ -21,43 +21,35 @@ peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
 
 peek'(ZZ,List) := (depth,s) -> (
      if depth === 0 then net s
-     else horizontalJoin(
-	  "{", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), "}" ) )
+     else apply(s, value -> peek'(depth,value)))
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
 
 formatNet := n -> (stack ((s -> substring(s,1,#s-2)) \ format \ unstack n))^(height n - 1)
 peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else netList({{formatNet s}}, Boxes => true)
 peek'(ZZ,Sequence) := (depth,s) -> (
      if depth === 0 then net s
-     else horizontalJoin(
-	  if #s === 0
-	  then "()"
-	  else if #s === 1 
-	  then ("1 : (", peek'(depth,s#0), ")")
-	  else ("(", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), ")" )))
+     else apply(s, value -> peek'(depth,value)))
 
 precOption := precedence ( 1 => 2 )
 
 peek'(ZZ,HashTable) := (depth,s) -> (
      if depth === 0 
-     then net s
-     else horizontalJoin(
-	  net class s,
+     then expression s
+     else RowExpression (
+	  expression class s,
 	  if parent s =!= Nothing 
-	  then horizontalJoin(" of ", net parent s)
+	  then (" of ", expression parent s)
 	  else "",
-	  "{",
-	  stack sort apply(
-	       pairs s,
-	       (key,value) -> horizontalJoin splice (
+    	  new VerticalList from
+	  apply(
+	       sortByName pairs s,
+	       (key,value) -> SpacedBinaryOperation ( symbol =>, 
 		    if precedence key < precOption
-		    then ("(",peek'(depth-1,key),")")
+		    then Parenthesize peek'(depth-1,key)
 		    else peek'(depth-1,key),
-		    " => ",
 		    if precedence value < precOption
-		    then ("(",peek'(depth-1,value),")")
-		    else peek'(depth-1,value))),
-	  "}"
+		    then Parenthesize peek'(depth-1,value)
+		    else peek'(depth-1,value)))
 	  ))
 
 peek'(ZZ,Dictionary) := (depth,d) -> (
