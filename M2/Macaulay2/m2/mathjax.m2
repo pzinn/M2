@@ -72,7 +72,7 @@ mathJax Thing := x -> concatenate(mathJaxTexComment,"\\(\\displaystyle ",htmlLit
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
 mathJax Net := n -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table;vertical-align:", toString(5.3*(height n-1)), "mm\">", apply(unstack n, x-> mathJax x | "<br/>"), "</span>")
-mathJax String := x -> concatenate(mathJaxHtmlComment, "<tt>", htmlLiteral x, "</tt>") -- a bit naive: font wrong
+mathJax String := x -> concatenate(mathJaxHtmlComment, htmlLiteral x) -- a bit naive: font wrong. but then can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
 mathJax Descent := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0

@@ -43,12 +43,8 @@ peek'(ZZ,HashTable) := (depth,s) -> (
 	  apply(
 	       sortByName pairs s,
 	       (key,value) -> SpacedBinaryOperation ( symbol =>, 
-		    if precedence key < precOption
-		    then Parenthesize peek'(depth-1,key)
-		    else peek'(depth-1,key),
-		    if precedence value < precOption
-		    then Parenthesize peek'(depth-1,value)
-		    else peek'(depth-1,value)))
+		   peek'(depth-1,key),
+		   peek'(depth-1,value)))
 	  ))
 
 peek'(ZZ,Dictionary) := (depth,d) -> (
