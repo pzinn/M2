@@ -1305,15 +1305,16 @@ expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := x -> if x.?texMath then x.texMath else texMath expression x
-
+-*
 -- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(
--- would be if HashTable was a SelfInitializingType
+-- plus creates all kinds of complications with subclasses
 expression HashTable := x -> (
          if hasAttribute(x,ReverseDictionary) then return expression getAttribute(x,ReverseDictionary);
 	 new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
 	 )
 value' HashTable := x -> applyPairs(x, (k,v) -> (value' k, value' v))
 expression Type := x -> new Holder from { x }
+*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
