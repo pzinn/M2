@@ -1319,13 +1319,12 @@ texMath Set := x -> if x.?texMath then x.texMath else texMath expression x
 
 -- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(
 -- would be if HashTable was a SelfInitializingType
--*
 expression HashTable := x -> (
-         if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) -- not! expression getAttribute(...)?
+         if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary)
 	 else new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
 	 )
 value' HashTable := x -> applyPairs(x, (k,v) -> (value' k, value' v))
-*-
+expression Type := x -> new Holder from { x }
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

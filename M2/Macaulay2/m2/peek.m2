@@ -35,7 +35,7 @@ precOption := precedence ( 1 => 2 )
 peek'(ZZ,HashTable) := (depth,s) -> (
      if depth === 0 
      then expression s
-     else RowExpression (
+     else RowExpression splice (
 	  expression class s,
 	  if parent s =!= Nothing 
 	  then (" of ", expression parent s)
