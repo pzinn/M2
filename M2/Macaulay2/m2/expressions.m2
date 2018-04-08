@@ -704,8 +704,8 @@ net Adjacent := net FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      args := m#1;
-     if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then (p = p-1; div = true; );
-     -- normally Lists should be wrapped, but sadly this is not always respected
+     if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; );
+     -- sometimes Lists are wrapped, sometimes they aren't
      netargs := net args;
      if precedence args >= p
      then if pfun > p
@@ -725,13 +725,13 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      args := m#1;
-     if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then (p = p-1; div = true; );
-     -- normally Lists should be wrapped, but sadly this is not always respected
+     if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; );
+     -- sometimes Lists are wrapped, sometimes they aren't
      if precedence args >= p
      then if pfun > p then (
 	 if div
 	 then concatenate (texMath fun, texMath args)
-	 else concatenate (texMath fun,"\\ ",texMath args)
+	 else concatenate (texMath fun,"\\,",texMath args)
 	 )
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
      else if pfun > p
