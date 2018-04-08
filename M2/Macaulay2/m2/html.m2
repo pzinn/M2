@@ -1278,7 +1278,8 @@ show URL := x -> (
      else
      if version#"issue" === "Cygwin" then browser = "cygstart";
      if browser === "" then (
-	  if runnable "firefox" then browser = "firefox"
+	  if runnable "google-chrome" then browser = "google-chrome"
+	  else if runnable "firefox" then browser = "firefox"
 	  else if runnable "netscape" then browser = "netscape"
 	  else error "no browser found, and none specified in $WWWBROWSER"
 	  );
