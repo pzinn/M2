@@ -4,7 +4,6 @@ export {
     "MathJax",
     "mathJax",
     "Describe",
-    "SpacedBinaryOperation",
     "LocalRing",
     "localRing",
     "MaximalIdeal",
