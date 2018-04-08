@@ -52,41 +52,42 @@ texMath Net := n -> (
 	    i=i+1;
 	    len=len+#x;
 	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-2mm]";
+		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-1mm]";
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
 	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-1mm]";
 	    ));
-    --      "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- this number may have to be adjusted/defined more properly, disabling for now
+--    "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- this number may have to be adjusted/defined more properly, disabling for now
     "\\begin{array}{l}" | s | "\\end{array}"
-   )
+    )
 
 -- now the mathJax stuff per se
--- comments used to help the browser app
+-- mathJax Thing produces some valid html code with possible tex code in \( \)
+-- topLevelMode=MathJax produces that plus possible pure text coming from the system
+-- hence, requires comments to help the browser app distinguish html from text
 mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
-mathJaxTexComment := "<!--tex-->"; -- indicates what follows is TeX (to be compiled)
-mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is pure HTML
+mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is HTML
 
---texWrap := x -> concatenate(mathJaxTexComment,"\\(",htmlLiteral x,"\\)")
-texWrap := x -> concatenate(mathJaxTexComment,"\\(",x,"\\)") -- we let the web parser do the work of html-ifying
+texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster
-mathJax Hypertext := x -> concatenate(mathJaxHtmlComment, html x)
+mathJax Hypertext := html -- !
 -- here, we assume line-height: 16px; is there a more intrinsic way to do this?
-mathJax Net := n -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table;vertical-align:", toString(16*(height n-1)), "px\">", apply(unstack n, x-> mathJax x | mathJaxHtmlComment | "<br/>"), "</span>")
-mathJax String := x -> concatenate(mathJaxHtmlComment, "<tt>" | htmlLiteral x | "</tt>")
-mathJax Descent := x -> concatenate(mathJaxHtmlComment, "<span style=\"display:inline-table\">", sort apply(pairs x,
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(16*(height n-1)), "px\">", apply(unstack n, x-> mathJax x | "<br/>"), "</span>")
+mathJax String := x -> concatenate("<tt>", htmlLiteral x, "</tt>")
+mathJax Descent := x -> concatenate("<span style=\"display:inline-table\">", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
 	  ) | "<br/>"), "</span>")
-mathJax RowExpression := x -> concatenate(mathJaxHtmlComment, apply(toList x,mathJax))
+mathJax RowExpression := x -> apply(toList x,mathJax)
 
 -- output routines
+
 ZZ#{MathJax,InputPrompt} = ZZ#{Standard,InputPrompt}
 ZZ#{MathJax,InputContinuationPrompt} = ZZ#{Standard,InputContinuationPrompt}
 
@@ -96,9 +97,8 @@ Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    << mathJaxTextComment;
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    << endl << oprompt | y | mathJaxTextComment << endl;
+    << endl << oprompt | mathJaxHtmlComment | y | mathJaxTextComment << endl;
     )
 
 -- afterprint <sigh>
@@ -106,9 +106,8 @@ Thing#{MathJax,Print} = x -> (
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
-	 << mathJaxTextComment;
 	 z := concatenate(texMath\y);
-	 << endl << on() | " : " | texWrap z | mathJaxTextComment << endl;
+	 << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
 	 )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
@@ -120,6 +119,7 @@ Expression#{MathJax,AfterPrint} = x -> texAfterPrint (Expression," of class ",cl
 Describe#{MathJax,AfterPrint} = identity
 
 Ideal#{MathJax,AfterPrint} = Ideal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
+MonomialIdeal#{MathJax,AfterPrint} = MonomialIdeal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
 
 Module#{MathJax,AfterPrint} = M -> (
      n := rank ambient M;
