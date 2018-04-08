@@ -79,7 +79,7 @@ monoidParts = (M) -> (
 expressionMonoid = M -> (
      T := if (options M).Local === true then List else Array;
      new T from apply(monoidParts M,expression))
-expression GeneralOrderedMonoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else FunctionApplication {monoid, expressionMonoid M}
+expression GeneralOrderedMonoid := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else new Parenthesize from { new FunctionApplication from {monoid, expressionMonoid M} }
 describe GeneralOrderedMonoid := M -> Describe FunctionApplication {monoid, expressionMonoid M}
 
 toExternalString GeneralOrderedMonoid := toString @@ describe
