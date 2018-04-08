@@ -755,6 +755,7 @@ returns = t -> x -> t
 		precedence String :=
 	    precedence Expression := returns strength1 symbol symbol
 	        precedence Holder := x -> precedence x#0
+	      precedence Describe := x -> precedence x#0
 --	       precedence Holder2 := x -> precedence x#0
                 precedence Ring := returns prec symbol ^ -- sort of temp. basically takes care of ZZ, QQ...
        precedence BinaryOperation := x -> lprec x#0
