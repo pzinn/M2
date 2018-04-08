@@ -13,7 +13,6 @@ export {
 	"concatCols",
 	"mathJax",
 	"Describe",
-	"SpacedBinaryOperation",
 	"FactPolynomialRing",
 	"MathJax",
 	"ColumnExpression",

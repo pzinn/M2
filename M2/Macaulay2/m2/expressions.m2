@@ -640,7 +640,7 @@ net BinaryOperation := m -> (
      y := net m#2;
      if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
      if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
-     horizontalJoin( x, toString m#0, y )
+     if m#?3 then horizontalJoin( x, m#3, toString m#0, m#3, y ) else horizontalJoin( x, toString m#0, y ) -- allow for optional separator
      )
 
 texMath BinaryOperation := m -> (
@@ -648,7 +648,7 @@ texMath BinaryOperation := m -> (
      y := texMath m#2;
      if rightPrecedence m#1 < lprec m#0 then x = "\\left(" | x | "\\right)";
      if precedence m#2 <= rprec m#0 then y = "\\left(" | y | "\\right)";
-     concatenate( x, texMath m#0, y )
+     if m#?3 then concatenate( x, replace(" ","\\,",m#3), texMath m#0, replace(" ","\\,",m#3), y ) else concatenate( x, texMath m#0, y )
      )
 
 toString'(Function, BinaryOperation) := (fmt,m) -> (
@@ -656,34 +656,8 @@ toString'(Function, BinaryOperation) := (fmt,m) -> (
      y := fmt m#2;
      if rightPrecedence m#1 < lprec m#0 then x = ("(",x,")");
      if precedence m#2 <= rprec m#0 then y = ("(",y,")");
-     concatenate( x, toString m#0, y )
+     if m#?3 then concatenate( x, m#3, toString m#0, m#3, y ) else concatenate( x, toString m#0, y ) -- allow for optional separator
      )
-
-SpacedBinaryOperation = new HeaderType of BinaryOperation -- {op,left,right}
-net SpacedBinaryOperation := m -> (
-     x := net m#1;
-     y := net m#2;
-     if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
-     if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
-     horizontalJoin( x, " ", toString m#0, " ", y )
-     )
-
-texMath SpacedBinaryOperation := m -> (
-     x := texMath m#1;
-     y := texMath m#2;
-     if rightPrecedence m#1 < lprec m#0 then x = "\\left(" | x | "\\right)";
-     if precedence m#2 <= rprec m#0 then y = "\\left(" | y | "\\right)";
-     concatenate( x, "\\,", texMath m#0, "\\,", y )
-     )
-
-toString'(Function, SpacedBinaryOperation) := (fmt,m) -> (
-     x := fmt m#1;
-     y := fmt m#2;
-     if rightPrecedence m#1 < lprec m#0 then x = ("(",x,")");
-     if precedence m#2 <= rprec m#0 then y = ("(",y,")");
-     concatenate( x, " ", toString m#0, " ", y )
-     )
-
 
 -----------------------------------------------------------------------------
 FunctionApplication = new HeaderType of Expression -- {fun,args}
@@ -1315,7 +1289,7 @@ toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- extra stuff
-expression Option := z -> SpacedBinaryOperation { symbol =>, expression z#0, expression z#1 }
+expression Option := z -> BinaryOperation { symbol =>, expression z#0, expression z#1, " " }
 net Option := net @@ expression
 texMath Option := texMath @@ expression
 toString Option := toString @@ expression
