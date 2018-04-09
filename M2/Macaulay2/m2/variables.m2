@@ -23,7 +23,11 @@ IndexedVariableTable _ Thing := (x,i) -> (
      if x#?i then x#i
      else if x#?symbol$ then new IndexedVariable from {x#symbol$,i}
      else error "attempted to make new indexed variable from indexed variable table associated with no symbol")
-IndexedVariableTable _ Thing  = (x,i,e) -> (checkValue x; x#i = e)
+IndexedVariableTable _ Thing  = (x,i,e) -> (checkValue x; 
+     Y := class e;
+     n := lookup(GlobalAssignHook,Y);
+     if n =!= null then n(new IndexedVariable from {x#symbol$,i}, e);
+    x#i = e)
 IndexedVariableTable.GlobalAssignHook = (X,x) -> (
      globalAssignFunction(X,x);
      if not x#?symbol$ then x#symbol$ = X;
