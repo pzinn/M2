@@ -576,14 +576,6 @@ binaryOperatorFunctions := new HashTable from {
      }
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
-    -*
-    symbol # => "\\# ",
-    symbol ^ => "{^\\wedge}",
-    symbol % => "\\% ",
-    symbol & => "\\& ",
-    symbol ^^ => "{^{\\wedge\\wedge}}"
-    symbol == => "=", -- ??
-    *-
     symbol |- => "\\vdash ",
     symbol .. => "\\,{.}{.}\\, ",
     symbol ..< => "\\,{.}{.}{<}\\, ",
