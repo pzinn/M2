@@ -54,6 +54,9 @@ value IndexedVariable := v -> (
 Symbol _ Thing = (x,i,e) -> (
      x' := value x;
      if not instance(x',IndexedVariableTable) then x' = new IndexedVariableTable from x;
+     Y := class e;
+     n := lookup(GlobalAssignHook,Y);
+     if n =!= null then n(x_i,e);
      x'_i = e)
 installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequence xi)
 
