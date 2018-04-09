@@ -35,6 +35,7 @@ IndexedVariableTable.GlobalAssignHook = (X,x) -> (
 IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
      globalReleaseFunction(X,x);
      if x#?symbol$ and x#symbol$ === X then remove(x,symbol$);
+     scan(pairs x, (key,val) -> ( n:=lookup(GlobalReleaseHook, class val); if n =!= null then n(new IndexedVariable from {X,key}, val)));
      )
 Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
