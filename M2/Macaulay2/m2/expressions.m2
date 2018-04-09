@@ -1213,7 +1213,7 @@ showTex Thing := o -> x -> (
      )
 
 -----------------------------------------------------------------------------
-print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
+print = x -> (<< net x << endl;)
 -----------------------------------------------------------------------------
 texMath RR := toString
 texMath ZZ := toString

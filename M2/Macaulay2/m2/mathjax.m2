@@ -170,3 +170,9 @@ CoherentSheaf#{MathJax,AfterPrint} = F -> (
  )
 
 ZZ#{MathJax,AfterPrint} = identity
+
+-- experimental
+print = x -> if topLevelMode === MathJax then (
+    y := mathJax x; -- we compute the mathJax now (in case it produces an error)
+    << mathJaxHtmlComment | y | mathJaxTextComment << endl;
+    ) else ( << net x << endl; )
