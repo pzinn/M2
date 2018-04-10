@@ -1192,11 +1192,12 @@ texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw ob
 bbletters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 greekletters := set {"alpha","beta","gamma","delta","epsilon","varepsilon","zeta","eta","theta","vartheta","iota","kappa","lambda","mu","nu","xi","pi","varpi","rho","varrho","sigma","varsigma","tau","upsilon","phi","varphi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Upsilon"}
 texVariable := x -> (
+    xx := separate("$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
     if #x === 2 and x#0 === x#1 and bbletters#?(x#0) then return "{\\mathbb "|x#0|"}"; -- effectively, makes ZZ.texMath obsolete
-    if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
+    if #x > 1 and last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     if #x > 3 and substring(x,-3) === "bar" then return "\\bar{"|texVariable substring(x,0,#x-3)|"}";
     if greekletters#?x then return "{\\"|x|"}";
-    replace("\\$","\\$",x);
+    x
     )
 texMath Symbol := x -> texVariable toString x;
 
