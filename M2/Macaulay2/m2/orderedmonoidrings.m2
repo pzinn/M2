@@ -398,7 +398,8 @@ fact PolynomialRing := opts -> R -> (
 	Rf.baseRings=append(R.baseRings,R);
 	commonEngineRingInitializations Rf;
 	if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
-	expression Rf := a -> (expression a#0)*new Product from apply(a#1,(f,e)->new Power from (expression f,e)); -- a#0 *must* be a constant (or a monomial if Inverses=true). in principle it gets converted automatically to expression by *
+--	expression Rf := a -> (expression a#0)* new Product from apply(a#1,(f,e)->new Power from (expression f,e)); -- a#0 *must* be a constant (or a monomial if Inverses=true). in principle it gets converted automatically to expression by *
+        expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e); -- subtly different from the above
 	factor Rf := opts -> a -> new Product from apply(prepend({a#0,1},a#1),u->new Power from u); -- we have to include a#0 in the product so it doesn't get expression'ed, and raise it to the power 1, to follow the convention of usual factor. for now, ignores options
 	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache it? can't really cache except in ring itself which sucks
 	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
