@@ -1082,7 +1082,7 @@ texMath Product := v -> (
      else (
      	  p := precedence v;
 	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and (x#1 === 1 or x#1 === ONE)));
-	  seps := apply (n-1, i-> if nums#i and nums#(i+1) then "\\cdot " else "");
+	  seps := apply (n-1, i-> if nums#i and nums#(i+1) then "\\cdot " else "\\,");
      	  boxes := apply(v,
 		    term -> (
 			 if precedence term <= p and class expression term =!= Divide
@@ -1229,7 +1229,7 @@ texVariable := x -> (
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     if #x > 3 and substring(x,-3) === "bar" then return "\\bar{"|texVariable substring(x,0,#x-3)|"}";
     if greekletters#?x then return "{\\"|x|"}";
-    x
+    if #x === 1 then x else "\\textit{"|x|"}"
     )
 texMath Symbol := x -> texVariable toString x;
 
