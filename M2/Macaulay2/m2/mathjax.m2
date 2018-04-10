@@ -73,19 +73,20 @@ texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
+
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
 -- here, we assume line-height: 16px; is there a more intrinsic way to do this?
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(16*(height n-1)), "px\">", apply(unstack n, x-> mathJax x | "<br/>"), "</span>")
-mathJax String := x -> concatenate("<tt>", htmlLiteral x, "</tt>")
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(16*(height n-1)), "px\"><tt>", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</tt></span>")
+mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral x, "</tt></span>")
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
 -- with katex no problem just redefine <tt> to be \tt
-mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-space:pre\">", sort apply(pairs x,
+mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-space:pre\"><tt>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
-	  ) | "<br/>"), "</span>")
+	  ) | "<br/>"), "</tt></span>")
 mathJax RowExpression := x -> apply(toList x,mathJax)
 -- kind of an expression analogue of Net. need to define its texMath as well
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-table;white-space:pre\">", apply(toList x, y->mathJax y | "<br/>"), "</span>")
