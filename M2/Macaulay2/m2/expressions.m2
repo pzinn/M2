@@ -1118,7 +1118,7 @@ texMath Power := v -> (
 	  x := texMath v#0;
 	  y := texMath v#1;
 	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
-	  concatenate("{",x,"}",(class v)#operator,"{",y,"}")))
+	  concatenate(x,(class v)#operator,"{",y,"}")))
 
 texMath Subscript := texMath Superscript := v -> ( -- there is a precedence issue, compare with net Superscript
 --     p := precedence v;
