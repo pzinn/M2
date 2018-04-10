@@ -1196,7 +1196,7 @@ texVariable := x -> (
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     if #x > 3 and substring(x,-3) === "bar" then return "\\bar{"|texVariable substring(x,0,#x-3)|"}";
     if greekletters#?x then return "{\\"|x|"}";
-    x
+    replace("\\$","\\$",x);
     )
 texMath Symbol := x -> texVariable toString x;
 
