@@ -84,7 +84,7 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-sp
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
 	  ) | "<br/>"), "</tt></span>")
-mathJax RowExpression := x -> apply(toList x,mathJax)
+mathJax RowExpression := x -> concatenate apply(toList x,mathJax)
 
 -- output routines
 
