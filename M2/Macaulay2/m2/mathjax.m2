@@ -87,7 +87,9 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-sp
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
 	  ) | "<br/>"), "</tt></span>")
+-- some expressions can be mathJaxed directly w/o reference to texMath
 mathJax RowExpression := x -> concatenate apply(toList x,mathJax)
+mathJax Holder := x -> mathJax x#0
 -- kind of an expression analogue of Net. need to define its texMath as well
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-table;white-space:pre\">", apply(toList x, y->mathJax y | "<br/>"), "</span>")
 
