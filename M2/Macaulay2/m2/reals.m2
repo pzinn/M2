@@ -317,6 +317,7 @@ net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
+texMath CC := texMath @@ expression
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
