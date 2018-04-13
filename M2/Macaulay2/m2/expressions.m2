@@ -1223,7 +1223,7 @@ texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw ob
 -- next version is a horrible hack
 --texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
 bbletters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
-greekletters := set {"alpha","beta","gamma","delta","epsilon","varepsilon","zeta","eta","theta","vartheta","iota","kappa","lambda","mu","nu","xi","pi","varpi","rho","varrho","sigma","varsigma","tau","upsilon","phi","varphi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Upsilon"}
+greekletters := set {"alpha","beta","gamma","delta","epsilon","varepsilon","zeta","eta","theta","vartheta","iota","kappa","lambda","mu","nu","xi","pi","varpi","rho","varrho","sigma","varsigma","tau","upsilon","phi","varphi","chi","psi","omega","Gamma","Delta","Theta","Lambda","Xi","Pi","Sigma","Upsilon","Phi","Psi","Omega"}
 texVariable := x -> (
     if x === "" then return "";
     xx := separate("$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
