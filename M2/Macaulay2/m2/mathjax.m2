@@ -62,6 +62,12 @@ texMath Net := n -> (
     "\\begin{array}{l}" | s | "\\end{array}"
     )
 
+texMath ColumnExpression := x -> concatenate (
+    "\\begin{array}{l}",
+    apply(toList x,y -> texMath y |"\\\\[-2mm]"), -- arbitrary. needs to be fixed somehow. in fact editor zoom will screw this up
+    "\\end{array}"
+    )
+
 -- now the mathJax stuff per se
 -- mathJax Thing produces some valid html code with possible tex code in \( \)
 -- topLevelMode=MathJax produces that plus possible pure text coming from the system
