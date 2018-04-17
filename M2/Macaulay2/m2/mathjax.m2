@@ -68,6 +68,8 @@ texMath Net := n -> (
 -- hence, requires comments to help the browser app distinguish html from text
 mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is HTML
+mathJaxInputComment := "<!--inp-->"; -- it's text but it's input
+mathJaxInputContdComment := "<!--con-->"; -- continuation of input
 
 texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
 
@@ -90,8 +92,8 @@ mathJax Holder := x -> mathJax x#0
 
 -- output routines
 
-ZZ#{MathJax,InputPrompt} = ZZ#{Standard,InputPrompt}
-ZZ#{MathJax,InputContinuationPrompt} = ZZ#{Standard,InputContinuationPrompt}
+ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputComment
+ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment | concatenate (ZZ#{Standard,InputContinuationPrompt} lineno:" ") -- need to test if number or string... TODO
 
 Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 
