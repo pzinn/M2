@@ -114,8 +114,8 @@ mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;fle
 -- output routines
 
 ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputComment
-ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment | concatenate (ZZ#{Standard,InputContinuationPrompt} lineno:" ") -- wish there wasn't this lame syntax
--- in fact, need to test if number or string... TODO
+--ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment | concatenate (ZZ#{Standard,InputContinuationPrompt} lineno:" ")
+ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment
 
 Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 
