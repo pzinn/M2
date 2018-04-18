@@ -90,8 +90,8 @@ mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for 
 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
--- here, we assume line-height: 16px; is there a more intrinsic way to do this?
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(16*(height n-1)), "px\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
+-- the % is relative to line-height
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(100*(height n-1)), "%\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
 mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral1 x, "</tt></span>")
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
 -- with katex no problem just redefine <tt> to be \tt
@@ -102,10 +102,14 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-sp
 	  else toString k | " : " | mathJax v
 	  ) | "<br/>"), "</tt></span>")
 -- some expressions can be mathJaxed directly w/o reference to texMath
-mathJax RowExpression := x -> concatenate apply(toList x,mathJax)
 mathJax Holder := x -> mathJax x#0
 -- kind of an expression analogue of Net. need to define its texMath as well
+-*
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-table;white-space:pre\">", apply(toList x, y->mathJax y | "<br/>"), "</span>")
+mathJax RowExpression := x -> concatenate apply(toList x,mathJax)
+*-
+mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column;white-space:pre\">", apply(toList x, mathJax ), "</span>")
+mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row;white-space:pre\">", apply(toList x, mathJax ), "</span>")
 
 -- output routines
 
