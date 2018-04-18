@@ -77,16 +77,22 @@ mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is HTML
 mathJaxInputComment := "<!--inp-->"; -- it's text but it's input
 mathJaxInputContdComment := "<!--con-->";
 
-texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
+htmlLiteral1 = x -> ( -- we need to protect \( and \) as well from being processed
+    s := htmlLiteral x;
+    s = replace("\\\\\\(","&bsol;(",s);
+    s = replace("\\\\\\)","&bsol;)",s);
+    return s
+    )
+
+texWrap := x -> concatenate("\\(",htmlLiteral1 x,"\\)")
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
-
 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
 -- here, we assume line-height: 16px; is there a more intrinsic way to do this?
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(16*(height n-1)), "px\"><tt>", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</tt></span>")
-mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral x, "</tt></span>")
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(16*(height n-1)), "px\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
+mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral1 x, "</tt></span>")
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
 -- with katex no problem just redefine <tt> to be \tt
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-space:pre\"><tt>", sort apply(pairs x,

@@ -416,6 +416,14 @@ showTikZ Digraph := opt -> G -> (
      get output
      )
 
+mathJax Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
+     dotfilename := temporaryFileName() | ".dot";
+     writeDotFile(dotfilename, G);
+     svgfilename := temporaryFileName() | ".svg";
+     runcmd(graphs'DotBinary  | " -Tsvg " | dotfilename | " -o " | svgfilename);
+     G.cache#"svg" = get svgfilename
+     )
+
 writeDotFile = method()
 writeDotFile (String, Graph) := (filename, G) -> (
     fil := openOut filename;
@@ -427,6 +435,7 @@ writeDotFile (String, Graph) := (filename, G) -> (
     scan(E, e -> fil << "\t" | toString e_0 | " -- " | toString e_1 | ";" << endl);
     fil << "}" << endl << close;
     )
+
 
 ------------------------------------------
 -- Derivative graphs
