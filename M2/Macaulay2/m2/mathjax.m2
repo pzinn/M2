@@ -84,8 +84,8 @@ mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for 
 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
--- here, we assume line-height: 16px; is there a more intrinsic way to do this?
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(16*(height n-1)), "px\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
+-- the % is relative to line-height
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(100*(height n-1)), "%\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
 mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral1 x, "</tt></span>")
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-space:pre\"><tt>", sort apply(pairs x,
      (k,v) -> (
