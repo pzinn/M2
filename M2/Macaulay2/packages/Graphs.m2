@@ -435,6 +435,15 @@ writeDotFile (String, Graph) := (filename, G) -> (
     scan(E, e -> fil << "\t" | toString e_0 | " -- " | toString e_1 | ";" << endl);
     fil << "}" << endl << close;
     )
+writeDotFile (String, Digraph) := (filename, G) -> (
+    fil := openOut filename;
+    fil << "digraph G {" << endl;
+    V := vertexSet G;
+    scan(#V, i -> fil << "\t" | toString i | " [label=\""|toString V_i|"\"];" << endl);
+    A := adjacencyMatrix G;
+    scan(#V, i-> scan(#V, j-> if A_(i,j) === 1 then fil << "\t" | toString i | " -> " | toString j | ";" << endl ));
+    fil << "}" << endl << close;
+    )
 
 
 ------------------------------------------
