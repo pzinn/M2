@@ -74,8 +74,9 @@ texMath ColumnExpression := x -> concatenate (
 -- hence, requires comments to help the browser app distinguish html from text
 mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
 mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is HTML
+mathJaxOutputComment := "<!--out-->"; -- it's html but it's output
 mathJaxInputComment := "<!--inp-->"; -- it's text but it's input
-mathJaxInputContdComment := "<!--con-->";
+mathJaxInputContdComment := "<!--con-->"; -- text, continuation of input
 
 htmlLiteral1 = x -> ( -- we need to protect \( and \) as well from being processed
     s := htmlLiteral x;
@@ -91,16 +92,18 @@ mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
 -- the % is relative to line-height
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(100*(height n-1)), "%\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
-mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral1 x, "</tt></span>")
+--mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(100*(height n-1)), "%\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\"><pre>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</pre></span>")
+--mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral1 x, "</tt></span>")
+mathJax String := x -> concatenate("<pre>", htmlLiteral1 x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
--- with katex no problem just redefine <tt> to be \tt
-mathJax Descent := x -> concatenate("<span style=\"display:inline-table;white-space:pre\"><tt>", sort apply(pairs x,
+-- actually same problem with katex
+mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | mathJax v
-	  ) | "<br/>"), "</tt></span>")
+	  ) | "<br/>"), "</pre></span>")
 -- some expressions can be mathJaxed directly w/o reference to texMath
 mathJax Holder := x -> mathJax x#0
 -- kind of an expression analogue of Net. need to define its texMath as well
@@ -108,8 +111,8 @@ mathJax Holder := x -> mathJax x#0
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-table;white-space:pre\">", apply(toList x, y->mathJax y | "<br/>"), "</span>")
 mathJax RowExpression := x -> concatenate apply(toList x,mathJax)
 *-
-mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column;white-space:pre\">", apply(toList x, mathJax ), "</span>")
-mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row;white-space:pre\">", apply(toList x, mathJax ), "</span>")
+mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax ), "</span>")
+mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax ), "</span>")
 
 -- output routines
 
@@ -125,7 +128,7 @@ Thing#{MathJax,Print} = x -> (
 --    << mathJaxTextComment;
      oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    << endl << oprompt | mathJaxHtmlComment | y | mathJaxTextComment << endl;
+    << endl << oprompt | mathJaxOutputComment | y | mathJaxTextComment << endl;
     )
 
 -- afterprint <sigh>
