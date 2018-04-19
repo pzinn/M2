@@ -100,7 +100,7 @@ mathJax Holder := x -> mathJax x#0
 -- output routines
 
 ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputComment
-ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment | concatenate (ZZ#{Standard,InputContinuationPrompt} lineno:" ") -- need to test if number or string... TODO
+ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment
 
 Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 
