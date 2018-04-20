@@ -64,7 +64,7 @@ texMath Net := n -> (
 
 texMath ColumnExpression := x -> concatenate (
     "\\begin{array}{l}",
-    apply(toList x,y -> texMath y |"\\\\[-2mm]"), -- arbitrary. needs to be fixed somehow. in fact editor zoom will screw this up
+    apply(toList x,y -> texMath y |"\\\\"), -- kinda works
     "\\end{array}"
     )
 
@@ -108,6 +108,24 @@ mathJax Holder := x -> mathJax x#0
 -- kind of an expression analogue of Net. need to define its texMath as well
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax ), "</span>")
 mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax ), "</span>")
+
+-*
+-- experimental: a new Type should be created for examples since they won't literally be PRE in mathJax mode
+-- either that or must rewrite the whole structure of mathJax = html, or both
+
+mathJaxTags={mathJaxTextComment,mathJaxHtmlComment,mathJaxOutputComment,mathJaxInputComment,mathJaxInputContdComment}
+
+fixMathJaxTags := s -> (
+    scan(mathJaxTags, t-> s=replace(oldhL t,t,s));
+    s
+    )
+html PRE   := x -> concatenate(
+     "<pre>",
+--     demark(newline, apply(lines concatenate x, fixMathJaxTags @@ oldhL)),
+    x,
+     "</pre>\n"
+     )
+*-
 
 -- output routines
 
