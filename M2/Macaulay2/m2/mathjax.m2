@@ -92,12 +92,10 @@ mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
 -- the % is relative to line-height
---mathJax Net := n -> concatenate("<span style=\"display:inline-table;white-space:pre;vertical-align:", toString(100*(height n-1)), "%\"><tt>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</tt></span>")
 mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\"><pre>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</pre></span>")
---mathJax String := x -> concatenate("<span style=\"white-space:pre\"><tt>", htmlLiteral1 x, "</tt></span>")
 mathJax String := x -> concatenate("<pre>", htmlLiteral1 x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
--- actually same problem with katex
+-- actually same problem with katex, though eventually should be able to tt -> \tt
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -107,17 +105,12 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>"
 -- some expressions can be mathJaxed directly w/o reference to texMath
 mathJax Holder := x -> mathJax x#0
 -- kind of an expression analogue of Net. need to define its texMath as well
--*
-mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-table;white-space:pre\">", apply(toList x, y->mathJax y | "<br/>"), "</span>")
-mathJax RowExpression := x -> concatenate apply(toList x,mathJax)
-*-
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax ), "</span>")
 mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax ), "</span>")
 
 -- output routines
 
 ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputComment
---ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment | concatenate (ZZ#{Standard,InputContinuationPrompt} lineno:" ")
 ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment
 
 Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
@@ -125,8 +118,8 @@ Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
---    << mathJaxTextComment;
-     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
+    --    << mathJaxTextComment;
+    oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
     << endl << oprompt | mathJaxOutputComment | y | mathJaxTextComment << endl;
     )
