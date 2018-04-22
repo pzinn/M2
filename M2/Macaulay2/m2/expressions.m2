@@ -341,6 +341,7 @@ toString'(Function, RowExpression) := (fmt,w) -> concatenate apply(w,fmt)
 ColumnExpression = new HeaderType of Expression
 ColumnExpression.synonym = "row expression"
 net ColumnExpression := w -> stack apply(toList w,net)
+toString ColumnExpression := toString @@ net
 --html ColumnExpression := w -> concatenate apply(w,html)
 --texMath ColumnExpression := w -> concatenate apply(w,texMath)
 --toString'(Function, ColumnExpression) := (fmt,w) -> concatenate apply(w,fmt)
