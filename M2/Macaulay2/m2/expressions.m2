@@ -572,7 +572,8 @@ binaryOperatorFunctions := new HashTable from {
      symbol != => ((x,y) -> x != y),
      symbol and => ((x,y) -> x and y),
      symbol not => ((x,y) -> x not y),
-     symbol or => ((x,y) -> x or y)
+     symbol or => ((x,y) -> x or y),
+     symbol ^** => ((x,y) -> x^**y)
      }
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
@@ -605,7 +606,7 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol / => "/",
     symbol // => "//",
     symbol { => "\\{ ",
-    symbol { => "\\} ",
+    symbol } => "\\} ",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
     symbol : => ":",
