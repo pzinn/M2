@@ -52,11 +52,11 @@ texMath Net := n -> (
 	    i=i+1;
 	    len=len+#x;
 	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-1mm]"; -- "\\\\[-2mm]";
+		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-1mm]";
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-1mm]"; -- "\\\\[-2mm]";
+	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-1mm]";
 	    ));
 --    "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- 2.65 for [-2mm]. this number may have to be adjusted/defined more properly, disabling for now
     "\\begin{array}{l}" | s | "\\end{array}"
@@ -105,7 +105,7 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>"
 	  ) | "<br/>"), "</pre></span>")
 -- some expressions can be mathJaxed directly w/o reference to texMath
 mathJax Holder := x -> mathJax x#0
--- kind of an expression analogue of Net. need to define its texMath as well
+-- kind of an expression analogue of Net
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax ), "</span>")
 mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax ), "</span>")
 
