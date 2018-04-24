@@ -223,12 +223,12 @@ if firstTime then (
 	  if n =!= null then n(s,v);
 	  s <- v);
      globalAssignFunction = (X,x) -> (
-	  if not instance(X,Symbol) and not instance(X,IndexedVariable) then error("globalAssignFunction: expected a symbol: ", toString X);
+	  --if not instance(X,Symbol) and not instance(X,IndexedVariable) then error("globalAssignFunction: expected a symbol: ", toString X);
 	  if not hasAttribute(x,ReverseDictionary) then setAttribute(x,ReverseDictionary,X);
 	  use x;
 	  );
      globalReleaseFunction = (X,x) -> (
-	  if not instance(X,Symbol) and not instance(X,IndexedVariable) then error("globalAssignFunction: expected a symbol: ", toString X);
+	  --if not instance(X,Symbol) and not instance(X,IndexedVariable) then error("globalAssignFunction: expected a symbol: ", toString X);
 	  if hasAttribute(x,ReverseDictionary)
 	  and getAttribute(x,ReverseDictionary) === X
 	  then removeAttribute(x,ReverseDictionary)
