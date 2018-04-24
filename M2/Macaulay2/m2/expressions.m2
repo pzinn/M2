@@ -333,18 +333,19 @@ toString'(Function, Power) := (fmt,v) -> (
 RowExpression = new HeaderType of Expression
 RowExpression.synonym = "row expression"
 net RowExpression := w -> horizontalJoin apply(toList w,net)
-html RowExpression := w -> concatenate apply(w,html)
+html RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, html), "</span>")
 texMath RowExpression := w -> concatenate apply(w,texMath)
 toString'(Function, RowExpression) := (fmt,w) -> concatenate apply(w,fmt)
+Expression | Expression := (a,b) -> new RowExpression from {a,b}
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 ColumnExpression = new HeaderType of Expression
 ColumnExpression.synonym = "row expression"
 net ColumnExpression := w -> stack apply(toList w,net)
 toString ColumnExpression := toString @@ net
---html ColumnExpression := w -> concatenate apply(w,html)
---texMath ColumnExpression := w -> concatenate apply(w,texMath)
---toString'(Function, ColumnExpression) := (fmt,w) -> concatenate apply(w,fmt)
+html ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, html), "</span>")
+toString'(Function, ColumnExpression) := (fmt,w) -> demark("\n", apply(w,fmt))
+Expression || Expression := (a,b) -> new ColumnExpression from {a,b}
 -----------------------------------------------------------------------------
 Adjacent = new HeaderType of Expression
 Adjacent.synonym = "adjacent expression"
