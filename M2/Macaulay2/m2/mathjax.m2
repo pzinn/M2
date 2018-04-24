@@ -72,22 +72,23 @@ mathJaxOutputComment := "<!--out-->"; -- it's html but it's output
 mathJaxInputComment := "<!--inp-->"; -- it's text but it's input
 mathJaxInputContdComment := "<!--con-->"; -- text, continuation of input
 
-htmlLiteral1 = x -> ( -- we need to protect \( and \) as well from being processed
-    s := htmlLiteral x;
+oldhL := htmlLiteral;
+htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
+    s := oldhL x;
     s = replace("\\\\\\(","&bsol;(",s);
     s = replace("\\\\\\)","&bsol;)",s);
     return s
     )
 
-texWrap := x -> concatenate("\\(",htmlLiteral1 x,"\\)")
+texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
 -- the % is relative to line-height
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\"><pre>", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</pre></span>")
-mathJax String := x -> concatenate("<pre>", htmlLiteral1 x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\"><pre>", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre></span>")
+mathJax String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
