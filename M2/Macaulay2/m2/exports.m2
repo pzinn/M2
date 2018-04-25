@@ -16,6 +16,7 @@ export {
 	"FactPolynomialRing",
 	"MathJax",
 	"ColumnExpression",
+	"ColoredExpression",
 -- end experimental
     "LocalRing",
     "localRing",
