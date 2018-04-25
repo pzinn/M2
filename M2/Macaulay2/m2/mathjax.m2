@@ -1,3 +1,9 @@
+-- color
+ColoredExpression = new HeaderType of Expression
+net ColoredExpression := x -> net x#0
+toString ColoredExpression := x -> toString x#0
+texMath ColoredExpression := x -> "{\\color{" | x#1 | "}" | texMath x#0 | "}"
+
 -- some texMath that got stranded
 texMath BasicList := s -> concatenate(
      if class s =!= List then texMath class s,
@@ -16,9 +22,11 @@ texMath HashTable := x -> if x.?texMath then x.texMath else (
 	 )
       )
 texMath MonoidElement := texMath @@ expression
-texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
-texMath Function := x -> texMath toString x
-texMath ScriptedFunctor := lookup(texMath,Type)
+texMath Type := x -> if x.?texMath then x.texMath else texMath ColoredExpression { toString x, "#228b22" }
+texMath Function := x -> texMath ColoredExpression { toString x, "#0000ff" }
+texMath ScriptedFunctor := x -> if x.?texMath then x.texMath else texMath ColoredExpression { toString x, "#008b8b" }
+texMath Constant := c -> texMath ColoredExpression { c#0, "#008b8b" }
+texMath Boolean := x -> texMath ColoredExpression { toString x, "#008b8b" }
 -- for a slightly different style:
 -*
 texMath Type := x -> if x.?texMath then x.texMath else "{\\textsf{" | toString x | "}}"
