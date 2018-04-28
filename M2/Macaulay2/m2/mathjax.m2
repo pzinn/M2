@@ -220,7 +220,7 @@ texMath ColoredExpression := x -> "{\\color{" | x#1 | "}" | texMath x#0 | "}"
 -- one could make that a method to have more specific coloring rules for certain types. anyway, not used for now
 --coloredExpression = x -> (c:=color x; if c=!= null then ColoredExpression { expression x, c } else expression x)
 
-color = method()
+color = method(Dispatch => Thing, TypicalValue => String)
 color Keyword := x -> "#a020f0"
 color Type := x -> "#228b22"
 color Function := x -> "#0000ff"
