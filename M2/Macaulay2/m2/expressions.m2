@@ -631,7 +631,7 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol ; => ";"
     }
 
-texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else texMath ColoredExpression { toString x,  "#a020f0" }
+texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
