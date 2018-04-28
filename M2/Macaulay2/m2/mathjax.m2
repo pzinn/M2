@@ -213,14 +213,13 @@ print = x -> if topLevelMode === MathJax then (
     ) else ( << net x << endl; )
 
 -- color
--*
 ColoredExpression = new HeaderType of Expression
 net ColoredExpression := x -> net x#0
 toString ColoredExpression := x -> toString x#0
 texMath ColoredExpression := x -> "{\\color{" | x#1 | "}" | texMath x#0 | "}"
--- one could make that a method to have more specific coloring rules for certain types
-coloredExpression = x -> (c:=color x; if c=!= null then ColoredExpression { expression x, c } else expression x)
-*-
+-- one could make that a method to have more specific coloring rules for certain types. anyway, not used for now
+--coloredExpression = x -> (c:=color x; if c=!= null then ColoredExpression { expression x, c } else expression x)
+
 color = method()
 color Keyword := x -> "#a020f0"
 color Type := x -> "#228b22"
@@ -228,7 +227,7 @@ color Function := x -> "#0000ff"
 color Constant := color Boolean := color ScriptedFunctor := x -> "#008b8b"
 color Thing := x -> null
 color Ring := x -> "black" -- disagrees with the syntax highlighting
-oldTexMath := texMath;
+oldTexMath = texMath;
 texMath = method()
 texMath Thing := x -> ( c:=color x; if c =!= null then "{\\color{" | c | "}" | oldTexMath x | "}" else oldTexMath x )
 -- anyway this is a terrible hack -- what about if new texMath defs are added afterwards?
