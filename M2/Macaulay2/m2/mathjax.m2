@@ -229,5 +229,6 @@ color Thing := x -> null
 color Ring := x -> "black" -- disagrees with the syntax highlighting
 oldTexMath = texMath;
 texMath = method(Dispatch => Thing, TypicalValue => String)
-texMath Thing := x -> if instance(x,Type) or instance(x,Symbol) or instance(x,Expression) or instance(x,String) then oldTexMath x else "\\underset{\\tiny" | oldTexMath class x | "}{" | oldTexMath x | "}"
+texMath Thing := x -> ( c:=color x; if c =!= null then "{\\color{" | c | "}" | oldTexMath x | "}" else oldTexMath x )
+--texMath Thing := x -> if instance(x,Type) or instance(x,Symbol) or instance(x,Expression) or instance(x,String) then oldTexMath x else "\\underset{\\tiny " | oldTexMath class x | "}{" | oldTexMath x | "}"
 -- anyway this is a terrible hack -- what about if new texMath defs are added afterwards?
