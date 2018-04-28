@@ -137,7 +137,9 @@ Nothing#{MathJax,Print} = identity
 Thing#{MathJax,Print} = x -> (
     --    << mathJaxTextComment;
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
+    mathJaxBegin();
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
+    mathJaxEnd();
     << endl << oprompt | mathJaxOutputComment | y | mathJaxTextComment << endl;
     )
 
@@ -146,10 +148,12 @@ Thing#{MathJax,Print} = x -> (
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
---	 << mathJaxTextComment;
-	 z := concatenate(texMath\y);
-	 << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
-	 )
+    --	 << mathJaxTextComment;
+    mathJaxBegin();
+    z := concatenate(texMath\y);
+    mathJaxEnd();
+    << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
+    )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
 
@@ -226,9 +230,16 @@ color Type := x -> "#228b22"
 color Function := x -> "#0000ff"
 color Constant := color Boolean := color ScriptedFunctor := x -> "#008b8b"
 color Thing := x -> null
-color Ring := x -> "black" -- disagrees with the syntax highlighting
-oldTexMath = texMath;
-texMath = method(Dispatch => Thing, TypicalValue => String)
-texMath Thing := x -> ( c:=color x; if c =!= null then "{\\color{" | c | "}" | oldTexMath x | "}" else oldTexMath x )
---texMath Thing := x -> if instance(x,Type) or instance(x,Symbol) or instance(x,Expression) or instance(x,String) then oldTexMath x else "\\underset{\\tiny " | oldTexMath class x | "}{" | oldTexMath x | "}"
--- anyway this is a terrible hack -- what about if new texMath defs are added afterwards?
+color Ring := x -> "black" -- disagrees with the syntax highlighting; but must be so because expressions of rings are symbols anyway, so color will get lost
+
+-- the color hack
+texMathBackup := texMath
+mathJaxBegin = () -> (
+    global texMath <- x -> ( c:=color x; if c =!= null then "{\\color{" | c | "}" | texMathBackup x | "}" else texMathBackup x );
+    -- next one is good for debugging
+    --global texMath <- x -> if instance(x,Type) or instance(x,String) then texMathBackup x else "\\underset{\\tiny " | texMathBackup class x | "}{" | texMathBackup x | "}"
+    )
+mathJaxEnd = () -> (
+    global texMath <- texMathBackup;
+    )
+

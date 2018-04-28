@@ -1126,7 +1126,6 @@ export {
 	"tensorAssociativity",
 	"terms",
 	"tex",
-	"texMath",
 	"then",
 	"threadVariable",
 	"throw",
@@ -1213,6 +1212,7 @@ export {
 }
 
 exportMutable {
+	"texMath",
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",
