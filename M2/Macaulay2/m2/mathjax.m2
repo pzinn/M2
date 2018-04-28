@@ -7,15 +7,18 @@ texMath BasicList := s -> concatenate(
     )
 texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath HashTable := x -> if x.?texMath then x.texMath else (
-     concatenate flatten (
-	 texMath class x,
-	 "\\left\\{",
-	 between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
-	 "\\right\\}"
-	 )
-      )
--- missing MutableHashTable
+texMath HashTable := x -> if x.?texMath then x.texMath else concatenate flatten (
+    texMath class x,
+    "\\left\\{",
+    between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
+    "\\right\\}"
+    )
+texMath MutableHashTable := x -> if hasAttribute(x,ReverseDictionary) then toString getAttribute(x,ReverseDictionary) else concatenate (
+    texMath class x,
+    "\\left\\{\\ldots",
+    texMath(#x),
+    "\\ldots\\right\\}"
+    )
 texMath MonoidElement := texMath @@ expression
 texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
 texMath Function := x -> texMath toString x
