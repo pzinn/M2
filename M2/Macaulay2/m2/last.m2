@@ -93,7 +93,7 @@ Core#"base packages" = {}				    -- these will be kept visible while other packa
 path = packagepath
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
-     if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === x then removeAttribute(x,ReverseDictionary);
+     if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === X then removeAttribute(x,ReverseDictionary);
      )
 waterMark = serialNumber symbol waterMark      -- used by Serialization package
 endPackage "Core" -- after this point, private global symbols, such as noinitfile, are no longer visible, and public symbols have been exported
