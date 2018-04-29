@@ -32,7 +32,7 @@ expression QQ := r -> (
      )
 toString QQ := r -> if denominator r === 1 then simpleToString numerator r else simpleToString r
 net QQ := net @@ expression
-texMath QQ := texMath @@ expression
+texMath QQ := x -> texMath expression x
 QQ.InverseMethod = x -> 1/x
 QQ.dim = 0
 QQ.Engine = true

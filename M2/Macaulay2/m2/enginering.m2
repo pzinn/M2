@@ -484,7 +484,7 @@ RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 toString RingElement := toString @@ expression
 toExternalString RingElement := toExternalFormat @@ expression
 net RingElement := net @@ expression
-texMath RingElement := texMath @@ expression
+texMath RingElement := x -> texMath expression x
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 

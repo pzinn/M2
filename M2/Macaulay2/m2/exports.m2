@@ -1255,7 +1255,7 @@ exportMutable {
 	"stopIfError",
 	"topLevelMode",
 	"texMath",
-    	"mathJaxDebug"	
+	"texMathDebug"
 	}
 
 -- Local Variables:

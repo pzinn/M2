@@ -31,7 +31,7 @@ status GroebnerBasis := opts -> G -> (
      (if s === "done" then "S-pairs encountered up to degree " else "all S-pairs handled up to degree ") | toString rawStatus2 raw G
      )
 toString GroebnerBasis := net GroebnerBasis := g -> "GroebnerBasis[" | status g | "]"
-texMath GroebnerBasis := texMath @@ toString
+texMath GroebnerBasis := x -> texMath toString x
 
 checkListOfIntegers := method()
 checkListOfIntegers ZZ := t -> {t}

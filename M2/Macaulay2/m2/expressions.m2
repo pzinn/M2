@@ -1300,7 +1300,7 @@ net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, expression z#0, expression z#1, " " }
 net Option := net @@ expression
-texMath Option := texMath @@ expression
+texMath Option := x -> texMath expression x
 toString Option := toString @@ expression
 
 -- needed because can't really have a symbol <---

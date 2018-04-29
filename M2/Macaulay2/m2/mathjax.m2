@@ -16,8 +16,8 @@ concatenate flatten (
     between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
     "\\right\\}"
     )
-texMath MonoidElement := texMath @@ expression
-texMath Function := texMath @@ toString
+texMath MonoidElement := x -> texMath expression x
+texMath Function := x -> texMath toString x
 
 -- strings -- compare with hypertext.m2
 texVerbLiteralTable := new MutableHashTable
@@ -227,13 +227,13 @@ color Constant := color Boolean := color ScriptedFunctor := x -> "#008b8b"
 color Thing := x -> null
 color Ring := x -> "black" -- disagrees with the syntax highlighting; but must be so because expressions of rings are symbols anyway, so color will get lost
 
-mathJaxDebug=false;
+texMathDebug=false;
 -- the color hack
 texMathBackup := texMath
 mathJaxBegin = () -> (
-    if mathJaxDebug then
+    if texMathDebug then
     --global texMath <- x -> if instance(x,String) or instance(x,Nothing) then texMathBackup x else "\\underset{\\tiny " | texMathBackup class x | "}{\\boxed{" | texMathBackup x | "}}"
-    global texMath <- x -> if instance(x,String) or instance(x,Nothing) then texMathBackup x else "\\underset{\\tiny " | texMathBackup toString class x | "}{\\boxed{" | texMathBackup x | "}}"
+    global texMath <- x -> "\\underset{\\tiny\\tt " | toString class x | "}{\\boxed{" | texMathBackup x | "}}"
     else
     global texMath <- x -> ( c:=color x; if c =!= null then "{\\color{" | c | "}" | texMathBackup x | "}" else texMathBackup x );
     )
