@@ -48,7 +48,7 @@ SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
 expression SheafOfRings := O -> Subscript { OO, expression O.variety }
 net SheafOfRings := net @@ expression
-texMath SheafOfRings := texMath @@ expression
+texMath SheafOfRings := x -> texMath expression x
 Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
 sheaf(Variety,Ring) := SheafOfRings => (X,R) -> (
      if ring X =!= R then error "expected the variety of the ring";

@@ -16,8 +16,8 @@ concatenate flatten (
     between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
     "\\right\\}"
     )
-texMath MonoidElement := texMath @@ expression
-texMath Function := texMath @@ toString
+texMath MonoidElement := x -> texMath expression x
+texMath Function := x -> texMath toString x
 
 -- strings -- compare with hypertext.m2
 texVerbLiteralTable := new MutableHashTable
@@ -177,14 +177,14 @@ CoherentSheaf#{MathJax,AfterPrint} = F -> (
 ZZ#{MathJax,AfterPrint} = identity
 
 -- the debug hack
-mathJaxDebug=false;
+texMathDebug=false;
 texMathBackup := texMath
 mathJaxBegin = () -> (
-    if mathJaxDebug then
-    global texMath <- x -> if instance(x,String) or instance(x,Nothing) then texMathBackup x else "\\underset{\\tiny " | texMathBackup toString class x | "}{\\boxed{" | texMathBackup x | "}}"
+    if texMathDebug then
+    global texMath <- x -> "\\underset{\\tiny\\tt " | toString class x | "}{\\boxed{" | texMathBackup x | "}}"
     )
 mathJaxEnd = () -> (
-    if mathJaxDebug then
+    if texMathDebug then
     global texMath <- texMathBackup;
     )
 
