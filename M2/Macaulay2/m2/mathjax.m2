@@ -142,10 +142,10 @@ Thing#{MathJax,Print} = x -> (
 
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
-texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
+texAfterPrint :=  y -> (
     --	 << mathJaxTextComment;
     mathJaxBegin();
-    z := concatenate(texMath\y);
+    z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
     mathJaxEnd();
     << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
     )
@@ -227,12 +227,15 @@ color Constant := color Boolean := color ScriptedFunctor := x -> "#008b8b"
 color Thing := x -> null
 color Ring := x -> "black" -- disagrees with the syntax highlighting; but must be so because expressions of rings are symbols anyway, so color will get lost
 
+mathJaxDebug=false;
 -- the color hack
 texMathBackup := texMath
 mathJaxBegin = () -> (
+    if mathJaxDebug then
+    --global texMath <- x -> if instance(x,String) or instance(x,Nothing) then texMathBackup x else "\\underset{\\tiny " | texMathBackup class x | "}{\\boxed{" | texMathBackup x | "}}"
+    global texMath <- x -> if instance(x,String) or instance(x,Nothing) then texMathBackup x else "\\underset{\\tiny " | texMathBackup toString class x | "}{\\boxed{" | texMathBackup x | "}}"
+    else
     global texMath <- x -> ( c:=color x; if c =!= null then "{\\color{" | c | "}" | texMathBackup x | "}" else texMathBackup x );
-    -- next one is good for debugging
-    --global texMath <- x -> if instance(x,Type) or instance(x,String) then texMathBackup x else "\\underset{\\tiny " | texMathBackup class x | "}{" | texMathBackup x | "}"
     )
 mathJaxEnd = () -> (
     global texMath <- texMathBackup;
