@@ -1212,7 +1212,6 @@ export {
 }
 
 exportMutable {
-	"texMath",
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",
@@ -1254,7 +1253,9 @@ exportMutable {
 	"recursionLimit",
 	"scriptCommandLine",
 	"stopIfError",
-	"topLevelMode"
+	"topLevelMode",
+	"texMath",
+    	"mathJaxDebug"	
 	}
 
 -- Local Variables:
