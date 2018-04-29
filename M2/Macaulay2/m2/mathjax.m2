@@ -7,27 +7,17 @@ texMath BasicList := s -> concatenate(
     )
 texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath HashTable := x -> if x.?texMath then x.texMath else concatenate flatten (
+texMath HashTable := x -> if x.?texMath then x.texMath else
+if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
+concatenate flatten (
     texMath class x,
     "\\left\\{",
+    if mutable x then if #x>0 then {"\\ldots",texMath(#x),"\\ldots"} else "" else
     between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
     "\\right\\}"
     )
-texMath MutableHashTable := x -> if hasAttribute(x,ReverseDictionary) then toString getAttribute(x,ReverseDictionary) else concatenate (
-    texMath class x,
-    "\\left\\{\\ldots",
-    texMath(#x),
-    "\\ldots\\right\\}"
-    )
 texMath MonoidElement := texMath @@ expression
-texMath Type := x -> if x.?texMath then x.texMath else texMath toString x
-texMath Function := x -> texMath toString x
-texMath ScriptedFunctor := lookup(texMath,Type)
--- for a slightly different style:
--*
-texMath Type := x -> if x.?texMath then x.texMath else "{\\textsf{" | toString x | "}}"
-texMath Function := x -> "{\\textsf{" | toString x | "}}"
-*-
+texMath Function := texMath @@ toString
 
 -- strings -- compare with hypertext.m2
 texVerbLiteralTable := new MutableHashTable
