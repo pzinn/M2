@@ -87,7 +87,7 @@ describe GeneralOrderedMonoid := M -> Describe new Parenthesize from { new Funct
 toExternalString GeneralOrderedMonoid := toString @@ describe
 toString GeneralOrderedMonoid := toString @@ expression
 net GeneralOrderedMonoid := net @@ expression
-texMath GeneralOrderedMonoid := x -> texMath expression x
+texMath GeneralOrderedMonoid := x -> if x.?texMath then x.texMath else texMath expression x
 
 degreesMonoid = method(TypicalValue => GeneralOrderedMonoid)
 degreesMonoid PolynomialRing := R -> (
