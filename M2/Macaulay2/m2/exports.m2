@@ -1110,7 +1110,6 @@ export {
 	"tensorAssociativity",
 	"terms",
 	"tex",
-	"texMath",
 	"then",
 	"threadVariable",
 	"throw",
@@ -1237,7 +1236,9 @@ exportMutable {
 	"recursionLimit",
 	"scriptCommandLine",
 	"stopIfError",
-	"topLevelMode"
+	"topLevelMode",
+	"texMath",
+	"mathJaxDebug"
 	}
 
 -- Local Variables:

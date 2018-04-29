@@ -104,7 +104,9 @@ Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
+    mathJaxBegin();
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
+    mathJaxEnd();
     << endl << oprompt | mathJaxOutputComment | y | mathJaxTextComment << endl;
     )
 
@@ -112,10 +114,12 @@ Thing#{MathJax,Print} = x -> (
 
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
-texAfterPrint :=  y -> ( y = select(deepSplice sequence y, x -> class x =!= Nothing);
-	 z := concatenate(texMath\y);
-	 << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
-	 )
+texAfterPrint :=  y -> (
+    mathJaxBegin();
+    z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
+    mathJaxEnd();
+    << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
+    )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
 
@@ -171,3 +175,16 @@ CoherentSheaf#{MathJax,AfterPrint} = F -> (
  )
 
 ZZ#{MathJax,AfterPrint} = identity
+
+-- the debug hack
+mathJaxDebug=false;
+texMathBackup := texMath
+mathJaxBegin = () -> (
+    if mathJaxDebug then
+    global texMath <- x -> if instance(x,String) or instance(x,Nothing) then texMathBackup x else "\\underset{\\tiny " | texMathBackup toString class x | "}{\\boxed{" | texMathBackup x | "}}"
+    )
+mathJaxEnd = () -> (
+    if mathJaxDebug then
+    global texMath <- texMathBackup;
+    )
+
