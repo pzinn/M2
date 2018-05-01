@@ -7,9 +7,10 @@ varIndices := new MutableHashTable
 varName := i -> (
      if 0 <= i and i < 26 then ascii(97 + i)
      else if 26 <= i and i < 52 then ascii(65 + i - 26)
+     else if 52 <= i and i < 52+#greekLettersList then greekLettersList#(i-52)
      else if i < 0
      then "X" | toString(-i)
-     else "x" | toString(i-52))
+     else "x" | toString(i-52-#greekLettersList))
 
 vars ZZ := i -> (
      if indeterminates#?i then indeterminates#i else (
@@ -26,10 +27,12 @@ reverseVars := a -> (
      if varIndices#?a then varIndices#a
      else (
 	  s := toString a;
-	  if isUserSymbol(s,a) and match("^[a-zA-Z]$",s) then (
-	       first ascii s + if match("^[A-Z]$",s) then 26 - first ascii "A" else - first ascii "a"
-	       )
-     	  else error(a, " is not one of the symbols known to 'vars'")
+	  if isUserSymbol(s,a) then (
+	       if match("^[a-z]$",s) then return first ascii s - first ascii "a";
+	       if match("^[A-Z]$",s) then return 26 + first ascii s - first ascii "A";
+	       if greekLetters#?s then return 52+position(greekLettersList, ss -> ss === s);
+	       );
+     	  error(a, " is not one of the symbols known to 'vars'");
      	  )
      )
 
