@@ -1251,6 +1251,7 @@ expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) 
 expression Symbol := x -> new Holder from { x }
 expression Function := x -> new Holder from { x }
 expression Boolean := x -> new Holder from { x }
+expression Type := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 
@@ -1290,7 +1291,6 @@ expression HashTable := x -> (
 	 new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
 	 )
 value' HashTable := x -> applyPairs(x, (k,v) -> (value' k, value' v))
-expression Type := x -> new Holder from { x }
 *-
 
 -- Local Variables:

@@ -50,9 +50,9 @@ texMath Net := n -> (
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-1mm]";
+            s=s|"\\vphantom{\\big|}" | texMath x;
+            if i<#n then s=s|"\\\\[-1mm]";
 	    ));
---    "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- this number may have to be adjusted/defined more properly, disabling for now
     "\\begin{array}{l}" | s | "\\end{array}"
     )
 
@@ -81,7 +81,7 @@ mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
 -- the % is relative to line-height
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\"><pre>", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre></span>")
+mathJax Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
 mathJax String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
@@ -90,7 +90,7 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>"
 	  else toString k | " : " | mathJax v
 	  ) | "<br/>"), "</pre></span>")
 -- some expressions can be mathJaxed directly w/o reference to texMath
-mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax ), "</span>")
+mathJax RowExpression := x -> concatenate apply(toList x, mathJax)
 mathJax Holder := x -> mathJax x#0
 
 -- output routines
