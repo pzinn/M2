@@ -1190,7 +1190,7 @@ texMath ZZ := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
-bbletters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
+bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 greekLetters0 := {"alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron" => "o","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega",
 	"Alpha" => "\\mathrm{A}", "Beta" => "\\mathrm{B}", "Gamma","Delta","Epsilon" => "\\mathrm{E}", "Zeta" => "\\mathrm{Z}", "Eta" => "\\mathrm{H}", "Theta","Iota" => "\\mathrm{I}", "Kappa" => "\\mathrm{K}", "Lambda","Mu" => "\\mathrm{M}","Nu" => "\\mathrm{N}", "Xi","Omicron" => "\\mathrm{O}", "Pi","Rho" => "\\mathrm{P}", "Sigma","Tau" => "\\mathrm{T}", "Upsilon","Phi","Chi" => "\\mathrm{X}", "Psi","Omega",
 	"varepsilon","vartheta","varpi","varrho","varsigma","varphi"};
