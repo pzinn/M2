@@ -50,7 +50,8 @@ texMath Net := n -> (
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\\\\[-1mm]";
+	    s=s|"\\vphantom{\\big|}" | texMath x;
+	    if i<#n then s=s|"\\\\[-1mm]";
 	    ));
 --    "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- 2.65 for [-2mm]. this number may have to be adjusted/defined more properly, disabling for now
     "\\begin{array}{l}" | s | "\\end{array}"
@@ -87,7 +88,7 @@ mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for 
 -- text stuff: we use html instead of tex, much faster
 mathJax Hypertext := html -- !
 -- the % is relative to line-height
-mathJax Net := n -> concatenate("<span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\"><pre>", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre></span>")
+mathJax Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
 mathJax String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
 -- actually same problem with katex, though eventually should be able to tt -> \tt
@@ -101,7 +102,8 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>"
 mathJax Holder := x -> mathJax x#0
 -- kind of an expression analogue of Net
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax), "</span>")
-mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax), "</span>")
+--mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax), "</span>")
+mathJax RowExpression := x -> concatenate apply(toList x, mathJax)
 
 -*
 -- experimental: a new Type should be created for examples since they won't literally be PRE in mathJax mode
