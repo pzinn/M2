@@ -1229,12 +1229,12 @@ bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 greekLetters0 := {"alpha","beta","gamma","delta","epsilon","zeta","eta","theta","iota","kappa","lambda","mu","nu","xi","omicron" => "o","pi","rho","sigma","tau","upsilon","phi","chi","psi","omega",
 	"Alpha" => "\\mathrm{A}", "Beta" => "\\mathrm{B}", "Gamma","Delta","Epsilon" => "\\mathrm{E}", "Zeta" => "\\mathrm{Z}", "Eta" => "\\mathrm{H}", "Theta","Iota" => "\\mathrm{I}", "Kappa" => "\\mathrm{K}", "Lambda","Mu" => "\\mathrm{M}","Nu" => "\\mathrm{N}", "Xi","Omicron" => "\\mathrm{O}", "Pi","Rho" => "\\mathrm{P}", "Sigma","Tau" => "\\mathrm{T}", "Upsilon","Phi","Chi" => "\\mathrm{X}", "Psi","Omega",
 	"varepsilon","vartheta","varpi","varrho","varsigma","varphi"};
-greekLettersList = apply(greekLetters0, x -> if class x === Option then x#0 else x); -- just names
-greekLetters = hashTable apply(greekLetters0,x->if class x === Option then x else x => "\\" | x)
+greekLettersList = apply(greekLetters0, x -> if class x === Option then x#0 else x); -- just names (in alphabetical order)
+greekLetters = hashTable apply(greekLetters0,x->if class x === Option then x else x => "\\" | x) -- name => LaTeX
 texVariable := x -> (
     if x === "" then return "";
     xx := separate("$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
-    if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}"; -- effectively, makes ZZ.texMath obsolete
+    if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     if #x > 3 and substring(x,-3) === "bar" then return "\\bar{"|texVariable substring(x,0,#x-3)|"}";
     if greekLetters#?x then return greekLetters#x;
