@@ -236,14 +236,24 @@ color Thing := x -> null
 color Ring := x -> "black" -- disagrees with the syntax highlighting; but must be so because expressions of rings are symbols anyway, so color will get lost
 
 texMathDebug=false;
--- the color hack
 texMathBackup := texMath
+-- the debug hack
+texMathDebugWrapper := x -> (
+    global texMath <- texMathBackup;
+    y := texMathBackup class x;
+    global texMath <- texMathDebugWrapper;
+    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}"
+    )
+-- the color hack
+texMathColorWrapper := x -> (
+    c:=color x;
+    if c =!= null then "{\\color{" | c | "}" | texMathBackup x | "}" else texMathBackup x
+    )
 mathJaxBegin = () -> (
     if texMathDebug then
-    --global texMath <- x -> if instance(x,String) or instance(x,Nothing) then texMathBackup x else "\\underset{\\tiny " | texMathBackup class x | "}{\\boxed{" | texMathBackup x | "}}"
-    global texMath <- x -> "\\underset{\\tiny\\tt " | toString class x | "}{\\boxed{" | texMathBackup x | "}}"
+    global texMath <- texMathDebugWrapper
     else
-    global texMath <- x -> ( c:=color x; if c =!= null then "{\\color{" | c | "}" | texMathBackup x | "}" else texMathBackup x );
+    global texMath <- texMathColorWrapper
     )
 mathJaxEnd = () -> (
     global texMath <- texMathBackup;
