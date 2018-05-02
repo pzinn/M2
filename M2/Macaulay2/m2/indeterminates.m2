@@ -4,13 +4,12 @@ indeterminates =  new MutableHashTable
 
 varIndices := new MutableHashTable
 
+varList := {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","α","β","γ","δ","ε","ζ","η","θ","ι","κ","λ","μ","ν","ξ","ο","π","ρ","σ","τ","υ","ϕ","χ","ψ","ω","Α","Β","Γ","Δ","Ε","Ζ","Η","Θ","Ι","Κ","Λ","Μ","Ξ","Ο","Π","Ρ","Τ","Υ","Φ","Χ","Ψ","Ω"}
 varName := i -> (
-     if 0 <= i and i < 26 then ascii(97 + i)
-     else if 26 <= i and i < 52 then ascii(65 + i - 26)
-     else if 52 <= i and i < 52+#greekLettersList then greekLettersList#(i-52)
+     if 0 <= i and i < #varList then varList#i
      else if i < 0
      then "X" | toString(-i)
-     else "x" | toString(i-52-#greekLettersList))
+     else "x" | toString(i-#varList))
 
 vars ZZ := i -> (
      if indeterminates#?i then indeterminates#i else (
@@ -28,10 +27,9 @@ reverseVars := a -> (
      else (
 	  s := toString a;
 	  if isUserSymbol(s,a) then (
-	       if match("^[a-z]$",s) then return first ascii s - first ascii "a";
-	       if match("^[A-Z]$",s) then return 26 + first ascii s - first ascii "A";
-	       if greekLetters#?s then return 52+position(greekLettersList, ss -> ss === s);
-	       );
+	      p := position(varList,ss -> s===ss);
+	      if p =!= null then return p;
+	      );
      	  error(a, " is not one of the symbols known to 'vars'");
      	  )
      )
@@ -40,7 +38,7 @@ Symbol .. Symbol := (a,z) -> if a === z then 1:a else vars( reverseVars a .. rev
 Symbol ..< Symbol := (a,z) -> if a === z then () else vars( reverseVars a ..< reverseVars z )
 
 succS = new MutableHashTable;
-for i from 0 to 50+#greekLettersList do succS#(varName i) = varName(i+1)
+for i from 0 to #varList-2 do succS#(varList#i) = varList#(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
