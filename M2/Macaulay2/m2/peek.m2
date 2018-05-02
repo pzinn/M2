@@ -1,15 +1,15 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-peek' = method(TypicalValue => Net)
+peek' = method(TypicalValue => Expression)
 
-peek'(ZZ,ZZ) := (depth,n) -> toString n
-peek'(ZZ,Nothing) := (depth,s) -> "null"
-peek'(ZZ,Symbol) := (depth,s) -> expression s
-peek'(ZZ,Thing) := (depth,s) -> expression s
+peek'(ZZ,ZZ) := (depth,n) -> Describe n
+peek'(ZZ,Nothing) := (depth,s) -> Describe "null"
+peek'(ZZ,Symbol) := (depth,s) -> Describe expression s
+peek'(ZZ,Thing) := (depth,s) -> Describe expression s
 
 peek'(ZZ,BasicList) := (depth,s) -> (
-     if depth === 0 then expression s
-     else Adjacent {
+     if depth === 0 then Describe expression s
+     else Describe Adjacent {
 	  expression class s,
 	  apply(toList s, value -> peek'(depth-1,value))})
 
@@ -20,22 +20,22 @@ peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
 	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))), "}" ) )
 
 peek'(ZZ,List) := (depth,s) -> (
-     if depth === 0 then expression s
-     else apply(s, value -> peek'(depth,value)))
-peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
+     if depth === 0 then Describe expression s
+     else Describe apply(s, value -> peek'(depth,value)))
+peek'(ZZ, String) := (depth,s) -> if depth === 0 then Describe s else Describe format s
 
 formatNet := n -> (stack ((s -> substring(s,1,#s-2)) \ format \ unstack n))^(height n - 1)
-peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else netList({{formatNet s}}, Boxes => true)
+peek'(ZZ,Net) := (depth,s) -> if depth === 0 then Describe s else Describe netList({{formatNet s}}, Boxes => true)
 peek'(ZZ,Sequence) := (depth,s) -> (
-     if depth === 0 then expression s
-     else apply(s, value -> peek'(depth,value)))
+     if depth === 0 then Describe expression s
+     else Describe apply(s, value -> peek'(depth,value)))
 
 precOption := precedence ( 1 => 2 )
 
 peek'(ZZ,HashTable) := (depth,s) -> (
      if depth === 0 
-     then expression s
-     else RowExpression splice (
+     then Describe expression s
+     else Describe RowExpression splice (
 	  expression class s,
 	  if parent s =!= Nothing 
 	  then (" of ", expression parent s," ") else " ",
@@ -49,8 +49,8 @@ peek'(ZZ,HashTable) := (depth,s) -> (
 	  ))
 
 peek'(ZZ,Dictionary) := (depth,d) -> (
-     if depth === 0 then expression d
-     else horizontalJoin(
+     if depth === 0 then Describe expression d
+     else Describe horizontalJoin(
 	  toString class d, "{", 
 	  stack apply(sort pairs d, (lhs,rhs) -> horizontalJoin splice (peek lhs," => ",peek'(depth-1,rhs))),
 	  "}"))

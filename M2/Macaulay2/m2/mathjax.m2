@@ -100,6 +100,7 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>"
 	  ) | "<br/>"), "</pre></span>")
 -- some expressions can be mathJaxed directly w/o reference to texMath
 mathJax Holder := x -> mathJax x#0
+mathJax Describe := x -> mathJax x#0
 -- kind of an expression analogue of Net
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax), "</span>")
 --mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax), "</span>")
