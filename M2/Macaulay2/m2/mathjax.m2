@@ -213,6 +213,12 @@ print = x -> if topLevelMode === MathJax then (
     << mathJaxHtmlComment | y | mathJaxTextComment << endl;
     ) else ( << net x << endl; )
 
+-- bb letters
+ℚ=QQ
+ℝ=RR
+ℤ=ZZ
+ℂ=CC
+
 -- color
 ColoredExpression = new HeaderType of Expression
 net ColoredExpression := x -> net x#0

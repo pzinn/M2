@@ -262,7 +262,7 @@ hilbertSeries ProjectiveHilbertPolynomial := opts -> h -> (
 
 expression ProjectiveHilbertPolynomial := (h) -> (
      sum(sort pairs h, (n,c) -> c * new Subscript from {"P", n})
-     )	  
+     )
 net ProjectiveHilbertPolynomial := (h) -> net expression h
 texMath ProjectiveHilbertPolynomial := x -> if x.?texMath then x.texMath else texMath expression x
 

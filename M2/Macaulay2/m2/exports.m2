@@ -18,6 +18,7 @@ export {
 	"ColumnExpression",
 	"color",
 	"ColoredExpression",
+	"ℚ","ℝ","ℤ","ℂ",
 -- end experimental
     "LocalRing",
     "localRing",
