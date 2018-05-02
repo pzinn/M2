@@ -179,9 +179,15 @@ ZZ#{MathJax,AfterPrint} = identity
 -- the debug hack
 texMathDebug=false;
 texMathBackup := texMath
+texMathDebugWrapper := x -> (
+    global texMath <- texMathBackup;
+    y := texMathBackup class x;
+    global texMath <- texMathDebugWrapper;
+    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}"
+    )
 mathJaxBegin = () -> (
     if texMathDebug then
-    global texMath <- x -> "\\underset{\\tiny\\tt " | toString class x | "}{\\boxed{" | texMathBackup x | "}}"
+    global texMath <- texMathDebugWrapper
     )
 mathJaxEnd = () -> (
     if texMathDebug then
