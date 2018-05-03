@@ -260,3 +260,10 @@ mathJaxEnd = () -> (
     global texMath <- texMathBackup;
     )
 
+-- completely unrelated -- move somewhere else
+length String := x -> (
+    c := 0;
+    scan(ascii x, i -> if (i & 192) =!= 128 then c=c+1);
+    c
+    )
+width Net := x -> max apply(unstack x,length) -- kind of a lame hack, short circuits the internal width
