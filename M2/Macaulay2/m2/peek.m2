@@ -21,7 +21,8 @@ peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
 
 peek'(ZZ,List) := (depth,s) -> (
      if depth === 0 then Describe expression s
-     else Describe apply(s, value -> peek'(depth,value)))
+     else Describe { apply(s, value -> peek'(depth,value)) }
+     )
 peek'(ZZ, String) := (depth,s) -> if depth === 0 then Describe s else Describe format s
 
 formatNet := n -> (stack ((s -> substring(s,1,#s-2)) \ format \ unstack n))^(height n - 1)
