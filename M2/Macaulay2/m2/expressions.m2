@@ -1218,7 +1218,7 @@ showTex Thing := o -> x -> (
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl;)
 -----------------------------------------------------------------------------
-texMath RR := toString
+texMath RR := x -> if isANumber x then if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else toString x else texMath toString x
 texMath ZZ := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
