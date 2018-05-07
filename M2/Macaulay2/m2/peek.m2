@@ -13,7 +13,7 @@ peek'(ZZ,BasicList) := (depth,s) -> (
 	  expression class s,
 	  apply(toList s, value -> peek'(depth-1,value))})
 
-peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
+peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> ( -- hasn't been rewritten
      if depth === 0 then net s
      else horizontalJoin(
 	  net class s,
@@ -39,14 +39,16 @@ peek'(ZZ,HashTable) := (depth,s) -> (
      else Describe RowExpression splice (
 	  expression class s,
 	  if parent s =!= Nothing 
-	  then (" of ", expression parent s," ") else " ",
+	  then (" of ", expression parent s) else "",
+	  "{",
 	  new ColumnExpression from
 	  apply(
 	       sortByName pairs s,
 	       (key,value) -> BinaryOperation ( symbol =>,
 		   peek'(depth-1,key),
 		   peek'(depth-1,value),
-		   " "))
+		   " ")),
+	   "}"
 	  ))
 
 peek'(ZZ,Dictionary) := (depth,d) -> (
