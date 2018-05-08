@@ -219,10 +219,16 @@ lngamma ZZ := lngamma QQ := lngamma RR := x -> (
 expression Constant := c -> expression c#0
 toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
-texMath Constant := c -> texMath c#0
 numeric Constant := c -> c#1 defaultPrecision
 numeric(ZZ,Constant) := (prec,c) -> c#1 prec
 exp Constant := c -> exp numeric c
+
+constantTexMath := new HashTable from {
+    symbol pi => "\\pi",
+    symbol EulerConstant => "\\gamma",
+    symbol ii => "\\mathbf{i}"
+    }
+texMath Constant := c -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0
 
 Constant + Constant := (c,d) -> numeric c + numeric d
 Constant + RingElement := 
