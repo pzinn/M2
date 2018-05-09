@@ -29,7 +29,8 @@ formatNet := n -> (stack ((s -> substring(s,1,#s-2)) \ format \ unstack n))^(hei
 peek'(ZZ,Net) := (depth,s) -> if depth === 0 then Describe s else Describe netList({{formatNet s}}, Boxes => true)
 peek'(ZZ,Sequence) := (depth,s) -> (
      if depth === 0 then Describe expression s
-     else Describe apply(s, value -> peek'(depth,value)))
+     else Describe { apply(s, value -> peek'(depth,value)) }
+     )
 
 precOption := precedence ( 1 => 2 )
 
