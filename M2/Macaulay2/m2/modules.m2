@@ -78,7 +78,7 @@ net Vector := v -> net super first v
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
 toExternalString Vector := 				    -- not quite right
-toString Vector := v -> concatenate ( "vector ", toString entries super v )
+toString Vector := v -> concatenate ( "vector ", toString entries super first v )
 texMath Vector := v -> texMath first v
 ring Vector := v -> ring class v
 module Vector := v -> target first v
@@ -93,6 +93,9 @@ new Vector from Matrix := (M,f) -> (
      if M === Vector then error "expected a module";
      if M =!= target f then error "module must be target of matrix";
      new M from {f})
+
+Vector ^ List := (v,l) -> vector (v#0^l)
+- Vector := v -> vector (-v#0)
 
 Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
 Vector + Vector := (v,w) -> (
