@@ -96,6 +96,10 @@ new Vector from Matrix := (M,f) -> (
 
 Vector ^ List := (v,l) -> vector (v#0^l)
 - Vector := v -> vector (-v#0)
+promote(Vector,InexactNumber) := 
+promote(Vector,InexactNumber') :=
+promote(Vector,RingElement) := 
+promote(Vector,Number) := Vector => (v,S) -> vector (promote(v#0,S))
 
 Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
 Vector + Vector := (v,w) -> (
