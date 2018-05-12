@@ -90,7 +90,7 @@ mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>"
 	  else toString k | " : " | mathJax v
 	  ) | "<br/>"), "</pre></span>")
 -- some expressions can be mathJaxed directly w/o reference to texMath
-mathJax RowExpression := x -> concatenate apply(toList x, mathJax)
+mathJax RowExpression := x -> concatenate("<span>",apply(toList x, mathJax),"</span>")
 mathJax Holder := x -> mathJax x#0
 mathJax Describe := x -> mathJax x#0
 
