@@ -104,7 +104,7 @@ mathJax Describe := x -> mathJax x#0
 -- kind of an expression analogue of Net
 mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax), "</span>")
 --mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax), "</span>")
-mathJax RowExpression := x -> concatenate apply(toList x, mathJax)
+mathJax RowExpression := x -> concatenate("<span>",apply(toList x, mathJax),"</span>")
 
 -*
 -- experimental: a new Type should be created for examples since they won't literally be PRE in mathJax mode
