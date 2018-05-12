@@ -95,26 +95,16 @@ new Vector from Matrix := (M,f) -> (
      new M from {f})
 
 Vector ^ List := (v,l) -> vector (v#0^l)
-- Vector := v -> vector (-v#0)
+- Vector := Vector => v -> vector (-v#0)
 promote(Vector,InexactNumber) := 
 promote(Vector,InexactNumber') :=
 promote(Vector,RingElement) := 
 promote(Vector,Number) := Vector => (v,S) -> vector (promote(v#0,S))
 
-Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
-Vector + Vector := (v,w) -> (
-     if class v =!= class w then error "expected vectors from the same module";
-     m := v#0 + w#0;
-     new target m from {m})
-Vector - Vector := (v,w) -> (
-     if class v =!= class w then error "expected vectors from the same module";
-     m := v#0 - w#0;
-     new target m from {m})
-
-Vector ** Vector := (v,w) -> (
-     if ring v =!= ring w then error "expected vectors over the same ring";
-     u := v#0 ** w#0;
-     new target u from {u})
+Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}
+Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
+Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
+Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
 
 Vector == Vector := (v,w) -> v === w
 
