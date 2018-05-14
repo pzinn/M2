@@ -74,14 +74,14 @@ vector List := v -> vector matrix apply(v, i -> {i});
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
-net Vector := v -> net super first v
+net Vector := v -> net super v#0
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
 toExternalString Vector :=
-toString Vector := v -> concatenate ( "vector ", toString flatten entries super v#0 )
-texMath Vector := v -> texMath first v
+toString Vector := v -> concatenate ( "vector ", toString entries super v )
+texMath Vector := v -> texMath super v#0
 ring Vector := v -> ring class v
-module Vector := v -> target first v
+module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
 degree Vector := v -> (
      f := ambient v#0;
@@ -100,8 +100,9 @@ promote(Vector,InexactNumber) :=
 promote(Vector,InexactNumber') :=
 promote(Vector,RingElement) := 
 promote(Vector,Number) := Vector => (v,S) -> vector (promote(v#0,S))
+super(Vector) := Vector => v -> vector super v#0
 
-Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
+Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
 Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
