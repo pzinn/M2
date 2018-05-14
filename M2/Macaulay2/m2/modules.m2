@@ -77,8 +77,8 @@ Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 net Vector := v -> net super first v
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
-toExternalString Vector := 				    -- not quite right
-toString Vector := v -> concatenate ( "vector ", toString entries super v )
+toExternalString Vector :=
+toString Vector := v -> concatenate ( "vector ", toString flatten entries super v#0 )
 texMath Vector := v -> texMath first v
 ring Vector := v -> ring class v
 module Vector := v -> target first v
@@ -94,20 +94,17 @@ new Vector from Matrix := (M,f) -> (
      if M =!= target f then error "module must be target of matrix";
      new M from {f})
 
-Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
-Vector + Vector := (v,w) -> (
-     if class v =!= class w then error "expected vectors from the same module";
-     m := v#0 + w#0;
-     new target m from {m})
-Vector - Vector := (v,w) -> (
-     if class v =!= class w then error "expected vectors from the same module";
-     m := v#0 - w#0;
-     new target m from {m})
+Vector ^ List := (v,l) -> vector (v#0^l)
+- Vector := Vector => v -> vector (-v#0)
+promote(Vector,InexactNumber) := 
+promote(Vector,InexactNumber') :=
+promote(Vector,RingElement) := 
+promote(Vector,Number) := Vector => (v,S) -> vector (promote(v#0,S))
 
-Vector ** Vector := (v,w) -> (
-     if ring v =!= ring w then error "expected vectors over the same ring";
-     u := v#0 ** w#0;
-     new target u from {u})
+Number * Vector := RingElement * Vector := (r,v) -> new class v from {r * v#0}
+Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
+Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
+Vector ** Vector := Vector => (v,w) -> vector(v#0**w#0)
 
 Vector == Vector := (v,w) -> v === w
 
