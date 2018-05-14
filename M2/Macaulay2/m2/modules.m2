@@ -94,7 +94,6 @@ new Vector from Matrix := (M,f) -> (
      if M =!= target f then error "module must be target of matrix";
      new M from {f})
 super Vector := Vector => v -> vector super v#0
-ideal Vector := Ideal => v -> ideal v#0
 
 Vector || Vector := Vector => (v,w) -> vector(v#0||w#0)
 Vector ^ List := (v,l) -> vector (v#0^l)
