@@ -239,7 +239,7 @@ expression Module := M -> (
      else new Power from {expression ring M, numgens M}
      )
 
--- net Module := M -> net expression M
+-- net Module := M -> net expression M -- can't do that because of compactMatrixForm
 
 net Module := M -> (
      -- we want compactMatrixForm to govern the matrix here, also.

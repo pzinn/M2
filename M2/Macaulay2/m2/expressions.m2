@@ -730,6 +730,8 @@ returns = t -> x -> t
 		    precedence ZZ := x -> if x>=0 then strength1 symbol symbol else prec symbol -
 		    precedence RR :=
 	      precedence Function :=
+	          precedence Type :=
+	       precedence Boolean :=
 		  precedence List :=
 		 precedence Array :=
 	      precedence Constant :=
@@ -740,7 +742,6 @@ returns = t -> x -> t
 	        precedence Holder := x -> precedence x#0
 	      precedence Describe := x -> precedence x#0
 --	       precedence Holder2 := x -> precedence x#0
-                precedence Ring := returns prec symbol ^ -- sort of temp. basically takes care of ZZ, QQ...
        precedence BinaryOperation := x -> lprec x#0
   rightPrecedence BinaryOperation := x -> rprec x#0
             rightPrecedence Thing := precedence
