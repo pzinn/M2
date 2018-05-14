@@ -93,15 +93,18 @@ new Vector from Matrix := (M,f) -> (
      if M === Vector then error "expected a module";
      if M =!= target f then error "module must be target of matrix";
      new M from {f})
+super Vector := Vector => v -> vector super v#0
+ideal Vector := Ideal => v -> ideal v#0
 
+Vector || Vector := Vector => (v,w) -> vector(v#0||w#0)
 Vector ^ List := (v,l) -> vector (v#0^l)
-- Vector := Vector => v -> vector (-v#0)
+
 promote(Vector,InexactNumber) := 
 promote(Vector,InexactNumber') :=
 promote(Vector,RingElement) := 
 promote(Vector,Number) := Vector => (v,S) -> vector (promote(v#0,S))
-super(Vector) := Vector => v -> vector super v#0
 
+- Vector := Vector => v -> vector (-v#0)
 Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}
 Vector + Vector := Vector => (v,w) -> vector(v#0+w#0)
 Vector - Vector := Vector => (v,w) -> vector(v#0-w#0)
