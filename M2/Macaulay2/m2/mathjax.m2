@@ -261,9 +261,10 @@ mathJaxEnd = () -> (
     )
 
 -- completely unrelated -- move somewhere else
-length String := x -> (
+-- in any case, will fail because most net operations are at d level
+width String := x -> ( -- we leave length to be #
     c := 0;
     scan(ascii x, i -> if (i & 192) =!= 128 then c=c+1);
     c
     )
-width Net := x -> max apply(unstack x,length) -- kind of a lame hack, short circuits the internal width
+width Net := x -> max apply(unstack x,width) -- kind of a lame hack, short circuits the internal width
