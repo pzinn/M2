@@ -66,12 +66,14 @@ texMath ColumnExpression := x -> concatenate (
 -- now the mathJax stuff per se
 -- mathJax Thing produces some valid html code with possible tex code in \( \)
 -- topLevelMode=MathJax produces that plus possible pure text coming from the system
--- hence, requires comments to help the browser app distinguish html from text
-mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
-mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is HTML
-mathJaxOutputComment := "<!--out-->"; -- it's html but it's output
-mathJaxInputComment := "<!--inp-->"; -- it's text but it's input
-mathJaxInputContdComment := "<!--con-->"; -- text, continuation of input
+-- hence, requires tags to help the browser app distinguish html from text
+(mathJaxTextTag,           -- indicates what follows is pure text; default mode
+    mathJaxHtmlTag,        -- indicates what follows is HTML
+    mathJaxOutputTag,      -- it's html but it's output
+    mathJaxInputTag,       -- it's text but it's input
+    mathJaxInputContdTag):= -- text, continuation of input
+--("<!--txt-->", "<!--html-->", "<!--out-->", "<!--inp-->", "<!--con-->")
+apply(1..5,ascii)
 
 oldhL := htmlLiteral;
 htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
@@ -110,7 +112,7 @@ mathJax RowExpression := x -> concatenate("<span>",apply(toList x, mathJax),"</s
 -- experimental: a new Type should be created for examples since they won't literally be PRE in mathJax mode
 -- either that or must rewrite the whole structure of mathJax = html, or both
 
-mathJaxTags={mathJaxTextComment,mathJaxHtmlComment,mathJaxOutputComment,mathJaxInputComment,mathJaxInputContdComment}
+mathJaxTags={mathJaxTextTag,mathJaxHtmlTag,mathJaxOutputTag,mathJaxInputTag,mathJaxInputContdTag}
 
 fixMathJaxTags := s -> (
     scan(mathJaxTags, t-> s=replace(oldhL t,t,s));
@@ -125,20 +127,20 @@ html PRE   := x -> concatenate(
 *-
 
 -- output routines
-ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputComment
-ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment
+ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputTag
+ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdTag
 
 Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 
 Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
-    --    << mathJaxTextComment;
+    --    << mathJaxTextTag;
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     mathJaxBegin();
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
     mathJaxEnd();
-    << endl << oprompt | mathJaxOutputComment | y | mathJaxTextComment << endl;
+    << endl << oprompt | mathJaxOutputTag | y | mathJaxTextTag << endl;
     )
 
 -- afterprint <sigh>
@@ -146,11 +148,11 @@ Thing#{MathJax,Print} = x -> (
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
-    --	 << mathJaxTextComment;
+    --	 << mathJaxTextTag;
     mathJaxBegin();
     z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
     mathJaxEnd();
-    << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
+    << endl << on() | " : " | mathJaxHtmlTag | texWrap z | mathJaxTextTag << endl;
     )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
@@ -211,7 +213,7 @@ ZZ#{MathJax,AfterPrint} = identity
 -- experimental
 print = x -> if topLevelMode === MathJax then (
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    << mathJaxHtmlComment | y | mathJaxTextComment << endl;
+    << mathJaxHtmlTag | y | mathJaxTextTag << endl;
     ) else ( << net x << endl; )
 
 -- bb letters
