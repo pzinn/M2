@@ -1226,7 +1226,7 @@ texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw ob
 -- next version is a horrible hack
 --texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
-suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave"};
+suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
 texVariable := x -> (
     if x === "" then return "";
