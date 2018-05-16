@@ -1192,12 +1192,17 @@ tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
+suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave"};
+suffixesRegExp := "("|demark("|",suffixes)|")\\'";
 texVariable := x -> (
     if x === "" then return "";
     xx := separate("$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
-    if #x > 3 and substring(x,-3) === "bar" then return "\\bar{"|texVariable substring(x,0,#x-3)|"}";
+    r := regex(suffixesRegExp,x); if r =!= null then (
+	r = first r;
+	return "\\"|substring(r,x)|"{"|texVariable substring(x,0,r#0)|"}"
+	);
     if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
     )
 texMath Symbol := x -> texVariable toString x;
