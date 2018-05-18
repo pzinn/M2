@@ -13,11 +13,12 @@ peek'(ZZ,BasicList) := (depth,s) -> (
 	  expression class s,
 	  apply(toList s, value -> peek'(depth-1,value))})
 
-peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> ( -- hasn't been rewritten
-     if depth === 0 then net s
-     else horizontalJoin(
-	  net class s,
-	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))), "}" ) )
+peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
+     if depth === 0 then expression s
+     else Describe RowExpression {
+	  expression class s,
+	  "{", ColumnExpression between (", ", apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))), "}" }
+      )
 
 peek'(ZZ,List) := (depth,s) -> (
      if depth === 0 then Describe expression s
