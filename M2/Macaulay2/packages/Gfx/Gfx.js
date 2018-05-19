@@ -190,7 +190,7 @@ function gfxRecompute(el) {
 		el.distance+=el.children[i].distance;
 		cnt++;
 	    }
-	el.distance/=cnt;
+	if (cnt>0) el.distance/=cnt;
     }
     else el.distance=0; // bit of a hack -- for 2d objects but also filters...
 }

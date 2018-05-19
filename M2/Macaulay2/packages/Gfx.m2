@@ -11,7 +11,7 @@ newPackage(
         )
 
 export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxRectangle", "GfxText",
-    "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation",
+    "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient",
      "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth", "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius", "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag"
     }
 
@@ -37,6 +37,7 @@ new GfxObject := T -> new T from { symbol cache => new CacheTable } -- every Gfx
 currentGfxMatrix := null; -- yeah, it's a ``global'' variable -- scary
 currentGfxPMatrix := null; -- the perspective matrix -- used for unmoving objects
 currentGfxLights := {}; -- list of lights. needs to be preprocessed
+currentGfxDefs = new MutableHashTable; -- list of defs. postprocessed
 
 GfxType = new Type of Type -- all usable Gfx objects are ~ self-initialized
 
@@ -67,10 +68,21 @@ gfxDistance = x -> if x.cache.?GfxDistance then x.cache.GfxDistance else error "
 gfxDistance1 = method()
 gfxDistance1 GfxObject := x -> 0_RR -- by default 2d -> on top of everything
 
-updateGfxCache = x -> (
-    x.cache.GfxRange = gfxRange1 x; -- update the range
-    x.cache.GfxDistance = gfxDistance1 x; -- update the squared distance
+updateGfxCache = g -> (
+    g.cache.GfxRange = gfxRange1 g; -- update the range
+    g.cache.GfxDistance = gfxDistance1 g; -- update the squared distance
+    if g.?GfxOneSided and g.GfxOneSided then gfxDetermineSide g;
+    -- bit of a hack: 2d objects GfxCircle, GfxEllipse get scaled in a 3d context
+    if gfxIs3d g and instance(g,GfxCircle) then (
+	scale := 1/(currentGfxMatrix*g.GfxCenter)_3;
+	g.cache.GfxScaledRadius=g.GfxRadius*scale;
+	) else if  gfxIs3d g and instance(g,GfxEllipse) then (
+	scale = 1/(currentGfxMatrix*g.GfxCenter)_3;
+	g.cache.GfxScaledRadiusX=g.GfxRadiusX*scale;
+	g.cache.GfxScaledRadiusY=g.GfxRadiusY*scale;
+	)
     )
+
 gfxRange = x -> if x.?GfxRange then x.GfxRange else if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of 3d object can only be obtained by rendering it"
 
 GfxPrimitive = new Type of GfxObject
@@ -207,58 +219,40 @@ updateGfxMatrix = g -> (
     if gfxIs3d g then first ( currentGfxMatrix,
     	if g.?GfxStatic and g.GfxStatic then currentGfxMatrix=currentGfxPMatrix, -- reset to perspective matrix	
 	if g.?GfxMatrix then currentGfxMatrix = currentGfxMatrix*g.GfxMatrix
-	)
     )
+)
+
 svgBegin = g -> (
-    -- check if there's need of a filter
-    if g.?GfxBlur or (#currentGfxLights > 0 and instance(g,GfxPolyPrimitive)) then g.cache.GfxFilterTag = gfxTag() else remove(g.cache,GfxFilterTag);
+    gfxFilter g; -- set up filter if need be
     prs := pairs g | pairs g.cache;
     concatenate (
     	"<", (class g)#Name,
     	concatenate apply(prs,(key,val) -> if svgLookup#?key then " " | (svgLookup#key val) ),
     	(style := select(prs,(key,val) -> class key === String);
-	    if g.?GfxOneSided and g.GfxOneSided and gfxWrongSide g then style = append(style,("visibility","hidden"));
     	    if #style>0 then " style='" | demark(";",apply(style,(key,val) -> key|":"|toString val))|"'"),
     	">"
 	)
     )
 svgEnd = g -> (
-    updateGfxCache g;
     concatenate(
-    "</", (class g)#Name, ">",
-    if g.cache.?GfxFilterTag then gfxFilter g
+    "</", (class g)#Name, ">"
     )
 )
 
 svg GfxObject := g -> ""
 svg GfxPrimitive := g -> ( 
     saveGfxMatrix := updateGfxMatrix g;
+    updateGfxCache g;
     first(svgBegin g | svgEnd g,
     	currentGfxMatrix = saveGfxMatrix)
     )
 
--- bit of a hack: 2d objects GfxCircle, GfxEllipse get scaled in a 3d context
-svg GfxCircle := g -> (
-    if gfxIs3d g then (
-	scale := 1/(currentGfxMatrix*g.GfxCenter)_3;
-	g.cache.GfxScaledRadius=g.GfxRadius*scale;
-	);
-    (lookup(svg,GfxPrimitive)) g
-    )
-svg GfxEllipse := g -> (
-    if gfxIs3d g then (
-	scale := 1/(currentGfxMatrix*g.GfxCenter)_3;
-	g.cache.GfxScaledRadiusX=g.GfxRadiusX*scale;
-	g.cache.GfxScaledRadiusY=g.GfxRadiusY*scale;
-	);
-    (lookup(svg,GfxPrimitive)) g
-    )
-
 -- careful that sort is *not* a stable sort (it's quicksort) so we can't use it in 2d. also means mixing 2d and 3d will be a mess :/
-svg GfxList := g -> ( 
+svg GfxList := g -> (
     saveGfxMatrix := updateGfxMatrix g;
     stuff := apply(g.GfxContents, svg);
     if gfxIs3d g then stuff = (transpose sort(transpose{g.GfxContents,stuff}))#1; -- sort stuff according to g.GfxContents distance
+    updateGfxCache g;
     first(svgBegin g | concatenate stuff | svgEnd g,
     	currentGfxMatrix = saveGfxMatrix)
     )
@@ -269,6 +263,7 @@ svg GfxText := g -> (
     f := if g.?GfxFontSize then g.GfxFontSize else 14.;
     if gfxIs3d g then f = f / (currentGfxMatrix*g.GfxPoint)_3;
     g.cache#"font-size"= toString f|"px";
+    updateGfxCache g;
     first(svgBegin g | g.GfxString | svgEnd g,
     	currentGfxMatrix = saveGfxMatrix)
     )
@@ -316,7 +311,8 @@ html GfxObject := g -> (
 	persp := if g.?GfxPerspective then g.GfxPerspective else 1000.; -- some arbitrary number
 	currentGfxMatrix = currentGfxPMatrix = if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,persp},{0,0,1/persp,1}}; -- useful to have output {x,y,z+p,1+z/p}
 	currentGfxLights = gfxSetupLights g;
-	) else currentGfxMatrix = currentGfxPMatrix = null;
+	) else ( currentGfxMatrix = currentGfxPMatrix = null; currentGfxLights = {}; );
+    currentGfxDefs = new MutableHashTable;
     s := svg g; -- run this first because it will compute the ranges too
     r := gfxRange g; -- should be cached at this stage
     if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return ""); -- nothing to draw
@@ -339,6 +335,7 @@ html GfxObject := g -> (
 	if gfxIs3d g then " data-pmatrix='"|jsString currentGfxMatrix|"'" else "",
     	">",
     	s,
+	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
     	"</svg>",
 	-- then sliders
 	if gfxIs3d g and (not g.?GfxGadgets or member(symbol GfxVertical,g.GfxGadgets)) then
@@ -380,14 +377,14 @@ gfxTranslation = vec -> (
     matrix {{1,0,0,vec_0},{0,1,0,vec_1},{0,0,1,vec_2},{0,0,0,1}}
 )
 
-gfxWrongSide = method()
-gfxWrongSide GfxObject := x -> false;
-gfxWrongSide GfxPolyPrimitive := x -> (
+gfxDetermineSide = method()
+gfxDetermineSide GfxObject := x -> ()
+gfxDetermineSide GfxPolyPrimitive := x -> (
     -- find first 3 coords
     if instance(x,GfxPath) then coords := select(x.GfxPathList, y -> instance(y,Vector)) else coords = x.GfxPoints;
     if #coords<3 then ( remove(x.cache,GfxFilterTag); return; );
     coords=apply(take(coords,3),x->(currentGfxMatrix*x)^{0,1,2});
-    det(matrix coords#0 | matrix coords#1 | matrix coords#2) > 0
+    x.cache#"visibility" = if det(matrix coords#0 | matrix coords#1 | matrix coords#2) > 0 then "hidden" else "visible";
     )
 
 -- lighting
@@ -417,7 +414,8 @@ gfxSetupLights GfxLight := g -> (
     g.cache.GfxTag = gfxTag();
     g )
 
-gfxFilter = x -> (
+gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyPrimitive)) then (
+    x.cache.GfxFilterTag = gfxTag();
     i:=0;
     if x.?GfxBlur then (
     	b := x.GfxBlur;
@@ -448,7 +446,7 @@ gfxFilter = x -> (
 	    	    c := 2*sp/w2;
 	    	    lightmir := light - c*w;
 		    if d<0 then sp=-sp;
-	    	    s=s| "<feSpecularLighting result=\"spec"|toString i|"\" specularExponent=\""|toString g.GfxSpecular|"\" lighting-color=\""|(if sp<0 then "black" else g#"fill")|"\">";
+	    	    s=s| "<feSpecularLighting result=\"spec"|toString i|"\" specularExponent=\""|toString g.GfxSpecular|"\" lighting-color=\""|(if sp<0 then "black" else toString g#"fill")|"\">";
 	    	    s=s|"<fePointLight data-origin=\""|g.cache.GfxTag|"\" x=\""|toString(lightmir_0*p/lightmir_2)|"\" y=\""|toString(lightmir_1*p/lightmir_2)|"\" z=\""|toString(sp/sqrt(w2))|"\" />";
 	    	    s=s|"</feSpecularLighting><feComposite in=\"spec"|toString i|"\" in2=\"SourceGraphic\" operator=\"in\" result=\"clipspec"|toString i|"\"/>";
 	    	    s=s|"<feComposite in=\""|(if i==0 then "SourceGraphic" else "result"|toString(i-1))|"\"  in2=\"clipspec"|toString i|"\" result=\"result"|toString i|"\" operator=\"arithmetic\" k1=\"0\" k2=\"1\" k3=\"1\" k4=\"0\" />";
@@ -456,8 +454,35 @@ gfxFilter = x -> (
 	    	    ));
 	    );
 	);
-    s|"</filter>"
+    currentGfxDefs#(x.cache.GfxFilterTag)=s|"</filter>";
+    ) else remove(x.cache,GfxFilterTag);
+
+GfxGradient = new Type of BasicList
+
+net GfxGradient := toString GfxGradient := x -> (
+    tag := x#0;
+    if not currentGfxDefs#?tag then currentGfxDefs#tag=x#1;
+    "url(#"|tag|")"
     )
+texMath GfxGradient := texMath @@ toString
+
+gfxLinearGradient = true >> o -> stop -> (
+    tag := gfxTag();
+    s:="<linearGradient id=\""|tag|"\""|concatenate apply(pairs o,(key,val) -> " "|key|"=\""|toString val|"\"")|">";
+    scan(stop, (offset,style) -> s = s | "<stop offset=\""|offset|"\" style=\""|style|"\" />");
+    s=s|"</linearGradient>";
+    new GfxGradient from (tag,s)
+    )
+
+gfxRadialGradient = true >> o -> stop -> (
+    tag := gfxTag();
+    s:="<radialGradient id=\""|tag|"\""|concatenate apply(pairs o,(key,val) -> " "|key|"=\""|toString val|"\"")|">";
+    scan(stop, (offset,style) -> s = s | "<stop offset=\""|offset|"\" style=\""|style|"\" />");
+    s=s|"</radialGradient>";
+    new GfxGradient from (tag,s)
+    )
+
+
 
 beginDocumentation()
 multidoc ///
@@ -720,15 +745,40 @@ multidoc ///
    GfxStatic
   Headline
    An option for a Gfx 3d object; it is unaffected by matrix tranformations of its ancestors
+ Node
+  Key
+   gfxLinearGradient
+  Headline
+   An SVG gradient
+  Description
+   Text
+    This corresponds to the linearGradient SVG gradient.
+    The argument is a list of pairs of offsets and styles.
+    Optional arguments (e.g., "x1", "y1", "x2", "y2") are used to determine the orientation of the gradient.
+   Example
+    GfxEllipse{[60,60],40,30, "fill"=>gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+ Node
+  Key
+   gfxRadialGradient
+  Headline
+   An SVG gradient
+  Description
+   Text
+    This corresponds to the radialGradient SVG gradient.
+    The argument is a list of pairs of offsets and styles.
+    Optional arguments (e.g., "cx", "cy", "r", "fx", "fy") are used to position the gradient.
+   Example
+    GfxEllipse{[60,60],40,30, "fill"=>gfxRadialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
 ///
 
 end--
 
 -- ex of use
+gr=gfxLinearGradient({"0%","0%","0%","100%"},{("0%","stop-color:red"),("100%","stop-color:yellow")});
 a=GfxCircle{"fill"=>"yellow","stroke"=>"green",GfxWidth=>1,GfxHeight=>1}
 b=GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"}
 c=GfxCircle{[50,50],50,"fill"=>"blue","fill-opacity"=>0.25}
-d=GfxEllipse{[60,60],40,30, "fill"=>"red", "stroke"=>"grey"}
+d=GfxEllipse{[60,60],40,30, "fill"=>gr, "stroke"=>"grey"}
 e=GfxPolyline{{[0,0],[100,100]},"stroke"=>"green"}
 f=GfxPolygon{{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
 gfx (f,a,b,c,d,e)
@@ -823,8 +873,9 @@ sph=apply(f3,f->GfxPolygon{apply(f,j->v3#j),"stroke"=>"white","fill"=>"gray"});
 gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>10,"fill"=>c,GfxSpecular=>10,GfxAutoMatrix=>gfxRotation(0.02,[rnd(),rnd(),rnd()])}),GfxRange=>{[-200,-200],[200,200]},GfxHeight=>30)
 
 
--- oops, my z coordinate has the wrong sign... :/ and so does my y coordinate! yay!
--- the amount of light should decrease with distance...
--- the stroke-width is not included in gfxRange. but then it would be a mess to keep track of 
+-- TODO:
+-- * oops, my z coordinate has the wrong sign... :/ and so does my y coordinate! yay!
+-- * the amount of light should decrease with distance...
+-- * the stroke-width is not included in gfxRange. but then it would be a mess to keep track of 
 -- (would need a currentStrokeWidth, which means would also require knowledge of default values...)
-
+-- * doc gradients
