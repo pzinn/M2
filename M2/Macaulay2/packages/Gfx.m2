@@ -7,7 +7,8 @@ newPackage(
                   Email => "pzinn@unimelb.edu.au", 
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
-        DebuggingMode => false
+        DebuggingMode => false,
+	AuxiliaryFiles => true
         )
 
 export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxRectangle", "GfxText",
@@ -774,7 +775,9 @@ multidoc ///
 end--
 
 -- ex of use
-gr=gfxLinearGradient({"0%","0%","0%","100%"},{("0%","stop-color:red"),("100%","stop-color:yellow")});
+gr=gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
+gfx(GfxEllipse{[0,0],90,30, "stroke"=>"none","fill"=>gr,GfxText{[-64,7],"Macaulay2",GfxFontSize=>25,"stroke"=>"black", "fill"=>"none"})
+
 a=GfxCircle{"fill"=>"yellow","stroke"=>"green",GfxWidth=>1,GfxHeight=>1}
 b=GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"}
 c=GfxCircle{[50,50],50,"fill"=>"blue","fill-opacity"=>0.25}
@@ -878,4 +881,3 @@ gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>
 -- * the amount of light should decrease with distance...
 -- * the stroke-width is not included in gfxRange. but then it would be a mess to keep track of 
 -- (would need a currentStrokeWidth, which means would also require knowledge of default values...)
--- * doc gradients
