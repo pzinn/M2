@@ -776,7 +776,7 @@ end--
 
 -- ex of use
 gr=gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
-gfx(GfxEllipse{[0,0],90,30, "stroke"=>"none","fill"=>gr,GfxText{[-64,7],"Macaulay2",GfxFontSize=>25,"stroke"=>"black", "fill"=>"none"})
+gfx(GfxEllipse{[0,0],90,30,"stroke"=>"none","fill"=>gr,GfxBlur=>0.3},GfxText{[-65,7],"Macaulay2",GfxFontSize=>25,"stroke"=>"black","fill"=>"white"},GfxHeight=>12)
 
 a=GfxCircle{"fill"=>"yellow","stroke"=>"green",GfxWidth=>1,GfxHeight=>1}
 b=GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"}
