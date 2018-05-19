@@ -60,11 +60,12 @@ texMath Net := n -> (
 -- mathJax Thing produces some valid html code with possible tex code in \( \)
 -- topLevelMode=MathJax produces that plus possible pure text coming from the system
 -- hence, requires comments to help the browser app distinguish html from text
-mathJaxTextComment := "<!--txt-->"; -- indicates what follows is pure text; default mode
-mathJaxHtmlComment := "<!--html-->"; -- indicates what follows is HTML
-mathJaxOutputComment := "<!--out-->"; -- it's html but it's output
-mathJaxInputComment := "<!--inp-->"; -- it's text but it's input
-mathJaxInputContdComment := "<!--con-->"; -- text, continuation of input
+(mathJaxTextTag,           -- indicates what follows is pure text; default mode
+    mathJaxHtmlTag,        -- indicates what follows is HTML
+    mathJaxOutputTag,      -- it's html but it's output
+    mathJaxInputTag,       -- it's text but it's input
+    mathJaxInputContdTag):= -- text, continuation of input
+apply(1..5,ascii)
 
 oldhL := htmlLiteral;
 htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
@@ -96,8 +97,8 @@ mathJax Describe := x -> mathJax x#0
 
 -- output routines
 
-ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputComment
-ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdComment
+ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputTag
+ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdTag
 
 Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 
@@ -108,7 +109,7 @@ Thing#{MathJax,Print} = x -> (
     mathJaxBegin();
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
     mathJaxEnd();
-    << endl << oprompt | mathJaxOutputComment | y | mathJaxTextComment << endl;
+    << endl << oprompt | mathJaxOutputTag | y | mathJaxTextTag << endl;
     )
 
 -- afterprint <sigh>
@@ -119,7 +120,7 @@ texAfterPrint :=  y -> (
     mathJaxBegin();
     z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
     mathJaxEnd();
-    << endl << on() | " : " | mathJaxHtmlComment | texWrap z | mathJaxTextComment << endl;
+    << endl << on() | " : " | mathJaxHtmlTag | texWrap z | mathJaxTextTag << endl;
     )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
