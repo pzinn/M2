@@ -65,7 +65,7 @@ texMath Net := n -> (
     mathJaxOutputTag,      -- it's html but it's output
     mathJaxInputTag,       -- it's text but it's input
     mathJaxInputContdTag):= -- text, continuation of input
-apply(1..5,ascii)
+apply((17,18,19,20,28),ascii)
 
 oldhL := htmlLiteral;
 htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
