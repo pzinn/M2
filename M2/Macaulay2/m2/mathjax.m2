@@ -67,7 +67,7 @@ texMath ColumnExpression := x -> concatenate (
 -- mathJax Thing produces some valid html code with possible tex code in \( \)
 -- topLevelMode=MathJax produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
-(mathJaxTextTag,           -- indicates what follows is pure text; default mode
+(mathJaxEndTag,            -- closing tag
     mathJaxHtmlTag,        -- indicates what follows is HTML
     mathJaxOutputTag,      -- it's html but it's output
     mathJaxInputTag,       -- it's text but it's input
@@ -139,7 +139,7 @@ Thing#{MathJax,Print} = x -> (
     mathJaxBegin();
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
     mathJaxEnd();
-    << endl << oprompt | mathJaxOutputTag | y | mathJaxTextTag << endl;
+    << endl << oprompt | mathJaxOutputTag | y | mathJaxEndTag << endl;
     )
 
 -- afterprint <sigh>
@@ -151,7 +151,7 @@ texAfterPrint :=  y -> (
     mathJaxBegin();
     z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
     mathJaxEnd();
-    << endl << on() | " : " | mathJaxHtmlTag | texWrap z | mathJaxTextTag << endl;
+    << endl << on() | " : " | mathJaxHtmlTag | texWrap z | mathJaxEndTag << endl;
     )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
@@ -212,7 +212,7 @@ ZZ#{MathJax,AfterPrint} = identity
 -- experimental
 print = x -> if topLevelMode === MathJax then (
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    << mathJaxHtmlTag | y | mathJaxTextTag << endl;
+    << mathJaxHtmlTag | y | mathJaxEndTag << endl;
     ) else ( << net x << endl; )
 
 -- bb letters
