@@ -71,8 +71,9 @@ texMath ColumnExpression := x -> concatenate (
     mathJaxHtmlTag,        -- indicates what follows is HTML
     mathJaxOutputTag,      -- it's html but it's output
     mathJaxInputTag,       -- it's text but it's input
-    mathJaxInputContdTag):= -- text, continuation of input
-apply((17,18,19,20,28),ascii)
+    mathJaxInputContdTag,  -- text, continuation of input
+    mathJaxTextTag):=      -- other text
+apply((17,18,19,20,28,30),ascii)
 
 oldhL := htmlLiteral;
 htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
@@ -108,22 +109,16 @@ mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;
 mathJax RowExpression := x -> concatenate("<span>",apply(toList x, mathJax),"</span>")
 
 -*
--- experimental: a new Type should be created for examples since they won't literally be PRE in mathJax mode
+-- temporary HACK: a new Type should be created for examples since they won't literally be PRE in mathJax mode
 -- either that or must rewrite the whole structure of mathJax = html, or both
+*-
 
-mathJaxTags={mathJaxTextTag,mathJaxHtmlTag,mathJaxOutputTag,mathJaxInputTag,mathJaxInputContdTag}
-
-fixMathJaxTags := s -> (
-    scan(mathJaxTags, t-> s=replace(oldhL t,t,s));
-    s
-    )
-html PRE   := x -> concatenate(
+html PRE := x -> concatenate(
      "<pre>",
---     demark(newline, apply(lines concatenate x, fixMathJaxTags @@ oldhL)),
-    x,
+     if topLevelMode === MathJax then (mathJaxTextTag, x, mathJaxEndTag) else demark(newline, apply(lines concatenate x, htmlLiteral)),
      "</pre>\n"
      )
-*-
+
 
 -- output routines
 ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputTag
