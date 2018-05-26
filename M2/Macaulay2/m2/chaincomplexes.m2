@@ -67,11 +67,13 @@ net ChainComplex := C -> (
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
+texMathMaybe = x -> if rank source x + rank target x < 16 then texMath x else "(\\cdots)"
+
 texMath ChainComplex := C -> (
      complete C;
      s := sort spots C;
      if # s === 0 then "0" else
-     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xrightarrow{\\scriptsize " | texMath C.dd_i | "}\\," | texUnder(texMath C_i,i) )
+     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xrightarrow{\\scriptsize " | texMathMaybe C.dd_i | "}\\," | texUnder(texMath C_i,i) )
       )
 
 -*

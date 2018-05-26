@@ -55,9 +55,9 @@ peek'(ZZ,HashTable) := (depth,s) -> (
 
 peek'(ZZ,Dictionary) := (depth,d) -> (
      if depth === 0 then Describe expression d
-     else Describe horizontalJoin(
-	  toString class d, "{", 
-	  stack apply(sort pairs d, (lhs,rhs) -> horizontalJoin splice (peek lhs," => ",peek'(depth-1,rhs))),
+     else Describe RowExpression splice (
+	  expression class d, "{",
+	  new ColumnExpression from apply(sort pairs d, (lhs,rhs) -> BinaryOperation ( symbol =>, peek lhs ,peek'(depth-1,rhs))),
 	  "}"))
 
 peek = s -> peek'(1,s)

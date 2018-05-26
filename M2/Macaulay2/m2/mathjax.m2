@@ -115,7 +115,7 @@ mathJax RowExpression := x -> concatenate("<span>",apply(toList x, mathJax),"</s
 
 html PRE := x -> concatenate(
      "<pre>",
-     if topLevelMode === MathJax then (mathJaxTextTag, x, mathJaxEndTag) else demark(newline, apply(lines concatenate x, htmlLiteral)),
+     if topLevelMode === MathJax then (mathJaxTextTag, x, "\n", mathJaxEndTag) else demark(newline, apply(lines concatenate x, htmlLiteral)), -- note the extra \n to make sure input is ended
      "</pre>\n"
      )
 
@@ -263,4 +263,4 @@ width String := x -> ( -- we leave length to be #
     scan(ascii x, i -> if (i & 192) =!= 128 then c=c+1);
     c
     )
-width Net := x -> max apply(unstack x,width) -- kind of a lame hack, short circuits the internal width
+width Net := x -> if #x === 0 then 0 else max apply(unstack x,width) -- kind of a lame hack, short circuits the internal width
