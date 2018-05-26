@@ -20,6 +20,7 @@ texMath MonoidElement := x -> texMath expression x
 texMath Function := x -> texMath toString x
 
 -- strings -- compare with hypertext.m2
+-*
 texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
     texVerbLiteralTable#"!" = ///!\texttt{!}\verb!///
@@ -30,11 +31,18 @@ texVerbLiteralTable := new MutableHashTable
     texVerbLiteralTable#"}" =///!\texttt{\}}\verb!/// -- eww ugly fix of #375 of mathJax
 texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
 --texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
+
 texMath String := s -> (
     ss := separate s;
     if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
     else texMath stack ss
     )
+*-
+texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\backslash{}", "{" => "\\{", "}" => "\\}", "&" => "\\&", "^" => "\\^{}", "_" => "\\_{}", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
+
+--texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
+
+texMath String := s -> "{\\tt\n" | texAltLiteral s | "\n}" -- here we refuse to consider \n issues
 
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
@@ -50,7 +58,7 @@ texMath Net := n -> (
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-	    s=s|"\\vphantom{\\big|}" | texMath x;
+	    s=s|"\\vphantom{\\big|}" | texMath x | "\n";
 	    if i<#n then s=s|"\\\\[-1mm]";
 	    ));
 --    "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- 2.65 for [-2mm]. this number may have to be adjusted/defined more properly, disabling for now
@@ -75,6 +83,19 @@ texMath ColumnExpression := x -> concatenate (
     mathJaxTextTag):=      -- other text
 apply((17,18,19,20,28,30),ascii)
 
+texAltLiteral = s -> ( open:= {};
+    concatenate apply(characters s,
+    c -> first(if texAltLiteralTable#?c and #open === 0 then texAltLiteralTable#c else c,
+	if #open > 0 then (
+	if (last open === mathJaxHtmlTag or last open === mathJaxOutputTag or last open === mathJaxTextTag) and c === mathJaxEndTag then open = drop(open,-1)
+	else if (last open === mathJaxInputTag or last open === mathJaxInputContdTag) and c === "\n" then open = drop(open,-1);
+	),
+	if c === mathJaxHtmlTag or c === mathJaxOutputTag or c === mathJaxInputTag or c === mathJaxInputContdTag or c === mathJaxTextTag then open = append(open,c)
+	)
+    )
+)
+
+
 oldhL := htmlLiteral;
 htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
     s := oldhL x;
@@ -83,7 +104,8 @@ htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processe
     return s
     )
 
-texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
+--texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
+texWrap := x -> concatenate("\\(",x,"\\)")
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
