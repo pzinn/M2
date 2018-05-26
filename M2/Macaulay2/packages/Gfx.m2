@@ -527,7 +527,7 @@ multidoc ///
    Text
     An SVG circle. The two compulsory options are GfxCenter (coordinates of the center) and GfxRadius (radius).
    Example
-    GfxCircle{GfxCenter=>[10,10],GfxRadius=>10}
+    GfxCircle{GfxCenter=>[10,10],GfxRadius=>50,"stroke"=>"none"}
     GfxCircle{[10,10],10} -- equivalent syntax
  Node
   Key
@@ -549,8 +549,8 @@ multidoc ///
    Text
     An SVG ellipse. The three compulsory options are GfxCenter (coordinates of the center) and GfxRadiusX, GfxRadiusY (radii).
    Example
-    GfxEllipse{GfxCenter=>[10,10],GfxRadiusX=>10,GfxRadiusY=>20}
-    GfxEllipse{[10,10],10,20} -- equivalent syntax
+    GfxEllipse{GfxCenter=>[10,10],GfxRadiusX=>50,GfxRadiusY=>20,"stroke"=>"none"}
+    GfxEllipse{[10,10],50,20,"stroke"=>"none"} -- equivalent syntax
  Node
   Key
    GfxPath
@@ -884,4 +884,4 @@ gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>
 
 
 -- to rerun examples/doc:
-installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, AbsoluteLinks => false, UserMode => false, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
+installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, AbsoluteLinks => false, UserMode => true, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
