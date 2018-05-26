@@ -327,7 +327,7 @@ html GfxObject := g -> (
     if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * rr_0/rr_1;
     tag := gfxTag();
     concatenate(
-	if gfxIs3d g then "<span style=\"position:relative;display:inline-block\">" else "",
+	if gfxIs3d g then "<span class=\"gfx3d\">" else "",
 	 -- svg first
 	"<svg xmlns=\"http://www.w3.org/2000/svg\"",
 	" class=\"M2Svg\" id=\""|tag|"\"",
@@ -340,14 +340,14 @@ html GfxObject := g -> (
     	"</svg>",
 	-- then sliders
 	if gfxIs3d g and (not g.?GfxGadgets or member(symbol GfxVertical,g.GfxGadgets)) then
-	    "<input oninput='gfxVRange(this,"|jsString tag|")' onclick='event.stopPropagation(); return false' type=\"range\" orient=\"vertical\" style=\"position:absolute;top:0;right:0\" min=\"-100\" max=\"100\" class=\"gfx3d vertical\">"
+	    "<input oninput='gfxVRange(this,"|jsString tag|")' onclick='event.stopPropagation(); return false' type=\"range\" orient=\"vertical\" style=\"position:absolute;top:0;right:0\" min=\"-100\" max=\"100\" class=\"vertical gadget\">"
 	    else "",
 	if gfxIs3d g and (not g.?GfxGadgets or member(symbol GfxHorizontal,g.GfxGadgets)) then
-	    "<input oninput='gfxHRange(this,"|jsString tag|")' onclick='event.stopPropagation(); return false' type=\"range\" style=\"position:absolute;bottom:0;left:0\" min=\"-100\" max=\"100\" class=\"gfx3d horizontal\">"
+	    "<input oninput='gfxHRange(this,"|jsString tag|")' onclick='event.stopPropagation(); return false' type=\"range\" style=\"position:absolute;bottom:0;left:0\" min=\"-100\" max=\"100\" class=\"horizontal gadget\">"
 	    else "",
 	-- then autorotate button
 	if gfxIs3d g and (not g.?GfxGadgets or member(symbol GfxAuto,g.GfxGadgets)) then
-	    "<button class=\"mdl-button mdl-button--icon gfx3d\" style=\"position:absolute;top:0;left:0\" onclick='gfxToggleRotation(this,"|jsString tag|"); event.stopPropagation(); return false'><i class=\"material-icons\">3d_rotation</i></button>"
+	    "<button class=\"mdl-button mdl-button--icon gadget\" style=\"position:absolute;top:0;left:0\" onclick='gfxToggleRotation(this,"|jsString tag|"); event.stopPropagation(); return false'><i class=\"material-icons\">3d_rotation</i></button>"
 	    else "",
 	if gfxIs3d g then "</span>" else ""
 	)
@@ -570,7 +570,7 @@ multidoc ///
    Text
     An SVG polygon. The coordinates must form a list called GfxPoints. (the difference with GfxPolyline is that the last coordinate is reconnected to the first)
    Example
-    GfxPolygon{GfxPoints=>{[10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
+    GfxPolygon{GfxPoints=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
  Node
   Key
    GfxPolyline
@@ -580,7 +580,7 @@ multidoc ///
    Text
     An SVG sequence of lines. The coordinates must form a list called GfxPoints. (the difference with GfxPolygon is that the last coordinate is not reconnected to the first)
    Example
-    GfxPolyline{GfxPoints=>{[10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
+    GfxPolyline{GfxPoints=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
  Node
   Key
    GfxRectangle
@@ -881,3 +881,7 @@ gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>
 -- * the amount of light should decrease with distance...
 -- * the stroke-width is not included in gfxRange. but then it would be a mess to keep track of 
 -- (would need a currentStrokeWidth, which means would also require knowledge of default values...)
+
+
+-- to rerun examples/doc:
+installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, AbsoluteLinks => false, UserMode => false, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)

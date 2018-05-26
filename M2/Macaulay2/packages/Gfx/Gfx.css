@@ -20,11 +20,16 @@ svg.M2Svg text {
     font-size: 14px; /* absolute sounds bad but actually it's not really absolute since it's in svg units */
 }
 
-.M2HtmlOutput .gfx3d {
+.gfx3d {
+    position:relative;
+    display:inline-block;
+}
+
+.gfx3d > .gadget {
     visibility: hidden;
 }
 
-.M2HtmlOutput:hover .gfx3d {
+.gfx3d:hover > .gadget {
     visibility: visible;
 }
 
