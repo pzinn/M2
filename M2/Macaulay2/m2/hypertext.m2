@@ -21,7 +21,6 @@ texLiteralTable := new MutableHashTable
     texLiteralTable#"\t" = "\t"
     texLiteralTable#"`" = "{`}"     -- break ligatures ?` and !` in font \tt
 				   -- see page 381 of TeX Book
-
 texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
 
 HALFLINE := ///\vskip 4.75pt
@@ -37,7 +36,6 @@ texExtraLiteralTable#" " = "\\ "
 texExtraLiteral := s -> demark(ENDLINE,
      apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c))
      )
-
 -----------------------------------------------------------------------------
 -- the default case
 
@@ -189,16 +187,16 @@ truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else s
 tex TABLE := x -> concatenate applyTable(x,tex)
 texMath TABLE := x -> concatenate (
      ///
-\matrix{
+\begin{matrix}
 ///,
      apply(x,
 	  row -> (
 	       apply(row,item -> (texMath item, "&")),
-	       ///\cr
+	       ///\\
 ///
 	       )
 	  ),
-     ///}
+     ///\end{matrix}
 ///
      )
 
@@ -227,7 +225,7 @@ verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBA
 maximumCodeWidth = 60					    -- see also booktex.m2, an old file that sets the same variable
 
 tex TT := verbatim
-texMath TT := concatenate("{\\tt", texExtraLiteral concatenate x, "}" ) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
+texMath TT := x -> concatenate("{\\tt ", texExtraLiteral concatenate x, "}" ) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
 
 tex CODE :=
 tex PRE := x -> concatenate ( VERBATIM,
