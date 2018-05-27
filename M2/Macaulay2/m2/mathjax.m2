@@ -196,3 +196,8 @@ mathJaxEnd = () -> (
     global texMath <- texMathBackup;
     )
 
+-- bb letters
+ℚ=QQ
+ℝ=RR
+ℤ=ZZ
+ℂ=CC
