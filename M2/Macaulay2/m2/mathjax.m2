@@ -78,19 +78,11 @@ texMath ColumnExpression := x -> concatenate (
     mathJaxTextTag):=      -- other text
 apply((17,18,19,20,28,30),ascii)
 
--- text mode variant
 texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
     "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#", "-" => "-{}" }
 -- not \^{} because of https://github.com/Khan/KaTeX/issues/1366
 -- -{} because of https://github.com/Khan/KaTeX/issues/1367
-
--* -- math mode variant: would require some more redefs, e.g., +-
-texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\backslash", "{" => "\\{", "}" => "\\}",
-    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\verb| |", "%" => "\\%", "#" => "\\#" }
-*-
-
 --texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-
 texAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
     c -> first(if texAltLiteralTable#?c and #open === 0 then texAltLiteralTable#c else c,
@@ -103,18 +95,24 @@ texAltLiteral = s -> ( open:= {};
     )
 )
 
+htmlAltLiteralTable := hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
+htmlAltLiteral = s -> ( open:= {};
+    concatenate apply(characters s,
+    c -> first(if htmlAltLiteralTable#?c and #open === 0 then htmlAltLiteralTable#c else c,
+	if #open > 0 then (
+	    if (last open === mathJaxHtmlTag or last open === mathJaxOutputTag or last open === mathJaxTextTag) and c === mathJaxEndTag then open = drop(open,-1)
+	    else if (last open === mathJaxInputTag or last open === mathJaxInputContdTag) and c === "\n" then open = drop(open,-1);
+	),
+	if c === mathJaxHtmlTag or c === mathJaxOutputTag or c === mathJaxInputTag or c === mathJaxInputContdTag or c === mathJaxTextTag then open = append(open,c)
+	)
+    )
+)
+
+
 texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is for closing of inputTag if needed!
 
-oldHtmlLiteral := htmlLiteral;
-htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
-    s := oldHtmlLiteral x;
-    s = replace("\\\\\\(","&bsol;(",s);
-    s = replace("\\\\\\)","&bsol;)",s);
-    return s
-    )
-
 --texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for mathJax compatibility
-texWrap := x -> concatenate("\\(",x,"\\)") -- break mathJax compatibility (KaTeX mode!) but helps with other situations
+texWrap := x -> concatenate("\\(",x,"\\)") -- breaks mathJax compatibility (KaTeX mode!) but helps with other situations
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
@@ -122,7 +120,7 @@ mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for 
 mathJax Hypertext := html -- !
 -- the % is relative to line-height
 mathJax Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
-mathJax String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+mathJax String := x -> concatenate("<pre>", htmlAltLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 -- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
 -- actually same problem with katex, though eventually should be able to tt -> \tt
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
