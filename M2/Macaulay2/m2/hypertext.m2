@@ -224,7 +224,8 @@ verbatim := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBA
 
 maximumCodeWidth = 60					    -- see also booktex.m2, an old file that sets the same variable
 
-tex TT := texMath TT := verbatim
+tex TT := verbatim
+texMath TT := x -> concatenate apply(x,texMath) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
 
 tex CODE :=
 tex PRE := x -> concatenate ( VERBATIM,
