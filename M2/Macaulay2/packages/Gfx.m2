@@ -165,8 +165,8 @@ gfxRange1 GfxList := x -> (
 )
 
 --GfxList | GfxList := (a,b) -> new GfxList from (a++b++{symbol GfxContents => a.GfxContents | b.GfxContents})
-GfxObject | GfxObject := (a,b) -> new RowExpression from {a,b}
-GfxObject || GfxObject := (a,b) -> new ColumnExpression from {a,b}
+--GfxObject | GfxObject := (a,b) -> new RowExpression from {a,b}
+--GfxObject || GfxObject := (a,b) -> new ColumnExpression from {a,b}
 
 -- GfxAnimation takes a Gfx option Obj (what to animate) -> shit, disabled
 --GfxAnimation = new GfxType from ("animate", { "attributeName" => "", "from" => "", "to" => "", "dur" => "", "attributeType" => "XML", "repeatCount" => "indefinite" })

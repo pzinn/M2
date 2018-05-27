@@ -187,7 +187,7 @@ truncateNet    := n -> if printWidth == 0 or width n <= printWidth then n else s
 tex TABLE := x -> concatenate applyTable(x,tex)
 texMath TABLE := x -> concatenate (
      ///
-\matrix{
+\begin{matrix}
 ///,
      apply(x,
 	  row -> (
@@ -196,7 +196,7 @@ texMath TABLE := x -> concatenate (
 ///
 	       )
 	  ),
-     ///}
+     ///\end{matrix}
 ///
      )
 
