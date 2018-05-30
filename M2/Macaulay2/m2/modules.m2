@@ -102,6 +102,13 @@ promote(Vector,InexactNumber) :=
 promote(Vector,InexactNumber') :=
 promote(Vector,RingElement) := 
 promote(Vector,Number) := Vector => (v,S) -> vector (promote(v#0,S))
+numeric Vector := v -> numeric(defaultPrecision,v)
+numeric(ZZ,Vector) := (prec,v) -> (
+     F := ring v;
+     if instance(F, InexactField) then return v;
+     if F === ZZ or F === QQ then return promote(v,RR_prec);
+     error "expected vector of numbers"
+     )
 
 - Vector := Vector => v -> vector (-v#0)
 Number * Vector := RingElement * Vector := Vector => (r,v) -> new class v from {r * v#0}

@@ -12,8 +12,10 @@ newPackage(
         )
 
 export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxRectangle", "GfxText",
-    "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxPlot",
-     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth", "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius", "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes"
+    "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
+     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
+     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
+     "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxTight"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
@@ -34,6 +36,8 @@ new GfxObject := T -> new T from { symbol cache => new CacheTable } -- every Gfx
 --   i.e, they or their contents can rotate/autorotate, but the rotations of their ancestors won't affect them
 --   useful for lights
 -- * GfxBlur (amount of blurriness relative to the size of the object)
+-- * GfxAxes (draw axes)
+-- * GfxTight (leave no blank around picture)
 
 currentGfxMatrix := null; -- yeah, it's a ``global'' variable -- scary
 currentGfxPMatrix := null; -- the perspective matrix -- used for unmoving objects
@@ -88,7 +92,7 @@ gfxRange = x -> if x.?GfxRange then x.GfxRange else if x.cache.?GfxRange then x.
 
 GfxPrimitive = new Type of GfxObject
 
-GfxCircle = new GfxType of GfxPrimitive from hashTable { symbol Name => "circle", symbol Options => { symbol GfxCenter => vector {0,0}, symbol GfxRadius => 50 }}
+GfxCircle = new GfxType of GfxPrimitive from hashTable { symbol Name => "circle", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadius => 50. }}
 gfxIs3d1 GfxCircle := x -> rank class x.GfxCenter > 2
 gfxRange1 GfxCircle := g -> (
     p := g.GfxCenter; 
@@ -102,7 +106,7 @@ gfxDistance1 GfxCircle := g -> (
     y_0^2+y_1^2+y_2^2
     )
 
-GfxEllipse = new GfxType of GfxPrimitive from hashTable { symbol Name => "ellipse", symbol Options => { symbol GfxCenter => vector {0,0}, symbol GfxRadiusX => 50, symbol GfxRadiusY => 50 }}
+GfxEllipse = new GfxType of GfxPrimitive from hashTable { symbol Name => "ellipse", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadiusX => 50., symbol GfxRadiusY => 50. }}
 gfxIs3d1 GfxEllipse := x -> rank class x.GfxCenter > 2
 gfxRange1 GfxEllipse := g -> (
     p := g.GfxCenter; 
@@ -117,7 +121,7 @@ gfxDistance1 GfxEllipse := g -> (
     )
 
 -- purely 2d
-GfxRectangle = new GfxType of GfxPrimitive from hashTable { symbol Name => "rect", symbol Options => { GfxPoint => vector {0,0}, GfxSize => vector {50,50} }}
+GfxRectangle = new GfxType of GfxPrimitive from hashTable { symbol Name => "rect", symbol Options => { GfxPoint => vector {0.,0.}, GfxSize => vector {50.,50.} }}
 gfxRange1 GfxRectangle := g -> (
     p1 := g.GfxPoint;
     p2 := p1+g.GfxSize;
@@ -125,7 +129,7 @@ gfxRange1 GfxRectangle := g -> (
     { vector(min\p), vector(max\p) }
     )
 
-GfxText = new GfxType of GfxObject from hashTable { symbol Name => "text", symbol Options => { GfxPoint => vector {0,0}, GfxString => "" }}
+GfxText = new GfxType of GfxObject from hashTable { symbol Name => "text", symbol Options => { GfxPoint => vector {0.,0.}, GfxString => "" }}
 gfxRange1 GfxText := g -> (
     f := if g.?GfxFontSize then g.GfxFontSize else 14.;
     p := g.GfxPoint;
@@ -153,7 +157,7 @@ gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, sc
 -- to make lists of them
 GfxList = new GfxType of GfxObject from hashTable { symbol Name => "g", symbol Options => { symbol GfxContents => {} } }
 -- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }
-gfx = true >> o -> x -> new GfxList from (new GfxObject) ++ gfxParse o ++ { symbol GfxContents => if instance(x,BasicList) then flatten toList x else {x} }
+gfx = true >> o -> x -> new GfxList from (new GfxObject) ++ gfxParse o ++ { symbol GfxContents => if instance(x,BasicList) then select(flatten toList x, y -> y =!=null) else {x} }
 gfxRange1 GfxList := x -> (
     s := select(apply(x.GfxContents, gfxRange),x->x=!=null);
     if #s===0 then null else (
@@ -317,15 +321,17 @@ html GfxObject := g -> (
     s := svg g; -- run this first because it will compute the ranges too
     r := gfxRange g; -- should be cached at this stage
     if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return ""); -- nothing to draw
+    r = apply(r,numeric);
     rr := r#1 - r#0;
     -- axes
     axes := null;
-    if g.?GfxAxes and g.GfxAxes then (
-	axes = if gfxIs3d g then svg GfxPath { GfxPathList => {"M", vector{r#0_0,0,0}, "L", vector {r#1_0,0,0}, 
-		"M", vector{0,r#0_1,0}, "L", vector{0,r#1_1,0}, 
-		"M", vector{0,0,min(r#0_0,r#0_1)}, "L", vector{0,0,max(r#1_0,r#1_1)}},"stroke"=>"black", "stroke-width"=>min(rr_0,rr_1)/100}
-	-- TEMP
-	    else svg GfxPath { GfxPathList => {"M", vector{r#0_0,0}, "L", vector {r#1_0,0}, "M", vector{0,r#0_1}, "L", vector{0,r#1_1}},"stroke"=>"black", "stroke-width"=>min(rr_0,rr_1)/100};
+    if g.?GfxAxes and g.GfxAxes then ( -- semi temp
+	axes = gfx(
+	    GfxPolyline { GfxPoints => if gfxIs3d g then { vector{r#0_0,0,0}, vector {r#1_0,0,0} } else { vector{r#0_0,0}, vector {r#1_0,0} }, "marker-end" => gfxArrow() },
+	    GfxPolyline { GfxPoints => if gfxIs3d g then { vector{0,r#0_1,0}, vector {0,r#1_1,0} } else { vector{0,r#0_1}, vector {0,r#1_1} }, "marker-end" => gfxArrow() },
+	    if gfxIs3d g then GfxPolyline { GfxPoints => { vector{0,0,min(r#0_0,r#0_1)}, vector {0,0,max(r#1_0,r#1_1)} }, "marker-end" => gfxArrow("z") },
+	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1) );
+	axes=svg axes;
 	);
     if g.?GfxWidth then g.cache.GfxWidth = numeric g.GfxWidth;
     if g.?GfxHeight then g.cache.GfxHeight = numeric g.GfxHeight;
@@ -334,6 +340,9 @@ html GfxObject := g -> (
     -- at this stage one of the two is set
     if not g.cache.?GfxHeight then g.cache.GfxHeight = g.cache.GfxWidth * rr_1/rr_0;
     if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * rr_0/rr_1;
+    -- put some extra blank space around picture
+    if not g.?GfxTight or not g.GfxTight then r = { 1.1*r#0-0.1*r#1, 1.1*r#1-0.1*r#0 };
+    --
     tag := gfxTag();
     concatenate(
 	if gfxIs3d g then "<span class=\"gfx3d\">" else "",
@@ -408,18 +417,14 @@ gfxRange1 GfxLight := x -> if x.GfxRadius === 0 then null else (lookup(gfxRange1
 gfxSetupLights = method()
 gfxSetupLights GfxObject := g -> {}
 gfxSetupLights GfxList := g -> (
-    	saveGfxMatrix := currentGfxMatrix;
-    	if g.?GfxStatic and g.GfxStatic then currentGfxMatrix=currentGfxPMatrix; -- reset to perspective matrix
-	if g.?GfxMatrix then currentGfxMatrix = currentGfxMatrix*g.GfxMatrix;
+    	saveGfxMatrix := updateGfxMatrix g;
 	first(
 	    flatten apply(g.GfxContents,gfxSetupLights),
 	    currentGfxMatrix = saveGfxMatrix
 	    )
 	)
 gfxSetupLights GfxLight := g -> (
-    saveGfxMatrix := currentGfxMatrix;
-    if g.?GfxStatic and g.GfxStatic then currentGfxMatrix=currentGfxPMatrix; -- reset to perspective matrix	
-    if g.?GfxMatrix then currentGfxMatrix = currentGfxMatrix*g.GfxMatrix;
+    saveGfxMatrix := updateGfxMatrix g;
     g.cache.GfxCenter = currentGfxMatrix*g.GfxCenter;
     currentGfxMatrix = saveGfxMatrix;
     g.cache.GfxTag = gfxTag();
@@ -468,30 +473,54 @@ gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyP
     currentGfxDefs#(x.cache.GfxFilterTag)=s|"</filter>";
     ) else remove(x.cache,GfxFilterTag);
 
-GfxGradient = new Type of BasicList
+GfxTagged = new Type of BasicList
 
-net GfxGradient := toString GfxGradient := x -> (
+net GfxTagged := toString GfxTagged := x -> (
     tag := x#0;
     if not currentGfxDefs#?tag then currentGfxDefs#tag=x#1;
     "url(#"|tag|")"
     )
-texMath GfxGradient := texMath @@ toString
+texMath GfxTagged := texMath @@ toString
 
 gfxLinearGradient = true >> o -> stop -> (
     tag := gfxTag();
-    s:="<linearGradient id=\""|tag|"\""|concatenate apply(pairs o,(key,val) -> " "|key|"=\""|toString val|"\"")|">";
-    scan(stop, (offset,style) -> s = s | "<stop offset=\""|offset|"\" style=\""|style|"\" />");
+    s:="<linearGradient id='"|tag|"'"|concatenate apply(pairs o,(key,val) -> " "|key|"='"|toString val|"'")|">";
+    scan(stop, (offset,style) -> s = s | "<stop offset='"|offset|"' style='"|style|"' />");
     s=s|"</linearGradient>";
-    new GfxGradient from (tag,s)
+    new GfxTagged from (tag,s)
     )
 
 gfxRadialGradient = true >> o -> stop -> (
     tag := gfxTag();
-    s:="<radialGradient id=\""|tag|"\""|concatenate apply(pairs o,(key,val) -> " "|key|"=\""|toString val|"\"")|">";
-    scan(stop, (offset,style) -> s = s | "<stop offset=\""|offset|"\" style=\""|style|"\" />");
+    s:="<radialGradient id='"|tag|"'"|concatenate apply(pairs o,(key,val) -> " "|key|"='"|toString val|"'")|">";
+    scan(stop, (offset,style) -> s = s | "<stop offset='"|offset|"' style='"|style|"' />");
     s=s|"</radialGradient>";
-    new GfxGradient from (tag,s)
+    new GfxTagged from (tag,s)
     )
+
+gfxArrow = true >> o -> () -> (
+    tag := gfxTag();
+    s:="<marker id='"|tag|"' orient='auto' markerWidth='3' markerHeight='4' refX='0' refY='2'>";
+    saveGfxMatrix := currentGfxMatrix;
+    s=s|(svg new GfxPolygon from (new GfxObject) ++ { "fill" => "black", "stroke" => "none" } ++ gfxParse o ++ { GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} } } );
+    currentGfxMatrix = saveGfxMatrix;
+    s=s|"</marker>";
+    new GfxTagged from (tag,s)
+    )
+
+-*    
+gfxLabel = true >> o -> label -> (
+    tag := gfxTag();
+    f:=1; -- TEMP
+--    s:="<marker id='"|tag|"' markerUnits='userSpaceOnUse' markerWidth='"|toString(f*0.6*length label)|"' markerHeight='"|toString f|"' refX='0' refY='0'>"; -- very approximate
+    s:="<marker id='"|tag|"' markerWidth='100' markerHeight='100' refX='0' refY='0'>"; -- very approximate
+    saveGfxMatrix := currentGfxMatrix;
+    s=s|(svg new GfxText from (new GfxObject) ++ { "fill" => "black", "stroke" => "none" } ++ gfxParse o ++ { GfxPoint => vector {0,0}, GfxString => label });
+    currentGfxMatrix = saveGfxMatrix;
+    s=s|"</marker>";
+    new GfxTagged from (tag,s)
+    )
+*-    
 
 needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
 
@@ -518,7 +547,6 @@ gfxPlot = true >> o -> (P,r) -> (
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
 		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
-	print val;
 	new GfxList from (new GfxObject) ++ { GfxAxes=>true } ++ gfxParse o
 	++ { symbol GfxContents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
 		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
@@ -526,8 +554,6 @@ gfxPlot = true >> o -> (P,r) -> (
 	)
     )
     
-
-
 beginDocumentation()
 multidoc ///
  Node
@@ -813,6 +839,16 @@ multidoc ///
     Optional arguments (e.g., "cx", "cy", "r", "fx", "fy") are used to position the gradient.
    Example
     GfxEllipse{[60,60],40,30, "fill"=>gfxRadialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+ Node
+  Key
+   gfxPlot
+  Headline
+   Draws a curve or surface defined implicitly or explicitly by a polynomial
+ Node
+  Key
+   GfxAxes
+  Headline
+   An option to draw axes
 ///
 
 end--
@@ -824,7 +860,7 @@ gfx(GfxEllipse{[0,0],90,30,"stroke"=>"none","fill"=>gr,GfxBlur=>0.3},GfxText{[-6
 a=GfxCircle{"fill"=>"yellow","stroke"=>"green",GfxWidth=>1,GfxHeight=>1}
 b=GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"}
 c=GfxCircle{[50,50],50,"fill"=>"blue","fill-opacity"=>0.25}
-d=GfxEllipse{[60,60],40,30, "fill"=>gr, "stroke"=>"grey"}
+d=GfxEllipse{[60,60],40,30, "fill"=>"blue", "stroke"=>"grey"}
 e=GfxPolyline{{[0,0],[100,100]},"stroke"=>"green"}
 f=GfxPolygon{{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
 gfx (f,a,b,c,d,e)
@@ -844,10 +880,10 @@ OO_(Proj R)
 z=GfxRectangle{"fill"=>"white"}
 b1=GfxPath{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 b2=GfxPath{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-b=gfx(z,b1,b2,GfxWidth=>2,GfxHeight=>2)
+b=gfx(z,b1,b2,GfxWidth=>2,GfxHeight=>2,GfxTight=>true)
 a1=GfxPath{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 a2=GfxPath{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-a=gfx(z,a1,a2,GfxWidth=>2,GfxHeight=>2)
+a=gfx(z,a1,a2,GfxWidth=>2,GfxHeight=>2,GfxTight=>true)
 ab=a|b
 ba=b|a
 ab||ba||ba
@@ -883,7 +919,7 @@ label=apply(#vertices,i->GfxText{vertices#i,toString i});
 dodecasplit=apply(faces,centers,(f,c)->GfxPolygon{apply(f,j->vertices#j),
 	GfxAutoMatrix=>apply(steps,j->gfxRotation(2*pi/5/steps*4*min(j/steps,1-j/steps),c,c)*gfxTranslation(0.075*sin(2*pi*j/steps)*c)),
 	"fill"=>concatenate("rgb(",toString(134+round(1.2*c_0)),",",toString(134+round(1.2*c_1)),",",toString(134+round(1.2*c_2)),")")});
-d=gfx(dodecasplit,"fill-opacity"=>0.65,GfxAutoMatrix=>gfxRotation(0.02,[1,2,3]),GfxRange=>{vector{-200,-200},vector{200,200}});
+d=gfx(dodecasplit,"fill-opacity"=>0.65,GfxAutoMatrix=>gfxRotation(0.02,[1,2,3]));
 d1=gfx(d,GfxMatrix=>gfxTranslation[200,0,0]); -- using alternate syntax of Array instead of Vector
 d2=gfx(d,GfxMatrix=>gfxTranslation[-200,0,0]);
 gfx(d1,d2,GfxRange=>{vector{-400,-400},vector{400,400}},GfxHeight=>25)
@@ -921,6 +957,10 @@ gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>
 -- simple plot
 R=RR[x,y]; P=0.1*(x^2-y^2);
 gfx(gfxPlot(P,{{-10,10},{-10,10}},GfxPoints=>15,"stroke-width"=>0.05,"fill"=>"gray"),GfxLight{[200,0,-500],GfxSpecular=>10,"fill"=>"rgb(180,0,100)"},GfxLight{[-200,100,-500],GfxSpecular=>10,"fill"=>"rgb(0,180,100)"},GfxHeight=>40,GfxAxes=>false)
+
+-- implicit plot
+R=RR[x,y]; P=y^2-(x+1)*(x-1)*(x-2);
+gfxPlot(P,{-2,3},"stroke-width"=>0.05,GfxHeight=>25,"stroke"=>"red")
 
 -- to rerun examples/doc:
 installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, AbsoluteLinks => false, UserMode => true, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
