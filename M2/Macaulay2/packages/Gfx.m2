@@ -12,8 +12,8 @@ newPackage(
         )
 
 export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxRectangle", "GfxText",
-    "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient",
-     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth", "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius", "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag"
+    "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxPlot",
+     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth", "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius", "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
@@ -182,18 +182,18 @@ jsString Vector := x -> "new Float32Array(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 -- svg output
-project = x -> if rank class x===2 then x else ( xx := currentGfxMatrix*x;  vector {xx_0/xx_3,xx_1/xx_3} )
+project2d = x -> if rank class x===2 then x else ( xx := currentGfxMatrix*x;  vector {xx_0/xx_3,xx_1/xx_3} )
 svgString = method(Dispatch=>Thing)
 svgString Thing := toString
 svgString List := x -> demark(" ", apply(x,svgString))
-svgString Vector := x -> svgString entries project x 
+svgString Vector := x -> svgString entries project2d x 
 svg = method()
 svgLookup := hashTable { 
     symbol GfxMatrix => x -> "data-matrix='"|jsString x|"'",
     symbol GfxAutoMatrix => x -> "data-dmatrix='"|jsString x|"'",
     symbol GfxCenter => x -> concatenate(
 	"data-center='",jsString x,"' ",
-	(x = project x;),
+	(x = project2d x;),
 	"cx='", toString x_0, "' cy='", toString x_1, "'"
 	),
     symbol GfxRadius => x ->  (if currentGfxMatrix=!=null then "data-" else "") | "r='"|toString x|"'", -- 2d
@@ -206,7 +206,7 @@ svgLookup := hashTable {
     symbol GfxPoints => x -> "data-coords='"|jsString x|"' points='"|svgString x|"'",
     symbol GfxPoint => x -> concatenate(
 	"data-point='",jsString x,"' ",
-	(x = project x;),
+	(x = project2d x;),
 	"x='", toString x_0, "' y='", toString x_1, "'"
 	),
     symbol GfxSize => x -> concatenate("width='", toString x_0, "' height='", toString x_1, "'"), -- 2d only
@@ -318,6 +318,15 @@ html GfxObject := g -> (
     r := gfxRange g; -- should be cached at this stage
     if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return ""); -- nothing to draw
     rr := r#1 - r#0;
+    -- axes
+    axes := null;
+    if g.?GfxAxes and g.GfxAxes then (
+	axes = if gfxIs3d g then svg GfxPath { GfxPathList => {"M", vector{r#0_0,0,0}, "L", vector {r#1_0,0,0}, 
+		"M", vector{0,r#0_1,0}, "L", vector{0,r#1_1,0}, 
+		"M", vector{0,0,min(r#0_0,r#0_1)}, "L", vector{0,0,max(r#1_0,r#1_1)}},"stroke"=>"black", "stroke-width"=>min(rr_0,rr_1)/100}
+	-- TEMP
+	    else svg GfxPath { GfxPathList => {"M", vector{r#0_0,0}, "L", vector {r#1_0,0}, "M", vector{0,r#0_1}, "L", vector{0,r#1_1}},"stroke"=>"black", "stroke-width"=>min(rr_0,rr_1)/100};
+	);
     if g.?GfxWidth then g.cache.GfxWidth = numeric g.GfxWidth;
     if g.?GfxHeight then g.cache.GfxHeight = numeric g.GfxHeight;
     if not (g.?GfxWidth or g.?GfxHeight) then -- by default, make it fit inside 16 x 10
@@ -335,6 +344,7 @@ html GfxObject := g -> (
     	" viewBox=\"",between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),"\"",
 	if gfxIs3d g then " data-pmatrix='"|jsString currentGfxMatrix|"'" else "",
     	">",
+	axes,
     	s,
 	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
     	"</svg>",
@@ -483,6 +493,39 @@ gfxRadialGradient = true >> o -> stop -> (
     new GfxGradient from (tag,s)
     )
 
+needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
+
+gfxPlot = true >> o -> (P,r) -> (
+    R := ring P; -- R should have one or two variables
+    if not instance(r,List) then error("incorrect ranges");
+    if not instance(r#0,List) then r = { r };
+    if #r>2 or (numgens R =!= #r and numgens R =!= #r+1) then error("incorrect number of variables / ranges");
+    if numgens R === #r then R2 := coefficientRing R else R2 = (coefficientRing R) ( monoid [last gens R] );
+    if (#r === 1) then ( r = r#0;
+    	if (o.?GfxPoints) then n := o.GfxPoints else n = 100;
+	val := transpose apply(n+1, i -> (
+		x := i*(r#1-r#0)/n+r#0;
+		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
+		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
+	new GfxList from (new GfxObject) ++ { "fill"=>"none", GfxAxes=>true } ++ gfxParse o
+	++ { symbol GfxContents => apply(val, v -> GfxPath { flag:=true; GfxPathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))})}
+	) else (
+    	if (o.?GfxPoints) then n = o.GfxPoints else n = 10;
+	val = table(n+1,n+1,(i,j)->(
+		x := i*(r#0#1-r#0#0)/n+r#0#0;
+		y := j*(r#1#1-r#1#0)/n+r#1#0;
+		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
+		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
+		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
+	print val;
+	new GfxList from (new GfxObject) ++ { GfxAxes=>true } ++ gfxParse o
+	++ { symbol GfxContents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
+		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
+		    GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) }
+	)
+    )
+    
 
 
 beginDocumentation()
@@ -875,13 +918,9 @@ subdivide = (v,f) -> (
 sph=apply(f3,f->GfxPolygon{apply(f,j->v3#j),"stroke"=>"white","fill"=>"gray"});
 gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>10,"fill"=>c,GfxSpecular=>10,GfxAutoMatrix=>gfxRotation(0.02,[rnd(),rnd(),rnd()])}),GfxRange=>{[-200,-200],[200,200]},GfxHeight=>30)
 
-
--- TODO:
--- * oops, my z coordinate has the wrong sign... :/ and so does my y coordinate! yay!
--- * the amount of light should decrease with distance...
--- * the stroke-width is not included in gfxRange. but then it would be a mess to keep track of 
--- (would need a currentStrokeWidth, which means would also require knowledge of default values...)
-
+-- simple plot
+R=RR[x,y]; P=0.1*(x^2-y^2);
+gfx(gfxPlot(P,{{-10,10},{-10,10}},GfxPoints=>15,"stroke-width"=>0.05,"fill"=>"gray"),GfxLight{[200,0,-500],GfxSpecular=>10,"fill"=>"rgb(180,0,100)"},GfxLight{[-200,100,-500],GfxSpecular=>10,"fill"=>"rgb(0,180,100)"},GfxHeight=>40,GfxAxes=>false)
 
 -- to rerun examples/doc:
 installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, AbsoluteLinks => false, UserMode => true, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
