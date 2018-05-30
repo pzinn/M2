@@ -4,27 +4,26 @@ svg.M2Svg {
     vertical-align: middle;
     position: relative;
     display: inline;
-    fill: black;
     stroke: black;
-    fill-opacity: 1;
     stroke-opacity: 1;
-}
-
-svg.M2Svg path {
-    stroke: black;
+    fill: none;
+    fill-opacity: 1;
 }
 
 svg.M2Svg text {
-    stroke: none;
-    fill: black;
     font-size: 14px; /* absolute sounds bad but actually it's not really absolute since it's in svg units */
 }
 
-.M2HtmlOutput .gfx3d {
+.gfx3d {
+    position:relative;
+    display:inline-block;
+}
+
+.gfx3d > .gadget {
     visibility: hidden;
 }
 
-.M2HtmlOutput:hover .gfx3d {
+.gfx3d:hover > .gadget {
     visibility: visible;
 }
 
