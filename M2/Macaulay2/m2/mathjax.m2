@@ -96,6 +96,7 @@ texAltLiteral = s -> ( open:= {};
 )
 
 htmlAltLiteralTable := hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
+--htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTable#?c then htmlAltLiteralTable#c else c)
 htmlAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
     c -> first(if htmlAltLiteralTable#?c and #open === 0 then htmlAltLiteralTable#c else c,
@@ -121,8 +122,6 @@ mathJax Hypertext := html -- !
 -- the % is relative to line-height
 mathJax Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
 mathJax String := x -> concatenate("<pre>", htmlAltLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
--- a bit naive: font wrong. with mathJax can't use \tt because fix of https://github.com/mathjax/MathJax/issues/1953 is shit
--- actually same problem with katex, though eventually should be able to tt -> \tt
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -148,8 +147,8 @@ html PRE := x -> concatenate(
      "</pre>\n"
      )
 
-
 -- output routines
+
 ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputTag
 ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdTag
 
@@ -158,7 +157,6 @@ Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
 Nothing#{MathJax,Print} = identity
 
 Thing#{MathJax,Print} = x -> (
-    --    << mathJaxTextTag;
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     mathJaxBegin();
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
@@ -171,7 +169,6 @@ Thing#{MathJax,Print} = x -> (
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
-    --	 << mathJaxTextTag;
     mathJaxBegin();
     z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
     mathJaxEnd();
