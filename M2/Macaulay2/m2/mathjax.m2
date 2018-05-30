@@ -20,6 +20,7 @@ texMath MonoidElement := x -> texMath expression x
 texMath Function := x -> texMath toString x
 
 -- strings -- compare with hypertext.m2
+-*
 texVerbLiteralTable := new MutableHashTable
     scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
     texVerbLiteralTable#"!" = ///!\texttt{!}\verb!///
@@ -35,6 +36,7 @@ texMath String := s -> (
     if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
     else texMath stack ss
     )
+*-
 
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
@@ -50,8 +52,8 @@ texMath Net := n -> (
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-            s=s|"\\vphantom{\\big|}" | texMath x;
-            if i<#n then s=s|"\\\\[-1mm]";
+	    s=s|"\\vphantom{\\big|}" | texMath x | "\n";
+	    if i<#n then s=s|"\\\\[-1mm]";
 	    ));
     "\\begin{array}{l}" | s | "\\end{array}"
     )
@@ -59,31 +61,34 @@ texMath Net := n -> (
 -- now the mathJax stuff per se
 -- mathJax Thing produces some valid html code with possible tex code in \( \)
 -- topLevelMode=MathJax produces that plus possible pure text coming from the system
--- hence, requires comments to help the browser app distinguish html from text
-(mathJaxTextTag,           -- indicates what follows is pure text; default mode
+-- hence, requires tags to help the browser app distinguish html from text
+(mathJaxEndTag,            -- closing tag
     mathJaxHtmlTag,        -- indicates what follows is HTML
     mathJaxOutputTag,      -- it's html but it's output
     mathJaxInputTag,       -- it's text but it's input
-    mathJaxInputContdTag):= -- text, continuation of input
-apply((17,18,19,20,28),ascii)
+    mathJaxInputContdTag,  -- text, continuation of input
+    mathJaxTextTag):=      -- other text
+apply((17,18,19,20,28,30),ascii)
 
-oldhL := htmlLiteral;
-htmlLiteral = x -> ( -- we need to protect \( and \) as well from being processed
-    s := oldhL x;
-    s = replace("\\\\\\(","&bsol;(",s);
-    s = replace("\\\\\\)","&bsol;)",s);
-    return s
-    )
+texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
+    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#", "-" => "-{}" }
+-- not \^{} because of https://github.com/Khan/KaTeX/issues/1366
+-- -{} because of https://github.com/Khan/KaTeX/issues/1367
+texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
+htmlAltLiteralTable := hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
+htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTable#?c then htmlAltLiteralTable#c else c)
 
-texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)")
+texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is for closing of inputTag if needed!
+
+texWrap := x -> concatenate("\\(",htmlAltLiteral x,"\\)")
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
--- text stuff: we use html instead of tex, much faster
+-- text stuff: we use html instead of tex, much faster (and better spacing)
 mathJax Hypertext := html -- !
 -- the % is relative to line-height
 mathJax Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
-mathJax String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+mathJax String := x -> concatenate("<pre>", htmlAltLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -109,7 +114,7 @@ Thing#{MathJax,Print} = x -> (
     mathJaxBegin();
     y := mathJax x; -- we compute the mathJax now (in case it produces an error)
     mathJaxEnd();
-    << endl << oprompt | mathJaxOutputTag | y | mathJaxTextTag << endl;
+    << endl << oprompt | mathJaxOutputTag | y | mathJaxEndTag << endl;
     )
 
 -- afterprint <sigh>
@@ -120,7 +125,7 @@ texAfterPrint :=  y -> (
     mathJaxBegin();
     z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
     mathJaxEnd();
-    << endl << on() | " : " | mathJaxHtmlTag | texWrap z | mathJaxTextTag << endl;
+    << endl << on() | " : " | mathJaxHtmlTag | texWrap z | mathJaxEndTag << endl;
     )
 
 Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
@@ -178,6 +183,12 @@ CoherentSheaf#{MathJax,AfterPrint} = F -> (
 
 ZZ#{MathJax,AfterPrint} = identity
 
+-- bb letters
+ℚ=QQ
+ℝ=RR
+ℤ=ZZ
+ℂ=CC
+
 -- the debug hack
 texMathDebug=false;
 texMathBackup := texMath
@@ -195,9 +206,3 @@ mathJaxEnd = () -> (
     if texMathDebug then
     global texMath <- texMathBackup;
     )
-
--- bb letters
-ℚ=QQ
-ℝ=RR
-ℤ=ZZ
-ℂ=CC
