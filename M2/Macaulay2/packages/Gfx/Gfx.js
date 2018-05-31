@@ -169,13 +169,15 @@ function gfxRecompute(el) {
     else if (el.tagName=="text") {
 	if (!el.point)
 	    el.point=eval(el.dataset.point);
+	if (!el.fontsize)
+	    if (el.dataset.fontsize) el.fontsize=eval(el.dataset.fontsize); else el.fontsize=14;
 	var u=el.cmatrix.vectmultiply(el.point);
 	var v=[u[0]/u[3],u[1]/u[3]];
 	el.distance=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
 	el.setAttribute("x",v[0]);
 	el.setAttribute("y",v[1]);
 	// rescale font size
-	el.style.fontSize = 1/u[3]+"em"; // TODO: use existing size if specified
+	el.style.fontSize = el.fontsize/u[3]; // should add "px" but doesn't seem to care
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
 	if (!el.center)
