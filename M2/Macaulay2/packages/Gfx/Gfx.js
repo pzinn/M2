@@ -151,6 +151,21 @@ function gfxRecompute(el) {
 	    }
 	}
     }
+    else if (el.tagName=="line") {
+	if (!el.point1)
+	    el.point1=eval(el.dataset.point1);
+	if (!el.point2)
+	    el.point2=eval(el.dataset.point2);
+	var u1=el.cmatrix.vectmultiply(el.point1);
+	var v1=[u1[0]/u1[3],u1[1]/u1[3]];
+	var u2=el.cmatrix.vectmultiply(el.point2);
+	var v2=[u2[0]/u2[3],u2[1]/u2[3]];
+	el.distance=0.5*(u1[0]*u1[0]+u1[1]*u1[1]+u1[2]*u1[2]+u2[0]*u2[0]+u2[1]*u2[1]+u2[2]*u2[2]);
+	el.setAttribute("x1",v1[0]);
+	el.setAttribute("y1",v1[1]);
+	el.setAttribute("x2",v2[0]);
+	el.setAttribute("y2",v2[1]);
+    }
     else if (el.tagName=="text") {
 	if (!el.point)
 	    el.point=eval(el.dataset.point);
