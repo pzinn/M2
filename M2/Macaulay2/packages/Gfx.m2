@@ -11,7 +11,7 @@ newPackage(
 	AuxiliaryFiles => true
         )
 
-export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxRectangle", "GfxText", "GfxLine",
+export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
      "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
      "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
@@ -127,6 +127,7 @@ gfxDistance1 GfxEllipse := g -> (
     y_0^2+y_1^2+y_2^2
     )
 
+-*
 -- purely 2d
 GfxRectangle = new GfxType of GfxPrimitive from hashTable { symbol Name => "rect", symbol Options => { GfxPoint => vector {0.,0.}, GfxSize => vector {50.,50.} }}
 gfxRange1 GfxRectangle := g -> (
@@ -135,6 +136,7 @@ gfxRange1 GfxRectangle := g -> (
     p := transpose{entries p1,entries p2};
     { vector(min\p), vector(max\p) }
     )
+*-
 
 GfxText = new GfxType of GfxObject from hashTable { symbol Name => "text", symbol Options => { GfxPoint => vector {0.,0.}, GfxString => "" }}
 gfxRange1 GfxText := g -> (
@@ -168,8 +170,7 @@ GfxPolygon = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "po
 GfxPath = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "path", symbol Options => { symbol GfxPathList => {} }}
 gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, screw this
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
-    if gfxIs3d g then s = apply(s, x -> (xx := currentGfxMatrix*x; {xx_0/xx_3,xx_1/xx_3})) else s = entries\s;
-    s = transpose s;
+    s = transpose apply(s, x -> entries project2d x);
     {vector(min\s), vector(max\s)}
     )
 
@@ -696,18 +697,6 @@ multidoc ///
     GfxPolyline{GfxPoints=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
  Node
   Key
-   GfxRectangle
-  Headline
-   An SVG rectangle
-  Description
-   Text
-    An SVG rectangle. The SW coordinate is given as GfxPoint, the difference between NE and SW corners is given as GfxSize.
-   Example
-    GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"} -- first argument is GfxPoint, second GfxSize
-  Caveat
-   GfxRectangle can only be used in 2d. Use GfxPolygon for 3d.
- Node
-  Key
    GfxText
   Headline
    Some SVG text
@@ -888,6 +877,15 @@ multidoc ///
    gfxPlot
   Headline
    Draws a curve or surface defined implicitly or explicitly by a polynomial
+  Description
+   Text
+    The first argument is a polynomial, the second is a (list of) range(s) of variable(s).
+    If the number of ranges is equal to the number of variables of the polynomial, the graph of the polynomial
+    is drawn. If it is one fewer, then the zero set of the polynomial is drawn.
+   Example
+    R=RR[x,y];
+    P=y^2-(x+1)*(x-1)*(x-2);
+    gfxPlot(P,{-2,3},"stroke-width"=>0.05,GfxHeight=>25,"stroke"=>"red")
  Node
   Key
    GfxAxes
@@ -902,10 +900,10 @@ gr=gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
 gfx(GfxEllipse{[0,0],90,30,"stroke"=>"none","fill"=>gr,GfxBlur=>0.3},GfxText{[-65,-7],"Macaulay2",GfxFontSize=>25,"stroke"=>"black","fill"=>"white"},GfxHeight=>12)
 
 a=GfxCircle{"fill"=>"yellow","stroke"=>"green",GfxWidth=>1,GfxHeight=>1}
-b=GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"}
+b=GfxLine{[10,10],[20,50],"stroke"=>"black"}
 c=GfxCircle{[50,50],50,"fill"=>"blue","fill-opacity"=>0.25}
 d=GfxEllipse{[60,60],40,30, "fill"=>"blue", "stroke"=>"grey"}
-e=GfxPolyline{{[0,0],[100,100]},"stroke"=>"green"}
+e=GfxPolyline{{[0,0],[100,100],[100,50]},"fill"=>"pink","stroke"=>"green"}
 f=GfxPolygon{{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
 gfx (f,a,b,c,d,e)
 -- or
@@ -1003,8 +1001,23 @@ R=RR[x,y]; P=0.1*(x^2-y^2);
 gfx(gfxPlot(P,{{-10,10},{-10,10}},GfxPoints=>15,"stroke-width"=>0.05,"fill"=>"gray"),GfxLight{[200,0,-500],GfxSpecular=>10,"fill"=>"rgb(180,0,100)"},GfxLight{[-200,100,-500],GfxSpecular=>10,"fill"=>"rgb(0,180,100)"},GfxHeight=>40,GfxAxes=>false)
 
 -- implicit plot
-R=RR[x,y]; P=y^2-(x+1)*(x-1)*(x-2);
+R=RR[x,y];
+P=y^2-(x+1)*(x-1)*(x-2);
 gfxPlot(P,{-2,3},"stroke-width"=>0.05,GfxHeight=>25,"stroke"=>"red")
 
--- to rerun examples/doc:
+-- to rerun examples/doc: (possibly adding topLevelMode=MathJax to init.m2)
 installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, AbsoluteLinks => false, UserMode => true, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
+
+-- removed
+ Node
+  Key
+   GfxRectangle
+  Headline
+   An SVG rectangle
+  Description
+   Text
+    An SVG rectangle. The SW coordinate is given as GfxPoint, the difference between NE and SW corners is given as GfxSize.
+   Example
+    GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"} -- first argument is GfxPoint, second GfxSize
+  Caveat
+   GfxRectangle can only be used in 2d. Use GfxPolygon for 3d.
