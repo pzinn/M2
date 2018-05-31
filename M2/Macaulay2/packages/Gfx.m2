@@ -11,11 +11,11 @@ newPackage(
 	AuxiliaryFiles => true
         )
 
-export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxRectangle", "GfxText",
+export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxRectangle", "GfxText", "GfxLine",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
-     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
+     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
      "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
-     "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxTight"
+     "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
@@ -23,21 +23,22 @@ GfxObject = new Type of OptionTable -- ancestor type
 new GfxObject := T -> new T from { symbol cache => new CacheTable } -- every Gfx object should have a cache
 
 -- a bunch of options are scattered throughout the code:
--- * GfxHeight / GfxWidth for picture sizes
 -- * all dimensions are redefined as dimensionless quantities: GfxRadius, GfxFontSize, etc
 -- * GfxMatrix for static transformation
 -- * GfxAutoMatrix for animation transformation
--- * GfxRange for manual range of viewing window
--- * GfxPerspective for 3d: can be a number or a whole 4d matrix (ideally, there'd be a function to translate...)
---   the matrix should be such that after transformation, the coordinates are (x,y,z,z/p) where the viewer is at (0,0,0) and the screen at z=p
--- * GfxGadgets for 3d picture -- list of Gfx{Vertical, Horizontal, Auto}
 -- * GfxOneSided for 3d paths, polygons
 -- * GfxStatic for objects that can't be rotated 
 --   i.e, they or their contents can rotate/autorotate, but the rotations of their ancestors won't affect them
 --   useful for lights
 -- * GfxBlur (amount of blurriness relative to the size of the object)
+-- GLOBAL options (only work if in outermost object)
+-- * GfxHeight / GfxWidth for picture sizes
+-- * GfxRange for manual range of viewing window
+-- * GfxPerspective for 3d: can be a number or a whole 4d matrix (ideally, there'd be a function to translate...)
+--   the matrix should be such that after transformation, the coordinates are (x,y,z,z/p) where the viewer is at (0,0,0) and the screen at z=-p
+-- * GfxMargin (leave blank around picture)
+-- * GfxGadgets for 3d picture -- list of Gfx{Vertical, Horizontal, Auto}
 -- * GfxAxes (draw axes)
--- * GfxTight (leave no blank around picture)
 
 currentGfxMatrix := null; -- yeah, it's a ``global'' variable -- scary
 currentGfxPMatrix := null; -- the perspective matrix -- used for unmoving objects
@@ -88,15 +89,21 @@ updateGfxCache = g -> (
 	)
     )
 
-gfxRange = x -> if x.?GfxRange then x.GfxRange else if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of 3d object can only be obtained by rendering it"
+--gfxRange = x -> if x.?GfxRange then x.GfxRange else if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of 3d object can only be obtained by rendering it"
+gfxRange = x -> if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of 3d object can only be obtained by rendering it"
+
+project2d = x -> (
+    xx := currentGfxMatrix*x;
+    if rank class xx===2 then xx else vector {xx_0/xx_3,xx_1/xx_3}
+    )
 
 GfxPrimitive = new Type of GfxObject
 
 GfxCircle = new GfxType of GfxPrimitive from hashTable { symbol Name => "circle", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadius => 50. }}
 gfxIs3d1 GfxCircle := x -> rank class x.GfxCenter > 2
 gfxRange1 GfxCircle := g -> (
-    p := g.GfxCenter; 
-    if gfxIs3d g then ( p = currentGfxMatrix * p; r:=g.GfxRadius/p_3; p=vector {p_0/p_3,p_1/p_3}; ) else r = g.GfxRadius;
+    p := currentGfxMatrix * g.GfxCenter;
+    if gfxIs3d g then ( r:=g.GfxRadius/p_3; p=vector {p_0/p_3,p_1/p_3}; ) else r = g.GfxRadius;
     r = vector {r,r};
     { p - r, p + r }
     )
@@ -109,8 +116,8 @@ gfxDistance1 GfxCircle := g -> (
 GfxEllipse = new GfxType of GfxPrimitive from hashTable { symbol Name => "ellipse", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadiusX => 50., symbol GfxRadiusY => 50. }}
 gfxIs3d1 GfxEllipse := x -> rank class x.GfxCenter > 2
 gfxRange1 GfxEllipse := g -> (
-    p := g.GfxCenter; 
-    if gfxIs3d g then ( p = currentGfxMatrix * p; rx:=g.GfxRadiusX/p_3; ry:=g.GfxRadiusY/p_3; p=vector {p_0/p_3,p_1/p_3}; ) else ( rx = g.GfxRadiusX; ry = g.GfxRadiusY; );
+    p := currentGfxMatrix * g.GfxCenter;
+    if gfxIs3d g then ( rx:=g.GfxRadiusX/p_3; ry:=g.GfxRadiusY/p_3; p=vector {p_0/p_3,p_1/p_3}; ) else ( rx = g.GfxRadiusX; ry = g.GfxRadiusY; );
     r := vector {rx,ry};
     { p - r, p + r }
     )
@@ -123,8 +130,8 @@ gfxDistance1 GfxEllipse := g -> (
 -- purely 2d
 GfxRectangle = new GfxType of GfxPrimitive from hashTable { symbol Name => "rect", symbol Options => { GfxPoint => vector {0.,0.}, GfxSize => vector {50.,50.} }}
 gfxRange1 GfxRectangle := g -> (
-    p1 := g.GfxPoint;
-    p2 := p1+g.GfxSize;
+    p1 := currentGfxMatrix * g.GfxPoint;
+    p2 := currentGfxMatrix * (p1+g.GfxSize);
     p := transpose{entries p1,entries p2};
     { vector(min\p), vector(max\p) }
     )
@@ -132,14 +139,26 @@ gfxRange1 GfxRectangle := g -> (
 GfxText = new GfxType of GfxObject from hashTable { symbol Name => "text", symbol Options => { GfxPoint => vector {0.,0.}, GfxString => "" }}
 gfxRange1 GfxText := g -> (
     f := if g.?GfxFontSize then g.GfxFontSize else 14.;
-    p := g.GfxPoint;
-    if gfxIs3d g then ( p = currentGfxMatrix * p; f=f/p_3; p=vector {p_0/p_3,p_1/p_3}; );
-    { p - vector {0,f}, p + vector{f*0.6*length g.GfxString,0} } -- very approximate
+    p := currentGfxMatrix*g.GfxPoint;
+    if gfxIs3d g then ( f=f/p_3; p=vector {p_0/p_3,p_1/p_3}; );
+    { p - vector {0,f}, p + vector{f*0.6*length g.GfxString,0} } -- very approximate TODO properly
     )
 
---GfxLine = new GfxType from ("line", { GfxPoint1 => vector {0,0}, GfxPoint2 => vector {50,50} })
---gfxRange1 GfxLine := g -> {} -- todo
--- useless
+GfxLine = new GfxType of GfxPrimitive from hashTable { symbol Name => "line", symbol Options => { GfxPoint1 => vector {0,0}, GfxPoint2 => vector {50,50} }}
+gfxIs3d1 GfxLine := x -> rank class x.GfxPoint1 > 2
+gfxRange1 GfxLine := g -> (
+    p1 := project2d g.GfxPoint1;
+    p2 := project2d g.GfxPoint2;
+    p := transpose{entries p1,entries p2};
+    { vector(min\p), vector(max\p) }
+    )
+gfxDistance1 GfxLine := g -> (
+    if not gfxIs3d g then return 0_RR; -- default for 2d things
+    p1 := currentGfxMatrix * g.GfxPoint1;
+    p2 := currentGfxMatrix * g.GfxPoint1;
+    0.5*(p1_0^2+p1_1^2+p1_2^2+p2_0^2+p2_1^2+p2_2^2)
+    )
+
 
 GfxPolyPrimitive = new Type of GfxPrimitive;
 
@@ -169,8 +188,8 @@ gfxRange1 GfxList := x -> (
 )
 
 --GfxList | GfxList := (a,b) -> new GfxList from (a++b++{symbol GfxContents => a.GfxContents | b.GfxContents})
-GfxObject | GfxObject := (a,b) -> new RowExpression from {a,b}
-GfxObject || GfxObject := (a,b) -> new ColumnExpression from {a,b}
+--GfxObject | GfxObject := (a,b) -> new RowExpression from {a,b}
+--GfxObject || GfxObject := (a,b) -> new ColumnExpression from {a,b}
 
 -- GfxAnimation takes a Gfx option Obj (what to animate) -> shit, disabled
 --GfxAnimation = new GfxType from ("animate", { "attributeName" => "", "from" => "", "to" => "", "dur" => "", "attributeType" => "XML", "repeatCount" => "indefinite" })
@@ -186,7 +205,6 @@ jsString Vector := x -> "new Float32Array(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 -- svg output
-project2d = x -> if rank class x===2 then x else ( xx := currentGfxMatrix*x;  vector {xx_0/xx_3,xx_1/xx_3} )
 svgString = method(Dispatch=>Thing)
 svgString Thing := toString
 svgString List := x -> demark(" ", apply(x,svgString))
@@ -200,9 +218,9 @@ svgLookup := hashTable {
 	(x = project2d x;),
 	"cx='", toString x_0, "' cy='", toString x_1, "'"
 	),
-    symbol GfxRadius => x ->  (if currentGfxMatrix=!=null then "data-" else "") | "r='"|toString x|"'", -- 2d
-    symbol GfxRadiusX => x -> (if currentGfxMatrix=!=null then "data-" else "") | "rx='"|toString x|"'", -- 2d
-    symbol GfxRadiusY => x -> (if currentGfxMatrix=!=null then "data-" else "") | "ry='"|toString x|"'", -- 2d
+    symbol GfxRadius => x ->  (if rank source currentGfxMatrix === 3 then "data-" else "") | "r='"|toString x|"'", -- 2d
+    symbol GfxRadiusX => x -> (if rank source currentGfxMatrix === 3 then "data-" else "") | "rx='"|toString x|"'", -- 2d
+    symbol GfxRadiusY => x -> (if rank source currentGfxMatrix === 3 then "data-" else "") | "ry='"|toString x|"'", -- 2d
     symbol GfxScaledRadius => x ->  "r='"|toString x|"'", -- 3d
     symbol GfxScaledRadiusX => x ->  "rx='"|toString x|"'", -- 3d
     symbol GfxScaledRadiusY => x ->  "ry='"|toString x|"'", -- 3d
@@ -213,15 +231,29 @@ svgLookup := hashTable {
 	(x = project2d x;),
 	"x='", toString x_0, "' y='", toString x_1, "'"
 	),
-    symbol GfxSize => x -> concatenate("width='", toString x_0, "' height='", toString x_1, "'"), -- 2d only
+    symbol GfxPoint1 => x -> concatenate(
+	"data-point1='",jsString x,"' ",
+	(x = project2d x;),
+	"x1='", toString x_0, "' y1='", toString x_1, "'"
+	),
+    symbol GfxPoint2 => x -> concatenate(
+	"data-point2='",jsString x,"' ",
+	(x = project2d x;),
+	"x2='", toString x_0, "' y2='", toString x_1, "'"
+	),
+    symbol GfxSize => x -> ( -- 2d only
+	x = project2d x;
+	concatenate("width='", toString x_0, "' height='", toString x_1, "'")
+	),
     symbol GfxStatic => x -> if x then "data-pmatrix='"|jsString currentGfxPMatrix|"'" else "",
     symbol GfxTag => x -> "id='"| x |"'",
     symbol GfxFilterTag => x -> "filter=\"url(#" | x | ")\"",
-    symbol GfxOneSided => x -> "data-onesided='"|jsString x|"'"
+    symbol GfxOneSided => x -> "data-onesided='"|jsString x|"'",
+    symbol GfxFontSize => x -> "data-fontsize='"|jsString x|"'"
     }
 
 updateGfxMatrix = g -> (
-    if gfxIs3d g then first ( currentGfxMatrix,
+    first ( currentGfxMatrix,
     	if g.?GfxStatic and g.GfxStatic then currentGfxMatrix=currentGfxPMatrix, -- reset to perspective matrix	
 	if g.?GfxMatrix then currentGfxMatrix = currentGfxMatrix*g.GfxMatrix
     )
@@ -314,23 +346,33 @@ gfxTag = () -> (
 html GfxObject := g -> (
     if gfxIs3d g then (
 	persp := if g.?GfxPerspective then g.GfxPerspective else 1000.; -- some arbitrary number
-	currentGfxMatrix = currentGfxPMatrix = if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,persp},{0,0,1/persp,1}}; -- useful to have output {x,y,z+p,1+z/p}
+	currentGfxMatrix = currentGfxPMatrix = if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}}; -- useful to have output {x,y,z+p,1+z/p}
 	currentGfxLights = gfxSetupLights g;
-	) else ( currentGfxMatrix = currentGfxPMatrix = null; currentGfxLights = {}; );
+	) else ( currentGfxMatrix = currentGfxPMatrix = matrix {{1,0},{0,-1}}; currentGfxLights = {}; );
     currentGfxDefs = new MutableHashTable;
     s := svg g; -- run this first because it will compute the ranges too
-    r := gfxRange g; -- should be cached at this stage
+    if g.?GfxRange then r := g.GfxRange else r = gfxRange g; -- should be cached at this stage
     if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return ""); -- nothing to draw
     r = apply(r,numeric);
     rr := r#1 - r#0;
     -- axes
     axes := null;
-    if g.?GfxAxes and g.GfxAxes then ( -- semi temp
+    if g.?GfxAxes and g.GfxAxes then ( -- semi temp: axes should be broken into little bits
+	arr := gfxArrow();
 	axes = gfx(
-	    GfxPolyline { GfxPoints => if gfxIs3d g then { vector{r#0_0,0,0}, vector {r#1_0,0,0} } else { vector{r#0_0,0}, vector {r#1_0,0} }, "marker-end" => gfxArrow() },
-	    GfxPolyline { GfxPoints => if gfxIs3d g then { vector{0,r#0_1,0}, vector {0,r#1_1,0} } else { vector{0,r#0_1}, vector {0,r#1_1} }, "marker-end" => gfxArrow() },
-	    if gfxIs3d g then GfxPolyline { GfxPoints => { vector{0,0,min(r#0_0,r#0_1)}, vector {0,0,max(r#1_0,r#1_1)} }, "marker-end" => gfxArrow("z") },
-	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1) );
+	    gfx(
+    	    	GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
+    	    	GfxLine { GfxPoint1 => vector if gfxIs3d g then {0,r#0_1,0} else {0,r#0_1}, GfxPoint2 => vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
+	    	if gfxIs3d g then GfxLine { GfxPoint1 => vector{0,0,min(r#0_0,r#0_1)}, GfxPoint2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => gfxArrow() },
+	    	"stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
+		),
+	    gfx(
+	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    	if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
+		"stroke" => "none", "fill" => "black"
+		)
+	    );
 	axes=svg axes;
 	);
     if g.?GfxWidth then g.cache.GfxWidth = numeric g.GfxWidth;
@@ -341,7 +383,8 @@ html GfxObject := g -> (
     if not g.cache.?GfxHeight then g.cache.GfxHeight = g.cache.GfxWidth * rr_1/rr_0;
     if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * rr_0/rr_1;
     -- put some extra blank space around picture
-    if not g.?GfxTight or not g.GfxTight then r = { 1.1*r#0-0.1*r#1, 1.1*r#1-0.1*r#0 };
+    margin := if g.?GfxMargin then g.GfxMargin else 0.1;
+    r = { r#0-margin*rr, r#1+margin*rr };
     --
     tag := gfxTag();
     concatenate(
@@ -502,6 +545,7 @@ gfxArrow = true >> o -> () -> (
     tag := gfxTag();
     s:="<marker id='"|tag|"' orient='auto' markerWidth='3' markerHeight='4' refX='0' refY='2'>";
     saveGfxMatrix := currentGfxMatrix;
+    currentGfxMatrix = matrix {{1,0},{0,1}}; -- ???
     s=s|(svg new GfxPolygon from (new GfxObject) ++ { "fill" => "black", "stroke" => "none" } ++ gfxParse o ++ { GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} } } );
     currentGfxMatrix = saveGfxMatrix;
     s=s|"</marker>";
@@ -550,7 +594,7 @@ gfxPlot = true >> o -> (P,r) -> (
 	new GfxList from (new GfxObject) ++ { GfxAxes=>true } ++ gfxParse o
 	++ { symbol GfxContents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
 		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
-		    GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) }
+		    GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) } -- technically this is wrong -- the quad isn't flat, we should make triangles
 	)
     )
     
@@ -855,7 +899,7 @@ end--
 
 -- ex of use
 gr=gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
-gfx(GfxEllipse{[0,0],90,30,"stroke"=>"none","fill"=>gr,GfxBlur=>0.3},GfxText{[-65,7],"Macaulay2",GfxFontSize=>25,"stroke"=>"black","fill"=>"white"},GfxHeight=>12)
+gfx(GfxEllipse{[0,0],90,30,"stroke"=>"none","fill"=>gr,GfxBlur=>0.3},GfxText{[-65,-7],"Macaulay2",GfxFontSize=>25,"stroke"=>"black","fill"=>"white"},GfxHeight=>12)
 
 a=GfxCircle{"fill"=>"yellow","stroke"=>"green",GfxWidth=>1,GfxHeight=>1}
 b=GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"}
@@ -866,7 +910,7 @@ f=GfxPolygon{{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
 gfx (f,a,b,c,d,e)
 -- or
 rgb={"red","green","blue"};
-scan(rgb, x -> (value x <- GfxCircle{"fill"=>x,"stroke"=>"black",GfxWidth=>0.8,GfxHeight=>0.8}))
+scan(rgb, x -> (value x <- GfxCircle{"fill"=>x,"stroke"=>"black",GfxWidth=>0.8,GfxHeight=>0.8,GfxMargin=>0}))
 value\rgb
 R=QQ[x_red,x_green,x_blue]
 describe R
@@ -880,10 +924,10 @@ OO_(Proj R)
 z=GfxRectangle{"fill"=>"white"}
 b1=GfxPath{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 b2=GfxPath{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-b=gfx(z,b1,b2,GfxWidth=>2,GfxHeight=>2,GfxTight=>true)
+b=gfx(z,b1,b2,GfxWidth=>2,GfxHeight=>2,GfxMargin=>0)
 a1=GfxPath{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 a2=GfxPath{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-a=gfx(z,a1,a2,GfxWidth=>2,GfxHeight=>2,GfxTight=>true)
+a=gfx(z,a1,a2,GfxWidth=>2,GfxHeight=>2,GfxMargin=>0)
 ab=a|b
 ba=b|a
 ab||ba||ba
