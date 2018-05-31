@@ -16,7 +16,7 @@ function gfxHRange(el,svgid) {
     if (!svgel) return;
     if (typeof el.oldvalue == "undefined") el.oldvalue=0;
     var cs=Math.cos((el.value-el.oldvalue)*0.031416);
-    var sn=Math.sin((el.value-el.oldvalue)*0.031416);
+    var sn=-Math.sin((el.value-el.oldvalue)*0.031416); // because extra reflection... note weakness: depends on choice of pmatrix
     var mat=new Matrix([[cs,0,-sn,0],[0,1,0,0],[sn,0,cs,0],[0,0,0,1]]);
     gfxRotate(svgel,mat);
     gfxRecompute(svgel);
@@ -177,7 +177,7 @@ function gfxRecompute(el) {
 	el.setAttribute("x",v[0]);
 	el.setAttribute("y",v[1]);
 	// rescale font size
-	el.style.fontSize = el.fontsize/u[3]; // should add "px" but doesn't seem to care
+	el.style.fontSize = el.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
 	if (!el.center)

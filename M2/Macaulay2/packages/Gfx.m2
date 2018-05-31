@@ -35,7 +35,7 @@ new GfxObject := T -> new T from { symbol cache => new CacheTable } -- every Gfx
 -- * GfxHeight / GfxWidth for picture sizes
 -- * GfxRange for manual range of viewing window
 -- * GfxPerspective for 3d: can be a number or a whole 4d matrix (ideally, there'd be a function to translate...)
---   the matrix should be such that after transformation, the coordinates are (x,y,z,z/p) where the viewer is at (0,0,0) and the screen at z=p
+--   the matrix should be such that after transformation, the coordinates are (x,y,z,z/p) where the viewer is at (0,0,0) and the screen at z=-p
 -- * GfxMargin (leave blank around picture)
 -- * GfxGadgets for 3d picture -- list of Gfx{Vertical, Horizontal, Auto}
 -- * GfxAxes (draw axes)
@@ -346,7 +346,7 @@ gfxTag = () -> (
 html GfxObject := g -> (
     if gfxIs3d g then (
 	persp := if g.?GfxPerspective then g.GfxPerspective else 1000.; -- some arbitrary number
-	currentGfxMatrix = currentGfxPMatrix = if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,persp},{0,0,1/persp,1}}; -- useful to have output {x,y,z+p,1+z/p}
+	currentGfxMatrix = currentGfxPMatrix = if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}}; -- useful to have output {x,y,z+p,1+z/p}
 	currentGfxLights = gfxSetupLights g;
 	) else ( currentGfxMatrix = currentGfxPMatrix = matrix {{1,0},{0,-1}}; currentGfxLights = {}; );
     currentGfxDefs = new MutableHashTable;
