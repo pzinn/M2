@@ -11,12 +11,16 @@ newPackage(
 	AuxiliaryFiles => true
         )
 
-export{"GfxType", "GfxObject", "GfxList", "GfxPrimitive", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPolyPrimitive", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine",
+export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
+    "GfxList", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine", -- "GfxHtml",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
-     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
-     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
-     "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
+    "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
+    "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
+    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
     }
+exportMutable {
+"TST"
+}
 
 GfxObject = new Type of OptionTable -- ancestor type
 
@@ -184,9 +188,20 @@ gfxRange1 GfxList := x -> (
 	s = transpose s; -- won't work if 2d & 3d are mixed
     	mn := transpose (entries \ s#0);
     	mx := transpose (entries \ s#1);
-    	{vector (min\mn), vector(max\mx)}
+	{vector (min\mn), vector(max\mx)}
     )
 )
+
+-- the scaling is incorrect. no known solution. disabling.
+-- the positioning is problematic: the only way to position correctly (as well as set width, height)
+-- is to shift by half its size, which can only be obtained by getBoundingClientRect(), which one can only do after rendering
+-*
+GfxHtml = new GfxType of GfxText from hashTable { symbol Name => "foreignObject", symbol Options => { GfxPoint => vector {0.,0.}, GfxString => "" }}
+gfxRange1 GfxHtml := g -> (
+    p := currentGfxMatrix*g.GfxPoint;
+    { p, p } -- TODO properly
+    )
+*-
 
 --GfxList | GfxList := (a,b) -> new GfxList from (a++b++{symbol GfxContents => a.GfxContents | b.GfxContents})
 GfxObject | GfxObject := (a,b) -> new RowExpression from {a,b}
@@ -306,6 +321,15 @@ svg GfxText := g -> (
     	currentGfxMatrix = saveGfxMatrix)
     )
 
+-*
+svg GfxHtml := g -> (
+    saveGfxMatrix := updateGfxMatrix g;
+    updateGfxCache g;
+    g.cache#"overflow"="visible";
+    first(svgBegin g | g.GfxString | svgEnd g,
+    	currentGfxMatrix = saveGfxMatrix)
+    )
+*-
 
 mathJax GfxObject := html
 -- the 0.4 is approximate and should correspond to depth vs height of current font
@@ -358,7 +382,7 @@ html GfxObject := g -> (
     rr := r#1 - r#0;
     -- axes
     axes := null;
-    if g.?GfxAxes and g.GfxAxes then ( -- semi temp: axes should be broken into little bits
+    if g.?GfxAxes then ( -- semi temp: axes should be broken into little bits
 	arr := gfxArrow();
 	axes = gfx(
 	    gfx(
@@ -368,10 +392,15 @@ html GfxObject := g -> (
 	    	"stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 		),
 	    gfx(
-	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    	if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
-		"stroke" => "none", "fill" => "black"
+-*
+	    	GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#0 else "\\(x\\)" , GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    	GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    	if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
+		*-
+	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    	if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#2 else "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
+		"stroke" => "none", "fill"=>"black"
 		)
 	    );
 	axes=svg axes;
@@ -381,8 +410,8 @@ html GfxObject := g -> (
     if not (g.?GfxWidth or g.?GfxHeight) then -- by default, make it fit inside 16 x 10
 	if rr_0 > 1.6*rr_1 then g.cache.GfxWidth = 16. else g.cache.GfxHeight = 10.;
     -- at this stage one of the two is set
-    if not g.cache.?GfxHeight then g.cache.GfxHeight = g.cache.GfxWidth * rr_1/rr_0;
-    if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * rr_0/rr_1;
+    if not g.cache.?GfxHeight then g.cache.GfxHeight = g.cache.GfxWidth * (if rr_0 != 0 then rr_1/rr_0 else 10/16);
+    if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * (if rr_1 != 1 then rr_0/rr_1 else 16/10);
     -- put some extra blank space around picture
     margin := if g.?GfxMargin then g.GfxMargin else 0.1;
     r = { r#0-margin*rr, r#1+margin*rr };
@@ -582,7 +611,7 @@ gfxPlot = true >> o -> (P,r) -> (
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
 		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
-	new GfxList from (new GfxObject) ++ { "fill"=>"none", GfxAxes=>true } ++ gfxParse o
+	new GfxList from (new GfxObject) ++ { "fill"=>"none", GfxAxes=>gens R } ++ gfxParse o
 	++ { symbol GfxContents => apply(val, v -> GfxPath { flag:=true; GfxPathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))})}
 	) else (
     	if (o.?GfxPoints) then n = o.GfxPoints else n = 10;
@@ -592,7 +621,7 @@ gfxPlot = true >> o -> (P,r) -> (
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
 		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
-	new GfxList from (new GfxObject) ++ { GfxAxes=>true } ++ gfxParse o
+	new GfxList from (new GfxObject) ++ { GfxAxes=>gens R } ++ gfxParse o
 	++ { symbol GfxContents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
 		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
 		    GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) } -- technically this is wrong -- the quad isn't flat, we should make triangles
