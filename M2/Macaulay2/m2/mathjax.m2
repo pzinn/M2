@@ -256,7 +256,7 @@ color Type := x -> "#228b22"
 color Function := x -> "#0000ff"
 color Constant := color Boolean := color ScriptedFunctor := x -> "#008b8b"
 color Thing := x -> null
-color Ring := x -> "black" -- disagrees with the syntax highlighting; but must be so because expressions of rings are symbols anyway, so color will get lost
+color Ring := color InexactFieldFamily := x -> "black" -- disagrees with the syntax highlighting; but must be so because expressions of rings are symbols anyway, so color will get lost
 
 texMathDebug=false;
 texMathBackup := texMath

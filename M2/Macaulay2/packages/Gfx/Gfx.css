@@ -11,7 +11,12 @@ svg.M2Svg {
 }
 
 svg.M2Svg text {
-    font-size: 14px; /* absolute sounds bad but actually it's not really absolute since it's in svg units */
+/*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
+absolute sounds bad but actually it's not really absolute since it's in svg units */
+}
+
+svg.M2Svg foreign-object {
+/*    font-size: 14px;*/ /* same. absolute sounds bad but actually it's not really absolute since it's in svg units */
 }
 
 .gfx3d {

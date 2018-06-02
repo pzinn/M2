@@ -12,16 +12,13 @@ newPackage(
         )
 
 export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
-    "GfxList", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine", -- "GfxHtml",
+    "GfxList", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine", "GfxHtml",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
     "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
     }
-exportMutable {
-"TST"
-}
-
+exportMutable{"TST"}
 GfxObject = new Type of OptionTable -- ancestor type
 
 new GfxObject := T -> new T from { symbol cache => new CacheTable } -- every Gfx object should have a cache
@@ -195,13 +192,12 @@ gfxRange1 GfxList := x -> (
 -- the scaling is incorrect. no known solution. disabling.
 -- the positioning is problematic: the only way to position correctly (as well as set width, height)
 -- is to shift by half its size, which can only be obtained by getBoundingClientRect(), which one can only do after rendering
--*
 GfxHtml = new GfxType of GfxText from hashTable { symbol Name => "foreignObject", symbol Options => { GfxPoint => vector {0.,0.}, GfxString => "" }}
 gfxRange1 GfxHtml := g -> (
     p := currentGfxMatrix*g.GfxPoint;
+    if gfxIs3d g then p=vector {p_0/p_3,p_1/p_3}; -- or could call project2d
     { p, p } -- TODO properly
     )
-*-
 
 --GfxList | GfxList := (a,b) -> new GfxList from (a++b++{symbol GfxContents => a.GfxContents | b.GfxContents})
 GfxObject | GfxObject := (a,b) -> new RowExpression from {a,b}
@@ -234,9 +230,9 @@ svgLookup := hashTable {
 	(x = project2d x;),
 	"cx='", toString x_0, "' cy='", toString x_1, "'"
 	),
-    symbol GfxRadius => x ->  (if rank source currentGfxMatrix === 3 then "data-" else "") | "r='"|toString x|"'", -- 2d
-    symbol GfxRadiusX => x -> (if rank source currentGfxMatrix === 3 then "data-" else "") | "rx='"|toString x|"'", -- 2d
-    symbol GfxRadiusY => x -> (if rank source currentGfxMatrix === 3 then "data-" else "") | "ry='"|toString x|"'", -- 2d
+    symbol GfxRadius => x ->  (if rank source currentGfxMatrix === 4 then "data-" else "") | "r='"|toString x|"'", -- 2d
+    symbol GfxRadiusX => x -> (if rank source currentGfxMatrix === 4 then "data-" else "") | "rx='"|toString x|"'", -- 2d
+    symbol GfxRadiusY => x -> (if rank source currentGfxMatrix === 4 then "data-" else "") | "ry='"|toString x|"'", -- 2d
     symbol GfxScaledRadius => x ->  "r='"|toString x|"'", -- 3d
     symbol GfxScaledRadiusX => x ->  "rx='"|toString x|"'", -- 3d
     symbol GfxScaledRadiusY => x ->  "ry='"|toString x|"'", -- 3d
@@ -321,15 +317,11 @@ svg GfxText := g -> (
     	currentGfxMatrix = saveGfxMatrix)
     )
 
--*
 svg GfxHtml := g -> (
-    saveGfxMatrix := updateGfxMatrix g;
-    updateGfxCache g;
     g.cache#"overflow"="visible";
-    first(svgBegin g | g.GfxString | svgEnd g,
-    	currentGfxMatrix = saveGfxMatrix)
+    if gfxIs3d g then g.cache.GfxSize=vector{1,-1,0,1} else g.cache.GfxSize=vector{1,-1}; -- TEMP? weird bug with chrome. needs more testing
+    (lookup(svg,GfxText)) g
     )
-*-
 
 mathJax GfxObject := html
 -- the 0.4 is approximate and should correspond to depth vs height of current font
@@ -382,7 +374,7 @@ html GfxObject := g -> (
     rr := r#1 - r#0;
     -- axes
     axes := null;
-    if g.?GfxAxes then ( -- semi temp: axes should be broken into little bits
+    if g.?GfxAxes and g.GfxAxes =!= false then ( -- semi temp: axes should be broken into little bits
 	arr := gfxArrow();
 	axes = gfx(
 	    gfx(
@@ -392,16 +384,16 @@ html GfxObject := g -> (
 	    	"stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 		),
 	    gfx(
--*
 	    	GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#0 else "\\(x\\)" , GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    	GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    	if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
-		*-
+		GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    	if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)}
+-*
 	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
 	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
 	    	if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#2 else "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
 		"stroke" => "none", "fill"=>"black"
-		)
+		*-
+		),
 	    );
 	axes=svg axes;
 	);
