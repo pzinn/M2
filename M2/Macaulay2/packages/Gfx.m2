@@ -662,7 +662,7 @@ multidoc ///
    Text
     An SVG circle. The two compulsory options are GfxCenter (coordinates of the center) and GfxRadius (radius).
    Example
-    GfxCircle{GfxCenter=>[10,10],GfxRadius=>50,"stroke"=>"none"}
+    GfxCircle{GfxCenter=>[10,10],GfxRadius=>50,"fill"=>"green","stroke"=>"none"}
     GfxCircle{[10,10],10} -- equivalent syntax
  Node
   Key
