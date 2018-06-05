@@ -18,7 +18,7 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
     "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
     }
-exportMutable{"TST"}
+
 GfxObject = new Type of OptionTable -- ancestor type
 
 new GfxObject := T -> new T from { symbol cache => new CacheTable } -- every Gfx object should have a cache
@@ -373,29 +373,28 @@ html GfxObject := g -> (
     r = apply(r,numeric);
     rr := r#1 - r#0;
     -- axes
-    axes := null;
+    axes := null; axeslabels := null;
     if g.?GfxAxes and g.GfxAxes =!= false then ( -- semi temp: axes should be broken into little bits
 	arr := gfxArrow();
 	axes = gfx(
-	    gfx(
-    	    	GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
-    	    	GfxLine { GfxPoint1 => vector if gfxIs3d g then {0,r#0_1,0} else {0,r#0_1}, GfxPoint2 => vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
-	    	if gfxIs3d g then GfxLine { GfxPoint1 => vector{0,0,min(r#0_0,r#0_1)}, GfxPoint2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => gfxArrow() },
-	    	"stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
-		),
-	    gfx(
-	    	GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#0 else "\\(x\\)" , GfxFontSize => 0.08*min(rr_0,rr_1)},
-		GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    	if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)}
+	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
+	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {0,r#0_1,0} else {0,r#0_1}, GfxPoint2 => vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
+	    if gfxIs3d g then GfxLine { GfxPoint1 => vector{0,0,min(r#0_0,r#0_1)}, GfxPoint2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => gfxArrow() },
+	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
+	    );
+	axeslabels = gfx(
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#0 else "\\(x\\)" , GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)}
 -*
 	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
 	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
 	    	if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#2 else "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
 		"stroke" => "none", "fill"=>"black"
 		*-
-		),
 	    );
 	axes=svg axes;
+	axeslabels=svg axeslabels;
 	);
     if g.?GfxWidth then g.cache.GfxWidth = numeric g.GfxWidth;
     if g.?GfxHeight then g.cache.GfxHeight = numeric g.GfxHeight;
@@ -414,11 +413,13 @@ html GfxObject := g -> (
 	 -- svg first
 	"<svg xmlns=\"http://www.w3.org/2000/svg\"",
 	" class=\"M2Svg\" id=\""|tag|"\"",
-	" style=\"width:",toString g.cache.GfxWidth,"em;height:",toString g.cache.GfxHeight,"em\"",
+	" style='width:",toString g.cache.GfxWidth,"em;height:",toString g.cache.GfxHeight,"em;",
+    	if not g#?"stroke-width" then "stroke-width:"|toString(0.01*min(rr_0,rr_1)), -- define a default stroke-width
+	"'",
     	" viewBox=\"",between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),"\"",
 	if gfxIs3d g then " data-pmatrix='"|jsString currentGfxMatrix|"'" else "",
     	">",
-	axes,
+	axes, axeslabels,
     	s,
 	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
     	"</svg>",
@@ -568,7 +569,8 @@ gfxArrow = true >> o -> () -> (
     s:="<marker id='"|tag|"' orient='auto' markerWidth='3' markerHeight='4' refX='0' refY='2'>";
     saveGfxMatrix := currentGfxMatrix;
     currentGfxMatrix = matrix {{1,0},{0,1}}; -- ???
-    s=s|(svg new GfxPolygon from (new GfxObject) ++ { "fill" => "black", "stroke" => "none" } ++ gfxParse o ++ { GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} } } );
+    s=s|(svg new GfxPolygon from (new GfxObject) ++ { "fill" => "black", "stroke" => "none" } ++ gfxParse o 
+	++ { GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} } } );
     currentGfxMatrix = saveGfxMatrix;
     s=s|"</marker>";
     new GfxTagged from (tag,s)

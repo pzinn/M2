@@ -79,9 +79,8 @@ texMath ColumnExpression := x -> concatenate (
 apply((17,18,19,20,28,30),ascii)
 
 texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
-    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#", "-" => "-{}" }
+    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
 -- not \^{} because of https://github.com/Khan/KaTeX/issues/1366
--- -{} because of https://github.com/Khan/KaTeX/issues/1367
 --texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
 texAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
