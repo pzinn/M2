@@ -995,7 +995,6 @@ document List := opts -> args -> (
      rest := {};
      if class key === List then (
 	  key = nonnull key;
-     	  if not all(values tally key, i -> i == 1) then error ("documentation key(s) mentioned twice: ", concatenate \\ between_", " \\ toString \ first \ select(pairs tally key, (k,n) -> n > 1));
 	  rest = drop(key,1);
 	  o.Key = key = first key;
 	  );
@@ -1153,13 +1152,13 @@ briefDocumentation Thing := x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
      if package x === Core then checkLoadDocumentation();
      r := briefSynopsis normalizeDocumentKey x;
-     if r =!= null then print r
+     if r =!= null then << endl << r << endl
      else (
-	  if headline x =!= null then print commentize headline x
+	  if headline x =!= null then << endl << commentize headline x << endl;
 	  );
      if instance(x, Function) or instance(x, ScriptedFunctor) then (
 	  s := fmeth x;
-	  if s =!= null then print s))
+	  if s =!= null then << endl << s << endl;))
 
 help = method(Dispatch => Thing)
 help String := key -> (

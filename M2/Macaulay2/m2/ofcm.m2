@@ -63,7 +63,7 @@ monoidDefaults = (
      	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
 	  Constants => false,				    -- whether to use rawTowerRing when making a monoid ring
 	  DegreesRing => null,                              -- experimental: provide a preexisting degrees ring
-	  AddDegreesRing => null,                           -- experimental: provide a preexisting additive degrees ring
+	  AddDegreesRing => null                            -- experimental: provide a preexisting additive degrees ring
 	  }
      )
 

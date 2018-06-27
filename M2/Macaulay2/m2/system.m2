@@ -89,20 +89,14 @@ getDBkeys = dbfn -> (
      dbkeys)
 
 makePackageInfo := (pkgname,prefix,dbfn,layoutIndex) -> (
-     new MutableHashTable from {
+     new HashTable from {
 	  "doc db file name" => dbfn,
 	  "doc db file time" => fileTime dbfn, -- if this package is reinstalled, we can tell by checking this time stamp (unless the package takes less than a second to install, which is unlikely)
-	  -- "doc keys" => getDBkeys dbfn, -- do this lazily, getting it later, when needed for "about"
+	  "doc keys" => getDBkeys dbfn,
 	  "prefix" => prefix,
      	  "layout index" => layoutIndex,
 	  "name" => pkgname
 	  })
-
-fetchDocKeys = i -> (
-     if i#?"doc keys"
-     then i#"doc keys"
-     else i#"doc keys" = getDBkeys i#"doc db file name"
-     )
 
 installedPackagesByPrefix = new MutableHashTable
 
@@ -141,18 +135,9 @@ locateCorePackageFileRelative = (pkgname,f,installPrefix,installTail) -> locateP
 
 locateDocumentationNode = method()
 
-keyExists = (i,fkey) -> (
-     if i#?"doc keys" 
-     then i#"doc keys"#?fkey
-     else (
-	  db := openDatabase i#"doc db file name";	    -- how long does it take to open and close 170 database files?
-	  r := db#?fkey;
-	  close db;
-	  r))
-
 locateDocumentationNode (String,String) := (pkgname,fkey) -> (
      i := getPackageInfo pkgname;
-     if i === null or not keyExists(i,fkey) then return null;
+     if i === null or not i#"doc keys"#?fkey then return null;
      layout := Layout#(i#"layout index");
      fn := i#"prefix" | htmlFilename1(fkey,pkgname,layout);
      if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
@@ -167,7 +152,7 @@ locateDocumentationNode String := fkey -> (			    -- search packages for one wit
 	       pkgtable := installedPackagesByPrefix#prefix#"package table";
 	       for pkgname in keys pkgtable do (
 		    q := pkgtable#pkgname;
-		    if keyExists(q,fkey) then (
+		    if q#"doc keys"#?fkey then (
 			 layout := Layout#(q#"layout index");
 			 fn := prefix | htmlFilename1(fkey,pkgname,layout);
 			 if not fileExists fn then error ("internal error: html documentation file does not exist: ",fn);
