@@ -1190,7 +1190,7 @@ tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
-suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave"};
+suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
 texVariable := x -> (
     if x === "" then return "";
