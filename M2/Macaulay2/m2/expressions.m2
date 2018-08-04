@@ -1006,7 +1006,7 @@ html Expression := v -> (
 texMath Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
-     then "{-(" | texMath term | ")}"
+     then "{-\\left(" | texMath term | "\\right)}"
      else "{-" | texMath term | "}"
      )
 
