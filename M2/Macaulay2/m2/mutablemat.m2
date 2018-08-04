@@ -15,6 +15,8 @@ net MutableMatrix := m -> (
      m = raw m;
      if m == 0 then return "0";
      stack toSequence apply(lines toString m, x -> concatenate("| ",x,"|")))
+expression MutableMatrix := lookup(expression,Matrix)
+texMath MutableMatrix := lookup(texMath,Matrix)
 map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
      new MutableMatrix from {
 	  symbol Ring => R,
