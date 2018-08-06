@@ -179,18 +179,6 @@ document { Key => {permutations, (permutations, ZZ), (permutations, VisibleList)
 	  }
      }
 
-document { Key => separateRegexp,
-     Headline => "separate a string into pieces, with separators determined by a regular expression" }
-document { Key => (separateRegexp, String, String),
-     Usage => "separateRegexp(sep,str)",
-     Inputs => { "sep" => "a regular expression" , "str" => "a string to be separated" },
-     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by ", TT "sep" } },
-     EXAMPLE { ///separateRegexp("-", "asdf-qwer-dfadf")/// }}
-document { Key => (separateRegexp, String, ZZ, String),
-     Usage => "separateRegexp(sep,n,str)",
-     Inputs => { "sep" => "a regular expression" , "n", "str" => "a string to be separated" },
-     Outputs => { { "a list of substrings consecutively extracted from ", TT "str", ", with separators recognized by the ", TT "n", "-th parenthesized subexpression of ", TT "sep" } },
-     EXAMPLE { ///separateRegexp("f(-)", 1, "asdf-qwer-dfadf")/// }}
 document { Key => tutorial,
      Headline => "convert documentation from tutorial format",
      Usage => "tutorial x",
@@ -835,12 +823,12 @@ document { Key => "documentation keys",
      ///
      }
 
-document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
+document { Key => {about, [about, Body], Body, (help,ZZ), (about,Function), (about,String), (about,Symbol), (about,Type)},
      Headline => "search the documentation",
      Usage => "about s",
      Inputs => { 
 	  "s" => { ofClass { String, Function, Symbol, Type } },
-	  SearchBody => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
+	  Body => Boolean => { "whether also to search the bodies of the documentation nodes.  By default, just their keys are searched." }
 	  },
      Outputs => {
 	  NumberedVerticalList => { "a list of documentation node keys matching the regular expression in the string ", TT "s", ", if ", TT "s", " is a string.
@@ -848,12 +836,13 @@ document { Key => {about, [about, SearchBody], SearchBody, (help,ZZ)},
 	       }
 	  },
      PARA {
-	  "The documentation corresponding to the keys can be displayed by applying the function ", TO "help", " to the resulting list.
-	  To see the documentation corresponding to just one or some of the keys, help ", TO "help", " an integer or a list of integers
-	  to be used for indexing into the list returned by the most recent application of ", TO "about", "."
+	  "The documentation corresponding to the keys in the list returned can be displayed by applying the function ", TO "help", " to it.
+	  To see the documentation corresponding to just one or some of the keys, give ", TO "help", " an integer or a list of integers
+	  to be used as indices in the list returned by the most recent application of ", TO "about", "."
 	  },
      PARA {
-	  "The packages searched are the loaded packages and the packages installed under one of the prefixes listed in ", TO "prefixPath", "."
+	  "The packages searched are the loaded packages and the packages installed under one of the prefixes listed in ", TO "prefixPath", ".
+	  The first search will take a few seconds while it reads all the documentation keys into memory."
 	  },
      ---- this example won't work until after Macaulay2Doc is installed.
      -- EXAMPLE lines ///

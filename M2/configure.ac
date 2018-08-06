@@ -29,7 +29,7 @@ dnl Note:
 dnl   Debian distributions may append a "downstream" debian release number N to the version number: X.Y.Z-N
 dnl   See distributions/deb/Makefile.in, where we allow for that, as a way to fix badly prepared binary distributions.
 
-AC_INIT(Macaulay2, 1.11.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
+AC_INIT(Macaulay2, 1.12.0.1, Macaulay2@math.uiuc.edu, Macaulay2, http://macaulay2.com/)
 
 dnl The convention for version numbers of Macaulay2 is this:
 dnl   1.3     : a major release, such as occurs every 6-12 months, stable, made into binary distributions
@@ -989,17 +989,15 @@ then # readline on Mac OS X is stuck at version 4.2, which has this bug:
 	[ AC_MSG_RESULT([no, will build it]) ; BUILD_readline=yes ],
 	[ AC_MSG_RESULT([cross-compiling, test not possible]) ])
 fi
+if test $BUILD_readline = no
+then AC_CHECK_DECL(rl_catch_signals,,BUILD_readline=yes,[
+	#include <stdio.h>
+	#include <readline/readline.h>
+	])
+fi
 if test $BUILD_readline = yes
 then AC_MSG_NOTICE(readline library will be compiled)
      BUILTLIBS="-lreadline -lhistory $BUILTLIBS"
-else AC_CHECK_DECLS(rl_catch_signals,,,[
-	#include <stdio.h>
-	#include <readline/readline.h>
-	])
-     AC_CHECK_DECLS(__rl_comment_begin,,,[
-	#include <stdio.h>
-	#include <readline/readline.h>
-	])
 fi
 
 dnl We no longer link with gmp.

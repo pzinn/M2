@@ -1023,7 +1023,7 @@ export {
 	"schedule",
 	"schreyerOrder",
 	"searchPath",
-	"SearchBody",
+	"Body",
 	"sec",
 	"sech",
 	"seeParsing",
