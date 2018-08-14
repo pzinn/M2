@@ -67,7 +67,7 @@ net ChainComplex := C -> (
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
-texMathMaybe = x -> if rank source x + rank target x < 16 then texMath x else "(\\cdots)"
+texMathMaybe := x -> if rank source x + rank target x < 16 then texMath x else "(\\cdots)"
 
 texMath ChainComplex := C -> (
      complete C;

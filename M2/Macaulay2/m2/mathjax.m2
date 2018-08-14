@@ -240,6 +240,7 @@ print = x -> if topLevelMode === MathJax then (
 ℝ=RR
 ℤ=ZZ
 ℂ=CC
+∞=infinity
 
 -- color
 ColoredExpression = new HeaderType of Expression
