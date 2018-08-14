@@ -80,7 +80,8 @@ htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTabl
 
 texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is for closing of inputTag if needed!
 
-texWrap := x -> concatenate("\\(",htmlAltLiteral x,"\\)")
+--texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for mathJax compatibility
+texWrap := x -> concatenate("\\(",x,"\\)") -- breaks mathJax compatibility (KaTeX mode!) but helps with other situations
 
 mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
 
