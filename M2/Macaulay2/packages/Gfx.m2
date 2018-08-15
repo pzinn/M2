@@ -311,7 +311,7 @@ mathJax GfxObject := html
 -- the 0.4 is approximate and should correspond to depth vs height of current font
 texMath GfxObject := x -> (
     h := html x; -- this way height is computed
-    "\\html{" | toString((x.cache.GfxHeight+0.4)/2.) |"}{" | toString((x.cache.GfxHeight-0.4)/2.) | "}{" | h | "}"
+    "\\html{" | h | "}{" | toString((x.cache.GfxHeight+0.4)/2.) |"em}{" | toString((x.cache.GfxHeight-0.4)/2.) | "em}"
     )
 expression GfxObject := hold
 
