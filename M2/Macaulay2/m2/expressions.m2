@@ -1148,13 +1148,13 @@ texMath Table := m -> (
 	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
 	"\\end{array}}")
 )
-	
+
 texMath MatrixExpression := m -> (
      if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
-	      newline | "\\end{pmatrix}" -- notice the absence of final \\ -- so lame
+	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
 
