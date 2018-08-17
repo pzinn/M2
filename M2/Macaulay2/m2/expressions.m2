@@ -1185,7 +1185,7 @@ texMath MatrixExpression := m -> (
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
-	      newline | "\\end{pmatrix}" -- notice the absence of final \\ -- so lame
+	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
 
