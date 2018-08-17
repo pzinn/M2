@@ -243,7 +243,7 @@ expression Module := M -> (
      else if M.?generators
      then FunctionApplication { image, expression M.generators }
      else if numgens M === 0 then 0
-     else Power {expression ring M, numgens M}
+     else Superscript {expression ring M, numgens M}
      )
 
 net Module := net @@ expression
