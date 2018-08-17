@@ -242,7 +242,7 @@ expression Module := M -> (
      else if M.?generators
      then new FunctionApplication from { image, expression M.generators }
      else if numgens M === 0 then 0
-     else new Power from {expression ring M, numgens M}
+     else new Superscript from {expression ring M, numgens M}
      )
 
 -- net Module := M -> net expression M -- can't do that because of compactMatrixForm
