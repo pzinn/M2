@@ -17,6 +17,7 @@ export {
 	"ColoredExpression",
 	"ℚ","ℝ","ℤ","ℂ","∞",
 	"minimalPresentationReds",
+	"setColor",
 -- end experimental
 	"MathJax",
 	"mathJax",

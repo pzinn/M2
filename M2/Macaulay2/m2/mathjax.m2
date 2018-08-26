@@ -257,6 +257,11 @@ color Function := x -> "#0000ff"
 color Constant := color Boolean := color ScriptedFunctor := x -> "#008b8b"
 color Thing := x -> null
 color Ring := color InexactFieldFamily := x -> "black" -- disagrees with the syntax highlighting; but must be so because expressions of rings are symbols anyway, so color will get lost
+-- or can use the colorTable for that. but do I really want rings to be colored? don't think so.
+-- or should be another color altogether
+colorTable = new MutableHashTable
+--setColor = (x,c) -> (colorTable#x = colorTable#(unhold expression x) = toString c;) -- slightly overkill
+setColor = (x,c) -> (colorTable#(unhold expression x) = toString c;) -- should be all we need
 
 texMathDebug=false;
 texMathBackup := texMath
@@ -269,7 +274,7 @@ texMathDebugWrapper := x -> (
     )
 -- the color hack
 texMathColorWrapper := x -> (
-    c:=color x;
+    c := try colorTable#x else color x;
     if c =!= null then "{\\color{" | c | "}" | texMathBackup x | "}" else texMathBackup x
     )
 mathJaxBegin = () -> (
