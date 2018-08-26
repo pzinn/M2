@@ -37,10 +37,11 @@ expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := v -> net expression v
 toString IndexedVariable := v -> toString expression v
 texMath IndexedVariable := v -> texMath expression v
-expression IndexedVariableTable := x -> hold x
-net IndexedVariableTable :=
-toString IndexedVariableTable := x -> if x#?symbol$ then toString x#symbol$ else "-*an indexed variable table*-"
-texMath IndexedVariableTable := x -> if x#?symbol$ then texMath x#symbol$ else texMath "-*an indexed variable table*-"
+expression IndexedVariableTable := x -> if x#?symbol$ then expression x#symbol$ else expression "-*an indexed variable table*-"
+net IndexedVariableTable := net @@ expression
+toString IndexedVariableTable := toString @@ expression
+texMath IndexedVariableTable := x -> texMath expression x
+
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)
 Symbol _ Thing := (X,i) -> new IndexedVariable from {X,i}
