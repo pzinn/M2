@@ -15,7 +15,7 @@ export {
 	"ColumnExpression",
 	"color",
 	"ColoredExpression",
-	"ℚ","ℝ","ℤ","ℂ","∞",
+	"ℚ","ℝ","ℤ","ℂ","ℙ","∞",
 	"minimalPresentationReds",
 	"setColor",
 -- end experimental
