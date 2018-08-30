@@ -178,7 +178,7 @@ print = x -> if topLevelMode === MathJax then (
 ColoredExpression = new HeaderType of Expression
 net ColoredExpression := x -> net x#0
 toString ColoredExpression := x -> toString x#0
-texMath ColoredExpression := x -> "{\\color{" | x#1 | "}" | texMath x#0 | "}"
+texMath ColoredExpression := x -> "\\begingroup\\color{" | x#1 | "}" | texMath x#0 | "\\endgroup "
 -- one could make that a method to have more specific coloring rules for certain types. anyway, not used for now
 --coloredExpression = x -> (c:=color x; if c=!= null then ColoredExpression { expression x, c } else expression x)
 
@@ -207,7 +207,8 @@ texMathDebugWrapper := x -> (
 -- the color hack
 texMathColorWrapper := x -> (
     c := try colorTable#x else color x;
-    if c =!= null then "{\\color{" | c | "}" | texMathBackup x | "}" else texMathBackup x
+    if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
+    -- buggy, see https://github.com/Khan/KaTeX/issues/1679
     )
 mathJaxBegin = () -> (
     if texMathDebug then

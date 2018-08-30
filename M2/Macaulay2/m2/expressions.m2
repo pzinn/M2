@@ -1168,9 +1168,9 @@ texMath SparseMonomialVectorExpression := v -> (
      )
 
 texMath VerticalList := s -> concatenate(
-    "\\left\\{\\begin{array}{l}",
-    between("\\\\",apply(toList s,texMath))
-    ,"\\end{array}\\right\\}"
+    "\\left\\{\\begin{aligned}",
+    between("\\\\",apply(toList s,x->"&"|texMath x))
+    ,"\\end{aligned}\\right\\}"
     )
 
 texMath Table := m -> (
@@ -1382,17 +1382,17 @@ texMath Net := n -> (
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\n";
+	    s=s|"&\\vphantom{\\big|}" | texMath x | "\n";
 	    if i<#n then s=s|"\\\\[-1mm]";
 	    ));
 --    "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- 2.65 for [-2mm]. this number may have to be adjusted/defined more properly, disabling for now
-    "\\begin{array}{l}" | s | "\\end{array}"
+    "\\begin{aligned}" | s | "\\end{aligned}"
     )
 
 texMath ColumnExpression := x -> concatenate (
-    "\\begin{array}{l}",
-    apply(toList x,y -> texMath y |"\\\\"), -- kinda works
-    "\\end{array}"
+    "\\begin{aligned}",
+    apply(toList x,y -> "&" | texMath y | "\\\\"), -- kinda works
+    "\\end{aligned}"
     )
 
 
