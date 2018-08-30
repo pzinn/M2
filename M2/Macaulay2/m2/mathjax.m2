@@ -1,62 +1,5 @@
--- some texMath that got stranded
-texMath BasicList := s -> concatenate(
-     if class s =!= List then texMath class s,
-    "\\left\\{",
-    between(",\\,",apply(toList s,texMath))
-    ,"\\right\\}"
-    )
-texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
-texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath HashTable := x -> if x.?texMath then x.texMath else
-if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
-concatenate flatten (
-    texMath class x,
-    "\\left\\{",
-    if mutable x then if #x>0 then {"\\ldots",texMath(#x),"\\ldots"} else "" else
-    between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
-    "\\right\\}"
-    )
-texMath MonoidElement := x -> texMath expression x
-texMath Function := x -> texMath toString x
-
--- strings -- compare with hypertext.m2
--*
-texVerbLiteralTable := new MutableHashTable
-    scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
-    texVerbLiteralTable#"!" = ///!\texttt{!}\verb!///
-    --texVerbLiteralTable#"$" = ///!\texttt{\$}\verb!/// -- eww ugly fix of #375 of mathJax. not needed if not enclosing using $
-    texVerbLiteralTable#"\\"= ///!\verb!\!\verb!/// -- eww ugly fix of #375 of mathJax
-    -- unfortunately the next 2 (needed if the string happens to be in a {} group) may result in wrong font in normal LaTeX depending on encoding, see https://stackoverflow.com/questions/2339651/how-to-get-real-braces-in-ttfont-in-latex
-    texVerbLiteralTable#"{" =///!\texttt{\{}\verb!/// -- eww ugly fix of #375 of mathJax
-    texVerbLiteralTable#"}" =///!\texttt{\}}\verb!/// -- eww ugly fix of #375 of mathJax
-texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
---texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
-texMath String := s -> (
-    ss := separate s;
-    if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
-    else texMath stack ss
-    )
-*-
-
--- this truncates very big nets
-maxlen := 3000; -- randomly chosen
-texMath Net := n -> (
-    dep := depth n; hgt := height n;
-    s:="";
-    len:=0; i:=0;
-    scan(unstack n, x->(
-	    i=i+1;
-	    len=len+#x;
-	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-1mm]";
-		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
-		break
-		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\n";
-	    if i<#n then s=s|"\\\\[-1mm]";
-	    ));
-    "\\begin{array}{l}" | s | "\\end{array}"
-    )
+htmlAltLiteralTable := hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
+htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTable#?c then htmlAltLiteralTable#c else c)
 
 -- now the mathJax stuff per se
 -- mathJax Thing produces some valid html code with possible tex code in \( \)
@@ -70,20 +13,10 @@ texMath Net := n -> (
     mathJaxTextTag):=      -- other text
 apply((17,18,19,20,28,30),ascii)
 
-texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
-    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#", "-" => "-{}" }
--- not \^{} because of https://github.com/Khan/KaTeX/issues/1366
--- -{} because of https://github.com/Khan/KaTeX/issues/1367
-texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-htmlAltLiteralTable := hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
-htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTable#?c then htmlAltLiteralTable#c else c)
-
-texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is for closing of inputTag if needed!
-
 --texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for mathJax compatibility
 texWrap := x -> concatenate("\\(",x,"\\)") -- breaks mathJax compatibility (KaTeX mode!) but helps with other situations
 
-mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
+mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 mathJax Hypertext := html -- !

@@ -1291,6 +1291,52 @@ expression HashTable := x -> (
 expressionValue HashTable := x -> applyPairs(x, (k,v) -> (expressionValue k, expressionValue v))
 *-
 
+-- some texMath that got stranded
+texMath BasicList := s -> concatenate(
+     if class s =!= List then texMath class s,
+    "\\left\\{",
+    between(",\\,",apply(toList s,texMath))
+    ,"\\right\\}"
+    )
+texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
+texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
+texMath HashTable := x -> if x.?texMath then x.texMath else
+if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
+concatenate flatten (
+    texMath class x,
+    "\\left\\{",
+    if mutable x then if #x>0 then {"\\ldots",texMath(#x),"\\ldots"} else "" else
+    between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
+    "\\right\\}"
+    )
+texMath Function := x -> texMath toString x
+
+-- strings -- compare with hypertext.m2
+texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
+    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
+-- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
+texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
+texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is for closing of inputTag if needed!
+-- this truncates very big nets
+maxlen := 3000; -- randomly chosen
+texMath Net := n -> (
+    dep := depth n; hgt := height n;
+    s:="";
+    len:=0; i:=0;
+    scan(unstack n, x->(
+	    i=i+1;
+	    len=len+#x;
+	    if i<#n and len>maxlen then (
+		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\[-1mm]";
+		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
+		break
+		);
+	    s=s|"\\vphantom{\\big|}" | texMath x | "\n";
+	    if i<#n then s=s|"\\\\[-1mm]";
+	    ));
+    "\\begin{array}{l}" | s | "\\end{array}"
+    )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
