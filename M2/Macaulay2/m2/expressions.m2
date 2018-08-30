@@ -1137,9 +1137,9 @@ texMath SparseMonomialVectorExpression := v -> (
      )
 
 texMath VerticalList := s -> concatenate(
-    "\\left\\{\\begin{array}{l}",
-    between("\\\\",apply(toList s,texMath))
-    ,"\\end{array}\\right\\}"
+    "\\left\\{\\begin{aligned}",
+    between("\\\\",apply(toList s,x->"&"|texMath x))
+    ,"\\end{aligned}\\right\\}"
     )
 
 texMath Table := m -> (
@@ -1316,7 +1316,7 @@ texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\
     "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
 -- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
 texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is for closing of inputTag if needed!
+texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is intentional!
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
@@ -1331,10 +1331,10 @@ texMath Net := n -> (
 		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
 		break
 		);
-	    s=s|"\\vphantom{\\big|}" | texMath x | "\n";
+	    s=s|"&\\vphantom{\\big|}" | texMath x | "\n";
 	    if i<#n then s=s|"\\\\[-1mm]";
 	    ));
-    "\\begin{array}{l}" | s | "\\end{array}"
+    "\\begin{aligned}" | s | "\\end{aligned}"
     )
 
 -- Local Variables:
