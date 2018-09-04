@@ -161,6 +161,7 @@ print = x -> if topLevelMode === MathJax then (
     ) else ( << net x << endl; )
 
 -- bb letters
+export { "ℚ","ℝ","ℤ","ℂ","ℙ","∞" }
 ℚ=QQ
 ℝ=RR
 ℤ=ZZ

@@ -15,7 +15,6 @@ export {
 	"ColumnExpression",
 	"color",
 	"ColoredExpression",
-	"ℚ","ℝ","ℤ","ℂ","ℙ","∞",
 	"minimalPresentationReds",
 	"setColor",
 -- end experimental
@@ -257,6 +256,7 @@ export {
 	"MakeInfo",
 	"MakeLinks",
 	"Manipulator",
+	"MapExpression",
 	"Matrix",
 	"MatrixExpression",
 	"MaxReductionCount",

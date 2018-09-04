@@ -438,9 +438,6 @@ Holder     / Holder     := (x,y) -> new Divide from {x#0,y#0}
 Expression / Thing      := (x,y) -> x / (expression y)
      Thing / Expression := (x,y) -> (expression x) / y
 not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else -* UnaryOperation{symbol not, e} *- error ("negation of an equation with ", toString (#e), " parts")
--- not Expression := e -> BinaryOperation{symbol not, e}
-Expression and Expression := (e,f) -> BinaryOperation{symbol and,e,f," "}
-Expression or Expression := (e,f) -> BinaryOperation{symbol or,e,f," "}
 expression ZZ := i -> (
      if i === 0 then ZERO
      else if i === 1 then ONE
@@ -586,10 +583,11 @@ binaryOperatorFunctions := new HashTable from {
      symbol SPACE => ((x,y) -> x y),
      symbol != => ((x,y) -> x != y),
      symbol and => ((x,y) -> x and y),
-     symbol not => ((x,y) -> x not y),
      symbol or => ((x,y) -> x or y),
      symbol ^** => ((x,y) -> x^**y)
      }
+
+spacedOps := set { symbol =>, symbol and, symbol or }
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
     -*
@@ -649,7 +647,7 @@ net BinaryOperation := m -> (
      y := net m#2;
      if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
      if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
-     if m#?3 then horizontalJoin( x, m#3, toString m#0, m#3, y ) else horizontalJoin( x, toString m#0, y ) -- allow for optional separator
+     if spacedOps#?(m#0) then horizontalJoin( x, " ", toString m#0, " ", y ) else horizontalJoin( x, toString m#0, y )
      )
 
 texMath BinaryOperation := m -> (
@@ -657,7 +655,7 @@ texMath BinaryOperation := m -> (
      y := texMath m#2;
      if rightPrecedence m#1 < lprec m#0 then x = "\\left(" | x | "\\right)";
      if precedence m#2 <= rprec m#0 then y = "\\left(" | y | "\\right)";
-     if m#?3 then concatenate( x, replace(" ","\\,",m#3), texMath m#0, replace(" ","\\,",m#3), y ) else concatenate( x, texMath m#0, y )
+     if spacedOps#?(m#0) then concatenate( x, "\\ ", texMath m#0, "\\ ", y ) else concatenate( x, texMath m#0, y )
      )
 
 toString'(Function, BinaryOperation) := (fmt,m) -> (
@@ -665,7 +663,7 @@ toString'(Function, BinaryOperation) := (fmt,m) -> (
      y := fmt m#2;
      if rightPrecedence m#1 < lprec m#0 then x = ("(",x,")");
      if precedence m#2 <= rprec m#0 then y = ("(",y,")");
-     if m#?3 then concatenate( x, m#3, toString m#0, m#3, y ) else concatenate( x, toString m#0, y ) -- allow for optional separator
+     if spacedOps#?(m#0) then concatenate( x, " ", toString m#0, " ", y ) else concatenate( x, toString m#0, y )
      )
 
 -----------------------------------------------------------------------------
@@ -1307,7 +1305,7 @@ toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- extra stuff
-expression Option := z -> BinaryOperation { symbol =>, expression z#0, expression z#1, " " }
+expression Option := z -> BinaryOperation { symbol =>, expression z#0, expression z#1 }
 net Option := net @@ expression
 texMath Option := x -> texMath expression x
 toString Option := toString @@ expression
