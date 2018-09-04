@@ -603,8 +603,9 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",
     symbol .. => "\\,{.}{.}\\, ",
     symbol ..< => "\\,{.}{.}{<}\\, ",
+    symbol <= => "\\le ",
+    symbol >= => "\\ge ",
     symbol => => "\\Rightarrow ",
-    symbol <= => "\\Leftarrow ",
     symbol ==> => "\\Longrightarrow ",
     symbol <== => "\\Longleftarrow ",
     symbol <==> => "\\Longleftrightarrow ",
@@ -1311,11 +1312,12 @@ net Option := net @@ expression
 texMath Option := x -> texMath expression x
 toString Option := toString @@ expression
 
--- needed because can't really have a symbol <---
-MapArrow = new HeaderType of Expression;
-toString MapArrow := x-> toString(x#0) | " <--- " | toString(x#1)
-net MapArrow := x-> net(x#0) | " <--- " | net(x#1)
-texMath MapArrow := x -> texMath(x#0) | "\\,\\longleftarrow\\," | texMath(x#1)
+-- only used by mathjax.m2 at the moment. note that one can't have a symbol <---
+MapExpression = new HeaderType of Expression;
+toString MapExpression := x-> toString(x#0) | " <--- " | toString(x#1)
+net MapExpression := x-> net(x#0) | " <--- " | net(x#1)
+texMath MapExpression := x -> texMath(x#0) | "\\," | (if (#x>2) then "\\xleftarrow{"|texMath(x#2)|"}" else "\\longleftarrow ") | "\\," | texMath(x#1)
+value MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}

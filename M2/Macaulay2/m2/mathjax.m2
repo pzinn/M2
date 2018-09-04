@@ -125,13 +125,13 @@ Module#{MathJax,AfterPrint} = M -> (
      )
 
 
-Matrix#{MathJax,AfterPrint} = Matrix#{MathJax,AfterNoPrint} = f -> texAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapArrow from {target f,source f}))
+Matrix#{MathJax,AfterPrint} = Matrix#{MathJax,AfterNoPrint} = f -> texAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
 
 Net#{MathJax,AfterPrint} = identity
 
 Nothing#{MathJax,AfterPrint} = identity
 
-RingMap#{MathJax,AfterPrint} = RingMap#{MathJax,AfterNoPrint} = f -> texAfterPrint (class f," ",new MapArrow from {target f,source f})
+RingMap#{MathJax,AfterPrint} = RingMap#{MathJax,AfterNoPrint} = f -> texAfterPrint (class f," ",new MapExpression from {target f,source f})
 
 Sequence#{MathJax,AfterPrint} = Sequence#{MathJax,AfterNoPrint} = identity
 
