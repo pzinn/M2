@@ -219,9 +219,9 @@ svgLookup := hashTable {
 	(x = project2d x;),
 	"cx='", toString x_0, "' cy='", toString x_1, "'"
 	),
-    symbol GfxRadius => x ->  (if rank source currentGfxMatrix === 3 then "data-" else "") | "r='"|toString x|"'", -- 2d
-    symbol GfxRadiusX => x -> (if rank source currentGfxMatrix === 3 then "data-" else "") | "rx='"|toString x|"'", -- 2d
-    symbol GfxRadiusY => x -> (if rank source currentGfxMatrix === 3 then "data-" else "") | "ry='"|toString x|"'", -- 2d
+    symbol GfxRadius => x ->  (if rank source currentGfxMatrix === 4 then "data-" else "") | "r='"|toString x|"'", -- 2d
+    symbol GfxRadiusX => x -> (if rank source currentGfxMatrix === 4 then "data-" else "") | "rx='"|toString x|"'", -- 2d
+    symbol GfxRadiusY => x -> (if rank source currentGfxMatrix === 4 then "data-" else "") | "ry='"|toString x|"'", -- 2d
     symbol GfxScaledRadius => x ->  "r='"|toString x|"'", -- 3d
     symbol GfxScaledRadiusX => x ->  "rx='"|toString x|"'", -- 3d
     symbol GfxScaledRadiusY => x ->  "ry='"|toString x|"'", -- 3d
@@ -311,7 +311,7 @@ mathJax GfxObject := html
 -- the 0.4 is approximate and should correspond to depth vs height of current font
 texMath GfxObject := x -> (
     h := html x; -- this way height is computed
-    "\\html{" | h | "}{" | toString((x.cache.GfxHeight+0.4)/2.) |"em}{" | toString((x.cache.GfxHeight-0.4)/2.) | "em}"
+    "\\rawhtml{" | h | "}{" | toString((x.cache.GfxHeight+0.4)/2.) |"em}{" | toString((x.cache.GfxHeight-0.4)/2.) | "em}"
     )
 expression GfxObject := hold
 
