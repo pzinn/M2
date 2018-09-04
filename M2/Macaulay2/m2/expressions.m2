@@ -429,8 +429,8 @@ Expression / Thing      := (x,y) -> x / (expression y)
      Thing / Expression := (x,y) -> (expression x) / y
 not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else -* UnaryOperation{symbol not, e} *- error ("negation of an equation with ", toString (#e), " parts")
 -- not Expression := e -> BinaryOperation{symbol not, e}
-Expression and Expression := (e,f) -> BinaryOperation{symbol and,e,f}
-Expression or Expression := (e,f) -> BinaryOperation{symbol or,e,f}
+Expression and Expression := (e,f) -> BinaryOperation{symbol and,e,f," "}
+Expression or Expression := (e,f) -> BinaryOperation{symbol or,e,f," "}
 expression ZZ := i -> (
      if i === 0 then ZERO
      else if i === 1 then ONE
@@ -491,10 +491,15 @@ Expression     ..< Expression     :=
 Thing          ..< Expression     :=
 Expression     ..< Thing          := (x,y) -> BinaryOperation{symbol ..<,x,y}
 
+scan(flexibleBinaryOperators, op ->
+    if not Expression#?(op,Expression,Expression) then
+    installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y})
+    )
+
 -----------------------------------------------------------------------------
 --expressionValue Holder2 := x -> x#1
 --expressionValue Holder := x -> x#1
-expressionValue Holder := x -> expressionValue x#0 -- !!!
+expressionValue Holder := x -> expressionValue x#0
 expressionValue OneExpression := v -> 1
 expressionValue ZeroExpression := v -> 0
 -----------------------------------------------------------------------------
@@ -1312,7 +1317,7 @@ concatenate flatten (
 texMath Function := x -> texMath toString x
 
 -- strings -- compare with hypertext.m2
-texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
+texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
     "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
 -- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
 texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
