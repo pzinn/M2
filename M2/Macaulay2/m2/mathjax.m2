@@ -118,12 +118,14 @@ CoherentSheaf#{MathJax,AfterPrint} = F -> (
 ZZ#{MathJax,AfterPrint} = identity
 
 -- bb letters
+export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ℚ=QQ
 ℝ=RR
 ℤ=ZZ
 ℂ=CC
+∞=infinity
 
--- the debug hack
+-- the debug hack (temporary, to be removed before PR)
 texMathDebug=false;
 texMathBackup := texMath
 texMathDebugWrapper := x -> (
