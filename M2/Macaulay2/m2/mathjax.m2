@@ -9,12 +9,7 @@
     mathJaxInputContdTag,  -- text, continuation of input
     mathJaxTextTag):=      -- other text
 apply((17,18,19,20,28,30),ascii)
-
-texAltLiteralTable := hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
-    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
--- not \^{} because of https://github.com/Khan/KaTeX/issues/1366
---texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
--- what follows probably needs simplifying and/or explaining
+-- what follows probably needs simplifying -- we're trying not to code stuff inside mathjax tags
 texAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
     c -> first(if texAltLiteralTable#?c and #open === 0 then texAltLiteralTable#c else c,
@@ -27,7 +22,7 @@ texAltLiteral = s -> ( open:= {};
     )
 )
 
-htmlAltLiteralTable := hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
+htmlAltLiteralTable = hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
 --htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTable#?c then htmlAltLiteralTable#c else c)
 htmlAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
@@ -40,8 +35,6 @@ htmlAltLiteral = s -> ( open:= {};
 	)
     )
 )
-
-texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is for closing of inputTag if needed!
 
 --texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for mathJax compatibility
 texWrap := x -> concatenate("\\(",x,"\\)") -- breaks mathJax compatibility (KaTeX mode!) but helps with other situations

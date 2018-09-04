@@ -439,8 +439,8 @@ Expression / Thing      := (x,y) -> x / (expression y)
      Thing / Expression := (x,y) -> (expression x) / y
 not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else -* UnaryOperation{symbol not, e} *- error ("negation of an equation with ", toString (#e), " parts")
 -- not Expression := e -> BinaryOperation{symbol not, e}
-Expression and Expression := (e,f) -> BinaryOperation{symbol and,e,f}
-Expression or Expression := (e,f) -> BinaryOperation{symbol or,e,f}
+Expression and Expression := (e,f) -> BinaryOperation{symbol and,e,f," "}
+Expression or Expression := (e,f) -> BinaryOperation{symbol or,e,f," "}
 expression ZZ := i -> (
      if i === 0 then ZERO
      else if i === 1 then ONE
@@ -501,10 +501,15 @@ Expression     ..< Expression     :=
 Thing          ..< Expression     :=
 Expression     ..< Thing          := (x,y) -> BinaryOperation{symbol ..<,x,y}
 
+scan(flexibleBinaryOperators, op ->
+    if not Expression#?(op,Expression,Expression) then
+    installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y})
+    )
+
 -----------------------------------------------------------------------------
 --expressionValue Holder2 := x -> x#1
 --expressionValue Holder := x -> x#1
-expressionValue Holder := x -> expressionValue x#0 -- !!!
+expressionValue Holder := x -> expressionValue x#0
 expressionValue OneExpression := v -> 1
 expressionValue ZeroExpression := v -> 0
 -----------------------------------------------------------------------------
@@ -1349,25 +1354,11 @@ concatenate flatten (
 texMath Function := x -> texMath toString x
 
 -- strings -- compare with hypertext.m2
--*
-texVerbLiteralTable := new MutableHashTable
-    scan(characters ascii(0 .. 255), c -> texVerbLiteralTable#c = c)
-    texVerbLiteralTable#"!" = ///!\texttt{!}\verb!///
-    --texVerbLiteralTable#"$" = ///!\texttt{\$}\verb!/// -- eww ugly fix of #375 of mathJax. not needed if not enclosing using $
-    texVerbLiteralTable#"\\"= ///!\verb!\!\verb!/// -- eww ugly fix of #375 of mathJax
-    -- unfortunately the next 2 (needed if the string happens to be in a {} group) may result in wrong font in normal LaTeX depending on encoding, see https://stackoverflow.com/questions/2339651/how-to-get-real-braces-in-ttfont-in-latex
-    texVerbLiteralTable#"{" =///!\texttt{\{}\verb!/// -- eww ugly fix of #375 of mathJax
-    texVerbLiteralTable#"}" =///!\texttt{\}}\verb!/// -- eww ugly fix of #375 of mathJax
-texVerbLiteral = s -> concatenate apply(characters s, c -> texVerbLiteralTable#c)
---texMath String := s -> "\\verb|"|texVerbLiteral s|"|"
-
-texMath String := s -> (
-    ss := separate s;
-    if #ss <=1 then replace(///\\verb!!///,"",///\verb!///|texVerbLiteral s|///!///) -- to optimize compilation
-    else texMath stack ss
-    )
-*-
-
+texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
+    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
+-- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
+texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
+texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is intentional!
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
