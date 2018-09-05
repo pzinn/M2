@@ -526,8 +526,8 @@ MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 expressionValue MatrixExpression := x -> matrix applyTable(toList x,expressionValue)
 toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
-     "MatrixExpression {",		  -- ????
-     between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
+     "matrix {",
+     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
@@ -535,7 +535,7 @@ Table.synonym = "table expression"
 expressionValue Table := x -> applyTable(toList x,expressionValue)
 toString'(Function, Table) := (fmt,m) -> concatenate(
      "Table {",
-     between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
+     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 
@@ -656,11 +656,13 @@ toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fm
      p := precedence m;
      fun := m#0;
      args := m#1;
+     if class args === Holder and class args#0 === Sequence then args = args#0;
+     -- sometimes Lists are wrapped, sometimes they aren't
      if class args === Sequence
      then if #args === 1
      then concatenate(fmt fun, "(", fmt args#0, ")")  -- f (1:x)
      else concatenate(fmt fun, fmt args)       -- f(x,y) or f(), ...
-     else if precedence args >= p
+     else if precedence args > p
      then if precedence fun > p
      then concatenate(fmt fun, if not instance(args,Array) then " ", fmt args)
      else concatenate("(", fmt fun, ")", fmt args)
@@ -678,7 +680,7 @@ net Adjacent := net FunctionApplication := m -> (
      if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; );
      -- sometimes Lists are wrapped, sometimes they aren't
      netargs := net args;
-     if precedence args >= p
+     if precedence args > p
      then if pfun > p
      then (
 	  if div or class netfun === Net and netfun#?0 and width netfun > width netfun#0
@@ -701,7 +703,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; )
      else if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then sep="\\,";
      -- sometimes Lists are wrapped, sometimes they aren't
-     if precedence args >= p
+     if precedence args > p
      then if pfun > p then (
 	 if div
 	 then concatenate (texMath fun, texMath args)
