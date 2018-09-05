@@ -4,23 +4,18 @@ RingMap = new Type of HashTable
 
 RingMap.synonym = "ring map"
 matrix RingMap := opts -> f -> f.matrix
-toExternalString RingMap := f -> concatenate(
-     "map(", toString target f, ",", toString source f, ",", toString first entries matrix f,
-     -- should do something about the degree map here
-     ")"
-     )
-toString RingMap := f -> concatenate(
-     "map(", toString target f, ",", toString source f, ",", toString first entries matrix f, ")"
-     )
-net RingMap := f -> horizontalJoin(
-     "map(", net target f, ",", net source f, ",", net first entries matrix f, ")"
-     )
 source RingMap := f -> f.source
 target RingMap := f -> f.target
 raw RingMap := f -> f.RawRingMap
 
-expression RingMap := f -> FunctionApplication { map, expression (target f, source f, matrix f)}
+expression RingMap := f -> FunctionApplication { map, expression (target f, source f, first entries matrix f)}
+toString RingMap := f -> toString expression f
+net RingMap := f -> net expression f
 texMath RingMap := x -> if x.?texMath then x.texMath else texMath expression x
+
+describe RingMap := f -> Describe FunctionApplication { map, expression (target f, source f, first entries matrix f)}
+toExternalString RingMap := f -> toString describe f
+-- should do something about the degree map here
 
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 

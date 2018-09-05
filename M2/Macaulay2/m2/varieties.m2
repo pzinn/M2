@@ -59,7 +59,7 @@ ring SheafOfRings := O -> O.ring
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
 expression CoherentSheaf := F -> FunctionApplication { sheaf, expression F.module }
-describe CoherentSheaf := F -> FunctionApplication { sheaf, describe F.module }
+describe CoherentSheaf := F -> describe FunctionApplication { sheaf, describe F.module }
 
 -- net CoherentSheaf := (F) -> net expression F
 
