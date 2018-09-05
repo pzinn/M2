@@ -308,8 +308,8 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 oldnum := F#numerator; oldden := F#denominator;
 	 if class R === FactPolynomialRing then raw F := a -> rawFraction(F.RawRing,raw oldnum a, raw oldden a); -- only for Fact!
 	 if class R === FactPolynomialRing and R.Options.DegreeZero then (
-     	     numerator F := (x) -> g ( (oldnum x)*((oldden x)#0)^(-1) );
-     	     denominator F := (x) -> ( r := g oldden x; new R from {1, r#1} );
+	     numerator F := (x) -> (g oldnum x)*((g oldden x)#0)^(-1);
+	     denominator F := (x) -> ( r := g oldden x; new R from {1_(last R.baseRings), r#1} );
 	     )
 	 else (
      	     numerator F := (x) -> g oldnum x;
