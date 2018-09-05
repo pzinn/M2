@@ -21,7 +21,7 @@ pretty := relns -> (
      s := toSequence flatten entries relns;
      if #s === 1 then s = first s;
      s)
-toExternalString QuotientRing := S -> toString expression S
+toExternalString QuotientRing := S -> toString describe S
 random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())

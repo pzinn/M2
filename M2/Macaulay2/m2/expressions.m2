@@ -202,7 +202,7 @@ Parenthesize.synonym = "possibly parenthesized expression"
 net Parenthesize := net @@ first
 toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
 expressionValue Parenthesize := first
-texMath Parenthesize := texMath @@ first
+texMath Parenthesize := x -> texMath x#0
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
@@ -678,7 +678,7 @@ toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fm
      then if #args === 1
      then concatenate(fmt fun, "(", fmt args#0, ")")  -- f (1:x)
      else concatenate(fmt fun, fmt args)       -- f(x,y) or f(), ...
-     else if precedence args >= p
+     else if precedence args > p
      then if precedence fun > p
      then concatenate(fmt fun, if not instance(args,Array) then " ", fmt args)
      else concatenate("(", fmt fun, ")", fmt args)
@@ -696,7 +696,7 @@ net Adjacent := net FunctionApplication := m -> (
      if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; );
      -- sometimes Lists are wrapped, sometimes they aren't
      netargs := net args;
-     if precedence args >= p
+     if precedence args > p
      then if pfun > p
      then (
 	  if div or class netfun === Net and netfun#?0 and width netfun > width netfun#0
@@ -719,7 +719,7 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; )
      else if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then sep="\\,";
      -- sometimes Lists are wrapped, sometimes they aren't
-     if precedence args >= p
+     if precedence args > p
      then if pfun > p then (
 	 if div
 	 then concatenate (texMath fun, texMath args)
@@ -1224,7 +1224,7 @@ texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite
 
 texMath ZZ := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
-texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
+texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack
 --texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
