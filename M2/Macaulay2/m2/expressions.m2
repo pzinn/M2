@@ -202,7 +202,7 @@ Parenthesize.synonym = "possibly parenthesized expression"
 net Parenthesize := net @@ first
 toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
 expressionValue Parenthesize := first
-texMath Parenthesize := texMath @@ first
+texMath Parenthesize := x -> texMath x#0
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
@@ -1191,7 +1191,7 @@ print = x -> (<< net x << endl;) -- !! one may want to modify this depending on 
 texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
 texMath ZZ := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
-texMath Thing := texMath @@ net -- if we're desperate (in particular, for raw objects)
+texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};

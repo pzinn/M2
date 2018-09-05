@@ -239,6 +239,7 @@ export {
 	"MakeInfo",
 	"MakeLinks",
 	"Manipulator",
+	"MapExpression",
 	"Matrix",
 	"MatrixExpression",
 	"MaxReductionCount",
