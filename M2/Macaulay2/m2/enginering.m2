@@ -307,8 +307,14 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 promote(R,F) := (x,F) -> (f numerator x)/(f denominator x);
 	 oldnum := F#numerator; oldden := F#denominator;
 	 if class R === FactPolynomialRing then raw F := a -> rawFraction(F.RawRing,raw oldnum a, raw oldden a); -- only for Fact!
-     	 numerator F := (x) -> g oldnum x;
-     	 denominator F := (x) -> g oldden x;
+	 if class R === FactPolynomialRing and R.Options.DegreeZero then (
+     	     numerator F := (x) -> g ( (oldnum x)*((oldden x)#0)^(-1) );
+     	     denominator F := (x) -> ( r := g oldden x; new R from {1, r#1} );
+	     )
+	 else (
+     	     numerator F := (x) -> g oldnum x;
+     	     denominator F := (x) -> g oldden x;
+	     );
 	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";
 	 fraction(R,R) := (x,y) -> (f (numerator x*denominator y))/(f (numerator y*denominator x));
 	 return F;
@@ -317,7 +323,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      F.frac = F;
      F.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations F;
-     factor F := options -> f -> factor numerator f / factor denominator f;
+     factor F := options -> f -> factor(numerator f,options) / factor(denominator f,options);
      toString F := x -> toString expression x;
      net F := x -> net expression x;
      baseName F := (f) -> (

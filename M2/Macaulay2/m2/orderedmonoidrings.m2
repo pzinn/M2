@@ -259,7 +259,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  factor RM := opts -> a -> (
-    	       (c,fe) := factor1(a,opts); 
+    	       (c,fe) := factor1(a,opts);
 	       if c != 1 or #fe == 0 then fe=append(fe,(c,1)); -- subtle modif: I want 1 to be 1, not the empty product
 	       new Product from apply(fe,(p,n) -> new Power from {p,n}));
 	  isPrime RM := f -> (
