@@ -536,8 +536,8 @@ MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 expressionValue MatrixExpression := x -> matrix applyTable(toList x,expressionValue)
 toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
-     "MatrixExpression {",		  -- ????
-     between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
+     "matrix {",
+     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
@@ -545,7 +545,7 @@ Table.synonym = "table expression"
 expressionValue Table := x -> applyTable(toList x,expressionValue)
 toString'(Function, Table) := (fmt,m) -> concatenate(
      "Table {",
-     between(",",apply(toList m,row->("{", between(",",apply(row,fmt)), "}"))),
+     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
 
@@ -674,6 +674,8 @@ toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fm
      p := precedence m;
      fun := m#0;
      args := m#1;
+     if class args === Holder and class args#0 === Sequence then args = args#0;
+     -- sometimes Lists are wrapped, sometimes they aren't
      if class args === Sequence
      then if #args === 1
      then concatenate(fmt fun, "(", fmt args#0, ")")  -- f (1:x)

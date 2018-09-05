@@ -10,6 +10,7 @@ ProjectiveVariety = new Type of Variety
 ProjectiveVariety.synonym = "projective variety"
 ring Variety := X -> X.ring
 toString Variety := toString @@ expression
+toExternalString Variety := toString @@ describe
 net Variety := net @@ expression
 texMath Variety := x -> if x.?texMath then x.texMath else texMath expression x
 expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
@@ -58,6 +59,7 @@ ring SheafOfRings := O -> O.ring
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
 expression CoherentSheaf := F -> FunctionApplication { sheaf, expression F.module }
+describe CoherentSheaf := F -> FunctionApplication { sheaf, describe F.module }
 
 -- net CoherentSheaf := (F) -> net expression F
 

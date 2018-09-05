@@ -36,9 +36,7 @@ expression PolynomialRing := R -> (
 describe PolynomialRing := R -> (
      k := last R.baseRings;
      Describe (expression k) (expressionMonoid monoid R)) -- not describe k, we only expand one level
-toExternalString PolynomialRing := R -> (
-     k := last R.baseRings;
-     toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (describe monoid R)))
+toExternalString PolynomialRing := R -> toString describe R;
 
 degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
 

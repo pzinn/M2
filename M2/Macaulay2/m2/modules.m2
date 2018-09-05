@@ -201,42 +201,8 @@ numgens Module := M -> (
      else M.numgens
      )
 
-toString Module := M -> (
-     if M.?relations then (
-	  if M.?generators
-	  then "subquotient(" | toString M.generators | "," | toString M.relations | ")"
-	  else "cokernel " | toString M.relations
-	  )
-     else (
-	  if M.?generators
-	  then "image " | toString M.generators
-	  else (
-	       if numgens M === 0
-	       then "0"
-	       else toString expression M
-	       )
-	  )
-     )
-
-toExternalString Module := M -> (
-     if M.?relations then (
-	  if M.?generators
-	  then "subquotient(" | toExternalString M.generators | "," | toExternalString M.relations | ")"
-	  else "cokernel " | toExternalString M.relations
-	  )
-     else (
-	  if M.?generators
-	  then "image " | toExternalString M.generators
-	  else (
-	       if all(degrees M, deg -> all(deg, zero)) 
-	       then "(" | toString ring M | ")^" | numgens M
-	       else "(" | toString ring M | ")^" | toExternalString (- degrees M)
-	       )
-	  )
-     )
-
 expression Module := M -> (
-     if M.?relations 
+     if M.?relations
      then if M.?generators
      then FunctionApplication { subquotient, expression (M.generators, M.relations) }
      else FunctionApplication { cokernel, expression M.relations }
@@ -245,8 +211,21 @@ expression Module := M -> (
      else if numgens M === 0 then 0
      else Superscript {expression ring M, numgens M}
      )
+toString Module := M -> toString expression M
+net Module := net @@ expression -- NOT! in vanilla because of compactform
 
-net Module := net @@ expression
+describe Module := M -> Describe (
+     if M.?relations
+     then if M.?generators
+     then FunctionApplication { subquotient, (describe M.generators, describe M.relations) }
+     else FunctionApplication { cokernel, describe M.relations }
+     else if M.?generators
+     then FunctionApplication { image, describe M.generators }
+     else if numgens M === 0 then 0
+     else Superscript {expression ring M, if all(degrees M, deg -> all(deg, zero)) then numgens M
+	 else expression(-degrees M)}
+     )
+toExternalString Module := M -> toString describe M
 
 texMath Module := x -> if x.?texMath then x.texMath else texMath expression x
 

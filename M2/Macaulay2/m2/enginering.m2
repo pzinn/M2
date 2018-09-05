@@ -279,6 +279,7 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 	    dim FractionField := F -> 0
      expression FractionField := F -> if hasAttribute(F,ReverseDictionary) then expression getAttribute(F,ReverseDictionary) else FunctionApplication{frac, expression last F.baseRings}
      describe FractionField := F -> Describe FunctionApplication {frac, describe last F.baseRings}
+     toExternalString FractionField := F -> toString describe F
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 isHomogeneous EngineRing := R -> isHomogeneous 0_R
