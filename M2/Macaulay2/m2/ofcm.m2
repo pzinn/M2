@@ -301,10 +301,15 @@ makeit1 := (opts) -> (
      	  M.degreesRing = (
 	       if opts.DegreesRing =!= null then 
 	       (
-	       	   R:=opts.DegreesRing;
+		   R := opts.DegreesRing;
 --	       	   if coefficientRing R===ZZ and ((isPolynomialRing R and (options R).Inverses) or (isQuotientRing R and all(generators R,isUnit))) then R -- experimental
-                   if coefficientRing R===ZZ and isPolynomialRing R and (options R).Inverses then R
-	       	   else error "invalid ring of degrees"
+                   if not (coefficientRing R===ZZ and isPolynomialRing R and (options R).Inverses) then error "invalid ring of degrees";
+--		   if opts.Heft =!= null then (monoid R).Options=(monoid R).Options++{MonomialOrder=>prepend(Weights=>opts.Heft,(monoid R).Options.MonomialOrder)};
+		   if opts.Heft =!= null then (
+		       h := hashTable (options R).MonomialOrder;
+		       if not h.?Weights or h.Weights != -opts.Heft then stderr << "--warning: Weights of degrees ring don't match Heft vector" <<endl;
+		       );
+		   R
 		   )
 	       else if opts.Heft =!= null 
 	       then degreesRing opts.Heft 

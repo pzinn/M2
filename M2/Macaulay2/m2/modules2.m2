@@ -190,13 +190,10 @@ hilbertSeries Module := opts -> (M) -> (
      else (
 	  h := hilbertSeries(M,Reduce => true);
 	  s := (
-	       num = numerator h;
+	       num = numerator h; -- not quite poincare M because of Reduce => true...
 	       if num == 0 then 0_T else (
 		   denom0 := denominator h;
-		   if class class denom0 === FactPolynomialRing then ( -- need to distinguish... <sigh>
-		       u:=(lowestPart(denom0))^(-1);
-		       num=u*num; denom0=factor(u*denom0) -- this isn't quite right -- if some weights are negative, the monomial will appear in front and bug below
-		       );
+		   if class class denom0 === FactPolynomialRing then denom0=denom0#1; -- <sigh>
 		   wts := (options ring M).Heft;
 		   (lo,hi) := weightRange(wts,num);
 		   if ord <= lo then 0_T else (
