@@ -59,8 +59,8 @@ degreesRing List := PolynomialRing => memoize(
 --	  else ZZ degreesMonoid hft
 	  )
 
-degreesRing ZZ := PolynomialRing => memoize( 
-    n -> if n == 0 then degreesRing {} else --ZZ degreesMonoid n
+degreesRing ZZ := PolynomialRing => memoize(
+    n -> if n == 0 then degreesRing {} else -- ZZ degreesMonoid n
     fact(ZZ degreesMonoid n,DegreeZero=>true,Use=>false) -- might create problems. need to test more thoroughly
     )
 
@@ -120,6 +120,7 @@ protect generatorSymbols
 protect generatorExpressions
 protect indexSymbols
 
+fact=method(Options=>{DegreeZero=>false,Use=>true});
 
 InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
@@ -258,10 +259,12 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --		       apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m)))); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
 	       numerator RM := f -> f * denominator f;
 	       );
-	  factor RM := opts -> a -> (
+	  fact RM := opts -> a -> new fact(RM,opts++{Use=>false}) from a; -- destined to supplant factor
+-*	  factor RM := opts -> a -> (
     	       (c,fe) := factor1(a,opts);
 	       if c != 1 or #fe == 0 then fe=append(fe,(c,1)); -- subtle modif: I want 1 to be 1, not the empty product
-	       new Product from apply(fe,(p,n) -> new Power from {p,n}));
+	       new Product from apply(fe,(p,n) -> new Power from {p,n}));*-
+	  factor RM := opts -> a -> factor fact(a,opts);
 	  isPrime RM := f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
@@ -375,7 +378,6 @@ factor1 = {DegreeZero=>false} >> opts -> a -> (
 FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
 FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
-fact=method(TypicalValue => FactPolynomialRing,Options=>{DegreeZero=>false,Use=>true});
 fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
 expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else FunctionApplication {fact, expression last R.baseRings}
 describe FactPolynomialRing := R -> Describe FunctionApplication {fact, describe last R.baseRings}
@@ -397,7 +399,7 @@ fact PolynomialRing := opts -> R -> (
 	if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
 --	expression Rf := a -> (expression a#0)* new Product from apply(a#1,(f,e)->new Power from (expression f,e)); -- a#0 *must* be a constant (or a monomial if Inverses=true). in principle it gets converted automatically to expression by *
         expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e); -- subtly different from the above
-	factor Rf := opts -> a -> new Product from apply(prepend({a#0,1},a#1),u->new Power from u); -- we have to include a#0 in the product so it doesn't get expression'ed, and raise it to the power 1, to follow the convention of usual factor. for now, ignores options
+	factor Rf := opts -> a -> new Product from apply((if a#0 != 1 then {(a#0,1)} else {})|a#1,u->new Power from u); -- we have to include a#0 in the product so it doesn't get expression'ed, and raise it to the power 1, to follow the convention of usual factor. for now, ignores options
 	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache it? can't really cache except in ring itself which sucks
 	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
 	if (options R).Inverses then (
