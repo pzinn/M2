@@ -260,10 +260,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  fact RM := opts -> a -> new fact(RM,opts++{Use=>false}) from a; -- destined to supplant factor
--*	  factor RM := opts -> a -> (
-    	       (c,fe) := factor1(a,opts);
-	       if c != 1 or #fe == 0 then fe=append(fe,(c,1)); -- subtle modif: I want 1 to be 1, not the empty product
-	       new Product from apply(fe,(p,n) -> new Power from {p,n}));*-
 	  factor RM := opts -> a -> factor fact(a,opts);
 	  isPrime RM := f -> (
 	      v := factor f;
@@ -350,30 +346,6 @@ leadCoeff = x -> ( -- iterated leadCoefficient
     if class R === PolynomialRing then leadCoeff leadCoefficient x else
     if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
     x);
-factor1 = {DegreeZero=>false} >> opts -> a -> (
-    R := ring a;
-    c := 1_R;
-    if (options R).Inverses then (
-	-- a bit of a hack if a==0, but works
-        minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
-	a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial.
-	c=R_minexps;
-	);
-    fe := toList apply append(rawFactor raw a,(f,e)->(
-	    ff:=new R from f;
-	    if opts.DegreeZero and (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
-	    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
-	);
-    if liftable(fe#0#0,R.basering) then (
-	-- factory returns the possible constant factor in front
-	assert(fe#0#1 == 1);
-	c = c*(fe#0#0);
-        fe=drop(fe,1);
-	);
-    ( c, -- constant term
-      sort fe )  -- technically the sort should be on f, not on fe -- but should be the same. warning, do not change/remove sorting, needed by mergePairs
-    );
-
 
 FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
 FactPolynomialRing.synonym = "factorized polynomial ring";
@@ -413,7 +385,28 @@ fact PolynomialRing := opts -> R -> (
 	numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
 	);
 	);
-	new Rf from R := (A,a) -> toList factor1(a,DegreeZero=>Rf.Options.DegreeZero);
+	new Rf from R := (A,a) -> (
+	    if (options R).Inverses then (
+		-- a bit of a hack if a==0, but works
+		minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
+		a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial.
+		c:=R_minexps;
+		)
+	    else c = 1_R;
+	    fe := toList apply append(rawFactor raw a,(f,e)->(
+		    ff:=new R from f;
+		    if opts.DegreeZero and (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+		    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
+		);
+	    if liftable(fe#0#0,R.basering) then (
+		-- factory returns the possible constant factor in front
+		assert(fe#0#1 == 1);
+		c = c*(fe#0#0);
+		fe=drop(fe,1);
+		);
+	    { c, -- constant term
+		sort fe }  -- technically the sort should be on f, not on fe -- but should be the same. warning, do not change/remove sorting, needed by mergePairs
+	    );
 	new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- promote uses this
 	-- various redefinitions (there might be a more clever way to automate this?)
 	Rf.generators=apply(generators R,a->new Rf from a);
