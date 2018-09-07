@@ -15,6 +15,9 @@ export {
 	"ColoredExpression",
 	"minimalPresentationReds",
 	"setColor",
+	"genericVector",
+	"genericUpperMatrix",
+	"genericLowerMatrix",
 -- end experimental
 	"MathJax",
 	"mathJax",

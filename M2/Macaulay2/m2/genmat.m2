@@ -153,6 +153,62 @@ random(Module, Module) := Matrix => opts -> (F,G) -> (
 				   r)))));
 	  map(F, G, applyTable(degreesTable, k -> (randomElement k)()))))
 
+genericMatrix IndexedVariableTable := v -> (
+    inds := select(keys v,x-> class x === Sequence and #x === 2);
+    nrows := max apply(inds,x->x#0);
+    ncols := max apply(inds,x->x#1);
+    if nrows <= 0 or ncols <= 0 then error "invalid range of indices";
+    matrix table(nrows, ncols, (i,j)->if v#?(i+1,j+1) then v_(i+1,j+1) else 0)
+    )
+
+genericSkewMatrix IndexedVariableTable := v -> (
+    inds := select(keys v,x-> class x === Sequence and #x === 2);
+    n := max splice inds;
+    if n <= 0 then error "invalid range of indices";
+    matrix table(n, n, (i,j)->if i<j then
+	if v#?(i+1,j+1) then v_(i+1,j+1) else if v#?(j+1,i+1) then -v_(j+1,i+1) else 0
+	else if i>j then
+	if v#?(j+1,i+1) then -v_(j+1,i+1) else if v#?(i+1,j+1) then v_(i+1,j+1) else 0
+	else 0)
+    )
+
+genericSymmetricMatrix IndexedVariableTable := v -> (
+    inds := select(keys v,x-> class x === Sequence and #x === 2);
+    n := max splice inds;
+    if n <= 0 then error "invalid range of indices";
+    matrix table(n, n, (i,j)->if i<=j then
+	if v#?(i+1,j+1) then v_(i+1,j+1) else if v#?(j+1,i+1) then v_(j+1,i+1) else 0
+	else if i>j then
+	if v#?(j+1,i+1) then v_(j+1,i+1) else if v#?(i+1,j+1) then v_(i+1,j+1) else 0
+	)
+    )
+
+genericUpperMatrix = method(TypicalValue => Matrix)
+genericLowerMatrix = method(TypicalValue => Matrix)
+
+genericUpperMatrix IndexedVariableTable := v -> (
+    inds := select(keys v,x-> class x === Sequence and #x === 2);
+    n := max splice inds;
+    if n <= 0 then error "invalid range of indices";
+    matrix table(n, n, (i,j)->if i<=j and v#?(i+1,j+1) then v_(i+1,j+1) else 0)
+    )
+
+genericLowerMatrix IndexedVariableTable := v -> (
+    inds := select(keys v,x-> class x === Sequence and #x === 2);
+    n := max splice inds;
+    if n <= 0 then error "invalid range of indices";
+    matrix table(n, n, (i,j)->if i>=j and v#?(i+1,j+1) then v_(i+1,j+1) else 0)
+    )
+
+genericVector = method(TypicalValue => Vector)
+
+genericVector IndexedVariableTable := v -> (
+    inds := select(keys v,x-> class x === ZZ);
+    nrows := max inds;
+    if nrows <= 0 then error "invalid range of indices";
+    vector apply(nrows, i->if v#?(i+1) then v_(i+1) else 0)
+    )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
