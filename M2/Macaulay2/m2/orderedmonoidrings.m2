@@ -55,13 +55,13 @@ degreesRing List := PolynomialRing => memoize(
 	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
 	       S.indexSymbols = S.indexStrings = new HashTable;
 	       S)
-	  else fact(ZZ degreesMonoid hft,DegreeZero=>true,Use=>false) -- might create problems. need to test more thoroughly
+	  else fact(ZZ degreesMonoid hft) -- might create problems. need to test more thoroughly
 --	  else ZZ degreesMonoid hft
 	  )
 
 degreesRing ZZ := PolynomialRing => memoize(
     n -> if n == 0 then degreesRing {} else -- ZZ degreesMonoid n
-    fact(ZZ degreesMonoid n,DegreeZero=>true,Use=>false) -- might create problems. need to test more thoroughly
+    fact(ZZ degreesMonoid n) -- might create problems. need to test more thoroughly
     )
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
@@ -120,7 +120,7 @@ protect generatorSymbols
 protect generatorExpressions
 protect indexSymbols
 
-fact=method(Options=>{DegreeZero=>false,Use=>true});
+fact=method();
 
 InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
@@ -259,7 +259,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 --		       apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m)))); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
 	       numerator RM := f -> f * denominator f;
 	       );
-	  fact RM := opts -> a -> new fact(RM,opts++{Use=>false}) from a; -- destined to supplant factor
+	  fact RM := a -> new fact RM from a; -- destined to supplant factor
 	  factor RM := opts -> a -> factor fact(a,opts);
 	  isPrime RM := f -> (
 	      v := factor f;
@@ -350,21 +350,18 @@ leadCoeff = x -> ( -- iterated leadCoefficient
 FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
 FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
-fact FactPolynomialRing := opts -> R -> R; -- and that :) and a few more below
+fact FactPolynomialRing := R -> R; -- and that :) and a few more below
 expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else FunctionApplication {fact, expression last R.baseRings}
 describe FactPolynomialRing := R -> Describe FunctionApplication {fact, describe last R.baseRings}
-options FactPolynomialRing := R -> options(monoid R)++R.Options;
-fact FractionField := opts -> F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
+fact FractionField := F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
-fact PolynomialRing := opts -> R -> (
+fact PolynomialRing := R -> (
     local Rf;
     if R.?fact then (
     	Rf=R.fact;
-    	Rf.Options=Rf.Options++opts; -- we allow change of options
      	)
     else (
-    	Rf=new FactPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
-	Rf.Options=opts; -- these are *not* ordinary polynomial ring options (which are really monoid options) but rather DegreeZero and Use
+	Rf=new FactPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
 	R.fact=Rf;
 	Rf.baseRings=append(R.baseRings,R);
 	commonEngineRingInitializations Rf;
@@ -375,7 +372,6 @@ fact PolynomialRing := opts -> R -> (
 	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache it? can't really cache except in ring itself which sucks
 	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
 	if (options R).Inverses then (
-	if Rf.Options.DegreeZero then ( -- in principle one could always use this first option
 	denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
 	numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
 	)
@@ -383,7 +379,6 @@ fact PolynomialRing := opts -> R -> (
 	(
 	denominator Rf := a -> new Rf from { denominator a#0, {} };
 	numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
-	);
 	);
 	new Rf from R := (A,a) -> (
 	    if (options R).Inverses then (
@@ -395,7 +390,7 @@ fact PolynomialRing := opts -> R -> (
 	    else c = 1_R;
 	    fe := toList apply append(rawFactor raw a,(f,e)->(
 		    ff:=new R from f;
-		    if opts.DegreeZero and (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+		    if (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
 		    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
 		);
 	    if liftable(fe#0#0,R.basering) then (
@@ -433,7 +428,7 @@ fact PolynomialRing := opts -> R -> (
 	);
 	Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
 	Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
-	Rf == Rf := (a,b) -> ( c:=gcd(a,b); value(a//c) == value(b//c) ); -- this is almost, but not quite the same as asking for equality of every factor (!) -- think about changing DegreeZero
+	Rf == Rf := (a,b) -> ( c:=gcd(a,b); value(a//c) == value(b//c) ); -- this is almost, but not quite the same as asking for equality of every factor (!)
         --Rf == Rf := (a,b) -> ( -- understand cryptic remark above
 	--    );
 	-- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
@@ -450,7 +445,7 @@ fact PolynomialRing := opts -> R -> (
 	lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e);
 	remove(Rf,symbol vars); -- in case R had already cached its vars
 	);
-    if (Rf.Options).Use then use Rf else Rf
+	Rf
     );
 
 -- this is an optimization: the product would take forever

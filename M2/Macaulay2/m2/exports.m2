@@ -3,8 +3,6 @@
 export {
 -- begin experimental
 	"fact",
-	"DegreeZero",
-	"Use",
 	"DegreesRing",
 	"addDegreesRing",
 	"AddDegreesRing",

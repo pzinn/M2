@@ -151,7 +151,7 @@ String ^ Sequence := Net => (s,p) -> (
 
 net Net := identity
 
-comma := ","
+comma := ", "
 
 netn = i -> if i === null then net000 else net i
 

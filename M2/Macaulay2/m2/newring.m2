@@ -31,7 +31,7 @@ newRing QuotientRing := opts -> R -> (
      S / image substitute(p,vars S))
 newRing FactPolynomialRing := opts -> (R) -> (
     R0 := newRing(last R.baseRings,opts);
-    fact(R0,R.Options++{Use=>false})
+    fact R0
     );
 
 -----------------------------

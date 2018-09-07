@@ -306,12 +306,11 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 F.baseRings=append(F.baseRings,R);
 	 promote(R,F) := (x,F) -> (f numerator x)/(f denominator x);
 	 oldnum := F#numerator; oldden := F#denominator;
-	 if class R === FactPolynomialRing then raw F := a -> rawFraction(F.RawRing,raw oldnum a, raw oldden a); -- only for Fact!
-	 if class R === FactPolynomialRing and R.Options.DegreeZero then (
+	 if class R === FactPolynomialRing then (
+	     raw F := a -> rawFraction(F.RawRing,raw oldnum a, raw oldden a); -- only for Fact!
 	     numerator F := (x) -> (g oldnum x)*((g oldden x)#0)^(-1);
 	     denominator F := (x) -> ( r := g oldden x; new R from {1_(last R.baseRings), r#1} );
-	     )
-	 else (
+	 ) else (
      	     numerator F := (x) -> g oldnum x;
      	     denominator F := (x) -> g oldden x;
 	     );
