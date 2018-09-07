@@ -323,6 +323,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      F.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations F;
      factor F := options -> f -> factor(numerator f,options) / factor(denominator f,options);
+     fact F := f -> (fact numerator f) / (fact denominator f);
      toString F := x -> toString expression x;
      net F := x -> net expression x;
      baseName F := (f) -> (

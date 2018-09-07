@@ -260,7 +260,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	       numerator RM := f -> f * denominator f;
 	       );
 	  fact RM := a -> new fact RM from a; -- destined to supplant factor
-	  factor RM := opts -> a -> factor fact(a,opts);
+	  factor RM := opts -> a -> factor fact a;
 	  isPrime RM := f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
