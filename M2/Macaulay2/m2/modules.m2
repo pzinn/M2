@@ -228,7 +228,7 @@ describe Module := M -> Describe (
      )
 toExternalString Module := M -> toString describe M
 
-texMath Module := x -> if x.?texMath then x.texMath else texMath expression x
+texMath Module := x -> texMath expression x
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

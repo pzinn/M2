@@ -12,7 +12,7 @@ ring Variety := X -> X.ring
 toString Variety := toString @@ expression
 toExternalString Variety := toString @@ describe
 net Variety := net @@ expression
-texMath Variety := x -> if x.?texMath then x.texMath else texMath expression x
+texMath Variety := x -> texMath expression x
 expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
 describe AffineVariety := (X) -> Describe FunctionApplication { Spec, expression X.ring }
 describe ProjectiveVariety := (X) -> Describe FunctionApplication { Proj, expression X.ring }
@@ -82,7 +82,6 @@ net CoherentSheaf := F -> (
 			 else toString toSequence d)))))
 
 texMath CoherentSheaf := F -> (
-        if F.?texMath then return F.texMath;
 	M := module F;
 	if M.?relations or M.?generators then texMath M
     	else if numgens M === 0 then "0"

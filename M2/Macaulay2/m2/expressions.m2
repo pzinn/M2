@@ -539,6 +539,14 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      "matrix {",
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
+MatrixDegreeExpression = new HeaderType of Expression
+MatrixDegreeExpression.synonym = "matrix degree expression"
+expressionValue MatrixDegreeExpression := x -> (
+    m := expressionValue x#0;
+    map((ring m)^(x#1),,entries m)
+    )
+toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,x#0)
+
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -976,6 +984,11 @@ net MatrixExpression := x -> (
      )
 html MatrixExpression := x -> html TABLE toList x
 
+net MatrixDegreeExpression := x -> (
+    if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
+    else horizontalJoin(stack( x#1 / toString ), " ", net x#0)
+    )
+
 net VectorExpression := x -> (
     if all(x,i->class i===ZeroExpression) then "0"
      else (
@@ -1204,13 +1217,15 @@ texMath Table := m -> (
 )
 	
 texMath MatrixExpression := m -> (
-     if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
+    if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
+    else if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
 	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
+texMath MatrixDegreeExpression := x -> texMath x#0 -- degrees not displayed atm
 
 texMath VectorExpression := v -> (
      concatenate(
@@ -1348,7 +1363,7 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
-texMath Set := x -> if x.?texMath then x.texMath else texMath expression x
+texMath Set := x -> texMath expression x
 
 -*
 -- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(

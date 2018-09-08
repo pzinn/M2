@@ -401,12 +401,6 @@ Matrix#{Standard,AfterNoPrint} = f -> (
      )
 
 -- precedence Matrix := x -> precedence symbol x
-net Matrix := f -> if f == 0 then "0" else (
-    m := net expression f;
-    d := degrees cover target f;
-    if compactMatrixForm and not all(d, i -> all(i, j -> j == 0)) then horizontalJoin(stack( d / toString ), " ", m) else m
-)
-
 
 image Matrix := Module => f -> (
      if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)
@@ -430,7 +424,7 @@ expression Ideal := (I) -> FunctionApplication { ideal, unsequence apply(toSeque
 net Ideal := net @@ expression
 toString Ideal := toString @@ expression
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
-texMath Ideal := (I) -> if I.?texMath then I.texMath else texMath expression I
+texMath Ideal := (I) -> texMath expression I
 describe Ideal := (I) -> Describe FunctionApplication { ideal, VerticalList apply(first entries generators I, expression) }
 
 isIdeal Ideal := I -> true

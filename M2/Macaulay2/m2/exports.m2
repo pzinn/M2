@@ -259,6 +259,7 @@ export {
 	"Manipulator",
 	"MapExpression",
 	"Matrix",
+	"MatrixDegreeExpression",
 	"MatrixExpression",
 	"MaxReductionCount",
 	"MaximalIdeal",

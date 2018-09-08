@@ -239,7 +239,7 @@ reduce := (r,s) -> (
      (a,b))
 
 expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else expression toString R.RawRing -- should never be used
-texMath EngineRing := R -> if R.?texMath then R.texMath else texMath expression R
+texMath EngineRing := R -> texMath expression R
 toString EngineRing := toString @@ expression
 net EngineRing := net @@ expression
 
