@@ -74,12 +74,13 @@ vector List := v -> vector matrix apply(v, i -> {i});
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
-net Vector := v -> net super v#0
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
+net Vector := v -> net super v#0 -- can't expressionify cause of matrixcompactform
+expression Vector := v -> VectorExpression flatten entries super v#0
 toExternalString Vector :=
-toString Vector := v -> concatenate ( "vector ", toString entries super v )
-texMath Vector := v -> texMath super v#0
+toString Vector := v -> toString expression v
+texMath Vector := v -> texMath expression v
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0

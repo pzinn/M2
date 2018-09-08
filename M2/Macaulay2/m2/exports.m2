@@ -426,6 +426,7 @@ export {
 	"Variables",
 	"Variety",
 	"Vector",
+	"VectorExpression",
 	"Verbose",
 	"Verify",
 	"Version",

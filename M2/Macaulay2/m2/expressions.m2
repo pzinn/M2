@@ -540,6 +540,14 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
+VectorExpression = new HeaderType of Expression
+VectorExpression.synonym = "vector expression"
+expressionValue VectorExpression := x -> vector apply(toList x,expressionValue)
+toString'(Function,VectorExpression) := (fmt,v) -> concatenate(
+     "vector {",
+     between(", ",apply(toList v,fmt)),
+     "}" )
+-----------------------------------------------------------------------------
 Table = new HeaderType of Expression
 Table.synonym = "table expression"
 expressionValue Table := x -> applyTable(toList x,expressionValue)
@@ -622,7 +630,7 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol _ => "\\_ ",
     symbol | => "|",
     symbol || => "||",
-    symbol * => "*",
+    symbol * => "\\times ", -- ??
     symbol + => "+",
     symbol - => "-",
     symbol / => "/",
@@ -964,6 +972,14 @@ net MatrixExpression := x -> (
 	  horizontalJoin(side," ",m," ",side)))
 html MatrixExpression := x -> html TABLE toList x
 
+net VectorExpression := x -> (
+     if # x === 0 then "|  |"
+     else (
+	  m := net Table apply(toList x,y->{y});
+	  side := "|" ^ (height m, depth m);
+	  horizontalJoin(side," ",m," ",side)))
+html VectorExpression := x -> html TABLE apply(toList x,y->{y})
+
 -----------------------------------------------------------------------------
 -- tex stuff
 
@@ -1188,6 +1204,14 @@ texMath MatrixExpression := m -> (
 	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
+
+texMath VectorExpression := v -> (
+     concatenate(
+	 "\\begin{pmatrix}" | newline,
+	 between(///\\///,apply(toList v,texMath)),
+	 "\\end{pmatrix}"
+	 )
+     )
 
 ctr := 0
 showTex = method()
