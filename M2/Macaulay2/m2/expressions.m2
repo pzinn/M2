@@ -973,11 +973,14 @@ net SparseMonomialVectorExpression := v -> (
 net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
 compactMatrixForm=true; -- governs net MatrixExpression
+matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Boxes => false, Alignment => Left },
+                                   false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
+
 net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
     else (
-	x=applyTable(toList x,if compactMatrixForm then toString else net);
-	m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
+	x=applyTable(toList x,if compactMatrixForm then toString@@raw@@value else net);
+	m := netList(x,matrixDisplayOptions#compactMatrixForm);
 	side := "|" ^ (height m, depth m);
 	horizontalJoin(side," ",m," ",side)
 	)
