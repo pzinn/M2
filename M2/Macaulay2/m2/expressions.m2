@@ -976,7 +976,7 @@ compactMatrixForm=true; -- governs net MatrixExpression
 matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Boxes => false, Alignment => Left },
                                    false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
 
-toCompactString := x -> replace("\\*|\\>\\^","",toString x)
+toCompactString := x -> replace("\\*|([[:alpha:]])\\^","\\1",toString x)
 
 net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
