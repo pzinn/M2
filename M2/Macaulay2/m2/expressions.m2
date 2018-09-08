@@ -976,10 +976,12 @@ compactMatrixForm=true; -- governs net MatrixExpression
 matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Boxes => false, Alignment => Left },
                                    false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
 
+toCompactString := x -> replace("\\*|\\>\\^","",toString x)
+
 net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
     else (
-	x=applyTable(toList x,if compactMatrixForm then toString@@raw@@value else net);
+	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
 	m := netList(x,matrixDisplayOptions#compactMatrixForm);
 	side := "|" ^ (height m, depth m);
 	horizontalJoin(side," ",m," ",side)
@@ -988,14 +990,14 @@ net MatrixExpression := x -> (
 html MatrixExpression := x -> html TABLE toList x
 
 net MatrixDegreeExpression := x -> (
-    if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
+    if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
     else horizontalJoin(stack( x#1 / toString ), " ", net x#0)
     )
 
 net VectorExpression := x -> (
     if all(x,i->class i===ZeroExpression) then "0"
      else (
-	 x=apply(toList x,y->{(if compactMatrixForm then toString else net)y});
+	 x=apply(toList x,y->{(if compactMatrixForm then toCompactString else net)y});
 	 m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
 	 side := "|" ^ (height m, depth m);
 	 horizontalJoin(side," ",m," ",side)
