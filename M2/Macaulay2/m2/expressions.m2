@@ -966,7 +966,7 @@ net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, Bas
 
 compactMatrixForm=true; -- governs net MatrixExpression
 net MatrixExpression := x -> (
-    if # x === 0 or # (x#0) === 0 then "0"
+    if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
     else (
 	x=applyTable(toList x,if compactMatrixForm then toString else net);
 	m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
@@ -977,11 +977,14 @@ net MatrixExpression := x -> (
 html MatrixExpression := x -> html TABLE toList x
 
 net VectorExpression := x -> (
-     if # x === 0 then "|  |"
+    if all(x,i->class i===ZeroExpression) then "0"
      else (
-	  m := net Table apply(toList x,y->{y});
-	  side := "|" ^ (height m, depth m);
-	  horizontalJoin(side," ",m," ",side)))
+	 x=apply(toList x,y->{(if compactMatrixForm then toString else net)y});
+	 m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
+	 side := "|" ^ (height m, depth m);
+	 horizontalJoin(side," ",m," ",side)
+	 )
+     )
 html VectorExpression := x -> html TABLE apply(toList x,y->{y})
 
 -----------------------------------------------------------------------------
@@ -1339,7 +1342,7 @@ MapExpression = new HeaderType of Expression;
 toString MapExpression := x-> toString(x#0) | " <--- " | toString(x#1)
 net MapExpression := x-> net(x#0) | " <--- " | net(x#1)
 texMath MapExpression := x -> texMath(x#0) | "\\," | (if (#x>2) then "\\xleftarrow{"|texMath(x#2)|"}" else "\\longleftarrow ") | "\\," | texMath(x#1)
-value MapExpression := x -> map toSequence apply(x,expressionValue)
+expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
