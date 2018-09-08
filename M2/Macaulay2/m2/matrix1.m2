@@ -401,27 +401,12 @@ Matrix#{Standard,AfterNoPrint} = f -> (
      )
 
 -- precedence Matrix := x -> precedence symbol x
+net Matrix := f -> if f == 0 then "0" else (
+    m := net expression f;
+    d := degrees cover target f;
+    if compactMatrixForm and not all(d, i -> all(i, j -> j == 0)) then horizontalJoin(stack( d / toString ), " ", m) else m
+)
 
---compactMatrixForm = true
-compactMatrixForm = false
-
-net Matrix := f -> (
-     if f == 0 
-     then "0"
-     else (
-	  m := (
-	       if compactMatrixForm then (
-	       	    stack toSequence apply(lines toString f.RawMatrix, x -> concatenate("| ",x,"|"))
-	       	    )
-     	       else net expression f
-	       );
-	  if compactMatrixForm and degreeLength ring target f > 0 -- and isHomogeneous f
-	  then (
-	       d := degrees cover target f;
-	       if not all(d, i -> all(i, j -> j == 0)) then m = horizontalJoin(stack( d / toString ), " ", m);
-	       );
-	  m)
-     )
 
 image Matrix := Module => f -> (
      if f.cache.?image then f.cache.image else f.cache.image = subquotient(f,)

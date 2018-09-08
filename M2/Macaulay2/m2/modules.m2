@@ -213,7 +213,7 @@ expression Module := M -> (
      else Superscript {expression ring M, numgens M}
      )
 toString Module := M -> toString expression M
-net Module := net @@ expression -- NOT! in vanilla because of compactform
+net Module := M -> net expression M
 
 describe Module := M -> Describe (
      if M.?relations

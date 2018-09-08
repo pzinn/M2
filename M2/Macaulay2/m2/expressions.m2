@@ -964,12 +964,16 @@ net SparseMonomialVectorExpression := v -> (
 
 net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
+compactMatrixForm=true; -- governs net MatrixExpression
 net MatrixExpression := x -> (
-     if # x === 0 or # (x#0) === 0 then "|  |"
-     else (
-	  m := net Table toList x;
-	  side := "|" ^ (height m, depth m);
-	  horizontalJoin(side," ",m," ",side)))
+    if # x === 0 or # (x#0) === 0 then "0"
+    else (
+	x=applyTable(toList x,if compactMatrixForm then toString else net);
+	m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
+	side := "|" ^ (height m, depth m);
+	horizontalJoin(side," ",m," ",side)
+	)
+     )
 html MatrixExpression := x -> html TABLE toList x
 
 net VectorExpression := x -> (
