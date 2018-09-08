@@ -603,7 +603,7 @@ binaryOperatorFunctions := new HashTable from {
      symbol ^** => ((x,y) -> x^**y)
      }
 
-spacedOps := set { symbol =>, symbol and, symbol or }
+spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
     -*

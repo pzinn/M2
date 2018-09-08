@@ -58,42 +58,32 @@ ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-expression CoherentSheaf := F -> FunctionApplication { sheaf, expression F.module }
 describe CoherentSheaf := F -> describe FunctionApplication { sheaf, describe F.module }
-
--- net CoherentSheaf := (F) -> net expression F
 
 runLengthEncoding := x -> if #x === 0 then x else (
      p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
      apply(#p-1, i -> (p#(i+1)-p#i, x#(p#i))))
 
-net CoherentSheaf := F -> (
+expression CoherentSheaf := F -> (
      M := module F;
-     if M.?relations or M.?generators then net M
-     else if numgens M === 0 then "0"
+     if M.?relations or M.?generators then expression M -- needs wrapping
+     else if numgens M === 0 then expression 0 -- needs wrapping
      else (
-	  X := variety F;
-	  horizontalJoin between(" ++ ",
-	       apply(runLengthEncoding (- degrees F),
-		    (n,d) -> (
-			 net new Superscript from {net OO_X, n},
-			 if all(d, zero) then "" else 
-			 if #d === 1 then ("(", toString first d, ")")
-			 else toString toSequence d)))))
-
-texMath CoherentSheaf := F -> (
-	M := module F;
-	if M.?relations or M.?generators then texMath M
-    	else if numgens M === 0 then "0"
-    	else (
 	    X := variety F;
-	  demark(" \\oplus ",
-	       apply(runLengthEncoding (- degrees F),
-		    (n,d) -> (
-			 texMath new Superscript from {OO_X, n},
-			 if all(d, zero) then "" else 
-			 if #d === 1 then ("(", toString first d, ")")
-			 else toString toSequence d)))))
+	    rle := runLengthEncoding (- degrees F);
+	    expr := null;
+	    scan(rle,
+		(n,d) -> (
+		    s := new Superscript from {expression OO_X, n};
+		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize d#0 else toSequence d};
+		    if expr === null then expr = s else expr = expr ++ s;
+		    ));
+	    expr
+	    )
+	)
+
+net CoherentSheaf := (F) -> net expression F
+texMath CoherentSheaf := (F) -> texMath expression F
 
 CoherentSheaf#{Standard,AfterPrint} = F -> (
      X := variety F;

@@ -209,7 +209,7 @@ expression Module := M -> (
      else FunctionApplication { cokernel, expression M.relations }
      else if M.?generators
      then FunctionApplication { image, expression M.generators }
-     else if numgens M === 0 then 0
+     else if numgens M === 0 then 0 -- NO!
      else Superscript {expression ring M, numgens M}
      )
 toString Module := M -> toString expression M
