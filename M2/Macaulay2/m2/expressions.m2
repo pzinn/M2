@@ -976,7 +976,18 @@ compactMatrixForm=true; -- governs net MatrixExpression
 matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Boxes => false, Alignment => Left },
                                    false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
 
-toCompactString := x -> replace("\\*|([[:alpha:]])\\^","\\1",toString x)
+toCompactString = method(Dispatch => Thing)
+toCompactString Thing := toString
+toCompactString Product := x -> if #x === 0 then "1" else concatenate apply(toList x,toCompactString)
+toCompactString Sum := x -> if #x === 0 then "0" else concatenate apply(#x,i->
+    if i===0 or class x#i === Minus then toCompactString x#i else {"+",toCompactString x#i})
+toCompactString Minus := x -> "-" | toCompactString x#0
+digitsparen := set characters "0123456789()"
+toCompactString Power := x -> (
+    a:=toCompactString x#0; b:=toCompactString x#1;
+    if #a === 0 or digitsparen#?(last a) then a|"^"|b else a|b
+    )
+toCompactString Subscript := x -> toCompactString x#0 | "_" | toCompactString x#1
 
 net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
