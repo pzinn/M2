@@ -978,21 +978,18 @@ matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpa
 
 -- modified to work with factorized expressions as well
 toCompactString = method(Dispatch => Thing)
-toCompactParen = x -> if class x === Sum then "("|toCompactString x|")" else toCompactString x
+toCompactParen = x -> if class x === Sum then "(" | toCompactString x | ")" else toCompactString x
 toCompactString Thing := toString
 toCompactString Product := x -> if #x === 0 then "1" else concatenate apply(toList x,toCompactParen)
 toCompactString Sum := x -> if #x === 0 then "0" else concatenate apply(#x,i->
-    if i===0 or class x#i === Minus then toCompactString x#i else {"+",toCompactString x#i})
-toCompactString Minus := x -> "-"|toCompactParen x#0
-digitsparen := set characters "0123456789()"
+    if i===0 or class x#i === Minus then toCompactString x#i else { "+", toCompactString x#i })
+toCompactString Minus := x -> "-" | toCompactParen x#0
 toCompactString Power := x -> (
-    a:=toCompactParen x#0; b:=toCompactString x#1;
-    if #a === 0 or digitsparen#?(last a) then a|"^"|b else a|b
+    a:=toCompactParen x#0;
+    b:=toCompactString x#1;
+    if #a =!= 1 then a|"^"|b else a|b
     )
-toCompactString Divide := x -> (
-        a:=toCompactParen x#0; b:=toCompactParen x#1;
-	a|"/"|b
-	)
+toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 toCompactString Subscript := x -> toCompactString x#0 | "_" | toCompactString x#1
 
 net MatrixExpression := x -> (
