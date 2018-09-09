@@ -978,7 +978,7 @@ matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpa
 
 toCompactString = method(Dispatch => Thing)
 toCompactString Thing := toString
-toCompactString Product := x -> if #x === 0 then "1" else concatenate apply(toList x,toCompactString)
+toCompactString Product := x -> if #x === 0 then "1" else concatenate apply(toList x,y -> if class y === Sum then "("|toCompactString y|")" else toCompactString y)
 toCompactString Sum := x -> if #x === 0 then "0" else concatenate apply(#x,i->
     if i===0 or class x#i === Minus then toCompactString x#i else {"+",toCompactString x#i})
 toCompactString Minus := x -> "-" | toCompactString x#0

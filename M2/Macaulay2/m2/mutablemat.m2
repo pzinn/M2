@@ -11,12 +11,9 @@ entries MutableMatrix := m -> (
      applyTable(entries raw m, r -> promote(r,R)))
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
-net MutableMatrix := m -> (
-     m = raw m;
-     if m == 0 then return "0";
-     stack toSequence apply(lines toString m, x -> concatenate("| ",x,"|")))
-expression MutableMatrix := lookup(expression,Matrix)
+expression MutableMatrix := m -> MatrixExpression applyTable(entries m, expression)
 texMath MutableMatrix := lookup(texMath,Matrix)
+net MutableMatrix := lookup(net,Matrix)
 
 map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
      new MutableMatrix from {
