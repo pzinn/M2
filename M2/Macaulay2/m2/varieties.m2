@@ -58,7 +58,7 @@ ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-describe CoherentSheaf := F -> describe FunctionApplication { sheaf, describe F.module }
+describe CoherentSheaf := F -> Describe FunctionApplication { sheaf, describe F.module }
 
 runLengthEncoding := x -> if #x === 0 then x else (
      p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});
