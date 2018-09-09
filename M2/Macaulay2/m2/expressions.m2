@@ -577,7 +577,7 @@ binaryOperatorFunctions := new HashTable from {
      symbol ^** => ((x,y) -> x^**y)
      }
 
-spacedOps := set { symbol =>, symbol and, symbol or }
+spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",
@@ -673,44 +673,39 @@ toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fm
 net Adjacent := net FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
+     args := m#1;
      netfun := net fun;
+     netargs := net args;
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
-     args := m#1;
-     if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; );
-     -- sometimes Lists are wrapped, sometimes they aren't
-     netargs := net args;
      if precedence args > p
-     then if pfun > p
+     then if pfun >= p
      then (
-	  if div or class netfun === Net and netfun#?0 and width netfun > width netfun#0
+	  if instance(args,Array) or (class args === Holder and instance(args#0,Array)) or div or class netfun === Net and netfun#?0 and width netfun > width netfun#0
+	  -- sometimes Lists are wrapped, sometimes they aren't
 	  then horizontalJoin (netfun, netargs)
 	  else horizontalJoin (netfun, " ", netargs)
 	  )
      else horizontalJoin (bigParenthesize netfun, netargs)
-     else if pfun > p
+     else if pfun >= p
      then horizontalJoin (netfun, bigParenthesize netargs)
      else horizontalJoin (bigParenthesize netfun, bigParenthesize netargs)
      )
 texMath Adjacent := texMath FunctionApplication := m -> (
      p := precedence m;
      fun := m#0;
+     args := m#1;
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
-     args := m#1;
      -- we can finesse further the amount of space than in net
-     sep := "\\ ";
-     if instance(args,Array) or (class args === Holder and instance(args#0,Array)) then (p = p-1; div = true; )
-     else if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then sep="\\,";
-     -- sometimes Lists are wrapped, sometimes they aren't
+     if div or instance(args,Array) or (class args === Holder and instance(args#0,Array)) then sep:=""
+     else if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then sep="\\,"
+     else sep = "\\ ";
      if precedence args > p
-     then if pfun > p then (
-	 if div
-	 then concatenate (texMath fun, texMath args)
-	 else concatenate (texMath fun, sep, texMath args)
-	 )
+     then if pfun >= p
+     then concatenate (texMath fun, sep, texMath args)
      else concatenate ("\\left(", texMath fun, "\\right)", texMath args)
-     else if pfun > p
+     else if pfun >= p
      then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
      else concatenate ("\\left(",texMath fun,"\\right)\\left(", texMath args, "\\right)")
      )
@@ -1088,22 +1083,21 @@ html Product := v -> (
 	  )
      )
 
-texMath Power := v -> (
-     if v#1 === 1 then texMath v#0
-     else (
-	  p := precedence v;
-	  x := texMath v#0;
-	  y := texMath v#1;
-	  if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
-	  concatenate(x,(class v)#operator,"{",y,"}")))
+texMath Power := texMath Superscript := v -> if class v === Power and v#1 === 1 then texMath v#0 else (
+    p := precedence v;
+    x := texMath v#0;
+    y := texMath v#1;
+    if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+    concatenate(x,"^{",y,"}") -- no braces around x
+    )
 
-texMath Subscript := texMath Superscript := v -> ( -- there is a precedence issue, compare with net Superscript
---     p := precedence v;
+texMath Subscript := v -> (
+     p := precedence v;
      x := texMath v#0;
-     if class v#1 === Sequence then y:=demark(",", apply(v#1,texMath)) else y = texMath v#1;
---     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
-     if precedence v#0 <  prec symbol ^ then x = "\\left(" | x | "\\right)";
-     concatenate("{",x,"}",(class v)#operator,"{",y,"}"))
+     if class v#1 === Sequence then y:=demark(",", apply(v#1,texMath)) else y = texMath v#1; -- no parentheses
+     if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+     concatenate("{",x,"}_{",y,"}")
+     )
 
 html Superscript := v -> (
      p := precedence v;
@@ -1287,7 +1281,7 @@ value MapExpression := x -> map toSequence apply(x,expressionValue)
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
-texMath Set := x -> if x.?texMath then x.texMath else texMath expression x
+texMath Set := x -> texMath expression x
 -*
 -- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(
 -- plus creates all kinds of complications with subclasses

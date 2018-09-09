@@ -239,7 +239,7 @@ net Module := M -> (
 	  net new Superscript from { if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R, numgens M}
 	  )
      )
-texMath Module := x -> if x.?texMath then x.texMath else texMath expression x
+texMath Module := x -> texMath expression x
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

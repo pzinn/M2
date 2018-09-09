@@ -211,7 +211,7 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
 
 expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
 toString Matrix := m -> toString expression m;
-texMath Matrix := m -> if m.?texMath then m.texMath else if m==0 then "0" else texMath expression m
+texMath Matrix := m -> if m==0 then "0" else texMath expression m
 
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
