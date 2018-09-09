@@ -12,8 +12,8 @@ entries MutableMatrix := m -> (
 toString MutableMatrix := m -> "mutableMatrix " | toString entries m
 precision MutableMatrix := precision @@ ring
 expression MutableMatrix := m -> MatrixExpression applyTable(entries m, expression)
-texMath MutableMatrix := lookup(texMath,Matrix)
-net MutableMatrix := lookup(net,Matrix)
+texMath MutableMatrix := m -> texMath expression m
+net MutableMatrix := m -> net expression m
 
 map(Ring,RawMutableMatrix) := opts -> (R,m) -> (
      new MutableMatrix from {
