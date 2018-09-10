@@ -363,10 +363,18 @@ document {
 	  (describe, PolynomialRing),
 	  (describe, QuotientRing),
 	  (describe, FractionField),
-	  (describe, Thing)
+	  (describe, Thing),
+	  (describe, AffineVariety),
+	  (describe, CoherentSheaf),
+	  (describe, GaloisField),
+	  (describe, GeneralOrderedMonoid),
+	  (describe, Matrix),
+	  (describe, Module),
+	  (describe, ProjectiveVariety),
+	  (describe, RingMap)
 	  },
      Headline => "real description",
-     TT "describe x", " -- returns ", ofClass Net, " containing the 
+     TT "describe x", " -- returns ", ofClass Expression, " containing the 
      real description of ", TT "x", ", bypassing the feature that causes
      certain types of things to acquire, for brevity, the names of global variables to which
      they are assigned.  For polynomial rings, it also displays the options used at creation.",

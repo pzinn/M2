@@ -41,7 +41,11 @@ undocumented {
 (toString,Net),
 (toString,String),
 (toString,QQ),
-(toString,Dictionary)
+(toString,Dictionary),
+(toString,CoherentSheaf),
+(toString,Describe),
+(toString,MapExpression),
+(toString,Variety)
 }
 
 document { 

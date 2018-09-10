@@ -533,7 +533,11 @@ MatrixDegreeExpression = new HeaderType of Expression
 MatrixDegreeExpression.synonym = "matrix degree expression"
 expressionValue MatrixDegreeExpression := x -> (
     m := expressionValue x#0;
-    map((ring m)^(-x#1),(ring m)^(-x#2),entries m)
+    R := ring m;
+    n := degreeLength R;
+    if all(x#1, y->#y===n) and all(x#2, y->#y===n)
+    then map(R^(-x#1),R^(-x#2),entries m)
+    else m
     )
 toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,x#0)
 -----------------------------------------------------------------------------
