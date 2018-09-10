@@ -40,8 +40,8 @@ undocumented {
     (toExternalString, PolynomialRing),
     (toExternalString, Net),
     (toExternalString, String),
-    (toExternalString,FractionField), 
-    (toExternalString,Variety),
+    (toExternalString,FractionField),
+    (toExternalString,Variety)
     }     
 
 document { 
