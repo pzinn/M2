@@ -364,6 +364,14 @@ document {
 	  (describe, QuotientRing),
 	  (describe, FractionField),
 	  (describe, Thing)
+	  (describe, AffineVariety),
+	  (describe, CoherentSheaf),
+	  (describe, GaloisField),
+	  (describe, GeneralOrderedMonoid),
+	  (describe, Matrix),
+	  (describe, Module),
+	  (describe, ProjectiveVariety),
+	  (describe, RingMap),
 	  },
      Headline => "real description",
      TT "describe x", " -- returns ", ofClass Net, " containing the 

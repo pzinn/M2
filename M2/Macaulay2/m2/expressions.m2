@@ -481,7 +481,6 @@ ZZ             .. InfiniteNumber := (x,y) -> if x < y then (
      error "infinite range requested";
      -- BinaryOperation{symbol ..,x,y}
      ) else ()
-Expression     .. Expression     :=
 Thing          .. Expression     :=
 Expression     .. Thing          := (x,y) -> BinaryOperation{symbol ..,x,y}
 
@@ -494,13 +493,12 @@ ZZ             ..< InfiniteNumber := (x,y) -> if x < y then (
      error "infinite range requested";
      -- BinaryOperation{symbol ..<,x,y}
      ) else ()
-Expression     ..< Expression     :=
 Thing          ..< Expression     :=
 Expression     ..< Thing          := (x,y) -> BinaryOperation{symbol ..<,x,y}
 
 scan(flexibleBinaryOperators, op ->
     if not Expression#?(op,Expression,Expression) then
-    installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y})
+    installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y}) -- we don't bother with the Holders, or contagious Things
     )
 
 -----------------------------------------------------------------------------
@@ -543,7 +541,11 @@ MatrixDegreeExpression = new HeaderType of Expression
 MatrixDegreeExpression.synonym = "matrix degree expression"
 expressionValue MatrixDegreeExpression := x -> (
     m := expressionValue x#0;
-    map((ring m)^(-x#1),(ring m)^(-x#2),entries m)
+    R := ring m;
+    n := degreeLength R;
+    if all(x#1, y->#y===n) and all(x#2, y->#y===n)
+    then map(R^(-x#1),R^(-x#2),entries m)
+    else m
     )
 toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,x#0)
 

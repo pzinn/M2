@@ -102,7 +102,13 @@ undocumented {(net, Function),(net, InexactField),(net, Constant),
 	  (net, ZZ),
 	  (net, BettiTally),
 	  (net, COMMENT),
-	  (net, HypertextContainer)
+	  (net, HypertextContainer),
+	  (net,Describe),
+	  (net,EngineRing),
+	  (net,MapExpression),
+	  (net,MatrixDegreeExpression),
+	  (net,SheafExpression),
+	  (net,VectorExpression)
 	  }
 
 document {

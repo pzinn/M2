@@ -7,7 +7,7 @@ document {
      Headline => "examine contents of an object",
      Usage => "peek s",
      Inputs => { "s" },
-     Outputs => { { "a net or string that displays the contents of ", TT "s", " to depth 1, bypassing installed methods for displaying the object" } },
+     Outputs => { { "an expression that displays the contents of ", TT "s", " to depth 1, bypassing installed methods for displaying the object" } },
      "This function is used during debugging Macaulay2 programs to examine the internal structure of objects.",
      EXAMPLE {
 	  "set {1,2,3}",
@@ -28,7 +28,7 @@ document {
      Usage => "peek'(n,s)",
      Inputs => { "n", "s" },
      Outputs => {
-	  { "a net that displays the contents of ", TT "s", ", bypassing installed formatting and printing methods to depth ", TT "n" }
+	  { "an expression that displays the contents of ", TT "s", ", bypassing installed formatting and printing methods to depth ", TT "n" }
 	  },
      EXAMPLE {
 	  "s = factor 112",
@@ -36,10 +36,9 @@ document {
       	  "peek'_2 s"
 	  },
      PARA {
-	  "Some types of things have the notion of depth modified slightly to make the entire structure visible at depth 1, as in the following example, which
-	  also shows how to use ", TO "wrap", " with the output from ", TO "peek", "."
+	  "Some types of things have the notion of depth modified slightly to make the entire structure visible at depth 1, as in the following example:"
 	  },
-     EXAMPLE "wrap_70 peek help resolution",
+     EXAMPLE "peek help resolution",
      SeeAlso => "peek"
      }
 
