@@ -367,6 +367,7 @@ export {
 	"SeparateExec",
 	"Sequence",
 	"Set",
+	"SheafExpression",
 	"SheafOfRings",
 	"SizeLimit",
 	"SkewCommutative",

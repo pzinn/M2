@@ -216,6 +216,7 @@ expression Module := M -> (
  )
 toString Module := M -> toString expression M
 net Module := M -> net expression M
+texMath Module := x -> texMath expression x
 
 describe Module := M -> Describe (
      if M.?relations
@@ -228,8 +229,6 @@ describe Module := M -> Describe (
 	 else expression(-degrees M)}
      )
 toExternalString Module := M -> toString describe M
-
-texMath Module := x -> texMath expression x
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

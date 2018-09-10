@@ -543,7 +543,7 @@ MatrixDegreeExpression = new HeaderType of Expression
 MatrixDegreeExpression.synonym = "matrix degree expression"
 expressionValue MatrixDegreeExpression := x -> (
     m := expressionValue x#0;
-    map((ring m)^(x#1),,entries m)
+    map((ring m)^(-x#1),(ring m)^(-x#2),entries m)
     )
 toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,x#0)
 

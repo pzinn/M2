@@ -211,8 +211,8 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
 
 expression Matrix := m -> (
     x := MatrixExpression applyTable(entries m, expression);
-    d := degrees cover target m;
-    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d} else x
+    d := degrees -* cover *- target m;
+    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d, degrees source m} else x
     )
 
 net Matrix := m -> net expression m
