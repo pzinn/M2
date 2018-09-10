@@ -529,6 +529,21 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      "matrix {",
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
+MatrixDegreeExpression = new HeaderType of Expression
+MatrixDegreeExpression.synonym = "matrix degree expression"
+expressionValue MatrixDegreeExpression := x -> (
+    m := expressionValue x#0;
+    map((ring m)^(-x#1),(ring m)^(-x#2),entries m)
+    )
+toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,x#0)
+-----------------------------------------------------------------------------
+VectorExpression = new HeaderType of Expression
+VectorExpression.synonym = "vector expression"
+expressionValue VectorExpression := x -> vector apply(toList x,expressionValue)
+toString'(Function,VectorExpression) := (fmt,v) -> concatenate(
+     "vector {",
+     between(", ",apply(toList v,fmt)),
+     "}" )
 -----------------------------------------------------------------------------
 Table = new HeaderType of Expression
 Table.synonym = "table expression"
@@ -780,7 +795,7 @@ net Subscript := x -> (
      else net x#0 | n^-(height n)
      )
 
-net Superscript := x -> (
+net Superscript := x -> if x#1 === moduleZERO then "0" else (
      n := net x#1;
      if precedence x#0 < prec symbol ^
      then horizontalJoin( bigParenthesize net x#0, n^(1+depth n))
@@ -792,7 +807,7 @@ expectExponent = n -> if height n < 2 then n = (stack( 2 - height n : "", n))^1 
 net Power := v -> (
      x := v#0;
      y := v#1;
-     if y === 1 then net x
+     if y === 1 or y === ONE then net x
      else (
      	  nety := net y;
 	  nety = nety ^ (1 + depth nety);
@@ -937,13 +952,51 @@ net SparseMonomialVectorExpression := v -> (
 
 net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
+compactMatrixForm=true; -- governs net MatrixExpression
+matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Boxes => false, Alignment => Left },
+                                   false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
+
+toCompactString := method(Dispatch => Thing)
+toCompactParen = x -> if class x === Sum then "(" | toCompactString x | ")" else toCompactString x
+toCompactString Thing := toString
+toCompactString Product := x -> if #x === 0 then "1" else concatenate apply(toList x,toCompactParen)
+toCompactString Sum := x -> if #x === 0 then "0" else concatenate apply(#x,i->
+    if i===0 or class x#i === Minus then toCompactString x#i else { "+", toCompactString x#i })
+toCompactString Minus := x -> "-" | toCompactParen x#0
+toCompactString Power := x -> (
+    a:=toCompactParen x#0;
+    b:=toCompactString x#1;
+    if #a =!= 1 then a|"^"|b else a|b
+    )
+toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
+toCompactString Subscript := x -> toCompactString x#0 | "_" | toCompactString x#1
+
 net MatrixExpression := x -> (
-     if # x === 0 or # (x#0) === 0 then "|  |"
-     else (
-	  m := net Table toList x;
-	  side := "|" ^ (height m, depth m);
-	  horizontalJoin(side," ",m," ",side)))
+    if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
+    else (
+	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
+	m := netList(x,matrixDisplayOptions#compactMatrixForm);
+	side := "|" ^ (height m, depth m);
+	horizontalJoin(side," ",m," ",side)
+	)
+     )
 html MatrixExpression := x -> html TABLE toList x
+
+net MatrixDegreeExpression := x -> (
+    if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
+    else horizontalJoin(stack( x#1 / toString ), " ", net x#0)
+    )
+
+net VectorExpression := x -> (
+    if all(x,i->class i===ZeroExpression) then "0"
+     else (
+	 x=apply(toList x,y->{(if compactMatrixForm then toCompactString else net)y});
+	 m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
+	 side := "|" ^ (height m, depth m);
+	 horizontalJoin(side," ",m," ",side)
+	 )
+     )
+html VectorExpression := x -> html TABLE apply(toList x,y->{y})
 
 -----------------------------------------------------------------------------
 -- tex stuff
@@ -1083,7 +1136,15 @@ html Product := v -> (
 	  )
      )
 
-texMath Power := texMath Superscript := v -> if class v === Power and v#1 === 1 then texMath v#0 else (
+texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
+    p := precedence v;
+    x := texMath v#0;
+    y := texMath v#1;
+    if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+    concatenate(x,"^{",y,"}") -- no braces around x
+    )
+
+texMath Superscript := v -> if v#1 === moduleZERO then "0" else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
@@ -1150,13 +1211,23 @@ texMath Table := m -> (
 )
 
 texMath MatrixExpression := m -> (
-     if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
+    if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
+    else if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
 	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
+texMath MatrixDegreeExpression := x -> texMath x#0 -- degrees not displayed atm
+
+texMath VectorExpression := v -> (
+     concatenate(
+	 "\\begin{pmatrix}" | newline,
+	 between(///\\///,apply(toList v,texMath)),
+	 "\\end{pmatrix}"
+	 )
+     )
 
 ctr := 0
 showTex = method()
@@ -1270,12 +1341,20 @@ net Option := net @@ expression
 texMath Option := x -> texMath expression x
 toString Option := toString @@ expression
 
+SheafExpression = new WrapperType of Expression;
+toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
+net SheafExpression := x -> net x#0
+texMath SheafExpression := x -> texMath x#0
+expressionValue SheafExpression := x -> sheaf expressionValue x#0
+
+moduleZERO = new ZeroExpression from { 0, Module }
+
 -- little used at the moment. note that one can't have a symbol <---
 MapExpression = new HeaderType of Expression;
 toString MapExpression := x-> toString(x#0) | " <--- " | toString(x#1)
 net MapExpression := x-> net(x#0) | " <--- " | net(x#1)
 texMath MapExpression := x -> texMath(x#0) | "\\," | (if (#x>2) then "\\xleftarrow{"|texMath(x#2)|"}" else "\\longleftarrow ") | "\\," | texMath(x#1)
-value MapExpression := x -> map toSequence apply(x,expressionValue)
+expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}

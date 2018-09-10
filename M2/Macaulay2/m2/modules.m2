@@ -74,12 +74,13 @@ vector List := v -> vector matrix apply(v, i -> {i});
 Vector = new Type of BasicList				    -- an instance v will have one entry, an n by 1 matrix m, with class v === target m
 Vector.synonym = "vector"
 Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
-net Vector := v -> net super v#0
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
+expression Vector := v -> VectorExpression flatten entries super v#0
+net Vector := v -> net expression v
 toExternalString Vector :=
-toString Vector := v -> concatenate ( "vector ", toString entries super v )
-texMath Vector := v -> texMath super v#0
+toString Vector := v -> toString expression v
+texMath Vector := v -> texMath expression v
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
 leadTerm Vector := v -> new class v from leadTerm v#0
@@ -207,10 +208,14 @@ expression Module := M -> (
      else FunctionApplication { cokernel, expression M.relations }
      else if M.?generators
      then FunctionApplication { image, expression M.generators }
-     else if numgens M === 0 then 0
-     else Superscript {expression ring M, numgens M}
+     else (
+	 n := numgens M;
+	 Superscript {expression ring M, if n =!= 0 then expression n else moduleZERO }
      )
+ )
 toString Module := M -> toString expression M
+net Module := M -> net expression M
+texMath Module := M -> texMath expression M
 
 describe Module := M -> Describe (
      if M.?relations
@@ -219,27 +224,10 @@ describe Module := M -> Describe (
      else FunctionApplication { cokernel, describe M.relations }
      else if M.?generators
      then FunctionApplication { image, describe M.generators }
-     else if numgens M === 0 then 0
-     else Superscript {expression ring M, if all(degrees M, deg -> all(deg, zero)) then numgens M
+     else Superscript {expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
 	 else expression(-degrees M)}
      )
 toExternalString Module := M -> toString describe M
-
-net Module := M -> (
-     -- we want compactMatrixForm to govern the matrix here, also.
-     if M.?relations
-     then if M.?generators
-     then net new FunctionApplication from { subquotient, (net M.generators, net M.relations) }
-     else net new FunctionApplication from { cokernel, net M.relations }
-     else if M.?generators
-     then net new FunctionApplication from { image, net M.generators }
-     else if numgens M === 0 then "0"
-     else (
-	  R := ring M;
-	  net new Superscript from { if hasAttribute(R,ReverseDictionary) then getAttribute(R,ReverseDictionary) else expression R, numgens M}
-	  )
-     )
-texMath Module := x -> texMath expression x
 
 Module == Module := (M,N) -> (
      -- this code might not be the quickest - Mike should check it

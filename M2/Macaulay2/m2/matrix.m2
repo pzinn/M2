@@ -209,9 +209,15 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      u := m * v#0;
      new target u from {u})
 
-expression Matrix := m -> MatrixExpression applyTable(entries m, expression)
-toString Matrix := m -> toString expression m;
-texMath Matrix := m -> if m==0 then "0" else texMath expression m
+expression Matrix := m -> (
+    x := MatrixExpression applyTable(entries m, expression);
+    d := degrees -* cover *- target m;
+    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d, degrees source m} else x
+    )
+
+net Matrix := m -> net expression m
+toString Matrix := m -> toString expression m
+texMath Matrix := m -> texMath expression m
 
 describe Matrix := m -> (
     args:=(describe target m,describe source m);
