@@ -209,9 +209,11 @@ expression Module := M -> (
      else FunctionApplication { cokernel, expression M.relations }
      else if M.?generators
      then FunctionApplication { image, expression M.generators }
-     else if numgens M === 0 then 0 -- NO!
-     else Superscript {expression ring M, numgens M}
+     else (
+	 n := numgens M;
+	 Superscript {expression ring M, if n =!= 0 then expression n else moduleZERO }
      )
+ )
 toString Module := M -> toString expression M
 net Module := M -> net expression M
 
@@ -222,8 +224,7 @@ describe Module := M -> Describe (
      else FunctionApplication { cokernel, describe M.relations }
      else if M.?generators
      then FunctionApplication { image, describe M.generators }
-     else if numgens M === 0 then 0
-     else Superscript {expression ring M, if all(degrees M, deg -> all(deg, zero)) then numgens M
+     else Superscript {expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
 	 else expression(-degrees M)}
      )
 toExternalString Module := M -> toString describe M

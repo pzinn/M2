@@ -814,7 +814,7 @@ net Subscript := x -> (
      else net x#0 | n^-(height n)
      )
 
-net Superscript := x -> (
+net Superscript := x -> if x#1 === moduleZERO then "0" else (
      n := net x#1;
      if precedence x#0 < prec symbol ^
      then horizontalJoin( bigParenthesize net x#0, n^(1+depth n))
@@ -826,7 +826,7 @@ expectExponent = n -> if height n < 2 then n = (stack( 2 - height n : "", n))^1 
 net Power := v -> (
      x := v#0;
      y := v#1;
-     if y === 1 then net x
+     if y === 1 or y === ONE then net x
      else (
      	  nety := net y;
 	  nety = nety ^ (1 + depth nety);
@@ -1169,7 +1169,15 @@ html Product := v -> (
 	  )
      )
 
-texMath Power := texMath Superscript := v -> if class v === Power and v#1 === 1 then texMath v#0 else (
+texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
+    p := precedence v;
+    x := texMath v#0;
+    y := texMath v#1;
+    if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+    concatenate(x,"^{",y,"}") -- no braces around x
+    )
+
+texMath Superscript := v -> if v#1 === moduleZERO then "0" else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
@@ -1370,6 +1378,14 @@ expression Option := z -> BinaryOperation { symbol =>, expression z#0, expressio
 net Option := net @@ expression
 texMath Option := x -> texMath expression x
 toString Option := toString @@ expression
+
+SheafExpression = new WrapperType of Expression;
+toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
+net SheafExpression := x -> net x#0
+texMath SheafExpression := x -> texMath x#0
+expressionValue SheafExpression := x -> sheaf expressionValue x#0
+
+moduleZERO = new ZeroExpression from { 0, Module }
 
 -- only used by mathjax.m2 at the moment. note that one can't have a symbol <---
 MapExpression = new HeaderType of Expression;

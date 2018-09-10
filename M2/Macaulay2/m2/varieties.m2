@@ -66,15 +66,14 @@ runLengthEncoding := x -> if #x === 0 then x else (
 
 expression CoherentSheaf := F -> (
      M := module F;
-     if M.?relations or M.?generators then expression M -- needs wrapping
-     else if numgens M === 0 then expression 0 -- needs wrapping
+     if M.?relations or M.?generators or numgens M === 0 then SheafExpression expression M
      else (
 	    X := variety F;
 	    rle := runLengthEncoding (- degrees F);
 	    expr := null;
 	    scan(rle,
 		(n,d) -> (
-		    s := new Superscript from {expression OO_X, n};
+		    s := new Superscript from {expression OO_X, expression n};
 		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize d#0 else toSequence d};
 		    if expr === null then expr = s else expr = expr ++ s;
 		    ));
@@ -84,6 +83,7 @@ expression CoherentSheaf := F -> (
 
 net CoherentSheaf := (F) -> net expression F
 texMath CoherentSheaf := (F) -> texMath expression F
+toString CoherentSheaf := (F) -> toString expression F
 
 CoherentSheaf#{Standard,AfterPrint} = F -> (
      X := variety F;
