@@ -977,7 +977,7 @@ matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpa
                                    false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
 
 -- modified to work with factorized expressions as well
-toCompactString = method(Dispatch => Thing)
+toCompactString := method(Dispatch => Thing)
 toCompactParen = x -> if class x === Sum then "(" | toCompactString x | ")" else toCompactString x
 toCompactString Thing := toString
 toCompactString Product := x -> if #x === 0 then "1" else concatenate apply(toList x,toCompactParen)
