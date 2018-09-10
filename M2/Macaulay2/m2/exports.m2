@@ -1117,6 +1117,8 @@ export {
 	"tensorAssociativity",
 	"terms",
 	"tex",
+	"texMath",
+	"texMathDebug",
 	"then",
 	"threadVariable",
 	"throw",
@@ -1242,9 +1244,7 @@ exportMutable {
 	"recursionLimit",
 	"scriptCommandLine",
 	"stopIfError",
-	"topLevelMode",
-	"texMath",
-	"texMathDebug"
+	"topLevelMode"
 	}
 
 -- Local Variables:

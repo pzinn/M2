@@ -216,7 +216,7 @@ lngamma ZZ := lngamma QQ := lngamma RR := x -> (
      if s == -1 then y + ii * numeric_(precision y) pi else y
      )
 
-expression Constant := c -> expression c#0
+expression Constant := hold
 toString Constant := net Constant := c -> toString c#0
 toExternalString Constant := c -> toString c#0
 numeric Constant := c -> c#1 defaultPrecision

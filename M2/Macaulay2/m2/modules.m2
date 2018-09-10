@@ -204,13 +204,13 @@ numgens Module := M -> (
 expression Module := M -> (
      if M.?relations
      then if M.?generators
-     then FunctionApplication { subquotient, expression (M.generators, M.relations) }
-     else FunctionApplication { cokernel, expression M.relations }
+     then new FunctionApplication from { subquotient, expression (M.generators, M.relations) }
+     else new FunctionApplication from { cokernel, expression M.relations }
      else if M.?generators
-     then FunctionApplication { image, expression M.generators }
+     then new FunctionApplication from { image, expression M.generators }
      else (
 	 n := numgens M;
-	 Superscript {expression ring M, if n =!= 0 then expression n else moduleZERO }
+	 new Superscript from {expression ring M, if n =!= 0 then expression n else moduleZERO }
      )
  )
 toString Module := M -> toString expression M
@@ -220,11 +220,11 @@ texMath Module := M -> texMath expression M
 describe Module := M -> Describe (
      if M.?relations
      then if M.?generators
-     then FunctionApplication { subquotient, (describe M.generators, describe M.relations) }
-     else FunctionApplication { cokernel, describe M.relations }
+     then new FunctionApplication from { subquotient, (describe M.generators, describe M.relations) }
+     else new FunctionApplication from { cokernel, describe M.relations }
      else if M.?generators
-     then FunctionApplication { image, describe M.generators }
-     else Superscript {expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
+     then new FunctionApplication from { image, describe M.generators }
+     else new Superscript from {expression ring M, if all(degrees M, deg -> all(deg, zero)) then expression numgens M
 	 else expression(-degrees M)}
      )
 toExternalString Module := M -> toString describe M
