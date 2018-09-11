@@ -644,8 +644,6 @@ toString'(Function, Adjacent) := toString'(Function, FunctionApplication) := (fm
      p := precedence m;
      fun := m#0;
      args := m#1;
-     if class args === Holder and class args#0 === Sequence then args = args#0;
-     -- sometimes Lists are wrapped, sometimes they aren't
      if class args === Sequence
      then if #args === 1
      then concatenate(fmt fun, "(", fmt args#0, ")")  -- f (1:x)
@@ -669,8 +667,7 @@ net Adjacent := net FunctionApplication := m -> (
      if precedence args > p
      then if pfun >= p
      then (
-	  if instance(args,Array) or (class args === Holder and instance(args#0,Array)) or div or class netfun === Net and netfun#?0 and width netfun > width netfun#0
-	  -- sometimes Lists are wrapped, sometimes they aren't
+	  if instance(args,Array) or div or class netfun === Net and netfun#?0 and width netfun > width netfun#0
 	  then horizontalJoin (netfun, netargs)
 	  else horizontalJoin (netfun, " ", netargs)
 	  )
@@ -686,8 +683,8 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      -- we can finesse further the amount of space than in net
-     if div or instance(args,Array) or (class args === Holder and instance(args#0,Array)) then sep:=""
-     else if instance(args,VisibleList) or (class args === Holder and instance(args#0,VisibleList)) then sep="\\,"
+     if div or instance(args,Array) then sep:=""
+     else if instance(args,VisibleList) then sep="\\,"
      else sep = "\\ ";
      if precedence args > p
      then if pfun >= p
