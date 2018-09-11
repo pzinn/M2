@@ -262,7 +262,7 @@ makeit1 := (opts) -> (
 	  then processTrm trms#0
 	  else new Product from apply(trms, processTrm));
      expression M := x -> (
-	  processTrms rawSparseListFormMonomial x.RawMonomial
+	  hold processTrms rawSparseListFormMonomial x.RawMonomial -- hold needed if single variable
 	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
 	  );
      M.indexSymbols = hashTable apply(M.generatorSymbols,M.generators,(v,x) -> v => x);
