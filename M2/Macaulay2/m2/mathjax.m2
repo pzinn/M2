@@ -51,6 +51,8 @@ Thing#{MathJax,Print} = x -> (
     << endl << oprompt | mathJaxOutputTag | y | mathJaxEndTag << endl;
     )
 
+InexactNumber#{MathJax,Print} = x ->  withFullPrecision ( () -> Thing#{MathJax,Print} x )
+
 -- afterprint <sigh>
 
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
@@ -72,6 +74,8 @@ Describe#{MathJax,AfterPrint} = identity
 
 Ideal#{MathJax,AfterPrint} = Ideal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
 MonomialIdeal#{MathJax,AfterPrint} = MonomialIdeal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
+
+InexactNumber#{MathJax,Print} = x ->  withFullPrecision ( () -> Thing#{MathJax,Print} x )
 
 Module#{MathJax,AfterPrint} = M -> (
      n := rank ambient M;
