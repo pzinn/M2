@@ -395,8 +395,6 @@ Expression * Expression := Product => (x,y) -> new Product from {x,y}
 Expression * Minus := (x,y) -> -(x * y#0)
 Minus * Expression := (x,y) -> -(x#0 * y)
 Minus * Minus := (x,y) -> expression x#0 * expression y#0
-Expression * Thing      := (x,y) -> x * (expression y)
-     Thing * Expression := (x,y) -> (expression x) * y
 Holder     ** OneExpression :=
 Expression ** OneExpression := (x,y) -> x
 OneExpression ** Holder     :=
@@ -411,8 +409,6 @@ Expression Thing      := (x,y) -> x (expression y)
 Expression ** NonAssociativeProduct := prepend
 Holder     ** NonAssociativeProduct := prepend0
 Expression ** Expression := NonAssociativeProduct => (x,y) -> new NonAssociativeProduct from {x,y}
-Expression ** Thing      := (x,y) -> x ** (expression y)
-     Thing ** Expression := (x,y) -> (expression x) ** y
 Holder     / OneExpression :=
 Expression / OneExpression := (x,y) -> x
 Expression / Expression := Divide => (x,y) -> new Divide from {x,y}
@@ -448,13 +444,52 @@ ZZ             ..< InfiniteNumber := (x,y) -> if x < y then (
      -- BinaryOperation{symbol ..<,x,y}
      ) else ()
 
+binaryOperatorFunctions := new HashTable from {
+     symbol * => ((x,y) -> x*y),
+     symbol + => ((x,y) -> x+y),
+     symbol - => ((x,y) -> x-y),
+     symbol / => ((x,y) -> x/y),
+     symbol // => ((x,y) -> x//y),
+     symbol ^ => ((x,y) -> x^y),
+     symbol == => ((x,y) -> x==y),
+     symbol .. => ((x,y) -> x..y),
+     symbol ..< => ((x,y) -> x..<y),
+     symbol % => ((x,y) -> x%y),
+     symbol @ => ((x,y) -> x@y),
+     symbol ==> => ((x,y) -> x==>y),
+     symbol ===> => ((x,y) -> x===>y),
+     symbol <== => ((x,y) -> x<==y),
+     symbol <=== => ((x,y) -> x<===y),
+     symbol <==> => ((x,y) -> x<==>y),
+     symbol |- => ((x,y) -> x|-y),
+     symbol \ => ((x,y) -> x\y),
+     symbol @@ => ((x,y) -> x@@y),
+     symbol & => ((x,y) -> x&y),
+     symbol ? => ((x,y) -> x?y),
+     symbol | => ((x,y) -> x|y),
+     symbol => => ((x,y) -> x=>y),
+     symbol || => ((x,y) -> x||y),
+     symbol << => ((x,y) -> x<<y),
+     symbol >> => ((x,y) -> x>>y),
+     symbol : => ((x,y) -> x:y),
+     symbol ++ => ((x,y) -> x++y),
+     symbol ** => ((x,y) -> x**y),
+     symbol _ => ((x,y) -> x_y),
+     symbol SPACE => ((x,y) -> x y),
+     symbol != => ((x,y) -> x != y),
+     symbol and => ((x,y) -> x and y),
+     symbol or => ((x,y) -> x or y),
+     symbol ^** => ((x,y) -> x^**y)
+     }
+
 scan(flexibleBinaryOperators, op -> (
     f := try Expression#(op,Expression,Expression) else installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y});
-    installMethod(op,Expression,Thing,(x,y) -> f(x,expression y));
-    installMethod(op,Thing,Expression,(x,y) -> f(expression x,y));
     installMethod(op,Expression,Holder,(x,y) -> f(x,y#0));
     installMethod(op,Holder,Expression,(x,y) -> f(x#0,y));
     installMethod(op,Holder,Holder,(x,y) -> f(x#0,y#0));
+    g := try binaryOperatorFunctions#op else f; -- subtly different
+    installMethod(op,Expression,Thing,(x,y) ->  g(x,expression y));
+    installMethod(op,Thing,Expression,(x,y) ->  g(expression x,y));
     ))
 
 -----------------------------------------------------------------------------
@@ -521,44 +556,6 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
-
-binaryOperatorFunctions := new HashTable from {
-     symbol * => ((x,y) -> x*y),
-     symbol + => ((x,y) -> x+y),
-     symbol - => ((x,y) -> x-y),
-     symbol / => ((x,y) -> x/y),
-     symbol // => ((x,y) -> x//y),
-     symbol ^ => ((x,y) -> x^y),
-     symbol == => ((x,y) -> x==y),
-     symbol .. => ((x,y) -> x..y),
-     symbol ..< => ((x,y) -> x..<y),
-     symbol % => ((x,y) -> x%y),
-     symbol @ => ((x,y) -> x@y),
-     symbol ==> => ((x,y) -> x==>y),
-     symbol ===> => ((x,y) -> x===>y),
-     symbol <== => ((x,y) -> x<==y),
-     symbol <=== => ((x,y) -> x<===y),
-     symbol <==> => ((x,y) -> x<==>y),
-     symbol |- => ((x,y) -> x|-y),
-     symbol \ => ((x,y) -> x\y),
-     symbol @@ => ((x,y) -> x@@y),
-     symbol & => ((x,y) -> x&y),
-     symbol ? => ((x,y) -> x?y),
-     symbol | => ((x,y) -> x|y),
-     symbol => => ((x,y) -> x=>y),
-     symbol || => ((x,y) -> x||y),
-     symbol << => ((x,y) -> x<<y),
-     symbol >> => ((x,y) -> x>>y),
-     symbol : => ((x,y) -> x:y),
-     symbol ++ => ((x,y) -> x++y),
-     symbol ** => ((x,y) -> x**y),
-     symbol _ => ((x,y) -> x_y),
-     symbol SPACE => ((x,y) -> x y),
-     symbol != => ((x,y) -> x != y),
-     symbol and => ((x,y) -> x and y),
-     symbol or => ((x,y) -> x or y),
-     symbol ^** => ((x,y) -> x^**y)
-     }
 
 spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
 
