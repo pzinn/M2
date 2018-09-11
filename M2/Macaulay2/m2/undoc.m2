@@ -135,16 +135,6 @@ undocumented {
 
 undocumented {
     (hold, Expression),(hold, Thing),
-    (symbol +,Expression,Holder),
-    (symbol +,Holder,Expression),
-    (symbol SPACE,Expression,Holder),
-    (symbol SPACE,Holder,Expression),
-    (symbol _,Expression,Holder),
-    (symbol _,Holder,Expression),
-    (symbol /,Holder,Expression),
-    (symbol ^,Expression,Thing),
-    (symbol +, Sum, Holder),
-    (symbol +, Holder, Holder),
     (symbol +, Sum, ZeroExpression),
     (symbol +, Holder, ZeroExpression),
     (symbol +, Sum, Sum),

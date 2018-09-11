@@ -297,34 +297,11 @@ document {
      there is just one instance, an expression representing the number 1."
      }
 
-undocumented {
-     (symbol SPACE,Expression,Thing), (symbol SPACE,Thing,Expression),
-     (symbol SPACE,Holder,Holder),
-     (symbol *,Expression,Thing), (symbol *,Thing,Expression),
-     (symbol **,Expression,Thing), (symbol **,Thing,Expression),
-     (symbol +,Expression,Thing), (symbol +,Thing,Expression),
-     (symbol -,Expression,Thing), (symbol -,Thing,Expression),
-     (symbol /,Expression,Thing), (symbol /,Thing,Expression),
-     (symbol ==,Expression,Thing), (symbol ==,Thing,Expression),
-     (symbol ^,Thing,Expression),
-     (symbol _,Expression,Thing), 
-     (symbol _,Thing,Expression),
-     (symbol :,Expression,Holder),
-     (symbol :,Expression,Thing),
-     (symbol :,Holder,Expression),
-     (symbol :,Holder,Holder),
-     (symbol :,Thing,Expression),
-     (symbol ..,Expression,Holder),
-     (symbol ..,Expression,Thing),
-     (symbol ..,Holder,Expression),
-     (symbol ..,Holder,Holder),
-     (symbol ..,Thing,Expression)
-     }
-
 undocumented {(value, RingElement),(value, Nothing), (value, IndexedVariableTable)}
 
 document {
-     Key => {Expression, (value,Expression)} | apply(toList value Core#"private dictionary"#"flexibleBinaryOperators", op -> (op,Expression,Expression)),
+     Key => {Expression, (value,Expression)} | flatten apply(toList value Core#"private dictionary"#"expressionBinaryOperators",
+	 op -> {(op,Expression,Expression),(op,Expression,Thing),(op,Thing,Expression),(op,Expression,Holder),(op,Holder,Expression),(op,Holder,Holder)}),
      Headline => "the class of all expressions",
      "An ", EM "expression", " is a symbolic representation of a mathematical expression.  It retains some of the semantics of the mathematical expression,
      as well as enough information to print the expression nicely.  In Macaulay2 expressions have two main functions: they are an intermediate phase in

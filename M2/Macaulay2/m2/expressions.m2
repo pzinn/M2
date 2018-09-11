@@ -362,18 +362,11 @@ Sum + Holder                := append0
 Expression + Sum            := prepend
 Holder     + Sum            := prepend0
 Expression + Expression     := Sum => (x,y) -> new Sum from {x,y}
-Expression + Holder         := (x,y) -> new Sum from {x,y#0}
-Holder     + Expression     := (x,y) -> new Sum from {x#0,y}
-Holder     + Holder         := (x,y) -> new Sum from {x#0,y#0}
-Expression + Thing          := (x,y) -> x + expression y
-     Thing + Expression     := (x,y) -> expression x + y
        - ZeroExpression     := identity
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
            - Holder         := x -> new Minus from {x#0}
 Expression - Expression     := Sum => (x,y) -> x + -y
-Expression - Thing          := (x,y) -> x - expression y
-     Thing - Expression     := (x,y) -> expression x - y
 Product    * OneExpression  :=
 Expression * OneExpression  :=
 Holder     * OneExpression  := (x,y) -> x
@@ -389,9 +382,6 @@ Product * Holder            := append0
 Expression * Product        := prepend
 Holder     * Product        := prepend0
 Expression * Expression := Product => (x,y) -> new Product from {x,y}
-Holder     * Expression := (x,y) -> new Product from {x#0,y}
-Expression * Holder     := (x,y) -> new Product from {x,y#0}
-Holder     * Holder     := (x,y) -> new Product from {x#0,y#0}
 Expression * Minus := (x,y) -> -(x * y#0)
 Minus * Expression := (x,y) -> -(x#0 * y)
 Minus * Minus := (x,y) -> expression x#0 * expression y#0
@@ -405,28 +395,15 @@ NonAssociativeProduct ** NonAssociativeProduct := join
 NonAssociativeProduct ** Expression := append
 NonAssociativeProduct ** Holder     := append0
 Expression Expression := Adjacent => (x,y) -> new Adjacent from {x,y}
-Holder     Expression := (x,y) -> new Adjacent from {x#0,y}
-Expression Holder     := (x,y) -> new Adjacent from {x,y#0}
-Holder     Holder     := (x,y) -> new Adjacent from {x#0,y#0}
      -- are lists expressions, too???
 Expression Thing      := (x,y) -> x (expression y)
      Thing Expression := (x,y) -> (expression x) y
 Expression ** NonAssociativeProduct := prepend
 Holder     ** NonAssociativeProduct := prepend0
 Expression ** Expression := NonAssociativeProduct => (x,y) -> new NonAssociativeProduct from {x,y}
-Holder     ** Expression := (x,y) -> new NonAssociativeProduct from {x#0,y}
-Expression ** Holder     := (x,y) -> new NonAssociativeProduct from {x,y#0}
-Holder     ** Holder     := (x,y) -> new NonAssociativeProduct from {x#0,y#0}
-Expression ** Thing      := (x,y) -> x ** (expression y)
-     Thing ** Expression := (x,y) -> (expression x) ** y
 Holder     / OneExpression :=
 Expression / OneExpression := (x,y) -> x
 Expression / Expression := Divide => (x,y) -> new Divide from {x,y}
-Holder     / Expression := (x,y) -> new Divide from {x#0,y}
-Expression / Holder     := (x,y) -> new Divide from {x,y#0}
-Holder     / Holder     := (x,y) -> new Divide from {x#0,y#0}
-Expression / Thing      := (x,y) -> x / (expression y)
-     Thing / Expression := (x,y) -> (expression x) / y
 not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else -* UnaryOperation{symbol not, e} *- error ("negation of an equation with ", toString (#e), " parts")
 expression ZZ := i -> (
      if i === 0 then ZERO
@@ -443,59 +420,80 @@ ZeroExpression ^ Holder     :=
 ZeroExpression ^ Expression := (x,y) -> ZERO
 ZeroExpression ^ ZeroExpression := (x,y) -> ONE
 Expression ^ Expression := Power => (x,y) -> Power{x,y}
-Holder     ^ Expression := (x,y) -> Power{x#0,y}
-Expression ^ Holder     := (x,y) -> Power{x,y#0}
-Holder     ^ Holder     := (x,y) -> Power{x#0,y#0}
-Expression ^ Thing      := (x,y) -> x ^ (expression y)
-     Thing ^ Expression := (x,y) -> (expression x) ^ y
 Expression _ Expression := Subscript => (x,y) -> Subscript{x,y}
-Holder     _ Expression := (x,y) -> Subscript{x#0,y}
-Expression _ Holder     := (x,y) -> Subscript{x,y#0}
-Holder     _ Holder     := (x,y) -> Subscript{x#0,y#0}
-Expression _ Thing      := (x,y) -> x _ (expression y)
-     Thing _ Expression := (x,y) -> (expression x) _ y
 
-Expression : Expression := (x,y) -> BinaryOperation{symbol :,x,y}
-Holder     : Expression := (x,y) -> BinaryOperation{symbol :,x#0,y}
-Expression     : Holder := (x,y) -> BinaryOperation{symbol :,x,y#0}
-Holder         : Holder := (x,y) -> BinaryOperation{symbol :,x#0,y#0}
-Thing      : Expression := (x,y) -> BinaryOperation{symbol :,x,y}
-Expression     :  Thing := (x,y) -> BinaryOperation{symbol :,x,y}
-
-Holder     .. Expression := (x,y) -> BinaryOperation{symbol ..,x#0,y}
-Expression     .. Holder := (x,y) -> BinaryOperation{symbol ..,x,y#0}
-Holder         .. Holder := (x,y) -> BinaryOperation{symbol ..,x#0,y#0}
 InfiniteNumber .. InfiniteNumber :=
 InfiniteNumber .. ZZ             :=
 ZZ             .. InfiniteNumber := (x,y) -> if x < y then (
      error "infinite range requested";
      -- BinaryOperation{symbol ..,x,y}
      ) else ()
-Expression     .. Expression     :=
-Thing          .. Expression     :=
-Expression     .. Thing          := (x,y) -> BinaryOperation{symbol ..,x,y}
 
-Holder     ..< Expression := (x,y) -> BinaryOperation{symbol ..<,x#0,y}
-Expression     ..< Holder := (x,y) -> BinaryOperation{symbol ..<,x,y#0}
-Holder         ..< Holder := (x,y) -> BinaryOperation{symbol ..<,x#0,y#0}
 InfiniteNumber ..< InfiniteNumber :=
 InfiniteNumber ..< ZZ             :=
 ZZ             ..< InfiniteNumber := (x,y) -> if x < y then (
      error "infinite range requested";
      -- BinaryOperation{symbol ..<,x,y}
      ) else ()
-Expression     ..< Expression     :=
-Thing          ..< Expression     :=
-Expression     ..< Thing          := (x,y) -> BinaryOperation{symbol ..<,x,y}
 
-scan(flexibleBinaryOperators, op ->
-    if not Expression#?(op,Expression,Expression) then
-    installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y})
-    )
+binaryOperatorFunctions := new HashTable from {
+     symbol * => ((x,y) -> x*y),
+     symbol + => ((x,y) -> x+y),
+     symbol - => ((x,y) -> x-y),
+     symbol / => ((x,y) -> x/y),
+     symbol // => ((x,y) -> x//y),
+     symbol ^ => ((x,y) -> x^y),
+     symbol == => ((x,y) -> x==y),
+     symbol .. => ((x,y) -> x..y),
+     symbol ..< => ((x,y) -> x..<y),
+     symbol % => ((x,y) -> x%y),
+     symbol @ => ((x,y) -> x@y),
+     symbol ==> => ((x,y) -> x==>y),
+     symbol ===> => ((x,y) -> x===>y),
+     symbol <== => ((x,y) -> x<==y),
+     symbol <=== => ((x,y) -> x<===y),
+     symbol <==> => ((x,y) -> x<==>y),
+     symbol |- => ((x,y) -> x|-y),
+     symbol \ => ((x,y) -> x\y),
+     symbol @@ => ((x,y) -> x@@y),
+     symbol & => ((x,y) -> x&y),
+     symbol ? => ((x,y) -> x?y),
+     symbol | => ((x,y) -> x|y),
+     symbol => => ((x,y) -> x=>y),
+     symbol || => ((x,y) -> x||y),
+     symbol << => ((x,y) -> x<<y),
+     symbol >> => ((x,y) -> x>>y),
+     symbol : => ((x,y) -> x:y),
+     symbol ++ => ((x,y) -> x++y),
+     symbol ** => ((x,y) -> x**y),
+     symbol _ => ((x,y) -> x_y),
+     symbol SPACE => ((x,y) -> x y),
+     symbol != => ((x,y) -> x != y),
+     symbol and => ((x,y) -> x and y),
+     symbol or => ((x,y) -> x or y),
+     symbol ^** => ((x,y) -> x^**y)
+     }
+
+expressionBinaryOperators =
+{symbol and, symbol <==, symbol ^**, symbol ^, symbol ==>, symbol _,
+    symbol ==, symbol ++, symbol =>, symbol <===, symbol <==>, symbol or,
+    symbol %, symbol SPACE, symbol &, symbol *, symbol +,
+    symbol -, symbol |-, symbol :, symbol !=, symbol |, symbol ..<,
+    symbol @@, symbol @, symbol **, symbol .., symbol ^^,
+    symbol ||, symbol ===>}
+
+scan(expressionBinaryOperators, op -> (
+    f := try Expression#(op,Expression,Expression) else installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y});
+    installMethod(op,Expression,Holder,(x,y) -> f(x,y#0));
+    installMethod(op,Holder,Expression,(x,y) -> f(x#0,y));
+    installMethod(op,Holder,Holder,(x,y) -> f(x#0,y#0));
+    g := try binaryOperatorFunctions#op else f; -- subtly different
+    installMethod(op,Expression,Thing,(x,y) ->  g(x,expression y));
+    installMethod(op,Thing,Expression,(x,y) ->  g(expression x,y));
+    ))
 
 -----------------------------------------------------------------------------
 --expressionValue Holder2 := x -> x#1
---expressionValue Holder := x -> x#1
 expressionValue Holder := x -> expressionValue x#0
 expressionValue OneExpression := v -> 1
 expressionValue ZeroExpression := v -> 0
@@ -557,44 +555,6 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 -----------------------------------------------------------------------------
-
-binaryOperatorFunctions := new HashTable from {
-     symbol * => ((x,y) -> x*y),
-     symbol + => ((x,y) -> x+y),
-     symbol - => ((x,y) -> x-y),
-     symbol / => ((x,y) -> x/y),
-     symbol // => ((x,y) -> x//y),
-     symbol ^ => ((x,y) -> x^y),
-     symbol == => ((x,y) -> x==y),
-     symbol .. => ((x,y) -> x..y),
-     symbol ..< => ((x,y) -> x..<y),
-     symbol % => ((x,y) -> x%y),
-     symbol @ => ((x,y) -> x@y),
-     symbol ==> => ((x,y) -> x==>y),
-     symbol ===> => ((x,y) -> x===>y),
-     symbol <== => ((x,y) -> x<==y),
-     symbol <=== => ((x,y) -> x<===y),
-     symbol <==> => ((x,y) -> x<==>y),
-     symbol |- => ((x,y) -> x|-y),
-     symbol \ => ((x,y) -> x\y),
-     symbol @@ => ((x,y) -> x@@y),
-     symbol & => ((x,y) -> x&y),
-     symbol ? => ((x,y) -> x?y),
-     symbol | => ((x,y) -> x|y),
-     symbol => => ((x,y) -> x=>y),
-     symbol || => ((x,y) -> x||y),
-     symbol << => ((x,y) -> x<<y),
-     symbol >> => ((x,y) -> x>>y),
-     symbol : => ((x,y) -> x:y),
-     symbol ++ => ((x,y) -> x++y),
-     symbol ** => ((x,y) -> x**y),
-     symbol _ => ((x,y) -> x_y),
-     symbol SPACE => ((x,y) -> x y),
-     symbol != => ((x,y) -> x != y),
-     symbol and => ((x,y) -> x and y),
-     symbol or => ((x,y) -> x or y),
-     symbol ^** => ((x,y) -> x^**y)
-     }
 
 spacedOps := set { symbol =>, symbol and, symbol or, symbol ++ }
 
