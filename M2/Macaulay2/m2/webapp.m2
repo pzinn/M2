@@ -1,7 +1,5 @@
-htmlAltLiteralTable := hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
-htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTable#?c then htmlAltLiteralTable#c else c)
+-- Paul Zinn-Justin 2018
 
--- now the web app stuff per se
 -- texOrHtml Thing produces some valid html code with possible tex code in \( \)
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
@@ -19,10 +17,10 @@ texWrap := x -> concatenate("\\(",x,"\\)") -- breaks texOrHtml compatibility (Ka
 texOrHtml Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
-texOrHtml Hypertext := html -- !
+texOrHtml Hypertext := html
 -- the % is relative to line-height
 texOrHtml Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
-texOrHtml String := x -> concatenate("<pre>", htmlAltLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+texOrHtml String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 texOrHtml Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
