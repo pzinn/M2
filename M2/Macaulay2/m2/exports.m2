@@ -19,8 +19,8 @@ export {
 	"genericUpperMatrix",
 	"genericLowerMatrix",
 -- end experimental
-	"MathJax",
-	"mathJax",
+	"WebApp",
+	"texOrHtml",
 	"Describe",
 	"!",
 	"!=",

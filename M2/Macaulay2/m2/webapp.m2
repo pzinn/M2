@@ -1,23 +1,23 @@
--- now the mathJax stuff per se
--- mathJax Thing produces some valid html code with possible tex code in \( \)
--- topLevelMode=MathJax produces that plus possible pure text coming from the system
+-- now the web app stuff per se
+-- texOrHtml Thing produces some valid html code with possible tex code in \( \)
+-- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
-(mathJaxEndTag,            -- closing tag
-    mathJaxHtmlTag,        -- indicates what follows is HTML
-    mathJaxOutputTag,      -- it's html but it's output
-    mathJaxInputTag,       -- it's text but it's input
-    mathJaxInputContdTag,  -- text, continuation of input
-    mathJaxTextTag):=      -- other text
+(webAppEndTag,            -- closing tag
+    webAppHtmlTag,        -- indicates what follows is HTML
+    webAppOutputTag,      -- it's html but it's output
+    webAppInputTag,       -- it's text but it's input
+    webAppInputContdTag,  -- text, continuation of input
+    webAppTextTag):=      -- other text
 apply((17,18,19,20,28,30),ascii)
--- what follows probably needs simplifying -- we're trying not to code stuff inside mathjax tags
+-- what follows probably needs simplifying -- we're trying not to code stuff inside web app tags
 texAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
     c -> first(if texAltLiteralTable#?c and #open === 0 then texAltLiteralTable#c else c,
 	if #open > 0 then (
-	    if (last open === mathJaxHtmlTag or last open === mathJaxOutputTag or last open === mathJaxTextTag) and c === mathJaxEndTag then open = drop(open,-1)
-	    else if (last open === mathJaxInputTag or last open === mathJaxInputContdTag) and c === "\n" then open = drop(open,-1);
+	    if (last open === webAppHtmlTag or last open === webAppOutputTag or last open === webAppTextTag) and c === webAppEndTag then open = drop(open,-1)
+	    else if (last open === webAppInputTag or last open === webAppInputContdTag) and c === "\n" then open = drop(open,-1);
 	),
-	if c === mathJaxHtmlTag or c === mathJaxOutputTag or c === mathJaxInputTag or c === mathJaxInputContdTag or c === mathJaxTextTag then open = append(open,c)
+	if c === webAppHtmlTag or c === webAppOutputTag or c === webAppInputTag or c === webAppInputContdTag or c === webAppTextTag then open = append(open,c)
 	)
     )
 )
@@ -28,93 +28,93 @@ htmlAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
     c -> first(if htmlAltLiteralTable#?c and #open === 0 then htmlAltLiteralTable#c else c,
 	if #open > 0 then (
-	    if (last open === mathJaxHtmlTag or last open === mathJaxOutputTag or last open === mathJaxTextTag) and c === mathJaxEndTag then open = drop(open,-1)
-	    else if (last open === mathJaxInputTag or last open === mathJaxInputContdTag) and c === "\n" then open = drop(open,-1);
+	    if (last open === webAppHtmlTag or last open === webAppOutputTag or last open === webAppTextTag) and c === webAppEndTag then open = drop(open,-1)
+	    else if (last open === webAppInputTag or last open === webAppInputContdTag) and c === "\n" then open = drop(open,-1);
 	),
-	if c === mathJaxHtmlTag or c === mathJaxOutputTag or c === mathJaxInputTag or c === mathJaxInputContdTag or c === mathJaxTextTag then open = append(open,c)
+	if c === webAppHtmlTag or c === webAppOutputTag or c === webAppInputTag or c === webAppInputContdTag or c === webAppTextTag then open = append(open,c)
 	)
     )
 )
 
---texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for mathJax compatibility
-texWrap := x -> concatenate("\\(",x,"\\)") -- breaks mathJax compatibility (KaTeX mode!) but helps with other situations
+--texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for texOrHtml compatibility
+texWrap := x -> concatenate("\\(",x,"\\)") -- breaks texOrHtml compatibility (KaTeX mode!) but helps with other situations
 
-mathJax Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for MathJax we use tex (as opposed to html)
+texOrHtml Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for WebApp we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
-mathJax Hypertext := html -- !
+texOrHtml Hypertext := html -- !
 -- the % is relative to line-height
-mathJax Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
-mathJax String := x -> concatenate("<pre>", htmlAltLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
-mathJax Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
+texOrHtml Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
+texOrHtml String := x -> concatenate("<pre>", htmlAltLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+texOrHtml Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
-	  else toString k | " : " | mathJax v
+	  else toString k | " : " | texOrHtml v
 	  ) | "<br/>"), "</pre></span>")
--- some expressions can be mathJaxed directly w/o reference to texMath
-mathJax Holder := x -> mathJax x#0
-mathJax Describe := x -> mathJax x#0
+-- some expressions can be html'ed directly w/o reference to texMath
+texOrHtml Holder := x -> texOrHtml x#0
+texOrHtml Describe := x -> texOrHtml x#0
 -- kind of an expression analogue of Net
-mathJax ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, mathJax), "</span>")
---mathJax RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, mathJax), "</span>")
-mathJax RowExpression := x -> concatenate("<span>",apply(toList x, mathJax),"</span>")
+texOrHtml ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, texOrHtml), "</span>")
+--texOrHtml RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, texOrHtml), "</span>")
+texOrHtml RowExpression := x -> concatenate("<span>",apply(toList x, texOrHtml),"</span>")
 
 -*
--- temporary HACK: a new Type should be created for examples since they won't literally be PRE in mathJax mode
--- either that or must rewrite the whole structure of mathJax = html, or both
+-- temporary HACK: a new Type should be created for examples since they won't literally be PRE in texOrHtml mode
+-- either that or must rewrite the whole structure of texOrHtml = html, or both
 *-
 
 html PRE := x -> concatenate(
      "<pre>",
-     if topLevelMode === MathJax then (mathJaxTextTag, x, "\n", mathJaxEndTag) else demark(newline, apply(lines concatenate x, htmlLiteral)), -- note the extra \n to make sure input is ended
+     if topLevelMode === WebApp then (webAppTextTag, x, "\n", webAppEndTag) else demark(newline, apply(lines concatenate x, htmlLiteral)), -- note the extra \n to make sure input is ended
      "</pre>\n"
      )
 
 -- output routines
 
-ZZ#{MathJax,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | mathJaxInputTag
-ZZ#{MathJax,InputContinuationPrompt} = lineno -> mathJaxInputContdTag
+ZZ#{WebApp,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | webAppInputTag
+ZZ#{WebApp,InputContinuationPrompt} = lineno -> webAppInputContdTag
 
-Thing#{MathJax,BeforePrint} = identity -- not sure what to put there
+Thing#{WebApp,BeforePrint} = identity -- not sure what to put there
 
-Nothing#{MathJax,Print} = identity
+Nothing#{WebApp,Print} = identity
 
-Thing#{MathJax,Print} = x -> (
+Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    mathJaxBegin();
-    y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    mathJaxEnd();
-    << endl << oprompt | mathJaxOutputTag | y | mathJaxEndTag << endl;
+    webAppBegin();
+    y := texOrHtml x; -- we compute the texOrHtml now (in case it produces an error)
+    webAppEnd();
+    << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
     )
 
-InexactNumber#{MathJax,Print} = x ->  withFullPrecision ( () -> Thing#{MathJax,Print} x )
+InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
 
 -- afterprint <sigh>
 
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
-    mathJaxBegin();
+    webAppBegin();
     z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
-    mathJaxEnd();
-    << endl << on() | " : " | mathJaxHtmlTag | texWrap z | mathJaxEndTag << endl;
+    webAppEnd();
+    << endl << on() | " : " | webAppHtmlTag | texWrap z | webAppEndTag << endl;
     )
 
-Thing#{MathJax,AfterPrint} = x -> texAfterPrint class x;
+Thing#{WebApp,AfterPrint} = x -> texAfterPrint class x;
 
-Boolean#{MathJax,AfterPrint} = identity
+Boolean#{WebApp,AfterPrint} = identity
 
-Expression#{MathJax,AfterPrint} = x -> texAfterPrint (Expression," of class ",class x)
+Expression#{WebApp,AfterPrint} = x -> texAfterPrint (Expression," of class ",class x)
 
-Describe#{MathJax,AfterPrint} = identity
+Describe#{WebApp,AfterPrint} = identity
 
-Ideal#{MathJax,AfterPrint} = Ideal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
-MonomialIdeal#{MathJax,AfterPrint} = MonomialIdeal#{MathJax,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
+Ideal#{WebApp,AfterPrint} = Ideal#{WebApp,AfterNoPrint} = (I) -> texAfterPrint (Ideal," of ",ring I)
+MonomialIdeal#{WebApp,AfterPrint} = MonomialIdeal#{WebApp,AfterNoPrint} = (I) -> texAfterPrint (MonomialIdeal," of ",ring I)
 
-InexactNumber#{MathJax,AfterPrint} = x -> texAfterPrint (class x," (of precision ",precision x,")")
+InexactNumber#{WebApp,AfterPrint} = x -> texAfterPrint (class x," (of precision ",precision x,")")
 
-Module#{MathJax,AfterPrint} = M -> (
+Module#{WebApp,AfterPrint} = M -> (
      n := rank ambient M;
      texAfterPrint(ring M,"-module",
      if M.?generators then
@@ -129,17 +129,17 @@ Module#{MathJax,AfterPrint} = M -> (
      )
 
 
-Matrix#{MathJax,AfterPrint} = Matrix#{MathJax,AfterNoPrint} = f -> texAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
+Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} = f -> texAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
 
-Net#{MathJax,AfterPrint} = identity
+Net#{WebApp,AfterPrint} = identity
 
-Nothing#{MathJax,AfterPrint} = identity
+Nothing#{WebApp,AfterPrint} = identity
 
-RingMap#{MathJax,AfterPrint} = RingMap#{MathJax,AfterNoPrint} = f -> texAfterPrint (class f," ",new MapExpression from {target f,source f})
+RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> texAfterPrint (class f," ",new MapExpression from {target f,source f})
 
-Sequence#{MathJax,AfterPrint} = Sequence#{MathJax,AfterNoPrint} = identity
+Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
 
-CoherentSheaf#{MathJax,AfterPrint} = F -> (
+CoherentSheaf#{WebApp,AfterPrint} = F -> (
      X := variety F;
      M := module F;
      n := rank ambient F;
@@ -156,12 +156,12 @@ CoherentSheaf#{MathJax,AfterPrint} = F -> (
      )
  )
 
-ZZ#{MathJax,AfterPrint} = identity
+ZZ#{WebApp,AfterPrint} = identity
 
 -- experimental
-print = x -> if topLevelMode === MathJax then (
-    y := mathJax x; -- we compute the mathJax now (in case it produces an error)
-    << mathJaxHtmlTag | y | mathJaxEndTag << endl;
+print = x -> if topLevelMode === WebApp then (
+    y := texOrHtml x; -- we compute the texOrHtml now (in case it produces an error)
+    << webAppHtmlTag | y | webAppEndTag << endl;
     ) else ( << net x << endl; )
 
 -- bb letters
@@ -208,13 +208,13 @@ texMathColorWrapper := x -> (
     if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
     -- buggy, see https://github.com/Khan/KaTeX/issues/1679
     )
-mathJaxBegin = () -> (
+webAppBegin = () -> (
     if texMathDebug then
     global texMath <- texMathDebugWrapper
     else
     global texMath <- texMathColorWrapper
     )
-mathJaxEnd = () -> (
+webAppEnd = () -> (
     global texMath <- texMathBackup;
     )
 

@@ -321,7 +321,7 @@ svg GfxHtml := g -> (
     (lookup(svg,GfxText)) g
     )
 
-mathJax GfxObject := html
+texOrHtml GfxObject := html
 -- the 0.4 is approximate and should correspond to depth vs height of current font
 texMath GfxObject := x -> (
     h := html x; -- this way height is computed
@@ -379,9 +379,9 @@ html GfxObject := g -> (
 	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 	    );
 	axeslabels = gfx(
-	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#0 else "\\(x\\)" , GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then mathJax g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)}
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then texOrHtml g.GfxAxes#0 else "\\(x\\)" , GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then texOrHtml g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then texOrHtml g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)}
 -*
 	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
 	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
