@@ -423,7 +423,7 @@ expression ZZ := i -> (
 Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
 Holder     ^ ZeroExpression :=
-Expression ^ ZeroExpression := (x,y) -> ONE
+Expression ^ ZeroExpression := (x,y) -> ONE -- potentially dangerous (modules?)
 ZeroExpression ^ Holder     :=
 ZeroExpression ^ Expression := (x,y) -> ZERO
 ZeroExpression ^ ZeroExpression := (x,y) -> ONE
@@ -482,7 +482,15 @@ binaryOperatorFunctions := new HashTable from {
      symbol ^** => ((x,y) -> x^**y)
      }
 
-scan(flexibleBinaryOperators, op -> (
+expressionBinaryOperators =
+{symbol and, symbol <==, symbol ^**, symbol ^, symbol ==>, symbol _,
+    symbol ==, symbol ++, symbol =>, symbol <===, symbol <==>, symbol or,
+    symbol %, symbol SPACE, symbol &, symbol *, symbol +,
+    symbol -, symbol |-, symbol :, symbol !=, symbol |, symbol ..<,
+    symbol @@, symbol @, symbol **, symbol .., symbol ^^,
+    symbol ||, symbol ===>}
+
+scan(expressionBinaryOperators, op -> (
     f := try Expression#(op,Expression,Expression) else installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y});
     installMethod(op,Expression,Holder,(x,y) -> f(x,y#0));
     installMethod(op,Holder,Expression,(x,y) -> f(x#0,y));
