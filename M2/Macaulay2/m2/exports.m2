@@ -1117,7 +1117,6 @@ export {
 	"terms",
 	"tex",
 	"texMath",
-	"texMathDebug",
 	"texOrHtml",
 	"then",
 	"threadVariable",
@@ -1244,7 +1243,8 @@ exportMutable {
 	"recursionLimit",
 	"scriptCommandLine",
 	"stopIfError",
-	"topLevelMode"
+	"topLevelMode",
+	"texMathDebug"
 	}
 
 -- Local Variables:

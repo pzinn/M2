@@ -11,8 +11,7 @@
     webAppTextTag):=      -- other text
 apply((17,18,19,20,28,30),ascii)
 
---texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for texOrHtml compatibility
-texWrap := x -> concatenate("\\(",x,"\\)") -- breaks texOrHtml compatibility (KaTeX mode!) but helps with other situations
+texWrap := x -> concatenate("\\(",x,"\\)")
 
 texOrHtml Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
 
@@ -27,12 +26,12 @@ texOrHtml Descent := x -> concatenate("<span style=\"display:inline-table\"><pre
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | texOrHtml v
 	  ) | "<br/>"), "</pre></span>")
--- some expressions can be html'ed directly w/o reference to texMath
+-- some expressions can be texOrHtml'ed directly w/o reference to texMath
 texOrHtml RowExpression := x -> concatenate("<span>",apply(toList x, texOrHtml),"</span>")
 texOrHtml Holder := x -> texOrHtml x#0
 texOrHtml Describe := x -> texOrHtml x#0
 
--- output routines
+-- output routines for WebApp mode
 
 ZZ#{WebApp,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | webAppInputTag
 ZZ#{WebApp,InputContinuationPrompt} = lineno -> webAppInputContdTag
@@ -119,7 +118,7 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 
 ZZ#{WebApp,AfterPrint} = identity
 
--- bb letters
+-- bb letters (to be removed before PR)
 export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ℚ=QQ
 ℝ=RR
@@ -127,7 +126,7 @@ export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ℂ=CC
 ∞=infinity
 
--- the debug hack (temporary, to be removed before PR)
+-- the debug hack (temporary, to be removed before PR -- don't forget webAppBegin/End above)
 texMathDebug=false;
 texMathBackup := texMath
 texMathDebugWrapper := x -> (
