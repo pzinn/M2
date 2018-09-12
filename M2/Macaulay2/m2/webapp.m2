@@ -36,8 +36,8 @@ htmlAltLiteral = s -> ( open:= {};
     )
 )
 
---texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for texOrHtml compatibility
-texWrap := x -> concatenate("\\(",x,"\\)") -- breaks texOrHtml compatibility (KaTeX mode!) but helps with other situations
+--texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for MathJax compatibility
+texWrap := x -> concatenate("\\(",x,"\\)") -- breaks MathJax compatibility (KaTeX mode!) but helps with other situations
 
 texOrHtml Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for WebApp we use tex (as opposed to html)
 
@@ -52,7 +52,7 @@ texOrHtml Descent := x -> concatenate("<span style=\"display:inline-table\"><pre
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | texOrHtml v
 	  ) | "<br/>"), "</pre></span>")
--- some expressions can be html'ed directly w/o reference to texMath
+-- some expressions can be texOrHtml'ed directly w/o reference to texMath
 texOrHtml Holder := x -> texOrHtml x#0
 texOrHtml Describe := x -> texOrHtml x#0
 -- kind of an expression analogue of Net
