@@ -307,7 +307,7 @@ svg GfxText := g -> (
     )
 
 
-mathJax GfxObject := html
+texOrHtml GfxObject := html
 -- the 0.4 is approximate and should correspond to depth vs height of current font
 texMath GfxObject := x -> (
     h := html x; -- this way height is computed

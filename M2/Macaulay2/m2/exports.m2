@@ -1,9 +1,6 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
-    "MathJax",
-    "mathJax",
-    "Describe",
 	"!",
 	"!=",
 	"#",
@@ -122,6 +119,7 @@ export {
 	"Density",
 	"Descending",
 	"Descent",
+	"Describe",
 	"Description",
 	"Dictionary",
 	"Dispatch",
@@ -418,6 +416,7 @@ export {
 	"VerticalSpace",
 	"VirtualTally",
 	"VisibleList",
+	"WebApp",
 	"Weights",
 	"WeylAlgebra",
 	"Wikipedia",
@@ -1119,6 +1118,7 @@ export {
 	"tex",
 	"texMath",
 	"texMathDebug",
+	"texOrHtml",
 	"then",
 	"threadVariable",
 	"throw",

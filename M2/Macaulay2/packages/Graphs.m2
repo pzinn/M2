@@ -416,7 +416,7 @@ showTikZ Digraph := opt -> G -> (
      get output
      )
 
-mathJax Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
+html Digraph := texOrHtml Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
      dotfilename := temporaryFileName() | ".dot";
      writeDotFile(dotfilename, G);
      svgfilename := temporaryFileName() | ".svg";
