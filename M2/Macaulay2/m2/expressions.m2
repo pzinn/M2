@@ -482,9 +482,9 @@ binaryOperatorFunctions := new HashTable from {
      symbol ^** => ((x,y) -> x^**y)
      }
 
-expressionBinaryOperators =
+expressionBinaryOperators = -- excludes built-in functions, cf typicalvalues.m2, and a few more such as functional
 {symbol and, symbol <==, symbol ^**, symbol ^, symbol ==>, symbol _,
-    symbol ==, symbol ++, symbol =>, symbol <===, symbol <==>, symbol or,
+    symbol ==, symbol ++, symbol <===, symbol <==>, symbol or,
     symbol %, symbol SPACE, symbol &, symbol *, symbol +,
     symbol -, symbol |-, symbol :, symbol !=, symbol |, symbol ..<,
     symbol @@, symbol @, symbol **, symbol .., symbol ^^,
@@ -1196,6 +1196,12 @@ texMath VerticalList := s -> concatenate(
     ,"\\end{aligned}\\right\\}"
     )
 
+texMath NumberedVerticalList := s -> concatenate(
+    "\\left\\{\\begin{aligned}",
+    between("\\\\",apply(#s,i->i|".\\quad&"|texMath s#i))
+    ,"\\end{aligned}\\right\\}"
+    )
+
 texMath Table := m -> (
     if m#?0 then concatenate(
 	"{\\begin{array}{", #m#0: "c", "}", newline,
@@ -1313,7 +1319,7 @@ Expression#{Standard,AfterPrint} = x -> (
 
 -----------------------------------------------------------------------------
 
-expression VisibleList := v -> new Holder from {apply(v,expression)}
+expression VisibleList := v -> new Holder from {apply(v,unhold @@ expression)}
 expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
 expression Symbol := x -> new Holder from { x }
 expression Function := x -> new Holder from { x }
@@ -1389,6 +1395,12 @@ concatenate flatten (
     "\\right\\}"
     )
 texMath Function := x -> texMath toString x
+texMath MutableList := x -> concatenate (
+    texMath class x,
+    "\\left\\{",
+    if #x > 0 then "\\ldots "|#x|"\\ldots ",
+    ,"\\right\\}"
+    )
 
 -- strings -- compare with hypertext.m2
 texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",

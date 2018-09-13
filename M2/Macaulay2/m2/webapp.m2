@@ -42,6 +42,7 @@ texWrap := x -> concatenate("\\(",x,"\\)") -- breaks MathJax compatibility (KaTe
 texOrHtml Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for WebApp we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
+-- of course ideally we'd redefine html itself
 texOrHtml Hypertext := html -- !
 -- the % is relative to line-height
 texOrHtml Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
@@ -193,16 +194,25 @@ colorTable = new MutableHashTable
 --setColor = (x,c) -> (colorTable#x = colorTable#(unhold expression x) = toString c;) -- slightly overkill
 setColor = (x,c) -> (colorTable#(unhold expression x) = toString c;) -- should be all we need
 
+toExtString := method() -- somewhere between toString and toExternalString <sigh>
+toExtString Thing := toString -- e.g. for a ring!
+toExtString Symbol := toExternalString -- e.g. for a ring element!
+
 texMathDebug=false;
 texMathBackup := texMath
 -- the debug hack
 texMathDebugWrapper := x -> (
-    global texMath <- texMathBackup;
+-*    global texMath <- texMathBackup;
     y := texMathBackup class x;
     global texMath <- texMathDebugWrapper;
---    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}"
-    "\\rawhtml{<span class=\"Macaulay2 "|toString class x|"\">}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}"
+    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}" *-
+    if instance(x,VisibleList) or instance(x,Expression)
+    then "\\rawhtml{<span class=\"M2Meta\" data-type=\""|toString class x|"\">}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}" else (
+	y := expression x;
+	if instance(y,Holder)
+	then "\\rawhtml{<span class=\"M2Meta\" data-content=\""|toExtString x|"\">}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}" else texMath y
     )
+)
 -- the color hack
 texMathColorWrapper := x -> (
     c := try colorTable#x else color x;
