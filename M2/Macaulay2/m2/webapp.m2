@@ -200,7 +200,8 @@ texMathDebugWrapper := x -> (
     global texMath <- texMathBackup;
     y := texMathBackup class x;
     global texMath <- texMathDebugWrapper;
-    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}"
+--    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}"
+    "\\rawhtml{<span class=\"Macaulay2 "|toString class x|"\">}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}"
     )
 -- the color hack
 texMathColorWrapper := x -> (

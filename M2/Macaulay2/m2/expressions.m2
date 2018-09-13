@@ -492,7 +492,7 @@ expressionBinaryOperators =
 
 scan(expressionBinaryOperators, op -> (
     f := try Expression#(op,Expression,Expression) else installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y});
-    installMethod(op,Expression,Holder,(x,y) -> f(x,y#0));
+    installMethod(op,Expression,Holder,(x,y) -> f(x,y#0)); -- or we could just use unhold...
     installMethod(op,Holder,Expression,(x,y) -> f(x#0,y));
     installMethod(op,Holder,Holder,(x,y) -> f(x#0,y#0));
     g := try binaryOperatorFunctions#op else f; -- subtly different
@@ -1334,7 +1334,7 @@ toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- extra stuff
-expression Option := z -> BinaryOperation { symbol =>, expression z#0, expression z#1 }
+expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
 net Option := net @@ expression
 texMath Option := x -> texMath expression x
 toString Option := toString @@ expression
