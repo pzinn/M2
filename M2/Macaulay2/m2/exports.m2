@@ -1116,7 +1116,6 @@ export {
 	"tensorAssociativity",
 	"terms",
 	"tex",
-	"texMath",
 	"texOrHtml",
 	"then",
 	"threadVariable",
@@ -1244,6 +1243,7 @@ exportMutable {
 	"scriptCommandLine",
 	"stopIfError",
 	"topLevelMode",
+	"texMath",
 	"texMathDebug"
 	}
 
