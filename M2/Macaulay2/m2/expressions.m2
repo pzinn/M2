@@ -476,7 +476,7 @@ binaryOperatorFunctions := new HashTable from {
 
 expressionBinaryOperators =
 {symbol and, symbol <==, symbol ^**, symbol ^, symbol ==>, symbol _,
-    symbol ==, symbol ++, symbol =>, symbol <===, symbol <==>, symbol or,
+    symbol ==, symbol ++, symbol <===, symbol <==>, symbol or,
     symbol %, symbol SPACE, symbol &, symbol *, symbol +,
     symbol -, symbol |-, symbol :, symbol !=, symbol |, symbol ..<,
     symbol @@, symbol @, symbol **, symbol .., symbol ^^,
@@ -1166,6 +1166,12 @@ texMath VerticalList := s -> concatenate(
     ,"\\end{aligned}\\right\\}"
     )
 
+texMath NumberedVerticalList := s -> concatenate(
+    "\\left\\{\\begin{aligned}",
+    between("\\\\",apply(#s,i->i|".\\quad&"|texMath s#i))
+    ,"\\end{aligned}\\right\\}"
+    )
+
 texMath Table := m -> (
     if m#?0 then concatenate(
 	"{\\begin{array}{", #m#0: "c", "}", newline,
@@ -1353,6 +1359,12 @@ concatenate flatten (
     "\\right\\}"
     )
 texMath Function := x -> texMath toString x
+texMath MutableList := x -> concatenate (
+    texMath class x,
+    "\\left\\{",
+    if #x > 0 then "\\ldots "|#x|"\\ldots ",
+    ,"\\right\\}"
+    )
 
 -- strings -- compare with hypertext.m2
 texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
