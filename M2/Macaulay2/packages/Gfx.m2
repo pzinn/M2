@@ -327,7 +327,13 @@ texMath GfxObject := x -> (
     h := html x; -- this way height is computed
     "\\rawhtml{" | h | "}{" | toString((x.cache.GfxHeight+0.4)/2.) |"em}{" | toString((x.cache.GfxHeight-0.4)/2.) | "em}"
     )
-expression GfxObject := hold
+
+hasAttribute := value Core#"private dictionary"#"hasAttribute"
+getAttribute := value Core#"private dictionary"#"getAttribute"
+ReverseDictionary := value Core#"private dictionary"#"ReverseDictionary"
+globalAssignment GfxObject
+toString GfxObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,OptionTable)) g
+net GfxObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,OptionTable)) g
 
 gfxIs3d1 GfxPolyline := g -> any(g.GfxPoints, x-> rank class x>2)
 gfxIs3d1 GfxPolygon := lookup(gfxIs3d1, GfxPolyline)

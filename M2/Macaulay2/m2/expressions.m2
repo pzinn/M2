@@ -1319,11 +1319,11 @@ Expression#{Standard,AfterPrint} = x -> (
 
 -----------------------------------------------------------------------------
 
-expression VisibleList := v -> new Holder from {apply(v,unhold @@ expression)}
-expression Thing := x -> new Holder from { if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x }
-expression Symbol := x -> new Holder from { x }
-expression Function := x -> new Holder from { x }
-expression Boolean := x -> new Holder from { x }
+expression VisibleList := v -> new Holder from { apply(v,unhold @@ expression) }
+expression Thing :=
+expression Symbol :=
+expression Function :=
+expression Boolean :=
 expression Type := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
