@@ -224,7 +224,7 @@ describe Matrix := m -> (
     if m.?RingMap then args=append(args,describe m.RingMap);
     args=append(args,expression if m == 0 then 0 else entries m);
     if not all(degree m,zero) then args=append(args,expression(Degree=>degree m));
-    Describe new FunctionApplication from {map,args}
+    Describe (expression map) args
     )
 toExternalString Matrix := m -> toString describe m;
 

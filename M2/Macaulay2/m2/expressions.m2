@@ -70,14 +70,10 @@ value Expression := expressionValue
 Holder = new WrapperType of Expression
 Holder.synonym = "holder"
 
-Describe = new WrapperType of Expression
+Describe = new WrapperType of Holder
 Describe.synonym = "description"
 describe = method()
-describe Thing := x -> Describe expression x
-net Describe := x -> net x#0
-toString Describe := x -> toString x#0
-expressionValue Describe := x -> expressionValue x#0
-texMath Describe := x -> texMath x#0
+describe Thing := x -> Describe unhold expression x
 Describe#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
