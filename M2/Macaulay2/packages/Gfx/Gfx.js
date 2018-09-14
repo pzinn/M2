@@ -52,13 +52,9 @@ function gfxToggleRotation(el,svgid) {
     }
 }
 
-function gfxAnim(el,svgel) {
-    // check if we're still in the document
-}
-
 function gfxAutoRotate(el) {
-    if ((!el.dmatrix)&&(el.dataset.dmatrix))
-    {
+    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
+    if ((!el.dmatrix)&&(el.dataset.dmatrix)) {
 	// parse once and for all
 	el.dmatrix = eval(el.dataset.dmatrix);
     }
@@ -72,12 +68,14 @@ function gfxAutoRotate(el) {
 }
 
 function gfxRotate(el,mat) {
+    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if ((!el.matrix)&&(el.dataset.matrix))
 	el.matrix = eval(el.dataset.matrix); // parse once and for all
     if (!el.matrix) el.matrix = new Matrix(mat); else el.matrix.leftmultiply(mat);
 }
 
 function gfxRecompute(el) {
+    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     // find rotation matrix
     if ((!el.pmatrix)&&(el.dataset.pmatrix))
 	el.pmatrix = eval(el.dataset.pmatrix); // parse once and for all
@@ -166,7 +164,7 @@ function gfxRecompute(el) {
 	el.setAttribute("x2",v2[0]);
 	el.setAttribute("y2",v2[1]);
     }
-    else if (el.tagName=="text") {
+    else if ((el.tagName=="text")||(el.tagName=="foreignObject")) {
 	if (!el.point)
 	    el.point=eval(el.dataset.point);
 	if (!el.fontsize)
@@ -213,6 +211,7 @@ function gfxRecompute(el) {
 }
 
 function gfxReorder(el) {
+    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if ((el.tagName=="svg")||(el.tagName=="g")) {
 	// order children according to distance
 	for (i=1; i<el.children.length; i++) {
