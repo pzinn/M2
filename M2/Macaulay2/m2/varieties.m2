@@ -14,8 +14,8 @@ toExternalString Variety := toString @@ describe
 net Variety := net @@ expression
 texMath Variety := x -> texMath expression x
 expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
-describe AffineVariety := (X) -> Describe FunctionApplication { Spec, expression X.ring }
-describe ProjectiveVariety := (X) -> Describe FunctionApplication { Proj, expression X.ring }
+describe AffineVariety := (X) -> Describe (expression Spec) (expression X.ring)
+describe ProjectiveVariety := (X) -> Describe (expression Proj) (expression X.ring)
 
 char AffineVariety := X -> char ring X
 char ProjectiveVariety := X -> (
@@ -58,7 +58,7 @@ ring SheafOfRings := O -> O.ring
 
 CoherentSheaf = new Type of HashTable
 CoherentSheaf.synonym = "coherent sheaf"
-describe CoherentSheaf := F -> Describe new FunctionApplication from { sheaf, describe F.module }
+describe CoherentSheaf := F -> (expression sheaf) (describe F.module)
 
 runLengthEncoding := x -> if #x === 0 then x else (
      p := join({0}, select(1 .. #x - 1, i -> x#i =!= x#(i-1)), {#x});

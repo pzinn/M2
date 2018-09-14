@@ -351,8 +351,8 @@ FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a ne
 FactPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
 fact FactPolynomialRing := R -> R; -- and that :) and a few more below
-expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else FunctionApplication {fact, expression last R.baseRings}
-describe FactPolynomialRing := R -> Describe FunctionApplication {fact, describe last R.baseRings}
+expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression fact) (expression last R.baseRings)
+describe FactPolynomialRing := R -> Describe (expression fact) (describe last R.baseRings)
 fact FractionField := F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
 fact PolynomialRing := R -> (

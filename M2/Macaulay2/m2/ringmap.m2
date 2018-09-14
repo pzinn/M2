@@ -8,12 +8,12 @@ source RingMap := f -> f.source
 target RingMap := f -> f.target
 raw RingMap := f -> f.RawRingMap
 
-expression RingMap := f -> FunctionApplication { map, expression (target f, source f, first entries matrix f)}
+expression RingMap := f -> (expression map) (expression (target f, source f, first entries matrix f))
 toString RingMap := f -> toString expression f
 net RingMap := f -> net expression f
 texMath RingMap := x -> texMath expression x
 
-describe RingMap := f -> Describe FunctionApplication { map, expression (target f, source f, first entries matrix f)}
+describe RingMap := f -> Describe expression f
 toExternalString RingMap := f -> toString describe f
 -- should do something about the degree map here
 
