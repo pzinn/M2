@@ -47,7 +47,6 @@ undocumented {
 	(texMath, CoherentSheaf),
 	(texMath, Constant),
 	(texMath, Descent),
-	(texMath, Describe),
 	(texMath, EngineRing),
 	(texMath, Function),
 	(texMath, GeneralOrderedMonoid),
