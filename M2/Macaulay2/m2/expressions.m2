@@ -928,7 +928,6 @@ toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x
     if #a =!= 1 then a|"^"|b else a|b
     )
 toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
-toCompactString Subscript := x -> toCompactString x#0 | "_" | toCompactString x#1
 
 net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
