@@ -1,5 +1,6 @@
--- now the web app stuff per se
--- texOrHtml Thing produces some valid html code with possible tex code in \( \)
+-- Paul Zinn-Justin 2018
+
+-- htmlWithTex Thing produces some valid html code with possible TeX code in \( \)
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
 (webAppEndTag,            -- closing tag
@@ -22,48 +23,35 @@ texAltLiteral = s -> ( open:= {};
     )
 )
 
-htmlAltLiteralTable = hashTable { "&" => "&amp;", "<" => "&lt;", "]]>" => "]]&gt;", "\42" => "&quot;", "\\" => "&bsol;" }
---htmlAltLiteral = s -> concatenate apply(characters s, c -> if htmlAltLiteralTable#?c then htmlAltLiteralTable#c else c)
-htmlAltLiteral = s -> ( open:= {};
-    concatenate apply(characters s,
-    c -> first(if htmlAltLiteralTable#?c and #open === 0 then htmlAltLiteralTable#c else c,
-	if #open > 0 then (
-	    if (last open === webAppHtmlTag or last open === webAppOutputTag or last open === webAppTextTag) and c === webAppEndTag then open = drop(open,-1)
-	    else if (last open === webAppInputTag or last open === webAppInputContdTag) and c === "\n" then open = drop(open,-1);
-	),
-	if c === webAppHtmlTag or c === webAppOutputTag or c === webAppInputTag or c === webAppInputContdTag or c === webAppTextTag then open = append(open,c)
-	)
-    )
-)
+htmlWithTexLiteral = s -> replace("\\\\","&bsol;",htmlLiteral s);
 
 --texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for MathJax compatibility
-texWrap := x -> concatenate("\\(",x,"\\)") -- breaks MathJax compatibility (KaTeX mode!) but helps with other situations
+texWrap := x -> concatenate("\\(",x,"\\)")
 
-texOrHtml Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for WebApp we use tex (as opposed to html)
+htmlWithTex Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
--- of course ideally we'd redefine html itself
-texOrHtml Hypertext := html -- !
+htmlWithTex Hypertext := html
 -- the % is relative to line-height
-texOrHtml Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
-texOrHtml String := x -> concatenate("<pre>", htmlAltLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
-texOrHtml Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
+htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:",
+    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlWithTexLiteral x | "<br/>"), "</span></pre>")
+htmlWithTex String := x -> concatenate("<pre>", htmlWithTexLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then toString k -- sucks but no choice
-	  else toString k | " : " | texOrHtml v
+	  else toString k | " : " | htmlWithTex v
 	  ) | "<br/>"), "</pre></span>")
--- some expressions can be texOrHtml'ed directly w/o reference to texMath
-texOrHtml Holder := x -> texOrHtml x#0
-texOrHtml Describe := x -> texOrHtml x#0
+-- some expressions can be htmlWithTex'ed directly w/o reference to texMath
+htmlWithTex Holder := x -> htmlWithTex x#0
 -- kind of an expression analogue of Net
-texOrHtml ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, texOrHtml), "</span>")
---texOrHtml RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, texOrHtml), "</span>")
-texOrHtml RowExpression := x -> concatenate("<span>",apply(toList x, texOrHtml),"</span>")
+htmlWithTex ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, htmlWithTex), "</span>")
+--htmlWithTex RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, htmlWithTex), "</span>")
+htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
 
 -*
--- temporary HACK: a new Type should be created for examples since they won't literally be PRE in texOrHtml mode
--- either that or must rewrite the whole structure of texOrHtml = html, or both
+-- temporary HACK: a new Type should be created for examples since they won't literally be PRE in htmlWithTex mode
+-- either that or must rewrite the whole structure of htmlWithTex = html, or both
 *-
 
 html PRE := x -> concatenate(
@@ -84,7 +72,7 @@ Nothing#{WebApp,Print} = identity
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     webAppBegin();
-    y := texOrHtml x; -- we compute the texOrHtml now (in case it produces an error)
+    y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     webAppEnd();
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
     )
@@ -161,7 +149,7 @@ ZZ#{WebApp,AfterPrint} = identity
 
 -- experimental
 print = x -> if topLevelMode === WebApp then (
-    y := texOrHtml x; -- we compute the texOrHtml now (in case it produces an error)
+    y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     << webAppHtmlTag | y | webAppEndTag << endl;
     ) else ( << net x << endl; )
 

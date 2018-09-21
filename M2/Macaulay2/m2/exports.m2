@@ -732,6 +732,7 @@ export {
 	"homomorphism'",
 	"horizontalJoin",
 	"html",
+	"htmlWithTex",
 	"httpHeaders",
 	"hypertext",
 	"id",

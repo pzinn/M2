@@ -532,17 +532,16 @@ toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 MatrixDegreeExpression = new HeaderType of Expression
-MatrixDegreeExpression.synonym = "matrix degree expression"
+MatrixDegreeExpression.synonym = "matrix with degrees expression"
 expressionValue MatrixDegreeExpression := x -> (
-    m := expressionValue x#0;
+    m := expressionValue MatrixExpression x#0;
     R := ring m;
     n := degreeLength R;
     if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
     then map(R^(-x#1),R^(-x#2),entries m)
     else m
     )
-toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,x#0)
-
+toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,MatrixExpression x#0)
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -960,7 +959,7 @@ html MatrixExpression := x -> html TABLE toList x
 
 net MatrixDegreeExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
-    else horizontalJoin(stack( x#1 / toString ), " ", net x#0)
+    else horizontalJoin(stack( x#1 / toString ), " ", net MatrixExpression x#0)
     )
 
 net VectorExpression := x -> (
@@ -1213,7 +1212,7 @@ texMath MatrixExpression := m -> (
 	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
-texMath MatrixDegreeExpression := x -> texMath x#0 -- degrees not displayed atm
+texMath MatrixDegreeExpression := x -> texMath MatrixExpression x#0 -- degrees not displayed atm
 
 texMath VectorExpression := v -> (
      concatenate(
