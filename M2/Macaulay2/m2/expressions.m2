@@ -55,7 +55,7 @@ expression Expression := identity
 Expression#operator = ""
 
 expressionValue = method(Dispatch => Thing)
-expressionValue BasicList := x -> apply(x,expressionValue)
+expressionValue VisibleList := x -> apply(x,expressionValue)
 expressionValue Thing := identity
 
 -- with the following line we have no way to distinguish between "hold symbol x" and "hold x" when x has a value:
@@ -73,7 +73,7 @@ Holder.synonym = "holder"
 Describe = new WrapperType of Holder
 Describe.synonym = "description"
 describe = method()
-describe Thing := x -> Describe unhold expression x
+describe Thing := x -> new Describe from { unhold expression x }
 Describe#{Standard,AfterPrint} = identity -- all this to suppress "o##: class" thing
 
 -- new Holder2 from VisibleList := (H,x) -> (
@@ -757,7 +757,7 @@ nopar := x -> (
      -- this is like net Sequence except we omit the parentheses.
      horizontalJoin deepSplice (
 	  if #x === 0 then "()"
---	  else if #x === 1 then ("1 : (", net x#0, ")") -- ugly
+	  else if #x === 1 then ("1 : (", net x#0, ")") -- ugly
 	  else (toSequence between(",",apply(x,net)))))
 
 nopars := x -> if class x === Sequence then nopar x else net x
@@ -946,7 +946,6 @@ toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x
     if #a =!= 1 then a|"^"|b else a|b
     )
 toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
-toCompactString Subscript := x -> toCompactString x#0 | "_" | toCompactString x#1
 
 net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
@@ -1351,9 +1350,12 @@ moduleZERO = new ZeroExpression from { 0, Module }
 
 -- only used by mathjax.m2 at the moment. note that one can't have a symbol <---
 MapExpression = new HeaderType of Expression;
-toString MapExpression := x-> toString(x#0) | " <--- " | toString(x#1)
-net MapExpression := x-> net(x#0) | " <--- " | net(x#1)
-texMath MapExpression := x -> texMath(x#0) | "\\," | (if (#x>2) then "\\xleftarrow{"|texMath(x#2)|"}" else "\\longleftarrow ") | "\\," | texMath(x#1)
+toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { map, toSequence x })
+lineOnTop := (s) -> concatenate(width s : "-") || s
+net MapExpression := x-> if #x>2 then horizontalJoin(net x#0, " <--",
+		    lineOnTop net x#2,
+		    "-- ", net x#1) else net x#0 | " <--- " | net x#1
+texMath MapExpression := x -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
