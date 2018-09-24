@@ -1053,17 +1053,12 @@ texMath Sum := v -> (
      if n === 0 then "0"
      else (
 	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->"+"));
-	  seps#0 = seps#n = "";
-	  v = apply(n, i -> (
-		    if class v#i === Minus
-		    then ( seps#i = "-"; v#i#0 )
-		    else v#i ));
+	  seps := apply(toList(1..n-1), i -> if class v#i === Minus then "" else "+");
 	  names := apply(n, i -> (
-		    if precedence v#i <= p
-		    then "(" | texMath v#i | ")"
+		    if precedence v#i <= p and class v#i =!= Minus
+		    then "\\left(" | texMath v#i | "\\right)"
 		    else texMath v#i ));
-	  concatenate mingle ( seps, names )))
+	  concatenate mingle ( names, seps )))
 
 html Sum := v -> (
      n := # v;
@@ -1199,17 +1194,18 @@ texMath Table := m -> (
 	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
 	"\\end{array}}")
 )
-	
+
+texMathTable := lookup(texMath,Table);
 texMath MatrixExpression := m -> (
     if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
-    else if m#?0 then if #m#0>10 then "{\\left(" | texMath(new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
+    else if m#?0 then if #m#0>10 then "{\\left(" | texMathTable m | "\\right)}" -- the extra {} is to discourage line breaks
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
 	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
 	      )
 	  )
-texMath MatrixDegreeExpression := x -> texMath MatrixExpression x#0 -- degrees not displayed atm
+texMath MatrixDegreeExpression := (lookup(texMath,MatrixExpression))@@first -- degrees not displayed atm
 
 texMath VectorExpression := v -> (
      concatenate(
