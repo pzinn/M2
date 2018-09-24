@@ -187,6 +187,7 @@ setColor = (x,c) -> (colorTable#(unhold expression x) = toString c;) -- should b
 toExtString := method() -- somewhere between toString and toExternalString <sigh>
 toExtString Thing := toString -- e.g. for a ring!
 toExtString Symbol := toExternalString -- e.g. for a ring element!
+toExtString String := toExternalString
 
 texMathDebug=false;
 texMathBackup := texMath
@@ -197,10 +198,10 @@ texMathDebugWrapper := x -> (
     global texMath <- texMathDebugWrapper;
     "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}" *-
     if instance(x,VisibleList) or instance(x,Expression)
-    then "\\rawhtml{<span class=\"M2Meta\" data-type=\""|toString class x|"\">}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}" else (
+    then "\\rawhtml{<span class='M2Meta' data-type='"|toString class x|"'>}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}" else (
 	y := expression x;
 	if instance(y,Holder)
-	then "\\rawhtml{<span class=\"M2Meta\" data-content=\""|toExtString x|"\">}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}" else texMath y
+	then "\\rawhtml{<span class='M2Meta' data-content='"|toExtString x|"'>}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}" else texMath y
     )
 )
 -- the color hack
