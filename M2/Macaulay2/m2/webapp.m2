@@ -58,9 +58,9 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
-    webAppBegin();
+--    webAppBegin();
     z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
-    webAppEnd();
+--   webAppEnd();
     << endl << on() | " : " | webAppHtmlTag | texWrap z | webAppEndTag << endl;
     )
 
@@ -133,10 +133,23 @@ export { "ℚ","ℝ","ℤ","ℂ","∞" }
 texMathDebug=false;
 texMathBackup := texMath
 texMathDebugWrapper := x -> (
-    global texMath <- texMathBackup;
-    y := texMathBackup class x;
-    global texMath <- texMathDebugWrapper;
-    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}"
+    if instance(x,VisibleList) or instance(x,Expression) then (
+	global texMath <- texMathBackup;
+	y := texMath class x;
+	global texMath <- texMathDebugWrapper;
+	z := texMathBackup x;
+	)
+    else (
+	e := expression x;
+	if instance(e, Holder) and e#0 === x then (
+	global texMath <- texMathBackup;
+	y = texMath class x;
+	z = texMath x;
+	global texMath <- texMathDebugWrapper;
+	)
+    else return texMathBackup x;
+    );
+    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
     )
 webAppBegin = () -> (
     if texMathDebug then
