@@ -1048,9 +1048,6 @@ html Divide := x -> (
      if precedence x#1 <= p then b = "(" | b | ")";
      a | " / " | b)
 
-html OneExpression := html ZeroExpression :=
-texMath OneExpression := texMath ZeroExpression := toString
-
 texMath Sum := v -> (
      n := # v;
      if n === 0 then "0"
