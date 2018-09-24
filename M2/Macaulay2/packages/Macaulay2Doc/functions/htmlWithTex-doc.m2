@@ -9,7 +9,6 @@ undocumented {
     (htmlWithTex, String),
     (htmlWithTex, Descent),
     (htmlWithTex, Holder),
-    (htmlWithTex, Describe),
     (htmlWithTex, RowExpression)
 	     }
 
