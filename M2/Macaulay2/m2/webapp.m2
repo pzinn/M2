@@ -19,7 +19,7 @@ texWrap := x -> concatenate("\\(",x,"\\)")
 htmlWithTex Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
-htmlWithTex Hypertext := html
+htmlWithTex Hypertext := x -> replace("\\\\","&bsol;",html x);
 -- the % is relative to line-height
 htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", 
     toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlWithTexLiteral x | "<br/>"), "</span></pre>")
