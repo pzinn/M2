@@ -130,13 +130,14 @@ export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ∞=infinity
 
 -- the debug hack (temporary, to be removed before PR -- don't forget webAppBegin/End above)
-texMathDebug=false;
+expressionDebug=false;
 texMathBackup := texMath
-texMathDebugWrapper := x -> (
+htmlWithTexBackup := htmlWithTex;
+expressionDebugWrapper := x -> (
     if instance(x,VisibleList) or instance(x,Expression) then (
 	global texMath <- texMathBackup;
 	y := texMath class x;
-	global texMath <- texMathDebugWrapper;
+	global texMath <- expressionDebugWrapper;
 	z := texMathBackup x;
 	)
     else (
@@ -145,17 +146,21 @@ texMathDebugWrapper := x -> (
 	global texMath <- texMathBackup;
 	y = texMath class x;
 	z = texMath x;
-	global texMath <- texMathDebugWrapper;
+	global texMath <- expressionDebugWrapper;
 	)
     else return texMathBackup x;
     );
     "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
     )
 webAppBegin = () -> (
-    if texMathDebug then
-    global texMath <- texMathDebugWrapper
+    if expressionDebug then (
+	global texMath <- expressionDebugWrapper;
+	global htmlWithTex <- lookup(htmlWithTex,Thing);
+	)
     )
 webAppEnd = () -> (
-    if texMathDebug then
-    global texMath <- texMathBackup;
+    if expressionDebug then (
+	global texMath <- texMathBackup;
+	global htmlWithTex <- htmlWithTexBackup;
+	)
     )
