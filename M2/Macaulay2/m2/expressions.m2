@@ -188,10 +188,12 @@ toString'(Function, Equation) := (fmt,v) -> (
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
 ZERO = new ZeroExpression from {0}
+unhold ZeroExpression := identity
 -----------------------------------------------------------------------------
 OneExpression = new Type of Holder
 OneExpression.synonym = "one expression"
 ONE = new OneExpression from {1}
+unhold OneExpression := identity
 -----------------------------------------------------------------------------
 Parenthesize = new WrapperType of Expression
 Parenthesize.synonym = "possibly parenthesized expression"
@@ -391,6 +393,8 @@ Expression * Expression := Product => (x,y) -> new Product from {x,y}
 Expression * Minus := (x,y) -> -(x * y#0)
 Minus * Expression := (x,y) -> -(x#0 * y)
 Minus * Minus := (x,y) -> expression x#0 * expression y#0
+Expression * Thing      := (x,y) -> x * (expression y)
+     Thing * Expression := (x,y) -> (expression x) * y
 Holder     ** OneExpression :=
 Expression ** OneExpression := (x,y) -> x
 OneExpression ** Holder     :=
