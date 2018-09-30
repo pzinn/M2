@@ -1310,7 +1310,7 @@ Expression#{Standard,AfterPrint} = x -> (
 
 -----------------------------------------------------------------------------
 
-expression VisibleList := v -> new Holder from { apply(v,unhold @@ expression) }
+expression VisibleList := v -> new Holder from { apply(v, expression) }
 expression Thing :=
 expression Symbol :=
 expression Function :=

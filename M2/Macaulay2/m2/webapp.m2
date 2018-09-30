@@ -189,14 +189,11 @@ toExtString Thing := toString -- e.g. for a ring!
 toExtString Symbol := toExternalString -- for indexedvariables, for ex...
 toExtString String := toExternalString
 
-texMathDebug=false;
+expressionDebug=false;
 texMathBackup := texMath
--- the debug hack
-texMathDebugWrapper = x -> (
--*    global texMath <- texMathBackup;
-    y := texMathBackup class x;
-    global texMath <- texMathDebugWrapper;
-    "\\underset{\\tiny " | y | "}{\\boxed{" | texMathBackup x | "}}" *-
+htmlWithTexBackup := htmlWithTex;
+-- the debug hack -- the rawhtml is TEMP, of course
+texMathWrapper = x -> (
     if instance(x,VisibleList) or instance(x,Expression)
     then "\\rawhtml{<span class='M2Meta' data-type='"|toString class x|"'>}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}"
     else (
@@ -204,7 +201,7 @@ texMathDebugWrapper = x -> (
 	if instance(e,Holder) and e#0 === x then (
 	global texMath <- texMathBackup;
 	first("\\rawhtml{<span class='M2Meta' data-content='"|toExtString x|"'>}{0em}{0em}"|texMath x|"\\rawhtml{</span>}{0em}{0em}",
-	    global texMath <- texMathDebugWrapper)
+	    global texMath <- texMathWrapper)
 	)
     else texMathBackup x
     )
@@ -217,13 +214,16 @@ texMathColorWrapper := x -> (
     -- buggy, see https://github.com/Khan/KaTeX/issues/1679
     )
 webAppBegin = () -> (
-    if texMathDebug then
-    global texMath <- texMathDebugWrapper
+    if expressionDebug then (
+	global texMath <- texMathWrapper;
+	global htmlWithTex <- lookup(htmlWithTex,Thing);
+	)
     else
     global texMath <- texMathColorWrapper
     )
 webAppEnd = () -> (
     global texMath <- texMathBackup;
+    global htmlWithTex <- htmlWithTexBackup;
     )
 
 -- completely unrelated -- move somewhere else

@@ -732,7 +732,6 @@ export {
 	"homomorphism'",
 	"horizontalJoin",
 	"html",
-	"htmlWithTex",
 	"httpHeaders",
 	"hypertext",
 	"id",
@@ -1264,7 +1263,8 @@ exportMutable {
 	"stopIfError",
 	"topLevelMode",
 	"texMath",
-	"texMathDebug"
+	"htmlWithTex",
+	"expressionDebug"
 	}
 
 -- Local Variables:
