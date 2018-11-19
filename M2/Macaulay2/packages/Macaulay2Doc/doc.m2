@@ -274,91 +274,6 @@ document {
 	  }
      }
 
-document {
-     Key => HashTable,
-     Headline => "the class of all hash tables",
-     PARA {
-	  "A hash table consists of: a class type, a parent type, and a
-	  set of key-value pairs.  The keys and values can be anything.
-	  The access functions below accept a key and return the
-	  corresponding value.  For details of the mechanism
-	  underlying this, see ", TO "hashing", "."
-	  },
-     PARA{
-	  "One important feature of hash tables that when the keys
-	  are consecutive integers starting at 0, the keys are scanned
-	  in the natural order."
-	  },
-     PARA{
-     	  "There is a subclass of HashTable called ", TO "MutableHashTable", "
-     	  which consists of those hash tables whose entries can be changed."
-	  },
-     PARA "Access functions:",
-     UL {
- 	  TO "#",
- 	  TO "."
- 	  },
-     PARA "Query functions:",
-     UL {
- 	  TO "#?",
- 	  TO ".?"
- 	  }
-     }
-
-
-document {
-     Key => keys,
-     Headline => "keys used in a hash table" }
-document {
-     Key => (keys,HashTable),
-     Usage => "keys t",
-     Inputs => {
-	  "t"
-	  },
-     Outputs => {
-	  {"a list of the keys occurring in the hash table ", TT "t"}
-	  },
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2}",
-	  "keys x",
-	  }
-     }
-
-document {
-     Key => values,
-     Headline => "values in a hash table" }
-document {
-     Key => (values,HashTable),
-     Usage => "values t",
-     Inputs => {
-	  "t"
-	  },
-     Outputs => {
-	  {"a list of the values occurring in the hash table ", TT "t", "."}
-	  },
-     EXAMPLE {
-	  "x = new HashTable from {a => 1, b => 2}",
-	  "values x",
-	  }
-     }
-
-document {
-     Key => scanPairs,
-     Headline => "apply a function to pairs in a hash table" }
-
-document {
-     Key => (scanPairs,HashTable,Function),
-     Headline => "apply a function to pairs in a hash table",
-     TT "scanPairs(x,f)", " -- applies the function ", TT "f", " to each
-     pair ", TT "(k,v)", " where ", TT "k", " is a key in the hash 
-     table ", TT "x", " and ", TT "v", " is the corresponding 
-     value ", TT "x#k", ".",
-     PARA{},
-     "This function requires an immutable hash table.  To scan the pairs in
-     a mutable hash table, use ", TT "scan(pairs x, f)", ".",
-     PARA{},
-     SeeAlso => "scan"
-     }
 
 --document { find,
 --     TT "find(x,f)", " -- applies the function ", TT "f", " to each element
@@ -621,12 +536,6 @@ undocumented {
 (symbol SPACE, Command, Thing),
 (symbol SPACE, Manipulator, Nothing),
 (symbol SPACE, WrapperType, Thing),
-(symbol SPACE, Expression, Expression),
-(symbol SPACE, Expression, Holder),
-(symbol SPACE, Holder, Expression),
-(symbol SPACE, Expression, Thing),
-(symbol SPACE, Thing, Expression),
-(symbol SPACE, Holder, Holder),
 (symbol SPACE, HeaderType, List),
 (symbol SPACE, HeaderType, Sequence),
 (symbol SPACE, MarkUpType, Net),
@@ -1462,6 +1371,7 @@ document {
 	  (symbol==, Ideal, MonomialIdeal),
 	  (symbol==, GradedModuleMap, ZZ),
 	  (symbol==, InfiniteNumber, InfiniteNumber),
+	  (symbol==, Equation, Expression),
 	  (symbol==, ZZ, Ring),
 	  (symbol==, ZZ, QQ),
 	  (symbol==, Matrix, ZZ),
@@ -1471,6 +1381,7 @@ document {
 	  (symbol==, Ring, MonomialIdeal),
 	  (symbol==, MonomialIdeal, ZZ),
 	  (symbol==, Equation, Holder),
+	  (symbol==, Holder, Equation),
 	  (symbol==, ChainComplexMap, ZZ),
 	  (symbol==, ZZ, MutableMatrix),
 	  (symbol==, Number, InfiniteNumber),
@@ -1486,6 +1397,7 @@ document {
 	  (symbol==, MonomialIdeal, Ideal),
 	  (symbol==, ZZ, GradedModuleMap),
 	  (symbol==, GradedModule, GradedModule),
+	  (symbol==, Expression, Equation),
 	  (symbol==, Module, ZZ),
 	  (symbol==, ZZ, Module),
 	  (symbol==, ChainComplexMap, RingElement),
