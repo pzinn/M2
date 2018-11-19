@@ -940,6 +940,7 @@ export {
 	"plus",
 	"poincare",
 	"poincareN",
+	"polarize",
 	"position",
 	"positions",
 	"power",
