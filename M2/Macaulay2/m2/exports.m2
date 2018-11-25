@@ -19,9 +19,6 @@ export {
 	"genericUpperMatrix",
 	"genericLowerMatrix",
 -- end experimental
-	"WebApp",
-	"texOrHtml",
-	"Describe",
 	"!",
 	"!=",
 	"#",
@@ -734,7 +731,6 @@ export {
 	"homomorphism'",
 	"horizontalJoin",
 	"html",
-	"htmlWithTex",
 	"httpHeaders",
 	"hypertext",
 	"id",

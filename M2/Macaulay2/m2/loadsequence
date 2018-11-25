@@ -80,7 +80,6 @@ webapp.m2
 mathml.m2
 texmacs.m2
 pretty.m2
-webapp.m2
 docsearch.m2
 undoc.m2
 obsolete.m2
