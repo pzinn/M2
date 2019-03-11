@@ -49,7 +49,8 @@ succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
 succ(Symbol,Symbol) := (x,y) -> (
      (s,t) := (toString x, toString y);
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
-succ(IndexedVariable,IndexedVariable) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
+succ(IndexedVariable,IndexedVariable) := (x,y) -> ((x#0 === y#0 and succ(x#1,y#1))
+    or (succ(x#0,y#0) and ((instance(x#1,ZZ) and y#1===1) or (instance(x#1,Sequence) and instance(y#1,Sequence) and all(y#1,x->x===1))))) -- same problem
 succ(Thing,Thing) := x -> false
 runLengthEncode = method(Dispatch => Thing)
 runLengthEncode VisibleList := x -> (

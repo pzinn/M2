@@ -425,7 +425,7 @@ net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := (I) -> texMath expression I
-describe Ideal := (I) -> (expression ideal) VerticalList apply(first entries generators I, expression)
+describe Ideal := (I) -> Describe (expression ideal) VerticalList apply(first entries generators I, expression)
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
