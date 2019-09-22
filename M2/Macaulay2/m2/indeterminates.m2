@@ -38,22 +38,38 @@ Symbol .. Symbol := (a,z) -> if a === z then 1:a else vars( reverseVars a .. rev
 Symbol ..< Symbol := (a,z) -> if a === z then () else vars( reverseVars a ..< reverseVars z )
 
 succS = new MutableHashTable;
-for i from 0 to #varList-2 do succS#(varList#i) = varList#(i+1)
+for i from 0 to 50 do succS#(varName i) = varName(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
-    i := #y-1;
-    while i>=0 and y_i === 1 do i=i-1; -- should test x_i as well
-    i>=0 and take(x,i) === take(y,i) and x_i+1 === y_i
+    #x === #y and all(#x-1,i-> x#i === y#i) and x#(#x-1)+1 === y#(#x-1)
 )
+succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === symbol .. and (
+    succ (x#2,y#1) or (
+	instance(x#1,Subscript) and instance(x#2,Subscript)
+	and instance(y#1,Subscript) and instance(y#2,Subscript) and (
+	    a := sequence x#1#1; b := sequence x#2#1; c := sequence y#1#1; d := sequence y#2#1;
+	    -- find what endpoints have in common, remove
+	    while #a>0 and #c>0 and last a === last c do ( a=drop(a,-1); c=drop(c,-1); );
+	    if #a === 0 then a=x#1#0 else a=new Subscript from {x#1#0,unsequence a};
+	    if #c === 0 then c=y#1#0 else c=new Subscript from {y#1#0,unsequence c};
+	    while #b>0 and #d>0 and last b === last d do ( b=drop(b,-1); d=drop(d,-1); );
+	    if #b === 0 then b=x#2#0 else b=new Subscript from {x#2#0,unsequence b};
+	    if #d === 0 then d=y#2#0 else d=new Subscript from {y#2#0,unsequence d};
+	    a===b and c===d and succ(a,c)
+	)))
 succ(Symbol,Symbol) := (x,y) -> (
      (s,t) := (toString x, toString y);
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
-succ(IndexedVariable,IndexedVariable) := (x,y) -> ((x#0 === y#0 and succ(x#1,y#1))
-    or (succ(x#0,y#0) and ((instance(x#1,ZZ) and y#1===1) or (instance(x#1,Sequence) and instance(y#1,Sequence) and all(y#1,x->x===1))))) -- same problem
+succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(expressionValue x#1,expressionValue y#1)
 succ(Thing,Thing) := x -> false
 runLengthEncode = method(Dispatch => Thing)
 runLengthEncode VisibleList := x -> (
+    local xx;
+    while (xx=runLengthEncode0 x; #x =!= #xx) do x=xx;
+    xx
+    )
+runLengthEncode0 = x -> (
      if #x === 0 then return x;
      dupout := true;
      while first(dupout,dupout = false) do x = new class x from (
@@ -72,7 +88,7 @@ runLengthEncode VisibleList := x -> (
 		    continue)
 	       else first(
 		    if oi === symbol oi then (oi = i; m = 1 ; continue) else
-		    if m === 1 then hold oi else if dupin === true then hold m : expression oi else expression i0 .. expression oi,
+		    if m === 1 then hold oi else if dupin === true then hold m : expression oi else (if instance(i0,BinaryOperation) then i0#1 else expression i0) .. (if instance(oi,BinaryOperation) then oi#2 else expression oi),
 		    (dupin = null; oi = i; m = 1))));
      x)
 
