@@ -72,7 +72,7 @@ monoidParts = (M) -> (
      o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
      o = M.Options;
      nonnull splice (
-	  if M.?generatorSymbols then toSequence runLengthEncode M.generatorSymbols,
+	  if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions,
 	  Degrees => runLengthEncode if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
 	  if o.Heft =!= null then Heft => runLengthEncode o.Heft,
 	  MonomialOrder => rle o.MonomialOrder,
