@@ -1,6 +1,24 @@
 --		Copyright 2004,2005,2006,2007,2008 by Daniel R. Grayson
 
 export {
+-- begin experimental
+	"fact",
+	"DegreesRing",
+	"addDegreesRing",
+	"AddDegreesRing",
+	"lowestPart",
+	"concatRows",
+	"concatCols",
+	"FactPolynomialRing",
+	"ColumnExpression",
+	"color",
+	"ColoredExpression",
+	"minimalPresentationReds",
+	"setColor",
+	"genericVector",
+	"genericUpperMatrix",
+	"genericLowerMatrix",
+-- end experimental
 	"!",
 	"!=",
 	"#",
@@ -714,7 +732,6 @@ export {
 	"homomorphism'",
 	"horizontalJoin",
 	"html",
-	"htmlWithTex",
 	"httpHeaders",
 	"hypertext",
 	"id",
@@ -1119,7 +1136,6 @@ export {
 	"tensorAssociativity",
 	"terms",
 	"tex",
-	"texMath",
 	"then",
 	"threadVariable",
 	"throw",
@@ -1200,7 +1216,8 @@ export {
         "numrows" => "numRows",
         "res" => "resolution",
         "sub" => "substitute",
-        "top" => "topComponents"
+        "top" => "topComponents",
+	"mdeg" => "multidegree"
 }
 
 exportMutable {
@@ -1244,7 +1261,10 @@ exportMutable {
 	"recursionLimit",
 	"scriptCommandLine",
 	"stopIfError",
-	"topLevelMode"
+	"topLevelMode",
+	"texMath",
+	"htmlWithTex",
+	"expressionDebug"
 	}
 
 -- Local Variables:

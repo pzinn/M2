@@ -10,7 +10,7 @@ elements VirtualTally := x -> splice apply(pairs x, (k,v) -> v:k)
 
 toString VirtualTally := x -> concatenate( "new ", toString class x, " from {", demark(", ", sort apply(pairs x, (v,i) -> (toString v, " => ", toString i))), "}" )
 
-net VirtualTally := t -> peek t
+net VirtualTally := t -> net peek t
 
 VirtualTally _ Thing := (a,b) -> if a#?b then a#b else 0
 

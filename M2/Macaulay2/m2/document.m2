@@ -1164,13 +1164,13 @@ briefDocumentation Thing := x -> (
      if noBriefDocThings#?x or not isDocumentableThing x then return null;
      if package x === Core then checkLoadDocumentation();
      r := briefSynopsis normalizeDocumentKey x;
-     if r =!= null then << endl << r << endl
+     if r =!= null then print r
      else (
-	  if headline x =!= null then << endl << commentize headline x << endl;
+	  if headline x =!= null then print commentize headline x
 	  );
      if instance(x, Function) or instance(x, ScriptedFunctor) then (
 	  s := fmeth x;
-	  if s =!= null then << endl << s << endl;))
+	  if s =!= null then print s))
 
 help = method(Dispatch => Thing)
 help String := key -> (

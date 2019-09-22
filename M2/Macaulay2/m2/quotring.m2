@@ -25,7 +25,7 @@ toExternalString QuotientRing := S -> toString describe S
 random QuotientRing := opts -> S -> (
      if S.baseRings === {ZZ} then (random char S)_S
      else notImplemented())
-expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else Divide { expression ambient S, expression pretty S.relations }
+expression QuotientRing := S -> if hasAttribute(S,ReverseDictionary) then expression getAttribute(S,ReverseDictionary) else new Divide from { unhold expression ambient S, unhold expression pretty S.relations }
 describe QuotientRing := S -> Describe Divide { expression ambient S, expression pretty S.relations }
 ambient PolynomialRing := R -> R
 ambient QuotientRing := Ring => (cacheValue ambient) (R -> last R.baseRings)
@@ -228,6 +228,7 @@ EngineRing / Ideal := QuotientRing => (R,I) -> I.cache.QuotientRing = (
 --	       );
 	  );
      runHooks(R,QuotientRingHook,S);
+     factor S := opts -> f -> substitute(factor(lift(f,R),opts),S); -- experimental
      S)
 
 Ring / ZZ := (R,f) -> R / ideal f_R
@@ -278,6 +279,7 @@ dim QuotientRing := (R) -> (
 monoid QuotientRing := o -> (cacheValue monoid) (S -> monoid ambient S)
 degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid ambient S)
 degreesRing QuotientRing := (cacheValue degreesRing) (S -> degreesRing ambient S)
+addDegreesRing QuotientRing:= (cacheValue addDegreesRing) (S -> addDegreesRing ambient S)
 QuotientRing_String := (S,s) -> if S#?s then S#s else (
      R := ultimate(ambient, S);
      S#s = promote(R_s, S))
@@ -296,12 +298,14 @@ char QuotientRing := (stashValue symbol char) ((S) -> (
      if g == 0 then return char ring g;
      m := g_(0,0);
      if liftable(m,ZZ) then lift(m,ZZ) else 0))
+
 singularLocus(Ring) := QuotientRing => (R) -> (
      f := presentation R;
      A := ring f;
      A / (ideal f + minors(codim(R,Generic=>true), jacobian presentation R)))
 
-singularLocus(Ideal) := QuotientRing => (I) -> singularLocus(ring I / I)
+singularLocus(Ideal) := QuotientRing => (I) -> ideal singularLocus(ring I / I) -- changed functionality: now returns an ideal
+-- singularLocus(Ideal) := Ideal => (I) -> ( I + minors(codim(I,Generic=>true), jacobian I) ) -- would've been so much simpler, but ambient ring can be different...
 
 toField = method()
 toField Ring := R -> (
@@ -320,6 +324,10 @@ toField Ring := R -> (
 getNonUnit = R -> if R.?Engine and R.Engine then (
      r := rawGetNonUnit raw R;
      if r != 0 then new R from r)
+
+
+FactPolynomialRing / Ideal := QuotientRing => (F,I) -> I.cache.QuotientRing = (last F.baseRings)/((map(last F.baseRings,F))I);
+-- possibly temp: we lose factoring when taking quotients. though seems reasonable
 
 -- nextPrime and getPrimeWithRootOfUnity, written by Frank Schreyer.
 nextPrime=method(TypicalValue=>ZZ)

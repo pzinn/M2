@@ -294,28 +294,84 @@ factoryGood = R -> factoryAlmostGood R and not (options R).Inverses
 
 frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      o := options R;
-     if o.Inverses then error "not implemented : fraction fields of rings with inverses";
+--     if o.Inverses then error "not implemented : fraction fields of rings with inverses"; -- might want to change that with factorized
      if o.WeylAlgebra =!= {} or R.?SkewCommutative
      then error "fraction field of non-commutative ring requested";
-     if not factoryGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
-     R.frac = F := new FractionField from rawFractionRing R.RawRing;
+     if not factoryAlmostGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
+     local F;
+     if o.Inverses then (
+	 R1:=newRing(R,Inverses=>false,MonomialOrder=>GRevLex);
+	 f:=map(R1,R); g:=map(R,R1);
+	 R.frac = F = frac R1; -- !!!
+	 F.baseRings=append(F.baseRings,R);
+	 promote(R,F) := (x,F) -> (f numerator x)/(f denominator x);
+	 oldnum := F#numerator; oldden := F#denominator;
+	 if class R === FactPolynomialRing then (
+	     raw F := a -> rawFraction(F.RawRing,raw oldnum a, raw oldden a); -- only for Fact!
+	     numerator F := (x) -> (g oldnum x)*((g oldden x)#0)^(-1);
+	     denominator F := (x) -> ( r := g oldden x; new R from {1_(last R.baseRings), r#1} );
+	 ) else (
+     	     numerator F := (x) -> g oldnum x;
+     	     denominator F := (x) -> g oldden x;
+	     );
+	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";
+	 fraction(R,R) := (x,y) -> (f (numerator x*denominator y))/(f (numerator y*denominator x));
+	 return F;
+	 );
+     R.frac = F = new FractionField from rawFractionRing R.RawRing;
      F.frac = F;
      F.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations F;
-     factor F := options -> f -> factor numerator f / factor denominator f;
+     factor F := options -> f -> factor(numerator f,options) / factor(denominator f,options);
+     fact F := f -> (fact numerator f) / (fact denominator f);
      toString F := x -> toString expression x;
      net F := x -> net expression x;
      baseName F := (f) -> (
 	  if denominator f != 1 
 	  then error "expected a generator"
 	  else baseName numerator f);
-     expression F := (f) -> expression numerator f / expression denominator f;
-     numerator F := (f) -> new R from rawNumerator raw f;
-     denominator F := (f) -> new R from rawDenominator raw f;
-     fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
-     fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
+     expression F := (f) -> (
+	 den := denominator f;
+	 num := numerator f;
+	 if den === 1_(ring den) then expression num else expression num / expression den
+	 );
+     if class R =!= FactPolynomialRing then ( -- ordinary polynomial ring
+     	 numerator F := (f) -> new R from rawNumerator raw f;
+     	 denominator F := (f) -> new R from rawDenominator raw f;
+     	 fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
+     	 fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
+	 )
+     else -- factorized one: we effectively override (almost) all operations
+     (
+	 new F from R := (A,a) -> fraction(a,1_R);
+         new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
+	 promote(R,F) := (x,F) -> new F from x;
+	 lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
+    	 numerator F := a -> a#0;
+	 denominator F := a -> a#1;
+	 value F := a-> value numerator a / value denominator a;
+	 raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
+	 fraction(R,R) := (r,s) -> (
+	     g:=gcd(r,s);
+	     if coefficientRing R === ZZ then (
+		 rp:=rawPairs(raw ZZ,raw (s//g));
+		 e:=apply(rp#1,x->sum exponents(numgens R,x));
+		 if rp#0#(position(e,x->x==min e))<raw 0 then g=-g; -- lame workaround for #740
+		 ) else g=g*s#0; -- no constant in the denominator
+	     new F from {r//g, s//g}
+	     );
+	 fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
+	 F * F := (x,y) -> fraction(numerator x*numerator y,denominator x*denominator y);
+	 F + F := (x,y) -> fraction(numerator x*denominator y+numerator y*denominator x,denominator x*denominator y);
+	 F - F := (x,y) -> fraction(numerator x*denominator y-numerator y*denominator x,denominator x*denominator y);
+	 - F := x -> fraction(-numerator x, denominator x);
+	 F ^ ZZ := (x,n) -> if n>=0 then fraction( (numerator x)^n, (denominator x)^n ) else fraction( (denominator x)^-n, (numerator x)^-n );
+	 -- F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
+	 F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer
+	 F#0 = new F from { 0_R, 1_R };
+	 F#1 = new F from { 1_R, 1_R };
+     	 );
      F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
-     F.generators = apply(generators R, m -> promote(m,F));
      if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
      if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
      if R.?generatorExpressions then F.generatorExpressions = (
@@ -399,6 +455,18 @@ part(List,RingElement) := RingElement => (d,f) -> (
      if #u === 0 then 0_(ring f)
      else sum u
      )
+
+--- experimental. here only allowed weighting is standard one (may change in future)
+lowestPart = method();
+lowestPart(ZZ,RingElement) := RingElement => (d,f) -> if f === 0_(ring f) then f else part(d,d,numgens ring f:1,f); -- assumes min degree has already been computed
+lowestPart(RingElement) := RingElement => f -> (
+    R := ring f;
+    if f === 0_R then return f;
+    rp := rawPairs(raw coefficientRing R, raw f);
+    lowestPart(min apply(rp#1,x->sum exponents(numgens R,x)),f)
+    );
+
+
 
 Ring _ ZZ := RingElement => (R,i) -> (generators R)#i
 
@@ -630,16 +698,14 @@ RingElement / RingElement := RingElement => (f,g) -> (
 	       (x,y) -> promote(x,S) / y
 	       )
 	  else if member(S,R.baseRings) then (
-	       (x,y) -> x / promote(y,R)
+	       (x,y) -> promote(1/y,R) * x
 	       )
 	  else error "expected pair to have a method for '/'"
 	  );
      f / g)
 frac0 = (f,g) -> f/g
-
 Number / RingElement := frac0 @@ promoteleftexact
-RingElement / Number := (f,g) -> (1/g) * f
-
+RingElement / Number := (f,g) -> try (1/g)*f else frac0@@promoterightexact(f,g)
 InexactNumber / RingElement := frac0 @@ promoteleftinexact
 RingElement / InexactNumber := (f,g) -> (1/g) * f
 

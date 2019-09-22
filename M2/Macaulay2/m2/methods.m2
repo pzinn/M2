@@ -187,7 +187,7 @@ setupMethods((), {
 	  substitute, rank, complete, ambient, topComponents, baseName, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
 	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
 	  hilbertFunction, content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, degrees, assign, numgens, conjugate,
+	  leadComponent, degreesRing, addDegreesRing, degrees, assign, numgens, conjugate,
 	  autoload, relations, cone, standardForm, inverse, numeric, round, degree, multidegree,
 	  presentation, dismiss, precision, 
 	  norm, clean, numColumns, numRows, fraction, part, coefficient, preimage, minimalPrimes, decompose,
@@ -420,11 +420,13 @@ toExternalString Option := z -> concatenate splice (
      " => ",
      if precedence z > precedence z#1 then ("(",toExternalString z#1,")") else toExternalString z#1
      )
+-*
 toString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toString z#0,")") else toString z#0,
      " => ",
      if precedence z > precedence z#1 then ("(",toString z#1,")") else toString z#1
      )
+*-
 
 ultimate = method()
 ultimate(Function,Thing) := (f,x) -> (

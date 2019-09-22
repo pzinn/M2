@@ -49,6 +49,7 @@ easyFactor Power := x -> apply(easyFactor x#0, fac -> Power{fac#0, fac#1 * x#1})
 easyFactor Divide := x -> Divide{easyFactor x#0, easyFactor x#1}
 
 simplify = method()
+simplify Thing := identity
 simplify Divide := x -> (
      num := x#0;
      den := easyFactor x#1;				    -- a Product

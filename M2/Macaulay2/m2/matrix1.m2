@@ -425,6 +425,7 @@ net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := (I) -> texMath expression I
+describe Ideal := (I) -> Describe (expression ideal) VerticalList apply(first entries generators I, expression)
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I
@@ -432,6 +433,7 @@ isHomogeneous Ideal := (I) -> isHomogeneous generators I
 degrees Ideal := I -> degrees source generators I
 degreeLength Ideal := I -> degreeLength ring I
 degreesRing Ideal := I -> degreesRing ring I
+addDegreesRing Ideal := I -> addDegreesRing ring I
 
 promote(Ideal,Number) := 
 promote(Ideal,RingElement) := (I,R) -> ideal promote(generators I, R)
@@ -514,6 +516,8 @@ leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
 poincare Ideal := (I) -> poincare comodule I
+multidegree Ideal := I -> multidegree comodule I;
+
 Ideal _ List := (I,w) -> (module I)_w
 
 ring Ideal := (I) -> I.ring
@@ -556,6 +560,7 @@ ideal Matrix := Ideal => (f) -> (
      	  g := map(R^1,,f);			  -- in case the degrees are wrong
      	  if isHomogeneous g then f = g;
 	  );
+     if instance(R,PolynomialRing) and (options R).Inverses then f=matrix(R,applyTable(entries f, x->numerator x));  -- temporary fix to general inability to deal with Laurent polynomial rings. will fail for iterated rings, cf orderedmonoidrings 270 and 366
      new Ideal from { symbol generators => f, symbol ring => R, symbol cache => new CacheTable } )
 
 ideal Module := Ideal => (M) -> (
@@ -572,6 +577,8 @@ idealPrepare Thing := x -> error "expected a list of numbers, matrices, ring ele
 ideal List := ideal Sequence := Ideal => v -> ideal matrix {flatten apply(toList splice v,idealPrepare)}
 ideal RingElement := ideal Number := Ideal => v -> ideal {v}
 ideal Ring := R -> ideal map(R^1,R^0,0)
+ideal Ideal := identity;
+
 
 Ideal ^ Array := (I, e) -> (
    R := ring I;

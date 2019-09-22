@@ -696,7 +696,7 @@ flagBundle(List,AbstractSheaf) := opts -> (bundleRanks,E) -> (
      rlns = sum @@ last \ sort pairs partition(degree,terms(QQ,rlns));
      rlns = ideal matrix(U,{rlns});
      if heft S =!= null and degreesRing S === HR 
-     then gb(rlns, Hilbert => if hilbertSeriesHint =!= null then numerator hilbertSeriesHint * numerator hilbertSeries S);
+     then gb(rlns, Hilbert => if hilbertSeriesHint =!= null then hilbertSeriesHint * poincare S);
      B := A/rlns;
      -- (C,H) := flattenRing B; I := H^-1;
      C := B; H := identity;
@@ -877,7 +877,7 @@ multiFlag(List,List) := (bundleRanks, bundles) -> (
 	  k := sum (bundleRanks#i);
 	  product for j from 1 to k list 1 - T^j);
      if heft S =!= null and degreesRing S === HR then (
-         gb(rlns, Hilbert => hilbertSeriesHint * numerator hilbertSeries S));
+         gb(rlns, Hilbert => hilbertSeriesHint * poincare S));
      B := A/rlns;
      C := B; H := identity;
      d := dim X + sum(bundleRanks, l-> (

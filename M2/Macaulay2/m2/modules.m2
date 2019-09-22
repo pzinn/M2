@@ -148,6 +148,7 @@ new Module from Sequence := (Module,x) -> (
 
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
 degreesRing Module := PolynomialRing => M -> degreesRing ring M
+addDegreesRing Module := PolynomialRing => M -> addDegreesRing ring M
 degreeLength Module := M -> degreeLength ring M
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring
@@ -210,7 +211,7 @@ expression Module := M -> (
      then (expression image) (expression M.generators)
      else (
 	 n := numgens M;
-	 new Superscript from {unhold expression ring M, if n =!= 0 then expression n else moduleZERO }
+	 new Superscript from {unhold expression ring M, if n =!= 0 then unhold expression n else moduleZERO }
      )
  )
 toString Module := M -> toString expression M
@@ -300,7 +301,7 @@ Module ^ ZZ := Module => (M,i) -> directSum (i:M)
 
 Ring ^ List := Module => (
      (R,degs) -> (
-	  degs = - splice degs;
+	  degs = splice degs;
 	  if R.?RawRing then (
 	       -- check the args
 	       ndegs := degreeLength R;
@@ -308,18 +309,23 @@ Ring ^ List := Module => (
 	       else if all(degs,i -> class i === ZZ) then (
 		    if ndegs =!= 1
 	       	    then error ("expected each multidegree to be of length ", toString ndegs))
-	       else if all(degs,v -> class v === List) then (
-		    scan(degs,v -> (
-			      if #v =!= ndegs
-			      then error (
+	       else 
+		   degs=apply(degs,v -> (
+			   if class v === List then (
+			       v=splice v;
+			       if #v =!= ndegs
+			       then error (
 				   "expected each multidegree to be of length ",
 				   toString ndegs
 				   );
-			      if not all(v,i->class i === ZZ)
-			      then error "expected each multidegree to be a list of integers")))
-	       else error "expected a list of integers or a list of lists of integers";
+			       if not all(v,i->class i === ZZ)
+			       then error "expected each multidegree to be a list of integers";
+			       v) else 
+			   if class v === degreesRing R then (exponents v)#0 else
+			   if class v === addDegreesRing R then apply(flatten entries(coefficients(v,Monomials=>generators addDegreesRing R))#1,x->substitute(x,ZZ)) else
+	       		   error "expected a list of integers or a list of (lists of integers, monomials of the degrees ring, linear elements of the add degrees rings)"));
 	       -- then adjust the args
-	       fdegs := flatten degs;
+	       fdegs := - flatten degs;
 	       -- then do it
 	       if # fdegs === 0 
 	       then new Module from (R,rawFreeModule(R.RawRing,#degs))
@@ -419,7 +425,7 @@ Module#{Standard,AfterPrint} = M -> (
      else if n > 0 then (
 	  << ", free";
 	  if not all(degrees M, d -> all(d, zero)) 
-	  then << ", degrees " << runLengthEncode if degreeLength M === 1 then flatten degrees M else degrees M;
+	  then << ", degrees " << runLengthEncode if degreeLength M === 1 then flatten degrees M else apply(degrees M,runLengthEncode);
 	  );
      << endl;
      )

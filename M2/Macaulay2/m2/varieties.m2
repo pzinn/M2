@@ -74,7 +74,7 @@ expression CoherentSheaf := F -> (
 	    scan(rle,
 		(n,d) -> (
 		    s := new Superscript from {expression OO_X, expression n};
-		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize d#0 else toSequence d};
+		    if not all(d, zero) then s = Adjacent {s, if #d === 1 then Parenthesize unhold expression d#0 else expression toSequence d};
 		    if expr === null then expr = s else expr = expr ++ s;
 		    ));
 	    expr
@@ -218,8 +218,9 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       A := ring p;
 	       n := numgens A;
 	       M := cokernel lift(presentation module F,A) ** cokernel p;
-	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
-
+	       rank source basis(0, Ext^(n-1-i)(M,A^{-sum degrees A})))) -- Serre duality
+		       -- the first degree should be projective degree, and probably we want all variables to have first degree 1
+		       )
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
 applyMethod = (key,x) -> (

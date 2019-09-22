@@ -23,7 +23,12 @@ IndexedVariableTable _ Thing := (x,i) -> (
      if x#?i then x#i
      else if x#?symbol$ then new IndexedVariable from {x#symbol$,i}
      else error "attempted to make new indexed variable from indexed variable table associated with no symbol")
-IndexedVariableTable _ Thing  = (x,i,e) -> (checkValue x; x#i = e)
+IndexedVariableTable _ Thing  = (x,i,e) -> (checkValue x;
+    if x#?i then ( X := class x#i; m := lookup(GlobalReleaseHook,X); if m=!= null then m(new IndexedVariable from {x#symbol$,i},x#i) );
+     Y := class e;
+     n := lookup(GlobalAssignHook,Y);
+     if n =!= null then n(new IndexedVariable from {x#symbol$,i}, e);
+    x#i = e)
 IndexedVariableTable.GlobalAssignHook = (X,x) -> (
      globalAssignFunction(X,x);
      if not x#?symbol$ then x#symbol$ = X;
@@ -31,12 +36,13 @@ IndexedVariableTable.GlobalAssignHook = (X,x) -> (
 IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
      globalReleaseFunction(X,x);
      if x#?symbol$ and x#symbol$ === X then remove(x,symbol$);
+     scan(pairs x, (key,val) -> ( n:=lookup(GlobalReleaseHook, class val); if n =!= null then n(new IndexedVariable from {X,key}, val)));
      )
 Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
-net IndexedVariable := v -> net expression v
-toString IndexedVariable := v -> toString expression v
-texMath IndexedVariable := v -> texMath expression v
+net IndexedVariable := net @@ expression
+toString IndexedVariable := toString @@ expression
+texMath IndexedVariable := x -> texMath expression x
 expression IndexedVariableTable := x -> if x#?symbol$ then expression x#symbol$ else expression "-*an indexed variable table*-"
 net IndexedVariableTable := net @@ expression
 toString IndexedVariableTable := toString @@ expression
@@ -55,6 +61,9 @@ value IndexedVariable := v -> (
 Symbol _ Thing = (x,i,e) -> (
      x' := value x;
      if not instance(x',IndexedVariableTable) then x' = new IndexedVariableTable from x;
+     Y := class e;
+     n := lookup(GlobalAssignHook,Y);
+     if n =!= null then n(x_i,e);
      x'_i = e)
 installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequence xi)
 

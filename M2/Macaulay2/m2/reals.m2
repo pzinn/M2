@@ -295,6 +295,7 @@ toString ComplexField := R -> concatenate("CC_",toString R.precision)
 
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
+
 expression RR := x -> (
      if x < 0 
      then (
@@ -349,6 +350,8 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      *-
      << endl;
      )
+--InexactNumber#{Standard,Print} = x ->  withFullPrecision ( () -> Thing#{Standard,Print} x )
+--InexactNumber#{Standard,AfterPrint} = x -> afterPrint ( class x, " (of precision ", precision x,")" )
 
 isReal = method()
 isReal RR := isReal QQ := isReal ZZ := x -> true

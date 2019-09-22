@@ -9,8 +9,10 @@ newRing = method( Options => applyValues(monoidDefaults, x -> nothing), TypicalV
 newRing PolynomialRing := opts -> (R) -> (
      opts = new MutableHashTable from select(opts, v -> v =!= nothing);
      nullify := k -> if not opts#?k then opts#k = monoidDefaults#k;
-     if opts.?DegreeRank then (nullify Degrees;    nullify Heft);
-     if opts.?Degrees and opts.Degrees =!= {} then (nullify DegreeRank; nullify Heft);
+     if opts.?DegreeRank then (nullify Degrees;    nullify Heft; nullify DegreesRing; nullify AddDegreesRing);
+     if opts.?Degrees and opts.Degrees =!= {} then (nullify DegreeRank; nullify Heft; nullify DegreesRing; nullify AddDegreesRing);
+     if opts.?DegreesRing then (nullify DegreeRank; nullify Degrees; nullify Heft; nullify AddDegreesRing);
+     if opts.?AddDegreesRing then (nullify DegreeRank; nullify Degrees; nullify Heft; nullify DegreesRing);
      if opts.?Variables then (
 	  if instance(opts.Variables,List) then (
 	       opts.Variables = splice opts.Variables;
@@ -27,6 +29,10 @@ newRing QuotientRing := opts -> R -> (
      S := newRing(A, opts);
      if numgens S != numgens R then error "newRing: cannot change the number of variables";
      S / image substitute(p,vars S))
+newRing FactPolynomialRing := opts -> (R) -> (
+    R0 := newRing(last R.baseRings,opts);
+    fact R0
+    );
 
 -----------------------------
 -- tensor product of rings --

@@ -189,6 +189,7 @@ assert( apply(20,i -> random 100) === {47, 38, 51, 74, 28, 50, 44, 25, 72, 16, 4
    assert( (setRandomSeed 4; random RR_100) === .67753449342864841445246801151208p100 );
    assert( (setRandomSeed 4; random CC) === toCC(.46156623802715113p53,.3890127375373339p53) );
    assert( (setRandomSeed 4; random CC_100) === toCC(.67753449342864841445246801151208p100,.79330191647933724509628456990079p100) );
+>>>>>>> ea676e2f4644365506a1e54e44b8cabddd6250ea
 
 RR[x]
 f = (1+x)^5

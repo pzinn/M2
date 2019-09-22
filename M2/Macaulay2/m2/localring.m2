@@ -27,7 +27,6 @@ LocalRing.synonym = "Local ring"
 localRing = method(TypicalValue => LocalRing)
       localRing LocalRing := identity
      expression LocalRing := RP -> (expression localRing) (expression ring RP.MaximalIdeal, expression max RP)
-       describe LocalRing := RP -> net expression RP
        toString LocalRing := RP -> (if hasAttribute(RP, ReverseDictionary)
                                     then toString getAttribute(RP, ReverseDictionary)
                                     else "localRing(" | toString ring RP.MaximalIdeal | ", " | toString RP.MaximalIdeal | ")")

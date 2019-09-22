@@ -138,27 +138,27 @@ net BasicDivisor := t -> (
 			    myStr = myStr | "-Div(";
 			)
 			else (			
-			    myStr = myStr | toString(valList#i) | "*Div(";
+			    myStr = myStr | net(valList#i) | "*Div(";
 			);
 			
 			genList = first entries gens (primeList#i);
 			for j from 0 to (#genList-1) do (
 				if (j > 0) then myStr = myStr | ", ";
-				myStr = myStr | toString(genList#j);
+				myStr = myStr | net(genList#j);
 			);
 			myStr = myStr | ")";
 			i = i+1
 		);
 	)
 	else(
-		myStr = "0, the zero divisor"
+		myStr = "the zero divisor"
 	);
 	myStr
 )
 
 BasicDivisor#{Standard,AfterPrint} = BasicDivisor#{Standard,AfterNoPrint} = (D) -> (
      << endl;				  -- double space
-     << concatenate(interpreterDepth:"o") << lineNumber << " : " << toString(class D) << " on " << toString(ring(D)) << endl;
+     << concatenate(interpreterDepth:"o") << lineNumber << " : " << net(class D) << " on " << net(ring(D)) << endl;
      )
 
 
@@ -1908,8 +1908,7 @@ isSmooth(Ideal) := Boolean => o->J1 -> (
 	)
 	else ( 
 		if (isSubset(ideal(sub(1, ring J1)), J1)) then (flag = true) else (flag = (dim singularLocus J1 < 0));
-	);
-
+		);
 	flag
 );
 

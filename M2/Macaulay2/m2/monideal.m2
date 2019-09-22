@@ -112,8 +112,8 @@ intersect(Sequence) := args -> (
     if #args === 0 then error "expected at least one argument";
     M := args#0;
     R := ring M;
-    if class M === MonomialIdeal then (
-	 if not all(args, M -> class M === MonomialIdeal and R === ring M)
+    if instance( M, MonomialIdeal ) then (
+	 if not all(args, M -> instance( M, MonomialIdeal ) and R === ring M)
 	 then error "expected monomial ideals over the same ring";
 	 i := 1;
 	 while i < #args do (
@@ -121,7 +121,7 @@ intersect(Sequence) := args -> (
 	      i = i+1;
 	      );
 	 M)
-    else if class M === Module then (
+    else if instance( M, Module ) then (
     	 F := ambient args#0;
 	 if not all(args, N -> ambient N == F)
 	 or M.?relations 
@@ -144,8 +144,9 @@ intersect(Sequence) := args -> (
 	 if M.?relations then h = compress( h % M.relations );
     	 subquotient( h, if M.?relations then M.relations )
 	 )
-    else if class M === Ideal then (
-	 ideal intersect apply(args,module)
+    else if instance( M, Ideal ) then (
+	 MM := intersect apply(args,module);
+	 new class M from { symbol generators => generators MM, symbol ring => ring M, symbol cache => new CacheTable }
 	 )
     else error "expected modules, ideals, or monomial ideals"
     )

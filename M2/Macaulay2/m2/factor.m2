@@ -82,13 +82,13 @@ irreducibleCharacteristicSeries Ideal := I -> (		    -- rawCharSeries
 factor ZZ := ( f -> opts -> f ) (
      if instance(Pari$factorint, Function)
      then n -> (
-	  if n === 0 then Product { Power{0,1} }
+	  if n === 0 then new Product from { new Power from {0,1} }
 	  else (
 	       r := Pari$factorint n;
-	       Product apply(r#0,r#1,(p,i)-> Power{p,i})
+	       new Product from apply(r#0,r#1,(p,i)-> new Power from{p,i})
 	       )
 	  )
-     else n -> Product apply(sort pairs factorInteger n, (p,i)-> Power{p,i})
+     else n -> new Product from apply(sort pairs factorInteger n, (p,i)-> new Power from {p,i})
      )
 factor QQ := opts -> (r) -> factor numerator r / factor denominator r
 -----------------------------------------------------------------------------
@@ -103,6 +103,9 @@ topCoefficients RingElement := f -> (
      	  (monoms,coeffs) := topCoefficients matrix{{f}};
      	  (monoms_(0,0), coeffs_(0,0))))
 
+reduce1 = f -> ( v:=factor f; p:=1_(ring f); scan(v,x->if not isUnit(x#0) then p=p*(x#0)); p);
+reducegens = I -> trim ideal(reduce1\({0_(ring I)}|(flatten entries generators I))); -- should it be a method?
+
 minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
      (I) -> (
 	  R := ring I;
@@ -110,7 +113,7 @@ minimalPrimes Ideal := decompose Ideal := (cacheValue symbol minimalPrimes) (
 	  A := ring I';
 	  G := map(R, A, generators(R, CoefficientRing => coefficientRing A));
      	  --I = trim I';
-	  I = I';
+	  I = reducegens I'; -- not clear if this is really an optimization
 	  if not isPolynomialRing A then error "expected ideal in a polynomial ring or a quotient of one";
 	  if not isCommutative A then
 	    error "expected commutative polynomial ring";

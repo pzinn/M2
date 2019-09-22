@@ -1,0 +1,48 @@
+/* svg stuff (used by Gfx.m2) */
+
+svg.M2Svg {
+    vertical-align: middle;
+    position: relative;
+    display: inline;
+    stroke: black;
+    stroke-opacity: 1;
+    fill: none;
+    fill-opacity: 1;
+}
+
+svg.M2Svg text {
+/*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
+absolute sounds bad but actually it's not really absolute since it's in svg units */
+}
+
+svg.M2Svg foreign-object {
+/*    font-size: 14px;*/ /* same. absolute sounds bad but actually it's not really absolute since it's in svg units */
+}
+
+.gfx3d {
+    position:relative;
+    display:inline-block;
+}
+
+.gfx3d > .gadget {
+    visibility: hidden;
+}
+
+.gfx3d:hover > .gadget {
+    visibility: visible;
+}
+
+.M2HtmlOutput button[data-toggle].gfx3d {
+    background: rgba(0,0,0,0.2);
+}
+
+input[type="range"].vertical {
+    height: calc(100% - 20px);
+    width: 10px;
+    -webkit-appearance: slider-vertical;
+}
+
+input[type="range"].horizontal {
+    width: calc(100% - 20px);
+    height: 10px;
+}

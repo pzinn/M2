@@ -519,11 +519,18 @@ mergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 			 n = n+1;
 			 )
 		    else (
-			 z.n = Sequence(xi.0, applyEEE(f,xi.1,yj.1));
+		    	 t := applyEEE(f,xi.1,yj.1);
+		  	 when t is err:Error do (
+			      if err.message != continueMessage then return t;
+			      )
+			 else (
+			      z.n = Sequence(xi.0, t);
+			      n = n+1;
+			      );
 			 i = i+1;
 			 j = j+1;
-			 n = n+1;
-			 ))
+			 )
+			 )
 	       else return WrongArg(2,"a list of pairs")
 	       else return WrongArg(1,"a list of pairs"));
 	  if n < length(x)+length(y)
@@ -539,6 +546,180 @@ mergepairsfun(e:Expr):Expr := (
      else WrongNumArgs(3)
      else WrongNumArgs(3));
 setupfun("mergePairs",mergepairsfun);
+
+commonpairs(xx:Expr,yy:Expr,f:Expr):Expr := (
+     when xx is xl:List do
+     when yy is yl:List do (
+	  x := xl.v;
+	  y := yl.v;
+	  n := 0;
+	  z := new Sequence len length(x)+length(y) do provide nullE;
+	  i := 0;
+	  j := 0;
+	  while true do (
+	       if i >= length(x) || j>= length(y) then  break;
+	       when x.i
+	       is xi:Sequence do 
+	       if length(xi) != 2
+	       then return WrongArg(1,"a list of pairs")
+	       else
+	       when y.j
+	       is yj:Sequence do
+	       if length(yj) != 2
+	       then return WrongArg(2,"a list of pairs")
+	       else (
+		    c := compare(xi.0,yj.0);
+		    when c is Error do return c else nothing;
+		    if GreaterS.symbol === c then (
+			 j = j+1;
+			 )
+		    else if LessS.symbol === c then (
+			 i = i+1;
+			 )
+		    else (
+		    	 t := applyEEE(f,xi.1,yj.1);
+		  	 when t is err:Error do (
+			      if err.message != continueMessage then return t;
+			      )
+			 else (
+			      z.n = Sequence(xi.0, t);
+			      n = n+1;
+			      );
+			 i = i+1;
+			 j = j+1;
+			 )
+			 )
+	       else return WrongArg(2,"a list of pairs")
+	       else return WrongArg(1,"a list of pairs"));
+	  if n < length(x)+length(y)
+	  then z = new Sequence len n do foreach a in z do provide a;
+	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,0,false),xl.Mutable | yl.Mutable)))
+     else WrongArg(2,"a list")
+     else WrongArg(1,"a list"));
+commonpairsfun(e:Expr):Expr := (
+     when e
+     is a:Sequence do
+     if length(a) == 3 then
+     commonpairs(a.0,a.1,a.2)
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
+setupfun("commonPairs",commonpairsfun);
+
+
+combinepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
+     when xx is xl:List do
+     when yy is yl:List do (
+	  x := xl.v;
+	  y := yl.v;
+	  n := 0;
+	  z := new Sequence len length(x)+length(y) do provide nullE;
+	  i := 0;
+	  j := 0;
+	  while true do (
+	       if i >= length(x) then (
+		    while j < length(y) do (
+		    	  when y.j 
+	       		  is yj:Sequence do
+	       		  if length(yj) != 2
+	       		  then return WrongArg(2,"a list of pairs")
+			  else (
+				t := applyEEE(f,nullE,yj.1);
+		  	       	when t is err:Error do (
+			       	     if err.message != continueMessage then return t;
+			      	     )
+				else (
+			      	     z.n = Sequence(yj.0, t);
+				     n = n+1;
+				     );
+				j = j+1;
+			       )
+			  else return WrongArg(2,"a list of pairs");
+			  );
+		    break;
+		    )
+	       else if j >= length(y) then (
+		    while i < length(x) do (
+	       	    	  when x.i
+	       		  is xi:Sequence do 
+	       		  if length(xi) != 2
+	       		  then return WrongArg(1,"a list of pairs")
+	       		  else (
+				t := applyEEE(f,xi.1,nullE);
+		  	       	when t is err:Error do (
+			       	     if err.message != continueMessage then return t;
+			      	     )
+				else (
+			       	     z.n = Sequence(xi.0, t);
+				     n = n+1;
+				     );
+				i = i+1; 
+			       )
+			  else return WrongArg(1,"a list of pairs");
+			  );			  
+		    break;
+		    );
+	       when x.i
+	       is xi:Sequence do 
+	       if length(xi) != 2
+	       then return WrongArg(1,"a list of pairs")
+	       else
+	       when y.j
+	       is yj:Sequence do
+	       if length(yj) != 2
+	       then return WrongArg(2,"a list of pairs")
+	       else (
+		    c := compare(xi.0,yj.0);
+		    when c is Error do return c else nothing;
+		    if GreaterS.symbol === c then (
+				t := applyEEE(f,nullE,yj.1);
+		  	       	when t is err:Error do (
+			       	     if err.message != continueMessage then return t;
+			      	     )
+				else (
+			      	     z.n = Sequence(yj.0, t);
+				     n = n+1;
+				     );
+				j = j+1;
+			 )
+		    else if LessS.symbol === c then (
+				t := applyEEE(f,xi.1,nullE);
+		  	       	when t is err:Error do (
+			       	     if err.message != continueMessage then return t;
+			      	     )
+				else (
+			       	     z.n = Sequence(xi.0, t);
+				     n=n+1;
+				     );
+				i = i+1; 
+			 )
+		    else (
+		    	 t := applyEEE(f,xi.1,yj.1);
+		  	 when t is err:Error do (
+			      if err.message != continueMessage then return t;
+			      )
+			 else (
+			      z.n = Sequence(xi.0, t);
+			      n = n+1;
+			      );
+			 i = i+1;
+			 j = j+1;
+			 )
+			 )
+	       else return WrongArg(2,"a list of pairs")
+	       else return WrongArg(1,"a list of pairs"));
+	  if n < length(x)+length(y)
+	  then z = new Sequence len n do foreach a in z do provide a;
+	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,0,false),xl.Mutable | yl.Mutable)))
+     else WrongArg(2,"a list")
+     else WrongArg(1,"a list"));
+combinepairsfun(e:Expr):Expr := (
+     when e
+     is a:Sequence do
+     if length(a) == 3 then
+     combinepairs(a.0,a.1,a.2)
+     else WrongNumArgs(3)
+     else WrongNumArgs(3));
+setupfun("combinePairs",combinepairsfun);
 
 --rmergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 --     when xx is xl:List do

@@ -61,7 +61,9 @@ monoidDefaults = (
 	  Join => null -* true *-,			    -- whether the degrees in the new monoid ring will be obtained by joining the degrees in the coefficient with the degrees in the monoid
       	  DegreeMap => null -* identity *-,		    -- the degree map to use, if Join=>false is specified, for converting degrees in the coefficient ring to degrees in the monoid
      	  DegreeLift => null,				    -- a function for lifting degrees from the monoid ring to the coefficient ring.  Length must be correct.  Gives an error if lifting is not possible.
-	  Constants => false				    -- whether to use rawTowerRing when making a monoid ring
+	  Constants => false,				    -- whether to use rawTowerRing when making a monoid ring
+	  DegreesRing => null,                              -- experimental: provide a preexisting degrees ring
+	  AddDegreesRing => null                            -- experimental: provide a preexisting additive degrees ring
 	  }
      )
 
@@ -70,7 +72,7 @@ monoidParts = (M) -> (
      o := M#"original options";	-- if we used M.Options we'd run into lots of long lists as in GRevLex => {1,1,1,1,1,1,1}
      o = M.Options;
      nonnull splice (
-	  if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions,
+	  if M.?generatorSymbols then toSequence runLengthEncode M.generatorSymbols,
 	  Degrees => runLengthEncode if o.DegreeRank === 1 then flatten o.Degrees else (x -> VerticalList x) \ o.Degrees,
 	  if o.Heft =!= null then Heft => runLengthEncode o.Heft,
 	  MonomialOrder => rle o.MonomialOrder,
@@ -187,8 +189,9 @@ RingElement ^ Ring := Number ^ Ring := (x,R) -> lift(x,R)
 RingElement ^ RingFamily := Number ^ RingFamily := (x,R) -> lift(x, default R)
 Constant ^ Ring := Constant ^ RingFamily := (x,R) -> lift(x,R)
 
-RingElement _ Ring := promote
-
+RingElement _ Ring := (x,R) -> try promote(x,R) else (
+    xx:=substitute(x,R); if member(xx,R.generators) then xx else error "variable not found in ring" -- experimental, needs testing
+)
 madeTrivialMonoid := false
 
 dotprod = (c,d) -> sum( min(#c, #d), i -> c#i * d#i )
@@ -296,10 +299,26 @@ makeit1 := (opts) -> (
 	  )
      else (
      	  M.degreesRing = (
-	       if opts.Heft =!= null 
+	       if opts.DegreesRing =!= null then 
+	       (
+		   R := opts.DegreesRing;
+--	       	   if coefficientRing R===ZZ and ((isPolynomialRing R and (options R).Inverses) or (isQuotientRing R and all(generators R,isUnit))) then R -- experimental
+                   if not (coefficientRing R===ZZ and isPolynomialRing R and (options R).Inverses) then error "invalid ring of degrees";
+--		   if opts.Heft =!= null then (monoid R).Options=(monoid R).Options++{MonomialOrder=>prepend(Weights=>opts.Heft,(monoid R).Options.MonomialOrder)};
+		   if opts.Heft =!= null then (
+		       h := hashTable (options R).MonomialOrder;
+		       if not h.?Weights or h.Weights != -opts.Heft then stderr << "--warning: Weights of degrees ring don't match Heft vector" <<endl;
+		       );
+		   R
+		   )
+	       else if opts.Heft =!= null 
 	       then degreesRing opts.Heft 
 	       else degreesRing degrk -* shouldn't really be needed *-
 	       );
+	  M.degreeLength = numgens M.degreesRing;
+	  if opts.AddDegreesRing =!= null then
+	  if isPolynomialRing opts.AddDegreesRing and coefficientRing opts.AddDegreesRing===ZZ and numgens opts.AddDegreesRing==M.degreeLength then M.addDegreesRing=opts.AddDegreesRing -- experimental
+	  else error "invalid ring of additive degrees";
      	  M.degreesMonoid = monoid M.degreesRing;
 	  M.RawMonoid = rawMonoid(
 	       M.RawMonomialOrdering,
@@ -348,24 +367,30 @@ makeit1 := (opts) -> (
      if opts.Global and not opts.Inverses then scan(M.generators, x -> if x <= 1 then error "not all variables are > 1, and Global => true");
      M)
 
-processDegrees := (degs,degrk,nvars) -> (
-     if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
-     if degs === null then degs = (
-	  if degrk === null then (
-	       degrk = 1;
-	       apply(nvars,i->{1})
-	       )
-	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
-	  )
-     else (
+processDegrees := (degs,degrk,nvars,degring,adddegring) -> (
+    -- pre-process degs
+    if degs =!= null then (
      	  if not instance(degs,List) then error "Degrees: expected a list";
      	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
-     	  scan(degs, d -> if not (instance(d,List) and all(d, i -> instance(i,ZZ))) then error "expected degree to be an integer or list of integers");
-     	  if degrk === null then (
-	       if not same(length \ degs) then error "expected degrees all of the same rank";
- 	       degrk = if #degs > 0 then #degs#0 else 1;
-	       )
-	  else scan(degs, d -> if #d =!= degrk then error("expected degree of rank ",degrk));
+	  degs = apply(degs, d -> (
+		  if degring =!= null and instance(d,degring) then d=(exponents d)#0
+		  else if adddegring =!= null and instance(d,adddegring) then d=apply(flatten entries(coefficients(d,Monomials=>generators adddegring))#1,x->substitute(x,ZZ));
+		  if instance(d,List) and all(d,i->instance(i,ZZ)) then d 
+	      	  else error "expected degree to be an integer or list of integers or a monomial of the degrees ring or a linear element of the add degrees ring"));
+	  if not same(length \ degs) then error "expected degrees all of the same rank";
+	  );
+     if degrk === null then ( -- then determine degrk
+	 if degring=!=null then degrk=numgens degring
+	 else if adddegring=!=null then degrk=numgens adddegring
+	 else if degs =!= null and #degs>0 then degrk=#degs#0
+	 else degrk=1;
+	 )
+     else if not instance(degrk,ZZ) then error("DegreeRank => ... : expected an integer or null");
+     if ((degring =!= null and degrk!=numgens degring) or (adddegring =!= null and degrk!=numgens adddegring) or (degs =!= null and #degs>0 and degrk!=#degs#0)) then error("Degrees rank mismatch");
+     
+     if degs === null then degs = (
+	  if degrk === 1 then apply(nvars,i->{1}) -- slightly changed compared to original: used to be only if degrk===null
+	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
 	  );
      if nvars != #degs then error "expected length of list of degrees to equal the number of variables";
      (degs,degrk));
@@ -461,7 +486,7 @@ makeMonoid := (opts) -> (
 			 error (msg,newline,toString (preX | silentRobustNetWithClass(pw - width  preX, 5, 3, v#i)))))));
      -- if length unique opts.Variables < length opts.Variables then error "at least one variable listed twice";
 
-     (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables );
+     (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables, opts.DegreesRing, opts.AddDegreesRing );
      opts.Degrees = degs;
      opts.DegreeRank = degrk;
 
@@ -514,7 +539,9 @@ trimMO := o -> (
 degreePad = (n,x) -> (
      if instance(x,ZZ) then x = {x};
      if not instance(x,List) or not all(x,i -> instance(i,ZZ)) then error "expected degree map to return a list of integers";
-     if #x > n then error("with Join => false, expected degree map to return a list of length at most ",toString n);
+     if #x > n then --error("with Join => false, expected degree map to return a list of length at most ",toString n);
+     take(x,n) -- no need to be so strict
+     else
      join(toList(n-#x:0),x));
 
 degreeNoLift = () -> error "degree not liftable"
@@ -549,6 +576,8 @@ tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
 	       )
 	  else if opts.Join === false then (
 	       opts.DegreeRank = Mopts.DegreeRank;
+	       opts.DegreesRing = Mopts.DegreesRing;
+	       opts.AddDegreesRing = Mopts.AddDegreesRing;
 	       dm := if opts.DegreeMap =!= null then opts.DegreeMap else if Mopts.DegreeMap =!= null then Mopts.DegreeMap else identity;
 	       opts.DegreeMap = d -> degreePad(opts.DegreeRank,dm d);
 	       lm := if opts.DegreeLift =!= null then opts.DegreeLift else if Mopts.DegreeLift =!= null then Mopts.DegreeLift;
@@ -565,7 +594,7 @@ tensor(Monoid, Monoid) := Monoid => opts0 -> (M,N) -> (
 	       )
 	  else error "tensor: expected Join option to be true, false, or null")
      else (
-     	  (degs,degrk) := processDegrees(opts.Degrees, opts.DegreeRank, length opts.Variables);
+     	  (degs,degrk) := processDegrees( opts.Degrees, opts.DegreeRank, length opts.Variables, opts.DegreesRing, opts.AddDegreesRing );
 	  opts.Degrees = degs;
 	  opts.DegreeRank = degrk;
 	  if opts.DegreeMap === null then opts.DegreeMap = Mopts.DegreeMap;

@@ -43,9 +43,8 @@ f << ///
 	    (max-specpdl-size 1000) ; needed for passing long long lists to regexp-opt
 	  )
        `(
-	 ; (,"--.*" . font-lock-comment-face)
+;	 ("\\(--.*\\)" 1 font-lock-comment-face prepend)
 ///
-
 
 add := (face,words) -> if #words > 0 then (
      f
