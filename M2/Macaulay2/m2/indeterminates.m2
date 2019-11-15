@@ -38,7 +38,7 @@ Symbol .. Symbol := (a,z) -> if a === z then 1:a else vars( reverseVars a .. rev
 Symbol ..< Symbol := (a,z) -> if a === z then () else vars( reverseVars a ..< reverseVars z )
 
 succS = new MutableHashTable;
-for i from 0 to 50 do succS#(varName i) = varName(i+1)
+for i from 0 to #varList-2 do succS#(varList#i) = varList#(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
