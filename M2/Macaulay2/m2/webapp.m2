@@ -155,7 +155,7 @@ expressionDebugWrapper := x -> (
 webAppBegin = () -> (
     if expressionDebug then (
 	global texMath <- expressionDebugWrapper;
-	global htmlWithTex <- lookup(htmlWithTex,Thing);
+	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
 	)
     )
 webAppEnd = () -> (
