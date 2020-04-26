@@ -8,8 +8,9 @@
     webAppOutputTag,      -- it's html but it's output
     webAppInputTag,       -- it's text but it's input
     webAppInputContdTag,  -- text, continuation of input
-    webAppTextTag):=      -- other text
-apply((17,18,19,20,28,30),ascii)
+    webAppTextTag,        -- other text
+    webAppTexFlag         -- TeX
+    ):=apply((17,18,19,20,28,30,31),ascii)
 -- what follows probably needs simplifying -- we're trying not to code stuff inside web app tags
 texAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
@@ -26,7 +27,7 @@ texAltLiteral = s -> ( open:= {};
 htmlWithTexLiteral = s -> replace("\\\\","&bsol;",htmlLiteral s);
 
 --texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for MathJax compatibility
-texWrap := x -> concatenate("\\(",x,"\\)")
+texWrap := x -> concatenate(webAppTexFlag,x,webAppEndTag)
 
 htmlWithTex Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
 
