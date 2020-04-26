@@ -1,6 +1,6 @@
 -- Paul Zinn-Justin 2018
 
--- htmlWithTex Thing produces some valid html code with possible TeX code in \( \)
+-- htmlWithTex Thing produces some valid html code with possible TeX code
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
 (webAppEndTag,            -- closing tag
@@ -8,13 +8,14 @@
     webAppOutputTag,      -- it's html but it's output
     webAppInputTag,       -- it's text but it's input
     webAppInputContdTag,  -- text, continuation of input
-    webAppTextTag):=      -- other text
-apply((17,18,19,20,28,30),ascii)
+    webAppTextTag,        -- other text
+    webAppTexFlag         -- TeX
+    ):=apply((17,18,19,20,28,30,31),ascii)
 
 
 htmlWithTexLiteral = s -> replace("\\\\","&bsol;",htmlLiteral s);
 
-texWrap := x -> concatenate("\\(",x,"\\)")
+texWrap := x -> concatenate(webAppTexFlag,x,webAppEndTag)
 
 htmlWithTex Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
 
