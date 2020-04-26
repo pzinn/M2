@@ -1250,7 +1250,8 @@ print = x -> (<< net x << endl;)
 texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
 
 texMath ZZ := toString
-tex Thing := x -> concatenate("$",texMath x,"$")
+texStart = texEnd = "$"; -- the default tex delimiters
+tex Thing := x -> concatenate(texStart,texMath x,texEnd)
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack

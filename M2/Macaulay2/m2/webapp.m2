@@ -1,6 +1,6 @@
 -- Paul Zinn-Justin 2018
 
--- htmlWithTex Thing produces some valid html code with possible TeX code in \( \)
+-- htmlWithTex Thing produces some valid html code with possible TeX code
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
 (webAppEndTag,            -- closing tag
@@ -26,10 +26,7 @@ texAltLiteral = s -> ( open:= {};
 
 htmlWithTexLiteral = s -> replace("\\\\","&bsol;",htmlLiteral s);
 
---texWrap := x -> concatenate("\\(",htmlLiteral x,"\\)") -- for MathJax compatibility
-texWrap := x -> concatenate(webAppTexFlag,x,webAppEndTag)
-
-htmlWithTex Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
+htmlWithTex Thing := tex -- by default, for KaTeX we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := x -> replace("\\\\","&bsol;",html x);
@@ -74,7 +71,7 @@ Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    webAppBegin();
+    webAppBegin(true);
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     webAppEnd();
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
@@ -87,10 +84,11 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
-    webAppBegin();
-    z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
+    if instance(y,Sequence) then y=RowExpression deepSplice y;
+    webAppBegin(false);
+    z := htmlWithTex y;
     webAppEnd();
-    << endl << on() | " : " | webAppHtmlTag | texWrap z | webAppEndTag << endl;
+    << endl << on() | " : " | webAppHtmlTag | z | webAppEndTag << endl;
     )
 
 Thing#{WebApp,AfterPrint} = x -> texAfterPrint class x;
@@ -214,7 +212,9 @@ texMathColorWrapper := x -> (
     if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
     -- buggy, see https://github.com/Khan/KaTeX/issues/1679
     )
-webAppBegin = () -> (
+webAppBegin = (flag) -> (
+    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
+    texEnd = webAppEndTag;
     if expressionDebug then (
 	global texMath <- texMathWrapper;
 	global htmlWithTex <- lookup(htmlWithTex,Thing);
@@ -223,6 +223,7 @@ webAppBegin = () -> (
     global texMath <- texMathColorWrapper
     )
 webAppEnd = () -> (
+    texStart = texEnd = "$"; -- the default tex delimiters
     global texMath <- texMathBackup;
     global htmlWithTex <- htmlWithTexBackup;
     )
