@@ -13,18 +13,14 @@
     ):=apply((17,18,19,20,28,30,31),ascii)
 
 
-htmlWithTexLiteral = s -> replace("\\\\","&bsol;",htmlLiteral s);
-
-texWrap := x -> concatenate(webAppTexFlag,x,webAppEndTag)
-
-htmlWithTex Thing := x -> texWrap("\\displaystyle " | texMath x) -- by default, for KaTeX we use tex (as opposed to html)
+htmlWithTex Thing := tex -- by default, for KaTeX we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
-htmlWithTex Hypertext := x -> replace("\\\\","&bsol;",html x);
+htmlWithTex Hypertext := html
 -- the % is relative to line-height
 htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", 
-    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlWithTexLiteral x | "<br/>"), "</span></pre>")
-htmlWithTex String := x -> concatenate("<pre>", htmlWithTexLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
+htmlWithTex String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -46,7 +42,7 @@ Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    webAppBegin();
+    webAppBegin(true);
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     webAppEnd();
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
@@ -59,10 +55,11 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
---    webAppBegin();
-    z := texMath if instance(y,Sequence) then RowExpression deepSplice y else y;
---   webAppEnd();
-    << endl << on() | " : " | webAppHtmlTag | texWrap z | webAppEndTag << endl;
+    if instance(y,Sequence) then y=RowExpression deepSplice y;
+    webAppBegin(false);
+    z := htmlWithTex y;
+    webAppEnd();
+    << endl << on() | " : " | webAppHtmlTag | z | webAppEndTag << endl;
     )
 
 Thing#{WebApp,AfterPrint} = x -> texAfterPrint class x;
@@ -130,7 +127,7 @@ export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ℂ=CC
 ∞=infinity
 
--- the debug hack (temporary, to be removed before PR -- don't forget webAppBegin/End above)
+-- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
 expressionDebug=false;
 texMathBackup := texMath
 htmlWithTexBackup := htmlWithTex;
@@ -153,13 +150,17 @@ expressionDebugWrapper := x -> (
     );
     "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
     )
-webAppBegin = () -> (
-    if expressionDebug then (
+
+webAppBegin = (flag) -> ( -- flag means add \displaystyle
+    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
+    texEnd = webAppEndTag;
+    if expressionDebug and flag then (
 	global texMath <- expressionDebugWrapper;
 	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
 	)
     )
 webAppEnd = () -> (
+    texStart = texEnd = "$"; -- the default tex delimiters
     if expressionDebug then (
 	global texMath <- texMathBackup;
 	global htmlWithTex <- htmlWithTexBackup;
