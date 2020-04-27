@@ -13,7 +13,7 @@ PACKAGES = $(ALL_PACKAGES)
 DEVEL = EngineTests
 
 RemakeAllDocumentation ?= false
-IgnoreExampleErrors ?= false
+IgnoreExampleErrors ?= true
 CheckDocumentation ?= true
 Verbose ?= false
 RerunExamples ?= false

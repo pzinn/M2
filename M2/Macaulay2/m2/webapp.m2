@@ -24,18 +24,16 @@ texAltLiteral = s -> ( open:= {};
     )
 )
 
-htmlWithTexLiteral = s -> replace("\\\\","&bsol;",htmlLiteral s);
-
 htmlWithTex Thing := tex -- by default, for KaTeX we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
-htmlWithTex Hypertext := x -> replace("\\\\","&bsol;",html x);
+htmlWithTex Hypertext := html
 -- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
 -- but they conflict with the current defs
 -- the % is relative to line-height
 htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:",
-    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlWithTexLiteral x | "<br/>"), "</span></pre>")
-htmlWithTex String := x -> concatenate("<pre>", htmlWithTexLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
+    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
+htmlWithTex String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -191,7 +189,8 @@ toExtString String := toExternalString
 expressionDebug=false;
 texMathBackup := texMath
 htmlWithTexBackup := htmlWithTex;
--- the debug hack -- the rawhtml is TEMP, of course
+-- both of the functions below are activated with texMath <- texMath[Color]Wrapper
+-- the debug hack -- the rawhtml is TEMP, of course. currently deactivated
 texMathWrapper = x -> (
     if instance(x,VisibleList) or instance(x,Expression)
     then "\\rawhtml{<span class='M2Meta' data-type='"|toString class x|"'>}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}"
@@ -205,30 +204,52 @@ texMathWrapper = x -> (
     else texMathBackup x
     )
 )
-
--- the color hack
+-- the color hack: currently deactivated
 texMathColorWrapper := x -> (
     c := try colorTable#x else color x;
     if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
-    -- buggy, see https://github.com/Khan/KaTeX/issues/1679
+    -- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
     )
-webAppBegin = (flag) -> (
+--
+
+-- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
+expressionDebugWrapper := x -> (
+    if instance(x,VisibleList) or instance(x,Expression) then (
+	global texMath <- texMathBackup;
+	y := texMath class x;
+	global texMath <- expressionDebugWrapper;
+	z := texMathBackup x;
+	)
+    else (
+	e := expression x;
+	if instance(e, Holder) and e#0 === x then (
+	global texMath <- texMathBackup;
+	y = texMath class x;
+	z = texMath x;
+	global texMath <- expressionDebugWrapper;
+	)
+    else return texMathBackup x;
+    );
+    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
+    )
+webAppBegin = (flag) -> ( -- flag means add \displaystyle
     texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
     texEnd = webAppEndTag;
-    if expressionDebug then (
-	global texMath <- texMathWrapper;
-	global htmlWithTex <- lookup(htmlWithTex,Thing);
+    if expressionDebug and flag then (
+	global texMath <- expressionDebugWrapper;
+	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
 	)
-    else
-    global texMath <- texMathColorWrapper
     )
 webAppEnd = () -> (
     texStart = texEnd = "$"; -- the default tex delimiters
-    global texMath <- texMathBackup;
-    global htmlWithTex <- htmlWithTexBackup;
+    if expressionDebug then (
+	global texMath <- texMathBackup;
+	global htmlWithTex <- htmlWithTexBackup;
+	)
     )
 
--- completely unrelated -- move somewhere else
+-- completely unrelated -- move somewhere else. see also
+-- https://github.com/Macaulay2/M2/issues/1069#issuecomment-617790397
 -- in any case, will fail because most net operations are at d level
 width String := x -> ( -- we leave length to be #
     c := 0;
