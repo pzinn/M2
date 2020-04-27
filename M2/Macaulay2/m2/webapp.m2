@@ -148,7 +148,9 @@ ZZ#{WebApp,AfterPrint} = identity
 
 -- experimental
 print = x -> if topLevelMode === WebApp then (
+    webAppBegin(true);
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
+    webAppEnd();
     << webAppHtmlTag | y | webAppEndTag << endl;
     ) else ( << net x << endl; )
 
