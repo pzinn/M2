@@ -133,12 +133,14 @@ texMathBackup := texMath
 htmlWithTexBackup := htmlWithTex;
 expressionDebugWrapper := x -> (
     if instance(x,VisibleList) or instance(x,Expression) then (
+--	<< "case 1 "|toString x|" "|toString class x << endl;
 	global texMath <- texMathBackup;
 	y := texMath class x;
 	global texMath <- expressionDebugWrapper;
 	z := texMathBackup x;
 	)
     else (
+--	<< "case 2 "|toString x|" "|toString class x << endl;
 	e := expression x;
 	if instance(e, Holder) and e#0 === x then (
 	global texMath <- texMathBackup;

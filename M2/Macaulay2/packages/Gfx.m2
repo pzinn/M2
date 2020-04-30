@@ -323,9 +323,12 @@ svg GfxHtml := g -> (
 
 htmlWithTex GfxObject := html
 -- the 0.4 is approximate and should correspond to depth vs height of current font
-texMath GfxObject := x -> (
+texMath GfxObject := x -> if topLevelMode != WebApp or texStart=="$" then (lookup(texMath,parent GfxObject)) x else ( -- fundamentally problematic: hacking texMath is wrong
     h := html x; -- this way height is computed
     "\\rawhtml{" | h | "}{" | toString((x.cache.GfxHeight+0.4)/2.) |"em}{" | toString((x.cache.GfxHeight-0.4)/2.) | "em}"
+--    "\\htmlStyle{content: url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2240%22%20stroke=%22red%22%20/%3E%3C/svg%3E');}{}"
+--    "\\htmlStyle{content: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><circle r=\\'40\\' /></svg>');}{}"
+--    "\\htmlStyle{content: url('data:image/svg+xml," | replace("\"","\\'",replace("'","\\'",h)) | "');}{}"
     )
 
 hasAttribute := value Core#"private dictionary"#"hasAttribute"
@@ -385,15 +388,15 @@ html GfxObject := g -> (
 	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 	    );
 	axeslabels = gfx(
-	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#0 else "\\(x\\)" , GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#1 else "\\(y\\)", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#2 else "\\(z\\)", GfxFontSize => 0.08*min(rr_0,rr_1)}
--*
-	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    	GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    	if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#2 else "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
-		"stroke" => "none", "fill"=>"black"
-		*-
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#0 else tex local x , GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#1 else tex local y, GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#2 else tex local z, GfxFontSize => 0.08*min(rr_0,rr_1)}
+	    -*
+	    GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#2 else "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    "stroke" => "none", "fill"=>"black"
+	    *-
 	    );
 	axes=svg axes;
 	axeslabels=svg axeslabels;
@@ -688,8 +691,8 @@ multidoc ///
    Text
     An SVG ellipse. The three compulsory options are GfxCenter (coordinates of the center) and GfxRadiusX, GfxRadiusY (radii).
    Example
-    GfxEllipse{GfxCenter=>[10,10],GfxRadiusX=>50,GfxRadiusY=>20,"stroke"=>"none"}
-    GfxEllipse{[10,10],50,20,"stroke"=>"none"} -- equivalent syntax
+    GfxEllipse{GfxCenter=>[10,10],GfxRadiusX=>50,GfxRadiusY=>20,"stroke"=>"none","fill"=>"red"}
+    GfxEllipse{[10,10],50,20,"stroke"=>"blue"} -- equivalent syntax
  Node
   Key
    GfxPath
@@ -1030,8 +1033,8 @@ R=RR[x,y];
 P=y^2-(x+1)*(x-1)*(x-2);
 gfxPlot(P,{-2,3},"stroke-width"=>0.05,GfxHeight=>25,"stroke"=>"red")
 
--- to rerun examples/doc: (possibly adding topLevelMode=MathJax to init.m2)
-installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, AbsoluteLinks => false, UserMode => true, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
+-- to rerun examples/doc: (possibly adding topLevelMode=WebApp to init.m2)
+installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, UserMode => true, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
 
 -- removed
  Node
