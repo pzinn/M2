@@ -375,10 +375,16 @@ info TOH := x -> (
 	  )
      )
 
-info IMG := net IMG := tex IMG  := x -> (
+info IMG := net IMG := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
      if o#"alt" === null then error ("IMG item is missing alt attribute");
      o#"alt")
+
+tex IMG := texMath IMG := x -> (
+     (o,cn) := override(IMG.Options,toSequence x);
+     if o#"src" === null then error ("IMG item is missing src attribute");
+    "\\includegraphics{" | o#"src" | "}"
+    )
 
 info HREF := net HREF := x -> (
      if #x === 1
