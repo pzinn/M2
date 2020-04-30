@@ -47,16 +47,92 @@ htmlWithTex ColumnExpression := x -> concatenate("<span style=\"display:inline-f
 --htmlWithTex RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, htmlWithTex), "</span>")
 htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
 
--*
--- temporary HACK: a new Type should be created for examples since they won't literally be PRE in htmlWithTex mode
--- either that or must rewrite the whole structure of htmlWithTex = html, or both
-*-
+-- now preparation for output
 
-html PRE := x -> concatenate(
-     "<pre>",
-     if topLevelMode === WebApp then (webAppTextTag, x, "\n", webAppEndTag) else demark(newline, apply(lines concatenate x, htmlLiteral)), -- note the extra \n to make sure input is ended
-     "</pre>\n"
-     )
+-- both of the functions below are activated with texMath <- texMath[Color]Wrapper
+expressionDebug=false;
+texMathBackup := texMath
+htmlWithTexBackup := htmlWithTex;
+-- the debug hack -- the rawhtml is TEMP, of course. currently deactivated
+toExtString := method() -- somewhere between toString and toExternalString <sigh>
+toExtString Thing := toString -- e.g. for a ring!
+toExtString Symbol := toExternalString -- for indexedvariables, for ex...
+toExtString String := toExternalString
+texMathWrapper = x -> (
+    if instance(x,VisibleList) or instance(x,Expression)
+    then "\\rawhtml{<span class='M2Meta' data-type='"|toString class x|"'>}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}"
+    else (
+	e := expression x;
+	if instance(e,Holder) and e#0 === x then (
+	global texMath <- texMathBackup;
+	first("\\rawhtml{<span class='M2Meta' data-content='"|toExtString x|"'>}{0em}{0em}"|texMath x|"\\rawhtml{</span>}{0em}{0em}",
+	    global texMath <- texMathWrapper)
+	)
+    else texMathBackup x
+    )
+)
+-- the color hack: currently deactivated
+texMathColorWrapper := x -> (
+    c := try colorTable#x else color x;
+    if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
+    -- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
+    )
+--
+
+-- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
+expressionDebugWrapper := x -> (
+    if instance(x,VisibleList) or instance(x,Expression) then (
+--	<< "case 1 "|toString x|" "|toString class x << endl;
+	global texMath <- texMathBackup;
+	y := texMath class x;
+	global texMath <- expressionDebugWrapper;
+	z := texMathBackup x;
+	)
+    else (
+--	<< "case 2 "|toString x|" "|toString class x << endl;
+	e := expression x;
+	if instance(e, Holder) and e#0 === x then (
+	global texMath <- texMathBackup;
+	y = texMath class x;
+	z = texMath x;
+	global texMath <- expressionDebugWrapper;
+	)
+    else return texMathBackup x;
+    );
+    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
+    )
+
+-- the help hack: if started in WebApp mode, help is compiled in it as well
+if topLevelMode === WebApp then (
+    rawPRE := new MarkUpType of PRE;
+    html rawPRE := x -> concatenate(
+	"<pre>",
+	webAppTextTag, x, "\n", webAppEndTag,
+	"</pre>\n"
+	);
+    pELBackup:=lookup(processExamplesLoop,ExampleItem);
+    processExamplesLoop ExampleItem := x -> (
+	res := pELBackup x;
+	new rawPRE from res );
+)
+
+webAppBegin := (flag) -> ( -- flag means add \displaystyle
+    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
+    texEnd = webAppEndTag;
+    -- the debug hack
+    if expressionDebug and flag then (
+	global texMath <- expressionDebugWrapper;
+	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
+	)
+    )
+webAppEnd := () -> (
+    texStart = texEnd = "$"; -- the default tex delimiters
+    -- the debug hack
+    if expressionDebug then (
+	global texMath <- texMathBackup;
+	global htmlWithTex <- htmlWithTexBackup;
+	)
+    )
 
 -- output routines
 
@@ -183,74 +259,7 @@ colorTable = new MutableHashTable
 --setColor = (x,c) -> (colorTable#x = colorTable#(unhold expression x) = toString c;) -- slightly overkill
 setColor = (x,c) -> (colorTable#(unhold expression x) = toString c;) -- should be all we need
 
-toExtString := method() -- somewhere between toString and toExternalString <sigh>
-toExtString Thing := toString -- e.g. for a ring!
-toExtString Symbol := toExternalString -- for indexedvariables, for ex...
-toExtString String := toExternalString
 
-expressionDebug=false;
-texMathBackup := texMath
-htmlWithTexBackup := htmlWithTex;
--- both of the functions below are activated with texMath <- texMath[Color]Wrapper
--- the debug hack -- the rawhtml is TEMP, of course. currently deactivated
-texMathWrapper = x -> (
-    if instance(x,VisibleList) or instance(x,Expression)
-    then "\\rawhtml{<span class='M2Meta' data-type='"|toString class x|"'>}{0em}{0em}"|texMathBackup x|"\\rawhtml{</span>}{0em}{0em}"
-    else (
-	e := expression x;
-	if instance(e,Holder) and e#0 === x then (
-	global texMath <- texMathBackup;
-	first("\\rawhtml{<span class='M2Meta' data-content='"|toExtString x|"'>}{0em}{0em}"|texMath x|"\\rawhtml{</span>}{0em}{0em}",
-	    global texMath <- texMathWrapper)
-	)
-    else texMathBackup x
-    )
-)
--- the color hack: currently deactivated
-texMathColorWrapper := x -> (
-    c := try colorTable#x else color x;
-    if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
-    -- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
-    )
---
-
--- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
-expressionDebugWrapper := x -> (
-    if instance(x,VisibleList) or instance(x,Expression) then (
---	<< "case 1 "|toString x|" "|toString class x << endl;
-	global texMath <- texMathBackup;
-	y := texMath class x;
-	global texMath <- expressionDebugWrapper;
-	z := texMathBackup x;
-	)
-    else (
---	<< "case 2 "|toString x|" "|toString class x << endl;
-	e := expression x;
-	if instance(e, Holder) and e#0 === x then (
-	global texMath <- texMathBackup;
-	y = texMath class x;
-	z = texMath x;
-	global texMath <- expressionDebugWrapper;
-	)
-    else return texMathBackup x;
-    );
-    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
-    )
-webAppBegin = (flag) -> ( -- flag means add \displaystyle
-    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
-    texEnd = webAppEndTag;
-    if expressionDebug and flag then (
-	global texMath <- expressionDebugWrapper;
-	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
-	)
-    )
-webAppEnd = () -> (
-    texStart = texEnd = "$"; -- the default tex delimiters
-    if expressionDebug then (
-	global texMath <- texMathBackup;
-	global htmlWithTex <- htmlWithTexBackup;
-	)
-    )
 
 -- completely unrelated -- move somewhere else. see also
 -- https://github.com/Macaulay2/M2/issues/1069#issuecomment-617790397
