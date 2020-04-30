@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "Gfx",
-        Version => "0.1", 
+        Version => "0.2",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin", 
                   Email => "pzinn@unimelb.edu.au", 
@@ -16,7 +16,8 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
-    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
+    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
+    "Image"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
@@ -626,6 +627,12 @@ gfxPlot = true >> o -> (P,r) -> (
 		    GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) } -- technically this is wrong -- the quad isn't flat, we should make triangles
 	)
     )
+
+-- not directly related: a simple Image type
+Image = new WrapperType of BasicList;
+html Image := x -> "<img src='" | x#0 | "'>";
+htmlWithTex Image := html;
+texMath Image := x -> "\\includegraphics{" | x#0 | "}"; -- needs more, like height depth etc
     
 beginDocumentation()
 multidoc ///
