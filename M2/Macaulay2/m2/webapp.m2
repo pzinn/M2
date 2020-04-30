@@ -18,7 +18,7 @@ htmlWithTex Thing := tex -- by default, for KaTeX we use tex (as opposed to html
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
 -- the % is relative to line-height
-htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:", 
+htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:",
     toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
 htmlWithTex String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
 htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
@@ -30,6 +30,64 @@ htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><p
 -- some expressions can be htmlWithTex'ed directly w/o reference to texMath
 htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
 htmlWithTex Holder := x -> htmlWithTex x#0
+
+-- now preparation for output
+
+-- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
+expressionDebug=false;
+texMathBackup := texMath
+htmlWithTexBackup := htmlWithTex;
+expressionDebugWrapper := x -> (
+    if instance(x,VisibleList) or instance(x,Expression) then (
+	global texMath <- texMathBackup;
+	y := texMath class x;
+	global texMath <- expressionDebugWrapper;
+	z := texMathBackup x;
+	)
+    else (
+	e := expression x;
+	if instance(e, Holder) and e#0 === x then (
+	global texMath <- texMathBackup;
+	y = texMath class x;
+	z = texMath x;
+	global texMath <- expressionDebugWrapper;
+	)
+    else return texMathBackup x;
+    );
+    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
+    )
+
+-- the help hack: if started in WebApp mode, help is compiled in it as well
+if topLevelMode === WebApp then (
+    webAppPRE := new MarkUpType of PRE;
+    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so need to htmlLiteral it
+	"<pre>",
+	webAppTextTag, x, "\n", webAppEndTag,
+	"</pre>\n"
+	);
+    pELBackup:=lookup(processExamplesLoop,ExampleItem);
+    processExamplesLoop ExampleItem := x -> (
+	res := pELBackup x;
+	new webAppPRE from res );
+)
+
+webAppBegin := (flag) -> ( -- flag means add \displaystyle
+    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
+    texEnd = webAppEndTag;
+    -- the debug hack
+    if expressionDebug and flag then (
+	global texMath <- expressionDebugWrapper;
+	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
+	)
+    )
+webAppEnd := () -> (
+    texStart = texEnd = "$"; -- the default tex delimiters
+    -- the debug hack
+    if expressionDebug then (
+	global texMath <- texMathBackup;
+	global htmlWithTex <- htmlWithTexBackup;
+	)
+    )
 
 -- output routines for WebApp mode
 
@@ -127,44 +185,3 @@ export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ℂ=CC
 ∞=infinity
 
--- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
-expressionDebug=false;
-texMathBackup := texMath
-htmlWithTexBackup := htmlWithTex;
-expressionDebugWrapper := x -> (
-    if instance(x,VisibleList) or instance(x,Expression) then (
---	<< "case 1 "|toString x|" "|toString class x << endl;
-	global texMath <- texMathBackup;
-	y := texMath class x;
-	global texMath <- expressionDebugWrapper;
-	z := texMathBackup x;
-	)
-    else (
---	<< "case 2 "|toString x|" "|toString class x << endl;
-	e := expression x;
-	if instance(e, Holder) and e#0 === x then (
-	global texMath <- texMathBackup;
-	y = texMath class x;
-	z = texMath x;
-	global texMath <- expressionDebugWrapper;
-	)
-    else return texMathBackup x;
-    );
-    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
-    )
-
-webAppBegin = (flag) -> ( -- flag means add \displaystyle
-    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
-    texEnd = webAppEndTag;
-    if expressionDebug and flag then (
-	global texMath <- expressionDebugWrapper;
-	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
-	)
-    )
-webAppEnd = () -> (
-    texStart = texEnd = "$"; -- the default tex delimiters
-    if expressionDebug then (
-	global texMath <- texMathBackup;
-	global htmlWithTex <- htmlWithTexBackup;
-	)
-    )
