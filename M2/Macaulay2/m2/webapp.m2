@@ -77,7 +77,7 @@ webAppBegin := (flag) -> ( -- flag means add \displaystyle
     -- the debug hack
     if expressionDebug and flag then (
 	global texMath <- expressionDebugWrapper;
-	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
+	global htmlWithTex <- lookup(tex,Thing); -- force the use of tex
 	)
     )
 webAppEnd := () -> (
