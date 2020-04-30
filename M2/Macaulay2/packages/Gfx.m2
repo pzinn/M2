@@ -175,6 +175,7 @@ GfxList = new GfxType of GfxObject from hashTable { symbol Name => "g", symbol O
 -- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }. plus updates is3d correctly!
 gfx = true >> opts -> x -> (
     x=if instance(x,BasicList) then select(flatten toList x, y -> y =!=null) else {x};
+    if any(x, y -> not instance(y,GfxObject)) then error "gfx: all elements must be instances of GfxObject";
     gfxParseFlag = false;
     opts = gfxParse opts;
     new GfxList from (new GfxObject) ++ opts ++ { symbol GfxContents => x, symbol GfxIs3d => gfxParseFlag or any(x,y->y.GfxIs3d) }
@@ -628,12 +629,6 @@ gfxPlot = true >> o -> (P,r) -> (
 	)
     )
 
--- not directly related: a simple Image type
-Image = new WrapperType of BasicList;
-html Image := x -> "<img src='" | x#0 | "'>";
-htmlWithTex Image := html;
-texMath Image := x -> "\\includegraphics{" | x#0 | "}"; -- needs more, like height depth etc
-    
 beginDocumentation()
 multidoc ///
  Node
