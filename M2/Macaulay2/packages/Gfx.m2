@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "Gfx",
-        Version => "0.1", 
+        Version => "0.2",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin", 
                   Email => "pzinn@unimelb.edu.au", 
@@ -16,7 +16,8 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
-    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
+    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
+    "Image"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
@@ -174,6 +175,7 @@ GfxList = new GfxType of GfxObject from hashTable { symbol Name => "g", symbol O
 -- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }. plus updates is3d correctly!
 gfx = true >> opts -> x -> (
     x=if instance(x,BasicList) then select(flatten toList x, y -> y =!=null) else {x};
+    if any(x, y -> not instance(y,GfxObject)) then error "gfx: all elements must be instances of GfxObject";
     gfxParseFlag = false;
     opts = gfxParse opts;
     new GfxList from (new GfxObject) ++ opts ++ { symbol GfxContents => x, symbol GfxIs3d => gfxParseFlag or any(x,y->y.GfxIs3d) }
@@ -322,14 +324,6 @@ svg GfxHtml := g -> (
     )
 
 htmlWithTex GfxObject := html
--- the 0.4 is approximate and should correspond to depth vs height of current font
-texMath GfxObject := x -> if topLevelMode != WebApp or texStart=="$" then (lookup(texMath,parent GfxObject)) x else ( -- fundamentally problematic: hacking texMath is wrong
-    h := html x; -- this way height is computed
-    "\\rawhtml{" | h | "}{" | toString((x.cache.GfxHeight+0.4)/2.) |"em}{" | toString((x.cache.GfxHeight-0.4)/2.) | "em}"
---    "\\htmlStyle{content: url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2240%22%20stroke=%22red%22%20/%3E%3C/svg%3E');}{}"
---    "\\htmlStyle{content: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><circle r=\\'40\\' /></svg>');}{}"
---    "\\htmlStyle{content: url('data:image/svg+xml," | replace("\"","\\'",replace("'","\\'",h)) | "');}{}"
-    )
 
 hasAttribute := value Core#"private dictionary"#"hasAttribute"
 getAttribute := value Core#"private dictionary"#"getAttribute"
@@ -626,7 +620,7 @@ gfxPlot = true >> o -> (P,r) -> (
 		    GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) } -- technically this is wrong -- the quad isn't flat, we should make triangles
 	)
     )
-    
+
 beginDocumentation()
 multidoc ///
  Node

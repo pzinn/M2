@@ -9,8 +9,9 @@
     webAppInputTag,       -- it's text but it's input
     webAppInputContdTag,  -- text, continuation of input
     webAppTextTag,        -- other text
-    webAppTexFlag         -- TeX
+    webAppTexTag         -- TeX
     ):=apply((17,18,19,20,28,30,31),ascii)
+
 -- what follows probably needs simplifying -- we're trying not to code stuff inside web app tags
 texAltLiteral = s -> ( open:= {};
     concatenate apply(characters s,
@@ -46,13 +47,83 @@ htmlWithTex Holder := x -> htmlWithTex x#0
 htmlWithTex ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, htmlWithTex), "</span>")
 --htmlWithTex RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, htmlWithTex), "</span>")
 htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
+-- could add some more to clean up code: symbols, Types...
+
+-- now preparation for output
+
+-- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
+expressionDebug=false;
+texMathBackup := texMath
+htmlWithTexBackup := htmlWithTex;
+expressionDebugWrapper := x -> (
+    if instance(x,VisibleList) or instance(x,Expression) then (
+	global texMath <- texMathBackup;
+	y := texMath class x;
+	global texMath <- expressionDebugWrapper;
+	z := texMathBackup x;
+	)
+    else (
+	e := expression x;
+	if instance(e, Holder) and e#0 === x then (
+	global texMath <- texMathBackup;
+	y = texMath class x;
+	z = texMath x;
+	global texMath <- expressionDebugWrapper;
+	)
+    else return texMathBackup x;
+    );
+    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
+    )
+
+-- the help hack: if started in WebApp mode, help is compiled in it as well
+if topLevelMode === WebApp then (
+    webAppPRE := new MarkUpType of PRE;
+    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so need to htmlLiteral it
+	"<pre>",
+	webAppTextTag, x, "\n", webAppEndTag,
+	"</pre>\n"
+	);
+    pELBackup:=lookup(processExamplesLoop,ExampleItem);
+    processExamplesLoop ExampleItem := x -> (
+	res := pELBackup x;
+	new webAppPRE from res );
+)
+
+-- experimental
+texMathInsideHtml := x -> if lookup(htmlWithTex,class x) =!= html -* === tex *- then texMathBackup x else concatenate(
+	webAppHtmlTag,
+	htmlWithTex x,
+	webAppEndTag
+	);
+
+
+webAppBegin := (flag) -> ( -- flag means add \displaystyle
+    texStart = webAppTexTag | (if flag then "\\displaystyle " else "");
+    texEnd = webAppEndTag;
+    -- the debug hack
+    -*
+    if expressionDebug and flag then (
+	global texMath <- expressionDebugWrapper;
+	global htmlWithTex <- lookup(tex,Thing); -- force the use of tex
+	)
+    *-
+    global texMath <- texMathInsideHtml;
+    )
+webAppEnd := () -> (
+    texStart = texEnd = "$"; -- the default tex delimiters
+    -- the debug hack
+    -*
+    if expressionDebug then (
+	global texMath <- texMathBackup;
+	global htmlWithTex <- htmlWithTexBackup;
+	)
+    *-
+    global texMath <- texMathBackup;
+    )
 
 -- now preparation for output
 
 -- both of the functions below are activated with texMath <- texMath[Color]Wrapper
-expressionDebug=false;
-texMathBackup := texMath
-htmlWithTexBackup := htmlWithTex;
 -- the debug hack -- the rawhtml is TEMP, of course. currently deactivated
 toExtString := method() -- somewhere between toString and toExternalString <sigh>
 toExtString Thing := toString -- e.g. for a ring!
@@ -78,61 +149,6 @@ texMathColorWrapper := x -> (
     -- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
     )
 --
-
--- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
-expressionDebugWrapper := x -> (
-    if instance(x,VisibleList) or instance(x,Expression) then (
---	<< "case 1 "|toString x|" "|toString class x << endl;
-	global texMath <- texMathBackup;
-	y := texMath class x;
-	global texMath <- expressionDebugWrapper;
-	z := texMathBackup x;
-	)
-    else (
---	<< "case 2 "|toString x|" "|toString class x << endl;
-	e := expression x;
-	if instance(e, Holder) and e#0 === x then (
-	global texMath <- texMathBackup;
-	y = texMath class x;
-	z = texMath x;
-	global texMath <- expressionDebugWrapper;
-	)
-    else return texMathBackup x;
-    );
-    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
-    )
-
--- the help hack: if started in WebApp mode, help is compiled in it as well
-if topLevelMode === WebApp then (
-    rawPRE := new MarkUpType of PRE;
-    html rawPRE := x -> concatenate(
-	"<pre>",
-	webAppTextTag, x, "\n", webAppEndTag,
-	"</pre>\n"
-	);
-    pELBackup:=lookup(processExamplesLoop,ExampleItem);
-    processExamplesLoop ExampleItem := x -> (
-	res := pELBackup x;
-	new rawPRE from res );
-)
-
-webAppBegin := (flag) -> ( -- flag means add \displaystyle
-    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
-    texEnd = webAppEndTag;
-    -- the debug hack
-    if expressionDebug and flag then (
-	global texMath <- expressionDebugWrapper;
-	global htmlWithTex <- lookup(htmlWithTex,Thing); -- force the use of tex
-	)
-    )
-webAppEnd := () -> (
-    texStart = texEnd = "$"; -- the default tex delimiters
-    -- the debug hack
-    if expressionDebug then (
-	global texMath <- texMathBackup;
-	global htmlWithTex <- htmlWithTexBackup;
-	)
-    )
 
 -- output routines
 
@@ -230,7 +246,7 @@ print = x -> if topLevelMode === WebApp then (
     << webAppHtmlTag | y | webAppEndTag << endl;
     ) else ( << net x << endl; )
 
--- bb letters
+-- bb letters (to be removed before PR)
 export { "ℚ","ℝ","ℤ","ℂ","ℙ","∞" }
 ℚ=QQ
 ℝ=RR
