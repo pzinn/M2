@@ -9,7 +9,7 @@
     webAppInputTag,       -- it's text but it's input
     webAppInputContdTag,  -- text, continuation of input
     webAppTextTag,        -- other text
-    webAppTexFlag         -- TeX
+    webAppTexTag         -- TeX
     ):=apply((17,18,19,20,28,30,31),ascii)
 
 
@@ -30,6 +30,7 @@ htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><p
 -- some expressions can be htmlWithTex'ed directly w/o reference to texMath
 htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
 htmlWithTex Holder := x -> htmlWithTex x#0
+-- could add some more to clean up code: symbols, Types...
 
 -- now preparation for output
 
@@ -71,22 +72,36 @@ if topLevelMode === WebApp then (
 	new webAppPRE from res );
 )
 
+-- experimental
+texMathInsideHtml := x -> if lookup(htmlWithTex,class x) =!= html -* === tex *- then texMathBackup x else concatenate(
+	webAppHtmlTag,
+	htmlWithTex x,
+	webAppEndTag
+	);
+
+
 webAppBegin := (flag) -> ( -- flag means add \displaystyle
-    texStart = webAppTexFlag | (if flag then "\\displaystyle " else "");
+    texStart = webAppTexTag | (if flag then "\\displaystyle " else "");
     texEnd = webAppEndTag;
     -- the debug hack
+    -*
     if expressionDebug and flag then (
 	global texMath <- expressionDebugWrapper;
 	global htmlWithTex <- lookup(tex,Thing); -- force the use of tex
 	)
+    *-
+    global texMath <- texMathInsideHtml;
     )
 webAppEnd := () -> (
     texStart = texEnd = "$"; -- the default tex delimiters
     -- the debug hack
+    -*
     if expressionDebug then (
 	global texMath <- texMathBackup;
 	global htmlWithTex <- htmlWithTexBackup;
 	)
+    *-
+    global texMath <- texMathBackup;
     )
 
 -- output routines for WebApp mode

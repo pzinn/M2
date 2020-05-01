@@ -324,14 +324,6 @@ svg GfxHtml := g -> (
     )
 
 htmlWithTex GfxObject := html
--- the 0.4 is approximate and should correspond to depth vs height of current font
-texMath GfxObject := x -> if topLevelMode != WebApp or texStart=="$" then (lookup(texMath,parent GfxObject)) x else ( -- fundamentally problematic: hacking texMath is wrong
-    h := html x; -- this way height is computed
-    "\\rawhtml{" | h | "}{" | toString((x.cache.GfxHeight+0.4)/2.) |"em}{" | toString((x.cache.GfxHeight-0.4)/2.) | "em}"
---    "\\htmlStyle{content: url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%3E%3Ccircle%20cx=%2250%22%20cy=%2250%22%20r=%2240%22%20stroke=%22red%22%20/%3E%3C/svg%3E');}{}"
---    "\\htmlStyle{content: url('data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><circle r=\\'40\\' /></svg>');}{}"
---    "\\htmlStyle{content: url('data:image/svg+xml," | replace("\"","\\'",replace("'","\\'",h)) | "');}{}"
-    )
 
 hasAttribute := value Core#"private dictionary"#"hasAttribute"
 getAttribute := value Core#"private dictionary"#"getAttribute"
