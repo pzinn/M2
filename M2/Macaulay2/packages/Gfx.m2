@@ -16,7 +16,7 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
-    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
+    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
     "Image"
     }
 
@@ -253,10 +253,6 @@ svgLookup := hashTable {
 	(x = project2d x;),
 	"x2='", toString x_0, "' y2='", toString x_1, "'"
 	),
-    symbol GfxSize => x -> ( -- 2d only?
-	x = project2d x;
-	concatenate("width='", toString x_0, "' height='", toString x_1, "'")
-	),
     symbol GfxStatic => x -> if x then "data-pmatrix='"|jsString currentGfxPMatrix|"'" else "",
     symbol GfxTag => x -> "id='"| x |"'",
     symbol GfxFilterTag => x -> "filter=\"url(#" | x | ")\"",
@@ -319,7 +315,6 @@ svg GfxText := g -> (
 
 svg GfxHtml := g -> (
     g.cache#"overflow"="visible";
-    g.cache.GfxSize=vector{1,-1,0,1}; -- TEMP? weird bug with chrome. needs more testing
     (lookup(svg,GfxText)) g
     )
 
