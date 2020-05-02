@@ -27,10 +27,6 @@ htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><p
 	  then toString k -- sucks but no choice
 	  else toString k | " : " | htmlWithTex v
 	  ) | "<br/>"), "</pre></span>")
--- some expressions can be htmlWithTex'ed directly w/o reference to texMath
-htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
-htmlWithTex Holder := x -> htmlWithTex x#0
--- could add some more to clean up code: symbols, Types...
 
 -- now preparation for output
 
@@ -73,7 +69,7 @@ if topLevelMode === WebApp then (
 )
 
 -- experimental
-texMathInsideHtml := x -> if lookup(htmlWithTex,class x) =!= html -* === tex *- then texMathBackup x else concatenate(
+texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex then texMathBackup x else concatenate(
 	webAppHtmlTag,
 	htmlWithTex x,
 	webAppEndTag
