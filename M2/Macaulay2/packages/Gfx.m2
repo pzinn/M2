@@ -314,7 +314,8 @@ svg GfxText := g -> (
     )
 
 svg GfxHtml := g -> (
-    g.cache#"overflow"="visible";
+    g.cache#"overflow"="visible"; -- makes width/height irrelevant
+    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
     (lookup(svg,GfxText)) g
     )
 
@@ -369,6 +370,7 @@ html GfxObject := g -> (
     -- axes
     axes := null; axeslabels := null;
     if g.?GfxAxes and g.GfxAxes =!= false then ( -- semi temp: axes should be broken into little bits
+	currentGfxPMatrix=currentGfxMatrix=1; -- eww
 	arr := gfxArrow();
 	axes = gfx(
 	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
@@ -586,6 +588,8 @@ gfxLabel = true >> o -> label -> (
 
 needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
 
+-- note that the range is only where the curve actually lies, not the original range "r" provided.
+-- the reason is that it's not clear how to force that original range (there are possible coordinate transformations etc)
 gfxPlot = true >> o -> (P,r) -> (
     R := ring P; -- R should have one or two variables
     if not instance(r,List) then error("incorrect ranges");
@@ -594,13 +598,12 @@ gfxPlot = true >> o -> (P,r) -> (
     if numgens R === #r then R2 := coefficientRing R else R2 = (coefficientRing R) ( monoid [last gens R] );
     if (#r === 1) then ( r = r#0;
     	if (o.?GfxPoints) then n := o.GfxPoints else n = 100;
-	ymin:=infinity; ymax:=-infinity;
 	val := transpose apply(n+1, i -> (
 		x := i*(r#1-r#0)/n+r#0;
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
 		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
-		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then ( yy=realPart yy; if yy<ymin then ymin=yy; if yy>ymax then ymax=yy; vector { x, yy }))));
-	new GfxList from (new GfxObject) ++ { "fill"=>"none", GfxAxes=>gens R, GfxIs3d=>false, GfxRange=>{vector{r#0,ymin},vector{r#1,ymax}} } ++ gfxParse o
+		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
+	new GfxList from (new GfxObject) ++ { "fill"=>"none", GfxAxes=>gens R, GfxIs3d=>false } ++ gfxParse o
 	++ { symbol GfxContents => apply(val, v -> GfxPath { flag:=true; GfxPathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))})}
 	) else (
     	if (o.?GfxPoints) then n = o.GfxPoints else n = 10;
