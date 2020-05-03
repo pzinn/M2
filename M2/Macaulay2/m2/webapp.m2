@@ -54,20 +54,6 @@ expressionDebugWrapper := x -> (
     "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
     )
 
--- the help hack: if started in WebApp mode, help is compiled in it as well
-if topLevelMode === WebApp then (
-    webAppPRE := new MarkUpType of PRE;
-    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so need to htmlLiteral it
-	"<pre>",
-	webAppTextTag, x, "\n", webAppEndTag,
-	"</pre>\n"
-	);
-    pELBackup:=lookup(processExamplesLoop,ExampleItem);
-    processExamplesLoop ExampleItem := x -> (
-	res := pELBackup x;
-	new webAppPRE from res );
-)
-
 -- experimental
 texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex then texMathBackup x else concatenate(
 	webAppHtmlTag,
@@ -76,8 +62,8 @@ texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex 
 	);
 
 
-webAppBegin := (flag) -> ( -- flag means add \displaystyle
-    texStart = webAppTexTag | (if flag then "\\displaystyle " else "");
+webAppBegin := (displayStyle) -> (
+    texStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
     texEnd = webAppEndTag;
     -- the debug hack
     -*
@@ -124,11 +110,11 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
-    if instance(y,Sequence) then y=RowExpression deepSplice y;
+    if instance(y,Sequence) then y=deepSplice y else y=sequence y;
     webAppBegin(false);
-    z := htmlWithTex y;
+    z := htmlWithTex \ y;
     webAppEnd();
-    << endl << on() | " : " | webAppHtmlTag | z | webAppEndTag << endl;
+    << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
 
 Thing#{WebApp,AfterPrint} = x -> texAfterPrint class x;
@@ -195,4 +181,25 @@ export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ℤ=ZZ
 ℂ=CC
 ∞=infinity
+
+if topLevelMode === WebApp then (
+    -- the help hack: if started in WebApp mode, help is compiled in it as well
+    webAppPRE := new MarkUpType of PRE;
+    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so need to htmlLiteral it
+	"<pre>",
+	webAppTextTag, x, "\n", webAppEndTag,
+	"</pre>\n"
+	);
+    pELBackup:=lookup(processExamplesLoop,ExampleItem);
+    processExamplesLoop ExampleItem := x -> (
+	res := pELBackup x;
+	new webAppPRE from res );
+    -- the print hack
+    print = x -> if topLevelMode === WebApp then (
+	webAppBegin(true);
+	y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
+	webAppEnd();
+	<< webAppHtmlTag | y | webAppEndTag << endl;
+	) else ( << net x << endl; );
+)
 
