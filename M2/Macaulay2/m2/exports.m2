@@ -1249,8 +1249,8 @@ exportMutable {
 	"texMath",
 	"htmlWithTex",
 	"expressionDebug",
-	"texStart",
-	"texEnd"
+	"texMathStart",
+	"texMathEnd"
 	}
 
 -- Local Variables:

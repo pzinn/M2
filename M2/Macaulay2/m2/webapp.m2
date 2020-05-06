@@ -63,8 +63,8 @@ texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex 
 
 
 webAppBegin := (displayStyle) -> (
-    texStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
-    texEnd = webAppEndTag;
+    texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
+    texMathEnd = webAppEndTag;
     -- the debug hack
     -*
     if expressionDebug and flag then (
@@ -75,7 +75,7 @@ webAppBegin := (displayStyle) -> (
     global texMath <- texMathInsideHtml;
     )
 webAppEnd := () -> (
-    texStart = texEnd = "$"; -- the default tex delimiters
+    texMathStart = texMathEnd = "$"; -- the default tex delimiters
     -- the debug hack
     -*
     if expressionDebug then (
