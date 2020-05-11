@@ -9,8 +9,9 @@
     webAppInputTag,       -- it's text but it's input
     webAppInputContdTag,  -- text, continuation of input
     webAppTextTag,        -- other text
-    webAppTexTag         -- TeX
-    ):=apply((17,18,19,20,28,30,31),ascii)
+    webAppTexTag,         -- TeX
+    webAppTexEndTag       -- TeX
+    ):=("</span>","<span class='M2Html'>","<span class='M2Html M2Output'>","","","<span><pre>","\\(","\\)");
 
 
 htmlWithTex Thing := tex -- by default, for KaTeX we use tex (as opposed to html)
@@ -30,61 +31,18 @@ htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><p
 
 -- now preparation for output
 
--- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
-expressionDebug=false;
-texMathBackup := texMath
-htmlWithTexBackup := htmlWithTex;
-expressionDebugWrapper := x -> (
-    if instance(x,VisibleList) or instance(x,Expression) then (
-	global texMath <- texMathBackup;
-	y := texMath class x;
-	global texMath <- expressionDebugWrapper;
-	z := texMathBackup x;
-	)
-    else (
-	e := expression x;
-	if instance(e, Holder) and e#0 === x then (
-	global texMath <- texMathBackup;
-	y = texMath class x;
-	z = texMath x;
-	global texMath <- expressionDebugWrapper;
-	)
-    else return texMathBackup x;
-    );
-    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
-    )
+texMathStartBackup := texMathEndBackup := "$"; -- the default tex delimiters
 
--- experimental
-texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex then texMathBackup x else concatenate(
-	webAppHtmlTag,
-	htmlWithTex x,
-	webAppEndTag
-	);
-
-
-webAppBegin := (displayStyle) -> (
+webAppBegin = (displayStyle) -> (
+    texMathStartBackup = texMathStart;
+    texMathEndBackup = texMathEnd;
     texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
-    texMathEnd = webAppEndTag;
-    -- the debug hack
-    -*
-    if expressionDebug and flag then (
-	global texMath <- expressionDebugWrapper;
-	global htmlWithTex <- lookup(tex,Thing); -- force the use of tex
-	)
-    *-
-    global texMath <- texMathInsideHtml;
-    )
-webAppEnd := () -> (
-    texMathStart = texMathEnd = "$"; -- the default tex delimiters
-    -- the debug hack
-    -*
-    if expressionDebug then (
-	global texMath <- texMathBackup;
-	global htmlWithTex <- htmlWithTexBackup;
-	)
-    *-
-    global texMath <- texMathBackup;
-    )
+    texMathEnd = webAppTexEndTag;
+    );
+webAppEnd = () -> (
+    texMathStart = texMathStartBackup;
+    texMathEnd = texMathEndBackup;
+    );
 
 -- output routines for WebApp mode
 
@@ -183,9 +141,18 @@ export { "ℚ","ℝ","ℤ","ℂ","∞" }
 ∞=infinity
 
 if topLevelMode === WebApp then (
+    (webAppEndTag,            -- closing tag
+	webAppHtmlTag,        -- indicates what follows is HTML
+	webAppOutputTag,      -- it's html but it's output
+	webAppInputTag,       -- it's text but it's input
+	webAppInputContdTag,  -- text, continuation of input
+	webAppTextTag,        -- other text
+	webAppTexTag,         -- TeX
+	webAppTexEndTag      -- TeX
+	)=apply((17,18,19,20,28,30,31,17),ascii);
     -- the help hack: if started in WebApp mode, help is compiled in it as well
     webAppPRE := new MarkUpType of PRE;
-    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so need to htmlLiteral it
+    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
 	"<pre>",
 	webAppTextTag, x, "\n", webAppEndTag,
 	"</pre>\n"
@@ -201,5 +168,24 @@ if topLevelMode === WebApp then (
 	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
+    -- the texMath hack
+    currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
+    texMathBackup := texMath;
+    texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex then texMathBackup x else concatenate(
+	webAppHtmlTag,
+	htmlWithTex x,
+	webAppEndTag
+	);
+    webAppBegin = (displayStyle) -> (
+	texMathStartBackup = texMathStart;
+	texMathEndBackup = texMathEnd;
+	texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
+	texMathEnd = webAppTexEndTag;
+	global texMath <- texMathInsideHtml;
+    );
+    webAppEnd = () -> (
+	texMathStart = texMathStartBackup;
+	texMathEnd = texMathEndBackup;
+	global texMath <- texMathBackup;
+    );
 )
-

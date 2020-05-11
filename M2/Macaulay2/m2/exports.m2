@@ -715,6 +715,7 @@ export {
 	"homomorphism'",
 	"horizontalJoin",
 	"html",
+	"htmlWithTex",
 	"httpHeaders",
 	"hypertext",
 	"id",
@@ -1121,6 +1122,7 @@ export {
 	"tensorAssociativity",
 	"terms",
 	"tex",
+	"texMath",
 	"then",
 	"threadVariable",
 	"throw",
@@ -1245,12 +1247,9 @@ exportMutable {
 	"recursionLimit",
 	"scriptCommandLine",
 	"stopIfError",
-	"topLevelMode",
-	"texMath",
-	"htmlWithTex",
-	"expressionDebug",
 	"texMathStart",
-	"texMathEnd"
+	"texMathEnd",
+	"topLevelMode"
 	}
 
 -- Local Variables:
