@@ -11,7 +11,7 @@
     webAppTextTag,        -- other text
     webAppTexTag,         -- TeX
     webAppTexEndTag       -- TeX
-    ):=("</span>","<span class='M2Html'>","<span class='M2Html M2Output'>","","","<span><pre>","\\(","\\)");
+    ):=("</span>","<span class='M2Html'>","<span class='M2Html M2Output'>","","","<span class='M2Text'>","\\(","\\)");
 
 
 htmlWithTex Thing := tex -- by default, for KaTeX we use tex (as opposed to html)
@@ -19,15 +19,15 @@ htmlWithTex Thing := tex -- by default, for KaTeX we use tex (as opposed to html
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
 -- the % is relative to line-height
-htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:",
-    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
-htmlWithTex String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
-htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
+htmlWithTex Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
+    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
+htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x, "</pre>",if #x>0 and last x === "\n" then "<br/>") -- fix for html ignoring trailing \n
+htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
-	  then toString k -- sucks but no choice
-	  else toString k | " : " | htmlWithTex v
-	  ) | "<br/>"), "</pre></span>")
+	  then htmlWithTex net k -- sucks but no choice
+	  else htmlWithTex net k | " : " | htmlWithTex v
+	  ) | "<br/>"), "</pre>")
 
 -- now preparation for output
 

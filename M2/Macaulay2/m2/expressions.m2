@@ -1356,8 +1356,7 @@ texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{
     "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
 -- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
 texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
---texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is intentional!
-texMath String := s -> "\\texttt{" | texAltLiteral s | "}" -- TEST
+texMath String := s -> "\\texttt{" | texAltLiteral s | "}"
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
