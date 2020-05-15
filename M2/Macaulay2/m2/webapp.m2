@@ -9,8 +9,9 @@
     webAppInputTag,       -- it's text but it's input
     webAppInputContdTag,  -- text, continuation of input
     webAppTextTag,        -- other text
-    webAppTexTag         -- TeX
-    ):=apply((17,18,19,20,28,30,31),ascii)
+    webAppTexTag,         -- TeX
+    webAppTexEndTag       -- TeX
+    ):=("</span>","<span class='M2Html'>","<span class='M2Html M2Output'>","","","<span class='M2Text'>","\\(","\\)");
 
 -- what follows probably needs simplifying -- we're trying not to code stuff inside web app tags
 texAltLiteral = s -> ( open:= {};
@@ -32,94 +33,30 @@ htmlWithTex Hypertext := html
 -- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
 -- but they conflict with the current defs
 -- the % is relative to line-height
-htmlWithTex Net := n -> concatenate("<pre><span style=\"display:inline-table;vertical-align:",
-    toString(100*(height n-1)), "%\">", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</span></pre>")
-htmlWithTex String := x -> concatenate("<pre>", htmlLiteral x, "</pre>") -- only problem is, this ignores starting/ending \n. but then one should use Net for that
-htmlWithTex Descent := x -> concatenate("<span style=\"display:inline-table\"><pre>", sort apply(pairs x,
+htmlWithTex Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
+    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
+htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x, "</pre>",if #x>0 and last x === "\n" then "<br/>") -- fix for html ignoring trailing \n
+htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
-	  then toString k -- sucks but no choice
-	  else toString k | " : " | htmlWithTex v
-	  ) | "<br/>"), "</pre></span>")
--- some expressions can be htmlWithTex'ed directly w/o reference to texMath
-htmlWithTex Holder := x -> htmlWithTex x#0
--- kind of an expression analogue of Net
-htmlWithTex ColumnExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:column\">", apply(toList x, htmlWithTex), "</span>")
---htmlWithTex RowExpression := x -> concatenate("<span style=\"display:inline-flex;flex-direction:row\">", apply(toList x, htmlWithTex), "</span>")
-htmlWithTex RowExpression := x -> concatenate("<span>",apply(toList x, htmlWithTex),"</span>")
--- could add some more to clean up code: symbols, Types...
+	  then htmlWithTex net k -- sucks but no choice
+	  else htmlWithTex net k | " : " | htmlWithTex v
+	  ) | "<br/>"), "</pre>")
 
 -- now preparation for output
 
--- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
-expressionDebug=false;
-texMathBackup := texMath
-htmlWithTexBackup := htmlWithTex;
-expressionDebugWrapper := x -> (
-    if instance(x,VisibleList) or instance(x,Expression) then (
-	global texMath <- texMathBackup;
-	y := texMath class x;
-	global texMath <- expressionDebugWrapper;
-	z := texMathBackup x;
-	)
-    else (
-	e := expression x;
-	if instance(e, Holder) and e#0 === x then (
-	global texMath <- texMathBackup;
-	y = texMath class x;
-	z = texMath x;
-	global texMath <- expressionDebugWrapper;
-	)
-    else return texMathBackup x;
+texMathStartBackup := texMathEndBackup := "$"; -- the default tex delimiters
+
+webAppBegin = (displayStyle) -> (
+    texMathStartBackup = texMathStart;
+    texMathEndBackup = texMathEnd;
+    texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
+    texMathEnd = webAppTexEndTag;
     );
-    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
-    )
-
--- the help hack: if started in WebApp mode, help is compiled in it as well
-if topLevelMode === WebApp then (
-    webAppPRE := new MarkUpType of PRE;
-    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so need to htmlLiteral it
-	"<pre>",
-	webAppTextTag, x, "\n", webAppEndTag,
-	"</pre>\n"
-	);
-    pELBackup:=lookup(processExamplesLoop,ExampleItem);
-    processExamplesLoop ExampleItem := x -> (
-	res := pELBackup x;
-	new webAppPRE from res );
-)
-
--- experimental
-texMathInsideHtml := x -> if lookup(htmlWithTex,class x) =!= html -* === tex *- then texMathBackup x else concatenate(
-	webAppHtmlTag,
-	htmlWithTex x,
-	webAppEndTag
-	);
-
-
-webAppBegin := (flag) -> ( -- flag means add \displaystyle
-    texStart = webAppTexTag | (if flag then "\\displaystyle " else "");
-    texEnd = webAppEndTag;
-    -- the debug hack
-    -*
-    if expressionDebug and flag then (
-	global texMath <- expressionDebugWrapper;
-	global htmlWithTex <- lookup(tex,Thing); -- force the use of tex
-	)
-    *-
-    global texMath <- texMathInsideHtml;
-    )
-webAppEnd := () -> (
-    texStart = texEnd = "$"; -- the default tex delimiters
-    -- the debug hack
-    -*
-    if expressionDebug then (
-	global texMath <- texMathBackup;
-	global htmlWithTex <- htmlWithTexBackup;
-	)
-    *-
-    global texMath <- texMathBackup;
-    )
+webAppEnd = () -> (
+    texMathStart = texMathStartBackup;
+    texMathEnd = texMathEndBackup;
+    );
 
 -- now preparation for output
 
@@ -174,11 +111,11 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 texAfterPrint :=  y -> (
-    if instance(y,Sequence) then y=RowExpression deepSplice y;
+    if instance(y,Sequence) then y=deepSplice y else y=sequence y;
     webAppBegin(false);
-    z := htmlWithTex y;
+    z := htmlWithTex \ y;
     webAppEnd();
-    << endl << on() | " : " | webAppHtmlTag | z | webAppEndTag << endl;
+    << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
 
 Thing#{WebApp,AfterPrint} = x -> texAfterPrint class x;
@@ -286,3 +223,54 @@ width String := x -> ( -- we leave length to be #
     c
     )
 width Net := x -> if #x === 0 then 0 else max apply(unstack x,width) -- kind of a lame hack, short circuits the internal width
+
+if topLevelMode === WebApp then (
+    (webAppEndTag,            -- closing tag
+	webAppHtmlTag,        -- indicates what follows is HTML
+	webAppOutputTag,      -- it's html but it's output
+	webAppInputTag,       -- it's text but it's input
+	webAppInputContdTag,  -- text, continuation of input
+	webAppTextTag,        -- other text
+	webAppTexTag,         -- TeX
+	webAppTexEndTag      -- TeX
+	)=apply((17,18,19,20,28,30,31,17),ascii);
+    -- the help hack: if started in WebApp mode, help is compiled in it as well
+    webAppPRE := new MarkUpType of PRE;
+    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
+	"<pre>",
+	webAppTextTag, x, "\n", webAppEndTag,
+	"</pre>\n"
+	);
+    pELBackup:=lookup(processExamplesLoop,ExampleItem);
+    processExamplesLoop ExampleItem := x -> (
+	res := pELBackup x;
+	new webAppPRE from res );
+    -- the print hack
+    print = x -> if topLevelMode === WebApp then (
+	webAppBegin(true);
+	y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
+	webAppEnd();
+	<< webAppHtmlTag | y | webAppEndTag << endl;
+	) else ( << net x << endl; );
+    -- the texMath hack
+    currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
+    texMathBackup := texMath;
+    texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex then texMathBackup x else concatenate(
+	webAppHtmlTag,
+	htmlWithTex x,
+	webAppEndTag
+	);
+    webAppBegin = (displayStyle) -> (
+	texMathStartBackup = texMathStart;
+	texMathEndBackup = texMathEnd;
+	texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
+	texMathEnd = webAppTexEndTag;
+	global texMath <- texMathInsideHtml;
+    );
+    webAppEnd = () -> (
+	texMathStart = texMathStartBackup;
+	texMathEnd = texMathEndBackup;
+	global texMath <- texMathBackup;
+    );
+)
+

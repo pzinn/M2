@@ -16,8 +16,7 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
-    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxSize", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
-    "Image"
+    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
@@ -253,10 +252,6 @@ svgLookup := hashTable {
 	(x = project2d x;),
 	"x2='", toString x_0, "' y2='", toString x_1, "'"
 	),
-    symbol GfxSize => x -> ( -- 2d only?
-	x = project2d x;
-	concatenate("width='", toString x_0, "' height='", toString x_1, "'")
-	),
     symbol GfxStatic => x -> if x then "data-pmatrix='"|jsString currentGfxPMatrix|"'" else "",
     symbol GfxTag => x -> "id='"| x |"'",
     symbol GfxFilterTag => x -> "filter=\"url(#" | x | ")\"",
@@ -318,8 +313,8 @@ svg GfxText := g -> (
     )
 
 svg GfxHtml := g -> (
-    g.cache#"overflow"="visible";
-    g.cache.GfxSize=vector{1,-1,0,1}; -- TEMP? weird bug with chrome. needs more testing
+    g.cache#"overflow"="visible"; -- makes width/height irrelevant
+    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
     (lookup(svg,GfxText)) g
     )
 
@@ -374,6 +369,7 @@ html GfxObject := g -> (
     -- axes
     axes := null; axeslabels := null;
     if g.?GfxAxes and g.GfxAxes =!= false then ( -- semi temp: axes should be broken into little bits
+	currentGfxPMatrix=currentGfxMatrix=1; -- eww
 	arr := gfxArrow();
 	axes = gfx(
 	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
@@ -591,6 +587,8 @@ gfxLabel = true >> o -> label -> (
 
 needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
 
+-- note that the range is only where the curve actually lies, not the original range "r" provided.
+-- the reason is that it's not clear how to force that original range (there are possible coordinate transformations etc)
 gfxPlot = true >> o -> (P,r) -> (
     R := ring P; -- R should have one or two variables
     if not instance(r,List) then error("incorrect ranges");

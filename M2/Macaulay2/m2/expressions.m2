@@ -1250,8 +1250,8 @@ print = x -> (<< net x << endl;)
 texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
 
 texMath ZZ := toString
-texStart = texEnd = "$"; -- the default tex delimiters
-tex Thing := x -> concatenate(texStart,texMath x,texEnd)
+texMathStart = texMathEnd = "$"; -- the default tex delimiters
+tex Thing := x -> concatenate(texMathStart,texMath x,texMathEnd)
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack
@@ -1404,7 +1404,7 @@ texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{
     "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
 -- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
 texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-texMath String := s -> "\\texttt{" | texAltLiteral s | "%\n}" -- here we refuse to consider \n issues. the final %\n is intentional!
+texMath String := s -> "\\texttt{" | texAltLiteral s | "}"
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
