@@ -47,7 +47,7 @@ installMethod(symbol ++, OptionTable, OptionTable, OptionTable =>
      )
 
 installMethod(symbol ++, OptionTable, List, OptionTable =>
-     (opts1, opts2) -> opts1 ++ new OptionTable from opts2
+     (opts1, opts2) -> opts1 ++ new class opts1 from opts2
      )
 
 -- Local Variables:

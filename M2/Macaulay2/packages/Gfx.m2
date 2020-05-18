@@ -21,7 +21,8 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
 
 GfxObject = new Type of OptionTable -- ancestor type
 
-new GfxObject := T -> new T from { symbol cache => new CacheTable } -- every Gfx object should have a cache
+new GfxObject from List := (T,l) -> new OptionTable from append(l,symbol cache => new CacheTable); -- every Gfx object should have a cache
+new GfxObject := T -> new T from {};
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: GfxRadius, GfxFontSize, etc
@@ -58,23 +59,28 @@ gfxParse HashTable := x -> applyValues(x,gfxParse)
 gfxParse CacheTable := identity
 gfxParse Option := x -> x#0 => gfxParse x#1
 gfxParse Thing := identity
-gfxParse Matrix := identity -- TODO: convert 2,3d -> 4d
-gfxParse Vector := x -> if rank class x === 2 then x || vector {0,1.} else (gfxParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x else error "wrong coordinates")
+gfxParse Matrix := x -> (
+    if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
+    if rank source x == 2 then x++1++1 else if rank source x == 3 then x++1 else x
+    )
+gfxParse Vector := x -> (
+    if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
+     if rank class x === 2 then x || vector {0,1.} else (
+	 gfxParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
+     )
 
 GfxType List := (T,opts) -> (
     opts0 := T.Options;
-    -- scan the first few arguments in case we skipped the keys for standard arguments. also, turn into a list and parse
+    -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     gfxParseFlag = false;
-    temp := gfxParse((new GfxObject) ++ opts0 ++ apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
-    new T from temp ++ {symbol GfxIs3d => gfxParseFlag}
+    temp := gfxParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
+    new T from append(temp,symbol GfxIs3d => gfxParseFlag)
 )
 
 gfxRange1 = method() -- returns [xmin,ymin],[xmax,ymax]
 gfxRange1 GfxObject := x -> null
 
-gfxIs3d = x -> if x.?GfxIs3d then x.GfxIs3d else error "BUG"; --false; -- TODO: finalize
-gfxIs3d1 = method()
-gfxIs3d1 GfxObject := x -> false -- by default, 2d
+gfxIs3d = x -> if x.?GfxIs3d then x.GfxIs3d else true; -- the else clause should never happen
 
 gfxDistance = x -> if x.cache.?GfxDistance then x.cache.GfxDistance else error "distance of 3d object can only be obtained by rendering it"
 gfxDistance1 = method()
@@ -106,7 +112,6 @@ project2d = x -> (
 GfxPrimitive = new Type of GfxObject
 
 GfxCircle = new GfxType of GfxPrimitive from hashTable { symbol Name => "circle", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadius => 50. }}
-gfxIs3d1 GfxCircle := x -> rank class x.GfxCenter > 2
 gfxRange1 GfxCircle := g -> (
     p := currentGfxMatrix * g.GfxCenter;
     r:=g.GfxRadius/p_3;
@@ -120,7 +125,6 @@ gfxDistance1 GfxCircle := g -> (
     )
 
 GfxEllipse = new GfxType of GfxPrimitive from hashTable { symbol Name => "ellipse", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadiusX => 50., symbol GfxRadiusY => 50. }}
-gfxIs3d1 GfxEllipse := x -> rank class x.GfxCenter > 2
 gfxRange1 GfxEllipse := g -> (
     p := currentGfxMatrix * g.GfxCenter;
     rx:=g.GfxRadiusX/p_3; ry:=g.GfxRadiusY/p_3;
@@ -143,7 +147,6 @@ gfxRange1 GfxText := g -> (
     )
 
 GfxLine = new GfxType of GfxPrimitive from hashTable { symbol Name => "line", symbol Options => { GfxPoint1 => vector {0.,0.}, GfxPoint2 => vector {50.,50.} }}
-gfxIs3d1 GfxLine := x -> rank class x.GfxPoint1 > 2
 gfxRange1 GfxLine := g -> (
     p1 := project2d g.GfxPoint1;
     p2 := project2d g.GfxPoint2;
@@ -177,7 +180,7 @@ gfx = true >> opts -> x -> (
     if any(x, y -> not instance(y,GfxObject)) then error "gfx: all elements must be instances of GfxObject";
     gfxParseFlag = false;
     opts = gfxParse opts;
-    new GfxList from (new GfxObject) ++ opts ++ { symbol GfxContents => x, symbol GfxIs3d => gfxParseFlag or any(x,y->y.GfxIs3d) }
+    (new GfxList from opts) ++ { symbol GfxContents => x, symbol GfxIs3d => gfxParseFlag or any(x,y->y.GfxIs3d) }
     )
 gfxRange1 GfxList := x -> (
     s := select(apply(x.GfxContents, gfxRange),x->x=!=null);
@@ -327,12 +330,6 @@ globalAssignment GfxObject
 toString GfxObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,OptionTable)) g
 net GfxObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,OptionTable)) g
 
-gfxIs3d1 GfxPolyline := g -> any(g.GfxPoints, x-> rank class x>2)
-gfxIs3d1 GfxPolygon := lookup(gfxIs3d1, GfxPolyline)
-gfxIs3d1 GfxPath := g -> any(select(g.GfxPathList, x -> instance(x,Vector)), x-> rank class x>2)
-gfxIs3d1 GfxList := g -> any(g.GfxContents,gfxIs3d) -- really there can't be any mix at this stage
-gfxIs3d1 GfxText := g -> rank class g.GfxPoint >2
-
 gfxDistance1 GfxPolyPrimitive := x -> (
     if not gfxIs3d x then return 0_RR; -- default for 2d things
     if instance(x,GfxPath) then s := select(x.GfxPathList, y -> instance(y,Vector)) else s = x.GfxPoints;
@@ -374,7 +371,7 @@ html GfxObject := g -> (
 	axes = gfx(
 	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
 	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {0,r#0_1,0} else {0,r#0_1}, GfxPoint2 => vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
-	    if gfxIs3d g then GfxLine { GfxPoint1 => vector{0,0,min(r#0_0,r#0_1)}, GfxPoint2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => gfxArrow() },
+	    if gfxIs3d g then GfxLine { GfxPoint1 => vector{0,0,min(r#0_0,r#0_1)}, GfxPoint2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => arr },
 	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 	    );
 	axeslabels = gfx(
@@ -438,23 +435,23 @@ html GfxObject := g -> (
 -- GfxAutoMatrix (animation) or GfxMatrix (static)
 
 gfxRotation = args -> (
+    if not instance(args,Sequence) then args = sequence args;
+    if #args>3 then error("Too many arguments");
     angle := args#0;
-    axis := args#1;
-    if instance(axis,Array) then axis = vector toList axis; -- let's be tolerant. for now.
-    axis = promote(axis,RR);
+    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Array) and #args#1 === 3 )));
+    axis := promote(if threeD then if instance(args#1,Vector) then args#1 else vector toList args#1 else vector {0,0,1},RR);
     invr := 1/sqrt(axis_0^2+axis_1^2+axis_2^2);
     axis = invr*axis;
     cross := (axis#0)**transpose(axis#0);
     rot := cross + (sin angle) * matrix {{0,-axis_2,axis_1},{axis_2,0,-axis_0},{-axis_1,axis_0,0}} + (cos angle) * (1-cross);
-    rot = rot ++ matrix {{1}};
-    if #args==2 then rot else (
-	center := args#2;
-    	if instance(center,Array) then center = vector toList center; 
+    rot = rot ++ 1;
+    if (#args==2 and threeD) or #args==1 then rot else (
+	center := gfxParse last args;
 	(gfxTranslation(center))*rot*(gfxTranslation(-center))
     	)
     )
 gfxTranslation = vec -> (
-    if instance(vec,Array) then vec = vector toList vec;
+    vec = gfxParse vec;
     matrix {{1,0,0,vec_0},{0,1,0,vec_1},{0,0,1,vec_2},{0,0,0,1}}
 )
 
@@ -628,14 +625,14 @@ multidoc ///
    A package to produce SVG graphics
   Description
    Text
-    {\em Gfx} is a package to produce SVG 2d and 3d graphics. 
+    {\bf Gfx} is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GfxObject, and are self-initializing.
-    Coordinates can be entered as vectors in RR^2 for 2d, RR^3 or RR^4 for 3d (RR^4 is projective
+    Coordinates can be entered as vectors in \mathbb{RR}^2, \mathbb{RR}^3 or \mathbb{RR}^4 (\mathbb{RR}^4 is projective
     coordinates); alternatively, one can enter them as arrays. The y axis points down, and the z axis points
     away from the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
-    Gfx options, that are symbols starting with Gfx (e.g., GfxRadius for circles); and styling options, which are CSS style options,
-    and which are {\bf strings} (e.g., "fill" for fill color).
+    Gfx options, that are symbols starting with Gfx (e.g., {\tt GfxRadius} for circles); and styling options, which are CSS style options,
+    and which are {\bf strings} (e.g., {\tt "fill"} for fill color).
     Gfx does not use units (coordinates are dimensionless).
   Caveat
     Mixing 2d and 3d graphics leads to unpredictable results.
@@ -648,10 +645,10 @@ multidoc ///
   Key
    GfxList
   Headline
-   A class that represents a list of Gfx objects, displayed together
+   A list of Gfx objects
   Description
    Text
-    A list of Gfx objects. see also gfx
+    A class that represents a list of Gfx objects, displayed together. see also @ TO{gfx} @
  Node
   Key
    GfxCircle
@@ -665,11 +662,20 @@ multidoc ///
     GfxCircle{[10,10],10} -- equivalent syntax
  Node
   Key
-   GfxLight
+   GfxLine
   Headline
-   A source of light for a 3d SVG picture.   
+   An SVG line
   Description
    Text
+    A simple SVG line. The two compulsory options are GfxPoint1 and GfxPoint2.
+ Node
+  Key
+   GfxLight
+  Headline
+   A source of light
+  Description
+   Text
+    A source of light for a 3d SVG picture.   
     This corresponds to the SVG "specular" lighting, use the property GfxSpecular. The location is given by GfxCenter.
     By default a GfxLight is invisible (it has GfxRadius 0) and is unaffected by matrix transformations outside it (GfxStatic true).
    Example
@@ -719,10 +725,10 @@ multidoc ///
   Key
    GfxText
   Headline
-   Some SVG text
+   SVG text
   Description
    Text
-    SVG text. The text itself is the option GfxString (a string). Text can be "stroke"d or "fill"ed.
+    Some SVG text. The text itself is the option GfxString (a string). Text can be "stroke"d or "fill"ed.
     Font size should be specified with GfxFontSize.
    Example
     GfxText{[0,0],"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
@@ -730,16 +736,20 @@ multidoc ///
   Key
    gfx
   Headline
-    Groups together multiple Gfx objects
+    Group together Gfx objects
   Description
    Text
     gfx(a,b,...,c, options) results in a new GfxList object containing a,b,...,c 
     and the given options.
+   Example
+    a=gfx(GfxLine{[-100, 15, 78], [-9, 100, 4]},GfxLine{[-96, -49, -100], [46, -100, 52]},GfxLine{[-100, -42, -51], [59, 100, 76]},GfxLine{[-100, 66, 54], [83, -100, -27]})
+    b=gfx(GfxLine{[-30, 100, 20], [9, -100, 8]},GfxLine{[-78, -73, -100], [-64, 84, 100]},"stroke"=>"red")
+    gfx(a,b,GfxWidth=>20)
  Node
   Key
    gfxRange   
   Headline
-    gives the range of view port occupied by a Gfx object
+    range of view port
   Description
    Text
     gfxRange gives the range of view port occupied by a Gfx object, either as computed by the package or as given by the option GfxRange
@@ -754,52 +764,79 @@ multidoc ///
   Key
    gfxDistance
   Headline
-   returns the distance to the viewer of a Gfx 3d object.
+   Distance to the viewer
+  Description
+   Text
+    returns the distance to the viewer of a Gfx 3d object.
  Node
   Key
    gfxRotation   
   Headline
-   Produces a 3d rotation encoded as a 4x4 matrix that can be used as an argument to GfxMatrix or GfxAutoMatrix.
+   Computes a rotation matrix
   Usage
    gfxRotation ( angle, axis, center)
+   gfxRotation ( angle, center)
+  Description
+   Text
+    Produces a rotation encoded as a 4x4 matrix that can be used as an argument to @TO{GfxMatrix}@ or @TO{GfxAutoMatrix}@.
+    For a 3d rotation, use 3d vectors for axis and center.
+    For a 2d rotation, use a 2d vector for the center.
+    In both cases, the center is optional.
  Node
   Key
    gfxTranslation
   Headline
-   Produces a 3d translation encoded as a 4x4 matrix that can be used as an argument to GfxMatrix or GfxAutoMatrix.
+   Computes a translation matrix
+  Description
+   Text
+    Produces a translation encoded as a 4x4 matrix that can be used as an argument to @TO{GfxMatrix}@ or @TO{GfxAutoMatrix}@.
+    The vector can be 2d or 3d.
+   Example
+    v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
+    f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
+    tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>"white"}))
+    g = memoize(n -> if n==0 then tetra else gfx apply(4,i->g(n-1)++{GfxMatrix=>gfxTranslation v#i}))
+    apply(4,g)
   Usage
    gfxTranslation ( vector )
  Node
   Key
    GfxOneSided
-  Headline
-   a property of GfxPolyPrimitive 3d objects, means that polygons must be drawn only if they are facing the correct way.
+  Description
+   Text
+    A property of GfxPolyPrimitive 3d objects, means that polygons must be drawn only if they are facing the correct way.
  Node
   Key
    GfxVertical
   Headline
-   A possible element of the list GfxGadgets of a Gfx 3d object; specifies that the vertical slider must be drawn.
+    Draw the vertical slider
+  Description
+   Text
+    A possible element of the list GfxGadgets of a Gfx 3d object;
+    specifies that the vertical slider must be drawn.
  Node
   Key
    GfxRange
   Headline
-   An option to fix manually the view port range of a Gfx object.
+   Fix the view port
   Description
    Text
+    An option to fix manually the view port range of a Gfx object.
     Only has an effect if in the outermost Gfx object.
  Node
   Key
    GfxWidth
   Headline
-   An option to fix the width of the Gfx object in line width units. 
+   Set the width
   Description
    Text
+    An option to fix the width of the Gfx object in line width units. 
     Only has an effect if in the outermost Gfx object.
  Node
   Key
    GfxPerspective
   Headline
-   An option to fix the amount of perspective
+   Set the amount of perspective
   Description
    Text
     A 4x4 matrix that is applied to 3d coordinates for perspective.
@@ -812,7 +849,7 @@ multidoc ///
   Key
    GfxHorizontal
   Headline
-   Used to draw the horiontal slider of a Gfx 3d object
+    Draw the horiontal slider
   Description
    Text
     A possible element of the list GfxGadgets of a Gfx 3d object;
@@ -821,27 +858,35 @@ multidoc ///
   Key
    GfxHeight
   Headline
-   An option to fix the height of the Gfx object in line width units. 
+   Set the height
   Description
    Text
+    An option to fix the height of the Gfx object in line width units. 
     Only has an effect if in the outermost Gfx object.
  Node
   Key
    GfxAutoMatrix
   Headline
-   An option to create a rotation animation for the Gfx 3d object.
+   Create a rotation animation matrix
   Description
    Text
+    An option to create a rotation animation for the Gfx 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
     In order for the animation to work, Gfx.css and Gfx.js must be included in the web page.   
+   Example
+    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>gfxRotation(0.1,[0,0,1],[0,0,0])},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
  Node
   Key
    GfxMatrix
   Headline
-   An option to rotate the coordinates of the Gfx 3d object.
+   Create a rotation matrix
   Description
    Text
+    An option to rotate the coordinates of the Gfx 3d object.
     Must be a 4x4 matrix (projective coordinates).
+   Example
+    a=GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red"}
+    gfx(a,a++{GfxMatrix=>gfxRotation(2*pi/3,[0,0,1],[0,0,0])})
  Node
   Key
    GfxGadgets
@@ -896,9 +941,10 @@ multidoc ///
   Key
    gfxPlot
   Headline
-   Draws a curve or surface defined implicitly or explicitly by a polynomial
+   Draws a curve or surface
   Description
    Text
+    Draws a curve or surface defined implicitly or explicitly by a polynomial.
     The first argument is a polynomial, the second is a (list of) range(s) of variable(s).
     If the number of ranges is equal to the number of variables of the polynomial, the graph of the polynomial
     is drawn. If it is one fewer, then the zero set of the polynomial is drawn.
@@ -911,6 +957,16 @@ multidoc ///
    GfxAxes
   Headline
    An option to draw axes
+ Node
+  Key
+   gfxArrow
+  Headline
+   A marker to add to paths
+  Description
+   Text
+    Must be used as styling options "marker-start", "marker-mid" or "marker-end", to add an arrow to a path.
+   Example
+    GfxPolyline{GfxPoints=>{[0,0],[50,50],[0,100],[50,150]},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>gfxArrow("fill"=>"orange"),GfxMargin=>0.3}
 ///
 
 end--
@@ -1025,8 +1081,17 @@ R=RR[x,y];
 P=y^2-(x+1)*(x-1)*(x-2);
 gfxPlot(P,{-2,3},"stroke-width"=>0.05,GfxHeight=>25,"stroke"=>"red")
 
--- to rerun examples/doc: (possibly adding topLevelMode=WebApp to init.m2)
-installPackage("Gfx", RemakeAllDocumentation => true, IgnoreExampleErrors => false, RerunExamples => true, CheckDocumentation => true, UserMode => true, InstallPrefix => "/home/pzinn/M2/M2/BUILD/fedora/usr-dist/", SeparateExec => true, DebuggingMode => true)
+-- Schubert calculus
+a=gfx(GfxLine{[-100, 15, 78], [-9, 100, 4]},GfxLine{[-96, -49, -100], [46, -100, 52]},GfxLine{[-100, -42, -51], [59, 100, 76]},GfxLine{[-100, 66, 54], [83, -100, -27]})
+b=gfx(GfxLine{[-30, 100, 20], [9, -100, 8]},GfxLine{[-78, -73, -100], [-64, 84, 100]},"stroke"=>"red")
+c=gfx(GfxPolygon{{[-100,100,100],[-100,-100,100],[-100,-100,-100],[-100,100,-100]}},
+		  GfxPolygon{{[100,100,100],[100,-100,100],[100,-100,-100],[100,100,-100]}},
+		  GfxPolygon{{[100,-100,100],[-100,-100,100],[-100,-100,-100],[100,-100,-100]}},
+		  GfxPolygon{{[100,100,100],[-100,100,100],[-100,100,-100],[100,100,-100]}},
+		  GfxPolygon{{[100,100,-100],[100,-100,-100],[-100,-100,-100],[-100,100,-100]}},
+		  GfxPolygon{{[100,100,100],[100,-100,100],[-100,-100,100],[-100,100,100]}},
+		  "stroke"=>"black","fill"=>"grey", "opacity"=>"0.25")
+gfx(a,b,c,GfxWidth=>20)
 
 -- removed
  Node
