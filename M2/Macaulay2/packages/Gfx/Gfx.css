@@ -8,6 +8,7 @@ svg.M2Svg {
     stroke-opacity: 1;
     fill: none;
     fill-opacity: 1;
+    cursor: grab;
 }
 
 .katex svg.M2Svg path { /* because of KaTeX annoying def */
@@ -23,30 +24,32 @@ svg.M2Svg foreign-object {
 /*    font-size: 14px;*/ /* same. absolute sounds bad but actually it's not really absolute since it's in svg units */
 }
 
-.gfx3d {
-    position:relative;
-    display:inline-block;
+.gfxauto {
+    fill-opacity: 75%;
+    cursor: pointer;
 }
 
-.gfx3d > .gadget {
+.gfxauto .gfxautoplay {
+    visibility: inherit;
+}
+
+.gfxauto .gfxautostop {
     visibility: hidden;
 }
 
-.gfx3d:hover > .gadget {
+.gfxauto.active .gfxautoplay {
+    visibility: hidden;
+}
+
+.gfxauto.active .gfxautostop {
+    visibility: inherit;
+}
+
+
+svg.M2Svg > .gfxauto {
+    visibility: hidden;
+}
+
+svg.M2Svg:hover > .gfxauto {
     visibility: visible;
-}
-
-.M2HtmlOutput button[data-toggle].gfx3d {
-    background: rgba(0,0,0,0.2);
-}
-
-input[type="range"].vertical {
-    height: calc(100% - 20px);
-    width: 10px;
-    -webkit-appearance: slider-vertical;
-}
-
-input[type="range"].horizontal {
-    width: calc(100% - 20px);
-    height: 10px;
 }
