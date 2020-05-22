@@ -1,56 +1,86 @@
-// ranges
-function gfxVRange(el,svgid) {
-    var svgel=document.getElementById(svgid);
-    if (!svgel) return;
-    if (typeof el.oldvalue == "undefined") el.oldvalue=0;
-    var cs=Math.cos((el.value-el.oldvalue)*0.031416);
-    var sn=Math.sin((el.value-el.oldvalue)*0.031416);
-    var mat = new Matrix([[1,0,0,0],[0,cs,sn,0],[0,-sn,cs,0],[0,0,0,1]]);
-    gfxRotate(svgel,mat);
-    gfxRecompute(svgel);
-    el.oldvalue=el.value;
-}
-
-function gfxHRange(el,svgid) {
-    var svgel=document.getElementById(svgid);
-    if (!svgel) return;
-    if (typeof el.oldvalue == "undefined") el.oldvalue=0;
-    var cs=Math.cos((el.value-el.oldvalue)*0.031416);
-    var sn=-Math.sin((el.value-el.oldvalue)*0.031416); // because extra reflection... note weakness: depends on choice of pmatrix
-    var mat=new Matrix([[cs,0,-sn,0],[0,1,0,0],[sn,0,cs,0],[0,0,0,1]]);
-    gfxRotate(svgel,mat);
-    gfxRecompute(svgel);
-    el.oldvalue=el.value;
+function gfxInit(el) {
+    el.onmousedown = gfxMouseDown;
+    el.onmouseleave = gfxMouseLeave;
+    el.onmouseup = gfxMouseUp;
+    el.onmousemove = gfxMouseMove;
+    el.dataset.init="true";
+    el.onclick = gfxMouseClick;
 }
 
 // auto-rotation button
-function gfxToggleRotation(el,svgid) {
-    el.blur();
-    var svgel=document.getElementById(svgid);
-    if (!svgel) return;
+function gfxToggleRotation(event) {
+    //    this.blur();
+    //    var svgel=document.getElementById(svgid);
+    //    if (!svgel) return;
+    var svgel = this.parentElement; // weak but works
     if (!svgel.pmatrix) {
 	svgel.pmatrix = eval(svgel.dataset.pmatrix); // parse once and for all
 	// should *always* exist. the perspective matrix
     }
     if (!svgel.cmatrix) svgel.cmatrix = new Matrix(svgel.pmatrix);
-    if (el.hasAttribute("data-toggle")) {
-	clearInterval(el.intervalId);
-	el.removeAttribute("data-toggle");
+    if (this.classList.contains("active")) {
+	clearInterval(this.intervalId);
+	this.classList.remove("active");
     }
     else
     {
-	el.setAttribute("data-toggle","true");
-	el.intervalId=setInterval(function() {
-	    if (!document.getElementById(svgel.id)) {
-		clearInterval(el.intervalId);
-		el.removeAttribute("data-toggle");
+	this.classList.add("active");
+	this.intervalId=setInterval(() => {
+	    if ((!svgel)||(!svgel.id)||(!document.getElementById(svgel.id))) {
+		svgel=null; // for garbage collecting
+		this.classList.remove("active");
+		clearInterval(this.intervalId);
 	    } else {
 		gfxAutoRotate(svgel);
 		gfxRecompute(svgel);
 	    }
 	},50);
     }
+    event.stopPropagation();
 }
+
+var mouseDown=false;
+
+// mouse handling
+function gfxMouseDown(event) {
+    if (!this.dataset.init) gfxInit(this);
+    mouseDown=true;
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+function gfxMouseUp(event) {
+    mouseDown=false;
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+function gfxMouseLeave(event) {
+    mouseDown=false;
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+function gfxMouseMove(event) {
+    if (!mouseDown) return;
+
+    var x=event.movementX/this.width.baseVal.value;
+    var y=event.movementY/this.height.baseVal.value;
+
+    var mat=new Matrix([[1-x*x+y*y,2*x*y,2*x,0],[2*x*y,1+x*x-y*y,-2*y,0],[-2*x,2*y,1-x*x-y*y,0],[0,0,0,1+x*x+y*y]]);
+    mat.leftmultiply(1/(1+x*x+y*y));
+    gfxRotate(this,mat);
+
+    gfxRecompute(this);
+
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+function gfxMouseClick(event) {
+    event.stopPropagation();
+}
+
 
 function gfxAutoRotate(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
@@ -76,6 +106,7 @@ function gfxRotate(el,mat) {
 
 function gfxRecompute(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
+    if (el.classList.contains("gfxauto")) return; // gadgets aren't affected by transformations
     // find rotation matrix
     if ((!el.pmatrix)&&(el.dataset.pmatrix))
 	el.pmatrix = eval(el.dataset.pmatrix); // parse once and for all
@@ -228,6 +259,7 @@ function gfxReorder(el) {
 
 // a simple square matrix type
 var msize=4;
+var matrix_accuracy=1e-6;
 var matrix_identity=new Array(msize); for (var i=0; i<msize; i++) { matrix_identity[i]=new Array(msize); for (var j=0; j<msize; j++) if (i==j) matrix_identity[i][j]=1.; else matrix_identity[i][j]=0.; }
 
 function doubleArrayToFloat32Array(mat) // used internally
@@ -352,51 +384,5 @@ Matrix.prototype =
 		    this.elem[j+msize*i]=temp;
 		}
     },
-
-
-    // orthogonalize
-    orthogonalize: function()
-    {
-	var q=new Matrix();
-	var qq;
-	var eps=1.; var t=0;
-	while ((eps>matrix_accuracy)&&(t<20)) // safeguard here: can't iterate more than ... times
-	    {
-		eps=0.;
-		for (var i=0; i<msize; i++)
-		    for (var j=0; j<msize; j++)
-			{
-			    qq=0;
-			    for (var k=0; k<msize; k++) qq+=this.elem[i+msize*k]*this.elem[j+msize*k];
-			    if (i==j) { eps+=Math.abs(qq-1); q.elem[i+msize*j]=1.5-0.5*qq; }
-			    else { eps+=Math.abs(qq); q.elem[i+msize*j]=-0.5*qq; }
-			}
-		this.leftmultiply(q);
-		t++;
-	    } 
-    },
-
-    // random antisymmetric matrix
-    randomanti: function(amp)
-    {
-	for (var i=0; i<msize; i++)
-	    for (var j=0; j<msize; j++)
-		if (i<j)
-		    this.elem[i+msize*j]=amp*(Math.random()-0.5);
-		else if (i>j)
-		    this.elem[i+msize*j]=-this.elem[j+msize*i];
-		else
-		    this.elem[i*(msize+1)]=0;
-    },
-
-    //generates a random orthogonal
-    //matrix in the neighborhood of the origin
-    randomorthog: function(amp)
-    {
-	this.randomanti(amp);
-	this.add(1);
-	this.orthogonalize();
-    },
-
 };
 

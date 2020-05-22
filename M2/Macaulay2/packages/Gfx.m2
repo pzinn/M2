@@ -15,14 +15,16 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "GfxList", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine", "GfxHtml",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
-    "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxGadgets", "GfxPoints", "GfxRadius",
-    "GfxAuto", "GfxBlur", "GfxIs3d", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin"
+    "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius",
+    "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
+    "GfxIs3d", "GfxAuto"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
 
 new GfxObject from List := (T,l) -> new OptionTable from append(l,symbol cache => new CacheTable); -- every Gfx object should have a cache
 new GfxObject := T -> new T from {};
+--new GfxObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable}
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: GfxRadius, GfxFontSize, etc
@@ -39,10 +41,9 @@ new GfxObject := T -> new T from {};
 -- * GfxPerspective for 3d: can be a number or a whole 4d matrix (ideally, there'd be a function to translate...)
 --   the matrix should be such that after transformation, the coordinates are (x,y,z,z/p) where the viewer is at (0,0,0) and the screen at z=-p
 -- * GfxMargin (leave blank around picture)
--- * GfxGadgets for 3d picture -- list of Gfx{Vertical, Horizontal, Auto}
 -- * GfxAxes (draw axes)
 
--- 3d: turns on lights, enables sorting, shows gadgets, axes are diff
+-- 3d: turns on lights, enables sorting, axes are diff
 
 currentGfxMatrix := null; -- yeah, it's a ``global'' variable -- scary
 currentGfxPMatrix := null; -- the perspective matrix -- used for unmoving objects
@@ -176,7 +177,7 @@ gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, sc
 GfxList = new GfxType of GfxObject from hashTable { symbol Name => "g", symbol Options => { symbol GfxContents => {} } }
 -- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }. plus updates is3d correctly!
 gfx = true >> opts -> x -> (
-    x=if instance(x,BasicList) then select(flatten toList x, y -> y =!=null) else {x};
+    x=select(flatten toList sequence x, y -> y =!=null );
     if any(x, y -> not instance(y,GfxObject)) then error "gfx: all elements must be instances of GfxObject";
     gfxParseFlag = false;
     opts = gfxParse opts;
@@ -201,14 +202,12 @@ gfxRange1 GfxHtml := g -> (
     { p, p } -- TODO properly
     )
 
---GfxList | GfxList := (a,b) -> new GfxList from (a++b++{symbol GfxContents => a.GfxContents | b.GfxContents})
---GfxObject | GfxObject := (a,b) -> new RowExpression from {a,b}
---GfxObject || GfxObject := (a,b) -> new ColumnExpression from {a,b}
-
--- GfxAnimation takes a Gfx option Obj (what to animate) -> shit, disabled
---GfxAnimation = new GfxType from ("animate", { "attributeName" => "", "from" => "", "to" => "", "dur" => "", "attributeType" => "XML", "repeatCount" => "indefinite" })
---gfxRange1 GfxAnimation := g -> gfxRange1 g#Obj;
---svg GfxAnimation := g -> svgBegin g#Obj | ((lookup(svg,GfxPrimitive)) g) | svgEnd g#Obj
+gfxAuto = method()
+gfxAuto GfxObject := x -> x.?GfxAutoMatrix
+gfxAuto GfxList := x -> (
+    if not x.cache.?GfxAuto then x.cache.GfxAuto = x.?GfxAutoMatrix or any(x.GfxContents,gfxAuto);
+    x.cache.GfxAuto
+    )
 
 -- for javascript stuff
 jsString = method(Dispatch=>Thing)
@@ -366,7 +365,7 @@ html GfxObject := g -> (
     -- axes
     axes := null; axeslabels := null;
     if g.?GfxAxes and g.GfxAxes =!= false then ( -- semi temp: axes should be broken into little bits
-	currentGfxPMatrix=currentGfxMatrix=1; -- eww
+	currentGfxPMatrix=currentGfxMatrix=1; -- ???
 	arr := gfxArrow();
 	axes = gfx(
 	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
@@ -397,36 +396,33 @@ html GfxObject := g -> (
     if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * (if rr_1 != 1 then rr_0/rr_1 else 16/10);
     -- put some extra blank space around picture
     margin := if g.?GfxMargin then g.GfxMargin else 0.1;
-    r = { r#0-margin*rr, r#1+margin*rr };
+    r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
     --
     tag := gfxTag();
     concatenate(
-	if gfxIs3d g then "<span class=\"gfx3d\">" else "",
-	 -- svg first
-	"<svg xmlns=\"http://www.w3.org/2000/svg\"",
-	" class=\"M2Svg\" id=\""|tag|"\"",
+	"<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'",
+	" class='M2Svg' id='"|tag|"'",
 	" style='width:",toString g.cache.GfxWidth,"em;height:",toString g.cache.GfxHeight,"em;",
     	if not g#?"stroke-width" then "stroke-width:"|toString(0.01*min(rr_0,rr_1)), -- define a default stroke-width
 	"'",
-    	" viewBox=\"",between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),"\"",
+	" viewBox='",between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),"'",
 	" data-pmatrix='"|jsString currentGfxMatrix|"'",
+	if gfxIs3d g then " onmousedown='gfxMouseDown.call(this,event)'",
     	">",
+	-- then autorotate button
+	if gfxAuto g then (
+	    sizex := rr_0*min(0.5,1.5/g.cache.GfxWidth); sizey := rr_1*min(0.5,1.5/g.cache.GfxHeight); -- can't be larger than half the pic; default = 1.5em
+	    "<g transform='translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")' class='gfxauto' onclick='gfxToggleRotation.call(this,event)'>",
+	    "<circle cx='0.5' cy='0.5' r='0.45' style='fill:white; stroke:black; stroke-width:0.05'/>",
+	    "<polygon class='gfxautoplay' points='0.3,0.25 0.8,0.5 0.3,0.75' style='stroke:none; fill:black'/>",
+	    "<line class='gfxautostop' x1='0.3' y1='0.25' x2='0.3' y2='0.75' style='stroke:black; stroke-width:0.15'/>",
+	    "<line class='gfxautostop' x1='0.7' y1='0.25' x2='0.7' y2='0.75' style='stroke:black; stroke-width:0.15'/>",
+	    "</g>"
+	    ),
 	axes, axeslabels,
     	s,
 	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
-    	"</svg>",
-	-- then sliders
-	if gfxIs3d g and (not g.?GfxGadgets or member(symbol GfxVertical,g.GfxGadgets)) then
-	    "<input oninput='gfxVRange(this,"|jsString tag|")' onclick='event.stopPropagation(); return false' type=\"range\" orient=\"vertical\" style=\"position:absolute;top:0;right:0\" min=\"-100\" max=\"100\" class=\"vertical gadget\">"
-	    else "",
-	if gfxIs3d g and (not g.?GfxGadgets or member(symbol GfxHorizontal,g.GfxGadgets)) then
-	    "<input oninput='gfxHRange(this,"|jsString tag|")' onclick='event.stopPropagation(); return false' type=\"range\" style=\"position:absolute;bottom:0;left:0\" min=\"-100\" max=\"100\" class=\"horizontal gadget\">"
-	    else "",
-	-- then autorotate button
-	if gfxIs3d g and (not g.?GfxGadgets or member(symbol GfxAuto,g.GfxGadgets)) then
-	    "<button class=\"mdl-button mdl-button--icon gadget\" style=\"position:absolute;top:0;left:0\" onclick='gfxToggleRotation(this,"|jsString tag|"); event.stopPropagation(); return false'><i class=\"material-icons\">3d_rotation</i></button>"
-	    else "",
-	if gfxIs3d g then "</span>" else ""
+	"</svg>"
 	)
     )
 
@@ -435,7 +431,7 @@ html GfxObject := g -> (
 -- GfxAutoMatrix (animation) or GfxMatrix (static)
 
 gfxRotation = args -> (
-    if not instance(args,Sequence) then args = sequence args;
+    args = sequence args;
     if #args>3 then error("Too many arguments");
     angle := args#0;
     threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Array) and #args#1 === 3 )));
@@ -493,16 +489,16 @@ gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyP
     i:=0;
     if x.?GfxBlur then (
     	b := x.GfxBlur;
-    	s := "<filter id=\""| x.cache.GfxFilterTag|"\" x=\""|toString(-100*b)|"%\" y=\""|toString(-100*b)|"%\" width=\""|toString(100*(1+2*b))|"%\" height=\""|toString(100*(1+2*b))|"%\">";
+	s := "<filter id='"| x.cache.GfxFilterTag|"' x='"|toString(-100*b)|"%' y='"|toString(-100*b)|"%' width='"|toString(100*(1+2*b))|"%' height='"|toString(100*(1+2*b))|"%'>";
     	rng := x.cache.GfxRange; if rng =!= null then (
     	    drng:=rng#1-rng#0;
     	    r := b*min(drng_0,drng_1);
 	    x.cache.GfxRange={rng#0-vector{r,r},rng#1+vector{r,r}};
-    	    s=s|"<feGaussianBlur in=\"SourceGraphic\" result=\"result"|toString i|"\" stdDeviation=\""|toString(0.5*r)|"\" />"; -- problem is, this should be updated dynamically as radius changes...
+	    s=s|"<feGaussianBlur in='SourceGraphic' result='result"|toString i|"' stdDeviation='"|toString(0.5*r)|"' />"; -- problem is, this should be updated dynamically as radius changes...
 	    i=i+1;
 	)
     )
-    else s = "<filter id=\""| x.cache.GfxFilterTag|"\">";
+    else s = "<filter id='"| x.cache.GfxFilterTag|"'>";
     if gfxIs3d x and (instance(x,GfxPolygon) or instance(x,GfxPolyline) or instance(x,GfxPath)) then (
     	-- find first 3 coords
     	if instance(x,GfxPath) then coords := select(x.GfxPathList, y -> instance(y,Vector)) else coords = x.GfxPoints;
@@ -520,10 +516,10 @@ gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyP
 	    	    c := 2*sp/w2;
 	    	    lightmir := light - c*w;
 		    if d<0 then sp=-sp;
-	    	    s=s| "<feSpecularLighting result=\"spec"|toString i|"\" specularExponent=\""|toString g.GfxSpecular|"\" lighting-color=\""|(if sp<0 then "black" else toString g#"fill")|"\">";
-	    	    s=s|"<fePointLight data-origin=\""|g.cache.GfxTag|"\" x=\""|toString(lightmir_0*p/lightmir_2)|"\" y=\""|toString(lightmir_1*p/lightmir_2)|"\" z=\""|toString(sp/sqrt(w2))|"\" />";
-	    	    s=s|"</feSpecularLighting><feComposite in=\"spec"|toString i|"\" in2=\"SourceGraphic\" operator=\"in\" result=\"clipspec"|toString i|"\"/>";
-	    	    s=s|"<feComposite in=\""|(if i==0 then "SourceGraphic" else "result"|toString(i-1))|"\"  in2=\"clipspec"|toString i|"\" result=\"result"|toString i|"\" operator=\"arithmetic\" k1=\"0\" k2=\"1\" k3=\"1\" k4=\"0\" />";
+	    	    s=s| "<feSpecularLighting result='spec"|toString i|"' specularExponent='"|toString g.GfxSpecular|"' lighting-color='"|(if sp<0 then "black" else toString g#"fill")|"'>";
+	    	    s=s|"<fePointLight data-origin='"|g.cache.GfxTag|"' x='"|toString(lightmir_0*p/lightmir_2)|"' y='"|toString(lightmir_1*p/lightmir_2)|"' z='"|toString(sp/sqrt(w2))|"' />";
+	    	    s=s|"</feSpecularLighting><feComposite in='spec"|toString i|"' in2='SourceGraphic' operator='in' result='clipspec"|toString i|"'/>";
+	    	    s=s|"<feComposite in='"|(if i==0 then "SourceGraphic" else "result"|toString(i-1))|"'  in2='clipspec"|toString i|"' result='result"|toString i|"' operator='arithmetic' k1='0' k2='1' k3='1' k4='0' />";
 	    	    i=i+1;
 	    	    ));
 	    );
@@ -556,13 +552,14 @@ gfxRadialGradient = true >> o -> stop -> (
     new GfxTagged from (tag,s)
     )
 
-gfxArrow = true >> o -> () -> (
+GfxArrow = GfxPolygon { symbol GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none" }
+
+gfxArrow = o -> (
     tag := gfxTag();
     s:="<marker id='"|tag|"' orient='auto' markerWidth='3' markerHeight='4' refX='0' refY='2'>";
     saveGfxMatrix := currentGfxMatrix;
-    currentGfxMatrix = map(RR^4,RR^4,1); -- ???
-    s=s|(svg new GfxPolygon from (new GfxObject) ++ { "fill" => "black", "stroke" => "none" } ++ gfxParse o 
-	++ { GfxIs3d=>false, GfxPoints => { vector {0,0,0,1}, vector {0,4,0,1}, vector {3,2,0,1} } } ); -- need to rethink this
+    currentGfxMatrix = map(RR^4,RR^4,1); -- eww
+    s=s | svg (GfxArrow ++ gfxParse toList sequence o);
     currentGfxMatrix = saveGfxMatrix;
     s=s|"</marker>";
     new GfxTagged from (tag,s)
@@ -658,8 +655,8 @@ multidoc ///
    Text
     An SVG circle. The two compulsory options are GfxCenter (coordinates of the center) and GfxRadius (radius).
    Example
-    GfxCircle{GfxCenter=>[10,10],GfxRadius=>50,"fill"=>"green","stroke"=>"none"}
-    GfxCircle{[10,10],10} -- equivalent syntax
+    GfxCircle{GfxCenter=>vector {10,10},GfxRadius=>50,"fill"=>"green","stroke"=>"none"}
+    GfxCircle{[10,10],10} -- equivalent syntax for coordinates
  Node
   Key
    GfxLine
@@ -680,6 +677,10 @@ multidoc ///
     By default a GfxLight is invisible (it has GfxRadius 0) and is unaffected by matrix transformations outside it (GfxStatic true).
    Example
     GfxLight{GfxRadius=>10,"fill"=>"yellow"}
+    v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
+    f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
+    c={"red","green","blue","yellow"};
+    tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>c#i}),GfxLight{[100,0,0],GfxRadius=>10},GfxRange=>{[-100,-150],[150,150]},GfxHeight=>30,GfxMatrix=>gfxRotation(-1.5,[0,1,0]))
  Node
   Key
    GfxEllipse
@@ -759,7 +760,10 @@ multidoc ///
   Key
    gfxIs3d
   Headline
-   returns a boolean according to whether the Gfx object is 2d (false) or 3d (true).
+   Whether a Gfx object is 3d
+  Description
+   Text
+    Returns a boolean according to whether the Gfx object is 2d (false) or 3d (true).
  Node
   Key
    gfxDistance
@@ -767,7 +771,7 @@ multidoc ///
    Distance to the viewer
   Description
    Text
-    returns the distance to the viewer of a Gfx 3d object.
+    Returns the distance to the viewer of a Gfx 3d object.
  Node
   Key
    gfxRotation   
@@ -796,7 +800,7 @@ multidoc ///
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>"white"}))
     g = memoize(n -> if n==0 then tetra else gfx apply(4,i->g(n-1)++{GfxMatrix=>gfxTranslation v#i}))
-    apply(4,f)
+    apply(4,g)
   Usage
    gfxTranslation ( vector )
  Node
@@ -805,15 +809,6 @@ multidoc ///
   Description
    Text
     A property of GfxPolyPrimitive 3d objects, means that polygons must be drawn only if they are facing the correct way.
- Node
-  Key
-   GfxVertical
-  Headline
-    Draw the vertical slider
-  Description
-   Text
-    A possible element of the list GfxGadgets of a Gfx 3d object;
-    specifies that the vertical slider must be drawn.
  Node
   Key
    GfxRange
@@ -847,15 +842,6 @@ multidoc ///
     Only has an effect if in the outermost Gfx object.
  Node
   Key
-   GfxHorizontal
-  Headline
-    Draw the horiontal slider
-  Description
-   Text
-    A possible element of the list GfxGadgets of a Gfx 3d object;
-    specifies that the horizontal slider must be drawn.
- Node
-  Key
    GfxHeight
   Headline
    Set the height
@@ -886,19 +872,7 @@ multidoc ///
     Must be a 4x4 matrix (projective coordinates).
    Example
     a=GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red"}
-    gfx(a,a++{GfxMatrix=>gfxRotation(2*pi/3,[0,0,1],[0,0,0])})
- Node
-  Key
-   GfxGadgets
-  Headline
-   An option for a Gfx 3d object
-  Description
-   Text
-    Determines which of the following elements are drawn:
-    vertical and horizontal sliders, and 3d animation button.
-    It's a list with possible elemnts GfxVertical, GfxHorizontal, GfxAuto.
-    By default all three are drawn.
-    Only has an effect if in the outermost Gfx object.
+    gfx(a,a++{GfxMatrix=>gfxRotation(2*pi/3)})
  Node
   Key
    GfxBlur
@@ -912,7 +886,10 @@ multidoc ///
   Key
    GfxStatic
   Headline
-   An option for a Gfx 3d object; it is unaffected by matrix tranformations of its ancestors
+   An option to make a Gfx object unmoving
+  Description
+   Text
+    The Gfx 3d object is unaffected by matrix tranformations of its ancestors.
  Node
   Key
    gfxLinearGradient
@@ -957,6 +934,17 @@ multidoc ///
    GfxAxes
   Headline
    An option to draw axes
+ Node
+  Key
+   GfxMargin
+  Headline
+   An option to specify the margin
+  Description
+   Text
+    The margin is proportional to the size of the image.
+   Example
+    GfxCircle{"fill"=>"red","stroke"=>"none",GfxMargin=>0}
+    GfxCircle{"fill"=>"red","stroke"=>"none",GfxMargin=>0.5}
  Node
   Key
    gfxArrow
