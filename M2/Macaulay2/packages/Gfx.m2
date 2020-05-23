@@ -24,7 +24,6 @@ GfxObject = new Type of OptionTable -- ancestor type
 
 new GfxObject from List := (T,l) -> new OptionTable from append(l,symbol cache => new CacheTable); -- every Gfx object should have a cache
 new GfxObject := T -> new T from {};
---new GfxObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable}
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: GfxRadius, GfxFontSize, etc
@@ -165,7 +164,6 @@ GfxPolyPrimitive = new Type of GfxPrimitive;
 
 GfxPolyline = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "polyline", symbol Options => { symbol GfxPoints => {} }}
 GfxPolygon = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "polygon", symbol Options => { symbol GfxPoints => {} }}
---GfxPathCmds = new HashTable from {"M"=>1,"L"=>1,"Q"=>2,"S"=>2,"T"=>1,"C"=>3,"A"=>5,"Z"=>0} -- number of args (coords count as 1)
 GfxPath = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "path", symbol Options => { symbol GfxPathList => {} }}
 gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, screw this
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
@@ -217,13 +215,14 @@ jsString Matrix := x -> "new Matrix(" | jsString entries x | ")"
 jsString Vector := x -> "new Float32Array(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
+jsString Option := x -> "{ number: "|jsString x#0|", matrix: "|jsString x#1|"}"
 -- svg output
 svgString = method(Dispatch=>Thing)
 svgString Thing := toString
 svgString List := x -> demark(" ", apply(x,svgString))
 svgString Vector := x -> svgString entries project2d x 
 svg = method()
-svgLookup := hashTable { 
+svgLookup := hashTable {
     symbol GfxMatrix => x -> "data-matrix='"|jsString x|"'",
     symbol GfxAutoMatrix => x -> "data-dmatrix='"|jsString x|"'",
     symbol GfxCenter => x -> concatenate(
@@ -231,9 +230,9 @@ svgLookup := hashTable {
 	(x = project2d x;),
 	"cx='", toString x_0, "' cy='", toString x_1, "'"
 	),
-    symbol GfxRadius => x ->  "data-r='"|toString x|"'",
-    symbol GfxRadiusX => x -> "data-rx='"|toString x|"'",
-    symbol GfxRadiusY => x -> "data-ry='"|toString x|"'",
+    symbol GfxRadius => x ->  "data-r='"|jsString x|"'",
+    symbol GfxRadiusX => x -> "data-rx='"|jsString x|"'",
+    symbol GfxRadiusY => x -> "data-ry='"|jsString x|"'",
     symbol GfxScaledRadius => x ->  "r='"|toString x|"'",
     symbol GfxScaledRadiusX => x ->  "rx='"|toString x|"'",
     symbol GfxScaledRadiusY => x ->  "ry='"|toString x|"'",
@@ -409,6 +408,9 @@ html GfxObject := g -> (
 	" data-pmatrix='"|jsString currentGfxMatrix|"'",
 	if gfxIs3d g then " onmousedown='gfxMouseDown.call(this,event)'",
     	">",
+	axes, axeslabels,
+	s,
+	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
 	-- then autorotate button
 	if gfxAuto g then (
 	    sizex := rr_0*min(0.5,1.5/g.cache.GfxWidth); sizey := rr_1*min(0.5,1.5/g.cache.GfxHeight); -- can't be larger than half the pic; default = 1.5em
@@ -419,9 +421,6 @@ html GfxObject := g -> (
 	    "<line class='gfxautostop' x1='0.7' y1='0.25' x2='0.7' y2='0.75' style='stroke:black; stroke-width:0.15'/>",
 	    "</g>"
 	    ),
-	axes, axeslabels,
-    	s,
-	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
 	"</svg>"
 	)
     )
@@ -517,7 +516,7 @@ gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyP
 	    	    lightmir := light - c*w;
 		    if d<0 then sp=-sp;
 	    	    s=s| "<feSpecularLighting result='spec"|toString i|"' specularExponent='"|toString g.GfxSpecular|"' lighting-color='"|(if sp<0 then "black" else toString g#"fill")|"'>";
-	    	    s=s|"<fePointLight data-origin='"|g.cache.GfxTag|"' x='"|toString(lightmir_0*p/lightmir_2)|"' y='"|toString(lightmir_1*p/lightmir_2)|"' z='"|toString(sp/sqrt(w2))|"' />";
+		    s=s|"<fePointLight data-origin="|jsString g.cache.GfxTag|" x='"|toString(lightmir_0*p/lightmir_2)|"' y='"|toString(lightmir_1*p/lightmir_2)|"' z='"|toString(sp/sqrt(w2))|"' />";
 	    	    s=s|"</feSpecularLighting><feComposite in='spec"|toString i|"' in2='SourceGraphic' operator='in' result='clipspec"|toString i|"'/>";
 	    	    s=s|"<feComposite in='"|(if i==0 then "SourceGraphic" else "result"|toString(i-1))|"'  in2='clipspec"|toString i|"' result='result"|toString i|"' operator='arithmetic' k1='0' k2='1' k3='1' k4='0' />";
 	    	    i=i+1;
@@ -680,7 +679,7 @@ multidoc ///
     v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
-    tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>c#i}),GfxLight{[100,0,0],GfxRadius=>10},GfxRange=>{[-100,-150],[150,150]},GfxHeight=>30,GfxMatrix=>gfxRotation(-1.5,[0,1,0]))
+    tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>c#i,"stroke"=>"none"}),GfxLight{[100,0,0],GfxRadius=>10},GfxRange=>{[-100,-150],[150,150]},GfxHeight=>30,GfxMatrix=>gfxRotation(-1.5,[0,1,0]))
  Node
   Key
    GfxEllipse
@@ -858,9 +857,13 @@ multidoc ///
    Text
     An option to create a rotation animation for the Gfx 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
-    In order for the animation to work, Gfx.css and Gfx.js must be included in the web page.   
+    The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
+    The animation automatically loops (use 0 => {} to stop!)
+    In order for the animation to work, Gfx.css and Gfx.js must be included in the web page.
    Example
-    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>gfxRotation(0.1,[0,0,1],[0,0,0])},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
+    (anim1=gfxRotation(0.1,[0,0,1],[0,0,0]); anim2=gfxRotation(-0.1,[0,0,1],[0,0,0]); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 }); 
+    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>anim1},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
+    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>anim3},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
  Node
   Key
    GfxMatrix
@@ -1036,7 +1039,7 @@ p=random splice{0..11};
 -- icosahedron
 vertices={vector{0.,0.,-95.1057},vector{0.,0.,95.1057},vector{-85.0651,0.,-42.5325},vector{85.0651,0.,42.5325},vector{68.8191,-50.,-42.5325},vector{68.8191,50.,-42.5325},vector{-68.8191,-50.,42.5325},vector{-68.8191,50.,42.5325},vector{-26.2866,-80.9017,-42.5325},vector{-26.2866,80.9017,-42.5325},vector{26.2866,-80.9017,42.5325},vector{26.2866,80.9017,42.5325}};
 faces={{1,11,7},{1,7,6},{1,6,10},{1,10,3},{1,3,11},{4,8,0},{5,4,0},{9,5,0},{2,9,0},{8,2,0},{11,9,7},{7,2,6},{6,8,10},{10,4,3},{3,5,11},{4,10,8},{5,3,4},{9,11,5},{2,7,9},{8,6,2}};
-icosa=apply(faces,f->GfxPolygon{apply(f,j->vertices#j),"fill"=>"gray"});
+icosa=apply(faces,f->GfxPolygon{apply(f,j->vertices#j),"fill"=>"gray","stroke"=>"none"});
 i=gfx(icosa,GfxMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
 
 rnd = () -> random(-1.,1.); cols={"red","green","blue","yellow","magenta","cyan"};
@@ -1080,6 +1083,18 @@ c=gfx(GfxPolygon{{[-100,100,100],[-100,-100,100],[-100,-100,-100],[-100,100,-100
 		  GfxPolygon{{[100,100,100],[100,-100,100],[-100,-100,100],[-100,100,100]}},
 		  "stroke"=>"black","fill"=>"grey", "opacity"=>"0.25")
 gfx(a,b,c,GfxWidth=>20)
+
+-- stars
+n=100;
+speed=100;
+far=-10000;
+screen=1000;
+stars=apply(1..n,i->(
+z=speed*(random(far,screen)//speed);
+GfxCircle{[random(-200,200),random(-200,200),z],10,"fill"=>"yellow","stroke"=>"none",GfxBlur=>0.3,
+GfxAutoMatrix=>{((screen-z)//speed)=>gfxTranslation [0,0,speed],gfxTranslation [0,0,far-screen],((-far+z)//speed)=>gfxTranslation [0,0,speed]}}
+));
+gfx(stars,GfxRange=>{[-100,-100],[100,100]})
 
 -- removed
  Node

@@ -1,10 +1,19 @@
-function gfxInit(el) {
+function gfxInitMouse(el) {
     el.onmousedown = gfxMouseDown;
     el.onmouseleave = gfxMouseLeave;
     el.onmouseup = gfxMouseUp;
     el.onmousemove = gfxMouseMove;
-    el.dataset.init="true";
     el.onclick = gfxMouseClick;
+}
+
+function gfxInitData(el) {
+    if (!el.gfxdata) {
+	el.gfxdata={};
+	for (var v in el.dataset)
+	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
+	for (var i=0; i<el.children.length; i++)
+	    gfxInitData(el.children[i]);
+    }
 }
 
 // auto-rotation button
@@ -13,11 +22,11 @@ function gfxToggleRotation(event) {
     //    var svgel=document.getElementById(svgid);
     //    if (!svgel) return;
     var svgel = this.parentElement; // weak but works
-    if (!svgel.pmatrix) {
-	svgel.pmatrix = eval(svgel.dataset.pmatrix); // parse once and for all
-	// should *always* exist. the perspective matrix
-    }
-    if (!svgel.cmatrix) svgel.cmatrix = new Matrix(svgel.pmatrix);
+    if (!svgel.gfxdata) gfxInitData(svgel);
+
+    // the perspective matrix should *always* exist
+
+    if (!svgel.gfxdata.cmatrix) svgel.gfxdata.cmatrix = new Matrix(svgel.gfxdata.pmatrix);
     if (this.classList.contains("active")) {
 	clearInterval(this.intervalId);
 	this.classList.remove("active");
@@ -43,7 +52,8 @@ var mouseDown=false;
 
 // mouse handling
 function gfxMouseDown(event) {
-    if (!this.dataset.init) gfxInit(this);
+    if (!this.gfxdata) gfxInitData(this);
+    if (!this.onmouseup) gfxInitMouse(this); // weak
     mouseDown=true;
     event.preventDefault();
     event.stopPropagation();
@@ -84,161 +94,165 @@ function gfxMouseClick(event) {
 
 function gfxAutoRotate(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
-    if ((!el.dmatrix)&&(el.dataset.dmatrix)) {
-	// parse once and for all
-	el.dmatrix = eval(el.dataset.dmatrix);
-    }
-    if (el.dmatrix instanceof Matrix) gfxRotate(el,el.dmatrix);
-    else if ((el.dmatrix instanceof Array)&&(el.dmatrix.length>0)) {
-	if (!el.dmatrixindex) el.dmatrixindex=0;
-	gfxRotate(el,el.dmatrix[el.dmatrixindex]);
-	el.dmatrixindex++; if (el.dmatrixindex==el.dmatrix.length) el.dmatrixindex=0;
-    }
+    gfxAutoRotateInt(el,el.gfxdata.dmatrix);
     for (var i=0; i<el.children.length; i++) gfxAutoRotate(el.children[i]);
+}
+function gfxAutoRotateInt(el,dmatrix) { // returns true if can move to next in list
+    if (!dmatrix) return true;
+    else if (dmatrix instanceof Matrix) { gfxRotate(el,dmatrix); return true; } // single
+    else if ((dmatrix instanceof Array)&&(dmatrix.length>0)) { // list
+	if (!dmatrix.index) dmatrix.index=0;
+	if (gfxAutoRotateInt(el,dmatrix[dmatrix.index])) {
+	    dmatrix.index++;
+	    if (dmatrix.index==dmatrix.length) { dmatrix.index=0; return true; } else return false;
+	} else return false;
+    } else { // repeated
+	if (!dmatrix.index) dmatrix.index=0;
+	if (gfxAutoRotateInt(el,dmatrix.matrix)) {
+	    dmatrix.index++;
+	    if (dmatrix.index==dmatrix.number) { dmatrix.index=0; return true; } else return false;
+	} else return false;
+    }
 }
 
 function gfxRotate(el,mat) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
-    if ((!el.matrix)&&(el.dataset.matrix))
-	el.matrix = eval(el.dataset.matrix); // parse once and for all
-    if (!el.matrix) el.matrix = new Matrix(mat); else el.matrix.leftmultiply(mat);
+    if (!el.gfxdata.matrix) el.gfxdata.matrix = new Matrix(mat); else el.gfxdata.matrix.leftmultiply(mat);
 }
 
 function gfxRecompute(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
-    if (el.classList.contains("gfxauto")) return; // gadgets aren't affected by transformations
-    // find rotation matrix
-    if ((!el.pmatrix)&&(el.dataset.pmatrix))
-	el.pmatrix = eval(el.dataset.pmatrix); // parse once and for all
+    if (el.classList.contains("gfxauto")) { el.gfxdata.distance=0; return; } // gadgets aren't affected by transformations
     var mat;
-    if (el.pmatrix) mat = el.pmatrix; else { // if not unmoving, get the ancestors' cmatrix
+    if (el.gfxdata.pmatrix) mat = el.gfxdata.pmatrix; else { // if not unmoving, get the ancestors' cmatrix
 	var el1=el.parentElement;
-	if (!el1.cmatrix) return; // shouldn't happen
-	mat = el1.cmatrix;
+	if (!el1.gfxdata.cmatrix) return; // shouldn't happen
+	mat = el1.gfxdata.cmatrix;
     }
     // cmatrix is the compound rotation matrix (just an optimization to avoid repeated multiplications)
     // at the end of the day "cmatrix" is the *ordered* product over ancestors of matrices "matrix" (plus the leftmost perspective matrix "pmatrix"
-    if ((!el.matrix)&&(el.dataset.matrix))
-	el.matrix = eval(el.dataset.matrix); // parse once and for all
-    //    if (!el.matrix) el.cmatrix = new Matrix(mat); else { el.cmatrix = new Matrix(el.matrix); el.cmatrix.leftmultiply(mat); }
-        if (!el.matrix) el.cmatrix = mat; else { el.cmatrix = new Matrix(el.matrix); el.cmatrix.leftmultiply(mat); }
+    if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
     if ((el.tagName=="polyline")||(el.tagName=="polygon")||(el.tagName=="path")) {
 	var pth,s,coords,distance;
-	if (!el.coords)
-	    el.coords=eval(el.dataset.coords);
 	// parse path
-	s = ""; coords=[]; distance=0;
-    	for (var j=0; j<el.coords.length; j++) {
-	    if (el.coords[j] instanceof Float32Array) {
-		var u=el.cmatrix.vectmultiply(el.coords[j]);
-		var v=[u[0]/u[3],u[1]/u[3]];
-		coords.push(u);
-		s+=v[0]+" "+v[1]+" ";
-		distance+=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
+	s = ""; coords=[]; distance=0; var flag=false;
+	for (var j=0; j<el.gfxdata.coords.length; j++) {
+	    if (el.gfxdata.coords[j] instanceof Float32Array) {
+		var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.coords[j]);
+		if (u[3]<=0) flag=true; else {
+		    var v=[u[0]/u[3],u[1]/u[3]];
+		    coords.push(u);
+		    s+=v[0]+" "+v[1]+" ";
+		    distance+=u[0]*u[0]+u[1]*u[1]+u[2]*u[2]; // not homogenous... TODO
+		}
 	    }
-	    else s+=el.coords[j]+" ";
+	    else s+=el.gfxdata.coords[j]+" "; // huh? shouldn't happen any more?
 	}
-	// rewrite "d" or "points"
-	if (el.tagName=="path") el.setAttribute("d",s); else el.setAttribute("points",s);
-	// recompute square distance as average of square distances of vertices
-	el.distance=distance/coords.length;
-	if (coords.length>2) {	
-	    var det = coords[0][2]*coords[1][1]*coords[2][0]-coords[0][1]*coords[1][2]*coords[2][0]-coords[0][2]*coords[1][0]*coords[2][1]+coords[0][0]*coords[1][2]*coords[2][1]+coords[0][1]*coords[1][0]*coords[2][2]-coords[0][0]*coords[1][1]*coords[2][2]; // TODO optimize
-	    // visibility
-	    if (el.dataset.onesided) {
-		if (det<0) { el.style.visibility="hidden"; return; } else el.style.visibility="visible";
-	    }
-	    // lighting
-	    var lightname = el.getAttribute("filter");
-	    if (lightname) {
-		lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
-		var lightel=document.getElementById(lightname);
-		var u=[coords[1][0]-coords[0][0],coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]];
-		var v=[coords[2][0]-coords[0][0],coords[2][1]-coords[0][1],coords[2][2]-coords[0][2]];
-		var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
-		var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
-		for (var j=0; j<lightel.children.length; j++)
-		    if (lightel.children[j].tagName == "feSpecularLighting") {
-			var lightel2=lightel.children[j].firstElementChild; // eww
-			// move the center of the light to its mirror image in the plane of the polygon
-			var origin=document.getElementById(lightel2.dataset.origin);
-			if (!origin.pcenter) gfxRecompute(origin); // hopefully won't create infinite loops
-			var light = new Float32Array(origin.pcenter); // phew
-			var sp = w[0]*(light[0]-coords[0][0])+w[1]*(light[1]-coords[0][1])+w[2]*(light[2]-coords[0][2]);
-			var c = 2*sp/w2;
-			var p = light[2]/light[3]; // eww
-			for (var i=0; i<3; i++) light[i]-=c*w[i];
-			if (det<0) sp=-sp;
-			if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
-			    lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-			    lightel2.setAttribute("x",light[0]*p/light[2]);
-			    lightel2.setAttribute("y",light[1]*p/light[2]);
-			    lightel2.setAttribute("z",sp/Math.sqrt(w2));
+	if (flag) el.style.display="none"; else {
+	    el.style.display="";
+	    // rewrite "d" or "points"
+	    if (el.tagName=="path") el.setAttribute("d",s); else el.setAttribute("points",s);
+	    // recompute square distance as average of square distances of vertices
+	    el.gfxdata.distance=distance/coords.length;
+	    if (coords.length>2) {
+		var det = coords[0][2]*coords[1][1]*coords[2][0]-coords[0][1]*coords[1][2]*coords[2][0]-coords[0][2]*coords[1][0]*coords[2][1]+coords[0][0]*coords[1][2]*coords[2][1]+coords[0][1]*coords[1][0]*coords[2][2]-coords[0][0]*coords[1][1]*coords[2][2]; // TODO optimize
+		// visibility
+		if (el.gfxdata.onesided) {
+		    if (det<0) { el.style.visibility="hidden"; return; } else el.style.visibility="visible";
+		}
+		// lighting
+		var lightname = el.getAttribute("filter");
+		if (lightname) {
+		    lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
+		    var lightel=document.getElementById(lightname);
+		    var u=[coords[1][0]-coords[0][0],coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]];
+		    var v=[coords[2][0]-coords[0][0],coords[2][1]-coords[0][1],coords[2][2]-coords[0][2]];
+		    var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
+		    var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
+		    for (var j=0; j<lightel.children.length; j++)
+			if (lightel.children[j].tagName == "feSpecularLighting") {
+			    var lightel2=lightel.children[j].firstElementChild; // eww
+			    // move the center of the light to its mirror image in the plane of the polygon
+			    //var origin=document.getElementById(lightel2.gfxdata.origin);
+			    var origin=lightel2.gfxdata.origin; // eval acts as getElementById
+			    if (!origin.gfxdata.pcenter) gfxRecompute(origin); // hopefully won't create infinite loops
+			    var light = new Float32Array(origin.gfxdata.pcenter); // phew
+			    var sp = w[0]*(light[0]-coords[0][0])+w[1]*(light[1]-coords[0][1])+w[2]*(light[2]-coords[0][2]);
+			    var c = 2*sp/w2;
+			    var p = light[2]/light[3]; // eww
+			    for (var i=0; i<3; i++) light[i]-=c*w[i];
+			    if (det<0) sp=-sp;
+			    if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
+				lightel.children[j].setAttribute("lighting-color",origin.style.fill);
+				lightel2.setAttribute("x",light[0]*p/light[2]);
+				lightel2.setAttribute("y",light[1]*p/light[2]);
+				lightel2.setAttribute("z",sp/Math.sqrt(w2));
+			    }
 			}
-		    }
+		}
 	    }
 	}
     }
     else if (el.tagName=="line") {
-	if (!el.point1)
-	    el.point1=eval(el.dataset.point1);
-	if (!el.point2)
-	    el.point2=eval(el.dataset.point2);
-	var u1=el.cmatrix.vectmultiply(el.point1);
-	var v1=[u1[0]/u1[3],u1[1]/u1[3]];
-	var u2=el.cmatrix.vectmultiply(el.point2);
-	var v2=[u2[0]/u2[3],u2[1]/u2[3]];
-	el.distance=0.5*(u1[0]*u1[0]+u1[1]*u1[1]+u1[2]*u1[2]+u2[0]*u2[0]+u2[1]*u2[1]+u2[2]*u2[2]);
-	el.setAttribute("x1",v1[0]);
-	el.setAttribute("y1",v1[1]);
-	el.setAttribute("x2",v2[0]);
-	el.setAttribute("y2",v2[1]);
+	var u1=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point1);
+	var u2=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point2);
+	if ((u1[3]<=0)||(u2[3]<=0)) el.style.display="none"; else {
+	    el.style.display="";
+	    var v1=[u1[0]/u1[3],u1[1]/u1[3]];
+	    var v2=[u2[0]/u2[3],u2[1]/u2[3]];
+	    el.gfxdata.distance=0.5*(u1[0]*u1[0]+u1[1]*u1[1]+u1[2]*u1[2]+u2[0]*u2[0]+u2[1]*u2[1]+u2[2]*u2[2]);
+	    el.setAttribute("x1",v1[0]);
+	    el.setAttribute("y1",v1[1]);
+	    el.setAttribute("x2",v2[0]);
+	    el.setAttribute("y2",v2[1]);
+	}
     }
     else if ((el.tagName=="text")||(el.tagName=="foreignObject")) {
-	if (!el.point)
-	    el.point=eval(el.dataset.point);
-	if (!el.fontsize)
-	    if (el.dataset.fontsize) el.fontsize=eval(el.dataset.fontsize); else el.fontsize=14;
-	var u=el.cmatrix.vectmultiply(el.point);
-	var v=[u[0]/u[3],u[1]/u[3]];
-	el.distance=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
-	el.setAttribute("x",v[0]);
-	el.setAttribute("y",v[1]);
-	// rescale font size
-	el.style.fontSize = el.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
+	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=14;
+	var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point);
+	if (u[3]<=0) el.style.display="none"; else {
+	    el.style.display="";
+	    var v=[u[0]/u[3],u[1]/u[3]];
+	    el.gfxdata.distance=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
+	    el.setAttribute("x",v[0]);
+	    el.setAttribute("y",v[1]);
+	    // rescale font size
+	    el.style.fontSize = el.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
+	}
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
-	if (!el.center)
-	    el.center=eval(el.dataset.center);
-	var u=el.cmatrix.vectmultiply(el.center);
-	el.pcenter = u; // in case someone needs it ... (light)
-	var v=[u[0]/u[3],u[1]/u[3]];
-	el.distance=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
-	el.setAttribute("cx",v[0]);
-	el.setAttribute("cy",v[1]);
-	// also, rescale radius
-	if (el.tagName=="circle")
-	    el.setAttribute("r",eval(el.dataset.r)/u[3]);
-	else {
-	    el.setAttribute("rx",eval(el.dataset.rx)/u[3]);
-	    el.setAttribute("ry",eval(el.dataset.ry)/u[3]);
-	}	    
+	var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.center);
+	el.gfxdata.pcenter = u; // in case someone needs it ... (light)
+	if (u[3]<=0) el.style.display="none"; else {
+	    el.style.display="";
+	    var v=[u[0]/u[3],u[1]/u[3]];
+	    el.gfxdata.distance=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
+	    el.setAttribute("cx",v[0]);
+	    el.setAttribute("cy",v[1]);
+	    // also, rescale radius
+	    if (el.tagName=="circle")
+		el.setAttribute("r", el.gfxdata.r/u[3]);
+	    else {
+		el.setAttribute("rx", el.gfxdata.rx/u[3]);
+		el.setAttribute("ry", el.gfxdata.ry/u[3]);
+	    }
+	}
     }
     else if ((el.tagName=="svg")||(el.tagName=="g")) {
 	// must call inductively children's
 	for (var i=0; i<el.children.length; i++) gfxRecompute(el.children[i]);
 	gfxReorder(el);
 	// recompute square distance as average of square distances of children
-	el.distance=0; var cnt = 0;
+	el.gfxdata.distance=0; var cnt = 0;
 	for (var i=0; i<el.children.length; i++)
-	    if (el.children[i].distance != 0) {
-		el.distance+=el.children[i].distance;
+	    if (el.children[i].gfxdata.distance != 0) {
+		el.gfxdata.distance+=el.children[i].gfxdata.distance;
 		cnt++;
 	    }
-	if (cnt>0) el.distance/=cnt;
+	if (cnt>0) el.gfxdata.distance/=cnt;
     }
-    else el.distance=0; // bit of a hack -- for 2d objects but also filters...
+    else el.gfxdata.distance=0; // bit of a hack -- for 2d objects but also filters...
 }
 
 function gfxReorder(el) {
@@ -247,11 +261,8 @@ function gfxReorder(el) {
 	// order children according to distance
 	for (i=1; i<el.children.length; i++) {
 	    var child = el.children[i];
-	    j=i; while ((j>0)&&(child.distance>el.children[j-1].distance)) j--;
-	    if (j<i) {
-		el.removeChild(child);
-		el.insertBefore(child,el.children[j]);
-	    }
+	    j=i; while ((j>0)&&(child.gfxdata.distance>el.children[j-1].gfxdata.distance)) j--;
+	    if (j<i) el.insertBefore(child,el.children[j]);
 	}
     }
 }
