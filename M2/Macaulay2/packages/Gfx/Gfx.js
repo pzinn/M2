@@ -86,15 +86,27 @@ function gfxAutoRotate(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if ((!el.dmatrix)&&(el.dataset.dmatrix)) {
 	// parse once and for all
-	el.dmatrix = eval(el.dataset.dmatrix);
+	el.dmatrix = eval("("+el.dataset.dmatrix+")"); // to avoid annoying label vs object javascript confusion cf https://stackoverflow.com/questions/4597926/what-is-the-difference-between-new-object-and-object-literal-notation
     }
-    if (el.dmatrix instanceof Matrix) gfxRotate(el,el.dmatrix);
-    else if ((el.dmatrix instanceof Array)&&(el.dmatrix.length>0)) {
-	if (!el.dmatrixindex) el.dmatrixindex=0;
-	gfxRotate(el,el.dmatrix[el.dmatrixindex]);
-	el.dmatrixindex++; if (el.dmatrixindex==el.dmatrix.length) el.dmatrixindex=0;
-    }
+    gfxAutoRotateInt(el,el.dmatrix);
     for (var i=0; i<el.children.length; i++) gfxAutoRotate(el.children[i]);
+}
+function gfxAutoRotateInt(el,dmatrix) { // returns true if can move to next in list
+    if (!dmatrix) return true;
+    else if (dmatrix instanceof Matrix) { gfxRotate(el,dmatrix); return true; } // single
+    else if ((dmatrix instanceof Array)&&(dmatrix.length>0)) { // list
+	if (!dmatrix.index) dmatrix.index=0;
+	if (gfxAutoRotateInt(el,dmatrix[dmatrix.index])) {
+	    dmatrix.index++;
+	    if (dmatrix.index==dmatrix.length) { dmatrix.index=0; return true; } else return false;
+	} else return false;
+    } else { // repeated
+	if (!dmatrix.index) dmatrix.index=0;
+	if (gfxAutoRotateInt(el,dmatrix.matrix)) {
+	    dmatrix.index++;
+	    if (dmatrix.index==dmatrix.number) { dmatrix.index=0; return true; } else return false;
+	} else return false;
+    }
 }
 
 function gfxRotate(el,mat) {

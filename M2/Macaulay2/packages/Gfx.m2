@@ -217,6 +217,7 @@ jsString Matrix := x -> "new Matrix(" | jsString entries x | ")"
 jsString Vector := x -> "new Float32Array(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
+jsString Option := x -> "{ number: "|jsString x#0|", matrix: "|jsString x#1|"}"
 -- svg output
 svgString = method(Dispatch=>Thing)
 svgString Thing := toString
@@ -858,9 +859,12 @@ multidoc ///
    Text
     An option to create a rotation animation for the Gfx 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
+    The syntax n => ... can be used to repeat a sequence n times.
     In order for the animation to work, Gfx.css and Gfx.js must be included in the web page.   
    Example
-    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>gfxRotation(0.1,[0,0,1],[0,0,0])},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
+    (anim1=gfxRotation(0.1,[0,0,1],[0,0,0]); anim2=gfxRotation(-0.1,[0,0,1],[0,0,0]); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 }); 
+    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>anim1},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
+    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>anim3},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
  Node
   Key
    GfxMatrix
