@@ -211,11 +211,11 @@ gfxAuto GfxList := x -> (
 jsString = method(Dispatch=>Thing)
 jsString Thing := toString
 jsString String := toExternalString
-jsString Matrix := x -> "new Matrix(" | jsString entries x | ")"
-jsString Vector := x -> "new Float32Array(" | jsString entries x | ")"
+jsString Matrix := x -> "matrix(" | jsString entries x | ")"
+jsString Vector := x -> "vector(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
-jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
-jsString Option := x -> "{ number: "|jsString x#0|", matrix: "|jsString x#1|"}"
+--jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
+jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 -- svg output
 svgString = method(Dispatch=>Thing)
 svgString Thing := toString

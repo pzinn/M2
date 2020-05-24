@@ -23,7 +23,8 @@ function gfxToggleRotation(event) {
     //    if (!svgel) return;
     var svgel = this.parentElement; // weak but works
     if (!svgel.gfxdata) gfxInitData(svgel);
-
+    if (!this.ondblclick) this.ondblclick= function(event) { event.stopPropagation(); }; // weak
+    
     // the perspective matrix should *always* exist
 
     if (!svgel.gfxdata.cmatrix) svgel.gfxdata.cmatrix = new Matrix(svgel.gfxdata.pmatrix);
@@ -108,7 +109,7 @@ function gfxAutoRotateInt(el,dmatrix) { // returns true if can move to next in l
 	} else return false;
     } else { // repeated
 	if (!dmatrix.index) dmatrix.index=0;
-	if (gfxAutoRotateInt(el,dmatrix.matrix)) {
+	if (gfxAutoRotateInt(el,dmatrix.content)) {
 	    dmatrix.index++;
 	    if (dmatrix.index==dmatrix.number) { dmatrix.index=0; return true; } else return false;
 	} else return false;
@@ -269,131 +270,128 @@ function gfxReorder(el) {
 
 
 // a simple square matrix type
-var msize=4;
-var matrix_accuracy=1e-6;
-var matrix_identity=new Array(msize); for (var i=0; i<msize; i++) { matrix_identity[i]=new Array(msize); for (var j=0; j<msize; j++) if (i==j) matrix_identity[i][j]=1.; else matrix_identity[i][j]=0.; }
+var dim=4;
+var matrix_identity=new Array(dim); for (var i=0; i<dim; i++) { matrix_identity[i]=new Array(dim); for (var j=0; j<dim; j++) if (i==j) matrix_identity[i][j]=1.; else matrix_identity[i][j]=0.; }
 
-function doubleArrayToFloat32Array(mat) // used internally
-{
-    var val=new Float32Array(msize*msize);
-    var i,j;
-    for (i=0; i<msize; i++)
-	for (j=0; j<msize; j++)
-	    val[i+msize*j]=mat[i][j]; // note the transposition to conform to openGL's silly convention
-    return val;
+class Vector extends Float32Array {
+    constructor(v) {
+	if ((v instanceof Array)&&(v.length===dim))
+	    super(v);
+	else
+	    super(dim);
+    }
+    add(v)
+    {
+	if (v instanceof Vector)
+	{
+	    for (var i=0; i<dim; i++)
+		this[i]+=v[i];
+	}
+    }
 }
 
-function Matrix(mat) // simple constructor
+function doubleArrayToFloat32Array(mat,fl) // used internally
 {
-    if (typeof(mat)=='number') // a number means multiple of identity
-    {	
-	this.elem=doubleArrayToFloat32Array(matrix_identity);
-	this.leftmultiply(mat);
-    }
-    else if (typeof(mat) == 'object')
+    var i,j;
+    for (i=0; i<dim; i++)
+	for (j=0; j<dim; j++)
+	    fl[i+dim*j]=mat[i][j]; // note the transposition to conform to openGL's silly convention
+    return fl;
+}
+
+class Matrix extends Float32Array {
+    constructor(mat) // simple constructor
     {
-	if (mat instanceof Matrix)
+	if (typeof(mat)=='number') // a number means multiple of identity
 	{
-	    this.elem=new Float32Array(mat.elem);
-	}
-	if (mat instanceof Float32Array)
-	{
-	    this.elem=new Float32Array(mat);
+	    super(dim*dim);
+	    doubleArrayToFloat32Array(matrix_identity,this);
+	    this.leftmultiply(mat);
 	}
 	else if (mat instanceof Array)
 	{
-	    this.elem=doubleArrayToFloat32Array(mat);
+	    super(dim*dim);
+	    doubleArrayToFloat32Array(mat,this);
+	}
+	else if (mat instanceof Float32Array)
+	{
+	    super(mat);
 	}
     }
-    else
-	this.elem=new Float32Array(msize*msize);
-} 
-Matrix.prototype = 
-{
-    // Returns element (i,j) of the matrix
-    e: function(i,j) { return this.elem[i+msize*j]; },
 
-    zero: function() 
+    // Returns element (i,j) of the matrix
+    e(i,j) { return this[i+dim*j]; }
+
+    zero()
     {
-	this.elem.fill(0);
-    },
+	this.fill(0);
+    }
 
     // display
-    print: function() 
+    print()
     { 
 	a="{"; 
-	for (var i=0; i<msize; i++) 
+	for (var i=0; i<dim; i++)
 	    {
 		a+="{";
-		for (var j=0; j<msize; j++)
+		for (var j=0; j<dim; j++)
 		    {
 			a+=this.e(i,j);
-			if (j<msize-1) a+=",";
+			if (j<dim-1) a+=",";
 		    }
 		a+="}";
-		if (i<msize-1) a+=",";
+		if (i<dim-1) a+=",";
 	    }
 	a+="}";
 	return a;
-    },
+    }
 
     // add another matrix or a scalar (multiple of identity)
-    add: function(mat)
+    add(mat)
     {
 	if (typeof(mat)=='number')
 	    {
-		for (var i=0; i<msize; i++)
-		    this.elem[i*(msize+1)]+=mat;
+		for (var i=0; i<dim; i++)
+		    this[i*(dim+1)]+=mat;
 	    }
-	else if (typeof(mat)=='object')
+	else if (mat instanceof Matrix)
 	    {
-		for (var i=0; i<msize*msize; i++)
-		    this.elem[i]+=mat.elem[i];
+		for (var i=0; i<dim*dim; i++)
+		    this[i]+=mat[i];
 	    }
-    },
+    }
 
     // left multiply by a matrix or scalar
-    leftmultiply: function(mat) 
+    leftmultiply(mat)
     {
 	if (typeof(mat)=='number')
 	    {
-		for (var i=0; i<msize*msize; i++)
-		    this.elem[i]*=mat;
+		for (var i=0; i<dim*dim; i++)
+		    this[i]*=mat;
 	    }
-	else if (typeof(mat)=='object')
+	else if (mat instanceof Matrix)
 	    {
-		var temp=new Float32Array(msize*msize);
-		for (var i=0; i<msize; i++)
-		    for (var j=0; j<msize; j++)
-			for (var k=0; k<msize; k++)
-			    temp[i+msize*k]+=mat.elem[i+msize*j]*this.elem[j+msize*k];
-		this.elem=temp;
+		var temp=new Matrix(this); // it's assumed mat is *not* this
+		this.zero();
+		for (var i=0; i<dim; i++)
+		    for (var j=0; j<dim; j++)
+			for (var k=0; k<dim; k++)
+			    this[i+dim*k]+=mat[i+dim*j]*temp[j+dim*k];
 	    }
-    },
+    }
 
-    vectmultiply: function(vec)
+    vectmultiply(vec)
     {
-	// rotate
-	var u=new Float32Array(msize);
-	for (var k=0; k<msize; k++)
+	var u=new Vector();
+	for (var k=0; k<dim; k++)
 	{
-	    u[k]=0.;
-	    for (var l=0; l<msize; l++)
-		u[k]+=this.elem[k+msize*l]*vec[l];
+	    for (var l=0; l<dim; l++)
+		u[k]+=this[k+dim*l]*vec[l];
 	}
 	return u;
-    },
-    
-    transpose: function()
-    {
-	var temp;
-	for (i=0; i<msize-1; i++)
-	    for (j=i+1; j<msize; j++)
-		{
-		    temp=this.elem[i+msize*j];
-		    this.elem[i+msize*j]=this.elem[j+msize*i];
-		    this.elem[j+msize*i]=temp;
-		}
-    },
+    }
 };
 
+function vector(v) { return new Vector(v); }
+function matrix(m) { return new Matrix(m); }
+function times(n,x) { return { number: n, content: x }; }
