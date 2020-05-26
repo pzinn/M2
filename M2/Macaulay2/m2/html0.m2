@@ -13,7 +13,7 @@ HypertextParagraph.synonym = "mark-up list paragraph"
 HypertextContainer = new Type of Hypertext	    -- one of these may contain paragraphs or containers, and its method for printing has to handle the line breaks
 HypertextContainer.synonym = "mark-up list container"
 
-     MarkUpType = new Type of SelfInitializingType
+MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
 new MarkUpType from Thing := (M,x) -> new M from {x}
@@ -67,49 +67,81 @@ htmlMarkUpTypeWithOptions := opts -> s -> (
 	       ": unrecognized option name(s): ", toString select(toList t, x -> instance(x,Option))
 	       );
 	  scanPairs(opts', (k,v) -> if v =!= null then o = concatenate(o, " ", k, "=", format v));
-	  if #u === 0 then concatenate(lt, s, o, onoff)
+	  if u === () then concatenate(lt, s, o, onoff)
 	  else concatenate(lt, s, o, ">", apply(sequence u,html), off)
 	  ))
 
-MarkUpType.GlobalAssignHook = (X,x) -> (
-     if not x.?qname then x.qname = toLower toString X;
-     if not hasAttribute(x,ReverseDictionary) then (
-	  setAttribute(x,ReverseDictionary,X);
-     	  html x := htmlMarkUpType x.qname;
-	  );
-     )
+htmlGlobalAttr = { -- html global attributes
+    "accesskey",
+    "class",
+    "contenteditable",
+    --  "data-*", -- at the moment can't handle this
+    "dir",
+    "draggable",
+    "dropzone",
+    "hidden",
+    "id",
+    "lang",
+    "spellcheck",
+    "style",
+    "tabindex",
+    "title",
+    "translate"
+    }
 
-IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction -- no qname, no default method for producing html
+htmlAttr = htmlGlobalAttr | { -- html global and event attributes
+    "onafterprint",
+    "onbeforeprint",
+    "onbeforeunload",
+    "onerror",
+    "onhashchange",
+    "onload",
+    "onmessage",
+    "onoffline",
+    "ononline",
+    "onpagehide",
+    "onpageshow",
+    "onpopstate",
+    "onresize",
+    "onstorage",
+    "onunload"
+}
 
-MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
-     if not x.?qname then x.qname = toLower toString X;
-     if not hasAttribute(x,ReverseDictionary) then (
-	  setAttribute(x,ReverseDictionary,X);
-     	  html x := (htmlMarkUpTypeWithOptions options x) x.qname;
-	  );
-     )
+withOptions = (v,x) -> (x.Options = new OptionTable from apply(flatten v,val -> if class val === Option then val else val=>null); x)
+withQname   = (q,x) -> (
+    x.qname = q;
+--    html x := (if x.?Options then htmlMarkUpTypeWithOptions options x else htmlMarkUpType) q;
+    if x.?Options then html x := (htmlMarkUpTypeWithOptions x.Options) q;
+    x)
 
-withOptions := (v,x) -> (x.Options = new OptionTable from apply(v,val -> if class val === Option then val else val=>null); x)
-withQname   := (q,x) -> (x.qname = q; x)
 trimfront := x -> apply(x, line -> if not instance(line,String) then line else (
 	  s := lines line;
 	  r := if not s#?0 then line else concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)));
 	  if #r =!= 0 then r))
 
+MarkUpType.GlobalAssignHook = (X,x) -> (
+     if not x.?qname then withQname(toLower toString X,x);
+     if not hasAttribute(x,ReverseDictionary) then (
+	  setAttribute(x,ReverseDictionary,X);
+	  );
+     )
+
+IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction -- no qname, no default method for producing html
+
 new MarkUpType := x -> error "obsolete 'new' method called"
 
-BR         = new MarkUpType of Hypertext		    -- HypertextParagraph?  no, because paragraphs are separated more by browsers
+BR         = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext		    -- HypertextParagraph?  no, because paragraphs are separated more by browsers
 br         = BR{}
 
-HR         = new MarkUpType of HypertextParagraph
+HR         = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
 hr         = HR{}
 
-new HR from List := 
-new BR from List := (X,x) -> if #x>0 then error "expected empty list" else x
+--new HR from List :=  -- TODO: allow options
+--new BR from List := (X,x) -> if #x>0 then error "expected empty list" else x
 
-PARA       = withQname_"p" new MarkUpType of HypertextParagraph	    -- double spacing inside
+PARA       = withQname_"p" withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph	    -- double spacing inside
 
-ExampleItem = withQname_"code" new MarkUpType of Hypertext
+ExampleItem = withQname_"code" withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
 makeExampleItem = method()
 makeExampleItem String := s -> ExampleItem s
 makeExampleItem Thing := s -> error ("EXAMPLE expected a string or a PRE item, but encountered ", toString s)
@@ -126,45 +158,43 @@ EXAMPLE String := x -> (
      EXAMPLE {x}
      )
 
-PRE        = new MarkUpType of HypertextParagraph
+PRE        = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
 makeExampleItem PRE := identity				    -- this will allow precomputed example text
 
-TITLE      = new MarkUpType of HypertextParagraph
-HEAD       = new MarkUpType of HypertextParagraph
-BODY       = new MarkUpType of HypertextContainer
-IMG	   = withOptions_{"src","alt"} new MarkUpTypeWithOptions of Hypertext
-HTML       = new MarkUpType of Hypertext
-HEADER1    = withQname_"h1" new MarkUpType of HypertextParagraph
-HEADER2    = withQname_"h2" new MarkUpType of HypertextParagraph
-HEADER3    = withQname_"h3" new MarkUpType of HypertextParagraph
-HEADER4    = withQname_"h4" new MarkUpType of HypertextParagraph
-HEADER5    = withQname_"h5" new MarkUpType of HypertextParagraph
-HEADER6    = withQname_"h6" new MarkUpType of HypertextParagraph
+TITLE      = withOptions_htmlGlobalAttr new MarkUpTypeWithOptions of HypertextParagraph
+HEAD       = withOptions_htmlGlobalAttr new MarkUpTypeWithOptions of HypertextParagraph
+BODY       = withOptions_htmlGlobalAttr new MarkUpTypeWithOptions of HypertextContainer
+IMG	   = withOptions_{htmlAttr,"alt","crossorigin","height","ismap","longdesc","referrerpolicy","sizes","src","srcset","usemap","width"} new MarkUpTypeWithOptions of Hypertext
+HTML       = withOptions_htmlGlobalAttr new MarkUpTypeWithOptions of Hypertext
+HEADER1    = withQname_"h1" withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
+HEADER2    = withQname_"h2" withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
+HEADER3    = withQname_"h3" withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
+HEADER4    = withQname_"h4" withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
+HEADER5    = withQname_"h5" withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
+HEADER6    = withQname_"h6" withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
 SUBSECTION = HEADER2
 LITERAL    = withQname_"div" new IntermediateMarkUpType of Hypertext -- fake!!!!! check later
-BLOCKQUOTE = new MarkUpType of HypertextContainer
-STRONG     = new MarkUpType of Hypertext
-SMALL      = new MarkUpType of Hypertext
-SUB        = new MarkUpType of Hypertext
-SUP        = new MarkUpType of Hypertext
-ITALIC     = withQname_"i" new MarkUpType of Hypertext
+BLOCKQUOTE = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextContainer
+STRONG     = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+SMALL      = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+SUB        = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+SUP        = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+ITALIC     = withQname_"i" withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
 TEX	   = withQname_"#PCDATA" new MarkUpType of Hypertext -- TEX really needs to be processed further so its output can be checked, too!
-SPAN       = withOptions_{"lang"} new MarkUpTypeWithOptions of Hypertext
-TT         = new MarkUpType of Hypertext
-LI         = new MarkUpType of HypertextContainer
-EM         = new MarkUpType of Hypertext
-BOLD       = withQname_"b" new MarkUpType of Hypertext
-CODE       = new MarkUpType of Hypertext
+SPAN       = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+TT         = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+LI         = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextContainer
+EM         = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+BOLD       = withQname_"b" withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+CODE       = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
 COMMENT    = new MarkUpType of Hypertext
 CDATA      = new MarkUpType of Hypertext
-LINK       = withOptions_{"href","rel","title","type"} new MarkUpTypeWithOptions of Hypertext
-META       = withOptions_{"name","content","http-equiv"} new MarkUpTypeWithOptions of Hypertext
+LINK       = withOptions_{htmlGlobalAttr,"href","rel","title","type"} new MarkUpTypeWithOptions of Hypertext
+META       = withOptions_{htmlGlobalAttr,"name","content","http-equiv"} new MarkUpTypeWithOptions of Hypertext
 
-DL         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
-DD         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
-DT         = withOptions_{"class"} new MarkUpTypeWithOptions of Hypertext
-
-STYLE      = withOptions_{"type"} new MarkUpTypeWithOptions of Hypertext
+DL         = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+DD         = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+DT         = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
 
 HREF       = withQname_"a" new IntermediateMarkUpType of Hypertext
 new HREF from List := (HREF,x) -> (
@@ -177,9 +207,9 @@ new HREF from List := (HREF,x) -> (
      then error "HREF expected URL to be a string or a pair of strings";
      x)
 
-ANCHOR     = withOptions_{"id"} withQname_"a" new MarkUpTypeWithOptions of Hypertext
+ANCHOR     = withQname_"a" withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
 
-UL         = new MarkUpType of HypertextParagraph
+UL         = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
 new UL from VisibleList := (UL,x) -> (
      x = nonnull x;
      if #x == 0 then error("empty element of type ", format toString UL, " encountered");
@@ -191,14 +221,14 @@ ul = x -> (
      x = nonnull x;
      if #x>0 then UL x)
 
-DIV        = withOptions_{"class"} new MarkUpTypeWithOptions of HypertextContainer
-DIV1       = withOptions_{"class"=>"single"} withQname_"div" new MarkUpTypeWithOptions of HypertextContainer -- phase this one out!
+DIV        = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextContainer
+DIV1       = withQname_"div" withOptions_{"class"=>"single"} new MarkUpTypeWithOptions of HypertextContainer -- phase this one out!
 
-LABEL      = withOptions_{"title"} new MarkUpTypeWithOptions of Hypertext
+LABEL      = withOptions_{htmlAttr,"for","form"} new MarkUpTypeWithOptions of Hypertext
 
-TABLE      = withOptions_{"class"} new MarkUpTypeWithOptions of HypertextParagraph
-TR         = new MarkUpType of Hypertext
-TD         = withOptions_{"valign"} new MarkUpTypeWithOptions of HypertextContainer
+TABLE      = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextParagraph
+TR         = withOptions_htmlAttr new MarkUpTypeWithOptions of Hypertext
+TD         = withOptions_htmlAttr new MarkUpTypeWithOptions of HypertextContainer
 ButtonTABLE  = new MarkUpType of HypertextParagraph
 
 TO2        = withQname_"a" new IntermediateMarkUpType of Hypertext

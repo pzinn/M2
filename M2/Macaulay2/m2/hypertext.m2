@@ -385,8 +385,8 @@ scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList 
 
 info LITERAL := tex LITERAL := net LITERAL := x -> ""
 html LITERAL := x -> concatenate x
-html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
-html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
+--html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
+--html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 
 html Option := x -> error("attempted to convert option '", toString x, "' to html")
 
@@ -503,8 +503,6 @@ TO ? TO := TO ? TOH := TOH ? TO := TOH ? TOH := (x,y) -> x#0 ? y#0
 TO2 ? TO2 := (x,y) -> x#1 ? y#1
 TO ? TO2 := TOH ? TO2 := (x,y) -> x#0 ? y#1
 TO2 ? TO := TO2 ? TOH := (x,y) -> x#1 ? y#0
-
-texMath STYLE := tex STYLE := net STYLE := x -> ""
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
