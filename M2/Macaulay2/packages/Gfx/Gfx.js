@@ -78,6 +78,9 @@ function gfxMouseMove(event) {
     var x=event.movementX/this.width.baseVal.value;
     var y=event.movementY/this.height.baseVal.value;
 
+    var d=x*x+y*y;
+    x*=1+d/3; y*=1+d/3; // nonlinear correction
+
     var mat=new Matrix([[1-x*x+y*y,2*x*y,2*x,0],[2*x*y,1+x*x-y*y,-2*y,0],[-2*x,2*y,1-x*x-y*y,0],[0,0,0,1+x*x+y*y]]);
     mat.leftmultiply(1/(1+x*x+y*y));
     gfxRotate(this,mat);

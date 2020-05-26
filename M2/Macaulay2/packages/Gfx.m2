@@ -17,7 +17,8 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius",
     "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
-    "GfxIs3d", "GfxAuto"
+    "GfxIs3d", "GfxAuto",
+    "SVG", "SVGElement"
     }
 
 GfxObject = new Type of OptionTable -- ancestor type
@@ -49,6 +50,20 @@ currentGfxPMatrix := null; -- the perspective matrix -- used for unmoving object
 currentGfxLights := {}; -- list of lights. needs to be preprocessed
 currentGfxDefs = new MutableHashTable; -- list of defs. postprocessed
 
+
+--hasAttribute := value Core#"private dictionary"#"hasAttribute"
+exportFrom_Core {
+     "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
+     "MarkUpTypeWithOptions", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr" } -- hypertext
+-- TEMP: borrowed from html0.m2
+-*
+withOptions := (v,x) -> (x.Options = new OptionTable from apply(flatten v,val -> if class val === Option then val else val=>null); x)
+withQname   := (q,x) -> (
+    x.qname = q;
+    if x.?Options then html x := htmlMarkUpTypeWithOptions x.Options q;
+    x)
+*-
+
 GfxType = new Type of Type -- all usable Gfx objects are ~ self-initialized
 
 gfxParseFlag = false;
@@ -65,7 +80,7 @@ gfxParse Matrix := x -> (
     )
 gfxParse Vector := x -> (
     if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
-     if rank class x === 2 then x || vector {0,1.} else (
+    if rank class x === 2 then x || vector {0,1.} else (
 	 gfxParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
      )
 
@@ -102,6 +117,7 @@ updateGfxCache = g -> (
     )
 
 --gfxRange = x -> if x.?GfxRange then x.GfxRange else if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of 3d object can only be obtained by rendering it"
+-- we intentionally ignore x.GfxRange for internal objects -- rotation of parent might affect it anyway
 gfxRange = x -> if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of object can only be obtained by rendering it"
 
 project2d = x -> (
@@ -109,9 +125,20 @@ project2d = x -> (
     vector {xx_0/xx_3,xx_1/xx_3}
     )
 
+new GfxType of GfxObject from VisibleList := (T,T2,x) -> (
+    g:=new MutableHashTable;
+    g.Options=x#1; -- TODO: should it be an actual table? then have to suppress the BS syntax
+    g.SVGElement = withQname_(x#0) withOptions_(htmlAttr | if #x>=3 then x#2 else {}) new MarkUpTypeWithOptions of Hypertext;
+    g)
+
+    
+
 GfxPrimitive = new Type of GfxObject
 
-GfxCircle = new GfxType of GfxPrimitive from hashTable { symbol Name => "circle", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadius => 50. }}
+GfxCircle = new GfxType of GfxPrimitive from ( "circle",
+    { symbol GfxCenter => vector {0.,0.}, symbol GfxRadius => 50. },
+    { "r", "cx", "cy" }
+    )
 gfxRange1 GfxCircle := g -> (
     p := currentGfxMatrix * g.GfxCenter;
     r:=g.GfxRadius/p_3;
@@ -124,7 +151,10 @@ gfxDistance1 GfxCircle := g -> (
     y_0^2+y_1^2+y_2^2
     )
 
-GfxEllipse = new GfxType of GfxPrimitive from hashTable { symbol Name => "ellipse", symbol Options => { symbol GfxCenter => vector {0.,0.}, symbol GfxRadiusX => 50., symbol GfxRadiusY => 50. }}
+GfxEllipse = new GfxType of GfxPrimitive from ( "ellipse",
+    { symbol GfxCenter => vector {0.,0.}, symbol GfxRadiusX => 50., symbol GfxRadiusY => 50. },
+    { "rx", "ry", "cx", "cy" }
+    )
 gfxRange1 GfxEllipse := g -> (
     p := currentGfxMatrix * g.GfxCenter;
     rx:=g.GfxRadiusX/p_3; ry:=g.GfxRadiusY/p_3;
@@ -137,7 +167,7 @@ gfxDistance1 GfxEllipse := g -> (
     y_0^2+y_1^2+y_2^2
     )
 
-GfxText = new GfxType of GfxObject from hashTable { symbol Name => "text", symbol Options => { GfxPoint => vector {0.,0.}, GfxString => "" }}
+GfxText = new GfxType of GfxObject from ( "text", { GfxPoint => vector {0.,0.}, GfxString => "" } )
 gfxRange1 GfxText := g -> (
     f := if g.?GfxFontSize then g.GfxFontSize else 14.;
     p := currentGfxMatrix*g.GfxPoint;
@@ -146,7 +176,10 @@ gfxRange1 GfxText := g -> (
     { p - vector {0,f}, p + vector{f*0.6*length g.GfxString,0} } -- very approximate TODO properly
     )
 
-GfxLine = new GfxType of GfxPrimitive from hashTable { symbol Name => "line", symbol Options => { GfxPoint1 => vector {0.,0.}, GfxPoint2 => vector {50.,50.} }}
+GfxLine = new GfxType of GfxPrimitive from ( "line",
+    { GfxPoint1 => vector {0.,0.}, GfxPoint2 => vector {50.,50.}},
+    { "x1", "y1", "x2", "y2" }
+    )
 gfxRange1 GfxLine := g -> (
     p1 := project2d g.GfxPoint1;
     p2 := project2d g.GfxPoint2;
@@ -162,9 +195,9 @@ gfxDistance1 GfxLine := g -> (
 
 GfxPolyPrimitive = new Type of GfxPrimitive;
 
-GfxPolyline = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "polyline", symbol Options => { symbol GfxPoints => {} }}
-GfxPolygon = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "polygon", symbol Options => { symbol GfxPoints => {} }}
-GfxPath = new GfxType of GfxPolyPrimitive from hashTable { symbol Name => "path", symbol Options => { symbol GfxPathList => {} }}
+GfxPolyline = new GfxType of GfxPolyPrimitive from ( "polyline", { symbol GfxPoints => {} }, { "points" } )
+GfxPolygon = new GfxType of GfxPolyPrimitive from ( "polygon", { symbol GfxPoints => {} }, { "points" } )
+GfxPath = new GfxType of GfxPolyPrimitive from ( "path", { symbol GfxPathList => {} }, { "d" } )
 gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, screw this
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
     s = transpose apply(s, x -> entries project2d x);
@@ -172,7 +205,7 @@ gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, sc
     )
 
 -- to make lists of them
-GfxList = new GfxType of GfxObject from hashTable { symbol Name => "g", symbol Options => { symbol GfxContents => {} } }
+GfxList = new GfxType of GfxObject from ( "g", { symbol GfxContents => {} } )
 -- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }. plus updates is3d correctly!
 gfx = true >> opts -> x -> (
     x=select(flatten toList sequence x, y -> y =!=null );
@@ -194,7 +227,7 @@ gfxRange1 GfxList := x -> (
 -- the scaling is incorrect. no known solution. disabling.
 -- the positioning is problematic: the only way to position correctly (as well as set width, height)
 -- is to shift by half its size, which can only be obtained by getBoundingClientRect(), which one can only do after rendering
-GfxHtml = new GfxType of GfxText from hashTable { symbol Name => "foreignObject", symbol Options => { GfxPoint => vector {0.,0.}, GfxString => "" }}
+GfxHtml = new GfxType of GfxText from ( "foreignObject", { GfxPoint => vector {0.,0.}, GfxString => "" } )
 gfxRange1 GfxHtml := g -> (
     p := project2d g.GfxPoint;
     { p, p } -- TODO properly
@@ -207,6 +240,8 @@ gfxAuto GfxList := x -> (
     x.cache.GfxAuto
     )
 
+SVG = withOptions_{htmlAttr,"height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"} new MarkUpTypeWithOptions of Hypertext
+
 -- for javascript stuff
 jsString = method(Dispatch=>Thing)
 jsString Thing := toString
@@ -216,7 +251,7 @@ jsString Vector := x -> "vector(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 --jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
--- svg output
+
 svgString = method(Dispatch=>Thing)
 svgString Thing := toString
 svgString List := x -> demark(" ", apply(x,svgString))
@@ -255,7 +290,7 @@ svgLookup := hashTable {
 	),
     symbol GfxStatic => x -> if x then "data-pmatrix='"|jsString currentGfxPMatrix|"'" else "",
     symbol GfxTag => x -> "id='"| x |"'",
-    symbol GfxFilterTag => x -> "filter=\"url(#" | x | ")\"",
+    symbol GfxFilterTag => x -> "filter='url(#" | x | ")'",
     symbol GfxOneSided => x -> "data-onesided='"|jsString x|"'",
     symbol GfxFontSize => x -> "data-fontsize='"|jsString x|"'"
     }
@@ -271,7 +306,7 @@ svgBegin = g -> (
     gfxFilter g; -- set up filter if need be
     prs := pairs g | pairs g.cache;
     concatenate (
-    	"<", (class g)#Name,
+    	"<", (class g).SVGElement.qname,
     	concatenate apply(prs,(key,val) -> if svgLookup#?key then " " | (svgLookup#key val) ),
     	(style := select(prs,(key,val) -> class key === String);
     	    if #style>0 then " style='" | demark(";",apply(style,(key,val) -> key|":"|toString val))|"'"),
@@ -280,8 +315,15 @@ svgBegin = g -> (
     )
 svgEnd = g -> (
     concatenate(
-    "</", (class g)#Name, ">"
+    "</", (class g).SVGElement.qname, ">"
     )
+)
+
+newsvg = method() -- destined to replace svg. produces hypertext
+
+newsvg GfxObject := g -> (
+    style := select(pairs g | pairs g.cache, (key,val) -> class key === String);
+    (class g).SVGElement { "style" => demark(";",apply(style,(key,val) -> key|":"|toString val)) }
 )
 
 svg GfxObject := g -> ""
@@ -321,9 +363,6 @@ svg GfxHtml := g -> (
 
 htmlWithTex GfxObject := html
 
-hasAttribute := value Core#"private dictionary"#"hasAttribute"
-getAttribute := value Core#"private dictionary"#"getAttribute"
-ReverseDictionary := value Core#"private dictionary"#"ReverseDictionary"
 globalAssignment GfxObject
 toString GfxObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,OptionTable)) g
 net GfxObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,OptionTable)) g
@@ -461,7 +500,9 @@ gfxDetermineSide GfxPolyPrimitive := x -> (
     )
 
 -- lighting
-GfxLight = new GfxType of GfxCircle from hashTable { Name => "circle", Options => { symbol GfxCenter => vector {0,0,0,1.}, "fill" => "#FFFFFF", symbol GfxSpecular => 64, symbol GfxRadius => 0, symbol GfxBlur => 0.3, symbol GfxStatic => true, "stroke" => "none" }}
+GfxLight = new GfxType of GfxCircle from ( "circle",
+    { symbol GfxCenter => vector {0,0,0,1.}, symbol GfxRadius => 0, symbol GfxSpecular => 64, symbol GfxBlur => 0.3, symbol GfxStatic => true, "fill" => "#FFFFFF", "stroke" => "none" }
+    )
 -- in case it's drawn, it's a circle
 
 -- gfxRange ignores lights if invisible
@@ -653,6 +694,7 @@ multidoc ///
   Description
    Text
     An SVG circle. The two compulsory options are GfxCenter (coordinates of the center) and GfxRadius (radius).
+    In 3d, gives a decent approximation of a sphere.
    Example
     GfxCircle{GfxCenter=>vector {10,10},GfxRadius=>50,"fill"=>"green","stroke"=>"none"}
     GfxCircle{[10,10],10} -- equivalent syntax for coordinates
@@ -858,7 +900,7 @@ multidoc ///
     An option to create a rotation animation for the Gfx 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
     The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
-    The animation automatically loops (use 0 => {} to stop!)
+    The animation automatically loops (use 0 => \{ \} to stop!)
     In order for the animation to work, Gfx.css and Gfx.js must be included in the web page.
    Example
     (anim1=gfxRotation(0.1,[0,0,1],[0,0,0]); anim2=gfxRotation(-0.1,[0,0,1],[0,0,0]); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 }); 
