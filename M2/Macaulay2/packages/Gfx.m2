@@ -15,11 +15,21 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "GfxList", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine", "GfxHtml",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
-    "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius",
+    "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilterTag", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius", "GfxLightCenter",
     "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
     "GfxIs3d", "GfxAuto",
-    "SVG", "SVGElement"
+    "SVG", "SVGElement",
+    "style" -- TEMP move elsewhere
     }
+
+--hasAttribute := value Core#"private dictionary"#"hasAttribute"
+exportFrom_Core {
+     "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
+     "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr" } -- hypertext
+
+-- for now data-* need entering manually
+htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize"}
+svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 
 GfxObject = new Type of OptionTable -- ancestor type
 
@@ -50,19 +60,6 @@ currentGfxPMatrix := null; -- the perspective matrix -- used for unmoving object
 currentGfxLights := {}; -- list of lights. needs to be preprocessed
 currentGfxDefs = new MutableHashTable; -- list of defs. postprocessed
 
-
---hasAttribute := value Core#"private dictionary"#"hasAttribute"
-exportFrom_Core {
-     "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
-     "MarkUpTypeWithOptions", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr" } -- hypertext
--- TEMP: borrowed from html0.m2
--*
-withOptions := (v,x) -> (x.Options = new OptionTable from apply(flatten v,val -> if class val === Option then val else val=>null); x)
-withQname   := (q,x) -> (
-    x.qname = q;
-    if x.?Options then html x := htmlMarkUpTypeWithOptions x.Options q;
-    x)
-*-
 
 GfxType = new Type of Type -- all usable Gfx objects are ~ self-initialized
 
@@ -97,9 +94,11 @@ gfxRange1 GfxObject := x -> null
 
 gfxIs3d = x -> if x.?GfxIs3d then x.GfxIs3d else true; -- the else clause should never happen
 
-gfxDistance = x -> if x.cache.?GfxDistance then x.cache.GfxDistance else error "distance of 3d object can only be obtained by rendering it"
+-- 2d objects are on top of everything
+gfxDistance = x -> if not gfxIs3d x then 0_RR else if x.cache.?GfxDistance then x.cache.GfxDistance else error "distance of 3d object can only be obtained by rendering it"
+
 gfxDistance1 = method()
-gfxDistance1 GfxObject := x -> 0_RR -- by default 2d -> on top of everything
+gfxDistance1 GfxObject := x -> 0_RR
 
 updateGfxCache = g -> (
     g.cache.GfxRange = gfxRange1 g; -- update the range
@@ -113,7 +112,16 @@ updateGfxCache = g -> (
 	scale = 1/(currentGfxMatrix*g.GfxCenter)_3;
 	g.cache.GfxScaledRadiusX=g.GfxRadiusX*scale;
 	g.cache.GfxScaledRadiusY=g.GfxRadiusY*scale;
-	)
+	) else if instance(g,GfxText) then ( -- same for GfxText
+	-- choose font size
+	f := if g.?GfxFontSize then g.GfxFontSize else 14.;
+	f = f / (currentGfxMatrix*g.GfxPoint)_3;
+	g.cache#"font-size"= toString f|"px";
+	if instance(g,GfxHtml) then ( -- hack
+	    g.cache#"overflow"="visible"; -- makes width/height irrelevant
+	    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
+	    );
+	);
     )
 
 --gfxRange = x -> if x.?GfxRange then x.GfxRange else if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of 3d object can only be obtained by rendering it"
@@ -128,7 +136,7 @@ project2d = x -> (
 new GfxType of GfxObject from VisibleList := (T,T2,x) -> (
     g:=new MutableHashTable;
     g.Options=x#1; -- TODO: should it be an actual table? then have to suppress the BS syntax
-    g.SVGElement = withQname_(x#0) withOptions_(htmlAttr | if #x>=3 then x#2 else {}) new MarkUpTypeWithOptions of Hypertext;
+    g.SVGElement = withQname_(x#0) withOptions_(svgAttr | if #x>=3 then x#2 else {}) new MarkUpType of Hypertext;
     g)
 
     
@@ -167,7 +175,10 @@ gfxDistance1 GfxEllipse := g -> (
     y_0^2+y_1^2+y_2^2
     )
 
-GfxText = new GfxType of GfxObject from ( "text", { GfxPoint => vector {0.,0.}, GfxString => "" } )
+GfxText = new GfxType of GfxObject from ( "text",
+    { GfxPoint => vector {0.,0.}, GfxString => "" },
+    { "x", "y" }
+    )
 gfxRange1 GfxText := g -> (
     f := if g.?GfxFontSize then g.GfxFontSize else 14.;
     p := currentGfxMatrix*g.GfxPoint;
@@ -227,12 +238,16 @@ gfxRange1 GfxList := x -> (
 -- the scaling is incorrect. no known solution. disabling.
 -- the positioning is problematic: the only way to position correctly (as well as set width, height)
 -- is to shift by half its size, which can only be obtained by getBoundingClientRect(), which one can only do after rendering
-GfxHtml = new GfxType of GfxText from ( "foreignObject", { GfxPoint => vector {0.,0.}, GfxString => "" } )
+GfxHtml = new GfxType of GfxText from ( "foreignObject",
+    { GfxPoint => vector {0.,0.}, GfxString => "" },
+    { "x", "y" }
+    )
 gfxRange1 GfxHtml := g -> (
     p := project2d g.GfxPoint;
     { p, p } -- TODO properly
     )
 
+--
 gfxAuto = method()
 gfxAuto GfxObject := x -> x.?GfxAutoMatrix
 gfxAuto GfxList := x -> (
@@ -240,125 +255,121 @@ gfxAuto GfxList := x -> (
     x.cache.GfxAuto
     )
 
-SVG = withOptions_{htmlAttr,"height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"} new MarkUpTypeWithOptions of Hypertext
+SVG = withOptions_{
+    svgAttr,
+    "height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"
+    } new MarkUpType of Hypertext
+
+--
+stableSort = x ->(
+xx := transpose {x,toList(0..#x-1)};
+(transpose sort xx)#0
+)
 
 -- for javascript stuff
-jsString = method(Dispatch=>Thing)
+jsString := method(Dispatch=>Thing)
 jsString Thing := toString
-jsString String := toExternalString
+jsString String := x -> "'" | x |"'"
 jsString Matrix := x -> "matrix(" | jsString entries x | ")"
 jsString Vector := x -> "vector(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 --jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 
-svgString = method(Dispatch=>Thing)
+svgString := method(Dispatch=>Thing)
 svgString Thing := toString
 svgString List := x -> demark(" ", apply(x,svgString))
 svgString Vector := x -> svgString entries project2d x 
-svg = method()
-svgLookup := hashTable {
-    symbol GfxMatrix => x -> "data-matrix='"|jsString x|"'",
-    symbol GfxAutoMatrix => x -> "data-dmatrix='"|jsString x|"'",
-    symbol GfxCenter => x -> concatenate(
-	"data-center='",jsString x,"' ",
-	(x = project2d x;),
-	"cx='", toString x_0, "' cy='", toString x_1, "'"
-	),
-    symbol GfxRadius => x ->  "data-r='"|jsString x|"'",
-    symbol GfxRadiusX => x -> "data-rx='"|jsString x|"'",
-    symbol GfxRadiusY => x -> "data-ry='"|jsString x|"'",
-    symbol GfxScaledRadius => x ->  "r='"|toString x|"'",
-    symbol GfxScaledRadiusX => x ->  "rx='"|toString x|"'",
-    symbol GfxScaledRadiusY => x ->  "ry='"|toString x|"'",
-    symbol GfxPathList => x -> "data-coords='"|jsString x|"' d='"|svgString x|"'",
-    symbol GfxPoints => x -> "data-coords='"|jsString x|"' points='"|svgString x|"'",
-    symbol GfxPoint => x -> concatenate(
-	"data-point='",jsString x,"' ",
-	(x = project2d x;),
-	"x='", toString x_0, "' y='", toString x_1, "'"
-	),
-    symbol GfxPoint1 => x -> concatenate(
-	"data-point1='",jsString x,"' ",
-	(x = project2d x;),
-	"x1='", toString x_0, "' y1='", toString x_1, "'"
-	),
-    symbol GfxPoint2 => x -> concatenate(
-	"data-point2='",jsString x,"' ",
-	(x = project2d x;),
-	"x2='", toString x_0, "' y2='", toString x_1, "'"
-	),
-    symbol GfxStatic => x -> if x then "data-pmatrix='"|jsString currentGfxPMatrix|"'" else "",
-    symbol GfxTag => x -> "id='"| x |"'",
-    symbol GfxFilterTag => x -> "filter='url(#" | x | ")'",
-    symbol GfxOneSided => x -> "data-onesided='"|jsString x|"'",
-    symbol GfxFontSize => x -> "data-fontsize='"|jsString x|"'"
-    }
 
-updateGfxMatrix = g -> (
+updateGfxMatrix := g -> (
     first ( currentGfxMatrix,
     	if g.?GfxStatic and g.GfxStatic then currentGfxMatrix=currentGfxPMatrix, -- reset to perspective matrix	
 	if g.?GfxMatrix then currentGfxMatrix = currentGfxMatrix*g.GfxMatrix
     )
 )
 
-svgBegin = g -> (
-    gfxFilter g; -- set up filter if need be
-    prs := pairs g | pairs g.cache;
-    concatenate (
-    	"<", (class g).SVGElement.qname,
-    	concatenate apply(prs,(key,val) -> if svgLookup#?key then " " | (svgLookup#key val) ),
-    	(style := select(prs,(key,val) -> class key === String);
-    	    if #style>0 then " style='" | demark(";",apply(style,(key,val) -> key|":"|toString val))|"'"),
-    	">"
-	)
+svgLookup := hashTable { -- should be more systematic
+    symbol GfxMatrix => x -> "data-matrix" => jsString x,
+    symbol GfxAutoMatrix => x -> "data-dmatrix" => jsString x,
+    symbol GfxCenter => x -> (
+	x = project2d x;
+	"cx" => toString x_0,
+	"cy" => toString x_1
+	),
+    symbol GfxScaledRadius => x ->  "r" => toString x,
+    symbol GfxScaledRadiusX => x ->  "rx" => toString x,
+    symbol GfxScaledRadiusY => x ->  "ry" => toString x,
+    symbol GfxPathList => x -> "d" => svgString x,
+    symbol GfxPoints => x -> "points" => svgString x,
+    symbol GfxPoint => x -> (
+	x = project2d x;
+	"x" => toString x_0,
+	"y" => toString x_1
+	),
+    symbol GfxPoint1 => x -> (
+	x = project2d x;
+	"x1" => toString x_0,
+	"y1" => toString x_1
+	),
+    symbol GfxPoint2 => x -> (
+	x = project2d x;
+	"x2" => toString x_0,
+	"y2" => toString x_1
+	),
+    symbol GfxStatic => x -> if x then "data-pmatrix" => jsString currentGfxPMatrix,
+    symbol GfxTag => x -> "id" => x,
+    symbol GfxFilterTag => x -> "filter" => "url(#" | x | ")",
+    symbol GfxContents => x -> (
+	x = toSequence stableSort x;
+	apply(x, y -> y.cache.SVGElement)
+	),
+    symbol GfxString => identity
+    }
+
+svg3dLookup := hashTable { -- should be more systematic
+    symbol GfxCenter => x -> "data-center" => jsString x,
+    symbol GfxRadius => x -> "data-r" => jsString x,
+    symbol GfxRadiusX => x -> "data-rx" => jsString x,
+    symbol GfxRadiusY => x -> "data-ry" => jsString x,
+    symbol GfxPathList => x -> "data-coords" => jsString x,
+    symbol GfxPoints => x -> "data-coords" => jsString x,
+    symbol GfxPoint => x -> "data-point" => jsString x,
+    symbol GfxPoint1 => x -> "data-point1" => jsString x,
+    symbol GfxPoint2 => x -> "data-point2" => jsString x,
+    symbol GfxOneSided => x -> "data-onesided" => jsString x,
+    symbol GfxFontSize => x -> "data-fontsize" => jsString x,
+    }
+
+-*
+texMath MarkUpType := T -> if T.?qname then texMath toUpper T.qname else lookup(texMath,Type) T
+net MarkUpType := T -> if T.?qname then net toUpper T.qname else lookup(net,Type) T
+toString MarkUpType := T -> if T.?qname then toString toUpper T.qname else lookup(toString,Type) T
+html MarkUpType := T -> if T.?qname then html toUpper T.qname else lookup(html,Type) T
+*-
+
+-- should be in html0.m2
+style = true >> s -> x -> style1(x,pairs s)
+style1 = (x,s) -> ( -- here s is a pair of key/values
+    str := concatenate apply(s, e -> if class e#0 === String then e#0|":"|toString e#1|";");
+    if str === "" then return x;
+    i := position(toList x, y -> class y === Option and y#0 === "style");
+    if i===null then append(x,"style"=>str) else
+    new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
     )
-svgEnd = g -> (
-    concatenate(
-    "</", (class g).SVGElement.qname, ">"
-    )
-)
 
-newsvg = method() -- destined to replace svg. produces hypertext
-
-newsvg GfxObject := g -> (
-    style := select(pairs g | pairs g.cache, (key,val) -> class key === String);
-    (class g).SVGElement { "style" => demark(";",apply(style,(key,val) -> key|":"|toString val)) }
-)
-
-svg GfxObject := g -> ""
-svg GfxPrimitive := g -> ( 
+-- produces SVG element hypertext
+svg = g -> (
+    if not (class g).?SVGElement then return;
     saveGfxMatrix := updateGfxMatrix g;
+    if g.?GfxContents then scan(g.GfxContents, svg);
     updateGfxCache g;
-    first(svgBegin g | svgEnd g,
-    	currentGfxMatrix = saveGfxMatrix)
-    )
-
--- careful that sort is *not* a stable sort (it's quicksort) so we can't use it in 2d. also means mixing 2d and 3d will be a mess :/
-svg GfxList := g -> (
-    saveGfxMatrix := updateGfxMatrix g;
-    stuff := apply(g.GfxContents, svg);
-    if gfxIs3d g then stuff = (transpose sort(transpose{g.GfxContents,stuff}))#1; -- sort stuff according to g.GfxContents distance
-    updateGfxCache g;
-    first(svgBegin g | concatenate stuff | svgEnd g,
-    	currentGfxMatrix = saveGfxMatrix)
-    )
-
-svg GfxText := g -> (
-    saveGfxMatrix := updateGfxMatrix g;
-    -- choose font size
-    f := if g.?GfxFontSize then g.GfxFontSize else 14.;
-    f = f / (currentGfxMatrix*g.GfxPoint)_3;
-    g.cache#"font-size"= toString f|"px";
-    updateGfxCache g;
-    first(svgBegin g | g.GfxString | svgEnd g,
-    	currentGfxMatrix = saveGfxMatrix)
-    )
-
-svg GfxHtml := g -> (
-    g.cache#"overflow"="visible"; -- makes width/height irrelevant
-    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
-    (lookup(svg,GfxText)) g
+    gfxFilter g;
+    prs := pairs g | pairs g.cache; -- TODO restructure
+    opts := deepSplice apply(select(prs,(key,val)-> svgLookup#?key), (key,val) -> svgLookup#key val);
+    if gfxIs3d g then opts = opts | deepSplice apply(select(prs,(key,val)-> svg3dLookup#?key), (key,val) -> svg3dLookup#key val);
+    g.cache.SVGElement = style1((class g).SVGElement opts,prs);
+    currentGfxMatrix = saveGfxMatrix;
+    return g.cache.SVGElement;
     )
 
 htmlWithTex GfxObject := html
@@ -389,21 +400,24 @@ gfxTag = () -> (
     "Gfx_" | toString currentTime() | "_" | toString gfxTagCount
     )
 
--- with the headers
-html GfxObject := g -> (
+svgDefs = withQname_"defs" withOptions_svgAttr new MarkUpType of Hypertext;
+
+-- full SVG with the headers
+new SVG from GfxObject := (S,g) -> (
     persp := if g.?GfxPerspective then g.GfxPerspective else 1000.; -- some arbitrary number
     currentGfxMatrix = currentGfxPMatrix = if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}}; -- useful to have output {x,y,z+p,1+z/p}
     currentGfxLights = if gfxIs3d g then gfxSetupLights g else {};
     currentGfxDefs = new MutableHashTable;
-    s := svg g; -- run this first because it will compute the ranges too
+    main := svg g; -- run this first because it will compute the ranges too
+    if main === null then return {};
     if g.?GfxRange then r := g.GfxRange else r = gfxRange g; -- should be cached at this stage
-    if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return ""); -- nothing to draw
+    if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return {}); -- nothing to draw
     r = apply(r,numeric);
     rr := r#1 - r#0;
     -- axes
-    axes := null; axeslabels := null;
-    if g.?GfxAxes and g.GfxAxes =!= false then ( -- semi temp: axes should be broken into little bits
-	currentGfxPMatrix=currentGfxMatrix=1; -- ???
+    axes:=null; axeslabels:=null;
+    if g.?GfxAxes and g.GfxAxes =!= false then ( -- TEMP: coordinates wrong for 3d, and should be broken into little bits
+--	currentGfxPMatrix=currentGfxMatrix=1; -- ???
 	arr := gfxArrow();
 	axes = gfx(
 	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
@@ -436,33 +450,41 @@ html GfxObject := g -> (
     margin := if g.?GfxMargin then g.GfxMargin else 0.1;
     r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
     --
-    tag := gfxTag();
-    concatenate(
-	"<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'",
-	" class='M2Svg' id='"|tag|"'",
-	" style='width:",toString g.cache.GfxWidth,"em;height:",toString g.cache.GfxHeight,"em;",
-    	if not g#?"stroke-width" then "stroke-width:"|toString(0.01*min(rr_0,rr_1)), -- define a default stroke-width
-	"'",
-	" viewBox='",between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),"'",
-	" data-pmatrix='"|jsString currentGfxMatrix|"'",
-	if gfxIs3d g then " onmousedown='gfxMouseDown.call(this,event)'",
-    	">",
-	axes, axeslabels,
-	s,
-	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
-	-- then autorotate button
-	if gfxAuto g then (
-	    sizex := rr_0*min(0.5,1.5/g.cache.GfxWidth); sizey := rr_1*min(0.5,1.5/g.cache.GfxHeight); -- can't be larger than half the pic; default = 1.5em
-	    "<g transform='translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")' class='gfxauto' onclick='gfxToggleRotation.call(this,event)'>",
-	    "<circle cx='0.5' cy='0.5' r='0.45' style='fill:white; stroke:black; stroke-width:0.05'/>",
-	    "<polygon class='gfxautoplay' points='0.3,0.25 0.8,0.5 0.3,0.75' style='stroke:none; fill:black'/>",
-	    "<line class='gfxautostop' x1='0.3' y1='0.25' x2='0.3' y2='0.75' style='stroke:black; stroke-width:0.15'/>",
-	    "<line class='gfxautostop' x1='0.7' y1='0.25' x2='0.7' y2='0.75' style='stroke:black; stroke-width:0.15'/>",
-	    "</g>"
-	    ),
-	"</svg>"
-	)
+--    tag := gfxTag();
+    ss := SVG {
+	"preserveAspectRatio" => "none",
+	"class" => "M2Svg",
+--	"id" => tag,
+	"style" => concatenate("width:",toString g.cache.GfxWidth,"em;",
+	    "height:",toString g.cache.GfxHeight,"em;",
+	    if not g#?"stroke-width" then "stroke-width:"|toString(0.01*min(rr_0,rr_1)), -- define a default stroke-width
+	),
+	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
+	"data-pmatrix" => jsString currentGfxMatrix
+	};
+    if gfxIs3d g then ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
+    if axes =!= null then ss = append(ss, axes);
+    if axeslabels =!= null then ss = append(ss, axeslabels);
+    ss = append(ss,main);
+    if #currentGfxDefs>0 then ss=append(ss,svgDefs values currentGfxDefs);
+    -- then autorotate button
+    if gfxAuto g then (
+	sizex := rr_0*min(0.5,1.5/g.cache.GfxWidth); sizey := rr_1*min(0.5,1.5/g.cache.GfxHeight); -- can't be larger than half the pic; default = 1.5em
+	ss = append(ss,
+	GfxList.SVGElement {
+	    "transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
+	    "class" => "gfxauto",
+	    "onclick" => "gfxToggleRotation.call(this,event)",
+	    GfxCircle.SVGElement { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
+	    GfxPolygon.SVGElement { "class" => "gfxautoplay", "points" => "0.3,0.25 0.8,0.5 0.3,0.75", "style" => "stroke:none; fill:black" },
+	    GfxLine.SVGElement { "class" => "gfxautostop", "x1" => "0.3", "y1" => "0.25", "x2" => "0.3", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
+	    GfxLine.SVGElement { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" }
+	    }
+	));
+    ss
     )
+
+html GfxObject := g -> html SVG g;
 
 -- now transformations
 -- following 2 functions can be used to produce matrices to be fed to either 
@@ -501,7 +523,8 @@ gfxDetermineSide GfxPolyPrimitive := x -> (
 
 -- lighting
 GfxLight = new GfxType of GfxCircle from ( "circle",
-    { symbol GfxCenter => vector {0,0,0,1.}, symbol GfxRadius => 0, symbol GfxSpecular => 64, symbol GfxBlur => 0.3, symbol GfxStatic => true, "fill" => "#FFFFFF", "stroke" => "none" }
+    { symbol GfxCenter => vector {0,0,0,1.}, symbol GfxRadius => 0, symbol GfxSpecular => 64, symbol GfxBlur => 0.3, symbol GfxStatic => true, "fill" => "#FFFFFF", "stroke" => "none" },
+    { "r", "cx", "cy" } -- atm these are not inherited
     )
 -- in case it's drawn, it's a circle
 
@@ -519,26 +542,33 @@ gfxSetupLights GfxList := g -> (
 	)
 gfxSetupLights GfxLight := g -> (
     saveGfxMatrix := updateGfxMatrix g;
-    g.cache.GfxCenter = currentGfxMatrix*g.GfxCenter;
+    g.cache.GfxLightCenter = currentGfxMatrix*g.GfxCenter;
     currentGfxMatrix = saveGfxMatrix;
     g.cache.GfxTag = gfxTag();
     g )
 
-gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyPrimitive)) then (
+svgFilter := withQname_"filter" withOptions_{svgAttr,"x","y","width","height"} new MarkUpType of Hypertext;
+feGaussianBlur := withQname_"feGaussianBlur" withOptions_{svgAttr,"in","result","stdDeviation"} new MarkUpType of Hypertext;
+feSpecularLighting := withQname_"feSpecularLighting" withOptions_{svgAttr,"result","specularExponent","lighting-color"} new MarkUpType of Hypertext;
+fePointLight := withQname_"fePointLight" withOptions_{svgAttr,"x","y","z"} new MarkUpType of Hypertext;
+feComposite := withQname_"feComposite" withOptions_{svgAttr,"in","in2","operator","result","k1","k2","k3","k4"} new MarkUpType of Hypertext;
+
+gfxFilter = x -> if (x.?GfxBlur and x.GfxBlur != 0) or (#currentGfxLights > 0 and instance(x,GfxPolyPrimitive)) then (
     x.cache.GfxFilterTag = gfxTag();
     i:=0;
+    opts := { "id" => x.cache.GfxFilterTag};
     if x.?GfxBlur then (
     	b := x.GfxBlur;
-	s := "<filter id='"| x.cache.GfxFilterTag|"' x='"|toString(-100*b)|"%' y='"|toString(-100*b)|"%' width='"|toString(100*(1+2*b))|"%' height='"|toString(100*(1+2*b))|"%'>";
+	opts = opts | { "x" => toString(-100*b)|"%", "y" => toString(-100*b)|"%", "width" => toString(100*(1+2*b))|"%", "height" => toString(100*(1+2*b))|"%" };
     	rng := x.cache.GfxRange; if rng =!= null then (
     	    drng:=rng#1-rng#0;
     	    r := b*min(drng_0,drng_1);
 	    x.cache.GfxRange={rng#0-vector{r,r},rng#1+vector{r,r}};
-	    s=s|"<feGaussianBlur in='SourceGraphic' result='result"|toString i|"' stdDeviation='"|toString(0.5*r)|"' />"; -- problem is, this should be updated dynamically as radius changes...
+	    opts = append(opts, feGaussianBlur { "in" => "SourceGraphic", 
+		    "result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
 	    i=i+1;
 	)
-    )
-    else s = "<filter id='"| x.cache.GfxFilterTag|"'>";
+    );
     if gfxIs3d x and (instance(x,GfxPolygon) or instance(x,GfxPolyline) or instance(x,GfxPath)) then (
     	-- find first 3 coords
     	if instance(x,GfxPath) then coords := select(x.GfxPathList, y -> instance(y,Vector)) else coords = x.GfxPoints;
@@ -548,7 +578,7 @@ gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyP
     	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
     	    scan(currentGfxLights, g -> (
 	    	    -- compute reflected coords
-	    	    light := g.cache.GfxCenter; -- note the cached version is already rotated appropriately
+		    light := g.cache.GfxLightCenter; -- note the cached version is already rotated appropriately
 	    	    p := light_2/light_3;
 	    	    light=light^{0,1,2};
 	    	    lightrel := light-coords#0;
@@ -556,15 +586,18 @@ gfxFilter = x -> if x.?GfxBlur or (#currentGfxLights > 0 and instance(x,GfxPolyP
 	    	    c := 2*sp/w2;
 	    	    lightmir := light - c*w;
 		    if d<0 then sp=-sp;
-	    	    s=s| "<feSpecularLighting result='spec"|toString i|"' specularExponent='"|toString g.GfxSpecular|"' lighting-color='"|(if sp<0 then "black" else toString g#"fill")|"'>";
-		    s=s|"<fePointLight data-origin="|jsString g.cache.GfxTag|" x='"|toString(lightmir_0*p/lightmir_2)|"' y='"|toString(lightmir_1*p/lightmir_2)|"' z='"|toString(sp/sqrt(w2))|"' />";
-	    	    s=s|"</feSpecularLighting><feComposite in='spec"|toString i|"' in2='SourceGraphic' operator='in' result='clipspec"|toString i|"'/>";
-	    	    s=s|"<feComposite in='"|(if i==0 then "SourceGraphic" else "result"|toString(i-1))|"'  in2='clipspec"|toString i|"' result='result"|toString i|"' operator='arithmetic' k1='0' k2='1' k3='1' k4='0' />";
+		    opts = opts | {
+			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString g.GfxSpecular, "lighting-color" => if sp<0 then "black" else toString g#"fill",
+			    fePointLight { "data-origin" => g.cache.GfxTag, "x" => toString(lightmir_0*p/lightmir_2), "y" => toString(lightmir_1*p/lightmir_2), "z" => toString(sp/sqrt(w2)) } },
+			feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
+			feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
+			    "operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
+			};
 	    	    i=i+1;
 	    	    ));
 	    );
 	);
-    currentGfxDefs#(x.cache.GfxFilterTag)=s|"</filter>";
+    currentGfxDefs#(x.cache.GfxFilterTag)=svgFilter opts;
     ) else remove(x.cache,GfxFilterTag);
 
 GfxTagged = new Type of BasicList
@@ -576,32 +609,41 @@ net GfxTagged := toString GfxTagged := x -> (
     )
 texMath GfxTagged := texMath @@ toString
 
+svgLinearGradient := withQname_"linearGradient" withOptions_{svgAttr,"in","in2","operator","result","k1","k2","k3","k4"} new MarkUpType of Hypertext;
+svgRadialGradient := withQname_"radialGradient" withOptions_{svgAttr,"in","in2","operator","result","k1","k2","k3","k4"} new MarkUpType of Hypertext;
+svgStop := withQname_"stop" withOptions_{svgAttr,"offset"} new MarkUpType of Hypertext;
 gfxLinearGradient = true >> o -> stop -> (
     tag := gfxTag();
-    s:="<linearGradient id='"|tag|"'"|concatenate apply(pairs o,(key,val) -> " "|key|"='"|toString val|"'")|">";
-    scan(stop, (offset,style) -> s = s | "<stop offset='"|offset|"' style='"|style|"' />");
-    s=s|"</linearGradient>";
+    s := svgLinearGradient prepend(
+	"id" => tag,
+	apply(pairs o, (key,val) -> key => val) -- lame but what to do
+	|
+	apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style })
+	);
     new GfxTagged from (tag,s)
     )
-
 gfxRadialGradient = true >> o -> stop -> (
     tag := gfxTag();
-    s:="<radialGradient id='"|tag|"'"|concatenate apply(pairs o,(key,val) -> " "|key|"='"|toString val|"'")|">";
-    scan(stop, (offset,style) -> s = s | "<stop offset='"|offset|"' style='"|style|"' />");
-    s=s|"</radialGradient>";
+    s := svgRadialGradient prepend(
+	"id" => tag,
+	apply(pairs o, (key,val) -> key => val) -- lame but what to do
+	|
+	apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style })
+	);
     new GfxTagged from (tag,s)
     )
 
 GfxArrow = GfxPolygon { symbol GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none" }
-
+svgMarker := withQname_"marker" withOptions_{svgAttr, "orient" => "auto", "markerWidth" => "3", "markerHeight" => "4", "refX" => "0", "refY" => "2"} new MarkUpType of Hypertext;
 gfxArrow = o -> (
     tag := gfxTag();
-    s:="<marker id='"|tag|"' orient='auto' markerWidth='3' markerHeight='4' refX='0' refY='2'>";
     saveGfxMatrix := currentGfxMatrix;
     currentGfxMatrix = map(RR^4,RR^4,1); -- eww
-    s=s | svg (GfxArrow ++ gfxParse toList sequence o);
+    s := svgMarker {
+	"id" => tag,
+	svg (GfxArrow ++ gfxParse toList sequence o)
+	};
     currentGfxMatrix = saveGfxMatrix;
-    s=s|"</marker>";
     new GfxTagged from (tag,s)
     )
 
@@ -927,6 +969,8 @@ multidoc ///
    Text
     This corresponds to the feGaussianBlur SVG filter. 
     The value is the amount of blurriness relative to the size of the object.
+  Caveat
+    In animated 3d, the amount of blurriness does not vary as the size varies.
  Node
   Key
    GfxStatic
@@ -1102,7 +1146,7 @@ subdivide = (v,f) -> (
     )
 (v2,f2)=subdivide(vertices,faces);
 (v3,f3)=subdivide(v2,f2);
-sph=apply(f3,f->GfxPolygon{apply(f,j->v3#j),"stroke"=>"white","fill"=>"gray"});
+sph=apply(f3,f->GfxPolygon{apply(f,j->v3#j),"stroke"=>"white","stroke-width"=>0.01,"fill"=>"gray"});
 gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>10,"fill"=>c,GfxSpecular=>10,GfxAutoMatrix=>gfxRotation(0.02,[rnd(),rnd(),rnd()])}),GfxRange=>{[-200,-200],[200,200]},GfxHeight=>30)
 
 -- simple plot
@@ -1137,6 +1181,7 @@ GfxCircle{[random(-200,200),random(-200,200),z],10,"fill"=>"yellow","stroke"=>"n
 GfxAutoMatrix=>{((screen-z)//speed)=>gfxTranslation [0,0,speed],gfxTranslation [0,0,far-screen],((-far+z)//speed)=>gfxTranslation [0,0,speed]}}
 ));
 gfx(stars,GfxRange=>{[-100,-100],[100,100]})
+style(SVG oo,"background"=>"black")
 
 -- removed
  Node
@@ -1151,3 +1196,171 @@ gfx(stars,GfxRange=>{[-100,-100],[100,100]})
     GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"} -- first argument is GfxPoint, second GfxSize
   Caveat
    GfxRectangle can only be used in 2d. Use GfxPolygon for 3d.
+
+-- outdated
+oldsvg = method()
+oldsvgLookup := hashTable {
+    symbol GfxMatrix => x -> "data-matrix='"|jsString x|"'",
+    symbol GfxAutoMatrix => x -> "data-dmatrix='"|jsString x|"'",
+    symbol GfxCenter => x -> concatenate(
+	"data-center='",jsString x,"' ",
+	(x = project2d x;),
+	"cx='", toString x_0, "' cy='", toString x_1, "'"
+	),
+    symbol GfxRadius => x ->  "data-r='"|jsString x|"'",
+    symbol GfxRadiusX => x -> "data-rx='"|jsString x|"'",
+    symbol GfxRadiusY => x -> "data-ry='"|jsString x|"'",
+    symbol GfxScaledRadius => x ->  "r='"|toString x|"'",
+    symbol GfxScaledRadiusX => x ->  "rx='"|toString x|"'",
+    symbol GfxScaledRadiusY => x ->  "ry='"|toString x|"'",
+    symbol GfxPathList => x -> "data-coords='"|jsString x|"' d='"|svgString x|"'",
+    symbol GfxPoints => x -> "data-coords='"|jsString x|"' points='"|svgString x|"'",
+    symbol GfxPoint => x -> concatenate(
+	"data-point='",jsString x,"' ",
+	(x = project2d x;),
+	"x='", toString x_0, "' y='", toString x_1, "'"
+	),
+    symbol GfxPoint1 => x -> concatenate(
+	"data-point1='",jsString x,"' ",
+	(x = project2d x;),
+	"x1='", toString x_0, "' y1='", toString x_1, "'"
+	),
+    symbol GfxPoint2 => x -> concatenate(
+	"data-point2='",jsString x,"' ",
+	(x = project2d x;),
+	"x2='", toString x_0, "' y2='", toString x_1, "'"
+	),
+    symbol GfxStatic => x -> if x then "data-pmatrix='"|jsString currentGfxPMatrix|"'" else "",
+    symbol GfxTag => x -> "id='"| x |"'",
+    symbol GfxFilterTag => x -> "filter='url(#" | x | ")'",
+    symbol GfxOneSided => x -> "data-onesided='"|jsString x|"'",
+    symbol GfxFontSize => x -> "data-fontsize='"|jsString x|"'"
+    }
+
+oldsvgBegin = g -> (
+    gfxFilter g; -- set up filter if need be
+    prs := pairs g | pairs g.cache;
+    concatenate (
+    	"<", (class g).SVGElement.qname,
+	concatenate apply(prs,(key,val) -> if oldsvgLookup#?key then " " | (oldsvgLookup#key val) ),
+    	(style := select(prs,(key,val) -> class key === String);
+    	    if #style>0 then " style='" | demark(";",apply(style,(key,val) -> key|":"|toString val))|"'"),
+    	">"
+	)
+    )
+oldsvgEnd = g -> (
+    concatenate(
+    "</", (class g).SVGElement.qname, ">"
+    )
+)
+
+oldsvg GfxObject := g -> ""
+oldsvg GfxPrimitive := g -> (
+    saveGfxMatrix := updateGfxMatrix g;
+    updateGfxCache g;
+    first(oldsvgBegin g | oldsvgEnd g,
+    	currentGfxMatrix = saveGfxMatrix)
+    )
+
+-- careful that sort is *not* a stable sort (it's quicksort) so we can't use it in 2d. also means mixing 2d and 3d will be a mess :/
+oldsvg GfxList := g -> (
+    saveGfxMatrix := updateGfxMatrix g;
+    stuff := apply(g.GfxContents, oldsvg);
+    if gfxIs3d g then stuff = (transpose sort(transpose{g.GfxContents,stuff}))#1; -- sort stuff according to g.GfxContents distance
+    updateGfxCache g;
+    first(oldsvgBegin g | concatenate stuff | oldsvgEnd g,
+    	currentGfxMatrix = saveGfxMatrix)
+    )
+
+oldsvg GfxText := g -> (
+    saveGfxMatrix := updateGfxMatrix g;
+    -- choose font size
+    f := if g.?GfxFontSize then g.GfxFontSize else 14.;
+    f = f / (currentGfxMatrix*g.GfxPoint)_3;
+    g.cache#"font-size"= toString f|"px";
+    updateGfxCache g;
+    first(oldsvgBegin g | g.GfxString | oldsvgEnd g,
+    	currentGfxMatrix = saveGfxMatrix)
+    )
+
+oldsvg GfxHtml := g -> (
+    g.cache#"overflow"="visible"; -- makes width/height irrelevant
+    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
+    (lookup(svg,GfxText)) g
+    )
+
+--html GfxObject := g -> (
+oldhtml = g -> (
+    persp := if g.?GfxPerspective then g.GfxPerspective else 1000.; -- some arbitrary number
+    currentGfxMatrix = currentGfxPMatrix = if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}}; -- useful to have output {x,y,z+p,1+z/p}
+    currentGfxLights = if gfxIs3d g then gfxSetupLights g else {};
+    currentGfxDefs = new MutableHashTable;
+    s := oldsvg g; -- run this first because it will compute the ranges too
+    if g.?GfxRange then r := g.GfxRange else r = gfxRange g; -- should be cached at this stage
+    if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return ""); -- nothing to draw
+    r = apply(r,numeric);
+    rr := r#1 - r#0;
+    -- axes
+    axes := null; axeslabels := null;
+    if g.?GfxAxes and g.GfxAxes =!= false then ( -- semi temp: axes should be broken into little bits
+	currentGfxPMatrix=currentGfxMatrix=1; -- ???
+	arr := gfxArrow();
+	axes = gfx(
+	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
+	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {0,r#0_1,0} else {0,r#0_1}, GfxPoint2 => vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
+	    if gfxIs3d g then GfxLine { GfxPoint1 => vector{0,0,min(r#0_0,r#0_1)}, GfxPoint2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => arr },
+	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
+	    );
+	axeslabels = gfx(
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#0 else tex local x , GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#1 else tex local y, GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then htmlWithTex g.GfxAxes#2 else tex local z, GfxFontSize => 0.08*min(rr_0,rr_1)}
+	    -*
+	    GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    if gfxIs3d g then GfxText { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#2 else "z", GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    "stroke" => "none", "fill"=>"black"
+	    *-
+	    );
+	axes=oldsvg axes;
+	axeslabels=oldsvg axeslabels;
+	);
+    if g.?GfxWidth then g.cache.GfxWidth = numeric g.GfxWidth;
+    if g.?GfxHeight then g.cache.GfxHeight = numeric g.GfxHeight;
+    if not (g.?GfxWidth or g.?GfxHeight) then -- by default, make it fit inside 16 x 10
+	if rr_0 > 1.6*rr_1 then g.cache.GfxWidth = 16. else g.cache.GfxHeight = 10.;
+    -- at this stage one of the two is set
+    if not g.cache.?GfxHeight then g.cache.GfxHeight = g.cache.GfxWidth * (if rr_0 != 0 then rr_1/rr_0 else 10/16);
+    if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * (if rr_1 != 1 then rr_0/rr_1 else 16/10);
+    -- put some extra blank space around picture
+    margin := if g.?GfxMargin then g.GfxMargin else 0.1;
+    r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
+    --
+    tag := gfxTag();
+    concatenate(
+	"<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'",
+	" class='M2Svg' id='"|tag|"'",
+	" style='width:",toString g.cache.GfxWidth,"em;height:",toString g.cache.GfxHeight,"em;",
+    	if not g#?"stroke-width" then "stroke-width:"|toString(0.01*min(rr_0,rr_1)), -- define a default stroke-width
+	"'",
+	" viewBox='",between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),"'",
+	" data-pmatrix='"|jsString currentGfxMatrix|"'",
+	if gfxIs3d g then " onmousedown='gfxMouseDown.call(this,event)'",
+    	">",
+	axes, axeslabels,
+	s,
+	if #currentGfxDefs>0 then "<defs>" | concatenate values currentGfxDefs | "</defs>",
+	-- then autorotate button
+	if gfxAuto g then (
+	    sizex := rr_0*min(0.5,1.5/g.cache.GfxWidth); sizey := rr_1*min(0.5,1.5/g.cache.GfxHeight); -- can't be larger than half the pic; default = 1.5em
+	    "<g transform='translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")' class='gfxauto' onclick='gfxToggleRotation.call(this,event)'>",
+	    "<circle cx='0.5' cy='0.5' r='0.45' style='fill:white; stroke:black; stroke-width:0.05'/>",
+	    "<polygon class='gfxautoplay' points='0.3,0.25 0.8,0.5 0.3,0.75' style='stroke:none; fill:black'/>",
+	    "<line class='gfxautostop' x1='0.3' y1='0.25' x2='0.3' y2='0.75' style='stroke:black; stroke-width:0.15'/>",
+	    "<line class='gfxautostop' x1='0.7' y1='0.25' x2='0.7' y2='0.75' style='stroke:black; stroke-width:0.15'/>",
+	    "</g>"
+	    ),
+	"</svg>"
+	)
+    )
+

@@ -80,22 +80,12 @@ htmlGlobalAttr = { -- html global attributes
     }
 
 htmlAttr = htmlGlobalAttr | { -- html global and event attributes
-    "onafterprint",
-    "onbeforeprint",
-    "onbeforeunload",
-    "onerror",
-    "onhashchange",
-    "onload",
-    "onmessage",
-    "onoffline",
-    "ononline",
-    "onpagehide",
-    "onpageshow",
-    "onpopstate",
-    "onresize",
-    "onstorage",
-    "onunload"
-}
+    "onafterprint","onbeforeprint","onbeforeunload","onerror","onhashchange","onload","onmessage","onoffline","ononline","onpagehide","onpageshow","onpopstate","onresize","onstorage","onunload",
+    "onblur","onchange","oncontextmenu","onfocusscript","oninputscript","oninvalid","onresetscript","onsearch","onselect","onsubmit",
+    "onkeydown","onkeypress","onkeyup",
+    "onclick","ondblclick","onmousedown","onmousemove","onmouseout","onmouseover","onmouseup","onmousewheel","onwheel",
+    "ondrag","ondragend","ondragenter","ondragleave","ondragover","ondragstart","ondrop","onscroll",
+    "ontoggle" }
 
 withOptions = (v,x) -> (x.Options = new OptionTable from apply(flatten v,val -> if class val === Option then val else val=>null); x)
 withQname   = (q,x) -> (

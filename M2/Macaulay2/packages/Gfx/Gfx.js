@@ -7,10 +7,16 @@ function gfxInitMouse(el) {
 }
 
 function gfxInitData(el) {
+    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
+    if (el.classList.contains("gfxauto")) return;
     if (!el.gfxdata) {
 	el.gfxdata={};
 	for (var v in el.dataset)
 	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
+	// just in case, start the computation of matrices... (see gfxRecompute() for details)
+	var mat = el.gfxdata.pmatrix? el.gfxdata.pmatrix : el.parentElement.gfxdata.cmatrix;
+	if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
+	checkData(el);
 	for (var i=0; i<el.children.length; i++)
 	    gfxInitData(el.children[i]);
     }
@@ -36,7 +42,7 @@ function gfxToggleRotation(event) {
     {
 	this.classList.add("active");
 	this.intervalId=setInterval(() => {
-	    if ((!svgel)||(!svgel.id)||(!document.getElementById(svgel.id))) {
+	    if ((!svgel)||(!document.body.contains(svgel))) {
 		svgel=null; // for garbage collecting
 		this.classList.remove("active");
 		clearInterval(this.intervalId);
@@ -97,7 +103,7 @@ function gfxMouseClick(event) {
 
 
 function gfxAutoRotate(el) {
-    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
+    if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return;
     gfxAutoRotateInt(el,el.gfxdata.dmatrix);
     for (var i=0; i<el.children.length; i++) gfxAutoRotate(el.children[i]);
 }
@@ -120,13 +126,12 @@ function gfxAutoRotateInt(el,dmatrix) { // returns true if can move to next in l
 }
 
 function gfxRotate(el,mat) {
-    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
+    if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return;
     if (!el.gfxdata.matrix) el.gfxdata.matrix = new Matrix(mat); else el.gfxdata.matrix.leftmultiply(mat);
 }
 
 function gfxRecompute(el) {
-    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
-    if (el.classList.contains("gfxauto")) { el.gfxdata.distance=0; return; } // gadgets aren't affected by transformations
+    if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return; // gadgets and non svg aren't affected by transformations
     var mat;
     if (el.gfxdata.pmatrix) mat = el.gfxdata.pmatrix; else { // if not unmoving, get the ancestors' cmatrix
 	var el1=el.parentElement;
@@ -151,7 +156,7 @@ function gfxRecompute(el) {
 		    distance+=u[0]*u[0]+u[1]*u[1]+u[2]*u[2]; // not homogenous... TODO
 		}
 	    }
-	    else s+=el.gfxdata.coords[j]+" "; // huh? shouldn't happen any more?
+	    else s+=el.gfxdata.coords[j]+" ";
 	}
 	if (flag) el.style.display="none"; else {
 	    el.style.display="";
@@ -222,7 +227,8 @@ function gfxRecompute(el) {
 	    el.setAttribute("x",v[0]);
 	    el.setAttribute("y",v[1]);
 	    // rescale font size
-	    el.style.fontSize = el.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
+	    if (!el.gfxdata.is2d)
+		el.style.fontSize = el.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
 	}
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
@@ -250,20 +256,20 @@ function gfxRecompute(el) {
 	// recompute square distance as average of square distances of children
 	el.gfxdata.distance=0; var cnt = 0;
 	for (var i=0; i<el.children.length; i++)
-	    if (el.children[i].gfxdata.distance != 0) {
+	    if (el.children[i].gfxdata && el.children[i].gfxdata.distance != 0) {
 		el.gfxdata.distance+=el.children[i].gfxdata.distance;
 		cnt++;
 	    }
 	if (cnt>0) el.gfxdata.distance/=cnt;
     }
-    else el.gfxdata.distance=0; // bit of a hack -- for 2d objects but also filters...
+    else el.gfxdata.distance=0; // bit of a hack -- for filters...
 }
 
 function gfxReorder(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if ((el.tagName=="svg")||(el.tagName=="g")) {
 	// order children according to distance
-	for (i=1; i<el.children.length; i++) {
+	for (i=1; i<el.children.length; i++) if (el.children[i].gfxdata&&!el.children[i].gfxdata.is2d) {
 	    var child = el.children[i];
 	    j=i; while ((j>0)&&(child.gfxdata.distance>el.children[j-1].gfxdata.distance)) j--;
 	    if (j<i) el.insertBefore(child,el.children[j]);
@@ -271,6 +277,65 @@ function gfxReorder(el) {
     }
 }
 
+function checkData(el) {
+    var mat = el.gfxdata.cmatrix.transpose();
+    if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
+	if (!el.gfxdata.coords) {
+	    el.gfxdata.is2d=true;
+	    var pts = el.points;
+	    el.gfxdata.coords = [];
+	    for (var i=0; i<pts.length; i++)
+		el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,pts[i].y,0,1])));
+	}
+    }
+    else if (el.tagName=="path") {
+	if (!el.gfxdata.coords) {
+	    el.gfxdata.is2d=true;
+	    var path = el.getAttribute("d").split(" "); // for lack of better
+	    el.gfxdata.coords=[];
+	    for (var i=0; i<path.length; i++)
+		if ( path[i] >= "A" && path[i] <= "Z" ) el.gfxdata.coords.push(path[i]);
+	    else {
+		el.gfxdata.coords.push(mat.vectmultiply(vector([+path[i],+path[i+1],0,1])));
+		i++;
+	    }
+	}
+    }
+    else if (el.tagName=="line") {
+	if (!el.gfxdata.point1 || !el.gfxdata.point2) {
+	    el.gfxdata.is2d=true;
+	    el.gfxdata.point1=mat.vectmultiply(vector([el.x1.baseVal.value,el.y1.baseVal.value,0,1]));
+	    el.gfxdata.point2=mat.vectmultiply(vector([el.x2.baseVal.value,el.y2.baseVal.value,0,1]));
+	}
+    }
+    else if (el.tagName=="text") {
+	if (!el.gfxdata.point) {
+	    el.gfxdata.is2d=true;
+	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal[0].value,el.y.baseVal[0].value,0,1])); // weird
+	}
+    }
+    else if (el.tagName=="foreignObject") {
+	if (!el.gfxdata.point) {
+	    el.gfxdata.is2d=true;
+	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal.value,el.y.baseVal.value,0,1]));
+	}
+    }
+    else if (el.tagName=="circle") {
+	if (!el.gfxdata.center) {
+	    el.gfxdata.is2d=true;
+	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
+	    el.gfxdata.r=el.r.baseVal.value;
+	}
+    }
+    else if (el.tagName=="ellipse") {
+	if (!el.gfxdata.center) {
+	    el.gfxdata.is2d=true;
+	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
+	    el.gfxdata.rx=el.rx.baseVal.value;
+	    el.gfxdata.ry=el.ry.baseVal.value;
+	}
+    }
+}
 
 // a simple square matrix type
 var dim=4;
@@ -320,6 +385,7 @@ class Matrix extends Float32Array {
 	{
 	    super(mat);
 	}
+	else super(dim*dim);
     }
 
     // Returns element (i,j) of the matrix
@@ -392,6 +458,15 @@ class Matrix extends Float32Array {
 		u[k]+=this[k+dim*l]*vec[l];
 	}
 	return u;
+    }
+
+    transpose()
+    {
+	var m=new Matrix();
+	for (var i=0; i<dim; i++)
+	    for (var j=0; j<dim; j++)
+		m[i+dim*j]=this[j+dim*i];
+	return m;
     }
 };
 
