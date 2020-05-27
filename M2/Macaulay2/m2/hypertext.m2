@@ -192,7 +192,7 @@ texMath TABLE := x -> concatenate (
      apply(x,
 	  row -> (
 	       apply(row,item -> (texMath item, "&")),
-	       ///\\
+	       ///\cr
 ///
 	       )
 	  ),
@@ -299,17 +299,10 @@ info SUB := opSU(info,-1)
 
 tex TO := x -> tex TT DocumentTag.FormattedKey x#0
 
-texMath TO := x -> texMath TT DocumentTag.FormattedKey x#0
-
 tex TO2 := x -> (
      tag := x#0;
      text := x#1;
      tex TT text )
-
-texMath TO2 := x -> (
-     tag := x#0;
-     text := x#1;
-     texMath TT text )
 
 net LATER := x -> net x#0()
 info LATER := x -> info x#0()
@@ -375,16 +368,10 @@ info TOH := x -> (
 	  )
      )
 
-info IMG := net IMG := x -> (
+info IMG := net IMG := tex IMG  := x -> (
      (o,cn) := override(IMG.Options,toSequence x);
      if o#"alt" === null then error ("IMG item is missing alt attribute");
      o#"alt")
-
-tex IMG := texMath IMG := x -> (
-     (o,cn) := override(IMG.Options,toSequence x);
-     if o#"src" === null then error ("IMG item is missing src attribute");
-    "\\includegraphics{" | o#"src" | "}"
-    )
 
 info HREF := net HREF := x -> (
      if #x === 1
@@ -394,12 +381,12 @@ info HREF := net HREF := x -> (
      else toString x#1 | " (see " | x#0 | " )"			    -- x#0 is sometimes the relative path to the file, but not from the current directory
      )
 
-scan( (net,html,tex,texMath), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
+scan( (net,html,tex), op -> op TOH := x -> op SPAN nonnull { new TO from toList x, commentize headline x#0 } )
 
 info LITERAL := tex LITERAL := net LITERAL := x -> ""
 html LITERAL := x -> concatenate x
-html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
-html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
+--html ITALIC := t -> concatenate("<i>", apply(t,html), "</i>")
+--html BOLD := t -> concatenate("<b>", apply(t,html), "</b>")
 
 html Option := x -> error("attempted to convert option '", toString x, "' to html")
 
@@ -516,16 +503,6 @@ TO ? TO := TO ? TOH := TOH ? TO := TOH ? TOH := (x,y) -> x#0 ? y#0
 TO2 ? TO2 := (x,y) -> x#1 ? y#1
 TO ? TO2 := TOH ? TO2 := (x,y) -> x#0 ? y#1
 TO2 ? TO := TO2 ? TOH := (x,y) -> x#1 ? y#0
-
-texMath STYLE := tex STYLE := net STYLE := x -> ""
-
-texMath UL := x -> concatenate (
-    "\\begin{array}{cl}",
-    apply(toList x,y -> "\\bullet&" | texMath y |"\\\\"),
-    "\\end{array}"
-    )
-
-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
