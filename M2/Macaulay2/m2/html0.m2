@@ -110,8 +110,8 @@ htmlAttr = htmlGlobalAttr | { -- html global and event attributes
 withOptions = (v,x) -> (x.Options = new OptionTable from apply(flatten v,val -> if class val === Option then val else val=>null); x)
 withQname   = (q,x) -> (
     x.qname = q;
---    html x := (if x.?Options then htmlMarkUpTypeWithOptions options x else htmlMarkUpType) q;
-    if x.?Options then html x := (htmlMarkUpTypeWithOptions x.Options) q;
+    html x := (if x.?Options then htmlMarkUpTypeWithOptions options x else htmlMarkUpType) q;
+--  if x.?Options then html x := (htmlMarkUpTypeWithOptions x.Options) q;
     x)
 
 trimfront := x -> apply(x, line -> if not instance(line,String) then line else (
@@ -119,11 +119,10 @@ trimfront := x -> apply(x, line -> if not instance(line,String) then line else (
 	  r := if not s#?0 then line else concatenate between(newline, prepend(replace("^[[:space:]]+","",s#0), drop(s,1)));
 	  if #r =!= 0 then r))
 
+--MarkUpTypeWithOptions.GlobalAssignHook = (X,x) -> (
 MarkUpType.GlobalAssignHook = (X,x) -> (
      if not x.?qname then withQname(toLower toString X,x);
-     if not hasAttribute(x,ReverseDictionary) then (
-	  setAttribute(x,ReverseDictionary,X);
-	  );
+     if not hasAttribute(x,ReverseDictionary) then setAttribute(x,ReverseDictionary,X);
      )
 
 IntermediateMarkUpType.GlobalAssignHook = globalAssignFunction -- no qname, no default method for producing html
@@ -215,7 +214,7 @@ new UL from VisibleList := (UL,x) -> (
      if #x == 0 then error("empty element of type ", format toString UL, " encountered");
      apply(x, e -> (
 	       if class e === TO then LI{TOH{e#0}}
-	       else if class e === LI then e
+	       else if class e === LI or instance(e,Option) then e
 	       else LI e)))
 ul = x -> (
      x = nonnull x;

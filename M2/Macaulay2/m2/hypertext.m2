@@ -68,7 +68,7 @@ scan((
 info TITLE := net TITLE := x -> ""
 
 Hop := (op,filler) -> x -> ( 
-     r := horizontalJoin apply(x,op);
+     r := horizontalJoin apply(noopts x,op);
      if width r === 1 then r = horizontalJoin(r," ");
      r || concatenate( width r : filler ) )
 net  HEADER1 := Hop(net,"*")
@@ -245,20 +245,18 @@ tex PRE := x -> concatenate ( VERBATIM,
 ///
      )
 
-net TT := info TT := x -> concatenate toSequence x   -- should just be strings here
-texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(x,tex),"}")
-texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(x,tex),"}")
+net TT := info TT := x -> concatenate toSequence noopts x   -- should just be strings here
+texMath STRONG := tex STRONG := x -> concatenate("{\\bf ",apply(noopts x,tex),"}")
+texMath ITALIC := tex ITALIC := x -> concatenate("{\\sl ",apply(noopts x,tex),"}")
 texMath TEX := tex TEX := x -> concatenate toList x
 
-info PRE := x -> wrap(printWidth,"-",net concatenate x)
-net PRE := x -> net concatenate x
-html PRE   := x -> concatenate( 
-     "<pre>", 
-     demark(newline, apply(lines concatenate x, htmlLiteral)),
-     "</pre>\n"
-     )
+info PRE := x -> wrap(printWidth,"-",net concatenate noopts x)
+net PRE := x -> net concatenate noopts x
 
-info CODE := net CODE := x -> stack lines concatenate x
+splitLines := x -> apply(x, y -> if class y === String then demark(newline,lines y) else y) -- effectively, \r\n -> \n and removes last [\r]\n
+html PRE := PRE#html @@ splitLines
+
+info CODE := net CODE := x -> stack lines concatenate noopts x
 
 -- this is wrong now
 -- tex ANCHOR := x -> (
@@ -278,7 +276,7 @@ info Nothing := net
 ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
-     r := stack apply(toList x, i -> s | op i);
+     r := stack apply(toList noopts x, i -> s | op i);
      printWidth = printWidth + #s;
      r)
 info UL := ULop info
@@ -286,12 +284,12 @@ net UL := ULop net
 
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 
-tex UL := x -> concatenate( ///\begin{itemize}///, newline, apply(x, x -> ( ///\item ///, tex x, newline)), ///\end{itemize}///, newline)
+tex UL := x -> concatenate( ///\begin{itemize}///, newline, apply(noopts x, x -> ( ///\item ///, tex x, newline)), ///\end{itemize}///, newline)
 
-texMath SUP := x -> concatenate( "^{", apply(x, tex), "}" )
-texMath SUB := x -> concatenate( "_{", apply(x, tex), "}" )
+texMath SUP := x -> concatenate( "^{", apply(noopts x, tex), "}" )
+texMath SUB := x -> concatenate( "_{", apply(noopts x, tex), "}" )
 
-opSU := (op,n) -> x -> (horizontalJoin apply(x, op))^n
+opSU := (op,n) -> x -> (horizontalJoin apply(noopts x, op))^n
 net SUP := opSU(net,1)
 info SUP := opSU(info,1)
 net SUB := opSU(net,-1)
@@ -409,7 +407,7 @@ tex HEADER1 := x -> concatenate (
      ///
 \par\medskip\noindent\begingroup\Large\bf
 ///,
-     apply(toList x, tex),
+     apply(toList noopts x, tex),
      ///\endgroup
 \par\smallskip%
 ///
@@ -418,7 +416,7 @@ tex HEADER2 := x -> concatenate (
      ///
 \par\medskip\noindent\begingroup\Large\bf
 ///,
-     apply(toList x, tex),
+     apply(toList noopts x, tex),
      ///\endgroup
 \par\smallskip%
 ///
@@ -427,7 +425,7 @@ tex HEADER3 := x -> concatenate (
      ///
 \par\medskip\noindent\begingroup\large\bf
 ///,
-     apply(toList x, tex),
+     apply(toList noopts x, tex),
      ///\endgroup
 \par\smallskip%
 ///
@@ -436,7 +434,7 @@ tex HEADER4 := x -> concatenate (
      ///
 \par\medskip\noindent\begingroup\large\bf
 ///,
-     apply(toList x, tex),
+     apply(toList noopts x, tex),
      ///\endgroup
 \par\smallskip%
 ///
@@ -445,7 +443,7 @@ tex HEADER5 := x -> concatenate (
      ///
 \par\medskip\noindent\begingroup\normal\bf
 ///,
-     apply(toList x, tex),
+     apply(toList noopts x, tex),
      ///\endgroup
 \par\smallskip%
 ///
@@ -454,7 +452,7 @@ tex HEADER6 := x -> concatenate (
      ///
 \par\medskip\noindent\begingroup\normal\bf
 ///,
-     apply(toList x, tex),
+     apply(toList noopts x, tex),
      ///\endgroup
 \par\smallskip%
 ///
