@@ -22,10 +22,14 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "style" -- TEMP move elsewhere
     }
 
---hasAttribute := value Core#"private dictionary"#"hasAttribute"
-exportFrom_Core {
+coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
      "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr" } -- hypertext
+
+scan(coreStuff, s -> globalAssign(value s,value Core#"private dictionary"#s))
+-*
+exportFrom_Core coreStuff
+*-
 
 -- for now data-* need entering manually
 htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize"}
@@ -416,8 +420,7 @@ new SVG from GfxObject := (S,g) -> (
     rr := r#1 - r#0;
     -- axes
     axes:=null; axeslabels:=null;
-    if g.?GfxAxes and g.GfxAxes =!= false then ( -- TEMP: coordinates wrong for 3d, and should be broken into little bits
---	currentGfxPMatrix=currentGfxMatrix=1; -- ???
+    if g.?GfxAxes and g.GfxAxes =!= false then ( -- TEMP: coordinates wrong
 	arr := gfxArrow();
 	axes = gfx(
 	    GfxLine { GfxPoint1 => vector if gfxIs3d g then {r#0_0,0,0} else {r#0_0,0}, GfxPoint2 => vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
