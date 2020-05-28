@@ -8,7 +8,7 @@ newPackage("Text",
 exportFrom_Core {
      "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DIV1", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
      "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
-     "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "SUB", "SUBSECTION", "SUP", "TABLE", "TD",
+     "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD",
      "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "validate",
      "MarkUpType", "IntermediateMarkUpType" }
 
@@ -49,10 +49,6 @@ document {
 	  (symbol SPACE, MarkUpType, Net),
 	  (symbol SPACE, MarkUpType, Hypertext)},
      Headline => "the class of mark-up types used with hypertext", 
-     PARA "Intended for internal use only."
-     }
-document { Key => MarkUpTypeWithOptions,
-     Headline => "the class of mark-up types used with hypertext, with option handling",
      "Some mark-up types allow options (attributes) to be inserted in their html tags.",
      EXAMPLE {
 	  ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
@@ -818,7 +814,7 @@ document { Key => {(validate, Hypertext),validate},
      }
 
 undocumented {
-     (validate, TO),(validate, String),(validate, MarkUpTypeWithOptions, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2),
+     (validate, TO),(validate, String),(validate, MarkUpType, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2),
      (validate, COMMENT),(validate, CDATA),(validate, TEX), (validate, LITERAL)
      }
 

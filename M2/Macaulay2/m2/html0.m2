@@ -170,6 +170,8 @@ DL         = withOptions_htmlAttr new MarkUpType of Hypertext
 DD         = withOptions_htmlAttr new MarkUpType of Hypertext
 DT         = withOptions_htmlAttr new MarkUpType of Hypertext
 
+STYLE      = withOptions_{htmlGlobalAttr,"type"} new MarkUpType of Hypertext
+
 HREF       = withQname_"a" new IntermediateMarkUpType of Hypertext
 new HREF from List := (HREF,x) -> (
      if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
