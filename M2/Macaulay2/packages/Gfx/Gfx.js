@@ -228,7 +228,7 @@ function gfxRecompute(el) {
 	    el.setAttribute("y",v[1]);
 	    // rescale font size
 	    if (!el.gfxdata.is2d)
-		el.style.fontSize = el.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
+		el.style.fontSize = el.gfxdata.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
 	}
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
