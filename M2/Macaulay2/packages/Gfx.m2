@@ -93,8 +93,8 @@ GfxType List := (T,opts) -> (
     new T from append(temp,symbol GfxIs3d => gfxParseFlag)
 )
 
-gfxRange1 = method() -- returns [xmin,ymin],[xmax,ymax]
-gfxRange1 GfxObject := x -> null
+gfxRange = method() -- returns [xmin,ymin],[xmax,ymax]
+gfxRange GfxObject := x -> null
 
 gfxIs3d = x -> if x.?GfxIs3d then x.GfxIs3d else true; -- the else clause should never happen
 
@@ -105,7 +105,7 @@ gfxDistance1 = method()
 gfxDistance1 GfxObject := x -> 0_RR
 
 updateGfxCache = g -> (
-    g.cache.GfxRange = gfxRange1 g; -- update the range
+    g.cache.GfxRange = gfxRange g; -- update the range
     g.cache.GfxDistance = gfxDistance1 g; -- update the squared distance
     if g.?GfxOneSided and g.GfxOneSided then gfxDetermineSide g;
     -- bit of a hack: 2d objects GfxCircle, GfxEllipse get scaled in a 3d context
@@ -128,10 +128,6 @@ updateGfxCache = g -> (
 	);
     )
 
---gfxRange = x -> if x.?GfxRange then x.GfxRange else if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of 3d object can only be obtained by rendering it"
--- we intentionally ignore x.GfxRange for internal objects -- rotation of parent might affect it anyway
-gfxRange = x -> if x.cache.?GfxRange then x.cache.GfxRange else if not gfxIs3d x then gfxRange1 x else error "range of object can only be obtained by rendering it"
-
 project2d = x -> (
     xx := currentGfxMatrix*x;
     vector {xx_0/xx_3,xx_1/xx_3}
@@ -151,7 +147,7 @@ GfxCircle = new GfxType of GfxPrimitive from ( "circle",
     { symbol GfxCenter => vector {0.,0.}, symbol GfxRadius => 50. },
     { "r", "cx", "cy" }
     )
-gfxRange1 GfxCircle := g -> (
+gfxRange GfxCircle := g -> (
     p := currentGfxMatrix * g.GfxCenter;
     r:=g.GfxRadius/p_3;
     p=vector {p_0/p_3,p_1/p_3};
@@ -167,7 +163,7 @@ GfxEllipse = new GfxType of GfxPrimitive from ( "ellipse",
     { symbol GfxCenter => vector {0.,0.}, symbol GfxRadiusX => 50., symbol GfxRadiusY => 50. },
     { "rx", "ry", "cx", "cy" }
     )
-gfxRange1 GfxEllipse := g -> (
+gfxRange GfxEllipse := g -> (
     p := currentGfxMatrix * g.GfxCenter;
     rx:=g.GfxRadiusX/p_3; ry:=g.GfxRadiusY/p_3;
     p=vector {p_0/p_3,p_1/p_3};
@@ -183,7 +179,7 @@ GfxText = new GfxType of GfxObject from ( "text",
     { GfxPoint => vector {0.,0.}, GfxString => "" },
     { "x", "y" }
     )
-gfxRange1 GfxText := g -> (
+gfxRange GfxText := g -> (
     f := if g.?GfxFontSize then g.GfxFontSize else 14.;
     p := currentGfxMatrix*g.GfxPoint;
     f=f/p_3;
@@ -195,7 +191,7 @@ GfxLine = new GfxType of GfxPrimitive from ( "line",
     { GfxPoint1 => vector {0.,0.}, GfxPoint2 => vector {50.,50.}},
     { "x1", "y1", "x2", "y2" }
     )
-gfxRange1 GfxLine := g -> (
+gfxRange GfxLine := g -> (
     p1 := project2d g.GfxPoint1;
     p2 := project2d g.GfxPoint2;
     p := transpose{entries p1,entries p2};
@@ -213,7 +209,7 @@ GfxPolyPrimitive = new Type of GfxPrimitive;
 GfxPolyline = new GfxType of GfxPolyPrimitive from ( "polyline", { symbol GfxPoints => {} }, { "points" } )
 GfxPolygon = new GfxType of GfxPolyPrimitive from ( "polygon", { symbol GfxPoints => {} }, { "points" } )
 GfxPath = new GfxType of GfxPolyPrimitive from ( "path", { symbol GfxPathList => {} }, { "d" } )
-gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, screw this
+gfxRange GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, screw this
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
     s = transpose apply(s, x -> entries project2d x);
     {vector(min\s), vector(max\s)}
@@ -229,8 +225,8 @@ gfx = true >> opts -> x -> (
     opts = gfxParse opts;
     (new GfxList from opts) ++ { symbol GfxContents => x, symbol GfxIs3d => gfxParseFlag or any(x,y->y.GfxIs3d) }
     )
-gfxRange1 GfxList := x -> (
-    s := select(apply(x.GfxContents, gfxRange),x->x=!=null);
+gfxRange GfxList := x -> (
+    s := select(apply(x.GfxContents, y->y.cache.GfxRange),x->x=!=null);
     if #s===0 then null else (
 	s = transpose s;
     	mn := transpose (entries \ s#0);
@@ -246,7 +242,7 @@ GfxHtml = new GfxType of GfxText from ( "foreignObject",
     { GfxPoint => vector {0.,0.}, GfxString => "" },
     { "x", "y" }
     )
-gfxRange1 GfxHtml := g -> (
+gfxRange GfxHtml := g -> (
     p := project2d g.GfxPoint;
     { p, p } -- TODO properly
     )
@@ -414,7 +410,7 @@ new SVG from GfxObject := (S,g) -> (
     currentGfxDefs = new MutableHashTable;
     main := svg g; -- run this first because it will compute the ranges too
     if main === null then return {};
-    if g.?GfxRange then r := g.GfxRange else r = gfxRange g; -- should be cached at this stage
+    if g.?GfxRange then r := g.GfxRange else r = g.cache.GfxRange; -- should be cached at this stage
     if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return {}); -- nothing to draw
     r = apply(r,numeric);
     rr := r#1 - r#0;
@@ -532,7 +528,7 @@ GfxLight = new GfxType of GfxCircle from ( "circle",
 -- in case it's drawn, it's a circle
 
 -- gfxRange ignores lights if invisible
-gfxRange1 GfxLight := x -> if x.GfxRadius === 0 then null else (lookup(gfxRange1,GfxCircle)) x
+gfxRange GfxLight := x -> if x.GfxRadius === 0 then null else (lookup(gfxRange,GfxCircle)) x
 
 gfxSetupLights = method()
 gfxSetupLights GfxObject := g -> {}
@@ -566,7 +562,7 @@ gfxFilter = x -> if (x.?GfxBlur and x.GfxBlur != 0) or (#currentGfxLights > 0 an
     	rng := x.cache.GfxRange; if rng =!= null then (
     	    drng:=rng#1-rng#0;
     	    r := b*min(drng_0,drng_1);
-	    x.cache.GfxRange={rng#0-vector{r,r},rng#1+vector{r,r}};
+	    x.cache.GfxRange={rng#0-vector{r,r},rng#1+vector{r,r}}; -- hack: in particular won't appear if user runs gfxRange xxx
 	    opts = append(opts, feGaussianBlur { "in" => "SourceGraphic", 
 		    "result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
 	    i=i+1;
@@ -834,12 +830,13 @@ multidoc ///
     gfx(a,b,GfxWidth=>20)
  Node
   Key
-   gfxRange   
+   gfxRange
   Headline
-    range of view port
+    Range of view port
   Description
    Text
-    gfxRange gives the range of view port occupied by a Gfx object, either as computed by the package or as given by the option GfxRange
+    gfxRange gives the range of view port occupied by a Gfx object, as computed by the package.
+    See also @ TO{GfxRange} @.
   Caveat
     At the moment gfxRange does not take into account the width of "stroke"s.
  Node
@@ -904,6 +901,7 @@ multidoc ///
    Text
     An option to fix manually the view port range of a Gfx object.
     Only has an effect if in the outermost Gfx object.
+    See also @ TO{gfxRange} @ and @ TO{GfxMargin} @.
  Node
   Key
    GfxWidth
@@ -945,7 +943,7 @@ multidoc ///
     An option to create a rotation animation for the Gfx 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
     The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
-    The animation automatically loops (use 0 => \{ \} to stop!)
+    The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
     In order for the animation to work, Gfx.css and Gfx.js must be included in the web page.
    Example
     (anim1=gfxRotation(0.1,[0,0,1],[0,0,0]); anim2=gfxRotation(-0.1,[0,0,1],[0,0,0]); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 }); 
@@ -1034,6 +1032,7 @@ multidoc ///
   Description
    Text
     The margin is proportional to the size of the image.
+    It increases the view port beyond the value returned by @ TO{gfxRange} @ or set by @ TO{GfxRange} @.
    Example
     GfxCircle{"fill"=>"red","stroke"=>"none",GfxMargin=>0}
     GfxCircle{"fill"=>"red","stroke"=>"none",GfxMargin=>0.5}
