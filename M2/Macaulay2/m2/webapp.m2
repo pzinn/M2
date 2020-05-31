@@ -15,7 +15,11 @@
 
 texMathStart := "\\(";
 texMathEnd := "\\)";
-texWrap := x -> texMathStart | texMath x | texMathEnd; -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues
+texWrap := x -> (  -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues
+    y := texMath x;
+    if class y =!= String then error "invalid texMath output";
+    texMathStart | y | texMathEnd
+    )
 
 htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
 
@@ -57,6 +61,7 @@ Thing#{WebApp,Print} = x -> (
     webAppBegin(true);
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     webAppEnd();
+    if class y =!= String then error "invalid htmlWithTex output";
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
     )
 
@@ -71,6 +76,7 @@ htmlWithTexAfterPrint :=  y -> (
     webAppBegin(false);
     z := htmlWithTex \ y;
     webAppEnd();
+    if any(z, x -> class x =!= String) then error "invalid htmlWithTex output";
     << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
 
