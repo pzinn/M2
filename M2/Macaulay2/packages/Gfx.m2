@@ -11,7 +11,7 @@ newPackage(
 	AuxiliaryFiles => true
         )
 
-export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
+export{"GfxType", "GfxObject", "GfxPoly",
     "GfxList", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine", "GfxHtml",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
@@ -104,6 +104,7 @@ gfxRange1 GfxObject := x -> null
 -- GfxIs3d=false has two effects:
 -- * the data-* stuff is lightened (can be recreated from the normal parameters)
 -- * the event listeners for 3d rotating the object with the mouse are deactivated
+-- * lighting is deactivated
 gfxIs3d = x -> if x.?GfxIs3d then x.GfxIs3d else true; -- the else clause should never happen
 
 gfxDistance = g -> (
@@ -148,9 +149,7 @@ new GfxType of GfxObject from VisibleList := (T,T2,x) -> (
 
     
 
-GfxPrimitive = new Type of GfxObject
-
-GfxCircle = new GfxType of GfxPrimitive from ( "circle",
+GfxCircle = new GfxType of GfxObject from ( "circle",
     { symbol GfxCenter => vector {0.,0.}, symbol GfxRadius => 50. },
     { "r", "cx", "cy" }
     )
@@ -166,7 +165,7 @@ gfxDistance1 GfxCircle := g -> (
     y_2
     )
 
-GfxEllipse = new GfxType of GfxPrimitive from ( "ellipse",
+GfxEllipse = new GfxType of GfxObject from ( "ellipse",
     { symbol GfxCenter => vector {0.,0.}, symbol GfxRadiusX => 50., symbol GfxRadiusY => 50. },
     { "rx", "ry", "cx", "cy" }
     )
@@ -194,7 +193,7 @@ gfxRange1 GfxText := g -> (
     { p - vector {0,f}, p + vector{f*0.6*length g.GfxString,0} } -- very approximate TODO properly
     )
 
-GfxLine = new GfxType of GfxPrimitive from ( "line",
+GfxLine = new GfxType of GfxObject from ( "line",
     { GfxPoint1 => vector {0.,0.}, GfxPoint2 => vector {50.,50.}},
     { "x1", "y1", "x2", "y2" }
     )
@@ -210,12 +209,12 @@ gfxDistance1 GfxLine := g -> (
     0.5*(p1_2+p2_2)
     )
 
-GfxPolyPrimitive = new Type of GfxPrimitive;
+GfxPoly = new Type of GfxObject;
 
-GfxPolyline = new GfxType of GfxPolyPrimitive from ( "polyline", { symbol GfxPoints => {} }, { "points" } )
-GfxPolygon = new GfxType of GfxPolyPrimitive from ( "polygon", { symbol GfxPoints => {} }, { "points" } )
-GfxPath = new GfxType of GfxPolyPrimitive from ( "path", { symbol GfxPathList => {} }, { "d" } )
-gfxRange1 GfxPolyPrimitive := g -> ( -- relative coordinates *not* supported, screw this
+GfxPolyline = new GfxType of GfxPoly from ( "polyline", { symbol GfxPoints => {} }, { "points" } )
+GfxPolygon = new GfxType of GfxPoly from ( "polygon", { symbol GfxPoints => {} }, { "points" } )
+GfxPath = new GfxType of GfxPoly from ( "path", { symbol GfxPathList => {} }, { "d" } )
+gfxRange1 GfxPoly := g -> ( -- relative coordinates *not* supported, screw this
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
     s = transpose apply(s, x -> entries project2d (g.cache.GfxCurrentMatrix*x));
     {vector(min\s), vector(max\s)}
@@ -368,7 +367,7 @@ globalAssignment GfxObject
 toString GfxObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,OptionTable)) g
 net GfxObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,OptionTable)) g
 
-gfxDistance1 GfxPolyPrimitive := g -> (
+gfxDistance1 GfxPoly := g -> (
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
     sum(s,x->(g.cache.GfxCurrentMatrix*x)_2) / #s
     )
@@ -449,7 +448,7 @@ new SVG from GfxObject := (S,g) -> (
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.GfxWidth,"em;",
 	    "height:",toString g.cache.GfxHeight,"em;",
-	    if not g#?"stroke-width" then "stroke-width:"|toString(0.01*min(rr_0,rr_1)), -- define a default stroke-width
+	    if not g#?"stroke-width" then "stroke-width:"|toString(0.005*max(rr_0,rr_1)), -- define a default stroke-width
 	),
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
@@ -506,7 +505,7 @@ gfxTranslation = vec -> (
 
 gfxDetermineSide = method()
 gfxDetermineSide GfxObject := x -> ()
-gfxDetermineSide GfxPolyPrimitive := g -> (
+gfxDetermineSide GfxPoly := g -> (
     -- find first 3 coords
     if instance(g,GfxPath) then coords := select(g.GfxPathList, x -> instance(x,Vector)) else coords = g.GfxPoints;
     if #coords<3 then ( remove(g.cache,GfxFilter); return; );
@@ -527,7 +526,7 @@ gfxRange1 GfxLight := g -> if g.GfxRadius === 0 then null else (lookup(gfxRange1
 gfxSetupLights = (g,m,p) -> if instance(g,GfxLight) then (
     updateGfxMatrix(g,m,p);
     g.cache.GfxTag = gfxTag();
-    g ) else if g.?GfxContents then (
+    { g } ) else if g.?GfxContents then (
     updateGfxMatrix(g,m,p);
     flatten apply(g.GfxContents, x -> gfxSetupLights(x,g.cache.GfxCurrentMatrix,p))
     ) else {}; -- yeah, could make a method...
@@ -548,7 +547,7 @@ feSpecularLighting := withQname_"feSpecularLighting" withOptions_{svgAttr,"resul
 fePointLight := withQname_"fePointLight" withOptions_{svgAttr,"x","y","z"} new MarkUpType of Hypertext;
 feComposite := withQname_"feComposite" withOptions_{svgAttr,"in","in2","operator","result","k1","k2","k3","k4"} new MarkUpType of Hypertext;
 
-gfxFilter = (g,l) -> if (g.?GfxBlur and g.GfxBlur != 0) or (#l > 0 and instance(g,GfxPolyPrimitive)) then (
+gfxFilter = (g,l) -> if (g.?GfxBlur and g.GfxBlur != 0) or (#l > 0 and instance(g,GfxPoly)) then (
     tag := gfxTag();
     i:=0;
     opts := { "id" => tag };
@@ -564,7 +563,7 @@ gfxFilter = (g,l) -> if (g.?GfxBlur and g.GfxBlur != 0) or (#l > 0 and instance(
 	    i=i+1;
 	)
     );
-    if gfxIs3d g and (instance(g,GfxPolygon) or instance(g,GfxPolyline) or instance(g,GfxPath)) then (
+    if gfxIs3d g and instance(g,GfxPoly) then (
     	-- find first 3 coords
 	if instance(g,GfxPath) then coords := select(g.GfxPathList, x -> instance(x,Vector)) else coords = g.GfxPoints;
     	if #coords>=3 then (
@@ -700,6 +699,11 @@ multidoc ///
    GfxObject
   Headline
    The ancestor class of all Gfx objects
+ Node
+  Key
+   GfxPoly
+  Headline
+   The ancestor class of @ TO{GfxPolygon} @, @ TO{GfxPolyline} @, @ TO{GfxPath} @
  Node
   Key
    GfxList
@@ -874,7 +878,7 @@ multidoc ///
    GfxOneSided
   Description
    Text
-    A property of GfxPolyPrimitive 3d objects, means that polygons must be drawn only if they are facing the correct way.
+    A property of @ TO{GfxPoly} @ 3d objects, means that polygons must be drawn only if they are facing the correct way.
  Node
   Key
    GfxRange
