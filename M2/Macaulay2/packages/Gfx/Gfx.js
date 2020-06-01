@@ -153,7 +153,7 @@ function gfxRecompute(el) {
 		    var v=[u[0]/u[3],u[1]/u[3]];
 		    coords.push(u);
 		    s+=v[0]+" "+v[1]+" ";
-		    distance+=u[0]*u[0]+u[1]*u[1]+u[2]*u[2]; // not homogenous... TODO
+		    distance+=u[2]; // not homogenous?
 		}
 	    }
 	    else s+=el.gfxdata.coords[j]+" ";
@@ -162,7 +162,7 @@ function gfxRecompute(el) {
 	    el.style.display="";
 	    // rewrite "d" or "points"
 	    if (el.tagName=="path") el.setAttribute("d",s); else el.setAttribute("points",s);
-	    // recompute square distance as average of square distances of vertices
+	    // recompute distance as average of distances of vertices
 	    el.gfxdata.distance=distance/coords.length;
 	    if (coords.length>2) {
 		var det = coords[0][2]*coords[1][1]*coords[2][0]-coords[0][1]*coords[1][2]*coords[2][0]-coords[0][2]*coords[1][0]*coords[2][1]+coords[0][0]*coords[1][2]*coords[2][1]+coords[0][1]*coords[1][0]*coords[2][2]-coords[0][0]*coords[1][1]*coords[2][2]; // TODO optimize
@@ -210,7 +210,7 @@ function gfxRecompute(el) {
 	    el.style.display="";
 	    var v1=[u1[0]/u1[3],u1[1]/u1[3]];
 	    var v2=[u2[0]/u2[3],u2[1]/u2[3]];
-	    el.gfxdata.distance=0.5*(u1[0]*u1[0]+u1[1]*u1[1]+u1[2]*u1[2]+u2[0]*u2[0]+u2[1]*u2[1]+u2[2]*u2[2]);
+	    el.gfxdata.distance=0.5*(u1[2]+u2[2]);
 	    el.setAttribute("x1",v1[0]);
 	    el.setAttribute("y1",v1[1]);
 	    el.setAttribute("x2",v2[0]);
@@ -223,12 +223,11 @@ function gfxRecompute(el) {
 	if (u[3]<=0) el.style.display="none"; else {
 	    el.style.display="";
 	    var v=[u[0]/u[3],u[1]/u[3]];
-	    el.gfxdata.distance=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
+	    el.gfxdata.distance=u[2];
 	    el.setAttribute("x",v[0]);
 	    el.setAttribute("y",v[1]);
 	    // rescale font size
-	    if (!el.gfxdata.is2d)
-		el.style.fontSize = el.gfxdata.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
+	    el.style.fontSize = el.gfxdata.fontsize/u[3]+"px"; // chrome doesn't mind absence of units but firefox does
 	}
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
@@ -237,7 +236,7 @@ function gfxRecompute(el) {
 	if (u[3]<=0) el.style.display="none"; else {
 	    el.style.display="";
 	    var v=[u[0]/u[3],u[1]/u[3]];
-	    el.gfxdata.distance=u[0]*u[0]+u[1]*u[1]+u[2]*u[2];
+	    el.gfxdata.distance=u[2];
 	    el.setAttribute("cx",v[0]);
 	    el.setAttribute("cy",v[1]);
 	    // also, rescale radius
@@ -253,10 +252,10 @@ function gfxRecompute(el) {
 	// must call inductively children's
 	for (var i=0; i<el.children.length; i++) gfxRecompute(el.children[i]);
 	gfxReorder(el);
-	// recompute square distance as average of square distances of children
+	// recompute distance as average of distances of children
 	el.gfxdata.distance=0; var cnt = 0;
 	for (var i=0; i<el.children.length; i++)
-	    if (el.children[i].gfxdata && el.children[i].gfxdata.distance != 0) {
+	    if (el.children[i].gfxdata) {
 		el.gfxdata.distance+=el.children[i].gfxdata.distance;
 		cnt++;
 	    }
@@ -269,7 +268,7 @@ function gfxReorder(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if ((el.tagName=="svg")||(el.tagName=="g")) {
 	// order children according to distance
-	for (i=1; i<el.children.length; i++) if (el.children[i].gfxdata&&!el.children[i].gfxdata.is2d) {
+	for (i=1; i<el.children.length; i++) if (el.children[i].gfxdata) {
 	    var child = el.children[i];
 	    j=i; while ((j>0)&&(child.gfxdata.distance>el.children[j-1].gfxdata.distance)) j--;
 	    if (j<i) el.insertBefore(child,el.children[j]);
@@ -281,7 +280,6 @@ function checkData(el) {
     var mat = el.gfxdata.cmatrix.transpose();
     if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
 	if (!el.gfxdata.coords) {
-	    el.gfxdata.is2d=true;
 	    var pts = el.points;
 	    el.gfxdata.coords = [];
 	    for (var i=0; i<pts.length; i++)
@@ -290,7 +288,6 @@ function checkData(el) {
     }
     else if (el.tagName=="path") {
 	if (!el.gfxdata.coords) {
-	    el.gfxdata.is2d=true;
 	    var path = el.getAttribute("d").split(" "); // for lack of better
 	    el.gfxdata.coords=[];
 	    for (var i=0; i<path.length; i++)
@@ -303,33 +300,30 @@ function checkData(el) {
     }
     else if (el.tagName=="line") {
 	if (!el.gfxdata.point1 || !el.gfxdata.point2) {
-	    el.gfxdata.is2d=true;
 	    el.gfxdata.point1=mat.vectmultiply(vector([el.x1.baseVal.value,el.y1.baseVal.value,0,1]));
 	    el.gfxdata.point2=mat.vectmultiply(vector([el.x2.baseVal.value,el.y2.baseVal.value,0,1]));
 	}
     }
     else if (el.tagName=="text") {
 	if (!el.gfxdata.point) {
-	    el.gfxdata.is2d=true;
 	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal[0].value,el.y.baseVal[0].value,0,1])); // weird
+	    el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
 	}
     }
     else if (el.tagName=="foreignObject") {
 	if (!el.gfxdata.point) {
-	    el.gfxdata.is2d=true;
 	    el.gfxdata.point=mat.vectmultiply(vector([el.x.baseVal.value,el.y.baseVal.value,0,1]));
+	    el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
 	}
     }
     else if (el.tagName=="circle") {
 	if (!el.gfxdata.center) {
-	    el.gfxdata.is2d=true;
 	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
 	    el.gfxdata.r=el.r.baseVal.value;
 	}
     }
     else if (el.tagName=="ellipse") {
 	if (!el.gfxdata.center) {
-	    el.gfxdata.is2d=true;
 	    el.gfxdata.center=mat.vectmultiply(vector([el.cx.baseVal.value,el.cy.baseVal.value,0,1]));
 	    el.gfxdata.rx=el.rx.baseVal.value;
 	    el.gfxdata.ry=el.ry.baseVal.value;

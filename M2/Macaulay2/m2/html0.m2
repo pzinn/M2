@@ -226,6 +226,39 @@ new TO from Thing := new TOH from Thing := (TO,x) -> new TO from {x} -- document
 
 MENU       = withQname_"div" new IntermediateMarkUpType of HypertextParagraph	            -- like "* Menu:" of "info"
 
+-- added stuff
+style = method(Options => true)
+style Hypertext := true >> o -> x -> style(x, pairs o)
+style (Hypertext,VisibleList) := true >> o -> (x,s) -> ( -- here s is a pair of key/values
+    str := concatenate apply(s, e -> if class e#0 === String then e#0|":"|toString e#1|";");
+    if str === "" then return x;
+    i := position(toList x, y -> class y === Option and y#0 === "style");
+    if i===null then append(x,"style"=>str) else
+    new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
+    )
+
+toString MarkUpType := X -> (
+    if hasAnAttribute X then (
+	if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
+	if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	);
+    concatenate(toString class X, " of ", toString parent X, if X.?qname then "<"|X.qname|">" ))
+
+net MarkUpType := X -> (
+    if hasAnAttribute X then (
+	if hasAttribute(X,PrintNet) then return getAttribute(X,PrintNet);
+	if hasAttribute(X,PrintNames) then return net getAttribute(X,PrintNames);
+	if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	);
+    horizontalJoin (net class X, " of ", net parent X, if X.?qname then "<"|X.qname|">" ))
+
+texMath MarkUpType := X -> (
+    if X.?texMath then return X.texMath;
+    if hasAttribute(X,ReverseDictionary) then return texMath toString getAttribute(X,ReverseDictionary);
+    concatenate apply({class X, " of ", parent X, if X.?qname then "<"|X.qname|">"}, texMath)
+    )
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

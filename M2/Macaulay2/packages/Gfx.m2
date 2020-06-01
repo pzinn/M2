@@ -19,14 +19,14 @@ export{"GfxType", "GfxObject", "GfxPrimitive", "GfxPolyPrimitive",
     "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
     "GfxIs3d", "GfxAuto", "GfxCurrentMatrix",
     "SVG", "SVGElement",
-    "style" -- TEMP move elsewhere
+    "style"
     }
 
 coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
-     "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr" } -- hypertext
+     "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr", "style" } -- hypertext
 
-scan(coreStuff, s -> globalAssign(value s,value Core#"private dictionary"#s))
+scan(coreStuff, s -> globalAssign(value s,value Core#"private dictionary"#s)) -- not the correct way TODO FIX (cf debug Core w or w/o debug Gfx)
 -*
 exportFrom_Core coreStuff
 *-
@@ -64,8 +64,8 @@ new GfxObject := T -> new T from {};
 GfxType = new Type of Type -- all usable Gfx objects are ~ self-initialized
 
 gfxParseFlag := false;
-gfxParse := method()
-gfxParse Array := x -> gfxParse vector(toList x)
+gfxParse := method(Dispatch=>Thing)
+gfxParse Sequence := x -> gfxParse vector(toList x)
 gfxParse VisibleList := x -> apply(x,gfxParse)
 gfxParse HashTable := x -> applyValues(x,gfxParse)
 gfxParse CacheTable := identity
@@ -101,10 +101,12 @@ gfxRange = g -> (
 gfxRange1 := method() -- returns [xmin,ymin],[xmax,ymax]
 gfxRange1 GfxObject := x -> null
 
+-- GfxIs3d=false has two effects:
+-- * the data-* stuff is lightened (can be recreated from the normal parameters)
+-- * the event listeners for 3d rotating the object with the mouse are deactivated
 gfxIs3d = x -> if x.?GfxIs3d then x.GfxIs3d else true; -- the else clause should never happen
 
 gfxDistance = g -> (
-    if not gfxIs3d g then return 0_RR; -- 2d objects are on top of everything
     if not g.cache.?GfxDistance then svg g; -- need to be rendered
     g.cache.GfxDistance
     )
@@ -113,7 +115,7 @@ gfxDistance1 GfxObject := x -> 0_RR
 
 updateGfxCache := g -> (
     g.cache.GfxRange = gfxRange1 g; -- update the range
-    g.cache.GfxDistance = gfxDistance1 g; -- update the squared distance
+    g.cache.GfxDistance = gfxDistance1 g; -- update the distance
     if g.?GfxOneSided and g.GfxOneSided then gfxDetermineSide g;
     -- bit of a hack: 2d objects GfxCircle, GfxEllipse get scaled in a 3d context
     if instance(g,GfxCircle) then (
@@ -126,7 +128,7 @@ updateGfxCache := g -> (
 	) else if instance(g,GfxText) then ( -- same for GfxText
 	-- choose font size
 	f := if g.?GfxFontSize then g.GfxFontSize else 14.;
-	scale = 1/(g.cache.GfxCurrentMatrix*g.GfxCenter)_3;
+	scale = 1/(g.cache.GfxCurrentMatrix*g.GfxPoint)_3;
 	f = max(0,f*scale);
 	g.cache#"font-size"= toString f|"px";
 	if instance(g,GfxHtml) then ( -- hack
@@ -161,7 +163,7 @@ gfxRange1 GfxCircle := g -> (
     )
 gfxDistance1 GfxCircle := g -> (
     y := g.cache.GfxCurrentMatrix * g.GfxCenter;
-    y_0^2+y_1^2+y_2^2
+    y_2
     )
 
 GfxEllipse = new GfxType of GfxPrimitive from ( "ellipse",
@@ -177,7 +179,7 @@ gfxRange1 GfxEllipse := g -> (
     )
 gfxDistance1 GfxEllipse := g -> (
     y := g.cache.GfxCurrentMatrix * g.GfxCenter;
-    y_0^2+y_1^2+y_2^2
+    y_2
     )
 
 GfxText = new GfxType of GfxObject from ( "text",
@@ -205,7 +207,7 @@ gfxRange1 GfxLine := g -> (
 gfxDistance1 GfxLine := g -> (
     p1 := g.cache.GfxCurrentMatrix * g.GfxPoint1;
     p2 := g.cache.GfxCurrentMatrix * g.GfxPoint1;
-    0.5*(p1_0^2+p1_1^2+p1_2^2+p2_0^2+p2_1^2+p2_2^2)
+    0.5*(p1_2+p2_2)
     )
 
 GfxPolyPrimitive = new Type of GfxPrimitive;
@@ -337,23 +339,6 @@ svg3dLookup := hashTable { -- should be more systematic
     symbol GfxFontSize => x -> "data-fontsize" => jsString x,
     }
 
--*
-texMath MarkUpType := T -> if T.?qname then texMath toUpper T.qname else lookup(texMath,Type) T
-net MarkUpType := T -> if T.?qname then net toUpper T.qname else lookup(net,Type) T
-toString MarkUpType := T -> if T.?qname then toString toUpper T.qname else lookup(toString,Type) T
-html MarkUpType := T -> if T.?qname then html toUpper T.qname else lookup(html,Type) T
-*-
-
--- should be in html0.m2
-style = true >> s -> x -> style1(x,pairs s)
-style1 = (x,s) -> ( -- here s is a pair of key/values
-    str := concatenate apply(s, e -> if class e#0 === String then e#0|":"|toString e#1|";");
-    if str === "" then return x;
-    i := position(toList x, y -> class y === Option and y#0 === "style");
-    if i===null then append(x,"style"=>str) else
-    new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
-    )
-
 -- produces SVG element hypertext
 svg = method()
 svg (GfxObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current matrix,perspective matrix,lights)
@@ -365,7 +350,7 @@ svg (GfxObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current matrix,p
     prs := pairs g | pairs g.cache; -- TODO restructure
     opts := deepSplice apply(select(prs,(key,val)-> svgLookup#?key), (key,val) -> svgLookup#key(val,g.cache.GfxCurrentMatrix));
     if gfxIs3d g then opts = opts | deepSplice apply(select(prs,(key,val)-> svg3dLookup#?key), (key,val) -> svg3dLookup#key val);
-    g.cache.SVGElement = style1((class g).SVGElement opts,prs)
+    g.cache.SVGElement = style((class g).SVGElement opts,prs)
     )
 
 svg (GfxObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
@@ -385,7 +370,7 @@ net GfxObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute
 
 gfxDistance1 GfxPolyPrimitive := g -> (
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
-    sum(apply(s,x->g.cache.GfxCurrentMatrix*x), x -> x_0^2+x_1^2+x_2^2 ) / #s
+    sum(s,x->(g.cache.GfxCurrentMatrix*x)_2) / #s
     )
 gfxDistance1 GfxList := g -> (
     sum(g.GfxContents, gfxDistance) / #(g.GfxContents)
@@ -393,7 +378,7 @@ gfxDistance1 GfxList := g -> (
 GfxObject ? GfxObject := (x,y) -> (gfxDistance y) ? (gfxDistance x)
 gfxDistance1 GfxText := g -> (
     y := g.cache.GfxCurrentMatrix*g.GfxPoint;
-    y_0^2+y_1^2+y_2^2
+    y_2
     )
 
 gfxTagCount := 0;
@@ -502,7 +487,7 @@ gfxRotation = args -> (
     args = sequence args;
     if #args>3 then error("Too many arguments");
     angle := args#0;
-    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Array) and #args#1 === 3 )));
+    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Sequence) and #args#1 === 3 )));
     axis := promote(if threeD then if instance(args#1,Vector) then args#1 else vector toList args#1 else vector {0,0,1},RR);
     invr := 1/sqrt(axis_0^2+axis_1^2+axis_2^2);
     axis = invr*axis;
@@ -553,6 +538,9 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
     tag := (select(x, y -> instance(y,Option) and y#0==="id"))#0#1;
     "url(#"|tag|")"
 )
+
+noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
+htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
 
 svgFilter := withQname_"filter" withOptions_{svgAttr,"x","y","width","height"} new MarkUpType of HypertextInternalLink;
 feGaussianBlur := withQname_"feGaussianBlur" withOptions_{svgAttr,"in","result","stdDeviation"} new MarkUpType of Hypertext;
@@ -699,8 +687,8 @@ multidoc ///
     {\bf Gfx} is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GfxObject, and are self-initializing.
     Coordinates can be entered as vectors in \mathbb{RR}^2, \mathbb{RR}^3 or \mathbb{RR}^4 (\mathbb{RR}^4 is projective
-    coordinates); alternatively, one can enter them as arrays. The y axis points down, and the z axis points
-    away from the viewer.
+    coordinates); alternatively, one can enter them as sequences. With the default perspective matrix,
+    the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
     Gfx options, that are symbols starting with Gfx (e.g., {\tt GfxRadius} for circles); and styling options, which are CSS style options,
     and which are {\bf strings} (e.g., {\tt "fill"} for fill color).
@@ -731,7 +719,7 @@ multidoc ///
     In 3d, gives a decent approximation of a sphere.
    Example
     GfxCircle{GfxCenter=>vector {10,10},GfxRadius=>50,"fill"=>"green","stroke"=>"none"}
-    GfxCircle{[10,10],10} -- equivalent syntax for coordinates
+    GfxCircle{(10,10),10} -- equivalent syntax for coordinates
  Node
   Key
    GfxLine
@@ -752,10 +740,10 @@ multidoc ///
     By default a GfxLight is invisible (it has GfxRadius 0) and is unaffected by matrix transformations outside it (GfxStatic true).
    Example
     GfxLight{GfxRadius=>10,"fill"=>"yellow"}
-    v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
+    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
-    tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>c#i,"stroke"=>"none"}),GfxLight{[100,0,0],GfxRadius=>10},GfxRange=>{[-100,-100],[100,100]},GfxHeight=>30,GfxMatrix=>gfxRotation(-1.5,[0,1,0]))
+    tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>c#i,"stroke"=>"none"}),GfxLight{(100,0,0),GfxRadius=>10},GfxRange=>{(-100,-100),(100,100)},GfxHeight=>30,GfxMatrix=>gfxRotation(-1.5,(0,1,0)))
  Node
   Key
    GfxEllipse
@@ -766,7 +754,9 @@ multidoc ///
     An SVG ellipse. The three compulsory options are GfxCenter (coordinates of the center) and GfxRadiusX, GfxRadiusY (radii).
    Example
     GfxEllipse{GfxCenter=>vector{10,10},GfxRadiusX=>50,GfxRadiusY=>20,"stroke"=>"none","fill"=>"red"}
-    GfxEllipse{[10,10],50,20,"stroke"=>"blue"} -- equivalent syntax
+    GfxEllipse{(10,10),50,20,"stroke"=>"blue"} -- equivalent syntax
+  Caveat
+   Does not really make sense in a 3d context.
  Node
   Key
    GfxPath
@@ -776,7 +766,7 @@ multidoc ///
    Text
     An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called GfxPathList.
    Example
-    GfxPath{GfxPathList => {"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+    GfxPath{GfxPathList => {"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
  Node
   Key
    GfxPolygon
@@ -786,7 +776,7 @@ multidoc ///
    Text
     An SVG polygon. The coordinates must form a list called GfxPoints. (the difference with GfxPolyline is that the last coordinate is reconnected to the first)
    Example
-    GfxPolygon{GfxPoints=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
+    GfxPolygon{GfxPoints=>{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
  Node
   Key
    GfxPolyline
@@ -796,7 +786,7 @@ multidoc ///
    Text
     An SVG sequence of lines. The coordinates must form a list called GfxPoints. (the difference with GfxPolygon is that the last coordinate is not reconnected to the first)
    Example
-    GfxPolyline{GfxPoints=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
+    GfxPolyline{GfxPoints=>{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
  Node
   Key
    GfxText
@@ -807,7 +797,7 @@ multidoc ///
     Some SVG text. The text itself is the option GfxString (a string). Text can be "stroke"d or "fill"ed.
     Font size should be specified with GfxFontSize.
    Example
-    GfxText{[0,0],"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+    GfxText{(0,0),"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
  Node
   Key
    gfx
@@ -818,8 +808,8 @@ multidoc ///
     gfx(a,b,...,c, options) results in a new GfxList object containing a,b,...,c 
     and the given options.
    Example
-    a=gfx(GfxLine{[-100, 15, 78], [-9, 100, 4]},GfxLine{[-96, -49, -100], [46, -100, 52]},GfxLine{[-100, -42, -51], [59, 100, 76]},GfxLine{[-100, 66, 54], [83, -100, -27]})
-    b=gfx(GfxLine{[-30, 100, 20], [9, -100, 8]},GfxLine{[-78, -73, -100], [-64, 84, 100]},"stroke"=>"red")
+    a=gfx(GfxLine{(-100, 15, 78), (-9, 100, 4)},GfxLine{(-96, -49, -100), (46, -100, 52)},GfxLine{(-100, -42, -51), (59, 100, 76)},GfxLine{(-100, 66, 54), (83, -100, -27)})
+    b=gfx(GfxLine{(-30, 100, 20), (9, -100, 8)},GfxLine{(-78, -73, -100), (-64, 84, 100)},"stroke"=>"red")
     gfx(a,b,GfxWidth=>20)
  Node
   Key
@@ -847,7 +837,7 @@ multidoc ///
    Distance to the viewer
   Description
    Text
-    Returns the square distance to the viewer of a Gfx 3d object.
+    Returns the distance (perpendicularly to the screen) to the viewer of a Gfx 3d object.
  Node
   Key
    gfxRotation   
@@ -872,7 +862,7 @@ multidoc ///
     Produces a translation encoded as a 4x4 matrix that can be used as an argument to @TO{GfxMatrix}@ or @TO{GfxAutoMatrix}@.
     The vector can be 2d or 3d.
    Example
-    v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
+    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     tetra=gfx(apply(4,i->GfxPolygon{f#i,"fill"=>"white"}))
     g = memoize(n -> if n==0 then tetra else gfx apply(4,i->g(n-1)++{GfxMatrix=>gfxTranslation v#i}))
@@ -939,9 +929,9 @@ multidoc ///
     The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
     In order for the animation to work, Gfx.css and Gfx.js must be included in the web page.
    Example
-    (anim1=gfxRotation(0.1,[0,0,1],[0,0,0]); anim2=gfxRotation(-0.1,[0,0,1],[0,0,0]); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 }); 
-    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>anim1},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
-    gfx(GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",GfxAutoMatrix=>anim3},GfxCircle{[1,0],0.1},GfxCircle{[0,0],1})
+    (anim1=gfxRotation(0.1,(0,0,1),(0,0,0)); anim2=gfxRotation(-0.1,(0,0,1),(0,0,0)); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 });
+    gfx(GfxPolygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",GfxAutoMatrix=>anim1},GfxCircle{(1,0),0.1},GfxCircle{(0,0),1})
+    gfx(GfxPolygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",GfxAutoMatrix=>anim3},GfxCircle{(1,0),0.1},GfxCircle{(0,0),1})
  Node
   Key
    GfxMatrix
@@ -952,7 +942,7 @@ multidoc ///
     An option to rotate the coordinates of the Gfx 3d object.
     Must be a 4x4 matrix (projective coordinates).
    Example
-    a=GfxPolygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red"}
+    a=GfxPolygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red"}
     gfx(a,a++{GfxMatrix=>gfxRotation(2*pi/3)})
  Node
   Key
@@ -984,7 +974,7 @@ multidoc ///
     The argument is a list of pairs of offsets and styles.
     Optional arguments (e.g., "x1", "y1", "x2", "y2") are used to determine the orientation of the gradient.
    Example
-    GfxEllipse{[60,60],40,30, "fill"=>gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+    GfxEllipse{(60,60),40,30, "fill"=>gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
  Node
   Key
    gfxRadialGradient
@@ -996,7 +986,7 @@ multidoc ///
     The argument is a list of pairs of offsets and styles.
     Optional arguments (e.g., "cx", "cy", "r", "fx", "fy") are used to position the gradient.
    Example
-    GfxEllipse{[60,60],40,30, "fill"=>gfxRadialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+    GfxEllipse{(60,60),40,30, "fill"=>gfxRadialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
  Node
   Key
    gfxPlot
@@ -1038,7 +1028,7 @@ multidoc ///
    Text
     Must be used as styling options "marker-start", "marker-mid" or "marker-end", to add an arrow to a path.
    Example
-    GfxPolyline{GfxPoints=>{[0,0],[50,50],[0,100],[50,150]},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>gfxArrow("fill"=>"orange"),GfxMargin=>0.3}
+    GfxPolyline{GfxPoints=>{(0,0),(50,50),(0,100),(50,150)},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>gfxArrow("fill"=>"orange"),GfxMargin=>0.3}
  Node
   Key
    GfxHtml
@@ -1055,14 +1045,14 @@ end--
 
 -- ex of use
 gr=gfxLinearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
-gfx(GfxEllipse{[0,0],90,30,"stroke"=>"none","fill"=>gr,GfxBlur=>0.3},GfxText{[-65,-7],"Macaulay2",GfxFontSize=>25,"stroke"=>"black","fill"=>"white"},GfxHeight=>12)
+gfx(GfxEllipse{(0,0),90,30,"stroke"=>"none","fill"=>gr,GfxBlur=>0.3},GfxText{(-65,-7),"Macaulay2",GfxFontSize=>25,"stroke"=>"black","fill"=>"white"},GfxHeight=>12)
 
 a=GfxCircle{"fill"=>"yellow","stroke"=>"green",GfxWidth=>1,GfxHeight=>1}
-b=GfxLine{[10,10],[20,50],"stroke"=>"black"}
-c=GfxCircle{[50,50],50,"fill"=>"blue","fill-opacity"=>0.25}
-d=GfxEllipse{[60,60],40,30, "fill"=>"blue", "stroke"=>"grey"}
-e=GfxPolyline{{[0,0],[100,100],[100,50]},"fill"=>"pink","stroke"=>"green"}
-f=GfxPolygon{{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
+b=GfxLine{(10,10),(20,50),"stroke"=>"black"}
+c=GfxCircle{(50,50),50,"fill"=>"blue","fill-opacity"=>0.25}
+d=GfxEllipse{(60,60),40,30, "fill"=>"blue", "stroke"=>"grey"}
+e=GfxPolyline{{(0,0),(100,100),(100,50)},"fill"=>"pink","stroke"=>"green"}
+f=GfxPolygon{{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
 gfx (f,a,b,c,d,e)
 -- or
 rgb={"red","green","blue"};
@@ -1078,11 +1068,11 @@ OO_(Proj R)
 
 -- or
 z=GfxRectangle{"fill"=>"white"}
-b1=GfxPath{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
-b2=GfxPath{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
+b1=GfxPath{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+b2=GfxPath{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
 b=gfx(z,b1,b2,GfxWidth=>2,GfxHeight=>2,GfxMargin=>0)
-a1=GfxPath{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
-a2=GfxPath{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
+a1=GfxPath{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+a2=GfxPath{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
 a=gfx(z,a1,a2,GfxWidth=>2,GfxHeight=>2,GfxMargin=>0)
 ab=a|b
 ba=b|a
@@ -1093,21 +1083,21 @@ loopConfig = I->new ColumnExpression from apply(k,i->tiledRow(I,i));
 
 
 -- or
-barside1=GfxPath{{"M",[80,60,100],"L",[80,55,100],"L",[220,55,100],"L",[220,60,100],"Z"},"fill"=>"#222","stroke-width"=>0}; -- stroke-width shouldn't be necessary
-triangle1=GfxPath{{"M",[-50,160,2],"L",[0,80,2],"L",[50,160,2],"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
-triangle2=GfxPath{{"M",[30,160,98],"L",[80,80,98],"L",[130,160,98],"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
-edge1=GfxPath{{"M",[30,160,98],"L",[30,160,102],"L",[80,80,102],"L",[80,80,98],"Z"},"fill"=>"#4080e0","stroke-width"=>1};
-edge2=GfxPath{{"M",[130,160,98],"L",[130,160,102],"L",[80,80,102],"L",[80,80,98],"Z"},"fill"=>"#4080e0","stroke-width"=>1};
-bartop=GfxPath{{"M",[80,55,98],"L",[80,55,102],"L",[220,55,102],"L",[220,55,98],"Z"},"fill"=>"#aaa","stroke-width"=>0}; -- stroke-width shouldn't be necessary
-thread=GfxPath{{"M",[80,55,100],"L",[80,80,100],"Z"},"stroke"=>"#111","stroke-width"=>0.5,"stroke-opacity"=>0.8};
+barside1=GfxPath{{"M",(80,60,100),"L",(80,55,100),"L",(220,55,100),"L",(220,60,100),"Z"},"fill"=>"#222","stroke-width"=>0}; -- stroke-width shouldn't be necessary
+triangle1=GfxPath{{"M",(-50,160,2),"L",(0,80,2),"L",(50,160,2),"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
+triangle2=GfxPath{{"M",(30,160,98),"L",(80,80,98),"L",(130,160,98),"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
+edge1=GfxPath{{"M",(30,160,98),"L",(30,160,102),"L",(80,80,102),"L",(80,80,98),"Z"},"fill"=>"#4080e0","stroke-width"=>1};
+edge2=GfxPath{{"M",(130,160,98),"L",(130,160,102),"L",(80,80,102),"L",(80,80,98),"Z"},"fill"=>"#4080e0","stroke-width"=>1};
+bartop=GfxPath{{"M",(80,55,98),"L",(80,55,102),"L",(220,55,102),"L",(220,55,98),"Z"},"fill"=>"#aaa","stroke-width"=>0}; -- stroke-width shouldn't be necessary
+thread=GfxPath{{"M",(80,55,100),"L",(80,80,100),"Z"},"stroke"=>"#111","stroke-width"=>0.5,"stroke-opacity"=>0.8};
 gfx{barside1,triangle1,triangle2,edge1,edge2,bartop,thread}
 
 -- tetrahedron
-v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
+v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
 c={"red","green","blue","yellow"};
 vv={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
 triangles=apply(4,i->GfxPath{{"M",vv#i#0,"L",vv#i#1,"L",vv#i#2,"Z"},"fill"=>c#i,GfxOneSided=>true});
-gfx(triangles,GfxLight{[100,0,0],GfxRadius=>10},GfxRange=>{[-100,-150],[150,150]},GfxHeight=>30,GfxMatrix=>gfxRotation(-1.5,[0,1,0]))
+gfx(triangles,GfxLight{(100,0,0),GfxRadius=>10},GfxRange=>{(-100,-150),(150,150)},GfxHeight=>30,GfxMatrix=>gfxRotation(-1.5,(0,1,0)))
 
 -- dodecahedron
 vertices={vector{-137.638,0.,26.2866},vector{137.638,0.,-26.2866},vector{-42.5325,-130.902,26.2866},vector{-42.5325,130.902,26.2866},vector{111.352,-80.9017,26.2866},vector{111.352,80.9017,26.2866},vector{-26.2866,-80.9017,111.352},vector{-26.2866,80.9017,111.352},vector{-68.8191,-50.,-111.352},vector{-68.8191,50.,-111.352},vector{68.8191,-50.,111.352},vector{68.8191,50.,111.352},vector{85.0651,0.,-111.352},vector{-111.352,-80.9017,-26.2866},vector{-111.352,80.9017,-26.2866},vector{-85.0651,0.,111.352},vector{26.2866,-80.9017,-111.352},vector{26.2866,80.9017,-111.352},vector{42.5325,-130.902,-26.2866},vector{42.5325,130.902,-26.2866}};
@@ -1119,9 +1109,9 @@ label=apply(#vertices,i->GfxText{vertices#i,toString i});
 dodecasplit=apply(faces,centers,(f,c)->GfxPolygon{apply(f,j->vertices#j),
 	GfxAutoMatrix=>apply(steps,j->gfxRotation(2*pi/5/steps*4*min(j/steps,1-j/steps),c,c)*gfxTranslation(0.075*sin(2*pi*j/steps)*c)),
 	"fill"=>concatenate("rgb(",toString(134+round(1.2*c_0)),",",toString(134+round(1.2*c_1)),",",toString(134+round(1.2*c_2)),")")});
-d=gfx(dodecasplit,"fill-opacity"=>0.65,GfxAutoMatrix=>gfxRotation(0.02,[1,2,3]));
-d1=gfx(d,GfxMatrix=>gfxTranslation[200,0,0]); -- using alternate syntax of Array instead of Vector
-d2=gfx(d,GfxMatrix=>gfxTranslation[-200,0,0]);
+d=gfx(dodecasplit,"fill-opacity"=>0.65,GfxAutoMatrix=>gfxRotation(0.02,(1,2,3)));
+d1=gfx(d,GfxMatrix=>gfxTranslation(200,0,0)); -- using alternate syntax of Sequence instead of Vector
+d2=gfx(d,GfxMatrix=>gfxTranslation(-200,0,0));
 gfx(d1,d2,GfxRange=>{vector{-400,-400},vector{400,400}},GfxHeight=>25,"stroke-width"=>2)
 
 p=random splice{0..11};
@@ -1134,7 +1124,7 @@ icosa=apply(faces,f->GfxPolygon{apply(f,j->vertices#j),"fill"=>"gray","stroke"=>
 i=gfx(icosa,GfxMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
 
 rnd = () -> random(-1.,1.); cols={"red","green","blue","yellow","magenta","cyan"};
-gfx(i, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>10,"fill"=>c,GfxSpecular=>10,GfxAutoMatrix=>gfxRotation(0.02,[rnd(),rnd(),rnd()])}),GfxRange=>{[-200,-200],[200,200]},GfxHeight=>30)
+gfx(i, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>10,"fill"=>c,GfxSpecular=>10,GfxAutoMatrix=>gfxRotation(0.02,(rnd(),rnd(),rnd()))}),GfxRange=>{(-200,-200),(200,200)},GfxHeight=>30)
 
 subdivide = (v,f) -> (
     u := v#0;
@@ -1152,11 +1142,11 @@ subdivide = (v,f) -> (
 (v2,f2)=subdivide(vertices,faces);
 (v3,f3)=subdivide(v2,f2);
 sph=apply(f3,f->GfxPolygon{apply(f,j->v3#j),"stroke"=>"white","stroke-width"=>0.01,"fill"=>"gray"});
-gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>10,"fill"=>c,GfxSpecular=>10,GfxAutoMatrix=>gfxRotation(0.02,[rnd(),rnd(),rnd()])}),GfxRange=>{[-200,-200],[200,200]},GfxHeight=>30)
+gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>10,"fill"=>c,GfxSpecular=>10,GfxAutoMatrix=>gfxRotation(0.02,(rnd(),rnd(),rnd()))}),GfxRange=>{(-200,-200),(200,200)},GfxHeight=>30)
 
 -- simple plot
 R=RR[x,y]; P=0.1*(x^2-y^2);
-gfx(gfxPlot(P,{{-10,10},{-10,10}},GfxPoints=>15,"stroke-width"=>0.05,"fill"=>"gray"),GfxLight{[200,0,-500],GfxSpecular=>10,"fill"=>"rgb(180,0,100)"},GfxLight{[-200,100,-500],GfxSpecular=>10,"fill"=>"rgb(0,180,100)"},GfxHeight=>40,GfxAxes=>false)
+gfx(gfxPlot(P,{{-10,10},{-10,10}},GfxPoints=>15,"stroke-width"=>0.05,"fill"=>"gray"),GfxLight{(200,0,-500),GfxSpecular=>10,"fill"=>"rgb(180,0,100)"},GfxLight{(-200,100,-500),GfxSpecular=>10,"fill"=>"rgb(0,180,100)"},GfxHeight=>40,GfxAxes=>false)
 
 -- implicit plot
 R=RR[x,y];
@@ -1164,14 +1154,14 @@ P=y^2-(x+1)*(x-1)*(x-2);
 gfxPlot(P,{-2,3},"stroke-width"=>0.05,GfxHeight=>25,"stroke"=>"red")
 
 -- Schubert calculus
-a=gfx(GfxLine{[-100, 15, 78], [-9, 100, 4]},GfxLine{[-96, -49, -100], [46, -100, 52]},GfxLine{[-100, -42, -51], [59, 100, 76]},GfxLine{[-100, 66, 54], [83, -100, -27]})
-b=gfx(GfxLine{[-30, 100, 20], [9, -100, 8]},GfxLine{[-78, -73, -100], [-64, 84, 100]},"stroke"=>"red")
-c=gfx(GfxPolygon{{[-100,100,100],[-100,-100,100],[-100,-100,-100],[-100,100,-100]}},
-		  GfxPolygon{{[100,100,100],[100,-100,100],[100,-100,-100],[100,100,-100]}},
-		  GfxPolygon{{[100,-100,100],[-100,-100,100],[-100,-100,-100],[100,-100,-100]}},
-		  GfxPolygon{{[100,100,100],[-100,100,100],[-100,100,-100],[100,100,-100]}},
-		  GfxPolygon{{[100,100,-100],[100,-100,-100],[-100,-100,-100],[-100,100,-100]}},
-		  GfxPolygon{{[100,100,100],[100,-100,100],[-100,-100,100],[-100,100,100]}},
+a=gfx(GfxLine{(-100, 15, 78), (-9, 100, 4)},GfxLine{(-96, -49, -100), (46, -100, 52)},GfxLine{(-100, -42, -51), (59, 100, 76)},GfxLine{(-100, 66, 54), (83, -100, -27)})
+b=gfx(GfxLine{(-30, 100, 20), (9, -100, 8)},GfxLine{(-78, -73, -100), (-64, 84, 100)},"stroke"=>"red")
+c=gfx(GfxPolygon{{(-100,100,100),(-100,-100,100),(-100,-100,-100),(-100,100,-100)}},
+		  GfxPolygon{{(100,100,100),(100,-100,100),(100,-100,-100),(100,100,-100)}},
+		  GfxPolygon{{(100,-100,100),(-100,-100,100),(-100,-100,-100),(100,-100,-100)}},
+		  GfxPolygon{{(100,100,100),(-100,100,100),(-100,100,-100),(100,100,-100)}},
+		  GfxPolygon{{(100,100,-100),(100,-100,-100),(-100,-100,-100),(-100,100,-100)}},
+		  GfxPolygon{{(100,100,100),(100,-100,100),(-100,-100,100),(-100,100,100)}},
 		  "stroke"=>"black","fill"=>"grey", "opacity"=>"0.25")
 gfx(a,b,c,GfxWidth=>20)
 
@@ -1182,10 +1172,10 @@ far=-10000;
 screen=1000;
 stars=apply(1..n,i->(
 z=speed*(random(far,screen)//speed);
-GfxCircle{[random(-200,200),random(-200,200),z],10,"fill"=>"yellow","stroke"=>"none",GfxBlur=>0.3,
-GfxAutoMatrix=>{((screen-z)//speed)=>gfxTranslation [0,0,speed],gfxTranslation [0,0,far-screen],((-far+z)//speed)=>gfxTranslation [0,0,speed]}}
+GfxCircle{(random(-200,200),random(-200,200),z),10,"fill"=>"yellow","stroke"=>"none",GfxBlur=>0.3,
+GfxAutoMatrix=>{((screen-z)//speed)=>gfxTranslation (0,0,speed),gfxTranslation (0,0,far-screen),((-far+z)//speed)=>gfxTranslation (0,0,speed)}}
 ));
-gfx(stars,GfxRange=>{[-100,-100],[100,100]})
+gfx(stars,GfxRange=>{(-100,-100),(100,100)})
 style(SVG oo,"background"=>"black")
 
 -- removed
@@ -1198,7 +1188,7 @@ style(SVG oo,"background"=>"black")
    Text
     An SVG rectangle. The SW coordinate is given as GfxPoint, the difference between NE and SW corners is given as GfxSize.
    Example
-    GfxRectangle{[10,10],[20,50],"fill"=>"pink","stroke"=>"black"} -- first argument is GfxPoint, second GfxSize
+    GfxRectangle{(10,10),(20,50),"fill"=>"pink","stroke"=>"black"} -- first argument is GfxPoint, second GfxSize
   Caveat
    GfxRectangle can only be used in 2d. Use GfxPolygon for 3d.
 
