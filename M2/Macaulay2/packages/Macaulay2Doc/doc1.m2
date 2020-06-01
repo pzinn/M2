@@ -240,8 +240,6 @@ document {
 undocumented {
      (NewFromMethod, Command, String),
      (NewFromMethod, Command, Function),
-     (NewFromMethod, BR, List),
-     (NewFromMethod, HR, List),
      (NewFromMethod, HREF, List),
      (NewFromMethod, MarkUpType, List),
      (NewFromMethod, Module, List),
