@@ -18,8 +18,7 @@ export{"GfxType", "GfxObject", "GfxPoly",
     "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilter", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius", "GfxLightCenter",
     "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
     "GfxIs3d", "GfxAuto", "GfxCurrentMatrix",
-    "SVG", "SVGElement",
-    "style"
+    "SVG", "SVGElement"
     }
 
 coreStuff := {
