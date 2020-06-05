@@ -14,18 +14,28 @@ newPackage(
 export{"GfxType", "GfxObject", "GfxPoly",
     "GfxList", "GfxCircle", "GfxLight", "GfxEllipse", "GfxPath", "GfxPolygon", "GfxPolyline", "GfxText", "GfxLine", "GfxHtml",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
-    "GfxContents", "GfxOneSided", "GfxScaledRadius", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxVertical", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxScaledRadiusX", "GfxScaledRadiusY", "GfxRange", "GfxWidth",
-    "GfxDistance", "GfxPerspective", "GfxFontSize", "GfxFilter", "GfxCenter", "GfxHorizontal", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius", "GfxLightCenter",
-    "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxTag", "GfxAxes", "GfxMargin",
-    "GfxIs3d", "GfxAuto", "GfxCurrentMatrix",
+    "GfxContents", "GfxOneSided", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxRange", "GfxWidth",
+    "GfxPerspective", "GfxFontSize", "GfxCenter", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius",
+    "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxAxes", "GfxMargin",
     "SVG", "SVGElement"
     }
+
+protect GfxFilter
+protect GfxDistance
+protect GfxIs3d
+protect GfxAuto
+protect GfxCurrentMatrix
+protect GfxScaledRadius
+protect GfxScaledRadiusX
+protect GfxScaledRadiusY
+protect GfxTag
+protect GfxLightCenter
 
 coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
      "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr", "style" } -- hypertext
 
-scan(coreStuff, s -> globalAssign(value s,value Core#"private dictionary"#s)) -- not the correct way TODO FIX (cf debug Core w or w/o debug Gfx)
+scan(coreStuff, s -> value s <- value Core#"private dictionary"#s) -- not the correct way, use PackageImports? (cf debug Core w or w/o debug Gfx)
 -*
 exportFrom_Core coreStuff
 *-
@@ -88,7 +98,7 @@ GfxType List := (T,opts) -> (
     new T from append(temp,symbol GfxIs3d => gfxParseFlag)
 )
 
-gfxPerspective := g -> (
+gfxPerspective = g -> (
     persp := if g.?GfxPerspective then g.GfxPerspective else 1000.; -- some arbitrary number
     if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}} -- useful to have output {x,y,z+p,1+z/p}
 )
@@ -265,7 +275,7 @@ SVG = withOptions_{
     } new MarkUpType of Hypertext
 
 --
-stableSort = x ->(
+stableSort = x -> if #x <= 1 then x else (
 xx := transpose {x,toList(0..#x-1)};
 (transpose sort xx)#0
 )
@@ -355,7 +365,7 @@ svg (GfxObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
 
 svg (GfxObject,List) := (g,l) -> (
     p := gfxPerspective g;
-    svg(g,p,p,l);
+    svg(g,p,p,l)
 )
 
 svg GfxObject := g -> svg(g,{})
@@ -371,7 +381,7 @@ gfxDistance1 GfxPoly := g -> (
     sum(s,x->(g.cache.GfxCurrentMatrix*x)_2) / #s
     )
 gfxDistance1 GfxList := g -> (
-    sum(g.GfxContents, gfxDistance) / #(g.GfxContents)
+    if #(g.GfxContents) == 0 then 0_RR else sum(g.GfxContents, gfxDistance) / #(g.GfxContents)
     )
 GfxObject ? GfxObject := (x,y) -> (gfxDistance y) ? (gfxDistance x)
 gfxDistance1 GfxText := g -> (
@@ -401,9 +411,17 @@ new SVG from GfxObject := (S,g) -> (
     main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
     if main === null then return {};
     if g.?GfxRange then r := g.GfxRange else r = g.cache.GfxRange; -- should be cached at this stage
-    if r === null then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return {}); -- nothing to draw
+    if r === null or r#0 == r#1 then (g.cache.GfxWidth=g.cache.GfxHeight=0.; return {}); -- nothing to draw
     r = apply(r,numeric);
     rr := r#1 - r#0;
+    if rr_0 == 0 then (
+	rr = vector { rr_1 * 16/10, rr_1 };
+	r = { vector { r#0_0 - 0.5*rr_0, r#0_1 }, vector { r#1_0 + 0.5*rr_0, r#1_1 } };
+	);
+    if rr_1 == 0 then (
+	rr = vector { rr_0, rr_0 * 10/16 };
+	r = { vector { r#0_0, r#0_1 - 0.5*rr_1 }, vector {  r#1_0, r#1_1 + 0.5*rr_1 } };
+	);
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
     if g.?GfxAxes and g.GfxAxes =!= false then ( -- TEMP: coordinates wrong
@@ -434,8 +452,8 @@ new SVG from GfxObject := (S,g) -> (
     if not (g.?GfxWidth or g.?GfxHeight) then -- by default, make it fit inside 16 x 10
 	if rr_0 > 1.6*rr_1 then g.cache.GfxWidth = 16. else g.cache.GfxHeight = 10.;
     -- at this stage one of the two is set
-    if not g.cache.?GfxHeight then g.cache.GfxHeight = g.cache.GfxWidth * (if rr_0 != 0 then rr_1/rr_0 else 10/16);
-    if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * (if rr_1 != 1 then rr_0/rr_1 else 16/10);
+    if not g.cache.?GfxHeight then g.cache.GfxHeight = g.cache.GfxWidth * rr_1/rr_0;
+    if not g.cache.?GfxWidth then g.cache.GfxWidth = g.cache.GfxHeight * rr_0/rr_1;
     -- put some extra blank space around picture
     margin := if g.?GfxMargin then g.GfxMargin else 0.1;
     r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
@@ -688,11 +706,13 @@ multidoc ///
     coordinates); alternatively, one can enter them as sequences. With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
-    Gfx options, that are symbols starting with Gfx (e.g., {\tt GfxRadius} for circles); and styling options, which are CSS style options,
+    Gfx options, that are symbols starting with Gfx (e.g., {\tt GfxRadius} for circles);
+    and styling options, which are CSS style options,
     and which are {\bf strings} (e.g., {\tt "fill"} for fill color).
     Gfx does not use units (coordinates are dimensionless).
-  Caveat
-    Mixing 2d and 3d graphics leads to unpredictable results.
+    In @ TO {Standard} @ mode, the graphical objects are not directly visible; to export them to SVG
+    in order to embed them into a web page, use @ TO {html} @. In @ TO {WebApp} @ mode, the graphical objects
+    are shown as output.
  Node
   Key
    GfxObject
@@ -730,7 +750,10 @@ multidoc ///
    An SVG line
   Description
    Text
-    A simple SVG line. The two compulsory options are GfxPoint1 and GfxPoint2.
+    A simple SVG line. The two compulsory options are GfxPoint1 and GfxPoint2, which are vectors (or sequences) describing the two endpoints.
+   Example
+    GfxLine{GfxPoint1=>vector{0,0},GfxPoint2=>vector{2,1},"stroke"=>"green"}
+    GfxLine{(0,0),(2,1),"stroke-width"=>0.1} -- simplified syntax
  Node
   Key
    GfxLight
