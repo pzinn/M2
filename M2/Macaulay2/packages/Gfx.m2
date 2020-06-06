@@ -20,6 +20,8 @@ export{"GfxType", "GfxObject", "GfxPoly",
     "SVG", "SVGElement"
     }
 
+exportFrom_Core { "style" }
+
 protect GfxFilter
 protect GfxDistance
 protect GfxIs3d
@@ -33,7 +35,7 @@ protect GfxLightCenter
 
 coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
-     "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr", "style" } -- hypertext
+     "nonnull", "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr" } -- hypertext
 
 scan(coreStuff, s -> value s <- value Core#"private dictionary"#s) -- not the correct way, use PackageImports? (cf debug Core w or w/o debug Gfx)
 -*
@@ -233,14 +235,14 @@ gfxRange1 GfxPoly := g -> ( -- relative coordinates *not* supported, screw this
 GfxList = new GfxType of GfxObject from ( "g", { symbol GfxContents => {} } )
 -- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }. plus updates is3d correctly!
 gfx = true >> opts -> x -> (
-    x=select(flatten toList sequence x, y -> y =!=null );
+    x=nonnull flatten toList sequence x;
     if any(x, y -> not instance(y,GfxObject)) then error "gfx: all elements must be instances of GfxObject";
     gfxParseFlag = false;
     opts = gfxParse opts;
     (new GfxList from opts) ++ { symbol GfxContents => x, symbol GfxIs3d => gfxParseFlag or any(x,y->y.GfxIs3d) }
     )
 gfxRange1 GfxList := x -> (
-    s := select(apply(x.GfxContents, y->y.cache.GfxRange),x->x=!=null);
+    s := nonnull apply(x.GfxContents, y->y.cache.GfxRange);
     if #s===0 then null else (
 	s = transpose s;
     	mn := transpose (entries \ s#0);

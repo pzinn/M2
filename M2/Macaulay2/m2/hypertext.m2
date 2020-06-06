@@ -282,6 +282,16 @@ ULop := op -> x -> (
 info UL := ULop info
 net UL := ULop net
 
+OLop := op -> x -> (
+     s := "000. ";
+     printWidth = printWidth - #s;
+     x = toList noopts x;
+     r := stack apply(#x, i -> pad(3,toString (i+1)) | ". " | op x#i); -- html starts counting from 1!
+     printWidth = printWidth + #s;
+     r)
+info OL := OLop info
+net OL := OLop net
+
 * String := x -> help x					    -- so the user can cut paste the menu line to get help!
 
 tex UL := x -> concatenate( ///\begin{itemize}///, newline, apply(noopts x, x -> ( ///\item ///, tex x, newline)), ///\end{itemize}///, newline)

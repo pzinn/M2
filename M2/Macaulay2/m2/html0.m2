@@ -113,6 +113,9 @@ br         = BR{}
 HR         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 hr         = HR{}
 
+new HR from List :=
+new BR from List := (X,x) -> if all(x, e -> instance(e,Option)) then x else error "expected empty list"
+
 PARA       = withQname_"p" withOptions_htmlAttr new MarkUpType of HypertextParagraph	    -- double spacing inside
 
 ExampleItem = withQname_"code" withOptions_htmlAttr new MarkUpType of Hypertext
@@ -186,9 +189,10 @@ new HREF from List := (HREF,x) -> (
 ANCHOR     = withQname_"a" withOptions_htmlAttr new MarkUpType of Hypertext
 
 UL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
-new UL from VisibleList := (UL,x) -> (
+OL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
+new UL from VisibleList := new OL from VisibleList := (T,x) -> (
      x = nonnull x;
-     if #x == 0 then error("empty element of type ", format toString UL, " encountered");
+     -- if #x == 0 then error("empty element of type ", format toString UL, " encountered"); -- empty UL/OL is valid
      apply(x, e -> (
 	       if class e === TO then LI{TOH{e#0}}
 	       else if class e === LI or instance(e,Option) then e
@@ -237,6 +241,7 @@ style (Hypertext,VisibleList) := true >> o -> (x,s) -> ( -- here s is a pair of 
     new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
     )
 
+-- what's below may be too much for PR
 toString MarkUpType := X -> (
     if hasAnAttribute X then (
 	if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
