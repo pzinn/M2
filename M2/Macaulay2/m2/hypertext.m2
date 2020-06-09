@@ -514,6 +514,9 @@ TO2 ? TO := TO2 ? TOH := (x,y) -> x#1 ? y#0
 
 texMath STYLE := tex STYLE := net STYLE := x -> ""
 
+html VerticalList := x -> html UL apply(x,html)
+html NumberedVerticalList := x -> html OL apply(x,html)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -16,11 +16,10 @@ HypertextContainer.synonym = "mark-up list container"
 MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
--*
+-- remove the 3 lines below?
 new MarkUpType from Thing := (M,x) -> new M from {x}
 new MarkUpType from List := (M,x) -> new M from x
 new MarkUpType from Sequence := (M,x) -> new M from toList x
-*-
 
 options MarkUpType := X -> X.Options
 
@@ -209,7 +208,7 @@ ul = x -> (
      if #x>0 then UL x)
 
 DIV        = withOptions_htmlAttr new MarkUpType of HypertextContainer
-DIV1       = withQname_"div" withOptions_{"class"=>"single"} new MarkUpType of HypertextContainer -- phase this one out!
+--DIV1       = withQname_"div" withOptions_{"class"=>"single"} new MarkUpType of HypertextContainer -- phase this one out!
 
 LABEL      = withOptions_{htmlAttr,"for","form"} new MarkUpType of Hypertext
 

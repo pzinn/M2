@@ -6,7 +6,7 @@ newPackage("Text",
      )
 
 exportFrom_Core {
-     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DIV1", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
+     "ANCHOR", "BLOCKQUOTE", "BODY", "BOLD", "BR", "CDATA", "CODE", "COMMENT", "DD", "DIV", "DL", "DT", "EM", "ExampleItem", "HEAD", "HEADER1",
      "HEADER2", "HEADER3", "HEADER4", "HEADER5", "HEADER6", "HR", "HREF", "HTML", "Hypertext", "HypertextContainer", "HypertextParagraph", "IMG", "ITALIC",
      "LABEL", "LATER", "LI", "LINK", "LITERAL", "MENU", "META", "PARA", "PRE", "SMALL", "SPAN", "STRONG", "STYLE", "SUB", "SUBSECTION", "SUP", "TABLE", "TD", "TH",
      "TEX", "TITLE", "TO", "TO2", "TOH", "TR", "TT", "UL", "OL", "validate",
@@ -67,6 +67,7 @@ document {
 --     TT "PARA x", " makes a ", TO "hypertext", " double-spaced paragraph break."
 --     }
 
+-*
 document {
      Key => DIV1,
      Headline => "a single-spaced paragraph separator",
@@ -74,6 +75,7 @@ document {
      TT "DIV1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
 	SeeAlso => "PARA"
      }
+*-
 
 document {
      Key => DIV,

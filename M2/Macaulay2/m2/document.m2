@@ -5,6 +5,8 @@ prefix := set flexiblePrefixOperators
 postfix := set flexiblePostfixOperators
 operator := binary+prefix+postfix
 
+DIV1 = x -> DIV if any(x, y -> class y === OptionTable and y#0 === "class") then x else append(x,"class"=>"single")
+
 checkLoadDocumentation = () -> ( -- this function should be made obsolete, because we should install the Macaulay2Doc package first
      if (
 	  not isGlobalSymbol "Macaulay2Doc"
