@@ -8,7 +8,9 @@ newPackage(
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
         DebuggingMode => false,
-	AuxiliaryFiles => true
+	AuxiliaryFiles => true,
+	PackageImports => {"Text"},
+	PackageExports => {"Text"}
         )
 
 export{"GfxType", "GfxObject", "GfxPoly",
@@ -19,8 +21,6 @@ export{"GfxType", "GfxObject", "GfxPoly",
     "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxAxes", "GfxMargin",
     "SVG", "SVGElement"
     }
-
-exportFrom_Text { "style" }
 
 protect GfxFilter
 protect GfxDistance
@@ -35,7 +35,8 @@ protect GfxLightCenter
 
 coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
-     "nonnull", "MarkUpType", "qname", "Hypertext", "withOptions", "withQname", "htmlAttr" } -- hypertext
+--     "Hypertext", "MarkUpType",  
+     "nonnull", "qname", "withOptions", "withQname", "htmlAttr" } -- hypertext
 
 scan(coreStuff, s -> value s <- value Core#"private dictionary"#s) -- not the correct way, use PackageImports? (cf debug Core w or w/o debug Gfx)
 -*
