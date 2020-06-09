@@ -46,10 +46,7 @@ document {
      PARA "Intended for internal use only."
      }
 document {
-     Key => {MarkUpType,
-	  (symbol SPACE, MarkUpType, String),
-	  (symbol SPACE, MarkUpType, Net),
-	  (symbol SPACE, MarkUpType, Hypertext)},
+     Key => MarkUpType,
      Headline => "the class of mark-up types used with hypertext", 
      "Some mark-up types allow options (attributes) to be inserted in their html tags.",
      EXAMPLE {
@@ -675,6 +672,8 @@ document { Key => TR,
      Headline => "hypertext TR element" }
 document { Key => TD,
      Headline => "hypertext TD element" }
+document { Key => TH,
+     Headline => "hypertext TH element" }
 document { Key => DL,
      Headline => "hypertext DL element" }
 document { Key => DT,
@@ -706,6 +705,24 @@ document {
      PRE "UL {\"first\",\"second\",\"third\"}",
      "produces",
      UL {"first","second","third"},
+     PARA{},
+     SeeAlso => "hypertext"
+     }
+
+document {
+     Key => OL,
+     Headline => "hypertext OL item",
+	Usage => "OL x",
+	Inputs => {"x" => {}},
+	Outputs => {OL => {}},
+     TT "OL x", " encloses the list x as a hypertext OL itemized list.",
+     PARA{},
+     "The argument ", TT "x", " should be a list of strings or hypertext items.",
+     PARA{},
+     "Here is an example. The expression ",
+     PRE "OL {\"first\",\"second\",\"third\"}",
+     "produces",
+     OL {"first","second","third"},
      PARA{},
      SeeAlso => "hypertext"
      }

@@ -20,7 +20,7 @@ export{"GfxType", "GfxObject", "GfxPoly",
     "SVG", "SVGElement"
     }
 
-exportFrom_Core { "style" }
+exportFrom_Text { "style" }
 
 protect GfxFilter
 protect GfxDistance
@@ -1067,6 +1067,11 @@ multidoc ///
     Some arbitrary HTML content, specified by the option GfxString (a string).
   Caveat
    Due to a limitation of <foreignObject>, coordinates are rounded to the nearest integer. So use large enough coordinate systems.
+ Node
+  Key
+   SVG
+  Headline
+   hypertext SVG item
 ///
 
 end--

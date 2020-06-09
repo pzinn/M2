@@ -16,12 +16,13 @@ HypertextContainer.synonym = "mark-up list container"
 MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
--- remove the 3 lines below?
+-*
 new MarkUpType from Thing := (M,x) -> new M from {x}
 new MarkUpType from List := (M,x) -> new M from x
 new MarkUpType from Sequence := (M,x) -> new M from toList x
+*-
 
-options MarkUpType := X -> X.Options
+options MarkUpType := X -> if X.?Options then X.Options else new OptionTable from {}
 
 -*
 MarkUpType Net := (M,x) -> new M from {toString x}
@@ -214,8 +215,8 @@ LABEL      = withOptions_{htmlAttr,"for","form"} new MarkUpType of Hypertext
 
 TABLE      = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 TR         = withOptions_htmlAttr new MarkUpType of Hypertext
-TD         = withOptions_htmlAttr new MarkUpType of HypertextContainer
-TH         = withOptions_htmlAttr new MarkUpType of TD
+TD         = withOptions_{htmlAttr,"colspan","headers","rowspan"} new MarkUpType of HypertextContainer
+TH         = withOptions_{htmlAttr,"colspan","headers","rowspan"} new MarkUpType of TD
 ButtonTABLE  = new MarkUpType of HypertextParagraph
 
 new TABLE from VisibleList := (T,x) -> (
