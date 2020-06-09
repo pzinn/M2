@@ -16,15 +16,23 @@ HypertextContainer.synonym = "mark-up list container"
 MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
+-*
 new MarkUpType from Thing := (M,x) -> new M from {x}
 new MarkUpType from List := (M,x) -> new M from x
 new MarkUpType from Sequence := (M,x) -> new M from toList x
+*-
 
 options MarkUpType := X -> X.Options
 
+-*
 MarkUpType Net := (M,x) -> new M from {toString x}
 MarkUpType String :=
 MarkUpType Hypertext := (M,x) -> new M from {x}
+*-
+new Hypertext from String :=
+new Hypertext from Hypertext := (M,x) -> {x}
+new Hypertext from Net := (M,x) -> {toString x}
+
 
 IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
 IntermediateMarkUpType.synonym = "intermediate mark-up type"
@@ -191,11 +199,10 @@ ANCHOR     = withQname_"a" withOptions_htmlAttr new MarkUpType of Hypertext
 UL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 OL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 new UL from VisibleList := new OL from VisibleList := (T,x) -> (
-     x = nonnull x;
-     -- if #x == 0 then error("empty element of type ", format toString UL, " encountered"); -- empty UL/OL is valid
-     apply(x, e -> (
+     -- if #x == 0 then error("empty element of type ", format toString T, " encountered"); -- empty UL/OL is valid (even excluding options)
+     apply(nonnull x, e -> (
 	       if class e === TO then LI{TOH{e#0}}
-	       else if class e === LI or instance(e,Option) then e
+	       else if instance(e, LI) or instance(e,Option) then e
 	       else LI e)))
 ul = x -> (
      x = nonnull x;
@@ -209,7 +216,16 @@ LABEL      = withOptions_{htmlAttr,"for","form"} new MarkUpType of Hypertext
 TABLE      = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 TR         = withOptions_htmlAttr new MarkUpType of Hypertext
 TD         = withOptions_htmlAttr new MarkUpType of HypertextContainer
+TH         = withOptions_htmlAttr new MarkUpType of TD
 ButtonTABLE  = new MarkUpType of HypertextParagraph
+
+new TABLE from VisibleList := (T,x) -> (
+    apply(nonnull x, e -> (
+	    if instance(e, TR) or instance(e, Option) then e else TR e)))
+
+new TR from VisibleList := (T,x) -> (
+    apply(nonnull x, e -> (
+	    if instance(e, TD) or instance(e, Option) then e else TD e)))
 
 TO2        = withQname_"a" new IntermediateMarkUpType of Hypertext
 new TO2 from Sequence := 
@@ -230,7 +246,6 @@ new TO from Thing := new TOH from Thing := (TO,x) -> new TO from {x} -- document
 
 MENU       = withQname_"div" new IntermediateMarkUpType of HypertextParagraph	            -- like "* Menu:" of "info"
 
--- added stuff
 style = method(Options => true)
 style Hypertext := true >> o -> x -> style(x, pairs o)
 style (Hypertext,VisibleList) := true >> o -> (x,s) -> ( -- here s is a pair of key/values
