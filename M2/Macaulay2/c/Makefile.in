@@ -33,13 +33,16 @@ CPPFLAGS := -I../../include -I/include -I@srcdir@/../../include -I@srcdir@ $(CPP
 
 # we include -Wno-unknown-attributes because libgc incorrectly assumes that clang 6 accepts __attribute__((__alloc_size__(1))):
 CFLAGS += -Wall -Wno-unknown-attributes -Wno-stringop-truncation
+ifeq "@DEVELOPMENT@" "yes"
+CFLAGS +=  -Werror
+endif
 ifeq "@__INTEL_COMPILER@" "no"
 CFLAGS += -Wimplicit-function-declaration
 endif
 ifeq (@OS@,Linux)
 LDFLAGS += -Wl,-rpath,$(BUILTLIBPATH)/lib
 endif
-LOADLIBES += @GC_LIBS@
+LOADLIBES += -lgc
 
 ############################## compiling
 scc1: $(OFILES) 

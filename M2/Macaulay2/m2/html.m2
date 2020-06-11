@@ -449,7 +449,7 @@ utest := opt -> (
      cmd := "ulimit " | opt | "; ";
      if chkrun("2>/dev/null >/dev/null "|cmd) == 0 then cmd else ""
      )
-ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000"| utest "-v 850000" | utest "-s 8192" | utest "-n 512"
+ulimit := utest "-c unlimited" | utest "-t 700" | utest "-m 850000" | utest "-s 8192" | utest "-n 512"
 
 M2statusRegexp := "^--status:"
 statusLines := file -> select(lines file, s -> match(M2statusRegexp,s))
@@ -464,26 +464,81 @@ describeReturnCode = r -> (
      else "killed by signal " | toString (r % 128) | if r & 128 =!= 0 then " (core dumped)" else ""
      )
 
+-- prefixes
+SetUlimit      := 1 << 20 -* sets ulimits *-
+GCMAXHEAP      := 1 << 21 -* sets GC_MAXIMUM_HEAP_SIZE=400M *-
+GCSTATS        := 1 << 22 -* sets GC_PRINT_STATS=1 *-
+GCVERBOSE      := 1 << 23 -* sets GC_PRINT_VERBOSE_STATS=1 *-
+-- arguments
+ArgQ           := 1 <<  0 -* add -q *-
+ArgInt         := 1 <<  1 -* add --int *-
+ArgNoBacktrace := 1 <<  2 -* add --no-backtrace *-
+ArgNoDebug     := 1 <<  3 -* add --no-debug *-
+ArgNoPreload   := 1 <<  4 -* add --no-preload *-
+ArgNoRandomize := 1 <<  5 -* add --no-randomize *-
+ArgNoReadline  := 1 <<  6 -* add --no-readline *-
+ArgNoSetup     := 1 <<  7 -* add --no-setup *-
+ArgNoThreads   := 1 <<  8 -* add --no-threads *-
+ArgNoTTY       := 1 <<  9 -* add --no-tty *-
+ArgNoTValues   := 1 << 10 -* add --no-tvalues *-
+ArgNotify      := 1 << 11 -* add --notify *-
+ArgSilent      := 1 << 12 -* add --silent *-
+ArgStop        := 1 << 13 -* add --stop *-
+ArgPrintWidth  := 1 << 14 -* add --print-width 77 *-
+-- suffixes
+SetInputFile   := 1 << 30 -* add <inf *-
+SetOutputFile  := 1 << 31 -* add >>tmpf *-
+SetCaptureErr  := 1 << 32 -* add 2>&1 *-
+
+-* by default, the following commandline fixtures are used *-
+defaultMode := (SetUlimit + GCMAXHEAP + ArgQ + ArgInt
+    + ArgNoRandomize + ArgNoReadline + ArgSilent + ArgStop
+    + ArgPrintWidth + SetInputFile + SetOutputFile + SetCaptureErr)
+-* making this global, so it can be edited after entering debug Core *-
+argumentMode = defaultMode
+
 runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefiles) -> ( -- return false if error
      announcechange();
-     stderr << "--making " << desc << " in file " << outf << endl;
+     stderr << "--making " << desc << ( if debugLevel > 0 then " in file " | outf else "" ) << endl;
      if fileExists outf then removeFile outf;
      pkgname := toString pkg;
-     setseed := " --no-randomize";
-     ldpkg := if pkgname != "Macaulay2Doc" then concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'") else "";
-     src := concatenate apply(srcdirs, d -> (" --srcdir ",format d));
-     -- we specify --no-readline because the readline library catches SIGINT:
-     args := "--silent --print-width 77 --stop --int --no-readline" | (if usermode then "" else " -q") | src | setseed | ldpkg;
-     env := "GC_MAXIMUM_HEAP_SIZE=400M ";
-     cmdname := commandLine#0;
-     -- must convert a relative path to an absolute path so we can run the same M2 from another directory while
-     -- running the examples:
-     if match("/",cmdname) then cmdname = toAbsolutePath cmdname;
      tmpf << "-- -*- M2-comint -*- hash: " << inputhash << endl << close; -- must match regular expression below
      rundir := temporaryFileName() | "-rundir/";
-     cmd := ulimit | "cd " | rundir | "; " | env | cmdname | " " | args | " <" | format inf | " >>" | format toAbsolutePath tmpf | " 2>&1";
-     stderr << cmd << endl;
      makeDirectory rundir;
+     -* The bits in the binary representation of argmode determine arguments to add.
+        If the 64th bit is set, argumentMode modifies the defaultMode rather than overriding them. *-
+     argmode := if 0 < argumentMode & (1<<64) then xor(defaultMode, argumentMode) else argumentMode;
+     -* returns (" "|arg) if all bits in m are set in argmode *-
+     readmode := (m, arg) -> if argmode & m == m then " " | arg else "";
+     cmd := readmode(SetUlimit, ulimit);
+     cmd = cmd | " cd " | rundir | ";";
+     cmd = cmd | readmode(GCMAXHEAP,      "GC_MAXIMUM_HEAP_SIZE=400M");
+     cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
+     cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
+     cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     if argmode =!= defaultMode or not usermode then
+     cmd = cmd | readmode(ArgQ,           "-q");
+     cmd = cmd | readmode(ArgInt,         "--int");
+     cmd = cmd | readmode(ArgNoBacktrace, "--no-backtrace");
+     cmd = cmd | readmode(ArgNoDebug,     "--no-debug");
+     cmd = cmd | readmode(ArgNoPreload,   "--no-preload");
+     cmd = cmd | readmode(ArgNoRandomize, "--no-randomize");
+     cmd = cmd | readmode(ArgNoReadline,  "--no-readline");
+     cmd = cmd | readmode(ArgNoSetup,     "--no-setup");
+     cmd = cmd | readmode(ArgNoThreads,   "--no-threads");
+     cmd = cmd | readmode(ArgNoTTY,       "--no-tty");
+     cmd = cmd | readmode(ArgNoTValues,   "--no-tvalues");
+     cmd = cmd | readmode(ArgNotify,      "--notify");
+     cmd = cmd | readmode(ArgSilent,      "--silent");
+     cmd = cmd | readmode(ArgStop,        "--stop");
+     cmd = cmd | readmode(ArgPrintWidth,  "--print-width 77");
+     cmd = cmd | concatenate apply(srcdirs, d -> (" --srcdir",format d));
+     needsline := concatenate(" -e 'needsPackage(\"",pkgname,"\", Reload => true, FileName => \"",pkg#"source file","\")'");
+     cmd = cmd | if pkgname != "Macaulay2Doc" then needsline else "";
+     cmd = cmd | readmode(SetInputFile,   "<" | format inf);
+     cmd = cmd | readmode(SetOutputFile,  ">>" | format toAbsolutePath tmpf);
+     cmd = cmd | readmode(SetCaptureErr,  "2>&1");
+     if debugLevel > 0 then stderr << cmd << endl;
      for fn in examplefiles do copyFile(fn,rundir | baseFilename fn);
      r := run cmd;
      if r == 0 then (
@@ -504,6 +559,7 @@ runFile := (inf,inputhash,outf,tmpf,desc,pkg,announcechange,usermode,examplefile
 	  moveFile(tmpf,outf);
 	  return true;
 	  );
+     stderr << cmd << endl;
      stderr << tmpf << ":0:1: (output file) error: Macaulay2 " << describeReturnCode r << endl;
      stderr << aftermatch(M2errorRegexp,get tmpf);
      stderr << inf  << ":0:1: (input file)" << endl;
@@ -823,6 +879,10 @@ installPackage Package := opts -> pkg -> (
 
  	  if not opts.IgnoreExampleErrors 
 	  then if hadExampleError then error(toString numExampleErrors, " error(s) occurred running examples for package ", pkg#"pkgname");
+
+	  -- if no examples were generated, then remove the directory
+	  if length readDirectory exampleOutputDir == 2 then
+	  	  removeDirectory exampleOutputDir;
 
 	  -- process documentation
 	  rawkey := "raw documentation database";
@@ -1184,38 +1244,20 @@ makePackageIndex List := path -> ( -- TO DO : rewrite this function to use the r
      )
 
 runnable := fn -> (
-     if isAbsolutePath fn then (
-	  fileExists fn
-	  )
-     else (
-     	  0 < # select(1,apply(separate(":", getenv "PATH"),p -> p|"/"|fn),fileExists)
-	  )
+     if fn == "" then false;
+     if isAbsolutePath fn then fileExists fn
+     else 0 < # select(1, apply(separate(":", getenv "PATH"), p -> p|"/"|fn), fileExists)
      )
-chk := ret -> if ret != 0 then (
-     if version#"operating system" === "MicrosoftWindows" and ret == 256 then return;     
-     error "external command failed"
-     )
-browserMethods := hashTable {
-     "firefox" => url -> {"firefox", url},
-     "open" => url -> {"open", url},
-     "cygstart" => url -> {"cygstart", url},
-     "netscape" => url -> {"netscape", "-remote",  "openURL(" | url | ")" },
-     "windows firefox" => url -> { "/cygdrive/c/Program Files/Mozilla Firefox/firefox", "-remote", "openURL(" | url | ")" }
-     }
 URL = new SelfInitializingType of BasicList
 new URL from String := (URL,str) -> new URL from {str}
 show URL := x -> (
      url := x#0;
-     browser := getenv "WWWBROWSER";
-     if version#"operating system" === "Darwin" and runnable "open" then browser = "open" -- should ignore WWWBROWSER, according to Mike
-     else
-     if version#"issue" === "Cygwin" then browser = "cygstart";
-     if browser === "" then (
-	  if runnable "firefox" then browser = "firefox"
-	  else if runnable "netscape" then browser = "netscape"
-	  else error "no browser found, and none specified in $WWWBROWSER"
-	  );
-     cmd := if browserMethods#?browser then browserMethods#browser url else { browser, url };
+     if runnable "open" then browser := "open" -- Apple varieties
+     else if runnable "xdg-open" then browser = "xdg-open" -- most Linux distributions
+     else if runnable getenv "WWWBROWSER" then browser = getenv "WWWBROWSER" -- compatibility
+     else if runnable "firefox" then browser = "firefox" -- backup
+     else error "neither open nor xdg-open is found and WWWBROWSER is not set";
+     cmd := { browser, url };
      if fork() == 0 then (
 	  setGroupID(0,0);
      	  try exec cmd;
