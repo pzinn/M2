@@ -139,6 +139,9 @@ html IMG  := x -> (
      concatenate("<img src=\"", htmlLiteral toURL o#"src", "\" alt=", format o#"alt", "/>"))
 *-
 
+treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
+html IMG := (lookup(html,IMG)) @@ treatImgSrc
+
 html HREF := x -> (
      r := html last x;
      if match("^ +$",r) then r = #r : "&nbsp;&nbsp;";

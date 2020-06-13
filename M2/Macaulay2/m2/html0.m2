@@ -16,15 +16,11 @@ HypertextContainer.synonym = "mark-up list container"
 MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
-new MarkUpType from Thing := (M,x) -> new M from {x}
-new MarkUpType from List := (M,x) -> new M from x
-new MarkUpType from Sequence := (M,x) -> new M from toList x
+options MarkUpType := X -> if X.?Options then X.Options else new OptionTable from {}
 
-options MarkUpType := X -> X.Options
-
-MarkUpType Net := (M,x) -> new M from {toString x}
-MarkUpType String :=
-MarkUpType Hypertext := (M,x) -> new M from {x}
+new Hypertext from VisibleList := (M,x) -> x
+new Hypertext from Thing := (M,x) -> {x}
+new Hypertext from Net := (M,x) -> {toString x}
 
 IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
 IntermediateMarkUpType.synonym = "intermediate mark-up type"
@@ -80,22 +76,12 @@ htmlGlobalAttr = { -- html global attributes
     }
 
 htmlAttr = htmlGlobalAttr | { -- html global and event attributes
-    "onafterprint",
-    "onbeforeprint",
-    "onbeforeunload",
-    "onerror",
-    "onhashchange",
-    "onload",
-    "onmessage",
-    "onoffline",
-    "ononline",
-    "onpagehide",
-    "onpageshow",
-    "onpopstate",
-    "onresize",
-    "onstorage",
-    "onunload"
-}
+    "onafterprint","onbeforeprint","onbeforeunload","onerror","onhashchange","onload","onmessage","onoffline","ononline","onpagehide","onpageshow","onpopstate","onresize","onstorage","onunload",
+    "onblur","onchange","oncontextmenu","onfocusscript","oninputscript","oninvalid","onresetscript","onsearch","onselect","onsubmit",
+    "onkeydown","onkeypress","onkeyup",
+    "onclick","ondblclick","onmousedown","onmousemove","onmouseout","onmouseover","onmouseup","onmousewheel","onwheel",
+    "ondrag","ondragend","ondragenter","ondragleave","ondragover","ondragstart","ondrop","onscroll",
+    "ontoggle" }
 
 withOptions = (v,x) -> (x.Options = new OptionTable from apply(flatten v,val -> if class val === Option then val else val=>null); x)
 withQname   = (q,x) -> (
@@ -122,6 +108,9 @@ br         = BR{}
 
 HR         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 hr         = HR{}
+
+new HR from List :=
+new BR from List := (X,x) -> if all(x, e -> instance(e,Option)) then x else error "expected empty list"
 
 PARA       = withQname_"p" withOptions_htmlAttr new MarkUpType of HypertextParagraph	    -- double spacing inside
 
@@ -180,6 +169,8 @@ DL         = withOptions_htmlAttr new MarkUpType of Hypertext
 DD         = withOptions_htmlAttr new MarkUpType of Hypertext
 DT         = withOptions_htmlAttr new MarkUpType of Hypertext
 
+STYLE      = withOptions_{htmlGlobalAttr,"type"} new MarkUpType of Hypertext
+
 HREF       = withQname_"a" new IntermediateMarkUpType of Hypertext
 new HREF from List := (HREF,x) -> (
      if #x > 2 or #x == 0 then error "HREF list should have length 1 or 2";
@@ -191,29 +182,38 @@ new HREF from List := (HREF,x) -> (
      then error "HREF expected URL to be a string or a pair of strings";
      x)
 
-ANCHOR     = withQname_"a" withOptions_htmlAttr new MarkUpType of Hypertext
+ANCHOR     = withQname_"a" withOptions_{htmlAttr,"href","rel","target","type"} new MarkUpType of Hypertext
 
 UL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
-new UL from VisibleList := (UL,x) -> (
-     x = nonnull x;
-     if #x == 0 then error("empty element of type ", format toString UL, " encountered");
-     apply(x, e -> (
+OL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
+new UL from VisibleList := new OL from VisibleList := (T,x) -> (
+     -- if #x == 0 then error("empty element of type ", format toString T, " encountered"); -- empty UL/OL is valid (even excluding options)
+     apply(nonnull x, e -> (
 	       if class e === TO then LI{TOH{e#0}}
-	       else if class e === LI then e
+	       else if instance(e, LI) or instance(e,Option) then e
 	       else LI e)))
 ul = x -> (
      x = nonnull x;
      if #x>0 then UL x)
 
 DIV        = withOptions_htmlAttr new MarkUpType of HypertextContainer
-DIV1       = withQname_"div" withOptions_{"class"=>"single"} new MarkUpType of HypertextContainer -- phase this one out!
+--DIV1       = withQname_"div" withOptions_{"class"=>"single"} new MarkUpType of HypertextContainer -- phase this one out!
 
 LABEL      = withOptions_{htmlAttr,"for","form"} new MarkUpType of Hypertext
 
 TABLE      = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 TR         = withOptions_htmlAttr new MarkUpType of Hypertext
-TD         = withOptions_htmlAttr new MarkUpType of HypertextContainer
+TD         = withOptions_{htmlAttr,"colspan","headers","rowspan"} new MarkUpType of HypertextContainer
+TH         = withOptions_{htmlAttr,"colspan","headers","rowspan"} new MarkUpType of TD
 ButtonTABLE  = new MarkUpType of HypertextParagraph
+
+new TABLE from VisibleList := (T,x) -> (
+    apply(nonnull x, e -> (
+	    if instance(e, TR) or instance(e, Option) then e else TR e)))
+
+new TR from VisibleList := (T,x) -> (
+    apply(nonnull x, e -> (
+	    if instance(e, TD) or instance(e, Option) then e else TD e)))
 
 TO2        = withQname_"a" new IntermediateMarkUpType of Hypertext
 new TO2 from Sequence := 
@@ -233,6 +233,39 @@ new TOH from Hypertext := x -> error("TO of mark up list '", toString x, "'")
 new TO from Thing := new TOH from Thing := (TO,x) -> new TO from {x} -- document tags can be sequences or arrays, so keep them intact
 
 MENU       = withQname_"div" new IntermediateMarkUpType of HypertextParagraph	            -- like "* Menu:" of "info"
+
+style = method(Options => true)
+style Hypertext := true >> o -> x -> style(x, pairs o)
+style (Hypertext,VisibleList) := true >> o -> (x,s) -> ( -- here s is a pair of key/values
+    str := concatenate apply(s, e -> if class e#0 === String then e#0|":"|toString e#1|";");
+    if str === "" then return x;
+    i := position(toList x, y -> class y === Option and y#0 === "style");
+    if i===null then append(x,"style"=>str) else
+    new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
+    )
+
+-- what's below may be too much for PR
+toString MarkUpType := X -> (
+    if hasAnAttribute X then (
+	if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
+	if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	);
+    concatenate(toString class X, " of ", toString parent X, if X.?qname then " <"|X.qname|">" ))
+
+net MarkUpType := X -> (
+    if hasAnAttribute X then (
+	if hasAttribute(X,PrintNet) then return getAttribute(X,PrintNet);
+	if hasAttribute(X,PrintNames) then return net getAttribute(X,PrintNames);
+	if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	);
+    horizontalJoin (net class X, " of ", net parent X, if X.?qname then " <"|X.qname|">" ))
+
+texMath MarkUpType := X -> (
+    if X.?texMath then return X.texMath;
+    if hasAttribute(X,ReverseDictionary) then return texMath toString getAttribute(X,ReverseDictionary);
+    concatenate apply({class X, " of ", parent X, if X.?qname then " <"|X.qname|">"}, texMath)
+    )
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
