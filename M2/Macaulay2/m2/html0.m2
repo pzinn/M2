@@ -194,7 +194,7 @@ new HREF from List := (HREF,x) -> (
      then error "HREF expected URL to be a string or a pair of strings";
      x)
 
-ANCHOR     = withQname_"a" withOptions_htmlAttr new MarkUpType of Hypertext
+ANCHOR     = withQname_"a" withOptions_{htmlAttr,"href","rel","target","type"} new MarkUpType of Hypertext
 
 UL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
 OL         = withOptions_htmlAttr new MarkUpType of HypertextParagraph
