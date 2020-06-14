@@ -18,7 +18,7 @@ export{"GfxType", "GfxObject", "GfxPoly",
     "gfx", "gfxRange", "gfxIs3d", "gfxDistance", "gfxRotation", "gfxTranslation", "gfxLinearGradient", "gfxRadialGradient", "gfxArrow", "gfxPlot",
     "GfxContents", "GfxOneSided", "GfxRadiusX", "GfxRadiusY", "GfxSpecular", "GfxPoint1", "GfxPoint2", "GfxPoint", "GfxRange", "GfxWidth",
     "GfxPerspective", "GfxFontSize", "GfxCenter", "GfxHeight", "GfxAutoMatrix", "GfxMatrix", "GfxPoints", "GfxRadius",
-    "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxAxes", "GfxMargin",
+    "GfxBlur", "GfxStatic", "GfxString", "GfxPathList", "GfxAxes", "GfxMargin", "GfxMesh",
     "SVG", "SVGElement"
     }
 
@@ -36,7 +36,7 @@ protect GfxLightCenter
 coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
 --     "Hypertext", "MarkUpType",  
-     "nonnull", "qname", "withOptions", "withQname", "htmlAttr" } -- hypertext
+     "htmlLiteral", "nonnull", "qname", "withOptions", "withQname", "htmlAttr" } -- hypertext
 
 scan(coreStuff, s -> value s <- value Core#"private dictionary"#s) -- not the correct way, use PackageImports? (cf debug Core w or w/o debug Gfx)
 -*
@@ -47,10 +47,16 @@ exportFrom_Core coreStuff
 htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize"}
 svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 
-GfxObject = new Type of OptionTable -- ancestor type
+GfxObject = new Type of HashTable -- ancestor type
 
-new GfxObject from List := (T,l) -> new OptionTable from append(l,symbol cache => new CacheTable); -- every Gfx object should have a cache
+new GfxObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Gfx object should have a cache
 new GfxObject := T -> new T from {};
+new GfxObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
+installMethod(symbol ++, GfxObject, List, GfxObject => -- cf similar method for OptionTable
+     (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last)
+     )
+
+
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: GfxRadius, GfxFontSize, etc
@@ -234,13 +240,12 @@ gfxRange1 GfxPoly := g -> ( -- relative coordinates *not* supported, screw this
 
 -- to make lists of them
 GfxList = new GfxType of GfxObject from ( "g", { symbol GfxContents => {} } )
--- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }. plus updates is3d correctly!
-gfx = true >> opts -> x -> (
-    x=nonnull flatten toList sequence x;
-    if any(x, y -> not instance(y,GfxObject)) then error "gfx: all elements must be instances of GfxObject";
-    gfxParseFlag = false;
-    opts = gfxParse opts;
-    (new GfxList from opts) ++ { symbol GfxContents => x, symbol GfxIs3d => gfxParseFlag or any(x,y->y.GfxIs3d) }
+-- slightly simpler syntax: gfx (a,b,c, opt=>xxx) rather than GfxList { {a,b,c}, opt=>xxx }
+gfx = x -> (
+    x=flatten toList sequence x;
+    x1 := select(x, y -> instance(y,GfxObject));
+    x2 := select(x, y -> instance(y,Option));
+    GfxList append(x2,symbol GfxContents => x1)
     )
 gfxRange1 GfxList := x -> (
     s := nonnull apply(x.GfxContents, y->y.cache.GfxRange);
@@ -298,6 +303,9 @@ updateGfxMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
     if g.?GfxMatrix then g.cache.GfxCurrentMatrix = g.cache.GfxCurrentMatrix*g.GfxMatrix;
     )
 
+LiteralString := new WrapperType of Holder -- to make sure the text inside GfxText doesn't get html'ified
+htmlWithTex LiteralString := x -> htmlLiteral x#0
+
 svgLookup := hashTable { -- should be more systematic
     symbol GfxMatrix => (x,m) -> "data-matrix" => jsString x,
     symbol GfxAutoMatrix => (x,m) -> "data-dmatrix" => jsString x,
@@ -333,7 +341,7 @@ svgLookup := hashTable { -- should be more systematic
 	x = toSequence stableSort x;
 	apply(x, y -> y.cache.SVGElement)
 	),
-    symbol GfxString => (x,m) -> x
+    symbol GfxString => (x,m) -> LiteralString x
     }
 
 svg3dLookup := hashTable { -- should be more systematic
@@ -436,9 +444,9 @@ new SVG from GfxObject := (S,g) -> (
 	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 	    );
 	axeslabels = gfx(
-	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => htmlWithTex if instance(g.GfxAxes,List) then g.GfxAxes#0 else local x , GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => htmlWithTex if instance(g.GfxAxes,List) then g.GfxAxes#1 else local y, GfxFontSize => 0.08*min(rr_0,rr_1)},
-	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => htmlWithTex if instance(g.GfxAxes,List) then g.GfxAxes#2 else local z, GfxFontSize => 0.08*min(rr_0,rr_1)}
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => htmlWithTex if instance(g.GfxAxes,List) and #g.GfxAxes>0 then g.GfxAxes#0 else local x , GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    GfxHtml { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => htmlWithTex if instance(g.GfxAxes,List) and #g.GfxAxes>1 then g.GfxAxes#1 else local y, GfxFontSize => 0.08*min(rr_0,rr_1)},
+	    if gfxIs3d g then GfxHtml { GfxPoint => 1.06*vector{0,0,max(r#1_0,r#1_1)}, GfxString => htmlWithTex if instance(g.GfxAxes,List) and #g.GfxAxes>2 then g.GfxAxes#2 else local z, GfxFontSize => 0.08*min(rr_0,rr_1)}
 	    -*
 	    GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {r#1_0,0,0} else {r#1_0,0}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#0 else "x", GfxFontSize => 0.08*min(rr_0,rr_1)},
 	    GfxText { GfxPoint => 1.06*vector if gfxIs3d g then {0,r#1_1,0} else {0,r#1_1}, GfxString => if instance(g.GfxAxes,List) then toString g.GfxAxes#1 else "y", GfxFontSize => 0.08*min(rr_0,rr_1)},
@@ -559,7 +567,7 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
 )
 
 noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
-htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
+HypertextInternalLink#{WebApp,Print} = x -> Thing#{WebApp,Print} @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
 
 svgFilter := withQname_"filter" withOptions_{svgAttr,"x","y","width","height"} new MarkUpType of HypertextInternalLink;
 feGaussianBlur := withQname_"feGaussianBlur" withOptions_{svgAttr,"in","result","stdDeviation"} new MarkUpType of Hypertext;
@@ -636,13 +644,13 @@ gfxRadialGradient = true >> o -> stop -> (
 	)
     )
 
-GfxArrow = GfxPolygon { symbol GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none" }
+GfxArrow = new OptionTable from gfxParse { symbol GfxPoints => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", GfxIs3d => false }
 svgMarker := withQname_"marker" withOptions_{svgAttr, "orient" => "auto", "markerWidth" => "3", "markerHeight" => "4", "refX" => "0", "refY" => "2"} new MarkUpType of HypertextInternalLink;
-gfxArrow = o -> (
+gfxArrow = true >> o -> x -> (
     tag := gfxTag();
     svgMarker {
 	"id" => tag,
-	svg(GfxArrow ++ gfxParse toList sequence o,map(RR^4,RR^4,1),map(RR^4,RR^4,1))  -- eww
+	svg(new GfxPolygon from (GfxArrow ++ gfxParse o),map(RR^4,RR^4,1),map(RR^4,RR^4,1))  -- eww
 	}
     )
 
@@ -671,28 +679,34 @@ gfxPlot = true >> o -> (P,r) -> (
     if #r>2 or (numgens R =!= #r and numgens R =!= #r+1) then error("incorrect number of variables / ranges");
     if numgens R === #r then R2 := coefficientRing R else R2 = (coefficientRing R) ( monoid [last gens R] );
     if (#r === 1) then ( r = r#0;
-    	if (o.?GfxPoints) then n := o.GfxPoints else n = 100;
+	if (o.?GfxMesh) then n := o.GfxMesh else n = 100;
 	val := transpose apply(n+1, i -> (
 		x := i*(r#1-r#0)/n+r#0;
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
 		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
-	new GfxList from (new GfxObject) ++ { "fill"=>"none", GfxAxes=>gens R, GfxIs3d=>false } ++ gfxParse o
-	++ { symbol GfxContents => apply(val, v -> GfxPath { flag:=true; GfxPathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))})}
+	new GfxList from (
+	    (new OptionTable from { "fill"=>"none", GfxAxes=>gens R, GfxIs3d=>false,
+		symbol GfxContents => apply(val, v -> GfxPath { flag:=true; GfxPathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))})
+		}) ++ gfxParse o
+	    )
 	) else (
-    	if (o.?GfxPoints) then n = o.GfxPoints else n = 10;
+	if (o.?GfxMesh) then n = o.GfxMesh else n = 10;
 	val = table(n+1,n+1,(i,j)->(
 		x := i*(r#0#1-r#0#0)/n+r#0#0;
 		y := j*(r#1#1-r#1#0)/n+r#1#0;
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
 		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
-	new GfxList from (new GfxObject) ++ { GfxAxes=>gens R, GfxIs3d=>true } ++ gfxParse o
-	++ { symbol GfxContents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
-		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
-		    GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) } -- technically this is wrong -- the quad isn't flat, we should make triangles
+	new GfxList from (
+	    (new OptionTable from { GfxAxes=>gens R, GfxIs3d=>true,
+		symbol GfxContents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
+			if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
+			GfxPolygon { GfxPoints => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) -- technically this is wrong -- the quad isn't flat, we should make triangles
+		 }) ++ gfxParse o
 	)
     )
+)
 
 beginDocumentation()
 multidoc ///
@@ -827,6 +841,8 @@ multidoc ///
     Font size should be specified with GfxFontSize.
    Example
     GfxText{(0,0),"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+  Caveat
+   Currently, cannot be rotated. (coming soon)
  Node
   Key
    gfx
@@ -1027,6 +1043,7 @@ multidoc ///
     The first argument is a polynomial, the second is a (list of) range(s) of variable(s).
     If the number of ranges is equal to the number of variables of the polynomial, the graph of the polynomial
     is drawn. If it is one fewer, then the zero set of the polynomial is drawn.
+    The option GfxMesh specifies the number of sampled values of the variables.
    Example
     R=RR[x,y];
     P=y^2-(x+1)*(x-1)*(x-2);
@@ -1180,7 +1197,7 @@ gfx(sph, apply(cols, c -> GfxLight{100*vector{1.5+rnd(),rnd(),rnd()},GfxRadius=>
 
 -- simple plot
 R=RR[x,y]; P=0.1*(x^2-y^2);
-gfx(gfxPlot(P,{{-10,10},{-10,10}},GfxPoints=>15,"stroke-width"=>0.05,"fill"=>"gray"),GfxLight{(200,0,-500),GfxSpecular=>10,"fill"=>"rgb(180,0,100)"},GfxLight{(-200,100,-500),GfxSpecular=>10,"fill"=>"rgb(0,180,100)"},GfxHeight=>40,GfxAxes=>false)
+gfx(gfxPlot(P,{{-10,10},{-10,10}},GfxMesh=>15,"stroke-width"=>0.05,"fill"=>"gray"),GfxLight{(200,0,-500),GfxSpecular=>10,"fill"=>"rgb(180,0,100)"},GfxLight{(-200,100,-500),GfxSpecular=>10,"fill"=>"rgb(0,180,100)"},GfxHeight=>40,GfxAxes=>false)
 
 -- implicit plot
 R=RR[x,y];
