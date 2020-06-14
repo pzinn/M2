@@ -167,16 +167,18 @@ if topLevelMode === WebApp then (
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global html);
     texMathBackup := texMath;
     htmlBackup := html;
-    texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === texWrap then texMathBackup x else concatenate(
+    texMathInside := x -> if lookup(htmlWithTex,class x) === texWrap then texMathBackup x else concatenate(
 	webAppHtmlTag,
 	htmlWithTex x,
 	webAppEndTag
 	);
+    -- ideally we'd just have htmlInside = htmlWithTex but not that simple... (String, Net...)
+    htmlInside := x -> if lookup(htmlWithTex,class x) === texWrap then texWrap x else htmlBackup x;
     webAppBegin = (displayStyle) -> (
 	texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
 	texMathEnd = webAppTexEndTag;
-	global texMath <- texMathInsideHtml;
-	global html <- htmlWithTex;
+	global texMath <- texMathInside;
+	global html <- htmlInside;
     );
     webAppEnd = () -> (
 	texMathStart = "\\(";

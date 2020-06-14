@@ -35,8 +35,8 @@ protect GfxLightCenter
 
 coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
---     "Hypertext", "MarkUpType",  
-     "htmlLiteral", "nonnull", "qname", "withOptions", "withQname", "htmlAttr" } -- hypertext
+--     "Hypertext", "MarkUpType",
+     "nonnull", "qname", "withOptions", "withQname", "htmlAttr" } -- hypertext
 
 scan(coreStuff, s -> value s <- value Core#"private dictionary"#s) -- not the correct way, use PackageImports? (cf debug Core w or w/o debug Gfx)
 -*
@@ -52,11 +52,7 @@ GfxObject = new Type of HashTable -- ancestor type
 new GfxObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Gfx object should have a cache
 new GfxObject := T -> new T from {};
 new GfxObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
-installMethod(symbol ++, GfxObject, List, GfxObject => -- cf similar method for OptionTable
-     (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last)
-     )
-
-
+GfxObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last) -- cf similar method for OptionTable
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: GfxRadius, GfxFontSize, etc
@@ -303,8 +299,10 @@ updateGfxMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
     if g.?GfxMatrix then g.cache.GfxCurrentMatrix = g.cache.GfxCurrentMatrix*g.GfxMatrix;
     )
 
+-*
 LiteralString := new WrapperType of Holder -- to make sure the text inside GfxText doesn't get html'ified
 htmlWithTex LiteralString := x -> htmlLiteral x#0
+*-
 
 svgLookup := hashTable { -- should be more systematic
     symbol GfxMatrix => (x,m) -> "data-matrix" => jsString x,
@@ -341,7 +339,7 @@ svgLookup := hashTable { -- should be more systematic
 	x = toSequence stableSort x;
 	apply(x, y -> y.cache.SVGElement)
 	),
-    symbol GfxString => (x,m) -> LiteralString x
+    symbol GfxString => (x,m) -> x
     }
 
 svg3dLookup := hashTable { -- should be more systematic
@@ -567,7 +565,7 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
 )
 
 noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
-HypertextInternalLink#{WebApp,Print} = x -> Thing#{WebApp,Print} @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
+htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
 
 svgFilter := withQname_"filter" withOptions_{svgAttr,"x","y","width","height"} new MarkUpType of HypertextInternalLink;
 feGaussianBlur := withQname_"feGaussianBlur" withOptions_{svgAttr,"in","result","stdDeviation"} new MarkUpType of Hypertext;
