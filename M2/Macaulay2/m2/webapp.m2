@@ -164,7 +164,9 @@ if topLevelMode === WebApp then (
 	) else ( << net x << endl; );
     -- the texMath hack
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
+    currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global html);
     texMathBackup := texMath;
+    htmlBackup := html;
     texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === texWrap then texMathBackup x else concatenate(
 	webAppHtmlTag,
 	htmlWithTex x,
@@ -174,10 +176,12 @@ if topLevelMode === WebApp then (
 	texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
 	texMathEnd = webAppTexEndTag;
 	global texMath <- texMathInsideHtml;
+	global html <- htmlWithTex;
     );
     webAppEnd = () -> (
 	texMathStart = "\\(";
 	texMathEnd = "\\)";
 	global texMath <- texMathBackup;
+	global html <- htmlBackup;
     );
 )

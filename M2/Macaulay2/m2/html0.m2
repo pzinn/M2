@@ -16,23 +16,11 @@ HypertextContainer.synonym = "mark-up list container"
 MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "mark-up type"
 
--*
-new MarkUpType from Thing := (M,x) -> new M from {x}
-new MarkUpType from List := (M,x) -> new M from x
-new MarkUpType from Sequence := (M,x) -> new M from toList x
-*-
-
 options MarkUpType := X -> if X.?Options then X.Options else new OptionTable from {}
 
--*
-MarkUpType Net := (M,x) -> new M from {toString x}
-MarkUpType String :=
-MarkUpType Hypertext := (M,x) -> new M from {x}
-*-
-new Hypertext from String :=
-new Hypertext from Hypertext := (M,x) -> {x}
+new Hypertext from VisibleList := (M,x) -> x
+new Hypertext from Thing := (M,x) -> {x}
 new Hypertext from Net := (M,x) -> {toString x}
-
 
 IntermediateMarkUpType = new Type of MarkUpType	    -- this is for things like MENU, which do not correspond to an html entity, but have a recipe for translation into html
 IntermediateMarkUpType.synonym = "intermediate mark-up type"
