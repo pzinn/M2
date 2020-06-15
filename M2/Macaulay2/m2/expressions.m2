@@ -1251,7 +1251,14 @@ texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite
 
 texMath ZZ := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
-texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
+
+-- experimental change (could do the same with toString, net, etc)
+texMath Thing := x -> texMath expression x
+texMath Holder := x -> ( -- we need to avoid loops
+    if lookup(texMath,class x#0) === Thing#texMath then texMath net x#0 else  -- if we're desperate (in particular, for raw objects)
+    texMath x#0
+    )
+
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack
 --texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
@@ -1358,8 +1365,8 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
-toString Set := toString @@ expression
-net Set := net @@ expression
+toString Set := x -> toString expression x
+net Set := x -> net expression x
 texMath Set := x -> texMath expression x
 
 -*
