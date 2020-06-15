@@ -57,6 +57,7 @@ document {
 	  TO "FLINT",
 	  TO "givaro",
 	  TO "fflas-ffpack",
+	  TO "MPSolve",
 	  -- TO "boost", -- we don't link with boost, but normaliz does
 	  "programs and their libraries",
 	  TO "4ti2",
@@ -280,13 +281,35 @@ document {
      SeeAlso => "GC garbage collector"
      }
 
+doc /// 
+    Key 
+        "MPSolve"
+    Headline 
+        a library for finding roots of univariate polynomials 
+    Description 
+        Text 
+            Starting with version 1.16, Macaulay2 incorporates the
+            MPsolve (version 3) package, available at @HREF
+            "https://numpi.dm.unipi.it/_media/software/mpsolve"@,
+            and originally developed by Dario Bini, Giuseppe
+            Fiorentino, and Leonardo Robol.
+            
+            This library is used by the @TO "roots"@ function, for
+            finding complex roots of a univariate polynomial
+    SeeAlso
+        (roots, RingElement)
+///
+
 document {
      Key => "pari",
      PARA {
-	  "Starting with version 1.2, Macaulay2 incorporates ", TT "pari", ", a free library for fast computations in number theory,
-	  available at ", HREF "http://pari.math.u-bordeaux.fr/", ",
-	  originally developed by Henri Cohen and his co-workers at Université Bordeaux I, France.
-	  It is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", TO (isPseudoprime, ZZ), ", and ", TO (isPrime,ZZ), "."
+	  "Starting with version 1.2, and up through version 1.15,
+	  Macaulay2 incorporated ", TT "pari", ", a free library for fast
+	  computations in number theory, available at ", HREF "http://pari.math.u-bordeaux.fr/", 
+      ", originally developed by
+	  Henri Cohen and his co-workers at Université Bordeaux I, France.
+	  In the stated versions, it is used by ", TO (factor,ZZ), ", ", TO (factor,QQ), ", ", 
+      TT "isPseudoprime", ", and ", TO (isPrime,ZZ), "."
 	  }
      }
 
@@ -396,17 +419,26 @@ document {
 	  "The following example shows the list of places where we might find the source code of a package called ", TT "Foo", "
 	  after it has been installed by ", TO "installPackage", "."
 	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///,
+     EXAMPLE {PRE(
+	  ///i1 : stack apply(prefixPath, p -> p | Layout#1#"packages" | "Foo.m2")///
+	  | newline | newline | ///o1 = /home/m2user/.Macaulay2/local/share/Macaulay2/Foo.m2///
+	  | newline | ///     /usr/share/Macaulay2/Foo.m2///)},
      PARA {
      	  "This example shows the list of places where we might reasonably find the html file documenting a
 	  function named ", TT "bar", " in a package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///,
+     EXAMPLE {PRE(
+	  ///i2 : stack apply(prefixPath, p -> p | replace("PKG","Foo",Layout#1#"packagehtml") | "bar.html")///
+	  | newline | newline | ///o2 = /home/m2user/.Macaulay2/local/share/doc/Macaulay2/Foo/html/bar.html///
+	  | newline | ///     /usr/share/doc/Macaulay2/Foo/html/bar.html///)},
      PARA {
      	  "This example shows the list of places where we might reasonably find the info file documenting a
 	  package called ", TT "Foo", "."
 	  },
-     EXAMPLE ///stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///,
+     EXAMPLE {PRE(
+	  ///i3 : stack apply(prefixPath, p -> p | Layout#1#"info" | "Foo.info")///
+	  | newline | newline | ///o3 = /home/m2user/.Macaulay2/local/share/info/Foo.info///
+	  | newline | ///     /usr/share/info/Foo.info///)},
      SeeAlso => {"commandLine", "Invoking the program", applicationDirectory, "prefixDirectory", "path", searchPath, load, loadPackage, needsPackage}
      }
 
@@ -703,8 +735,6 @@ document {
 	  TO "clearEcho",
 	  TO "setEcho",
      	  "Dumping and restoring the state of the system:",
-	  TO "dumpdata",
-	  TO "loaddata",
 	  TO "restart",
 	  TO "addStartFunction",
 	  TO "addEndFunction",

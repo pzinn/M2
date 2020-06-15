@@ -13,12 +13,16 @@
 	webAppTexEndTag       -- TeX end ~ \)
 	)=apply((17,18,19,20,28,30,31,17),ascii);
 
-htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
+-- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
+-- but they conflict with the current defs
+texMathStart := "\\(";
+texMathEnd := "\\)";
+texWrap := x -> texMathStart | texMath x | texMathEnd; -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues
+
+htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
--- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
--- but they conflict with the current defs
 htmlWithTex Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
     toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
 htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x, "</pre>",
@@ -32,17 +36,13 @@ htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n"
 
 -- now preparation for output
 
-texMathStartBackup := texMathEndBackup := "$"; -- the default tex delimiters
-
 webAppBegin = (displayStyle) -> (
-    texMathStartBackup = texMathStart;
-    texMathEndBackup = texMathEnd;
     texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
     texMathEnd = webAppTexEndTag;
     );
 webAppEnd = () -> (
-    texMathStart = texMathStartBackup;
-    texMathEnd = texMathEndBackup;
+    texMathStart = "\\(";
+    texMathEnd = "\\)";
     );
 
 -- now preparation for output
@@ -231,21 +231,19 @@ if topLevelMode === WebApp then (
     -- the texMath hack
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
     texMathBackup := texMath;
-    texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === tex then texMathBackup x else concatenate(
+    texMathInsideHtml := x -> if lookup(htmlWithTex,class x) -* =!= html *- === texWrap then texMathBackup x else concatenate(
 	webAppHtmlTag,
 	htmlWithTex x,
 	webAppEndTag
 	);
     webAppBegin = (displayStyle) -> (
-	texMathStartBackup = texMathStart;
-	texMathEndBackup = texMathEnd;
 	texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
 	texMathEnd = webAppTexEndTag;
 	global texMath <- texMathInsideHtml;
     );
     webAppEnd = () -> (
-	texMathStart = texMathStartBackup;
-	texMathEnd = texMathEndBackup;
+	texMathStart = "\\(";
+	texMathEnd = "\\)";
 	global texMath <- texMathBackup;
     );
 )
