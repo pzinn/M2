@@ -132,7 +132,7 @@ toString'(Function, Expression) := (fmt,v) -> (
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
 
-texMath Holder := v -> texMath v#0
+--texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 
@@ -690,7 +690,8 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      -- we can finesse further the amount of space than in net
-     if div or instance(args,Array) then sep:=""
+     if div or instance(args,Array) or (instance(args,Holder) and instance(args#0,Array)) then sep:="" -- something wrong: VisibleLists should be Holder'ed?
+--     else if instance(args,VisibleList) or (instance(args,Holder) and instance(args#0,VisibleList)) then sep="\\,"
      else if instance(args,VisibleList) then sep="\\,"
      else sep = "\\ ";
      if precedence args > p
@@ -701,6 +702,17 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      then concatenate (texMath fun, "\\left(", texMath args, "\\right)")
      else concatenate ("\\left(",texMath fun,"\\right)\\left(", texMath args, "\\right)")
      )
+
+NewFromExpression = new WrapperType of Expression
+NewFromExpression.synonym = "New ... From expression"
+expressionValue NewFromExpression := x -> new (expressionValue x#0) from (expressionValue x#1)
+-- temp: spacing needs improving
+net NewFromExpression := lookup(net,Adjacent)
+toString NewFromExpression := lookup(toString,Adjacent)
+texMath NewFromExpression := lookup(texMath,Adjacent)
+
+
+
 -----------------------------------------------------------------------------
 
 returns = t -> x -> t
@@ -715,6 +727,7 @@ returns = t -> x -> t
  precedence NonAssociativeProduct := returns prec symbol **
 		 precedence Minus := returns strength1 symbol -
    precedence FunctionApplication := returns prec symbol SPACE
+     precedence NewFromExpression := returns prec symbol SPACE
               precedence Adjacent := returns prec symbol SPACE
 		precedence Divide := returns prec symbol /
 	     precedence Subscript := returns prec symbol _
@@ -1252,7 +1265,7 @@ texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite
 texMath ZZ := toString
 tex Thing := x -> concatenate("$",texMath x,"$")
 
--- experimental change (could do the same with toString, net, etc)
+-- experimental change (should do the same with toString, net, etc)
 texMath Thing := x -> texMath expression x
 texMath Holder := x -> ( -- we need to avoid loops
     if lookup(texMath,class x#0) === Thing#texMath then texMath net x#0 else  -- if we're desperate (in particular, for raw objects)
@@ -1342,7 +1355,7 @@ net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
 net Option := net @@ expression
-texMath Option := x -> texMath expression x
+--texMath Option := x -> texMath expression x
 toString Option := toString @@ expression
 
 SheafExpression = new WrapperType of Expression;
@@ -1367,29 +1380,40 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := x -> toString expression x
 net Set := x -> net expression x
-texMath Set := x -> texMath expression x
+--texMath Set := x -> texMath expression x
 
--*
 -- useless -- nobody uses expression HashTable at the moment because it's not semantically correct :(
 -- plus creates all kinds of complications with subclasses
 expression HashTable := x -> (
          if hasAttribute(x,ReverseDictionary) then return expression getAttribute(x,ReverseDictionary);
-	 new Holder from { applyPairs(x, (k,v) -> (expression k, expression v) ) }
+	 NewFromExpression { class x,
+	 apply(sortByName pairs x, (k,v) -> expression k => expression v )
+	 }
 	 )
-expressionValue HashTable := x -> applyPairs(x, (k,v) -> (expressionValue k, expressionValue v))
-*-
+--expressionValue HashTable := x -> applyPairs(x, (k,v) -> (expressionValue k, expressionValue v))
+
 
 -- some texMath that got stranded
+-*
 texMath BasicList := s -> concatenate(
      if class s =!= List then texMath class s,
     "\\left\\{",
     between(",\\,",apply(toList s,texMath))
     ,"\\right\\}"
     )
+*-
+
+expression BasicList := s -> NewFromExpression { expression class s, apply(toList s, expression) }
+
+texMath List := x -> concatenate("\\left\\{", between(",", apply(x,texMath)), "\\right\\}")
 texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
 texMath HashTable := x -> if x.?texMath then x.texMath else
-if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
+-- ring names are in italic, other hashtables just monofont, Modules don't get ReverseDictionary'ed
+if hasAttribute(x,ReverseDictionary) and not instance(x,Module) then texMath (
+    if instance(x,EngineRing) or instance(x,Variety) then identity else toString) getAttribute(x,ReverseDictionary
+    ) else texMath expression x
+-*
 concatenate flatten (
     texMath class x,
     "\\left\\{",
@@ -1397,6 +1421,7 @@ concatenate flatten (
     between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
     "\\right\\}"
     )
+*-
 texMath Function := x -> texMath toString x
 texMath MutableList := x -> concatenate (
     texMath class x,

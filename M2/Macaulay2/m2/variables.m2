@@ -42,11 +42,11 @@ Ring _ IndexedVariable := (x,s) -> x.indexSymbols#s
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
 net IndexedVariable := net @@ expression
 toString IndexedVariable := toString @@ expression
-texMath IndexedVariable := x -> texMath expression x
+--texMath IndexedVariable := x -> texMath expression x
 expression IndexedVariableTable := x -> if x#?symbol$ then expression x#symbol$ else expression "-*an indexed variable table*-"
 net IndexedVariableTable := net @@ expression
 toString IndexedVariableTable := toString @@ expression
-texMath IndexedVariableTable := x -> texMath expression x
+--texMath IndexedVariableTable := x -> texMath expression x
 
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)

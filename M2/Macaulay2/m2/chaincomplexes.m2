@@ -708,6 +708,8 @@ rawBettiTally = v -> (
      v = apply(leftside,v,prepend);
      v)
 
+
+expression BettiTally := hold
 net BettiTally := v -> netList(rawBettiTally v, Alignment => Right, HorizontalSpace => 1, BaseRow => 1, Boxes => false)
 texMath BettiTally := v -> (
      v = rawBettiTally v;

@@ -261,7 +261,7 @@ expression ProjectiveHilbertPolynomial := (h) -> (
      sum(sort pairs h, (n,c) -> c * new Subscript from {ℙ, n})
      )
 net ProjectiveHilbertPolynomial := (h) -> net expression h
-texMath ProjectiveHilbertPolynomial := x -> texMath expression x
+--texMath ProjectiveHilbertPolynomial := x -> texMath expression x
 
 projectiveHilbertPolynomial = method()
 projectiveHilbertPolynomial ZZ := ProjectiveHilbertPolynomial => (n) -> (

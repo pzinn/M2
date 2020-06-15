@@ -12,7 +12,7 @@ ring Variety := X -> X.ring
 toString Variety := toString @@ expression
 toExternalString Variety := toString @@ describe
 net Variety := net @@ expression
-texMath Variety := x -> texMath expression x
+--texMath Variety := x -> texMath expression x
 expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
 describe AffineVariety := (X) -> Describe (expression Spec) (expression X.ring)
 describe ProjectiveVariety := (X) -> Describe (expression Proj) (expression X.ring)
@@ -49,7 +49,7 @@ SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
 expression SheafOfRings := O -> Subscript { OO, expression O.variety }
 net SheafOfRings := net @@ expression
-texMath SheafOfRings := x -> texMath expression x
+--texMath SheafOfRings := x -> texMath expression x
 Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
 sheaf(Variety,Ring) := SheafOfRings => (X,R) -> (
      if ring X =!= R then error "expected the variety of the ring";
@@ -82,7 +82,7 @@ expression CoherentSheaf := F -> (
 	)
 
 net CoherentSheaf := (F) -> net expression F
-texMath CoherentSheaf := (F) -> texMath expression F
+--texMath CoherentSheaf := (F) -> texMath expression F
 toString CoherentSheaf := (F) -> toString expression F
 
 CoherentSheaf#{Standard,AfterPrint} = F -> (
