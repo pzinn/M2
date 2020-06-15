@@ -1264,8 +1264,6 @@ exportMutable {
 	"recursionLimit",
 	"scriptCommandLine",
 	"stopIfError",
-	"texMathStart",
-	"texMathEnd",
 	"topLevelMode"
 	}
 

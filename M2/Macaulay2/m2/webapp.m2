@@ -17,7 +17,11 @@
 -- but they conflict with the current defs
 texMathStart := "\\(";
 texMathEnd := "\\)";
-texWrap := x -> texMathStart | texMath x | texMathEnd; -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues
+texWrap := x -> (  -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues
+    y := texMath x;
+    if class y =!= String then error "invalid texMath output";
+    texMathStart | y | texMathEnd
+    )
 
 htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
 
@@ -49,6 +53,7 @@ webAppEnd = () -> (
 
 -- both of the functions below are activated with texMath <- texMath[Color]Wrapper
 -- the debug hack -- the rawhtml is TEMP, of course. currently deactivated
+-*
 toExtString := method() -- somewhere between toString and toExternalString <sigh>
 toExtString Thing := toString -- e.g. for a ring!
 toExtString Symbol := toExternalString -- for indexedvariables, for ex...
@@ -66,13 +71,15 @@ texMathWrapper = x -> (
     else texMathBackup x
     )
 )
+*-
 -- the color hack: currently deactivated
+-*
 texMathColorWrapper := x -> (
     c := try colorTable#x else color x;
     if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
     -- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
     )
---
+*-
 
 -- output routines
 

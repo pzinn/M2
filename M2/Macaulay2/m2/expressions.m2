@@ -1250,8 +1250,7 @@ print = x -> (<< net x << endl;)
 texMath RR := x -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
 
 texMath ZZ := toString
-texMathStart = texMathEnd = "$"; -- the default tex delimiters
-tex Thing := x -> concatenate(texMathStart,texMath x,texMathEnd)
+tex Thing := x -> concatenate("$",texMath x,"$")
 texMath Thing := x -> texMath net x -- if we're desperate (in particular, for raw objects)
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack
@@ -1259,7 +1258,7 @@ texMath Thing := x -> texMath net x -- if we're desperate (in particular, for ra
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
-texVariable = x -> (
+texVariable := x -> (
     if x === "" then return "";
     xx := separate("$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
