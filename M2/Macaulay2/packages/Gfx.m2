@@ -31,7 +31,6 @@ protect GfxScaledRadius
 protect GfxScaledRadiusX
 protect GfxScaledRadiusY
 protect GfxTag
-protect GfxLightCenter
 
 coreStuff := {
      "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
@@ -72,8 +71,6 @@ GfxObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,la
 -- * GfxAxes (draw axes)
 
 -- 3d: turns on lights, enables sorting, axes are diff
-
--- both of these should be made local for Gfx to be thread-safe
 
 GfxType = new Type of Type -- all usable Gfx objects are ~ self-initialized
 
@@ -382,8 +379,9 @@ svg GfxObject := g -> svg(g,{})
 htmlWithTex GfxObject := html
 
 globalAssignment GfxObject
-toString GfxObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,OptionTable)) g
-net GfxObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,OptionTable)) g
+toString GfxObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
+net GfxObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
+expression GfxObject := hold -- bit of a hack: don't want the reverse dictionary to interfere with expression
 
 gfxDistance1 GfxPoly := g -> (
     if instance(g,GfxPath) then s := select(g.GfxPathList, x -> instance(x,Vector)) else s = g.GfxPoints;
@@ -737,7 +735,7 @@ multidoc ///
   Key
    GfxPoly
   Headline
-   The ancestor class of @ TO{GfxPolygon} @, @ TO{GfxPolyline} @, @ TO{GfxPath} @
+   The ancestor class of complex Gfx objects
  Node
   Key
    GfxList
