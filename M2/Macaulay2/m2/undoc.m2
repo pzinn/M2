@@ -33,7 +33,7 @@ undocumented {
     (expression,QuotientRing),
     (expression,ScriptedFunctor),
     (expression,Set),
-    (expression,Type),
+--    (expression,Type),
     (expression,Variety),
     (expression,Vector),
     (html, ExampleItem),

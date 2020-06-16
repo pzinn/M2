@@ -13,20 +13,26 @@
 	webAppTexEndTag       -- TeX end ~ \)
 	)=apply((17,18,19,20,28,30,31,17),ascii);
 
--- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
--- but they conflict with the current defs
-texMathStart := "\\(";
-texMathEnd := "\\)";
-texWrap := x -> (  -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues
-    y := texMath x;
+texWrap := x -> (  -- similar to 'tex'
+    y := texMathInsideHtml x;
+--    y := texMathInsideHtmlColor x;
     if class y =!= String then error "invalid texMath output";
-    texMathStart | y | texMathEnd
+    webAppTexTag | "\\displaystyle " | y | webAppTexEndTag
     )
+
+texMathInsideHtml = x -> (
+    if lookup(htmlWithTex,class x) === texWrap then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInsideHtml,x) else texMath x else concatenate(
+	webAppHtmlTag,
+	htmlWithTex x,
+	webAppEndTag
+	))
 
 htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
+-- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
+-- but they conflict with the current defs -- and would cause problems inside Hypertext
 htmlWithTex Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
     toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
 htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x, "</pre>",
@@ -38,20 +44,8 @@ htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n"
 	  else htmlWithTex net k | " : " | htmlWithTex v
 	  ) | "<br/>"), "</pre>")
 
--- now preparation for output
 
-webAppBegin = (displayStyle) -> (
-    texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
-    texMathEnd = webAppTexEndTag;
-    );
-webAppEnd = () -> (
-    texMathStart = "\\(";
-    texMathEnd = "\\)";
-    );
-
--- now preparation for output
-
--- both of the functions below are activated with texMath <- texMath[Color]Wrapper
+-- obsolete -- function below used to be activated with texMath <- texMath[Color]Wrapper
 -- the debug hack -- the rawhtml is TEMP, of course. currently deactivated
 -*
 toExtString := method() -- somewhere between toString and toExternalString <sigh>
@@ -72,14 +66,22 @@ texMathWrapper = x -> (
     )
 )
 *-
+
 -- the color hack: currently deactivated
--*
-texMathColorWrapper := x -> (
-    c := try colorTable#x else color x;
-    if c =!= null then "\\begingroup\\color{" | c | "}" | texMathBackup x | "\\endgroup " else texMathBackup x
-    -- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
-    )
-*-
+-- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
+
+texMathInsideHtmlColor = x -> (
+    if lookup(htmlWithTex,class x) === texWrap then concatenate(
+	c := try colorTable#x else color x;
+	if c =!= null then "\\begingroup\\color{" | c | "}",
+	if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInsideHtmlColor,x) else texMath x,
+	if c =!= null then "\\endgroup "
+	) else concatenate(
+	webAppHtmlTag,
+	htmlWithTex x,
+	webAppEndTag
+	))
+
 
 -- output routines
 
@@ -92,9 +94,7 @@ Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    webAppBegin(true);
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
-    webAppEnd();
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
     )
 
@@ -106,9 +106,7 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlWithTexAfterPrint :=  y -> (
     y=deepSplice sequence y;
-    webAppBegin(false);
     z := htmlWithTex \ y;
-    webAppEnd();
     << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
 
@@ -167,14 +165,6 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 
 ZZ#{WebApp,AfterPrint} = identity
 
--- experimental
-print = x -> if topLevelMode === WebApp then (
-    webAppBegin(true);
-    y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
-    webAppEnd();
-    << webAppHtmlTag | y | webAppEndTag << endl;
-    ) else ( << net x << endl; )
-
 -- bb letters (to be removed before PR)
 export { "ℚ","ℝ","ℤ","ℂ","ℙ","∞" }
 ℚ=QQ
@@ -230,12 +220,11 @@ if topLevelMode === WebApp then (
 	new webAppPRE from res );
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
-	webAppBegin(true);
 	y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
-	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- the texMath hack
+    -*
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
     texMathBackup := texMath;
     texMathBackup Holder := x -> ( -- we need to avoid loops -- need to redo cause of hack
@@ -258,5 +247,6 @@ if topLevelMode === WebApp then (
 	texMathEnd = "\\)";
 	global texMath <- texMathBackup;
     );
+*-
 )
 
