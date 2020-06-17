@@ -120,17 +120,6 @@ net ChainComplexMap := f -> (
      else stack v)
 
 -- code already in graded module map -- need to check if complete makes any diff
--*
-texMath ChainComplexMap := f -> (
-     complete f;
-     v := between(",\\quad ",
-	  apply(sort intersection(spots f.source, spots f.target / (i -> i - f.degree)),
-	       i -> texUnder(texMath target f_i,i+f.degree) | "\\xleftarrow{" | texMath f_i | "}" | texUnder(texMath source f_i,i)
-	       )
-	  );
-     if # v === 0 then "0"
-     else concatenate v)
-*-
 
 ring ChainComplexMap := (f) -> ring source f
 

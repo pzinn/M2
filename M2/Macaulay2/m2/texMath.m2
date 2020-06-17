@@ -59,7 +59,7 @@ texMathShort := m -> (
 	      )
     )
 
-texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
+texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
 
 union := (x,y) -> keys(set x + set y)
 intersection := (x,y) -> keys(set x * set y)
