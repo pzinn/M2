@@ -1089,7 +1089,19 @@ multidoc ///
    SVG
   Headline
    hypertext SVG item
+ Node
+  Key
+   GfxType
+  Headline
+   A particular type of type used by Gfx, similar to SelfInitializingType.
 ///
+
+undocumented {
+    GfxContents, SVGElement, GfxPoints, GfxPoint, GfxSpecular, GfxString, GfxRadius, GfxPoint1, GfxPoint2, GfxPathList, GfxMesh, GfxFontSize, GfxRadiusX, GfxRadiusY, GfxCenter,
+    (symbol ++, GfxObject, List), (symbol ?,GfxObject,GfxObject), (symbol SPACE,GfxType,List),
+    (expression, GfxObject), (html,GfxObject), (html,SVG), (htmlWithTex,GfxObject), (net,GfxObject), (toString,GfxObject),
+    (NewFromMethod,GfxObject,List), (NewFromMethod,GfxObject,OptionTable), (NewOfFromMethod,GfxType,GfxObject,VisibleList), (NewFromMethod,SVG,GfxObject),
+}
 
 end--
 
