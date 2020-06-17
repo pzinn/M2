@@ -13,22 +13,21 @@
 	webAppTexEndTag       -- TeX end ~ \)
 	)=apply((17,18,19,20,28,30,31,17),ascii);
 
-texWrap := x -> (  -- similar to 'tex'
-    y := texMathInsideHtml x;
---    y := texMathInsideHtmlColor x;
-    if class y =!= String then error "invalid texMath output";
-    webAppTexTag | "\\displaystyle " | y | webAppTexEndTag
-    )
-
-texMathInsideHtml = x -> (
-    if lookup(htmlWithTex,class x) === texWrap then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInsideHtml,x) else texMath x else concatenate(
+texMathInside = x -> (
+    if lookup(htmlWithTex,class x) === tex then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x else concatenate(
 	webAppHtmlTag,
 	htmlWithTex x,
 	webAppEndTag
 	))
+htmlInside = x -> (
+    if lookup(htmlWithTex,class x) === tex then concatenate(
+	webAppTexTag,
+	"\\displaystyle ",
+	if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x,
+	webAppTexEndTag
+	) else htmlWithTex x )
 
-htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
-
+htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
 -- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
@@ -70,11 +69,11 @@ texMathWrapper = x -> (
 -- the color hack: currently deactivated
 -- hopefully no longer buggy, see https://github.com/Khan/KaTeX/issues/1679
 
-texMathInsideHtmlColor = x -> (
-    if lookup(htmlWithTex,class x) === texWrap then concatenate(
+texMathInsideColor = x -> (
+    if lookup(htmlWithTex,class x) === tex then concatenate(
 	c := try colorTable#x else color x;
 	if c =!= null then "\\begingroup\\color{" | c | "}",
-	if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInsideHtmlColor,x) else texMath x,
+	if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInsideColor,x) else texMath x,
 	if c =!= null then "\\endgroup "
 	) else concatenate(
 	webAppHtmlTag,
@@ -94,7 +93,7 @@ Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
+    y := htmlInside x; -- we compute the htmlWithTex now (in case it produces an error)
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
     )
 
@@ -106,7 +105,7 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlWithTexAfterPrint :=  y -> (
     y=deepSplice sequence y;
-    z := htmlWithTex \ y;
+    z := htmlInside \ y;
     << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
 

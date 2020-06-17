@@ -286,15 +286,23 @@ tex Thing := x -> concatenate("$",texMath x,"$")
 
 -- experimental change (should do the same with toString, net, etc)
 texMath Thing := v -> texMath'(texMath,v)
+-*
 texMath' (Function, Thing) := (texMath,x) -> texMath expression x
 texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
     if lookup(texMath,class x#0) === Thing#texMath and lookup(texMath',Function,class x#0) === Function#(texMath',Function,Thing)
     then texMath net x#0 else  -- if we're desperate (in particular, for raw objects)
     texMath1 x#0
     )
+*-
+texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
+    -- we need to avoid loops: objects whose expression is hold of themselves and whose texMath is undefined
+    if class y === Holder and y#0 === x then texMath simpleToString x -- if we're desperate (in particular, for raw objects)
+    else texMath y )
+texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 then texMath x#0 else texMath simpleToString x#0
 
 --texMath Symbol := toString -- the simplest version
--- next version is a horrible hack
+-- next version is a horrible hack, just kept to remind me that:
+-- expression should never need to run value of course !!!
 --texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
@@ -320,21 +328,8 @@ texMath' (Function, MapExpression) := (texMath,x) -> texMath x#0 | "\\," | (if #
 texMath' (Function, List) := (texMath,x) -> concatenate("\\left\\{", between(",\\,", apply(x,texMath)), "\\right\\}")
 texMath' (Function, Array) := (texMath,x) -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath' (Function, Sequence) := (texMath,x) -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else
--- ring names are in italic, other hashtables just monofont, Modules don't get ReverseDictionary'ed displayed
-if hasAttribute(x,ReverseDictionary) and not instance(x,Module) and not instance(x,EngineRing) and not instance(x,Variety) then texMath (
-    toString getAttribute(x,ReverseDictionary)
-    ) else texMath expression x
+texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else texMath expression x
 
--*
-concatenate flatten (
-    texMath class x,
-    "\\left\\{",
-    if mutable x then if #x>0 then {"\\ldots",texMath(#x),"\\ldots"} else "" else
-    between(",\\,", apply(sortByName pairs x,(k,v) -> texMath k | "\\,\\Rightarrow\\," | texMath v)),
-    "\\right\\}"
-    )
-*-
 texMath' (Function, Function) := (texMath,x) -> texMath toString x
 texMath' (Function, MutableList) := (texMath,x) -> concatenate (
     texMath class x,
@@ -366,7 +361,6 @@ texMath Net := n -> (
 	    s=s|"&\\vphantom{\\big|}" | texMath x | "\n";
 	    if i<#n then s=s|"\\\\[-1mm]";
 	    ));
---    "\\raise"|toString (2.15*(-dep+hgt-1))|"mm"| -- 2.65 for [-2mm]. this number may have to be adjusted/defined more properly, disabling for now
     "\\begin{aligned}" | s | "\\end{aligned}"
     )
 

@@ -1095,8 +1095,7 @@ expression VisibleList := v -> new Holder from { apply(v, expression) }
 expression Thing :=
 expression Symbol :=
 expression Function :=
-expression Boolean :=
-expression Type := x -> new Holder from { x }
+expression Boolean := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 
@@ -1140,7 +1139,7 @@ net Set := x -> net expression x
 --texMath Set := x -> texMath expression x
 
 expression HashTable := x -> (
-         if hasAttribute(x,ReverseDictionary) then return expression getAttribute(x,ReverseDictionary);
+         if hasAttribute(x,ReverseDictionary) then return new Holder from { getAttribute(x,ReverseDictionary), class x };
 	 NewFromExpression { class x,
 	 apply(sortByName pairs x, (k,v) -> expression k => expression v )
 	 }
