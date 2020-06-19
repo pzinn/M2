@@ -1,10 +1,10 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "Graphics",
-        Version => "0.2",
+        Version => "0.9",
         Date => "May 18, 2018",
-        Authors => {{Name => "Paul Zinn-Justin", 
-                  Email => "pzinn@unimelb.edu.au", 
+        Authors => {{Name => "Paul Zinn-Justin",
+                  Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
         DebuggingMode => false,
@@ -20,7 +20,6 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
     "Blur", "Static", "PathList", "Axes", "Margin", "Mesh",
     "SVG", "SVGElement"
-    --"Center"
     }
 
 protect Filter
@@ -33,15 +32,7 @@ protect ScaledRadiusX
 protect ScaledRadiusY
 protect GraphicsId
 
-coreStuff := {
-     "hasAttribute", "getAttribute", "ReverseDictionary",    -- for global assignment
---     "Hypertext", "MarkUpType",
-     "nonnull", "qname", "withOptions", "withQname", "htmlAttr" } -- hypertext
-
-scan(coreStuff, s -> value s <- value Core#"private dictionary"#s) -- not the correct way, use PackageImports? (cf debug Core w or w/o debug Graphics)
--*
-exportFrom_Core coreStuff
-*-
+debug Core
 
 -- for now data-* need entering manually
 htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize"}
@@ -71,7 +62,7 @@ GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opt
 -- * Margin (leave blank around picture)
 -- * Axes (draw axes)
 
--- 3d: turns on lights, enables sorting, axes are diff
+-- 3d: turns on lights, axes are diff
 
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
@@ -156,10 +147,11 @@ project2d := x -> vector {x_0/x_3,x_1/x_3}
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new MutableHashTable;
     g.Options=x#1; -- TODO: should it be an actual table? then have to suppress the BS syntax
-    g.SVGElement = withQname_(x#0) withOptions_(svgAttr | if #x>=3 then x#2 else {}) new MarkUpType of Hypertext;
+    g.SVGElement = new MarkUpType of Hypertext;
+    addAttribute(g.SVGElement,svgAttr | if #x>=3 then x#2 else {});
+    g.SVGElement.qname = x#0;
     g)
 
-    
 
 Circle = new GraphicsType of GraphicsObject from ( "circle",
     { symbol Center => vector {0.,0.}, symbol Radius => 50. },
@@ -245,15 +237,12 @@ viewPort1 GraphicsList := x -> (
     s := nonnull apply(x.Contents, y->y.cache.ViewPort);
     if #s===0 then null else (
 	s = transpose s;
-    	mn := transpose (entries \ s#0);
-    	mx := transpose (entries \ s#1);
+	mn := transpose (entries \ s#0);
+	mx := transpose (entries \ s#1);
 	{vector (min\mn), vector(max\mx)}
     )
 )
 
--- the scaling is incorrect. no known solution. disabling.
--- the positioning is problematic: the only way to position correctly (as well as set width, height)
--- is to shift by half its size, which can only be obtained by getBoundingClientRect(), which one can only do after rendering
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { Point => vector {0.,0.}, symbol HtmlContent => null },
     { "x", "y" }
@@ -271,10 +260,8 @@ anim GraphicsList := x -> (
     x.cache.Anim
     )
 
-SVG = withOptions_{
-    svgAttr,
-    "height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"
-    } new MarkUpType of Hypertext
+SVG = new MarkUpType of Hypertext
+addAttribute(SVG,svgAttr|{"height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"})
 
 --
 stableSort = x -> if #x <= 1 then x else (
@@ -383,7 +370,7 @@ htmlWithTex GraphicsObject := html
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
 net GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
-expression GraphicsObject := hold -- bit of a hack: don't want the reverse dictionary to interfere with expression
+expression GraphicsObject := hold
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
@@ -405,7 +392,10 @@ graphicsId := () -> (
     )
 
 -- defs
-svgDefs = withQname_"defs" withOptions_svgAttr new MarkUpType of Hypertext
+svgDefs = new MarkUpType of Hypertext
+svgDefs.qname="defs"
+addAttribute(svgDefs,svgAttr)
+
 scanDefs := g -> (
     lst := select(values g | values g.cache, y->instance(y,HypertextInternalLink));
     if g.?Contents then lst = lst | flatten apply(g.Contents,scanDefs);
@@ -505,7 +495,7 @@ new SVG from GraphicsObject := (S,g) -> (
 html GraphicsObject := g -> html SVG g;
 
 -- now transformations
--- following 2 functions can be used to produce matrices to be fed to either 
+-- following 2 functions can be used to produce matrices to be fed to either
 -- AnimMatrix (animation) or TransformMatrix (static)
 
 rotation = args -> (
@@ -522,7 +512,7 @@ rotation = args -> (
     if (#args==2 and threeD) or #args==1 then rot else (
 	center := gParse last args;
 	(translation(center))*rot*(translation(-center))
-    	)
+	)
     )
 translation = vec -> (
     vec = gParse vec;
@@ -549,13 +539,16 @@ Light = new GraphicsType of Circle from ( "circle",
 -- viewPort1 ignores lights if invisible
 viewPort1 Light := g -> if g.Radius === 0 then null else (lookup(viewPort1,Circle)) g
 
-setupLights = (g,m,p) -> if instance(g,Light) then (
+setupLights = (g,m,p) -> (
+    remove(g.cache,Filter); -- clean up filters from past
+    if instance(g,Light) then (
     updateTransformMatrix(g,m,p);
     g.cache.GraphicsId = graphicsId();
     { g } ) else if g.?Contents then (
     updateTransformMatrix(g,m,p);
     flatten apply(g.Contents, x -> setupLights(x,g.cache.CurrentMatrix,p))
-    ) else {}; -- yeah, could make a method...
+    ) else {}
+) -- yeah, could make a method...
 
 HypertextInternalLink = new Type of Hypertext -- could be useful elsewhere
 toString HypertextInternalLink := net HypertextInternalLink := x -> (
@@ -567,13 +560,23 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
 noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
 htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
 
-svgFilter := withQname_"filter" withOptions_{svgAttr,"x","y","width","height"} new MarkUpType of HypertextInternalLink;
-feGaussianBlur := withQname_"feGaussianBlur" withOptions_{svgAttr,"in","result","stdDeviation"} new MarkUpType of Hypertext;
-feSpecularLighting := withQname_"feSpecularLighting" withOptions_{svgAttr,"result","specularExponent","lighting-color"} new MarkUpType of Hypertext;
-fePointLight := withQname_"fePointLight" withOptions_{svgAttr,"x","y","z"} new MarkUpType of Hypertext;
-feComposite := withQname_"feComposite" withOptions_{svgAttr,"in","in2","operator","result","k1","k2","k3","k4"} new MarkUpType of Hypertext;
+svgFilter := new MarkUpType of HypertextInternalLink
+addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
+svgFilter.qname="filter"
+feGaussianBlur := new MarkUpType of Hypertext
+addAttribute(feGaussianBlur,svgAttr|{"in","result","stdDeviation"})
+feGaussianBlur.qname="feGaussianBlur";
+feSpecularLighting := new MarkUpType of Hypertext
+addAttribute(feSpecularLighting,svgAttr| {"result","specularExponent","lighting-color"})
+feSpecularLighting.qname="feSpecularLighting"
+fePointLight := new MarkUpType of Hypertext
+addAttribute(fePointLight,svgAttr|{"x","y","z"})
+fePointLight.qname="fePointLight"
+feComposite := new MarkUpType of Hypertext
+addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
+feComposite.qname="feComposite"
 
-filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly)) then (
+filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly) and g#?"fill") then (
     tag := graphicsId();
     i:=0;
     opts := { "id" => tag };
@@ -584,12 +587,12 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
     	    drng:=rng#1-rng#0;
     	    r := b*min(drng_0,drng_1);
 	    g.cache.ViewPort={rng#0-vector{r,r},rng#1+vector{r,r}}; -- a bit of a hack
-	    opts = append(opts, feGaussianBlur { "in" => "SourceGraphic", 
+	    opts = append(opts, feGaussianBlur { "in" => "SourceGraphic",
 		    "result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
 	    i=i+1;
 	)
     );
-    if is3d g and instance(g,GraphicsPoly) then (
+    if is3d g and instance(g,GraphicsPoly) and g#?"fill" then (
     	-- find first 3 coords
 	if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
     	if #coords>=3 then (
@@ -617,12 +620,21 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
 	    	    ));
 	    );
 	);
+    if (g.cache.?Filter) then ( -- can happen if object used several times in a list
+	g.cache#(g.cache.Filter)=g.cache.Filter;
+	);
     g.cache.Filter=svgFilter opts;
-    ) else remove(g.cache,Filter);
+    )
 
-svgLinearGradient := withQname_"linearGradient" withOptions_{svgAttr,"in","in2","operator","result","k1","k2","k3","k4"} new MarkUpType of HypertextInternalLink;
-svgRadialGradient := withQname_"radialGradient" withOptions_{svgAttr,"in","in2","operator","result","k1","k2","k3","k4"} new MarkUpType of HypertextInternalLink;
-svgStop := withQname_"stop" withOptions_{svgAttr,"offset"} new MarkUpType of HypertextInternalLink;
+svgLinearGradient := new MarkUpType of HypertextInternalLink
+addAttribute(svgLinearGradient,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
+svgLinearGradient.qname="linearGradient"
+svgRadialGradient := new MarkUpType of HypertextInternalLink
+addAttribute(svgRadialGradient,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"} )
+svgRadialGradient.qname="radialGradient"
+svgStop := new MarkUpType of HypertextInternalLink
+addAttribute(svgStop,svgAttr|{"offset"} )
+svgStop.qname="stop"
 linearGradient = true >> o -> stop -> (
     tag := graphicsId();
     svgLinearGradient prepend(
@@ -643,7 +655,10 @@ radialGradient = true >> o -> stop -> (
     )
 
 GraphicsArrow = new OptionTable from gParse { symbol Points => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", Is3d => false }
-svgMarker := withQname_"marker" withOptions_{svgAttr, "orient" => "auto", "markerSizeX" => "3", "markerSizeY" => "4", "refX" => "0", "refY" => "2"} new MarkUpType of HypertextInternalLink;
+svgMarker := new MarkUpType of HypertextInternalLink
+addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerSizeX" => "3", "markerSizeY" => "4", "refX" => "0", "refY" => "2"})
+svgMarker.qname="marker"
+
 arrow = true >> o -> x -> (
     tag := graphicsId();
     svgMarker {
@@ -664,7 +679,7 @@ gfxLabel = true >> o -> label -> (
     s=s|"</marker>";
     new GraphicsIdged from (tag,s)
     )
-*-    
+*-
 
 needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
 
@@ -776,7 +791,7 @@ multidoc ///
    A source of light
   Description
    Text
-    A source of light for a 3d SVG picture.   
+    A source of light for a 3d SVG picture.
     This corresponds to the SVG "specular" lighting, use the property Specular. The location is given by Center.
     By default a Light is invisible (it has Radius 0) and is unaffected by matrix transformations outside it (Static true).
    Example
@@ -785,6 +800,8 @@ multidoc ///
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),Light{(100,0,0),Radius=>10},ViewPort=>{(-100,-100),(100,100)},SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
+  Caveat
+   Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
  Node
   Key
    Ellipse
@@ -947,7 +964,7 @@ multidoc ///
     A 4x4 matrix that is applied to 3d coordinates for perspective.
     After this tranformation, the coordinates must be (x,-y,-z,z/p) in the reference frame
     where the viewer is at (0,0,0) and the screen at z=-p.
-    One can instead provide a real number p, which is equivalent to placing the screen 
+    One can instead provide a real number p, which is equivalent to placing the screen
     centered at z=0 and the viewer at (0,0,p).
     Only has an effect if in the outermost @ TO {Graphics} @ object.
  Node
@@ -994,7 +1011,7 @@ multidoc ///
    An option to blur a Graphics object
   Description
    Text
-    This corresponds to the feGaussianBlur SVG filter. 
+    This corresponds to the feGaussianBlur SVG filter.
     The value is the amount of blurriness relative to the size of the object.
   Caveat
     In animated 3d, the amount of blurriness does not vary as the size varies.
@@ -1077,7 +1094,7 @@ multidoc ///
   Key
    GraphicsHtml
   Headline
-   Html content
+   Html content inside a Graphics object
   Description
    Text
     Some arbitrary HTML content, specified by the option HtmlContent (a @ TO{Hypertext} @ object or other content to render in HTML).
@@ -1096,9 +1113,9 @@ multidoc ///
 ///
 
 undocumented { -- there's an annoying conflict with NAG for Point, Points
-    Contents, TextContent, HtmlContent, SVGElement, Graphics$Point, Graphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY, 
+    Contents, TextContent, HtmlContent, SVGElement, Graphics$Point, Graphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
-    (expression, GraphicsObject), (html,GraphicsObject), (html,SVG), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
+    (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
 }
 
@@ -1123,24 +1140,21 @@ R=QQ[x_red,x_green,x_blue]
 describe R
 x_red^2-x_green^2
 factor oo
--- worse:
-OO.texMath = texMath green;
-OO_(Proj R)
 
 -- or
---z=Rectangle{"fill"=>"white"}
+z=Polygon{{(0,0),(0,50),(50,50),(50,0)},"fill"=>"white"}
 b1=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 b2=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
 b=gList(z,b1,b2,SizeX=>2,SizeY=>2,Margin=>0)
 a1=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 a2=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
 a=gList(z,a1,a2,SizeX=>2,SizeY=>2,Margin=>0)
-ab=a|b
-ba=b|a
-ab||ba||ba
+--ab=a|b
+--ba=b|a
+--ab||ba||ba
 tile = (I,i,j)->(if m_(i+1,j+1)%I == 0 then if c_(i+1,j+1)%I==0 then () else a else b);
 tiledRow = (I,i)->new RowExpression from apply(n,j->tile(I,i,j));
-loopConfig = I->new ColumnExpression from apply(k,i->tiledRow(I,i));
+loopConfig = I->new ColumnExpression from apply(k,i->tiledRow(I,i)); -- no such a thing as ColumnExpression. there should
 
 
 -- or
@@ -1226,12 +1240,23 @@ c=gList(Polygon{{(-100,100,100),(-100,-100,100),(-100,-100,-100),(-100,100,-100)
 		  "stroke"=>"black","fill"=>"grey", "opacity"=>"0.25")
 gList(a,b,c,SizeX=>20)
 
+--
+n=10;
+v1=apply(n,i->vector {cos(2*pi*i/n),sin(2*pi*i/n),0.1});
+v2=apply(n,i->vector {cos(2*pi*i/n),sin(2*pi*i/n),-0.1});
+l=apply(n,i->Polygon{{v1#i,v2#i,v2#((i+1)%n),v1#((i+1)%n)},"fill"=>"hsl("|toString(360.*i/n)|",100%,50%)"});
+a=gList(l,AnimMatrix=>rotation(0.2,vector{0,0,1}));
+m=50;r=apply(m,i->rotation(0.05,vector{cos(2*pi*i/m),sin(2*pi*i/m),0}));
+b=gList(a,AnimMatrix=>r)
+--c=gList(a,TransformMatrix=>(map(RR^3,RR^3,0.5)++1)*rotation(2,vector{1,2,3}),AnimMatrix=>r)
+--gList(b,c)
+
 -- stars
 n=100;
 speed=100;
 far=-10000;
 screen=1000;
-stars=apply(1..n,i->(
+stars=apply(n,i->(
 z=speed*(random(far,screen)//speed);
 Circle{(random(-200,200),random(-200,200),z),10,"fill"=>"yellow","stroke"=>"none",Blur=>0.3,
 AnimMatrix=>{((screen-z)//speed)=>translation (0,0,speed),translation (0,0,far-screen),((-far+z)//speed)=>translation (0,0,speed)}}
@@ -1239,7 +1264,7 @@ AnimMatrix=>{((screen-z)//speed)=>translation (0,0,speed),translation (0,0,far-s
 gList(stars,ViewPort=>{(-100,-100),(100,100)})
 style(SVG oo,"background"=>"black")
 
--- removed
+-- removed (might be added back if correctly implemented in 3d)
  Node
   Key
    Rectangle
