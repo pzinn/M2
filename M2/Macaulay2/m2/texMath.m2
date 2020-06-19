@@ -370,3 +370,25 @@ texMath' (Function, ColumnExpression) := (texMath,x) -> concatenate (
     "\\end{aligned}"
     )
 
+texMath' (Function, Bag) := (texMath,x) -> concatenate(
+    texMath class x,
+     "\\{",
+     if #x>0 then toString(#x) | "\\text{ items}",
+     "\\}"
+     )
+
+constantTexMath := new HashTable from {
+    symbol pi => "\\pi",
+    symbol EulerConstant => "\\gamma",
+    symbol ii => "\\mathbf{i}"
+    }
+texMath' (Function, Constant) := (texMath,c) -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0
+
+texMath' (Function, Package) :=
+texMath' (Function, GroebnerBasis) :=
+texMath' (Function, IndeterminateNumber) := (texMath,x) -> texMath toString x
+
+texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
+
+texMath (Function, SumOfTwists) := (texMath,S) -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
+
