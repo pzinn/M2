@@ -20,6 +20,7 @@ GradedModule == GradedModule := (C,D) -> (
 	       not C#?i and D#i == 0
 	       )))
 GradedModule _ ZZ := Module => (M,i) -> if M#?i then M#i else (ring M)^0
+expression GradedModule := hold
 net GradedModule := C -> (
      s := sort spots C;
      if # s === 0 then "0"
@@ -38,14 +39,6 @@ net GradedModule := C -> (
 	  printWidth = savePW;
 	  res))
   
-texUnder = (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
-
-texMath GradedModule := C -> (
-     s := sort spots C;
-     if # s === 0 then "0"
-     else demark("\\quad ",apply(s,i->texUnder(texMath C_i,i)))
-      )
-
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)
@@ -71,13 +64,6 @@ net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are ess
 	  );
      if # v === 0 then "0"
      else stack v)
-
-texMath GradedModuleMap := f -> (
-     d := f.degree;
-     s := sort intersection(spots f.source, spots f.target / (i -> i - d));
-     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> RowExpression {i+d, ":", MapExpression { target f_i, source f_i, f_i }, ":", i})
-)
-
 
 GradedModuleMap _ ZZ := Matrix => (f,i) -> (
      if f#?i then f#i else map((target f)_(i+f.degree),(source f)_i,0)

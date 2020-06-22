@@ -14,7 +14,6 @@ IndeterminateNumber.synonym = "indeterminate number"
 indeterminate = new IndeterminateNumber from {}
 setAttribute(indeterminate,ReverseDictionary,symbol indeterminate)
 toString IndeterminateNumber := net IndeterminateNumber := x -> "indeterminate"
-texMath IndeterminateNumber := x -> texMath toString x
 
 InfiniteNumber ? InfiniteNumber := (x,y) -> x#0 ? y#0
 InfiniteNumber + InfiniteNumber := (x,y) -> if x === y then x else indeterminate
@@ -198,8 +197,6 @@ InfiniteNumber ? RR := (x,y) -> (
 )
 CC ? InfiniteNumber := (x,y) -> if (isANumber(x) and not isFinite(x)) then symbol == else symbol incomparable
 InfiniteNumber ? CC := (x,y) -> if (isANumber(y) and not isFinite(y)) then symbol == else symbol incomparable
-
-texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 
 max VisibleList := x -> if #x === 0 then -infinity else fold((i,j) -> if i > j then i else j, x)
 min VisibleList := x -> if #x === 0 then  infinity else fold((i,j) -> if i < j then i else j, x)

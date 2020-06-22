@@ -14,7 +14,6 @@ toString RingMap := f -> toString expression f
 net RingMap := f -> horizontalJoin(
      "map(", net target f, ",", net source f, ",", net first entries matrix f, ")"
      )
-texMath RingMap := x -> texMath expression x
 
 describe RingMap := f -> Describe expression f
 toExternalString RingMap := f -> toString describe f

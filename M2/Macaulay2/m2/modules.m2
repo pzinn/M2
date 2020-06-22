@@ -80,7 +80,6 @@ expression Vector := v -> VectorExpression apply(flatten entries super v#0,expre
 net Vector := v -> net expression v
 toExternalString Vector :=
 toString Vector := v -> toString expression v
-texMath Vector := v -> texMath expression v
 html Vector := v -> html expression v
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
@@ -216,7 +215,6 @@ expression Module := M -> (
  )
 toString Module := M -> toString expression M
 net Module := M -> net expression M
-texMath Module := M -> texMath expression M
 
 describe Module := M -> Describe (
      if M.?relations

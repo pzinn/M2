@@ -227,7 +227,6 @@ expression Matrix := m -> (
 
 net Matrix := m -> net expression m
 toString Matrix := m -> toString expression m
-texMath Matrix := m -> texMath expression m
 html Matrix := m -> html expression m
 
 describe Matrix := m -> (

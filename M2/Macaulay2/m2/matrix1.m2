@@ -424,7 +424,6 @@ expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first 
 net Ideal := (I) -> net expression I
 toString Ideal := (I) -> toString expression I
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
-texMath Ideal := (I) -> texMath expression I
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

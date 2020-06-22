@@ -183,11 +183,6 @@ net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,netn)),
      "]")
-net BasicList := x -> horizontalJoin deepSplice (
-      net class x, 
-      "{",
-      toSequence between(comma,apply(toList x,netn)),
-      "}")
 net MutableList := x -> (
      if #x > 0 
      then horizontalJoin ( net class x, "{...", toString(#x), "...}")

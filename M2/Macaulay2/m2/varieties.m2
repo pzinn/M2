@@ -12,7 +12,6 @@ ring Variety := X -> X.ring
 toString Variety := toString @@ expression
 toExternalString Variety := toString @@ describe
 net Variety := net @@ expression
-texMath Variety := x -> texMath expression x
 expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
 describe AffineVariety := (X) -> Describe (expression Spec) (expression X.ring)
 describe ProjectiveVariety := (X) -> Describe (expression Proj) (expression X.ring)
@@ -49,7 +48,6 @@ SheafOfRings = new Type of HashTable
 SheafOfRings.synonym = "sheaf of rings"
 expression SheafOfRings := O -> Subscript { OO, expression O.variety }
 net SheafOfRings := net @@ expression
-texMath SheafOfRings := x -> texMath expression x
 Ring ~ := sheaf Ring := SheafOfRings => R -> new SheafOfRings from { symbol variety => Proj R, symbol ring => R }
 sheaf(Variety,Ring) := SheafOfRings => (X,R) -> (
      if ring X =!= R then error "expected the variety of the ring";
@@ -82,7 +80,6 @@ expression CoherentSheaf := F -> (
 	)
 
 net CoherentSheaf := (F) -> net expression F
-texMath CoherentSheaf := (F) -> texMath expression F
 toString CoherentSheaf := (F) -> toString expression F
 
 CoherentSheaf#{Standard,AfterPrint} = F -> (
@@ -204,7 +201,7 @@ SumOfTwists = new Type of BasicList
 CoherentSheaf LowerBound := SumOfTwists => (F,b) -> new SumOfTwists from {F, b}
 SheafOfRings LowerBound := SumOfTwists => (O,b) -> O^1 b
 net SumOfTwists := S -> net S#0 | if S#1#0 === neginfinity then "(*)" else "(>=" | net S#1#0 | ")"
-texMath SumOfTwists := S -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
+expression SumOfTwists := hold
 
 cohomology(ZZ,SumOfTwists) :=  Module => opts -> (i,S) -> (
      F := S#0;
