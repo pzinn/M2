@@ -47,7 +47,8 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     }
 
 
-texMathShort := m -> (
+-- should be made a method and primed
+texMathShort' = (texMath,m) -> (
     if m == 0 then return "0";
     x := entries m;
     texRow := row -> if #row>8 then { texMath first row, "\\cdots", texMath last row } else texMath\row;
@@ -92,7 +93,7 @@ texMath' (Function, ChainComplex) := (texMath,C) -> (
      complete C;
      s := sort spots C;
      if # s === 0 then "0" else
-     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptsize " | texMathShort C.dd_i | "}\\," | texUnder(texMath C_i,i) )
+     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptsize " | texMathShort'(texMath,C.dd_i) | "}\\," | texUnder(texMath C_i,i) )
       )
 
 texMath BettiTally := v -> (
@@ -295,9 +296,11 @@ texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
     )
 *-
 texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
-    -- we need to avoid loops: objects whose expression is hold of themselves and whose texMath is undefined
-    if class y === Holder and y#0 === x then texMath simpleToString x -- if we're desperate (in particular, for raw objects)
+    -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
+    -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
+    if class y === Holder and class y#0 === class x then texMath simpleToString x -- if we're desperate (in particular, for raw objects)
     else texMath y )
+-- probably temporary
 texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 then texMath x#0 else texMath simpleToString x#0
 
 --texMath Symbol := toString -- the simplest version
@@ -328,7 +331,7 @@ texMath' (Function, MapExpression) := (texMath,x) -> texMath x#0 | "\\," | (if #
 texMath' (Function, List) := (texMath,x) -> concatenate("\\left\\{", between(",\\,", apply(x,texMath)), "\\right\\}")
 texMath' (Function, Array) := (texMath,x) -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath' (Function, Sequence) := (texMath,x) -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else texMath expression x
+texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else (lookup(texMath',Function,Thing)) (texMath,x)
 
 texMath' (Function, Function) := (texMath,x) -> texMath toString x
 texMath' (Function, MutableList) := (texMath,x) -> concatenate (

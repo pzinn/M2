@@ -380,9 +380,11 @@ svg GraphicsObject := g -> svg(g,{})
 
 htmlWithTex GraphicsObject := html
 
+-- texMath temporarily different due to experimental changes
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
 net GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
+texMath GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else texMath new HashTable from g
 expression GraphicsObject := hold -- bit of a hack: don't want the reverse dictionary to interfere with expression
 
 distance1 GraphicsPoly := g -> (
