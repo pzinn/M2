@@ -302,6 +302,14 @@ toExternalString Thing := x -> (
      if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
      error("can't convert anonymous object of class ",toString class x," to external string"))
 
+regexQuote = method(Dispatch => Thing, TypicalValue => String)
+regexQuote String := s -> (
+     specialChars := {"\\", "^", "$", ".", "|", "?", "*", "+", "(", ")", "[",
+	  "]", "{", "}"};
+     concatenate apply(characters s, c ->
+	  if member(c, specialChars) then "\\" | c else c)
+     )
+
 options = method(Dispatch => Thing, TypicalValue => OptionTable)
 setupMethods(Dispatch => Thing, {max,min,directSum,intersect,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)
@@ -564,10 +572,12 @@ codeHelper#(functionBody (stashValue null) null) = g -> {
 -- hypertext conversion
 
 html = method(Dispatch => Thing, TypicalValue => String)
+markdown = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 texMath = method(Dispatch => Thing, TypicalValue => String)
 htmlWithTex = method(Dispatch => Thing, TypicalValue => String)
 info = method(Dispatch => Thing, TypicalValue => String)
+-- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
 
 -- method options
 

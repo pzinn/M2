@@ -90,6 +90,10 @@ do case $i in
    esac
 done
 
+dnl: homebrew-provided compilers don't look here:
+CPPFLAGS="-I/usr/include -I/usr/local/include $CPPFLAGS"
+LDFLAGS="-L/usr/lib -L/usr/local/lib $LDFLAGS"
+
 dnl AC_MSG_CHECKING(whether $FIND is GNU find)
 dnl if "$FIND" --version | head -1 | grep "GNU find" >/dev/null 2>&1
 dnl then AC_MSG_RESULT(yes)
@@ -525,10 +529,12 @@ AC_SUBST(TARLIBS,no)   AC_ARG_ENABLE(tarlibs, AS_HELP_STRING(--enable-tarlibs,in
 AC_SUBST(SHARED,yes)    AC_ARG_ENABLE(shared, AS_HELP_STRING(--disable-shared,disable building of shared libraries), SHARED=$enableval)
 
 dnl Under Mac OS X 10.15 the Gatekeeper makes it impossible for us to distribute shared libraries with our program to end users in disk image (*.dmg) format:
-if test "$ISSUE_FLAVOR" = "MacOS"
-then SHARED=no
-     AC_MSG_NOTICE([disabling the building of shared libraries under Mac OS X])
-fi
+dnl ... but we've given up on trying to satisfy the gatekeeper.  There is a strange error message when we try to link with libgmp.a:
+dnl     ld: illegal text-relocation to '___gmp_binvert_limb_table' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(mp_minv_tab.o) from '___gmpn_divexact_1' in /Users/runner/runners/2.263.0/work/M2/M2/M2/BUILD/cicd/usr-host/lib/libgmp.a(dive_1.o) for architecture x86_64
+dnl if test "$ISSUE_FLAVOR" = "MacOS"
+dnl then SHARED=no
+dnl      AC_MSG_NOTICE([disabling the building of shared libraries under Mac OS X])
+dnl fi
 
 test "$MEMDEBUG" = "yes" && DEBUG=yes
 test "$PROFILING" = "yes" && CFLAGS="$CFLAGS -pg" CXXFLAGS="$CXXFLAGS -pg" LDFLAGS="$LDFLAGS -pg" ENABLE_STRIP=no
@@ -694,7 +700,7 @@ AC_SUBST(BUILTLIBS)
 #    (Programs linked by this configure script are linked with the options in LIBS.  This allows libraries
 #    dependent on previously detected libraries to be detected by tests that involve linking.
 
-AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox boost gtest ")
+AC_SUBST(LIBLIST, " atomic_ops gc gdbm gmp mpir mpfr readline ntl flint factory lapack mpsolve frobby glpk cddlib fplll linbox gtest ")
 # The list LIBLIST is the list of libraries that might be used and linked into M2.
 
 AC_SUBST(PROGLIST, "4ti2 gfan normaliz csdp nauty cddplus lrslib gftables topcom cohomcalg")
@@ -889,8 +895,19 @@ then BUILTLIBS="-lgivaro $BUILTLIBS"
 fi
 
 AC_LANG(C)
-dnl topcom includes setoper.h, rather than cdd/setoper.h, so we do, too
-AC_CHECK_HEADER(setoper.h,,BUILD_cddlib=yes)
+SAVE=$CPPFLAGS
+dnl topcom includes "setoper.h" -- no prefix
+dnl We try 3 different filenames to thwart the caching of results:
+AC_CHECK_HEADER(cdd.h,,[
+  dnl for Ubuntu
+  CPPFLAGS="$SAVE -I/usr/include/cdd"
+  AC_CHECK_HEADER(cddmp.h,,[
+    dnl for Fedora
+    CPPFLAGS="$SAVE -I/usr/include/cddlib"
+    AC_CHECK_HEADER(setoper.h,,CPPFLAGS=$SAVE
+			        AC_MSG_RESULT([[cddlib not found, will build]])
+			        BUILD_cddlib=yes)])],
+    [#include <setoper.h>])
 if test $BUILD_cddlib = yes
 then BUILTLIBS="-lcdd $BUILTLIBS"
 else LIBS="-lcdd $LIBS"
@@ -898,14 +915,22 @@ fi
 
 dnl factory needs to know:
 AC_SUBST(BUILD_flint)
-dnl  We always build flint, until flint comes out with a release whose version number we can check for.
-dnl  (Now we use flint for factoring integers, and only a recent development version does that well.)
-BUILD_flint=yes
-BUILD_ALWAYS="$BUILD_ALWAYS flint"
-dnl 
 if test $BUILD_flint = no
 then AC_LANG(C)
-     AC_CHECK_HEADER(flint/flint.h,LIBS="-lflint -lgmp $LIBS",BUILD_flint=yes)
+     AC_MSG_CHECKING([for flint >= 2.6.0])
+     AC_COMPILE_IFELSE(
+        [AC_LANG_PROGRAM(
+	  [#include <flint/flint.h>
+	  ],
+	  [
+#if __FLINT_VERSION < 2 || (__FLINT_VERSION == 2 && __FLINT_VERSION_MINOR < 6)
+#error old flint
+#endif
+	  ])],
+	  AC_MSG_RESULT([yes])
+	  LIBS="-lflint -lgmp $LIBS",
+	  AC_MSG_RESULT([no])
+	  BUILD_flint=yes)
 fi
 if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
@@ -993,13 +1018,25 @@ then CFO=`$PKG_CONFIG --cflags-only-other eigen3`
 else AC_MSG_ERROR(eigen library not found)
 fi
 
-AC_LANG(C)
+AC_LANG(C++)
 AC_CHECK_HEADER(NTL/version.h,,BUILD_ntl=yes)
 if test $BUILD_ntl = yes
 then BUILTLIBS="-lntl $BUILTLIBS"
-else LIBS="-lntl $LIBS"
+else AC_MSG_CHECKING([whether libntl is present and usable])
+     LIBS="-lntl $LIBS"
+     AC_LINK_IFELSE(
+	[AC_LANG_PROGRAM(
+	    [
+	     #include <NTL/tools.h>
+	     ],
+	    [_ntl_GetTime()])],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no, even though include files are present])
+	 AC_MSG_ERROR(quitting)
+	 ])
 fi
-AC_SUBST(BUILD_ntl)		dnl factory needs to know
+dnl factory needs to know:
+AC_SUBST(BUILD_ntl)
 
 AC_LANG(C++)
 AC_CHECK_HEADER(frobby.h,LIBS="-lfrobby -lgmpxx -lgmp $LIBS",BUILD_frobby=yes)
@@ -1129,11 +1166,8 @@ then AC_LANG(C)
      AC_CHECK_HEADER(python2.7/Python.h,,AC_MSG_ERROR(include file python2.7/Python.h not found))
 fi
 
-
-if test $BUILD_boost = no
-then AC_LANG(C++)
-     AC_CHECK_HEADER(boost/version.hpp,,BUILD_boost=yes)
-fi
+AC_LANG(C++)
+AC_CHECK_HEADER(boost/version.hpp,,AC_MSG_ERROR([[boost library not installed, but required]]))
 
 AC_SUBST(ULIMIT_T,yes)
 AC_SUBST(ULIMIT_M,yes)
@@ -1395,8 +1429,10 @@ dnl        , so we test those two lines early.
 dnl
 if pkg-config --exists libxml-2.0
 then XML_INCLUDE=`pkg-config --cflags-only-I libxml-2.0 | sed -e 's=^-I/=-isystem /=g' -e 's= -I/= -isystem /=g'`
-     AC_MSG_NOTICE(pkg-config: will search for include files also in $XML_INCLUDE)
-     CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
+     if test "$XML_INCLUDE"
+     then AC_MSG_NOTICE([pkg-config: will search for include files also in $XML_INCLUDE])
+          CPPFLAGS="$XML_INCLUDE $CPPFLAGS"
+     fi
 fi
 
 AC_CHECK_HEADER(libxml/xmlexports.h,,

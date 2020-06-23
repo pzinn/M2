@@ -71,7 +71,6 @@ assert( (toString CurrentVersion) === "CurrentVersion" )
 assert( (toString D) === "D" )
 assert( (toString DD) === "DD" )
 assert( (toString DIV) === "DIV" )
---assert( (toString DIV1) === "DIV1" )
 assert( (toString DL) === "DL" )
 assert( (toString DT) === "DT" )
 assert( (toString Database) === "Database" )
@@ -230,7 +229,10 @@ assert( (toString MakeInfo) === "MakeInfo" )
 assert( (toString MakeLinks) === "MakeLinks" )
 assert( (toString Manipulator) === "Manipulator" )
 assert( (toString MarkUpType) === "MarkUpType" )
+<<<<<<< HEAD
 --assert( (toString MarkUpTypeWithOptions) === "MarkUpTypeWithOptions" )
+=======
+>>>>>>> 6c49cc1b6c483301e271ddff01ddd88c8a3fd273
 assert( (toString Matrix) === "Matrix" )
 assert( (toString MatrixExpression) === "MatrixExpression" )
 assert( (toString MaxReductionCount) === "MaxReductionCount" )

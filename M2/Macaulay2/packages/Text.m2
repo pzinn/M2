@@ -50,29 +50,12 @@ document {
      Headline => "the class of mark-up types used with hypertext", 
      "Some mark-up types allow options (attributes) to be inserted in their html tags.",
      EXAMPLE {
-	  ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
-    "There are many ways to use ", TO "resolution", "."
-    )///,
-     	  "html oo"
+	 ///DIV ( "class" => "waystouse", SUBSECTION {"Ways to use ", TT "resolution", ":"},
+	     "There are many ways to use ", TO "resolution", "."
+	     )///,
+	 "html oo"
          }
-    }
-
---document {
---     Key => PARA,
---     Headline => "paragraph separator",
---	Usage => "PARA x",
---     TT "PARA x", " makes a ", TO "hypertext", " double-spaced paragraph break."
---     }
-
--*
-document {
-     Key => DIV1,
-     Headline => "a single-spaced paragraph separator",
-	Usage => "DIV1 x",
-     TT "DIV1 x", " makes a ", TO "hypertext", " single-spaced paragraph break. This is mostly for the documentation formated in info mode.",
-	SeeAlso => "PARA"
      }
-*-
 
 document {
      Key => DIV,
@@ -783,7 +766,7 @@ document {
 
 document {
      Key => ExampleItem,
-     Headline => "a type of hypertext for holding example inputs awaiting outputs" 
+     Headline => "a type of hypertext for holding example inputs awaiting outputs"
      }
 
 document { Key => IntermediateMarkUpType,
@@ -835,10 +818,17 @@ document { Key => {(validate, Hypertext),validate},
      }
 
 undocumented {
-     (validate, TO),(validate, String),(validate, MarkUpType, Set, BasicList),(validate, Type, Set, BasicList),(validate, TOH),(validate, Option),(validate, TO2),
-     (validate, COMMENT),(validate, CDATA),(validate, TEX), (validate, LITERAL)
-     }
-
-undocumented { 
-     (examples,Hypertext)		   -- it might be good to document this
-     }
+    (validate, CDATA),
+    (validate, COMMENT),
+    (validate, LITERAL),
+    (validate, MarkUpType, Set, BasicList),
+    (validate, Option),
+    (validate, String),
+    (validate, TEX),
+    (validate, TO),
+    (validate, TO2),
+    (validate, TOH),
+    (validate, Type, Set, BasicList),
+    -- TODO: document this
+    (examples,Hypertext)
+    }
