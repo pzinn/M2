@@ -353,6 +353,7 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     prs := pairs g | pairs g.cache; -- TODO restructure
     opts := deepSplice apply(select(prs,(key,val)-> svgLookup#?key), (key,val) -> svgLookup#key(val,g.cache.CurrentMatrix));
     if is3d g then opts = opts | deepSplice apply(select(prs,(key,val)-> svg3dLookup#?key), (key,val) -> svg3dLookup#key val);
+    if hasAttribute(g,ReverseDictionary) then opts = append(opts, TITLE toString getAttribute(g,ReverseDictionary));
     g.cache.SVGElement = style((class g).SVGElement opts,prs)
     )
 
