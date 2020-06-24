@@ -177,8 +177,8 @@ texMath' (Function, Product) := (texMath,v) -> (
      else if n === 1 then texMath v#0
      else (
      	  p := precedence v;
-	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and (x#1 === 1 or x#1 === ONE)));
-	  seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot " else if nums#i or class v#i === Symbol or (class v#i === Power and class v#i#0 === Symbol and (v#i#1 === 1 or v#i#1 === ONE)) then "\\," else "");
+	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and x#1 === 1));
+	  seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot " else if nums#i or class v#i === Symbol or (class v#i === Power and class v#i#0 === Symbol and v#i#1 === 1) then "\\," else "");
      	  boxes := apply(v,
 		    term -> (
 			 if precedence term <= p and class expression term =!= Divide
@@ -190,7 +190,7 @@ texMath' (Function, Product) := (texMath,v) -> (
 	  )
       )
 
-texMath' (Function, Power) := (texMath,v) -> if v#1 === 1 or v#1 === ONE then texMath v#0 else ( -- "1" shouldn't happen but does in invalid expressions produced by "factor"
+texMath' (Function, Power) := (texMath,v) -> if v#1 === 1 then texMath v#0 else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
@@ -316,7 +316,7 @@ texVariable := x -> (
 texMath' (Function, Symbol) := (texMath,x) -> (
     C := class value' x;
     -- effectively, the next line determines which Types are in italic, which are in tt
-    if ancestor(Symbol,C) or ancestor(Ring,C) or ancestor(RingFamily,C) or ancestor(RingElement,C) or ancestor(IndexedVariableTable,C) or ancestor(ScriptedFunctor,C) then texVariable toString x else texMath simpleToString x
+    if ancestor(Symbol,C) or ancestor(Ring,C) or ancestor(RingFamily,C) or ancestor(RingElement,C) or ancestor(IndexedVariableTable,C) then texVariable toString x else texMath simpleToString x
     )
 
 texMath' (Function, SheafExpression) := (texMath,x) -> texMath x#0
