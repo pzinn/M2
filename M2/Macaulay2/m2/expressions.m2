@@ -8,14 +8,20 @@ TODO:
 - remove useless toString/net for Types which have a well-defined expression e.g. HashTable, VirtualTally
 - any reason the expression of HashTable is not Adjacent {hashTable, xxx} (lower case) rather than NewFromExpression {HashTable, xxx}? cf Ideal, Set, etc
 - fix texMath Symbol: tricky. introduce extra Expression type SymbolExpression? a bit heavy
+  see also related next point -- might want to give up on ReverseDictionary in expression and reverse texMath Symbol changes
+  except for inheritance issues -- if a type is not expressionified but his descendants are...
 - the use of ReverseDictionary is very confusing:
   * some types just don't have it e.g. hash tables
   * some have it but it's not used in their display e.g. modules
   * some have it and it's used e.g. poly rings
+  overall, expression can't really handle ReverseDictionary -- should be left to output routines (if they exist), sadly -- cf Type
 - reevaluate
   if class y === Holder and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
   rather than using simpleToString: simplifies things (e.g. for a non-globally-assigned Function) but creates extra dependency on toString working fine
-- remove space in net NewFromExpression
+- remove space in net NewFromExpression (ideally, would be something completely different from Adjacent, but that would break existing)
+- texMath Type? see also
+  https://github.com/Macaulay2/M2/issues/1218
+- unify keyword texmath table & general texMath table
 *-
 
 Constant = new Type of BasicList
@@ -1133,8 +1139,7 @@ expression HashTable := x -> (
 expression BasicList := s -> NewFromExpression { expression class s, apply(toList s, expression) }
 
 expression MutableList :=
-expression MutableHashTable :=
-expression Descent := hold
+expression MutableHashTable := lookup(expression,Thing)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

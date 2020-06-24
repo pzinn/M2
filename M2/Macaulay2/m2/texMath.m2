@@ -360,18 +360,24 @@ texMath Net := n -> (
     "\\begin{aligned}" | s | "\\end{aligned}"
     )
 
--*
-texMath' (Function, Bag) := (texMath,x) -> concatenate(
+-- MutableHashTable needs manual output...
+texMath' (Function, MutableHashTable) := (texMath,x) -> if hasAttribute(x,ReverseDictionary) then texMath simpleToString getAttribute(x,ReverseDictionary) else concatenate (
     texMath class x,
-     "\\{",
-     if #x>0 then toString(#x) | "\\text{ items}",
-     "\\}"
-     )
-*-
-
-texMath' (Function, MutableHashTable) := (texMath,x) -> (
-    --TODO
+    "\\left\\{",
+    if #x>0 then {"\\ldots",texMath(#x),"\\ldots"},
+    "\\right\\}"
     )
+
+-- ... but not some of its descendants
+texMath' (Function, Ring) :=
+texMath' (Function, Variety) :=
+lookup(texMath',Function,Thing)
+
+-*
+texMath' (Function, Type) := (texMath,x) ->
+     { class x," of ", parent x },
+     texMath )
+*-
 
 texMath' (Function, GroebnerBasis) := (texMath,x) -> texMath toString x
 

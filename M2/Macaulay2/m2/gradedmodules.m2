@@ -20,7 +20,6 @@ GradedModule == GradedModule := (C,D) -> (
 	       not C#?i and D#i == 0
 	       )))
 GradedModule _ ZZ := Module => (M,i) -> if M#?i then M#i else (ring M)^0
-expression GradedModule := hold
 net GradedModule := C -> (
      s := sort spots C;
      if # s === 0 then "0"
@@ -48,7 +47,6 @@ GradedModuleMap.synonym = "graded module map"
 source GradedModuleMap := GradedModule => f -> f.source
 target GradedModuleMap := GradedModule => f -> f.target
 ring GradedModuleMap := (f) -> ring source f
-expression GradedModuleMap := hold
 net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are essentially identical...
      d := f.degree;
      v := between("",
