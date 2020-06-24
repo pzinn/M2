@@ -1,12 +1,22 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
 -- rewritten by P. Zinn-Justin 2018-2020
 
--- TODO:
--- check that types whose texMath is defined directly have expression XXX := hold (or analogous)
--- move all expression methods to here
--- move toString/net to wherever
--- remove useless toString/net for Types which have a well-defined expression e.g. HashTable, VirtualTally
--- any reason the expression of HashTable is not `hashTable` (lower case) rather than `HashTable`? cf Ideal, Set, etc
+-*
+TODO:
+- move all expression methods to here?
+- move toString/net to wherever?
+- remove useless toString/net for Types which have a well-defined expression e.g. HashTable, VirtualTally
+- any reason the expression of HashTable is not Adjacent {hashTable, xxx} (lower case) rather than NewFromExpression {HashTable, xxx}? cf Ideal, Set, etc
+- fix texMath Symbol: tricky. introduce extra Expression type SymbolExpression? a bit heavy
+- the use of ReverseDictionary is very confusing:
+  * some types just don't have it e.g. hash tables
+  * some have it but it's not used in their display e.g. modules
+  * some have it and it's used e.g. poly rings
+- reevaluate
+  if class y === Holder and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
+  rather than using simpleToString: simplifies things (e.g. for a non-globally-assigned Function) but creates extra dependency on toString working fine
+- remove space in net NewFromExpression
+*-
 
 Constant = new Type of BasicList
 globalAssignment Constant
@@ -644,7 +654,8 @@ returns = t -> x -> t
 	       precedence Product := returns prec symbol *
  precedence NonAssociativeProduct := returns prec symbol **
 		 precedence Minus := returns strength1 symbol -
-   precedence FunctionApplication := returns prec symbol SPACE
+   precedence FunctionApplication :=
+     precedence NewFromExpression :=
               precedence Adjacent := returns prec symbol SPACE
 		precedence Divide := returns prec symbol /
 	     precedence Subscript := returns prec symbol _
@@ -1121,6 +1132,8 @@ expression HashTable := x -> (
 
 expression BasicList := s -> NewFromExpression { expression class s, apply(toList s, expression) }
 
+expression MutableList :=
+expression MutableHashTable :=
 expression Descent := hold
 
 -- Local Variables:

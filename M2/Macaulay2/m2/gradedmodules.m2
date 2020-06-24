@@ -48,6 +48,7 @@ GradedModuleMap.synonym = "graded module map"
 source GradedModuleMap := GradedModule => f -> f.source
 target GradedModuleMap := GradedModule => f -> f.target
 ring GradedModuleMap := (f) -> ring source f
+expression GradedModuleMap := hold
 net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are essentially identical...
      d := f.degree;
      v := between("",

@@ -284,7 +284,7 @@ texMath Thing := v -> if texMathTable#?v then texMathTable#v else texMath'(texMa
 texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
     -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
-    if class y === Holder and class y#0 === class x then texMath simpleToString x -- if we're desperate (in particular, for raw objects)
+    if class y === Holder and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
     else texMath y )
 -*
 texMath' (Function, Thing) := (texMath,x) -> texMath expression x
@@ -316,7 +316,7 @@ texVariable := x -> (
 texMath' (Function, Symbol) := (texMath,x) -> (
     C := class value' x;
     -- effectively, the next line determines which Types are in italic, which are in tt
-    if ancestor(Symbol,C) or ancestor(Ring,C) or ancestor(RingFamily,C) or ancestor(RingElement,C) or ancestor(IndexedVariableTable,C) then texVariable toString x else texMath simpleToString x
+    (if ancestor(Symbol,C) or ancestor(Ring,C) or ancestor(RingFamily,C) or ancestor(RingElement,C) or ancestor(IndexedVariableTable,C) or ancestor(Variety,C) then texVariable else texMath) simpleToString x
     )
 
 texMath' (Function, SheafExpression) := (texMath,x) -> texMath x#0
@@ -360,12 +360,18 @@ texMath Net := n -> (
     "\\begin{aligned}" | s | "\\end{aligned}"
     )
 
+-*
 texMath' (Function, Bag) := (texMath,x) -> concatenate(
     texMath class x,
      "\\{",
      if #x>0 then toString(#x) | "\\text{ items}",
      "\\}"
      )
+*-
+
+texMath' (Function, MutableHashTable) := (texMath,x) -> (
+    --TODO
+    )
 
 texMath' (Function, GroebnerBasis) := (texMath,x) -> texMath toString x
 
