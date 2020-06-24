@@ -5,6 +5,8 @@
 -- check that types whose texMath is defined directly have expression XXX := hold (or analogous)
 -- move all expression methods to here
 -- move toString/net to wherever
+-- remove useless toString/net for Types which have a well-defined expression e.g. HashTable, VirtualTally
+-- any reason the expression of HashTable is not `hashTable` (lower case) rather than `HashTable`? cf Ideal, Set, etc
 
 Constant = new Type of BasicList
 globalAssignment Constant
@@ -1111,9 +1113,9 @@ toString Set := toString @@ expression
 net Set := net @@ expression
 
 expression HashTable := x -> (
-         if hasAttribute(x,ReverseDictionary) then return new Holder from { getAttribute(x,ReverseDictionary), class x };
+         if hasAttribute(x,ReverseDictionary) then new Holder from { getAttribute(x,ReverseDictionary) } else
 	 NewFromExpression { class x,
-	 apply(sortByName pairs x, (k,v) -> expression k => expression v )
+	 new VerticalList from apply(sortByName pairs x, (k,v) -> expression k => expression v )
 	 }
 	 )
 

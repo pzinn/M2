@@ -372,4 +372,3 @@ texMath' (Function, GroebnerBasis) := (texMath,x) -> texMath toString x
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 
 texMath (Function, SumOfTwists) := (texMath,S) -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
-
