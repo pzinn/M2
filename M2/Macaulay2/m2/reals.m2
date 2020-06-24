@@ -10,8 +10,6 @@ globalAssignment ImmutableType
 
 RR.synonym = "real number"
 CC.synonym = "complex number"
-RR.texMath = ///{\mathbb R}///
-CC.texMath = ///{\mathbb C}///
 Number.synonym = "number"
 InexactFieldFamily.synonym = "inexact field family"
 InexactNumber.synonym = "inexact number"

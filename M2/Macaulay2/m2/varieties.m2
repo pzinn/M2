@@ -235,7 +235,6 @@ OO = new ScriptedFunctor from {
      subscript => X -> applyMethod((symbol _,OO,class X),(OO,X)),
      argument => X -> applyMethod((symbol SPACE,OO,class X),(OO,X)),
      }
-OO.texMath = ///{\mathcal O}///
 installMethod(symbol _,OO,Variety,(OO,X) -> sheaf_X ring X)
 sheaf Variety := X -> sheaf_X ring X
 

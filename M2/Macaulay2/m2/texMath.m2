@@ -53,11 +53,13 @@ texMathShort' = (texMath,m) -> (
 	      )
     )
 
-texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
+texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}" -- shitty, doesn't guarantee that all numbers are on same line -- FIX
 
 ---
 
--- texMath' should always be used rather than texMath unless absolutely certain that no descendant type needs redefining texMath'
+-- texMath' should always be used rather than texMath unless absolutely certain that
+-- 1. no recursive use of texMath takes place
+-- 2. no descendant type might redefine texMath'
 
 texMath' = method()
 
@@ -119,7 +121,7 @@ texMath' (Function, Adjacent) := texMath' (Function, FunctionApplication) := (te
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      -- we can finesse further the amount of space than in net
-     if div or instance(args,Array) then sep:="" -- something wrong: VisibleLists should be Holder'ed?
+     if div or instance(args,Array) then sep:=""
      else if instance(args,VisibleList) then sep="\\,"
      else sep = "\\ ";
      if precedence args > p
@@ -240,14 +242,14 @@ texMath' (Function, NumberedVerticalList) := (texMath,s) -> concatenate(
 
 texMath' (Function, Table) := (texMath,m) -> (
     if m#?0 then concatenate(
-	"{\\begin{array}{", #m#0: "c", "}", newline,
+	"\\begin{array}{", #m#0: "c", "}", newline,
 	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
-	"\\end{array}}")
+	"\\end{array}")
 )
 
 texMath' (Function, MatrixExpression) := (texMath,m) -> (
     if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
-    else if m#?0 then if #m#0>10 then "{\\left(" | texMath new Table from toList m | "\\right)}" -- the extra {} is to discourage line breaks
+    else if m#?0 then if #m#0>10 then concatenate("{\\left(", texMath new Table from m, "\\right)}") -- the extra {} is to discourage line breaks
      else concatenate(
       	      "\\begin{pmatrix}" | newline,
      	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
@@ -270,8 +272,15 @@ texMath' (Function, RR) := (texMath,x) -> if not isANumber x then texMath toStri
 texMath ZZ := toString -- eventually, change
 tex Thing := x -> concatenate("$",texMath x,"$")
 
+texMathTable := new HashTable from {
+    pi => "\\pi",
+    EulerConstant => "\\gamma",
+    ii => "\\mathbf{i}",
+    OO => "\\mathcal{O}"
+    }
+
+texMath Thing := v -> if texMathTable#?v then texMathTable#v else texMath'(texMath,v)
 -- experimental change (should do the same with toString, net, etc)
-texMath Thing := v -> texMath'(texMath,v)
 texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
     -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
@@ -285,13 +294,9 @@ texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
     texMath1 x#0
     )
 *-
--- probably temporary
-texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 or ancestor(Ring,x#1) or ancestor(RingFamily,x#1) or ancestor(ScriptedFunctor,x#1) then texMath x#0 else texMath simpleToString x#0
+texMath' (Function, Holder) := (texMath,x) -> texMath x#0
 
 --texMath Symbol := toString -- the simplest version
--- next version is a horrible hack, just kept to remind me that:
--- expression should never need to run value of course !!!
---texMath Symbol := x -> ( xx := value x; if instance(xx,HashTable) and xx.?texMath then xx.texMath else toString x)
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
@@ -307,7 +312,12 @@ texVariable := x -> (
 	);
     if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
     )
-texMath' (Function, Symbol) := (texMath,x) -> texVariable toString x;
+-- probably temporary -- violates the no-value-in-expression-code rule
+texMath' (Function, Symbol) := (texMath,x) -> (
+    C := class value' x;
+    -- effectively, the next line determines which Types are in italic, which are in tt
+    if ancestor(Symbol,C) or ancestor(Ring,C) or ancestor(RingFamily,C) or ancestor(RingElement,C) or ancestor(IndexedVariableTable,C) or ancestor(ScriptedFunctor,C) then texVariable toString x else texMath simpleToString x
+    )
 
 texMath' (Function, SheafExpression) := (texMath,x) -> texMath x#0
 
@@ -316,9 +326,7 @@ texMath' (Function, MapExpression) := (texMath,x) -> texMath x#0 | "\\," | (if #
 texMath' (Function, List) := (texMath,x) -> concatenate("\\left\\{", between(",\\,", apply(x,texMath)), "\\right\\}")
 texMath' (Function, Array) := (texMath,x) -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath' (Function, Sequence) := (texMath,x) -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
---texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else (lookup(texMath',Function,Thing)) (texMath,x)
 
-texMath' (Function, Function) := (texMath,x) -> texMath toString x
 texMath' (Function, MutableList) := (texMath,x) -> concatenate (
     texMath class x,
     "\\left\\{",
@@ -359,16 +367,7 @@ texMath' (Function, Bag) := (texMath,x) -> concatenate(
      "\\}"
      )
 
-constantTexMath := new HashTable from {
-    symbol pi => "\\pi",
-    symbol EulerConstant => "\\gamma",
-    symbol ii => "\\mathbf{i}"
-    }
-texMath' (Function, Constant) := (texMath,c) -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0
-
-texMath' (Function, Package) :=
-texMath' (Function, GroebnerBasis) :=
-texMath' (Function, IndeterminateNumber) := (texMath,x) -> texMath toString x
+texMath' (Function, GroebnerBasis) := (texMath,x) -> texMath toString x
 
 texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}"
 
