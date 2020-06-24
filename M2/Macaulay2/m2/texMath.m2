@@ -1,3 +1,4 @@
+-- P. Zinn-Justin 2018-2020
 -- in the new version, all types here should have expression XXX := hold
 
 keywordTexMath := new HashTable from { -- both unary and binary keywords
@@ -187,7 +188,7 @@ texMath' (Function, Product) := (texMath,v) -> (
 	  )
       )
 
-texMath' (Function, Power) := (texMath,v) -> if v#1 === 1 or v#1 === ONE then texMath v#0 else ( -- "1" shouldn't happen but does in shitty "factor"
+texMath' (Function, Power) := (texMath,v) -> if v#1 === 1 or v#1 === ONE then texMath v#0 else ( -- "1" shouldn't happen but does in invalid expressions produced by "factor"
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
@@ -271,6 +272,11 @@ tex Thing := x -> concatenate("$",texMath x,"$")
 
 -- experimental change (should do the same with toString, net, etc)
 texMath Thing := v -> texMath'(texMath,v)
+texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
+    -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
+    -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
+    if class y === Holder and class y#0 === class x then texMath simpleToString x -- if we're desperate (in particular, for raw objects)
+    else texMath y )
 -*
 texMath' (Function, Thing) := (texMath,x) -> texMath expression x
 texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
@@ -279,13 +285,8 @@ texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
     texMath1 x#0
     )
 *-
-texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
-    -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
-    -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
-    if class y === Holder and class y#0 === class x then texMath simpleToString x -- if we're desperate (in particular, for raw objects)
-    else texMath y )
 -- probably temporary
-texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 then texMath x#0 else texMath simpleToString x#0
+texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 or ancestor(Ring,x#1) or ancestor(RingFamily,x#1) or ancestor(ScriptedFunctor,x#1) then texMath x#0 else texMath simpleToString x#0
 
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack, just kept to remind me that:
@@ -315,7 +316,7 @@ texMath' (Function, MapExpression) := (texMath,x) -> texMath x#0 | "\\," | (if #
 texMath' (Function, List) := (texMath,x) -> concatenate("\\left\\{", between(",\\,", apply(x,texMath)), "\\right\\}")
 texMath' (Function, Array) := (texMath,x) -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath' (Function, Sequence) := (texMath,x) -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else (lookup(texMath',Function,Thing)) (texMath,x)
+--texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else (lookup(texMath',Function,Thing)) (texMath,x)
 
 texMath' (Function, Function) := (texMath,x) -> texMath toString x
 texMath' (Function, MutableList) := (texMath,x) -> concatenate (

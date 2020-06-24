@@ -6,7 +6,6 @@ globalAssignment ScriptedFunctor
 precedence ScriptedFunctor := x -> 70
 net ScriptedFunctor := lookup(net,Type)
 toString ScriptedFunctor := lookup(toString,Type)
-expression ScriptedFunctor := x -> new Holder from { x }
 methodOptions ScriptedFunctor := H -> null
 
 protect argument
