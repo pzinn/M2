@@ -7,7 +7,7 @@ help Expression
 
 blah blah blah
 
-## The change [on refactor/expression]
+## The proposed change [on refactor/expression]
 Expressions are now by default turned on for (almost) all types. Let us take an example.
 Say you define a new type
 ```

@@ -1,45 +1,6 @@
 -- P. Zinn-Justin 2018-2020
 -- in the new version, all types here should have expression XXX := hold
 
-keywordTexMath := new HashTable from { -- both unary and binary keywords
-    symbol |- => "\\vdash ",
-    symbol .. => "\\,{.}{.}\\, ",
-    symbol ..< => "\\,{.}{.}{<}\\, ",
-    symbol <= => "\\le ",
-    symbol >= => "\\ge ",
-    symbol => => "\\Rightarrow ",
-    symbol ==> => "\\Longrightarrow ",
-    symbol <== => "\\Longleftarrow ",
-    symbol <==> => "\\Longleftrightarrow ",
-    symbol ** => "\\otimes ",
-    symbol ++ => "\\oplus ",
-    symbol != => "\\ne ",
-    symbol = => "=",
-    symbol -> => "\\rightarrow ",
-    symbol <- => "\\leftarrow ",
-    symbol ===> => "{\\large\\Longrightarrow}",
-    symbol <=== => "{\\large\\Longleftarrow}",
-    symbol << => "\\ll ",
-    symbol >> => "\\gg ",
-    symbol ~ => "\\sim ",
-    symbol ^** => "^{\\otimes}",
-    symbol _ => "\\_ ",
-    symbol | => "|",
-    symbol || => "||",
-    symbol * => "*",
-    symbol + => "+",
-    symbol - => "-",
-    symbol / => "/",
-    symbol // => "//",
-    symbol { => "\\{ ",
-    symbol } => "\\} ",
-    symbol \ => "\\backslash ",
-    symbol \\ => "\\backslash\\backslash ",
-    symbol : => ":",
-    symbol ; => ";"
-    }
-
---
 
 texMathShort' = (texMath,m) -> (
     if m == 0 then return "0";
@@ -103,7 +64,7 @@ texMath' (Function, Parenthesize) := (texMath,x) -> texMath x#0
 
 texMath' (Function, RowExpression) := (texMath,w) -> concatenate apply(w,texMath)
 
-texMath' (Function, Keyword) := (texMath,x) -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
+--texMath' (Function, Keyword) := (texMath,x) -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
 
 texMath' (Function, BinaryOperation) := (texMath,m) -> (
      x := texMath m#1;
@@ -273,8 +234,50 @@ texMath ZZ := toString -- eventually, change
 tex Thing := x -> concatenate("$",texMath x,"$")
 
 texMathTable := new HashTable from {
-    pi => "\\pi",
-    EulerConstant => "\\gamma",
+    symbol |- => "\\vdash ",
+    symbol .. => "\\,{.}{.}\\, ",
+    symbol ..< => "\\,{.}{.}{<}\\, ",
+    symbol <= => "\\le ",
+    symbol >= => "\\ge ",
+    symbol => => "\\Rightarrow ",
+    symbol ==> => "\\Longrightarrow ",
+    symbol <== => "\\Longleftarrow ",
+    symbol <==> => "\\Longleftrightarrow ",
+    symbol ** => "\\otimes ",
+    symbol ++ => "\\oplus ",
+    symbol != => "\\ne ",
+    symbol = => "=",
+    symbol -> => "\\rightarrow ",
+    symbol <- => "\\leftarrow ",
+    symbol ===> => "{\\large\\Longrightarrow}",
+    symbol <=== => "{\\large\\Longleftarrow}",
+    symbol << => "\\ll ",
+    symbol >> => "\\gg ",
+    symbol ~ => "\\sim ",
+    symbol ^** => "^{\\otimes}",
+    symbol _ => "\\_ ",
+    symbol | => "|",
+    symbol || => "||",
+    symbol * => "*",
+    symbol + => "+",
+    symbol - => "-",
+    symbol / => "/",
+    symbol // => "//",
+    symbol { => "\\{ ",
+    symbol } => "\\} ",
+    symbol \ => "\\backslash ",
+    symbol \\ => "\\backslash\\backslash ",
+    symbol : => ":",
+    symbol ; => ";",
+    --
+    symbol # => "\\# ",
+    symbol % => "\\% ",
+    symbol & => "\\& ",
+    symbol ^ => "{^\\wedge}",
+    symbol ^^ => "{^{\\wedge\\wedge}}",
+--    symbol == => "=", -- ??
+    pi => "\\pi ",
+    EulerConstant => "\\gamma ",
     ii => "\\mathbf{i}",
     OO => "\\mathcal{O}"
     }

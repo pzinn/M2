@@ -21,7 +21,6 @@ TODO:
 - remove space in net NewFromExpression (ideally, would be something completely different from Adjacent, but that would break existing)
 - texMath Type? see also
   https://github.com/Macaulay2/M2/issues/1218
-- unify keyword texmath table & general texMath table
 *-
 
 Constant = new Type of BasicList
