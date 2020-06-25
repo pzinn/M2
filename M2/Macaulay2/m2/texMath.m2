@@ -62,6 +62,7 @@ texMath' (Function, Descent) := (texMath,x) -> "\\left|\\begin{array}{l}" | conc
 
 texMath' (Function, Parenthesize) := (texMath,x) -> texMath x#0
 
+texMath' (Function, NewFromExpression) := -- for now
 texMath' (Function, RowExpression) := (texMath,w) -> concatenate apply(w,texMath)
 
 --texMath' (Function, Keyword) := (texMath,x) -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
@@ -74,7 +75,6 @@ texMath' (Function, BinaryOperation) := (texMath,m) -> (
      if spacedOps#?(m#0) then concatenate( x, "\\ ", texMath m#0, "\\ ", y ) else concatenate( x, texMath m#0, y )
      )
 
-texMath' (Function, NewFromExpression) := -- for now
 texMath' (Function, Adjacent) := texMath' (Function, FunctionApplication) := (texMath,m) -> (
      p := precedence m;
      fun := m#0;
@@ -188,18 +188,6 @@ texMath' (Function, SparseMonomialVectorExpression) := (texMath,v) -> (
 	  expression m *
 	  hold concatenate("<",toString i,">"))
      )
-
-texMath' (Function, VerticalList) := (texMath,s) -> concatenate(
-    "\\left\\{\\begin{aligned}",
-    between("\\\\",apply(toList s,x->"&"|texMath x))
-    ,"\\end{aligned}\\right\\}"
-    )
-
-texMath' (Function, NumberedVerticalList) := (texMath,s) -> concatenate(
-    "\\left\\{\\begin{aligned}",
-    between("\\\\",apply(#s,i->i|".\\quad&"|texMath s#i))
-    ,"\\end{aligned}\\right\\}"
-    )
 
 texMath' (Function, Table) := (texMath,m) -> (
     if m#?0 then concatenate(
@@ -326,9 +314,22 @@ texMath' (Function, SheafExpression) := (texMath,x) -> texMath x#0
 
 texMath' (Function, MapExpression) := (texMath,x) -> texMath x#0 | "\\," | (if #x>2 then "\\xleftarrow{" | texMath x#2 | "}" else "\\longleftarrow ") | "\\," | texMath x#1
 
+-- visible lists
 texMath' (Function, List) := (texMath,x) -> concatenate("\\left\\{", between(",\\,", apply(x,texMath)), "\\right\\}")
 texMath' (Function, Array) := (texMath,x) -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath' (Function, Sequence) := (texMath,x) -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
+texMath' (Function, VerticalList) := (texMath,s) -> concatenate(
+    "\\left\\{\\begin{aligned}",
+    between("\\\\",apply(toList s,x->"&"|texMath x))
+    ,"\\end{aligned}\\right\\}"
+    )
+
+texMath' (Function, NumberedVerticalList) := (texMath,s) -> concatenate(
+    "\\left\\{\\begin{aligned}",
+    between("\\\\",apply(#s,i->i|".\\quad&"|texMath s#i))
+    ,"\\end{aligned}\\right\\}"
+    )
+
 
 texMath' (Function, MutableList) := (texMath,x) -> concatenate (
     texMath class x,

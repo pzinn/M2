@@ -43,7 +43,7 @@ toString HashTable := s -> (
 toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
 toStringn := i -> if i === null then "" else toString i
 toString BasicList := s -> concatenate(
-     if class s =!= List then toString class s,
+     if not instance(s, List) then toString class s,
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )

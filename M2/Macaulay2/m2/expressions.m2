@@ -18,7 +18,6 @@ TODO:
 - reevaluate
   if class y === Holder and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
   rather than using simpleToString: simplifies things (e.g. for a non-globally-assigned Function) but creates extra dependency on toString working fine
-- remove space in net NewFromExpression (ideally, would be something completely different from Adjacent, but that would break existing)
 - texMath Type? see also
   https://github.com/Macaulay2/M2/issues/1218
 *-
@@ -641,9 +640,8 @@ net Adjacent := net FunctionApplication := m -> (
 NewFromExpression = new WrapperType of Expression
 NewFromExpression.synonym = "New ... From expression"
 expressionValue NewFromExpression := x -> new (expressionValue x#0) from (expressionValue x#1)
--- temp: spacing needs improving
-net NewFromExpression := lookup(net,Adjacent)
-toString NewFromExpression := lookup(toString,Adjacent)
+net NewFromExpression := lookup(net,RowExpression)
+toString' (Function, NewFromExpression) := (fmt, e) -> "new " | fmt e#0 | " from " | fmt toList e#1
 
  
 -----------------------------------------------------------------------------
