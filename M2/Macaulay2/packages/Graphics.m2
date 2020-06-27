@@ -465,7 +465,7 @@ new SVG from GraphicsObject := (S,g) -> (
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
 	    "height:",toString g.cache.SizeY,"em;",
-	    if not g#?"stroke-width" then "stroke-width:"|toString(0.005*max(rr_0,rr_1)), -- define a default stroke-width
+	    if not g#?"stroke-width" then "stroke-width:1%", -- define a default stroke-width
 	),
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
@@ -800,7 +800,9 @@ multidoc ///
     v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
-    tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),Light{(100,0,0),Radius=>10},ViewPort=>{(-100,-100),(100,100)},SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
+    tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
+	Light{(100,0,0),Radius=>10},ViewPort=>{(-100,-100),(100,100)},
+	SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
   Caveat
    Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
  Node
@@ -825,7 +827,8 @@ multidoc ///
    Text
     An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called PathList.
    Example
-    Path{PathList => {"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+    Path{PathList => {"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},
+	"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
  Node
   Key
    Polygon
@@ -869,8 +872,13 @@ multidoc ///
     gList(a,b,...,c, options) results in a new @ TO{GraphicsList} @ object containing a,b,...,c
     and the given options.
    Example
-    a=gList(Line{(-100, 15, 78), (-9, 100, 4)},Line{(-96, -49, -100), (46, -100, 52)},Line{(-100, -42, -51), (59, 100, 76)},Line{(-100, 66, 54), (83, -100, -27)})
-    b=gList(Line{(-30, 100, 20), (9, -100, 8)},Line{(-78, -73, -100), (-64, 84, 100)},"stroke"=>"red")
+    a=gList(Line{(-100, 15, 78), (-9, 100, 4)},
+	Line{(-96, -49, -100), (46, -100, 52)},
+	Line{(-100, -42, -51), (59, 100, 76)},
+	Line{(-100, 66, 54), (83, -100, -27)})
+    b=gList(Line{(-30, 100, 20), (9, -100, 8)},
+	Line{(-78, -73, -100), (-64, 84, 100)},
+	"stroke"=>"red")
     gList(a,b,SizeX=>20)
  Node
   Key
