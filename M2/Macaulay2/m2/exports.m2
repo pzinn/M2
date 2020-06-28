@@ -1202,7 +1202,13 @@ export {
         "numrows" => "numRows",
         "res" => "resolution",
         "sub" => "substitute",
-        "top" => "topComponents"
+        "top" => "topComponents",
+	-- bb letters (to be removed before PR) cf https://github.com/Macaulay2/M2/issues/1186
+	"ℚ" => "QQ",
+	"ℝ" => "RR",
+	"ℤ" => "ZZ",
+	"ℂ" => "CC",
+	"∞" => "infinity"
 }
 
 exportMutable {

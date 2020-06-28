@@ -135,14 +135,6 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 
 ZZ#{WebApp,AfterPrint} = identity
 
--- bb letters (to be removed before PR) -- and should be turned to synonyms, cf https://github.com/Macaulay2/M2/issues/1186
-export { "ℚ","ℝ","ℤ","ℂ","∞" }
-ℚ=QQ
-ℝ=RR
-ℤ=ZZ
-ℂ=CC
-∞=infinity
-
 if topLevelMode === WebApp then (
     -- the help hack: if started in WebApp mode, help is compiled in it as well
     webAppPRE := new MarkUpType of PRE;
