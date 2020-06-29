@@ -1002,7 +1002,7 @@ else AC_MSG_RESULT([no, will build])
 fi
 
 AC_MSG_CHECKING(whether the package topcom is installed)
-if test "`type -t points2finetrianga`" = file
+if test "`type -t points2finetriangs`" = file
 then AC_MSG_RESULT(yes)
 else AC_MSG_RESULT([no, will build])
      BUILD_topcom=yes
@@ -1278,9 +1278,9 @@ else
     then
 	if test $FACTORY_NAME = factory
 	then
-	    GFTABLESDIR="${datadir}/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/factory/"
 	else
-	    GFTABLESDIR="${datadir}/singular/factory/"
+	    GFTABLESDIR="`$PKG_CONFIG --variable=prefix $FACTORY_NAME`/share/singular/factory/"
 	fi
     fi
     adl_RECURSIVE_EVAL([$GFTABLESDIR], [GFTABLESDIR])
@@ -1814,6 +1814,13 @@ done
 prefix=$save_prefix
 exec_prefix=$save_exec_prefix
 
+if test $BUILD_gftables = no
+then PRE_GFTABLESDIR="$GFTABLESDIR"
+else
+PRE_GFTABLESDIR="$pre_datadir/Macaulay2/Core/factory/"
+fi
+AC_SUBST(PRE_GFTABLESDIR)
+
 AC_SUBST(pre_bindir) dnl In Macaulay2/bin/M2.in we assume that $pre_bindir/.. is $pre_exec_prefix, which follows from pre_bindir=${pre_exec_prefix}/bin.
 AC_SUBST(pre_datadir)
 AC_SUBST(pre_includedir)
@@ -1895,7 +1902,7 @@ AC_MSG_NOTICE([staging area for architecture dependent files: $pre_exec_prefix])
 
 AC_SUBST(packagesdir,$datadir/Macaulay2)
 AC_SUBST(libm2dir,$libdir/Macaulay2)
-AC_SUBST(emacsdir,$datadir/emacs/site-lisp)
+AC_SUBST(emacsdir,$datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(librariesdir,$libm2dir/lib)
 AC_SUBST(programsdir,$libexecdir/Macaulay2/bin)
 AC_SUBST(licensesdir,$libexecdir/Macaulay2/program-licenses)
@@ -1903,7 +1910,7 @@ AC_SUBST(packagecachecoredir,$libm2dir/cache)
 
 AC_SUBST(tail_packagesdir,$tail_datadir/Macaulay2)
 AC_SUBST(tail_libm2dir,$tail_libdir/Macaulay2)
-AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp)
+AC_SUBST(tail_emacsdir,$tail_datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(tail_librariesdir,$tail_libm2dir/lib)
 AC_SUBST(tail_programsdir,$tail_libexecdir/Macaulay2/bin)
 AC_SUBST(tail_licensesdir,$tail_libexecdir/Macaulay2/program-licenses)
@@ -1911,7 +1918,7 @@ AC_SUBST(tail_packagecachecoredir,$tail_libm2dir/cache)
 
 AC_SUBST(pre_packagesdir,$pre_datadir/Macaulay2)
 AC_SUBST(pre_libm2dir,$pre_libdir/Macaulay2)
-AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp)
+AC_SUBST(pre_emacsdir,$pre_datadir/emacs/site-lisp/Macaulay2)
 AC_SUBST(pre_librariesdir,$pre_libm2dir/lib)
 AC_SUBST(pre_programsdir,$pre_libexecdir/Macaulay2/bin)
 AC_SUBST(pre_licensesdir,$pre_libexecdir/Macaulay2/program-licenses)
