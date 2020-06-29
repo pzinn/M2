@@ -8,8 +8,6 @@ prefix := set flexiblePrefixOperators
 postfix := set flexiblePostfixOperators
 operator := binary+prefix+postfix
 
-DIV1 = x -> DIV append(x,"class"=>"single")
-
 checkLoadDocumentation = () -> ( -- this function should be made obsolete, because we should install the Macaulay2Doc package first
      if (
 	  not isGlobalSymbol "Macaulay2Doc"
