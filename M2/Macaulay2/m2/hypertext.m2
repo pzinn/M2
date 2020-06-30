@@ -304,6 +304,29 @@ style(Hypertext, VisibleList) := true >> o -> (x, s) -> ( -- here s is a pair of
     new class x from replace(i,"style"=>x#i#1|(if #x#i#1>0 and last x#i#1 =!= ";" then ";" else "")|str,toList x)
     )
 
+-- what's below may be too much for PR
+toString MarkUpType := X -> (
+    if hasAnAttribute X then (
+	if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
+	if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	);
+    concatenate(toString class X, " of ", toString parent X, if X.?qname then " <"|X.qname|">" ))
+
+net MarkUpType := X -> (
+    if hasAnAttribute X then (
+	if hasAttribute(X,PrintNet) then return getAttribute(X,PrintNet);
+	if hasAttribute(X,PrintNames) then return net getAttribute(X,PrintNames);
+	if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	);
+    horizontalJoin (net class X, " of ", net parent X, if X.?qname then " <"|X.qname|">" ))
+
+texMath MarkUpType := X -> (
+    if X.?texMath then return X.texMath;
+    if hasAttribute(X,ReverseDictionary) then return texMath toString getAttribute(X,ReverseDictionary);
+    concatenate apply({class X, " of ", parent X, if X.?qname then " <"|X.qname|">"}, texMath)
+    )
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

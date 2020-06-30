@@ -146,7 +146,7 @@ if topLevelMode === WebApp then (
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
-	new webAppPRE from res );
+	new webAppPRE from res#0 );
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	webAppBegin(true);
