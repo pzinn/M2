@@ -1,6 +1,6 @@
 -- -*- coding: utf-8 -*-
 newPackage(
-        "Graphics",
+        "VectorGraphics",
         Version => "0.9",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
@@ -726,21 +726,21 @@ beginDocumentation()
 multidoc ///
  Node
   Key
-   Graphics
+   VectorGraphics
   Headline
    A package to produce SVG graphics
   Description
    Text
-    {\bf Graphics} is a package to produce SVG 2d and 3d graphics.
+    {\bf VectorGraphics} is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GraphicsObject, and are self-initializing.
     Coordinates can be entered as vectors in \mathbb{RR}^2, \mathbb{RR}^3 or \mathbb{RR}^4 (\mathbb{RR}^4 is projective
     coordinates); alternatively, one can enter them as sequences. With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
-    Graphics options, that are symbols (e.g., {\tt Radius} for circles);
+    VectorGraphics options, that are symbols (e.g., {\tt Radius} for circles);
     and styling options, which are CSS style options,
     and which are {\bf strings} (e.g., {\tt "fill"} for fill color).
-    {\bf Graphics} does not use units (coordinates are dimensionless).
+    {\bf VectorGraphics} does not use units (coordinates are dimensionless).
     In @ TO {Standard} @ mode, the graphical objects are not directly visible; to export them to SVG
     in order to embed them into a web page, use @ TO {html} @. In @ TO {WebApp} @ mode, the graphical objects
     are shown as output.
@@ -748,20 +748,20 @@ multidoc ///
   Key
    GraphicsObject
   Headline
-   The ancestor class of all Graphics objects
+   The ancestor class of all VectorGraphics objects
  Node
   Key
    GraphicsPoly
   Headline
-   The ancestor class of complex Graphics objects
+   The ancestor class of complex VectorGraphics objects
  Node
   Key
    GraphicsList
   Headline
-   A list of Graphics objects
+   A list of VectorGraphics objects
   Description
    Text
-    A class that represents a list of @ TO {Graphics} @ objects, displayed together. See also @ TO{gList} @.
+    A class that represents a list of @ TO {VectorGraphics} @ objects, displayed together. See also @ TO{gList} @.
  Node
   Key
    Circle
@@ -866,7 +866,7 @@ multidoc ///
   Key
    gList
   Headline
-    Group together Graphics objects
+    Group together VectorGraphics objects
   Description
    Text
     gList(a,b,...,c, options) results in a new @ TO{GraphicsList} @ object containing a,b,...,c
@@ -887,7 +887,7 @@ multidoc ///
     ViewPort of view port
   Description
    Text
-    viewPort gives the range of view port occupied by a @ TO {Graphics} @ object, as computed by the package.
+    viewPort gives the range of view port occupied by a @ TO {VectorGraphics} @ object, as computed by the package.
     See also @ TO{ViewPort} @.
   Caveat
     At the moment viewPort does not take into account the width of "stroke"s.
@@ -895,10 +895,10 @@ multidoc ///
   Key
    is3d
   Headline
-   Whether a Graphics object is 3d
+   Whether a VectorGraphics object is 3d
   Description
    Text
-    Returns a boolean according to whether the @ TO {Graphics} @ object is 2d (false) or 3d (true).
+    Returns a boolean according to whether the @ TO {VectorGraphics} @ object is 2d (false) or 3d (true).
  Node
   Key
    distance
@@ -906,7 +906,7 @@ multidoc ///
    Distance to the viewer
   Description
    Text
-    Returns the distance (perpendicularly to the screen) to the viewer of a @ TO {Graphics} @ 3d object.
+    Returns the distance (perpendicularly to the screen) to the viewer of a @ TO {VectorGraphics} @ 3d object.
  Node
   Key
    rotation
@@ -951,8 +951,8 @@ multidoc ///
    Fix the view port
   Description
    Text
-    An option to fix manually the view port range of a @ TO {Graphics} @ object.
-    Only has an effect if in the outermost @ TO {Graphics} @ object.
+    An option to fix manually the view port range of a @ TO {VectorGraphics} @ object.
+    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
     See also @ TO{viewPort} @ and @ TO{Margin} @.
  Node
   Key
@@ -961,8 +961,8 @@ multidoc ///
    Set the width
   Description
    Text
-    An option to fix the width of the @ TO {Graphics} @ object in line width units.
-    Only has an effect if in the outermost @ TO {Graphics} @ object.
+    An option to fix the width of the @ TO {VectorGraphics} @ object in line width units.
+    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
  Node
   Key
    Perspective
@@ -975,7 +975,7 @@ multidoc ///
     where the viewer is at (0,0,0) and the screen at z=-p.
     One can instead provide a real number p, which is equivalent to placing the screen
     centered at z=0 and the viewer at (0,0,p).
-    Only has an effect if in the outermost @ TO {Graphics} @ object.
+    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
  Node
   Key
    SizeY
@@ -983,8 +983,8 @@ multidoc ///
    Set the height
   Description
    Text
-    An option to fix the height of the @ TO {Graphics} @ object in line width units.
-    Only has an effect if in the outermost @ TO {Graphics} @ object.
+    An option to fix the height of the @ TO {VectorGraphics} @ object in line width units.
+    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
  Node
   Key
    AnimMatrix
@@ -992,11 +992,11 @@ multidoc ///
    Create a rotation animation matrix
   Description
    Text
-    An option to create a rotation animation for the @ TO {Graphics} @ 3d object.
+    An option to create a rotation animation for the @ TO {VectorGraphics} @ 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
     The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
     The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
-    In order for the animation to work, Graphics.css and Graphics.js must be included in the web page.
+    In order for the animation to work, VectorGraphics.css and VectorGraphics.js must be included in the web page.
    Example
     (anim1=rotation(0.1,(0,0,1),(0,0,0)); anim2=rotation(-0.1,(0,0,1),(0,0,0)); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 });
     gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim1},Circle{(1,0),0.1},Circle{(0,0),1})
@@ -1008,7 +1008,7 @@ multidoc ///
    Create a rotation matrix
   Description
    Text
-    An option to rotate the coordinates of the @ TO {Graphics} @ 3d object.
+    An option to rotate the coordinates of the @ TO {VectorGraphics} @ 3d object.
     Must be a 4x4 matrix (projective coordinates).
    Example
     a=Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red"}
@@ -1017,7 +1017,7 @@ multidoc ///
   Key
    Blur
   Headline
-   An option to blur a Graphics object
+   An option to blur a VectorGraphics object
   Description
    Text
     This corresponds to the feGaussianBlur SVG filter.
@@ -1028,10 +1028,10 @@ multidoc ///
   Key
    Static
   Headline
-   An option to make a Graphics object unmoving
+   An option to make a VectorGraphics object unmoving
   Description
    Text
-    The @ TO {Graphics} @ 3d object is unaffected by matrix tranformations of its ancestors.
+    The @ TO {VectorGraphics} @ 3d object is unaffected by matrix tranformations of its ancestors.
  Node
   Key
    linearGradient
@@ -1103,7 +1103,7 @@ multidoc ///
   Key
    GraphicsHtml
   Headline
-   Html content inside a Graphics object
+   Html content inside a VectorGraphics object
   Description
    Text
     Some arbitrary HTML content, specified by the option HtmlContent (a @ TO{Hypertext} @ object or other content to render in HTML).
@@ -1118,11 +1118,11 @@ multidoc ///
   Key
    GraphicsType
   Headline
-   A particular type of type used by Graphics, similar to SelfInitializingType.
+   A particular type of type used by VectorGraphics, similar to SelfInitializingType.
 ///
 
 undocumented { -- there's an annoying conflict with NAG for Point, Points
-    Contents, TextContent, HtmlContent, SVGElement, Graphics$Point, Graphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
+    Contents, TextContent, HtmlContent, SVGElement, VectorGraphics$Point, VectorGraphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),

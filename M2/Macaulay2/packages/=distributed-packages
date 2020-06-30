@@ -173,7 +173,6 @@ RandomMonomialIdeals
 Matroids
 NumericalImplicitization
 NonminimalComplexes
-Graphics
 CoincidentRootLoci
 RelativeCanonicalResolution
 RandomCurvesOverVerySmallFiniteFields
@@ -203,3 +202,4 @@ SparseResultants
 DecomposableSparseSystems
 MixedMultiplicity
 ThreadedGB
+VectorGraphics
