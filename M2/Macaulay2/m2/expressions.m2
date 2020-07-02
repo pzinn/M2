@@ -1048,6 +1048,7 @@ showTex Thing := x -> (
      if 0 =!= chkrun("(xdvi "|f|".dvi && rm -f "|f|".tex "|f|".dvi "|f|".log "|f|".aux)&")
      then error ("xdvi failed on input file "|f|".tex");
      )
+show TEX := showTex
 
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl;)

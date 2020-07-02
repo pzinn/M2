@@ -58,7 +58,7 @@ SRdeformations
 NumericalAlgebraicGeometry
 BeginningMacaulay2
 FormalGroupLaws
-OldGraphics
+Graphics
 WeylGroups
 HodgeIntegrals
 Cyclotomic
@@ -173,7 +173,6 @@ RandomMonomialIdeals
 Matroids
 NumericalImplicitization
 NonminimalComplexes
-Graphics
 CoincidentRootLoci
 RelativeCanonicalResolution
 RandomCurvesOverVerySmallFiniteFields
@@ -201,4 +200,7 @@ SlackIdeals
 PositivityToricBundles
 SparseResultants
 DecomposableSparseSystems
+MixedMultiplicity
+PencilsOfQuadrics
+ThreadedGB
 VectorGraphics

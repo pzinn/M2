@@ -114,7 +114,7 @@ various modern operating systems:
 
   Fedora:
     Install packages with:
-      sudo dnf -y install autoconf bison boost-devel cddlib-devel cohomCalg csdp csdp-tools eigen3-devel emacs factory-devel fflas-ffpack-devel flex flint-devel frobby gcc-c++ gc-devel gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel mpsolve nauty ncurses-devel ntl-devel patch pkgconf polymake qd readline-devel rpm-build rpmdevtools rpm-sign strace time which yasm
+      sudo dnf -y install autoconf bison boost-devel cddlib-devel cohomCalg csdp csdp-tools eigen3-devel emacs factory-devel factory-gftables fflas-ffpack-devel flex flint-devel frobby gcc-c++ gc-devel gdbm-devel git givaro-devel glpk-devel gmp-devel gtest gtest-devel kernel-devel lapack-devel libatomic_ops-devel libgfortran-static libmpc-devel libtool libxml2-devel mpfr-devel mpir-devel mpsolve nauty ncurses-devel ntl-devel patch pkgconf polymake qd readline-devel rpm-build rpmdevtools rpm-sign strace time which yasm
 
   CentOS 8 (covers Red Hat Enterprise Linux):
     Install packages with:
@@ -540,13 +540,13 @@ we briefly summarize them and the software they depend on:
  	         sudo apt-get install polymake
 
     Bertini needs bertini:
-	    http://www.nd.edu/~sommese/bertini/BertiniSource_v1.4.tar.gz
+	    http://www.nd.edu/~sommese/bertini/
 	which needs gmp and mpfr:
-	    https://gmplib.org/download/gmp/gmp-6.0.0a.tar.xz
-	    http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
+	    https://gmplib.org/
+	    http://www.mpfr.org/
 
     PHCpack needs PHCpack, download the binary:
-	    http://www.math.uic.edu/~jan/x86_64phcv23p.tar.gz
+            http://homepages.math.uic.edu/~jan/download.html
 
     AdjointIdeal ConvexInterface MapleInterface Parametrization need Maple.
 
