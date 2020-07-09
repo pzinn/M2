@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 -- licensed under GPL, any version
 newPackage(
-	"OldGraphics",
+	"Graphics",
 	Version => "0.2",
 	Date => "February 26, 2010",
 	Authors => {
@@ -536,9 +536,9 @@ beginDocumentation()
 
 doc ///
 	Key
-		OldGraphics
+		Graphics
 	Headline
-		OldGraphics
+		Graphics
 	Description
 		Text
 			This package provides graphic primitives and functions to turn them into pictures in different formats. The formats supported include svg and pgf/tikz.
