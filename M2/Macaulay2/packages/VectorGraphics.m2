@@ -931,10 +931,11 @@ multidoc ///
     Produces a translation encoded as a 4x4 matrix that can be used as an argument to @TO{TransformMatrix}@ or @TO{AnimMatrix}@.
     The vector can be 2d or 3d.
    Example
-    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+    v={vector{7.456, 5.201, -4.166}, vector{2.7263, -2.992, 9.144},
+       vector{-8.130, 5.783, 0.671}, vector {-2.052, -7.993, -5.649}};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>"white"}))
-    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation v#i}))
+    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation(2^(n-1)*v#i)}))
     apply(4,g)
   Usage
    translation ( vector )
