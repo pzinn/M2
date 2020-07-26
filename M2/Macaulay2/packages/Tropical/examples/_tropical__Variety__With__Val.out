@@ -1,30 +1,88 @@
 -- -*- M2-comint -*- hash: 845208344
--- polymake not present
 
-i1 : R = QQ[x,y,z]
+i1 : R = QQ[x,y,z]
 
-o1 = R
+o1 = \displaystyle R
 
-o1 : PolynomialRing
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 
-i2 : I = ideal(x+y+z)
+i2 : I = ideal(x+y+z)
 
-o2 = ideal(x + y + z)
+o2 = \displaystyle <pre style="display:inline">
+ideal</pre>\left(x+y+z\right)
 
-o2 : Ideal of R
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>R
 
-i3 : tropicalVarietyWithVal(I)
+i3 : tropicalVarietyWithVal(I)
 
-o3 = Can't handle the given valuation. Maybe no valuation given? Then use
-     tropicalVariety
+o3 = <pre style="display:inline">
+Can't handle the given valuation. Maybe no valuation given? Then use tropicalVariety</pre>
 
-i4 : tropicalVarietyWithVal(I, Valuation=>11)
-sh: Singular: command not found
+i4 : tropicalVarietyWithVal(I, Valuation=>11)
 
-o4 = You need to install Singular for using tropicalVarietyWithVal
+o4 = <pre style="display:inline">
+_application PolyhedralFan
+_version 2.2
+_type PolyhedralFan
 
-i5 : tropicalVarietyWithVal(I, Valuation=>x)
+AMBIENT_DIM
+4
 
-o5 = We have not implemented Puiseux valuation yet
+DIM
+3
 
-i6 : 
+LINEALITY_DIM
+1
+
+RAYS
+-1 0 0 0	# 0
+0 -2 1 1	# 1
+0 1 -2 1	# 2
+0 1 1 -2	# 3
+
+N_RAYS
+4
+
+LINEALITY_SPACE
+0 -1 -1 -1	# 0
+
+ORTH_LINEALITY_SPACE
+-1 0 0 0	# 0
+0 1 -1 0	# 1
+0 1 0 -1	# 2
+
+F_VECTOR
+1 4 3
+
+SIMPLICIAL
+1
+
+PURE
+1
+
+CONES
+{}	# Dimension 1
+{0}	# Dimension 2
+{1}
+{2}
+{3}
+{0 1}	# Dimension 3
+{0 2}
+{0 3}
+
+MAXIMAL_CONES
+{0 1}	# Dimension 3
+{0 2}
+{0 3}
+
+</pre><br/>
+
+i5 : tropicalVarietyWithVal(I, Valuation=>x)
+
+o5 = <pre style="display:inline">
+We have not implemented Puiseux valuation yet</pre>
+
+i6 : 

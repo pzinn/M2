@@ -1,52 +1,55 @@
 -- -*- M2-comint -*- hash: -2130591421
---loading configuration for package "FourTiTwo" from file /home/tim/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/tim/.Macaulay2/init-Topcom.m2
---loading configuration for package "NumericalAlgebraicGeometry" from file /home/tim/.Macaulay2/init-NumericalAlgebraicGeometry.m2
---loading configuration for package "PHCpack" from file /home/tim/.Macaulay2/init-PHCpack.m2
---loading configuration for package "Bertini" from file /home/tim/.Macaulay2/init-Bertini.m2
 
-i1 : setRandomSeed 0
+i1 : setRandomSeed 0
 
-o1 = 0
+o1 = \displaystyle 0
 
-i2 : declareVariable \ {A,B,C,D,X,Y}
+i2 : declareVariable \ {A,B,C,D,X,Y}
 
-o2 = {A, B, C, D, X, Y}
+o2 = \displaystyle \left\{<pre style="display:inline">
+InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,A\right\},\,<pre style="display:inline">
+InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,B\right\},\,<pre style="display:inline">
+InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,C\right\},\,<pre style="display:inline">
+InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,D\right\},\,<pre style="display:inline">
+InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,X\right\},\,<pre style="display:inline">
+InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,Y\right\}\right\}
 
-o2 : List
+o2 : <pre style="display:inline">
+List</pre>
 
-i3 : PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
+i3 : PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
 
-o3 = gate system: 2 ---> 2
-     (#parameters = 4)
+o3 = \displaystyle <pre style="display:inline">
+GateSystem</pre>\left\{\ldots5\ldots\right\}
 
-o3 : GateSystem
+o3 : <pre style="display:inline">
+GateSystem</pre>
 
-i4 : solveFamily(point{{1,1,1,1}}, PS)
+i4 : solveFamily(point{{1,1,1,1}}, PS)
 
-o4 = ({1, 1, 1, 1}, {{-8.98401e-17, -2-ii}, PointArray( 2 points: 0 1 ), {2,
-     ------------------------------------------------------------------------
-     -2-ii}})
+o4 = \displaystyle \left(<pre style="display:inline">
+Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
+PointArray</pre>\left\{\ldots3\ldots\right\}\right)
 
-o4 : Sequence
+i5 : R=CC[a,b,c,d][x,y]
 
-i5 : R=CC[a,b,c,d][x,y]
+o5 = \displaystyle R
 
-o5 = R
+o5 : <pre style="display:inline">
+PolynomialRing</pre>
 
-o5 : PolynomialRing
+i6 : F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
 
-i6 : F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
+o6 = \displaystyle <pre style="display:inline">
+F</pre>
 
-o6 = F
+o6 : <pre style="display:inline">
+PolySystem</pre>
 
-o6 : PolySystem
+i7 : solveFamily(point{{1,1,1,1}}, F)
 
-i7 : solveFamily(point{{1,1,1,1}}, F)
+o7 = \displaystyle \left(<pre style="display:inline">
+Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
+PointArray</pre>\left\{\ldots3\ldots\right\}\right)
 
-o7 = ({1, 1, 1, 1}, {{2, -2-ii}, PointArray( 2 points: 0 1 ), {2, -2+ii}})
-
-
-o7 : Sequence
-
-i8 : 
+i8 : 

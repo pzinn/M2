@@ -1,24 +1,22 @@
 -- -*- M2-comint -*- hash: -607525885
 
-i1 : R = QQ[x,y,z];
+i1 : R = QQ[x,y,z];
 
-i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
+i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
 
-i3 : sols = solveRationalSystem(system)
+i3 : sols = solveRationalSystem(system)
 
-o3 = {{.543689, .295598, .160713}, {-.771845-1.11514*ii, -.647799+1.72143*ii,
-     ------------------------------------------------------------------------
-     2.41964-.606291*ii}, {-.771845+1.11514*ii, -.647799-1.72143*ii,
-     ------------------------------------------------------------------------
-     2.41964+.606291*ii}}
+o3 = \displaystyle \left\{<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}\right\}
 
-o3 : List
+o3 : <pre style="display:inline">
+List</pre>
 
-i4 : peek first sols
+i4 : peek first sols
 
-o4 = Point{ConditionNumber => 4.87567                }
-           Coordinates => {.543689, .295598, .160713}
-           LastT => 1
-           SolutionStatus => Regular
+o4 = <pre style="display:inline-table;vertical-align:0%">
+Point{ConditionNumber => 4.87567                }<br/>      Coordinates => {.543689, .295598, .160713}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
 
-i5 : 
+i5 : 

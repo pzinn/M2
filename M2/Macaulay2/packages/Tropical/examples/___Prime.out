@@ -1,19 +1,24 @@
 -- -*- M2-comint -*- hash: -1813380371
 
-i1 : QQ[x,y,z];
+i1 : QQ[x,y,z];
 
-i2 : I=ideal(x^2+y^2-2*x*y);
+i2 : I=ideal(x^2+y^2-2*x*y);
 
-o2 : Ideal of QQ[x, y, z]
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>{\mathbb Q}\left[x,y,z\right]
 
-i3 : isPrime I
+i3 : isPrime I
 
-o3 = false
+o3 = \displaystyle <pre style="display:inline">
+false</pre>
 
-i4 : T=tropicalVariety(I,Prime=>false)
+i4 : T=tropicalVariety(I,Prime=>false)
 
-o4 = T
+o4 = \displaystyle <pre style="display:inline">
+T</pre>
 
-o4 : TropicalCycle
+o4 : <pre style="display:inline">
+TropicalCycle</pre>
 
-i5 : 
+i5 : 

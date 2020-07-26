@@ -1,74 +1,51 @@
 -- -*- M2-comint -*- hash: -343518489
-****************************************************************************
-CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
-****************************************************************************
 
-i1 : X = coincidentRootLocus {3,1,1}
+i1 : X = coincidentRootLocus {3,1,1}
 
-o1 = CRL(3,1,1)
+o1 = \displaystyle <pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
 
-o1 : CoincidentRootLocus
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 
-i2 : F = generic X
+i2 : F = generic X
 
-       3       5      3           3            2           4        3        
-o2 = t0 t1 t2 x  + (t0 t1 t2  + t0 t1 t2  + 3t0 t0 t1 t2 )x x  + (t0 t1 t2  +
-       0  0  0 0      0  0  1     0  1  0      0  1  0  0  0 1      0  1  1  
-     ------------------------------------------------------------------------
-        2               2                  2        3 2       2           
-     3t0 t0 t1 t2  + 3t0 t0 t1 t2  + 3t0 t0 t1 t2 )x x  + (3t0 t0 t1 t2  +
-        0  1  0  1      0  1  1  0      0  1  0  0  0 1       0  1  1  1  
-     ------------------------------------------------------------------------
-           2               2           3        2 3          2        
-     3t0 t0 t1 t2  + 3t0 t0 t1 t2  + t0 t1 t2 )x x  + (3t0 t0 t1 t2  +
-        0  1  0  1      0  1  1  0     1  0  0  0 1       0  1  1  1  
-     ------------------------------------------------------------------------
-       3           3          4     3       5
-     t0 t1 t2  + t0 t1 t2 )x x  + t0 t1 t2 x
-       1  0  1     1  1  0  0 1     1  1  1 1
+o2 = \displaystyle {\textit{t0}}_{0}^{3}{\textit{t1}}_{0}{\textit{t2}}_{0}{x}_{0}^{5}+\left({\textit{t0}}_{0}^{3}{\textit{t1}}_{0}{\textit{t2}}_{1}+{\textit{t0}}_{0}^{3}{\textit{t1}}_{1}{\textit{t2}}_{0}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{4}{x}_{1}+\left({\textit{t0}}_{0}^{3}{\textit{t1}}_{1}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{0}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{1}{\textit{t2}}_{0}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{3}{x}_{1}^{2}+\left(3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{1}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{0}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{1}{\textit{t2}}_{0}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{2}{x}_{1}^{3}+\left(3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{1}{\textit{t2}}_{1}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{0}{\textit{t2}}_{1}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{1}{\textit{t2}}_{0}\right){x}_{0}{x}_{1}^{4}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{1}{\textit{t2}}_{1}{x}_{1}^{5}
 
-o2 : QQ[t0 , t0 , t1 , t1 , t2 , t2 ][x , x ]
-          0    1    0    1    0    1   0   1
+o2 : {\mathbb Q}\left[{\textit{t0}}_{0},{\textit{t0}}_{1},{\textit{t1}}_{0},{\textit{t1}}_{1},{\textit{t2}}_{0},{\textit{t2}}_{1}\right]\left[{x}_{0},{x}_{1}\right]
 
-i3 : member(F,X)
+i3 : member(F,X)
 
-o3 = true
+o3 = \displaystyle <pre style="display:inline">
+true</pre>
 
-i4 : factor F
+i4 : factor F
 
-                                                  3
-o4 = (t2 x  + t2 x )(t1 x  + t1 x )(t0 x  + t0 x )
-        0 0     1 1    0 0     1 1    0 0     1 1
+o4 = \displaystyle \left({\textit{t2}}_{0}{x}_{0}+{\textit{t2}}_{1}{x}_{1}\right)\left({\textit{t1}}_{0}{x}_{0}+{\textit{t1}}_{1}{x}_{1}\right)\left({{\textit{t0}}_{0}{x}_{0}+{\textit{t0}}_{1}{x}_{1}}\right)^{3}
 
-o4 : Expression of class Product
+o4 : <pre style="display:inline">
+Expression</pre><pre style="display:inline">
+ of class </pre><pre style="display:inline">
+Product</pre>
 
-i5 : G = generic(X,Reduce=>true)
+i5 : G = generic(X,Reduce=>true)
 
-      5 5      4      4      4    4        3 2     3         3      
-o5 = t x  + (3t t  + t t  + t t )x x  + (3t t  + 3t t t  + 3t t t  +
-      0 0      0 1    0 2    0 3  0 1      0 1     0 1 2     0 1 3  
-     ------------------------------------------------------------------------
-      3      3 2     2 3     2 2       2 2       2        2 3       3    
-     t t t )x x  + (t t  + 3t t t  + 3t t t  + 3t t t t )x x  + (t t t  +
-      0 2 3  0 1     0 1     0 1 2     0 1 3     0 1 2 3  0 1     0 1 2  
-     ------------------------------------------------------------------------
-        3         2        4    3     5
-     t t t  + 3t t t t )x x  + t t t x
-      0 1 3     0 1 2 3  0 1    1 2 3 1
+o5 = \displaystyle {t}_{0}^{5}{x}_{0}^{5}+\left(3\,{t}_{0}^{4}{t}_{1}+{t}_{0}^{4}{t}_{2}+{t}_{0}^{4}{t}_{3}\right){x}_{0}^{4}{x}_{1}+\left(3\,{t}_{0}^{3}{t}_{1}^{2}+3\,{t}_{0}^{3}{t}_{1}{t}_{2}+3\,{t}_{0}^{3}{t}_{1}{t}_{3}+{t}_{0}^{3}{t}_{2}{t}_{3}\right){x}_{0}^{3}{x}_{1}^{2}+\left({t}_{0}^{2}{t}_{1}^{3}+3\,{t}_{0}^{2}{t}_{1}^{2}{t}_{2}+3\,{t}_{0}^{2}{t}_{1}^{2}{t}_{3}+3\,{t}_{0}^{2}{t}_{1}{t}_{2}{t}_{3}\right){x}_{0}^{2}{x}_{1}^{3}+\left({t}_{0}{t}_{1}^{3}{t}_{2}+{t}_{0}{t}_{1}^{3}{t}_{3}+3\,{t}_{0}{t}_{1}^{2}{t}_{2}{t}_{3}\right){x}_{0}{x}_{1}^{4}+{t}_{1}^{3}{t}_{2}{t}_{3}{x}_{1}^{5}
 
-o5 : QQ[t , t , t , t ][x , x ]
-         0   1   2   3   0   1
+o5 : {\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3}\right]\left[{x}_{0},{x}_{1}\right]
 
-i6 : member(G,X)
+i6 : member(G,X)
 
-o6 = true
+o6 = \displaystyle <pre style="display:inline">
+true</pre>
 
-i7 : factor G
+i7 : factor G
 
-                                            3
-o7 = (t x  + t x )(t x  + t x )(t x  + t x )
-       0 0    3 1   0 0    2 1   0 0    1 1
+o7 = \displaystyle \left({t}_{0}{x}_{0}+{t}_{3}{x}_{1}\right)\left({t}_{0}{x}_{0}+{t}_{2}{x}_{1}\right)\left({{t}_{0}{x}_{0}+{t}_{1}{x}_{1}}\right)^{3}
 
-o7 : Expression of class Product
+o7 : <pre style="display:inline">
+Expression</pre><pre style="display:inline">
+ of class </pre><pre style="display:inline">
+Product</pre>
 
-i8 : 
+i8 : 

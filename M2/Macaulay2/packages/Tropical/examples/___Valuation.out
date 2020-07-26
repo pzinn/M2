@@ -1,16 +1,71 @@
 -- -*- M2-comint -*- hash: 1991115338
--- polymake not present
 
-i1 : QQ[x,y, z];
+i1 : QQ[x,y, z];
 
-i2 : I=ideal(x+y+z);
+i2 : I=ideal(x+y+z);
 
-o2 : Ideal of QQ[x, y, z]
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>{\mathbb Q}\left[x,y,z\right]
 
-i3 : tropicalVarietyWithVal (I,Valuation=>7)
-sh: Singular: command not found
+i3 : tropicalVarietyWithVal (I,Valuation=>7)
 
-o3 = You need to install Singular for using tropicalVarietyWithVal
+o3 = <pre style="display:inline">
+_application PolyhedralFan
+_version 2.2
+_type PolyhedralFan
 
-i4 : 
-     
+AMBIENT_DIM
+4
+
+DIM
+3
+
+LINEALITY_DIM
+1
+
+RAYS
+-1 0 0 0	# 0
+0 -2 1 1	# 1
+0 1 -2 1	# 2
+0 1 1 -2	# 3
+
+N_RAYS
+4
+
+LINEALITY_SPACE
+0 -1 -1 -1	# 0
+
+ORTH_LINEALITY_SPACE
+-1 0 0 0	# 0
+0 1 -1 0	# 1
+0 1 0 -1	# 2
+
+F_VECTOR
+1 4 3
+
+SIMPLICIAL
+1
+
+PURE
+1
+
+CONES
+{}	# Dimension 1
+{0}	# Dimension 2
+{1}
+{2}
+{3}
+{0 1}	# Dimension 3
+{0 2}
+{0 3}
+
+MAXIMAL_CONES
+{0 1}	# Dimension 3
+{0 2}
+{0 3}
+
+</pre><br/>
+
+i4 : 
+

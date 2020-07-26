@@ -1,34 +1,40 @@
 -- -*- M2-comint -*- hash: -260309947
 
-i1 : QQ[x,y,z];
+i1 : QQ[x,y,z];
 
-i2 : I=ideal(x^2-y^2);
+i2 : I=ideal(x^2-y^2);
 
-o2 : Ideal of QQ[x, y, z]
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>{\mathbb Q}\left[x,y,z\right]
 
-i3 : isPrime I
+i3 : isPrime I
 
-o3 = false
+o3 = \displaystyle <pre style="display:inline">
+false</pre>
 
-i4 : T=tropicalVariety(I,Prime=>false,ComputeMultiplicities=>true);
+i4 : T=tropicalVariety(I,Prime=>false,ComputeMultiplicities=>true);
 
-i5 : rays T
+i5 : rays T
 
-o5 = 0
+o5 = \displaystyle 0
 
-              3
-o5 : Matrix ZZ  <--- 0
+o5 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>{\mathbb Z}^{3}\,\longleftarrow \,0
 
-i6 : maxCones T
+i6 : maxCones T
 
-o6 = {{}}
+o6 = \displaystyle \left\{\left\{\right\}\right\}
 
-o6 : List
+o6 : <pre style="display:inline">
+List</pre>
 
-i7 : multiplicities T
+i7 : multiplicities T
 
-o7 = {2}
+o7 = \displaystyle \left\{2\right\}
 
-o7 : List
+o7 : <pre style="display:inline">
+List</pre>
 
-i8 : 
+i8 : 

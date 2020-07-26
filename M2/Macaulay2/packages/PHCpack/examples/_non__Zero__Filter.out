@@ -1,63 +1,89 @@
 -- -*- M2-comint -*- hash: -2024144972
 
-i1 : R = CC[x,y];
+i1 : R = CC[x,y];
 
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
-i3 : fSols = solveSystem(f, randomSeed=>3);
+i3 : fSols = solveSystem(f, randomSeed=>3);
 
-i4 : fSols/print
-{-1, 0}
-{1, 0}
-{-1.59272, .964857}
-{.742585+.425943*ii, .270685-1.00715*ii}
-{-.764107, -.544612}
-{1.33076-.335184*ii, -.62414+.513163*ii}
-{-.894935-.624334*ii, .143333+1.14868*ii}
-{1.33076+.335184*ii, -.62414-.513163*ii}
-{-.894935+.624334*ii, .143333-1.14868*ii}
-{.742585-.425943*ii, .270685+1.00715*ii}
+i4 : fSols/print
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
 
-o4 = {, , , , , , , , , }
+o4 = \displaystyle \left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}
 
-o4 : List
+o4 : <pre style="display:inline">
+List</pre>
 
-i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
+i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
 
-i6 : nonZeroSols / print
-{-1.59272, .964857}
-{.742585+.425943*ii, .270685-1.00715*ii}
-{-.764107, -.544612}
-{1.33076-.335184*ii, -.62414+.513163*ii}
-{-.894935-.624334*ii, .143333+1.14868*ii}
-{1.33076+.335184*ii, -.62414-.513163*ii}
-{-.894935+.624334*ii, .143333-1.14868*ii}
-{.742585-.425943*ii, .270685+1.00715*ii}
+i6 : nonZeroSols / print
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
 
-o6 = {, , , , , , , }
+o6 = \displaystyle \left\{,\,,\,,\,,\,,\,,\,,\,\right\}
 
-o6 : List
+o6 : <pre style="display:inline">
+List</pre>
 
-i7 : f = {x^2+y^2,y*x+x};
+i7 : f = {x^2+y^2,y*x+x};
 
-i8 : fSols = solveSystem(f);
+i8 : fSols = solveSystem(f);
 
-i9 : fSols/print
-(-2.46519e-32+1.07852e-32*ii, -2.40467e-32+9.0524e-34*ii)
-{-ii, -1}
-{ii, -1}
+i9 : fSols/print
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
 
-o9 = {, , }
+o9 = \displaystyle \left\{,\,,\,\right\}
 
-o9 : List
+o9 : <pre style="display:inline">
+List</pre>
 
-i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
+i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 
-i11 : zeroSols/print
-(-2.46519e-32+1.07852e-32*ii, -2.40467e-32+9.0524e-34*ii)
+i11 : zeroSols/print
+\displaystyle <pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}
 
-o11 = {}
+o11 = \displaystyle \left\{\right\}
 
-o11 : List
+o11 : <pre style="display:inline">
+List</pre>
 
-i12 : 
+i12 : 
