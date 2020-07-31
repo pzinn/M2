@@ -1,48 +1,50 @@
 -- -*- M2-comint -*- hash: -2131607528
 
-i1 : R = CC[x,y,z];
+i1 : R = CC[x,y,z];
 
-i2 : L = { z*(x+y), z*(x-y) };
+i2 : L = { z*(x+y), z*(x-y) };
 
-i3 : WitSets = cascade(L)
+i3 : WitSets = cascade(L)
 
-o3 = WitSets
+o3 = \displaystyle <pre style="display:inline">
+WitSets</pre>
 
-o3 : NumericalVariety
+o3 : <pre style="display:inline">
+NumericalVariety</pre>
 
-i4 : W=first WitSets#2
+i4 : W=first WitSets#2
 
-o4 = W
+o4 = \displaystyle <pre style="display:inline">
+W</pre>
 
-o4 : WitnessSet
+o4 : <pre style="display:inline">
+WitnessSet</pre>
 
-i5 : W#Equations
+i5 : W#Equations
 
-o5 = ideal ((- .380139 + .924929*ii)zz1 + (.547606 + .836736*ii)zz2 - x*z -
-     ------------------------------------------------------------------------
-     y*z, (.45571 - .890128*ii)zz1 + (- .663772 - .747935*ii)zz2 - x*z + y*z,
-     ------------------------------------------------------------------------
-     - zz1 + (.537862 + .843033*ii)zz2)
+o5 = \displaystyle <pre style="display:inline">
+ideal</pre>\,\left(\left(-{.380139}+{.924929}\,\mathbf{i}\right)\textit{zz1}+\left({.547606}+{.836736}\,\mathbf{i}\right)\textit{zz2}-x\,z-y\,z,\left({.45571}-{.890128}\,\mathbf{i}\right)\textit{zz1}+\left(-{.663772}-{.747935}\,\mathbf{i}\right)\textit{zz2}-x\,z+y\,z,-\textit{zz1}+\left({.537862}+{.843033}\,\mathbf{i}\right)\textit{zz2}\right)
 
-o5 : Ideal of CC  {x, y, z, zz1, zz2}
-                53
+o5 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>{{\mathbb C}}_{53}\,\left\{x,\,y,\,z,\,\textit{zz1},\,\textit{zz2}\right\}
 
-i6 : W#Points
+i6 : W#Points
 
-o6 = {{.148619-.161802*ii, .45886-1.03272*ii, 3.21921e-32+7.65273e-33*ii, -2.28184e-32-4.87389e-33*ii, -1.6382e-32+1.66152e-32*ii}}
+o6 = \displaystyle \left\{\begin{aligned}&<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}\end{aligned}\right\}
 
-o6 : VerticalList
+o6 : <pre style="display:inline">
+VerticalList</pre>
 
-i7 : W#Slice
+i7 : W#Slice
 
-o7 = | .205377+.978683ii  .673112+.739541ii .943327-.331864ii 
-     | -.759495+.650513ii -.89022-.45553ii  -.972487+.232959ii
-     ------------------------------------------------------------------------
-     -.911067-.412259ii .497812+.867285ii  -.883724+.468009ii |
-     -.595572-.803302ii -.236638-.971598ii .871298-.490754ii  |
+o7 = \displaystyle \begin{pmatrix}
+{.205377}+{.978683}\,\mathbf{i}&{.673112}+{.739541}\,\mathbf{i}&{.943327}-{.331864}\,\mathbf{i}&-{.911067}-{.412259}\,\mathbf{i}&{.497812}+{.867285}\,\mathbf{i}&-{.883724}+{.468009}\,\mathbf{i}\\
+-{.759495}+{.650513}\,\mathbf{i}&-{.89022}-{.45553}\,\mathbf{i}&-{.972487}+{.232959}\,\mathbf{i}&-{.595572}-{.803302}\,\mathbf{i}&-{.236638}-{.971598}\,\mathbf{i}&{.871298}-{.490754}\,\mathbf{i}\end{pmatrix}
 
-                2          6
-o7 : Matrix CC    <--- CC
-              53         53
+o7 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>{{\mathbb C}}_{53}^{2}\,\longleftarrow \,{{\mathbb C}}_{53}^{6}
 
-i8 : 
+i8 : 

@@ -1,38 +1,54 @@
 -- -*- M2-comint -*- hash: 1832118703
 
-i1 : A = QQ{x,y,z,w}
+i1 : A = QQ{x,y,z,w}
 
-o1 = A
+o1 = \displaystyle <pre style="display:inline">
+A</pre>
 
-o1 : NCPolynomialRing
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 
-i2 : f = x^2+y^2+z^3
+i2 : f = x^2+y^2+z^3
 
-      3  2  2
-o2 = z +y +x
+o2 = \displaystyle <pre style="display:inline">
+A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x,\,x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z,\,z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}
 
-o2 : A
+o2 : <pre style="display:inline">
+A</pre>
 
-i3 : degree f
+i3 : degree f
 
-o3 = 3
+o3 = \displaystyle 3
 
-i4 : isHomogeneous f
+i4 : isHomogeneous f
 
-o4 = false
+o4 = \displaystyle <pre style="display:inline">
+false</pre>
 
-i5 : setWeights(A,{3,3,2,1})
+i5 : setWeights(A,{3,3,2,1})
 
-o5 = A
+o5 = \displaystyle <pre style="display:inline">
+A</pre>
 
-o5 : NCPolynomialRing
+o5 : <pre style="display:inline">
+NCPolynomialRing</pre>
 
-i6 : degree f
+i6 : degree f
 
-o6 = 6
+o6 = \displaystyle 6
 
-i7 : isHomogeneous f
+i7 : isHomogeneous f
 
-o7 = true
+o7 = \displaystyle <pre style="display:inline">
+true</pre>
 
-i8 : 
+i8 : 

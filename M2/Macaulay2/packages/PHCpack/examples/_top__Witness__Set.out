@@ -1,55 +1,56 @@
 -- -*- M2-comint -*- hash: -1010838168
 
-i1 : R = CC[x,y,z];
+i1 : R = CC[x,y,z];
 
-i2 : f = { x^2 - y, x^3 - z };
+i2 : f = { x^2 - y, x^3 - z };
 
-i3 : (w,ns) = topWitnessSet(f,1)
+i3 : (w,ns) = topWitnessSet(f,1)
 
-o3 = (w, {})
+o3 = \displaystyle \left(<pre style="display:inline">
+w</pre>,\left\{\right\}\right)
 
-o3 : Sequence
+i4 : dim(w)
 
-i4 : dim(w)
+o4 = \displaystyle 1
 
-o4 = 1
+i5 : degree(w)
 
-i5 : degree(w)
+o5 = \displaystyle 3
 
-o5 = 3
+i6 : toString equations(w)
 
-i6 : toString equations(w)
+o6 = <pre style="display:inline">
+{x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1}</pre>
 
-o6 = {x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1}
+i7 : toString slice(w)
 
-i7 : toString slice(w)
+o7 = <pre style="display:inline">
+{(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z+(-.911067-.412259*ii)*zz1-.883724+.468009*ii}</pre>
 
-o7 = {(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z
-     +(-.911067-.412259*ii)*zz1-.883724+.468009*ii}
+i8 : toString points(w)
 
-i8 : toString points(w)
+o8 = <pre style="display:inline">
+VerticalList{Point{...4...}, Point{...4...}, Point{...4...}}</pre>
 
-o8 = VerticalList{Point{...4...}, Point{...4...}, Point{...4...}}
+i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
-i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
+o10 = \displaystyle \left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\,x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\,x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}
 
-        3     2              3      3                             2
-o10 = {x  - 2x  - x*y + 2y, x y - 2x  - y*z + 2z, x*y*z - 2x*y - z  + 2z}
+o10 : <pre style="display:inline">
+List</pre>
 
-o10 : List
+i11 : (w,ns) = topWitnessSet(f,1);
 
-i11 : (w,ns) = topWitnessSet(f,1);
+i12 : dim(w)
 
-i12 : dim(w)
+o12 = \displaystyle 1
 
-o12 = 1
+i13 : degree(w)
 
-i13 : degree(w)
+o13 = \displaystyle 3
 
-o13 = 3
+i14 : #ns
 
-i14 : #ns
+o14 = \displaystyle 10
 
-o14 = 10
-
-i15 : 
+i15 : 

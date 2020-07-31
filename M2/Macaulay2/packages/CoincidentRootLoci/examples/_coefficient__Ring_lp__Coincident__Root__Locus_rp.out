@@ -1,32 +1,33 @@
 -- -*- M2-comint -*- hash: 1344597792
-****************************************************************************
-CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
-****************************************************************************
 
-i1 : X = coincidentRootLocus {3,2}
+i1 : X = coincidentRootLocus {3,2}
 
-o1 = CRL(3,2)
+o1 = \displaystyle <pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
 
-o1 : CoincidentRootLocus
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 
-i2 : coefficientRing X
+i2 : coefficientRing X
 
-o2 = QQ
+o2 = \displaystyle {\mathbb Q}
 
-o2 : Ring
+o2 : <pre style="display:inline">
+Ring</pre>
 
-i3 : X' = coincidentRootLocus({3,2},ZZ/3331)
+i3 : X' = coincidentRootLocus({3,2},ZZ/3331)
 
-o3 = CRL(3,2;ZZ/3331)
+o3 = \displaystyle <pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
 
-o3 : CoincidentRootLocus
+o3 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 
-i4 : coefficientRing X'
+i4 : coefficientRing X'
 
-      ZZ
-o4 = ----
-     3331
+o4 = \displaystyle \frac{{\mathbb Z}}{3331}
 
-o4 : QuotientRing
+o4 : <pre style="display:inline">
+QuotientRing</pre>
 
-i5 : 
+i5 : 
