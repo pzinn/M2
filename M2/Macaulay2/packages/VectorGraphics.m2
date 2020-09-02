@@ -90,7 +90,7 @@ GraphicsType List := (T,opts) -> (
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     gParseFlag = false;
     temp := gParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
-    new T from append(temp,symbol Is3d => gParseFlag)
+    new T from (if gParseFlag then append(temp,symbol Is3d => true) else temp)
 )
 
 perspective = g -> (
@@ -109,7 +109,7 @@ viewPort1 GraphicsObject := x -> null
 -- * the data-* stuff is lightened (can be recreated from the normal parameters)
 -- * the event listeners for 3d rotating the object with the mouse are deactivated
 -- * lighting is deactivated
-is3d = x -> if x.?Is3d then x.Is3d else true; -- the else clause should never happen
+is3d = x -> if x.?Is3d then x.Is3d else false;
 
 distance = g -> (
     if not g.cache.?Distance then svg g; -- need to be rendered
@@ -227,11 +227,12 @@ viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw 
 
 -- to make lists of them
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
--- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }
+-- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
 gList = x -> (
     x=flatten toList sequence x;
     x1 := select(x, y -> instance(y,GraphicsObject));
     x2 := select(x, y -> instance(y,Option));
+    if any(x1,is3d) then x2 = append(x2, Is3d => true);
     GraphicsList append(x2,symbol Contents => x1)
     )
 viewPort1 GraphicsList := x -> (
