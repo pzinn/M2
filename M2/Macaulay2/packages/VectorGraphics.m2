@@ -83,6 +83,7 @@ gParse Vector := x -> (
     if rank class x === 2 then x || vector {0,1.} else (
 	 gParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
      )
+gParse GraphicsObject := identity
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
