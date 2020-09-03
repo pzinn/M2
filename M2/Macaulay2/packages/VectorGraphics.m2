@@ -997,9 +997,9 @@ multidoc ///
    Text
     An option to create a rotation animation for the @ TO {VectorGraphics} @ 3d object.
     The value can be a single 4x4 matrix, or a list which is cycled.
-    The syntax n => ... can be used to repeat a sequence n times (where 0 means infinity).
+    The syntax {\tt n => ...} can be used to repeat a sequence n times (where {\tt 0} means infinity).
     The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
-    In order for the animation to work, VectorGraphics.css and VectorGraphics.js must be included in the web page.
+    In order for the animation to work, {\tt VectorGraphics.css} and {\tt VectorGraphics.js} must be included in the web page.
    Example
     (anim1=rotation(0.1,(0,0,1),(0,0,0)); anim2=rotation(-0.1,(0,0,1),(0,0,0)); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 });
     gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim1},Circle{(1,0),0.1},Circle{(0,0),1})
