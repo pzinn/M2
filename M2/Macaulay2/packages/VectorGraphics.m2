@@ -95,7 +95,7 @@ GraphicsType List := (T,opts) -> (
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,persp},{0,0,-1/persp,1}} -- useful to have output {x,y,z+p,1+z/p}
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- useful to have output {x,-y,-z,1-z/p}
 )
 
 viewPort = g -> (
@@ -684,13 +684,11 @@ gfxLabel = true >> o -> label -> (
     )
 *-
 
+needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
+
 -- note that the range is only where the curve actually lies, not the original range "r" provided.
 -- the reason is that it's not clear how to force that original range (there are possible coordinate transformations etc)
 plot = true >> o -> (P,r) -> (
-    pkg := needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
-    sS := value pkg.Dictionary#"solveSystem";
-    pkg2 := needsPackage "NAGtypes";
-    Crd := pkg2.Dictionary#"Coordinates";
     R := ring P; -- R should have one or two variables
     if not instance(r,List) then error("incorrect ranges");
     if not instance(r#0,List) then r = { r };
@@ -701,7 +699,7 @@ plot = true >> o -> (P,r) -> (
 	val := transpose apply(n+1, i -> (
 		x := i*(r#1-r#0)/n+r#0;
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
-		y := if numgens R === 1 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
+		y := if numgens R === 1 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
 	new GraphicsList from (
 	    (new OptionTable from { "fill"=>"none", Axes=>gens R, Is3d=>false,
@@ -714,7 +712,7 @@ plot = true >> o -> (P,r) -> (
 		x := i*(r#0#1-r#0#0)/n+r#0#0;
 		y := j*(r#1#1-r#1#0)/n+r#1#0;
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
-		z := if numgens R === 2 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
+		z := if numgens R === 2 then { f P } else sort apply(solveSystem { f P }, p -> first p.Coordinates); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
 	new GraphicsList from (
 	    (new OptionTable from { Axes=>gens R, Is3d=>true,
@@ -1127,7 +1125,7 @@ multidoc ///
 ///
 
 undocumented { -- there's an annoying conflict with NAG for Point, Points
-    Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
+    Contents, TextContent, HtmlContent, SVGElement, VectorGraphics$Point, VectorGraphics$Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
