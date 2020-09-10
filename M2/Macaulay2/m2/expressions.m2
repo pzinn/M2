@@ -868,8 +868,8 @@ net SparseMonomialVectorExpression := v -> (
 net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
 compactMatrixForm=true; -- governs net MatrixExpression
-matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Boxes => false, Alignment => Left },
-                                   false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center } }
+matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Alignment => Left },
+                                   false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Alignment => Center } }
 
 -- modified to work with factorized expressions as well
 toCompactString := method(Dispatch => Thing)
@@ -892,27 +892,23 @@ net MatrixExpression := x -> (
     if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
     else (
 	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
-	m := netList(x,matrixDisplayOptions#compactMatrixForm);
-	side := "|" ^ (height m, depth m);
-	horizontalJoin(side," ",m," ",side)
-	)
-     )
+	netList(x,Boxes=>{false,{0,#x#0}},matrixDisplayOptions#compactMatrixForm)
+     ))
 html MatrixExpression := x -> html TABLE toList x
 
 net MatrixDegreeExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
-    else horizontalJoin(stack( x#1 / toString ), " ", net MatrixExpression x#0)
-    )
+    else (
+	x=apply(#x#0,i->apply(prepend(x#1#i,x#0#i),if compactMatrixForm then toCompactString else net));
+	netList(x,Boxes=>{false,{1,#x#0}},matrixDisplayOptions#compactMatrixForm)
+     ))
 
 net VectorExpression := x -> (
     if all(x,i->class i===ZeroExpression) then "0"
      else (
 	 x=apply(toList x,y->{(if compactMatrixForm then toCompactString else net)y});
-	 m := netList(x,HorizontalSpace=>if compactMatrixForm then 1 else 2, VerticalSpace => if compactMatrixForm then 0 else 1, BaseRow => 0, Boxes => false, Alignment => Center);
-	 side := "|" ^ (height m, depth m);
-	 horizontalJoin(side," ",m," ",side)
-	 )
-     )
+	netList(x,Boxes=>{false,{0,1}},HorizontalSpace=>1,VerticalSpace=>if compactMatrixForm then 0 else 1,BaseRow=>0,Alignment=>Center)
+     ))
 html VectorExpression := x -> html TABLE apply(toList x,y->{y})
 
 -----------------------------------------------------------------------------
