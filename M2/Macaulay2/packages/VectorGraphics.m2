@@ -426,24 +426,30 @@ new SVG from GraphicsObject := (S,g) -> (
 	);
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
-    if g.?Axes and g.Axes =!= false then ( -- TEMP: coordinates wrong
+    if g.?Axes and g.Axes =!= false then (
 	arr := arrow();
+	-- determine intersection of viewport with axes
+	xmin := (r#0_0-p_(0,3))/p_(0,0);
+	xmax := (r#1_0-p_(0,3))/p_(0,0);
+	if xmax < xmin then ( temp:=xmin; xmin=xmax; xmax=temp; );
+	ymin := (r#0_1-p_(1,3))/p_(1,1);
+	ymax := (r#1_1-p_(1,3))/p_(1,1);
+	if ymax < ymin then ( temp:=ymin; ymin=ymax; ymax=temp; );
+	if is3d g then (
+	    zmax := 0.25*(xmax-xmin+ymax-ymin);
+	    zmin := -zmax;
+	    );
 	axes = gList(
-	    Line { Point1 => vector if is3d g then {r#0_0,0,0} else {r#0_0,0}, Point2 => vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, "marker-end" => arr },
-	    Line { Point1 => vector if is3d g then {0,r#0_1,0} else {0,r#0_1}, Point2 => vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, "marker-end" => arr },
-	    if is3d g then Line { Point1 => vector{0,0,min(r#0_0,r#0_1)}, Point2 => vector {0,0,max(r#1_0,r#1_1)}, "marker-end" => arr },
+	    Line { Point1 => vector {xmin,0,0,1}, Point2 => vector {xmax,0,0,1}, "marker-end" => arr },
+	    Line { Point1 => vector {0,ymin,0,1}, Point2 => vector {0,ymax,0,1}, "marker-end" => arr },
+	    if is3d g then Line { Point1 => vector{0,0,zmin,1}, Point2 => vector {0,0,zmax,1}, "marker-end" => arr },
 	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
 	    );
 	axeslabels = gList(
-	    GraphicsHtml { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x , FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsHtml { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
-	    -*
-	    GraphicsText { Point => 1.06*vector if is3d g then {r#1_0,0,0} else {r#1_0,0}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#0 else "x", FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsText { Point => 1.06*vector if is3d g then {0,r#1_1,0} else {0,r#1_1}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#1 else "y", FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsText { Point => 1.06*vector{0,0,max(r#1_0,r#1_1)}, HtmlContent => if instance(g.Axes,List) then toString g.Axes#2 else "z", FontSize => 0.08*min(rr_0,rr_1)},
-	    "stroke" => "none", "fill"=>"black"
-	    *-
+	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
+	    GraphicsHtml { Point => vector {xmax*1.06,0,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { Point => vector {0,ymax*1.06,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsHtml { Point => vector {0,0,zmax*1.06,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
 	    );
 	defsList = scanDefs axes | scanDefs axeslabels;
 	axes=svg(axes,p,p);
@@ -858,10 +864,13 @@ multidoc ///
    SVG text
   Description
    Text
-    Some SVG text. The text itself is the option TextContent (a string). Text can be "stroke"d or "fill"ed.
+    Some SVG text. The location of the start of the text is given by the option Point.
+    The text itself is the option TextContent (a string).
+    The text can be "stroke"d or "fill"ed.
     Font size should be specified with FontSize.
    Example
-    GraphicsText{(0,0),"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+    GraphicsText{TextContent=>"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
+    gList(GraphicsText{(0,0),"P",FontSize=>14},GraphicsText{(7,0),"AUL",FontSize=>10})
   Caveat
    Currently, cannot be rotated. (coming soon)
  Node
