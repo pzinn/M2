@@ -1,57 +1,77 @@
 -- -*- M2-comint -*- hash: 505971013
 
-i1 : R = CC[x,y];
+i1 : R = CC[x,y];
 
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 
-i3 : fSols = solveSystem(f, randomSeed=>3);
+i3 : fSols = solveSystem(f, randomSeed=>3);
 
-i4 : fSols/print
-{-1, 0}
-{1, 0}
-{-1.59272, .964857}
-{.742585+.425943*ii, .270685-1.00715*ii}
-{-.764107, -.544612}
-{1.33076-.335184*ii, -.62414+.513163*ii}
-{-.894935-.624334*ii, .143333+1.14868*ii}
-{1.33076+.335184*ii, -.62414-.513163*ii}
-{-.894935+.624334*ii, .143333-1.14868*ii}
-{.742585-.425943*ii, .270685+1.00715*ii}
+i4 : fSols/print
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {2.5},\,\textit{Coordinates}\ \Rightarrow \ \left\{-1,\,{0}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {2.5},\,\textit{Coordinates}\ \Rightarrow \ \left\{1,\,{0}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {6.73854},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{1.59272}+{2.45455}\cdot 10^{-91}\,\mathbf{i},\,{.964857}-{1.22727}\cdot 10^{-91}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {4.51264},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.88651},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.764107}-{1.96364}\cdot 10^{-90}\,\mathbf{i},\,-{.544612}+{7.85455}\cdot 10^{-90}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.62319},\,\textit{Coordinates}\ \Rightarrow \ \left\{{1.33076}-{.335184}\,\mathbf{i},\,-{.62414}+{.513163}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {7.98722},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.894935}-{.624334}\,\mathbf{i},\,{.143333}+{1.14868}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.62319},\,\textit{Coordinates}\ \Rightarrow \ \left\{{1.33076}+{.335184}\,\mathbf{i},\,-{.62414}-{.513163}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {7.98722},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {4.51264},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
 
-o4 = {, , , , , , , , , }
+o4 = \displaystyle \left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}
 
-o4 : List
+o4 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i5 : zeroSols = zeroFilter(fSols,1,1.0e-10);
+i5 : zeroSols = zeroFilter(fSols,1,1.0e-10);
 
-i6 : zeroSols / print
-{-1, 0}
-{1, 0}
+i6 : zeroSols / print
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {2.5},\,\textit{Coordinates}\ \Rightarrow \ \left\{-1,\,{0}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {2.5},\,\textit{Coordinates}\ \Rightarrow \ \left\{1,\,{0}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
 
-o6 = {, }
+o6 = \displaystyle \left\{,\,\right\}
 
-o6 : List
+o6 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i7 : f = {x^2+y^2,y*x+x};
+i7 : f = {x^2+y^2,y*x+x};
 
-i8 : fSols = solveSystem(f);
+i8 : fSols = solveSystem(f);
 
-i9 : fSols/print
-(-2.46519e-32+1.07852e-32*ii, -2.40467e-32+9.0524e-34*ii)
-{-ii, -1}
-{ii, -1}
+i9 : fSols/print
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {2.11015}\cdot 10^{31},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{2.46519}\cdot 10^{-32}+{1.07852}\cdot 10^{-32}\,\mathbf{i},\,-{2.40467}\cdot 10^{-32}+{9.05235}\cdot 10^{-34}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ {0},\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Singular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {5.09944},\,\textit{Coordinates}\ \Rightarrow \ \left\{-\mathbf{i},\,-1\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {5.09944},\,\textit{Coordinates}\ \Rightarrow \ \left\{\mathbf{i},\,-1\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
 
-o9 = {, , }
+o9 = \displaystyle \left\{,\,,\,\right\}
 
-o9 : List
+o9 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
+i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 
-i11 : zeroSols/print
-(-2.46519e-32+1.07852e-32*ii, -2.40467e-32+9.0524e-34*ii)
+i11 : zeroSols/print
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {2.11015}\cdot 10^{31},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{2.46519}\cdot 10^{-32}+{1.07852}\cdot 10^{-32}\,\mathbf{i},\,-{2.40467}\cdot 10^{-32}+{9.05235}\cdot 10^{-34}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ {0},\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Singular}\right\}
 
-o11 = {}
+o11 = \displaystyle \left\{\right\}
 
-o11 : List
+o11 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i12 : 
+i12 : 

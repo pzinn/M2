@@ -1,51 +1,61 @@
--- -*- M2-comint -*- {* hash: -425483933 *}
+-- -*- M2-comint -*- hash: -425483933
 
-i1 : A=random(QQ^3,QQ^3)
+i1 : A=random(QQ^3,QQ^3)
 
-o1 = | 9/2 1/2 3/2 |
-     | 1/2 1   3/4 |
-     | 9/4 3/4 7/4 |
+o1 = \displaystyle \begin{pmatrix}
+\frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
+\frac{1}{2}&1&\frac{3}{4}\\
+\frac{9}{4}&\frac{3}{4}&\frac{7}{4}\end{pmatrix}
 
-              3        3
-o1 : Matrix QQ  <--- QQ
+o1 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i2 : (perm,LR)=LRdecomposition(A,j->-j);
+i2 : (perm,LR)=LRdecomposition(A,j->-j);
 
-i3 : perm
+i3 : perm
 
-o3 = {0, 1, 2}
+o3 = \displaystyle \left\{0,\,1,\,2\right\}
 
-o3 : List
+o3 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i4 : P=transpose (id_(QQ^3))_perm
+i4 : P=transpose (id_(QQ^3))_perm
 
-o4 = | 1 0 0 |
-     | 0 1 0 |
-     | 0 0 1 |
+o4 = \displaystyle \begin{pmatrix}
+1&0&0\\
+0&1&0\\
+0&0&1\end{pmatrix}
 
-              3        3
-o4 : Matrix QQ  <--- QQ
+o4 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i5 : R=extractRightUpper(LR)
+i5 : R=extractRightUpper(LR)
 
-o5 = | 9/2 1/2   3/2   |
-     | 0   17/18 7/12  |
-     | 0   0     47/68 |
+o5 = \displaystyle \begin{pmatrix}
+\frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
+0&\frac{17}{18}&\frac{7}{12}\\
+0&0&\frac{47}{68}\end{pmatrix}
 
-              3        3
-o5 : Matrix QQ  <--- QQ
+o5 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i6 : L=extractLeftLower(LR)
+i6 : L=extractLeftLower(LR)
 
-o6 = | 1   0    0 |
-     | 1/9 1    0 |
-     | 1/2 9/17 1 |
+o6 = \displaystyle \begin{pmatrix}
+1&0&0\\
+\frac{1}{9}&1&0\\
+\frac{1}{2}&\frac{9}{17}&1\end{pmatrix}
 
-              3        3
-o6 : Matrix QQ  <--- QQ
+o6 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i7 : L*R==P*A
+i7 : L*R==P*A
 
-o7 = true
+o7 = \displaystyle <pre style="display:inline">
+true</pre>
 
-i8 : 
+i8 : 

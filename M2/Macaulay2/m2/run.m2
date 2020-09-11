@@ -95,6 +95,7 @@ runFile = (inf, inputhash, outf, tmpf, desc, pkg, announcechange, usermode, exam
      cmd = cmd | readmode(GCSTATS,        "GC_PRINT_STATS=1");
      cmd = cmd | readmode(GCVERBOSE,      "GC_PRINT_VERBOSE_STATS=1");
      cmd = cmd | " " | format toAbsolutePath commandLine#0;
+     cmd = cmd | " --webapp";
      if argmode =!= defaultMode or not usermode then
      cmd = cmd | readmode(ArgQ,           "-q");
      cmd = cmd | readmode(ArgInt,         "--int");

@@ -1,52 +1,60 @@
 -- -*- M2-comint -*- hash: -1388999538
 
-i1 : R = CC[x,y,z]
+i1 : R = CC[x,y,z]
 
-o1 = R
+o1 = \displaystyle R
 
-o1 : PolynomialRing
+o1 : \displaystyle <pre style="display:inline">
+PolynomialRing</pre>
 
-i2 : system = {y-x^2,z-x^3,x+y+z-1}
+i2 : system = {y-x^2,z-x^3,x+y+z-1}
 
-         2         3
-o2 = {- x  + y, - x  + z, x + y + z - 1}
+o2 = \displaystyle \left\{-x^{2}+y,\,-x^{3}+z,\,x+y+z-1\right\}
 
-o2 : List
+o2 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i3 : solns = solveSystem(system)
+i3 : solns = solveSystem(system)
 
-o3 = {{-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii},
-     ------------------------------------------------------------------------
-     {.543689, .295598, .160713}, {-.771845+1.11514*ii, -.647799-1.72143*ii,
-     ------------------------------------------------------------------------
-     2.41964+.606291*ii}}
+o3 = \displaystyle \left\{<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {33.3778},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.07977},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.543689}-{2.92605}\cdot 10^{-98}\,\mathbf{i},\,{.295598},\,{.160713}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {33.3778},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}\right\}
 
-o3 : List
+o3 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i4 : numSolns = #solns
+i4 : numSolns = #solns
 
-o4 = 3
+o4 = \displaystyle 3
 
-i5 : solns/print
-{-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}
-{.543689, .295598, .160713}
-{-.771845+1.11514*ii, -.647799-1.72143*ii, 2.41964+.606291*ii}
+i5 : solns/print
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {33.3778},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.07977},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.543689}-{2.92605}\cdot 10^{-98}\,\mathbf{i},\,{.295598},\,{.160713}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+\displaystyle <pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {33.3778},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
 
-o5 = {, , }
+o5 = \displaystyle \left\{,\,,\,\right\}
 
-o5 : List
+o5 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i6 : oneSoln = solns_0
+i6 : oneSoln = solns_0
 
-o6 = oneSoln
+o6 = \displaystyle <pre style="display:inline">
+oneSoln</pre>
 
-o6 : Point
+o6 : \displaystyle <pre style="display:inline">
+Point</pre>
 
-i7 : peek oneSoln
+i7 : peek oneSoln
 
-o7 = Point{ConditionNumber => 33.3778                                                   }
-           Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}
-           LastT => 1
-           SolutionStatus => Regular
+o7 = \displaystyle <pre style="display:inline">
+Point</pre><pre style="display:inline">
+</pre><pre style="display:inline">
+{</pre>\begin{aligned}&\textit{ConditionNumber}\ \Rightarrow \ {33.3778}\\&\textit{Coordinates}\ \Rightarrow \ \left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\}\\&\textit{LastT}\ \Rightarrow \ 1\\&\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\\\end{aligned}<pre style="display:inline">
+}</pre>
 
-i8 : 
+i8 : 

@@ -1,81 +1,98 @@
--- -*- M2-comint -*- {* hash: 781960899 *}
+-- -*- M2-comint -*- hash: 781960899
 
-i1 : A=random(QQ^3,QQ^3)
+i1 : A=random(QQ^3,QQ^3)
 
-o1 = | 9/2 1/2 3/2 |
-     | 1/2 1   3/4 |
-     | 9/4 3/4 7/4 |
+o1 = \displaystyle \begin{pmatrix}
+\frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
+\frac{1}{2}&1&\frac{3}{4}\\
+\frac{9}{4}&\frac{3}{4}&\frac{7}{4}\end{pmatrix}
 
-              3        3
-o1 : Matrix QQ  <--- QQ
+o1 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i2 : (perm,LR)=LRdecomposition(A,j->-j);
+i2 : (perm,LR)=LRdecomposition(A,j->-j);
 
-i3 : LR
+i3 : LR
 
-o3 = | 9/2 1/2   3/2   |
-     | 1/9 17/18 7/12  |
-     | 1/2 9/17  47/68 |
+o3 = \displaystyle \begin{pmatrix}
+\frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
+\frac{1}{9}&\frac{17}{18}&\frac{7}{12}\\
+\frac{1}{2}&\frac{9}{17}&\frac{47}{68}\end{pmatrix}
 
-              3        3
-o3 : Matrix QQ  <--- QQ
+o3 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i4 : P=transpose (id_(QQ^3))_perm
+i4 : P=transpose (id_(QQ^3))_perm
 
-o4 = | 1 0 0 |
-     | 0 1 0 |
-     | 0 0 1 |
+o4 = \displaystyle \begin{pmatrix}
+1&0&0\\
+0&1&0\\
+0&0&1\end{pmatrix}
 
-              3        3
-o4 : Matrix QQ  <--- QQ
+o4 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i5 : R=extractRightUpper(LR)
+i5 : R=extractRightUpper(LR)
 
-o5 = | 9/2 1/2   3/2   |
-     | 0   17/18 7/12  |
-     | 0   0     47/68 |
+o5 = \displaystyle \begin{pmatrix}
+\frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
+0&\frac{17}{18}&\frac{7}{12}\\
+0&0&\frac{47}{68}\end{pmatrix}
 
-              3        3
-o5 : Matrix QQ  <--- QQ
+o5 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i6 : L=extractLeftLower(LR)
+i6 : L=extractLeftLower(LR)
 
-o6 = | 1   0    0 |
-     | 1/9 1    0 |
-     | 1/2 9/17 1 |
+o6 = \displaystyle \begin{pmatrix}
+1&0&0\\
+\frac{1}{9}&1&0\\
+\frac{1}{2}&\frac{9}{17}&1\end{pmatrix}
 
-              3        3
-o6 : Matrix QQ  <--- QQ
+o6 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
-i7 : L*R==P*A
+i7 : L*R==P*A
 
-o7 = true
+o7 = \displaystyle <pre style="display:inline">
+true</pre>
 
-i8 : b=random(QQ^3,QQ^1);
+i8 : b=random(QQ^3,QQ^1);
 
-              3        1
-o8 : Matrix QQ  <--- QQ
+o8 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}
 
-i9 : y=forwardSubstitution(LR,P*b)
+i9 : y=forwardSubstitution(LR,P*b)
 
-o9 = | 7/9      |
-     | 497/810  |
-     | -109/510 |
+o9 = \displaystyle \begin{pmatrix}
+\frac{7}{9}\\
+\frac{497}{810}\\
+-\frac{109}{510}\end{pmatrix}
 
-              3        1
-o9 : Matrix QQ  <--- QQ
+o9 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}
 
-i10 : x=backwardSubstitution(LR,y)
+i10 : x=backwardSubstitution(LR,y)
 
-o10 = | 386/2115  |
-      | 1778/2115 |
-      | -218/705  |
+o10 = \displaystyle \begin{pmatrix}
+\frac{386}{2115}\\
+\frac{1778}{2115}\\
+-\frac{218}{705}\end{pmatrix}
 
-               3        1
-o10 : Matrix QQ  <--- QQ
+o10 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}
 
-i11 : inverse(A)*b==x
+i11 : inverse(A)*b==x
 
-o11 = true
+o11 = \displaystyle <pre style="display:inline">
+true</pre>
 
-i12 : 
+i12 : 

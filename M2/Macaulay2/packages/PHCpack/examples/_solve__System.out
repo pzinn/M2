@@ -1,53 +1,61 @@
 -- -*- M2-comint -*- hash: -1663871215
 
-i1 : R = CC[x,y,z]
+i1 : R = CC[x,y,z]
 
-o1 = R
+o1 = \displaystyle R
 
-o1 : PolynomialRing
+o1 : \displaystyle <pre style="display:inline">
+PolynomialRing</pre>
 
-i2 : S = {x+y+z-1, x^2+y^2, x+y-z-3}
+i2 : S = {x+y+z-1, x^2+y^2, x+y-z-3}
 
-                      2    2
-o2 = {x + y + z - 1, x  + y , x + y - z - 3}
+o2 = \displaystyle \left\{x+y+z-1,\,x^{2}+y^{2},\,x+y-z-{3}\right\}
 
-o2 : List
+o2 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i3 : L = solveSystem(S)
+i3 : L = solveSystem(S)
 
-o3 = {{1-ii, 1+ii, -1}, {1+ii, 1-ii, -1}}
+o3 = \displaystyle \left\{<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {6.32111},\,\textit{Coordinates}\ \Rightarrow \ \left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {6.32111},\,\textit{Coordinates}\ \Rightarrow \ \left\{1+\mathbf{i},\,1-\mathbf{i},\,-1-{3.34476}\cdot 10^{-17}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}\right\}
 
-o3 : List
+o3 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i4 : oneSoln = L_0
+i4 : oneSoln = L_0
 
-o4 = oneSoln
+o4 = \displaystyle <pre style="display:inline">
+oneSoln</pre>
 
-o4 : Point
+o4 : \displaystyle <pre style="display:inline">
+Point</pre>
 
-i5 : peek oneSoln
+i5 : peek oneSoln
 
-o5 = Point{ConditionNumber => 6.32111     }
-           Coordinates => {1-ii, 1+ii, -1}
-           LastT => 1
-           SolutionStatus => Regular
+o5 = \displaystyle <pre style="display:inline">
+Point</pre><pre style="display:inline">
+</pre><pre style="display:inline">
+{</pre>\begin{aligned}&\textit{ConditionNumber}\ \Rightarrow \ {6.32111}\\&\textit{Coordinates}\ \Rightarrow \ \left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\}\\&\textit{LastT}\ \Rightarrow \ 1\\&\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\\\end{aligned}<pre style="display:inline">
+}</pre>
 
-i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
+i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
 
-         2         3                      3
-o6 = {- x  + y, - x  + z, x + y + z - 1, x  + x + y - 1}
+o6 = \displaystyle \left\{-x^{2}+y,\,-x^{3}+z,\,x+y+z-1,\,x^{3}+x+y-1\right\}
 
-o6 : List
+o6 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i7 : #system > numcols vars R --overdetermined system
+i7 : #system > numcols vars R --overdetermined system
 
-o7 = true
+o7 = \displaystyle <pre style="display:inline">
+true</pre>
 
-i8 : solns = solveSystem(system);
+i8 : solns = solveSystem(system);
 *** after parseSolutions, ring has {x, y, z} ***
 
-i9 : numSolns = #solns
+i9 : numSolns = #solns
 
-o9 = 3
+o9 = \displaystyle 3
 
-i10 : 
+i10 : 

@@ -1,67 +1,52 @@
 -- -*- M2-comint -*- hash: 1509569113
 
-i1 : R=CC[a,b,c,d];
+i1 : R=CC[a,b,c,d];
 
-i2 : M=matrix for i to 2 list for j to 3 list random(1,R)+random(0,R);
+i2 : M=matrix for i to 2 list for j to 3 list random(1,R)+random(0,R);
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
 
-             3       4
-o2 : Matrix R  <--- R
+o2 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle R^{3}\,\longleftarrow \,R^{4}
 
-i3 : I=minors(3,M);
+i3 : I=minors(3,M);
 
-o3 : Ideal of R
+o3 : \displaystyle <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>\displaystyle R
 
-i4 : f=flatten entries gens I;
+i4 : f=flatten entries gens I;
 
-i5 : (w,ns) = topWitnessSet(f,2);
+i5 : (w,ns) = topWitnessSet(f,2);
 
-i6 : slcmat = matrix applyTable (entries w.Slice, x->1_CC*realPart x);
+i6 : slcmat = matrix applyTable (entries w.Slice, x->1_CC*realPart x);
 
-                2          7
-o6 : Matrix CC    <--- CC
-              53         53
+o6 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle {{\mathbb C}}_{53}^{2}\,\longleftarrow \,{{\mathbb C}}_{53}^{7}
 
-i7 : Rtwo = ring w.Equations;
+i7 : Rtwo = ring w.Equations;
 
-i8 : X = transpose matrix {gens Rtwo | {1_CC}};
+i8 : X = transpose matrix {gens Rtwo | {1_CC}};
 
-                7          1
-o8 : Matrix Rtwo  <--- Rtwo
+o8 : \displaystyle <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>\displaystyle \textit{Rtwo}^{7}\,\longleftarrow \,\textit{Rtwo}^{1}
 
-i9 : slcRR = flatten entries (promote(slcmat,Rtwo) * X);
+i9 : slcRR = flatten entries (promote(slcmat,Rtwo) * X);
 
-i10 : fsols = intersectSlice(w,slcRR)
+i10 : fsols = intersectSlice(w,slcRR)
 
-o10 = {{.278563-.243312*ii, -.092976+.923912*ii, -.508131+.698273*ii,
-      -----------------------------------------------------------------------
-      -1.23146-.008271*ii, 2.40419e-15+2.72257e-15*ii,
-      -----------------------------------------------------------------------
-      -2.43538e-15-3.91302e-15*ii}, {-18.336+8.26936*ii, 3.7764-9.67765*ii,
-      -----------------------------------------------------------------------
-      -13.7891-2.04541*ii, -1.28993+.094382*ii, -7.70412e-12-1.90445e-12*ii,
-      -----------------------------------------------------------------------
-      -1.06457e-11-2.38457e-11*ii}, {-5.13593-9.35491*ii, 7.19369+7.77241*ii,
-      -----------------------------------------------------------------------
-      1.77961-.856406*ii, -1.30143-.079476*ii, -8.17689e-13+7.72829e-13*ii,
-      -----------------------------------------------------------------------
-      -4.95576e-13-2.07459e-12*ii}, {.171703+.292386*ii, .372401-.2657*ii,
-      -----------------------------------------------------------------------
-      -.141952+.0040302*ii, -1.23561+.00268*ii, -1.73793e-15-4.06085e-15*ii,
-      -----------------------------------------------------------------------
-      2.85695e-15+1.00494e-15*ii}, {.07266-.862383*ii, .515658+.767545*ii,
-      -----------------------------------------------------------------------
-      -.0901531-.0279888*ii, -1.23697-.007765*ii,
-      -----------------------------------------------------------------------
-      -3.08113e-15-2.49173e-15*ii, 4.97412e-15+2.95249e-15*ii},
-      -----------------------------------------------------------------------
-      {.903518-2.84996*ii, 3.23789-.3435*ii, 3.39272-2.9677*ii,
-      -----------------------------------------------------------------------
-      -1.25924-.000908*ii, -1.28671e-13-5.378e-14*ii,
-      -----------------------------------------------------------------------
-      6.62906e-14-9.24819e-14*ii}}
+o10 = \displaystyle \left\{<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {103.767},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.278563}-{.243312}\,\mathbf{i},\,-{.0929761}+{.923912}\,\mathbf{i},\,-{.508131}+{.698273}\,\mathbf{i},\,-{1.23146}-{.00827078}\,\mathbf{i},\,{4.84123}\cdot 10^{-15}+{3.76995}\cdot 10^{-15}\,\mathbf{i},\,-{5.47244}\cdot 10^{-15}-{6.08534}\cdot 10^{-15}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {240269},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{18.336}+{8.26936}\,\mathbf{i},\,{3.7764}-{9.67765}\,\mathbf{i},\,-{13.7891}-{2.04541}\,\mathbf{i},\,-{1.28993}+{.0943817}\,\mathbf{i},\,-{5.85656}\cdot 10^{-12}-{6.21217}\cdot 10^{-13}\,\mathbf{i},\,-{1.34864}\cdot 10^{-12}-{1.36638}\cdot 10^{-11}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {29542.1},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{5.13593}-{9.35491}\,\mathbf{i},\,{7.19369}+{7.77241}\,\mathbf{i},\,{1.77961}-{.856406}\,\mathbf{i},\,-{1.30143}-{.079476}\,\mathbf{i},\,-{6.98385}\cdot 10^{-13}+{3.50493}\cdot 10^{-13}\,\mathbf{i},\,-{3.11232}\cdot 10^{-14}-{1.37966}\cdot 10^{-12}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {36.062},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.171703}+{.292386}\,\mathbf{i},\,{.372401}-{.2657}\,\mathbf{i},\,-{.141952}+{.00403019}\,\mathbf{i},\,-{1.23561}+{.00267976}\,\mathbf{i},\,-{4.34582}\cdot 10^{-15}-{2.16817}\cdot 10^{-15}\,\mathbf{i},\,{3.10393}\cdot 10^{-15}-{9.14161}\cdot 10^{-16}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {52.1921},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.0726598}-{.862383}\,\mathbf{i},\,{.515658}+{.767545}\,\mathbf{i},\,-{.0901531}-{.0279888}\,\mathbf{i},\,-{1.23697}-{.00776525}\,\mathbf{i},\,-{1.86858}\cdot 10^{-15}-{1.31302}\cdot 10^{-16}\,\mathbf{i},\,{5.3594}\cdot 10^{-15}-{9.95451}\cdot 10^{-16}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
+Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3285.15},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.903518}-{2.84996}\,\mathbf{i},\,{3.23789}-{.3435}\,\mathbf{i},\,{3.39272}-{2.9677}\,\mathbf{i},\,-{1.25924}-{.000907547}\,\mathbf{i},\,-{9.21025}\cdot 10^{-14}-{3.88957}\cdot 10^{-14}\,\mathbf{i},\,{1.19452}\cdot 10^{-13}-{9.58393}\cdot 10^{-14}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}\right\}
 
-o10 : List
+o10 : \displaystyle <pre style="display:inline">
+List</pre>
 
-i11 : 
+i11 : 
