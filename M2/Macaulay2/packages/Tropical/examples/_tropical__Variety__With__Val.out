@@ -78,7 +78,7 @@ MAXIMAL_CONES
 {0 2}
 {0 3}
 
-</pre><br/>
+ </pre>
 
 i5 : tropicalVarietyWithVal(I, Valuation=>x)
 

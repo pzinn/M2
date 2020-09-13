@@ -9,7 +9,7 @@ o1 : <pre style="display:inline">
 CoincidentRootLocus</pre>
 
 i2 : time polarDegrees X
-     -- used 0.841536 seconds
+     -- used 0.785663 seconds
 
 o2 = \displaystyle \left\{36,\,80,\,66,\,24\right\}
 

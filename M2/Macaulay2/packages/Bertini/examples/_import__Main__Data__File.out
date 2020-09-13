@@ -1,31 +1,43 @@
 -- -*- M2-comint -*- hash: 408841555
 
-i1 : makeB'InputFile(storeBM2Files,
-       AffVariableGroup=>{x,y,z},
-       BertiniInputConfiguration=>{{TrackType,1}},
-       B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
+i1 : makeB'InputFile(storeBM2Files,
+  AffVariableGroup=>{x,y,z},
+  BertiniInputConfiguration=>{{TrackType,1}},
+  B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
 
-i2 : runBertini(storeBM2Files)
+i2 : runBertini(storeBM2Files)
 
-i3 : thePoints=importMainDataFile(storeBM2Files)
+i3 : thePoints=importMainDataFile(storeBM2Files)
 
-o3 = {{.0299281-.31537*ii, -1.09008e-16-2.56554e-17*ii, .046797+1.04793*ii}, {3.04234-.182804*ii, -.542537-2.82288*ii, -.859692+1.13455*ii}, {-.764667+1.0007*ii, 1.39601+.446141*ii, .229276+.621026*ii}}
+o3 = \displaystyle \left\{<pre style="display:inline">
+Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots8\ldots\right\}\right\}
 
-o3 : List
+o3 : <pre style="display:inline">
+List</pre>
 
-i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
-1
-1
-1
+i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
+<pre style="display:inline">
+1</pre>
+<pre style="display:inline">
+1</pre>
+<pre style="display:inline">
+1</pre>
 
-o4 = {}
+o4 = \displaystyle \left\{\right\}
 
-o4 : List
+o4 : <pre style="display:inline">
+List</pre>
 
-i5 : sortMainDataComponents(thePoints)
+i5 : sortMainDataComponents(thePoints)
 
-o5 = {{{.0299281-.31537*ii, -1.09008e-16-2.56554e-17*ii, .046797+1.04793*ii}}, {{3.04234-.182804*ii, -.542537-2.82288*ii, -.859692+1.13455*ii}, {-.764667+1.0007*ii, 1.39601+.446141*ii, .229276+.621026*ii}}}
+o5 = \displaystyle \left\{\left\{<pre style="display:inline">
+Point</pre>\left\{\ldots8\ldots\right\}\right\},\,\left\{<pre style="display:inline">
+Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots8\ldots\right\}\right\}\right\}
 
-o5 : List
+o5 : <pre style="display:inline">
+List</pre>
 
-i6 : 
+i6 : 

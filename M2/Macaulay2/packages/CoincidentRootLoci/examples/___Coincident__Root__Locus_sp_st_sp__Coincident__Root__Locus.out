@@ -17,7 +17,7 @@ o2 : <pre style="display:inline">
 CoincidentRootLocus</pre>
 
 i3 : time X * Y
-     -- used 0.371287 seconds
+     -- used 0.343212 seconds
 
 o3 = \displaystyle <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}
@@ -26,7 +26,7 @@ o3 : <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>
 
 i4 : time X * Y * Y
-     -- used 0.0864203 seconds
+     -- used 0.0805048 seconds
 
 o4 = \displaystyle <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}
@@ -44,7 +44,7 @@ Ideal</pre><pre style="display:inline">
  of </pre>{\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4}\right]
 
 i6 : time projectiveJoin(I,I)
-     -- used 0.03731 seconds
+     -- used 0.0365256 seconds
 
 o6 = \displaystyle <pre style="display:inline">
 ideal</pre>\left({t}_{2}^{3}-2\,{t}_{1}{t}_{2}{t}_{3}+{t}_{0}{t}_{3}^{2}+{t}_{1}^{2}{t}_{4}-{t}_{0}{t}_{2}{t}_{4}\right)

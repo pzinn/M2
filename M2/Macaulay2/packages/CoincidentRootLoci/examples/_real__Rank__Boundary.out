@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 1569677465
 
 i1 : time D77 = realRankBoundary(7,7)
-     -- used 0.357062 seconds
+     -- used 0.419554 seconds
 
 o1 = \displaystyle <pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
@@ -22,7 +22,7 @@ The singular locus is the union of the coincident root loci associated with the 
 The defining polynomial has 1103 terms of degree 12</pre>
 
 i3 : time D64 = realRankBoundary(6,4)
-     -- used 1.99665 seconds
+     -- used 1.92011 seconds
 
 o3 = \displaystyle \left\{<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">
@@ -54,7 +54,7 @@ degree = 18
 The defining polynomial has 3140 terms of degree 18</pre>
 
 i6 : time D74 = realRankBoundary(7,4)
-     -- used 0.386947 seconds
+     -- used 0.365573 seconds
 
 o6 = \displaystyle <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}
@@ -74,7 +74,7 @@ codim  = 1
 degree = 24</pre>
 
 i8 : time D75 = realRankBoundary(7,5)
-     -- used 0.19731 seconds
+     -- used 0.209709 seconds
 
 o8 = \displaystyle \left\{<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">
@@ -116,7 +116,7 @@ codim  = 1
 degree = 24</pre>
 
 i12 : time D76 = realRankBoundary(7,6)
-     -- used 0.000261606 seconds
+     -- used 0.000324866 seconds
 
 o12 = \displaystyle \left\{<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">

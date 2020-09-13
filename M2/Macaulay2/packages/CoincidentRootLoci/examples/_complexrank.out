@@ -9,7 +9,7 @@ o2 = \displaystyle 325699392019820093805938500473136959995883\,x^{11}-58109075
 o2 : {\mathbb Q}\left[x,y\right]
 
 i3 : time complexrank F
-     -- used 0.0992567 seconds
+     -- used 0.0992321 seconds
 
 o3 = \displaystyle 8
 

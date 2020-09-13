@@ -17,7 +17,7 @@ o2 : <pre style="display:inline">
 CoincidentRootLocus</pre>
 
 i3 : time isSubset(X,Y)
-     -- used 0.000318044 seconds
+     -- used 0.000391238 seconds
 
 o3 = \displaystyle <pre style="display:inline">
 true</pre>
@@ -31,7 +31,7 @@ o4 : <pre style="display:inline">
 CoincidentRootLocus</pre>
 
 i5 : time isSubset(X',Y)
-     -- used 0.000305399 seconds
+     -- used 0.000375657 seconds
 
 o5 = \displaystyle <pre style="display:inline">
 false</pre>

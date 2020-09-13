@@ -9,7 +9,7 @@ o1 : <pre style="display:inline">
 CoincidentRootLocus</pre>
 
 i2 : time subsets X
-     -- used 0.415288 seconds
+     -- used 0.407413 seconds
 
 o2 = \displaystyle \left\{<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">

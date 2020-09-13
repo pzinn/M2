@@ -7,33 +7,33 @@ i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
 i3 : (p0, x0) = createSeedPair polys;
 
 i4 : (L, npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0})
---backup directory created: /tmp/M2-1338108-0/1
-     -- 0.0120862 seconds elapsed
+--backup directory created: /tmp/M2-93455-0/1
+     -- 0.0230623 seconds elapsed
   H01: 1
-     -- 0.00248937 seconds elapsed
+     -- 0.00272782 seconds elapsed
   H10: 1
-     -- 0.000330285 seconds elapsed
+     -- 0.000352884 seconds elapsed
 number of paths tracked: 2
 found 1 points in the fiber so far
-     -- 0.00231216 seconds elapsed
+     -- 0.00259961 seconds elapsed
   H01: 1
-     -- 0.00974154 seconds elapsed
+     -- 0.00270033 seconds elapsed
   H10: 1
-     -- 0.000292457 seconds elapsed
+     -- 0.000323611 seconds elapsed
 number of paths tracked: 4
 found 1 points in the fiber so far
-     -- 0.00237437 seconds elapsed
+     -- 0.00360855 seconds elapsed
   H01: 1
-     -- 0.00460392 seconds elapsed
+     -- 0.0056051 seconds elapsed
   H10: 1
-     -- 0.000293481 seconds elapsed
+     -- 0.000274343 seconds elapsed
 number of paths tracked: 6
 found 1 points in the fiber so far
-     -- 0.00255836 seconds elapsed
+     -- 0.0024072 seconds elapsed
   H01: 1
-     -- 0.00990024 seconds elapsed
+     -- 0.0118983 seconds elapsed
   H10: 1
-     -- 0.000289694 seconds elapsed
+     -- 0.000305317 seconds elapsed
 number of paths tracked: 8
 found 1 points in the fiber so far
 
