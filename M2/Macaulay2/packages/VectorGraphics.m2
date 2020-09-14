@@ -43,7 +43,9 @@ GraphicsObject = new Type of HashTable -- ancestor type
 new GraphicsObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Graphics object should have a cache
 new GraphicsObject := T -> new T from {};
 new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
-GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last) -- cf similar method for OptionTable
+GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,
+    (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
+    ) -- cf similar method for OptionTable
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: Radius, FontSize, etc
@@ -195,7 +197,12 @@ viewPort1 GraphicsText := g -> (
     p := g.cache.CurrentMatrix * g.Point;
     f=f/p_3;
     p=project2d p;
-    { p - vector {0,f}, p + vector{f*0.6*length g.TextContent,0} } -- very approximate TODO properly
+    r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
+    pp := p + vector {
+	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
+	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	};
+    {pp,pp+r}
     )
 
 Line = new GraphicsType of GraphicsObject from ( "line",
