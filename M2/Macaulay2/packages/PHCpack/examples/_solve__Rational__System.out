@@ -7,19 +7,16 @@ i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : sols = solveRationalSystem(system)
 
 o3 = \displaystyle \left\{<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {4.87567},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.543689},\,{.295598}+{1.36846}\cdot 10^{-48}\,\mathbf{i},\,{.160713}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {36.6838},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {33.5121},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}\right\}
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}\right\}
 
-o3 : \displaystyle <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
 
 i4 : peek first sols
 
-o4 = \displaystyle <pre style="display:inline">
-Point</pre><pre style="display:inline">
-</pre><pre style="display:inline">
-{</pre>\begin{aligned}&\textit{ConditionNumber}\ \Rightarrow \ {4.87567}\\&\textit{Coordinates}\ \Rightarrow \ \left\{{.543689},\,{.295598}+{1.36846}\cdot 10^{-48}\,\mathbf{i},\,{.160713}\right\}\\&\textit{LastT}\ \Rightarrow \ 1\\&\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\\\end{aligned}<pre style="display:inline">
-}</pre>
+o4 = <pre style="display:inline-table;vertical-align:0%">
+Point{ConditionNumber => 4.87567                }<br/>      Coordinates => {.543689, .295598, .160713}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
 
 i5 : 

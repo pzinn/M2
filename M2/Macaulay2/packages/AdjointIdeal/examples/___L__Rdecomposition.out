@@ -7,9 +7,9 @@ o1 = \displaystyle \begin{pmatrix}
 \frac{1}{2}&1&\frac{3}{4}\\
 \frac{9}{4}&\frac{3}{4}&\frac{7}{4}\end{pmatrix}
 
-o1 : \displaystyle <pre style="display:inline">
+o1 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+ </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
 i2 : (perm,LR)=LRdecomposition(A,j->-j);
 
@@ -17,7 +17,7 @@ i3 : perm
 
 o3 = \displaystyle \left\{0,\,1,\,2\right\}
 
-o3 : \displaystyle <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
 
 i4 : P=transpose (id_(QQ^3))_perm
@@ -27,9 +27,9 @@ o4 = \displaystyle \begin{pmatrix}
 0&1&0\\
 0&0&1\end{pmatrix}
 
-o4 : \displaystyle <pre style="display:inline">
+o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+ </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
 i5 : R=extractRightUpper(LR)
 
@@ -38,9 +38,9 @@ o5 = \displaystyle \begin{pmatrix}
 0&\frac{17}{18}&\frac{7}{12}\\
 0&0&\frac{47}{68}\end{pmatrix}
 
-o5 : \displaystyle <pre style="display:inline">
+o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+ </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
 i6 : L=extractLeftLower(LR)
 
@@ -49,9 +49,9 @@ o6 = \displaystyle \begin{pmatrix}
 \frac{1}{9}&1&0\\
 \frac{1}{2}&\frac{9}{17}&1\end{pmatrix}
 
-o6 : \displaystyle <pre style="display:inline">
+o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>\displaystyle {\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+ </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
 
 i7 : L*R==P*A
 

@@ -1,34 +1,44 @@
 -- -*- M2-comint -*- hash: -1057685552
 
-i1 : R = CC[x,y,z]
+i1 : R = CC[x,y,z]
 
-o1 = R
+o1 = \displaystyle R
 
-o1 : PolynomialRing
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 
-i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
+i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
-       3      2      2       2     3      2
-o2 = {x  + x*y  + x*z  - x, x y + y  + y*z  - y}
+o2 = \displaystyle \left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}
 
-o2 : List
+o2 : <pre style="display:inline">
+List</pre>
 
-i3 : NV = bertiniPosDimSolve(F)
+i3 : NV = bertiniPosDimSolve(F)
 
-o3 = NV
+o3 = \displaystyle <pre style="display:inline">
+NV</pre>
 
-o3 : NumericalVariety
+o3 : <pre style="display:inline">
+NumericalVariety</pre>
 
-i4 : W = NV#1_0 --z-axis
+i4 : W = NV#1_0 --z-axis
 
-o4 = W
+o4 = \displaystyle <pre style="display:inline">
+W</pre>
 
-o4 : WitnessSet
+o4 : <pre style="display:inline">
+WitnessSet</pre>
 
-i5 : bertiniSample(4, W)
+i5 : bertiniSample(4, W)
 
-o5 = {{-1.03853e-320-1.67291e-320*ii, -8.73068e-20-5.9335e-20*ii, 2.81409+.182791*ii}, {9.88131e-324, -7.44426e-20-3.60071e-19*ii, 1.99906+1.58373*ii}, {0, -1.53316e-20-9.6132e-20*ii, .543814-.831323*ii}, {-1.94662e-321+7.41098e-322*ii, 3.22341e-21+1.48053e-20*ii, .109152-.286424*ii}}
+o5 = \displaystyle \left\{<pre style="display:inline">
+Point</pre>\left\{\ldots1\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots1\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots1\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots1\ldots\right\}\right\}
 
-o5 : List
+o5 : <pre style="display:inline">
+List</pre>
 
-i6 : 
+i6 : 

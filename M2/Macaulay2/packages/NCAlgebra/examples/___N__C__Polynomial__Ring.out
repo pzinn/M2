@@ -1,9 +1,11 @@
 -- -*- M2-comint -*- hash: 847232713
 
-i1 : A = QQ{x,y}
+i1 : A = QQ{x,y}
 
-o1 = A
+o1 = \displaystyle <pre style="display:inline">
+A</pre>
 
-o1 : NCPolynomialRing
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 
-i2 : 
+i2 : 

@@ -782,11 +782,11 @@ document {
      Headline => "hypertext paragraph container",
      Usage => "PARA x",
      Inputs => {
-	  "x" => String => {", a ", TO2("hypertext list format", "hypertext list")}
+	  "x" => String => {", a ", TO2("Macaulay2Doc::hypertext list format", "hypertext list")}
 	  },
      Outputs => { {" a ", TO "hypertext", " paragraph containing ", TT "x" }
      },
-     "For an example, see ", TO "hypertext list format", "."
+     "For an example, see ", TO "Macaulay2Doc::hypertext list format", "."
      }
 document { Key => (options, MarkUpType),
      "Optional arguments of mark up types allow attributes to be added to html elements.",
@@ -816,6 +816,16 @@ document { Key => {(validate, Hypertext),validate},
 	  eliminated, or a more-final type of hypertext, convertible immediately to HTML, will have to be developed."
 	  }
      }
+document { Key => {(style, Hypertext),style},
+    Usage => "style (x,opts)",
+    Inputs => { "x" => { TO "hypertext" } },
+    Consequences => { { "Returns a new Hypertext object with its style option updated." }},
+    EXAMPLE lines ///
+    d = DIV { "Hello" }
+    d = style(d, "font-weight" => "bold")
+    peek d
+    ///
+    }
 
 undocumented {
     (validate, CDATA),

@@ -6,33 +6,33 @@ i4 : r0 = ourRoots#0#Coordinates#1
 
 o4 = \displaystyle {1.73205080756888}
 
-o4 : \displaystyle {\mathbb C}<pre style="display:inline">
- (of precision </pre>\displaystyle 53<pre style="display:inline">
+o4 : {\mathbb C}<pre style="display:inline">
+ (of precision </pre>53<pre style="display:inline">
 )</pre>
 
 i5 : newRoots = refineSolutions(S,ourRoots,64)
 
 o5 = \displaystyle \left\{<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {8.34028},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.57735},\,{1.73205}\right\},\,\textit{LastT}\ \Rightarrow \ {0},\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {8.34028},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.57735}-{8.22655}\cdot 10^{-143}\,\mathbf{i},\,-{1.73205}-{5}\cdot 10^{-141}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ {0},\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}\right\}
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}\right\}
 
-o5 : \displaystyle <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
 
 i6 : newRoots#0 -- recall that solutions are of type Point
 
 o6 = \displaystyle <pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {8.34028},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.57735},\,{1.73205}\right\},\,\textit{LastT}\ \Rightarrow \ {0},\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}
+Point</pre>\left\{\ldots4\ldots\right\}
 
-o6 : \displaystyle <pre style="display:inline">
+o6 : <pre style="display:inline">
 Point</pre>
 
 i7 : r1 = newRoots#0#Coordinates#1
 
 o7 = \displaystyle {1.73205080756887735414922460641658082304678611432812598193257967}
 
-o7 : \displaystyle {\mathbb C}<pre style="display:inline">
- (of precision </pre>\displaystyle 213<pre style="display:inline">
+o7 : {\mathbb C}<pre style="display:inline">
+ (of precision </pre>213<pre style="display:inline">
 )</pre>
 
 i8 : 

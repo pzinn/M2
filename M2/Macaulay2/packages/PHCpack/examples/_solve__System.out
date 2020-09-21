@@ -4,23 +4,23 @@ i1 : R = CC[x,y,z]
 
 o1 = \displaystyle R
 
-o1 : \displaystyle <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
 
 i2 : S = {x+y+z-1, x^2+y^2, x+y-z-3}
 
 o2 = \displaystyle \left\{x+y+z-1,\,x^{2}+y^{2},\,x+y-z-{3}\right\}
 
-o2 : \displaystyle <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
 
 i3 : L = solveSystem(S)
 
 o3 = \displaystyle \left\{<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {6.32111},\,\textit{Coordinates}\ \Rightarrow \ \left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {6.32111},\,\textit{Coordinates}\ \Rightarrow \ \left\{1+\mathbf{i},\,1-\mathbf{i},\,-1-{3.34476}\cdot 10^{-17}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}\right\}
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}\right\}
 
-o3 : \displaystyle <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
 
 i4 : oneSoln = L_0
@@ -28,22 +28,19 @@ i4 : oneSoln = L_0
 o4 = \displaystyle <pre style="display:inline">
 oneSoln</pre>
 
-o4 : \displaystyle <pre style="display:inline">
+o4 : <pre style="display:inline">
 Point</pre>
 
 i5 : peek oneSoln
 
-o5 = \displaystyle <pre style="display:inline">
-Point</pre><pre style="display:inline">
-</pre><pre style="display:inline">
-{</pre>\begin{aligned}&\textit{ConditionNumber}\ \Rightarrow \ {6.32111}\\&\textit{Coordinates}\ \Rightarrow \ \left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\}\\&\textit{LastT}\ \Rightarrow \ 1\\&\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\\\end{aligned}<pre style="display:inline">
-}</pre>
+o5 = <pre style="display:inline-table;vertical-align:0%">
+Point{ConditionNumber => 6.32111     }<br/>      Coordinates => {1-ii, 1+ii, -1}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
 
 i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
 
 o6 = \displaystyle \left\{-x^{2}+y,\,-x^{3}+z,\,x+y+z-1,\,x^{3}+x+y-1\right\}
 
-o6 : \displaystyle <pre style="display:inline">
+o6 : <pre style="display:inline">
 List</pre>
 
 i7 : #system > numcols vars R --overdetermined system

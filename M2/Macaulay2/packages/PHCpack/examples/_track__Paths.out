@@ -9,16 +9,16 @@ i3 : (m,q,qsols) = mixedVolume(f,StartSystem=>true);
 i4 : fsols = trackPaths(f,q,qsols)
 
 o4 = \displaystyle \left\{<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {7.98722},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.894935}-{.624334}\,\mathbf{i},\,{.143333}+{1.14868}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {6.73854},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{1.59272}+{2.61012}\cdot 10^{-54}\,\mathbf{i},\,{.964857}-{4.0934}\cdot 10^{-55}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {4.51264},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.62319},\,\textit{Coordinates}\ \Rightarrow \ \left\{{1.33076}+{.335184}\,\mathbf{i},\,-{.62414}-{.513163}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.62319},\,\textit{Coordinates}\ \Rightarrow \ \left\{{1.33076}-{.335184}\,\mathbf{i},\,-{.62414}+{.513163}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {3.88651},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.764107}+{4.59177}\cdot 10^{-41}\,\mathbf{i},\,-{.544612}-{9.18355}\cdot 10^{-41}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {4.51264},\,\textit{Coordinates}\ \Rightarrow \ \left\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\},\,<pre style="display:inline">
-Point</pre>\,\left\{\textit{ConditionNumber}\ \Rightarrow \ {7.98722},\,\textit{Coordinates}\ \Rightarrow \ \left\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\right\},\,\textit{LastT}\ \Rightarrow \ 1,\,\textit{SolutionStatus}\ \Rightarrow \ \textit{Regular}\right\}\right\}
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}\right\}
 
-o4 : \displaystyle <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
 
 i5 : 

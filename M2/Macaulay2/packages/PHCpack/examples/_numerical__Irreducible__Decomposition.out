@@ -10,7 +10,7 @@ found 6 irreducible factors
 o3 = \displaystyle <pre style="display:inline">
 V</pre>
 
-o3 : \displaystyle <pre style="display:inline">
+o3 : <pre style="display:inline">
 NumericalVariety</pre>
 
 i4 : WitSets=V#5; --witness sets are accessed by dimension
@@ -33,7 +33,7 @@ ideal</pre>\,\left(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\texti
 ideal</pre>\,\left(\textit{x12},\textit{x22},\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}\right),\,<pre style="display:inline">
 ideal</pre>\,\left(\textit{x13},\textit{x23},\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}\right)\right\}
 
-o9 : \displaystyle <pre style="display:inline">
+o9 : <pre style="display:inline">
 List</pre>
 
 i10 : for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)

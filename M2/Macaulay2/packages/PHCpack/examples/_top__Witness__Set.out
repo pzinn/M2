@@ -36,7 +36,7 @@ i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
 o10 = \displaystyle \left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\,x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\,x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}
 
-o10 : \displaystyle <pre style="display:inline">
+o10 : <pre style="display:inline">
 List</pre>
 
 i11 : (w,ns) = topWitnessSet(f,1);

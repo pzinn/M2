@@ -22,7 +22,7 @@ i7 : ring ideal convertedSys
 
 o7 = \displaystyle {\mathbb Q}\,\left\{x,\,y,\,z,\,{w}_{0}\right\}
 
-o7 : \displaystyle <pre style="display:inline">
+o7 : <pre style="display:inline">
 PolynomialRing</pre>
 
 i8 : describe oo
@@ -37,7 +37,7 @@ i10 : f = (x*y + z^2*y) / y
 
 o10 = \displaystyle z^{2}+x
 
-o10 : \displaystyle <pre style="display:inline">
+o10 : <pre style="display:inline">
 frac</pre>\ P
 
 i11 : liftable(f,P)
@@ -49,6 +49,6 @@ i12 : lift(f,P)
 
 o12 = \displaystyle z^{2}+x
 
-o12 : \displaystyle P
+o12 : P
 
 i13 : 

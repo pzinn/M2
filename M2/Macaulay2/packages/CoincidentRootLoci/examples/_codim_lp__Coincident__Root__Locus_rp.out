@@ -1,16 +1,15 @@
 -- -*- M2-comint -*- hash: 1279889124
-****************************************************************************
-CoincidentRootLoci v.0.1.2 loaded successfully (last updated: June 22, 2020)
-****************************************************************************
 
-i1 : X = coincidentRootLocus {3,2,2,1,1,1,1}
+i1 : X = coincidentRootLocus {3,2,2,1,1,1,1}
 
-o1 = CRL(3,2,2,1,1,1,1)
+o1 = \displaystyle <pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
 
-o1 : CoincidentRootLocus
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 
-i2 : codim X
+i2 : codim X
 
-o2 = 4
+o2 = \displaystyle 4
 
-i3 : 
+i3 : 

@@ -1055,8 +1055,6 @@ List << Thing := List => (files,x) -> apply(files, o -> o << x)
 
 o := () -> concatenate(interpreterDepth:"o")
 
-symbol briefDocumentation <- identity			    -- temporary assignment
-
 Thing#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
      << o() << lineNumber;
@@ -1065,27 +1063,26 @@ Thing#{Standard,AfterPrint} = x -> (
      << endl;
      )
 
--- Type#{Standard,AfterPrint} = x -> (
---      << endl;				  -- double space
---      << o() << lineNumber;
---      y := class x;
---      << " : " << y << ", with ancestors:";
---      while ( y = parent y; << " " << y; y =!= Thing ) do ();
---      << endl;
---      )
+-* TODO: add an option to re-enable these two
+Type#{Standard,AfterPrint} = x -> (
+     << endl;				  -- double space
+     << o() << lineNumber;
+     y := class x;
+     << " : " << y << ", with ancestors: ";
+     << concatenate between_" < " drop(toString \ ancestors y, 1);
+     << endl;
+     )
 
--*
 Function#{Standard,AfterPrint} = x -> (
      Thing#{Standard,AfterPrint} x;
-     -- briefDocumentation x; -- from now on, type "?foo" to get brief documentation on foo
+     briefDocumentation x;
      )
 *-
+
 Expression#{Standard,AfterPrint} = x -> (
      << endl;				  -- double space
      << o() << lineNumber << " : " << Expression << " of class " << class x << endl;
      )
-
-
 
 -----------------------------------------------------------------------------
 
@@ -1096,8 +1093,6 @@ expression Function :=
 expression Boolean := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
-
-? Function := x -> (briefDocumentation x;)
 
 Nothing#{Standard,AfterPrint} = identity
 ZZ#{Standard,AfterPrint} = identity

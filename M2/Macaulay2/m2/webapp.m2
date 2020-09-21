@@ -3,15 +3,17 @@
 -- htmlWithTex Thing produces some valid html code with possible TeX code
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
+webAppTags := apply((17,18,19,20,28,29,30,31,17),ascii);
     (webAppEndTag,            -- closing tag ~ </span>
 	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppOutputTag,      -- it's html but it's output ~ <span class='M2Html M2Output'>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
+	webAppUrlTag,         -- used internally
 	webAppTextTag,        -- other text ~ <span class='M2Text'>
 	webAppTexTag,         -- TeX start ~ \(
 	webAppTexEndTag       -- TeX end ~ \)
-	)=apply((17,18,19,20,28,30,31,17),ascii);
+	)=webAppTags;
 
 texMathInside = x -> (
     if lookup(htmlWithTex,class x) === tex then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x else concatenate(
@@ -27,15 +29,18 @@ htmlInside = x -> (
 	webAppTexEndTag
 	) else htmlWithTex x )
 
+stripTags := s -> replace(concatenate("[",webAppTags,"]"),"",s)
+
 htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
 -- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
 -- but they conflict with the current defs -- and would cause problems inside Hypertext
 htmlWithTex Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
-    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
-htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x, "</pre>",
-    if #x>0 and last x === "\n" then "<br/>") -- fix for html ignoring trailing \n
+    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> stripTags htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
+htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", stripTags htmlLiteral x,
+    if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
+    "</pre>")
 htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
@@ -64,6 +69,29 @@ texMathWrapper = x -> (
     else texMathBackup x
     )
 )
+-- the debug hack (temporary, to be removed before PR -- don't forget to remove the corresponding stuff in webAppBegin/End)
+expressionDebug=false;
+texMathBackup := texMath
+htmlWithTexBackup := htmlWithTex;
+expressionDebugWrapper := x -> (
+    if instance(x,VisibleList) or instance(x,Expression) then (
+	global texMath <- texMathBackup;
+	y := texMath class x;
+	global texMath <- expressionDebugWrapper;
+	z := texMathBackup x;
+	)
+    else (
+	e := expression x;
+	if instance(e, Holder) and e#0 === x then (
+	global texMath <- texMathBackup;
+	y = texMath class x;
+	z = texMath x;
+	global texMath <- expressionDebugWrapper;
+	)
+    else return texMathBackup x;
+    );
+    "\\underset{\\tiny " | y | "}{\\boxed{" | z | "}}"
+    )
 *-
 
 -- the color hack: currently deactivated
@@ -82,7 +110,7 @@ texMathInsideColor = x -> (
 	))
 
 
--- output routines
+-- output routines for WebApp mode
 
 ZZ#{WebApp,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | webAppInputTag
 ZZ#{WebApp,InputContinuationPrompt} = lineno -> webAppInputContdTag
@@ -94,6 +122,7 @@ Nothing#{WebApp,Print} = identity
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     y := htmlInside x; -- we compute the htmlWithTex now (in case it produces an error)
+    if class y =!= String then error "invalid TeX/HTML output";
     << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
     )
 
@@ -106,6 +135,7 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 htmlWithTexAfterPrint :=  y -> (
     y=deepSplice sequence y;
     z := htmlInside \ y;
+    if any(z, x -> class x =!= String) then error "invalid TeX/HTML output";
     << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
 
@@ -164,14 +194,6 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 
 ZZ#{WebApp,AfterPrint} = identity
 
--- bb letters (to be removed before PR)
-export { "ℚ","ℝ","ℤ","ℂ","ℙ","∞" }
-ℚ=QQ
-ℝ=RR
-ℤ=ZZ
-ℂ=CC
-∞=infinity
-
 -- color
 ColoredExpression = new HeaderType of Expression
 net ColoredExpression := x -> net x#0
@@ -216,11 +238,10 @@ if topLevelMode === WebApp then (
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
-	new webAppPRE from res );
+	new webAppPRE from res#0 );
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := htmlInside x; -- we compute the htmlWithTex now (in case it produces an error)
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
 )
-

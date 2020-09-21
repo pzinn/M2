@@ -9,7 +9,7 @@ i4 : w
 o4 = \displaystyle <pre style="display:inline">
 w</pre>
 
-o4 : \displaystyle <pre style="display:inline">
+o4 : <pre style="display:inline">
 WitnessSet</pre>
 
 i5 : L = factorWitnessSet(w)
@@ -18,7 +18,7 @@ found 2 irreducible factors
 o5 = \displaystyle <pre style="display:inline">
 L</pre>
 
-o5 : \displaystyle <pre style="display:inline">
+o5 : <pre style="display:inline">
 NumericalVariety</pre>
 
 i6 : 

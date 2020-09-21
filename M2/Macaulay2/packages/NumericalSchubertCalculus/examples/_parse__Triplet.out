@@ -1,11 +1,7 @@
 -- -*- M2-comint -*- hash: -1135376571
--- COMPILE TIME: Sep  9 2017, 07:55:04
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
---loading configuration for package "NumericalAlgebraicGeometry" from file /Users/leykin/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
---loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
 
-i1 : (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
-PHCv2.4.27 released 2016-10-16
+i1 : (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
+PHCv2.4.78 released 2020-06-30
 
 the input data for phc -e : 
 5
@@ -14,7 +10,7 @@ the input data for phc -e :
 0
 0
 0
-/var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/3PHCout
+/tmp/M2-188483-0/3PHCout
 0
 y
 y
@@ -22,264 +18,66 @@ y
 0
 0
 
-writing data to file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/2PHCip
-running phc -e, session output to /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/4PHCses
-                writing output to /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/3PHCout
-opening output file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/5PHCsolutions
+writing data to file /tmp/M2-188483-0/2PHCip
+running phc -e, session output to /tmp/M2-188483-0/4PHCses
+                writing output to /tmp/M2-188483-0/3PHCout
+opening output file /tmp/M2-188483-0/5PHCsolutions
 
-i2 : (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
+i2 : (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
 
-writing data to file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/6PHCinp
-running phc -o, writing output to /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/7PHCout
+writing data to file /tmp/M2-188483-0/6PHCinp
+running phc -o, writing output to /tmp/M2-188483-0/7PHCout
 
-writing data to file /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/9PHCipt
-writing solutions to /var/folders/11/t6mmkf11455d4nt0fn639c6h0000gn/T/M2-12050-0/10PHCsolsrunning phc -z ...
+writing data to file /tmp/M2-188483-0/9PHCipt
+writing solutions to /tmp/M2-188483-0/10PHCsolsrunning phc -z ...
 the dimension : 6
 the number of flags : 1
 
-o2 = (R, {(- .0637142 + .222804*ii)x11*x32*x53 + (- .122741 +
-                                                             
-                                                             
-                                                             
-                                                             
-                                                             
-     ------------------------------------------------------------------------
-     .140085*ii)x11*x32 + (.0971287 - .0832819*ii)x11*x53 + (.0111046 +
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-     ------------------------------------------------------------------------
-     .111655*ii)x32*x53 + (- .0595241 + .0247224*ii)x11 + (- .0639824 +
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-     ------------------------------------------------------------------------
-     .0828664*ii)x32 + (.0571559 - .154274*ii)x53 - .0875404 - .0111559*ii,
-                                                                           
-                                                                           
-                                                                           
-                                                                           
-                                                                           
-     ------------------------------------------------------------------------
-     (.0400078 + .0353146*ii)x11*x32*x53 + (.0355667 + .0333899*ii)x11*x32 +
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-     ------------------------------------------------------------------------
-     (- .0667066 + .146754*ii)x11*x53 + (- .000655815 + .0353306*ii)x32*x53 +
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-     ------------------------------------------------------------------------
-     (.021134 + .113585*ii)x11 + (- .0124953 + .0472244*ii)x32 + (- .118738 +
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-     ------------------------------------------------------------------------
-     .047703*ii)x53 - .0530505 + .0865391*ii, (.00284061 +
-                                                          
-                                                          
-                                                          
-                                                          
-                                                          
-     ------------------------------------------------------------------------
-     .00288975*ii)x11*x32*x53 + (.000123071 - .00813135*ii)x11*x32 + (-
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-                                                                       
-     ------------------------------------------------------------------------
-     .0506458 + .00860547*ii)x11*x53 + (- .000764226 + .00989542*ii)x32*x53 +
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-     ------------------------------------------------------------------------
-     (- .117889 - .0376117*ii)x11 + (.00811209 - .0018769*ii)x32 + (.00895064
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-     ------------------------------------------------------------------------
-     + .0012129*ii)x53 - .031609 - .0947396*ii, (- .040393 -
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-     ------------------------------------------------------------------------
-     .0321375*ii)x11*x32*x53 + (- .00586067 - .0371427*ii)x11*x32 + (-
-                                                                      
-                                                                      
-                                                                      
-                                                                      
-                                                                      
-     ------------------------------------------------------------------------
-     .0199123 + .00363433*ii)x11*x53 + (.0122616 - .0569594*ii)x32*x53 +
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-     ------------------------------------------------------------------------
-     (.0495545 - .0561337*ii)x11 + (.0349853 - .0245071*ii)x32 + (- .0250363
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-     ------------------------------------------------------------------------
-     + .0357151*ii)x53 + .0556534 + .0380411*ii, (.0680587 +
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-     ------------------------------------------------------------------------
-     .0211643*ii)x11*x32*x53 + (.0325199 + .0458332*ii)x11*x32 + (- .00892008
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-     ------------------------------------------------------------------------
-     + .0291568*ii)x11*x53 + (.0145271 + .0875449*ii)x32*x53 + (- .0627707 +
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-                                                                            
-     ------------------------------------------------------------------------
-     .0781898*ii)x11 + (- .0307314 + .0592439*ii)x32 + (.0196731 +
-                                                                  
-                                                                  
-                                                                  
-                                                                  
-                                                                  
-     ------------------------------------------------------------------------
-     .00532361*ii)x53 - .0877325 + .00821034*ii, (- .0146501 +
-                                                              
-                                                              
-                                                              
-                                                              
-                                                              
-     ------------------------------------------------------------------------
-     .0204081*ii)x11*x32*x53 + (- .0151978 + .00855551*ii)x11*x32 + (.0855858
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-                                                                             
-     ------------------------------------------------------------------------
-     + .122637*ii)x11*x53 + (- .0238161 - .0058264*ii)x32*x53 + (.0184607 +
-                                                                           
-                                                                           
-                                                                           
-                                                                           
-                                                                           
-     ------------------------------------------------------------------------
-     .0988078*ii)x11 + (- .014684 - .0112081*ii)x32 + (- .0264726 +
-                                                                   
-                                                                   
-                                                                   
-                                                                   
-                                                                   
-     ------------------------------------------------------------------------
-     .120082*ii)x53 - .0469397 + .080074*ii}, {{-.0194076-.479672*ii,
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-     ------------------------------------------------------------------------
-     -1.50362+6.80773*ii, -.777358-.425202*ii}, {-.563473-1.00664*ii,
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-     ------------------------------------------------------------------------
-     1.97344-2.9889*ii, -.435436-.411613*ii}}, {| -.829408-.558644i
-                                                | .93765+.34758i   
-                                                | -.913834-.406088i
-                                                | .9083+.418319i   
-                                                | -.988914+.148487i
-                                                | .503797-.863822i 
-     ------------------------------------------------------------------------
-     -.888702-.458485i .96251-.271247i   .354919+.934897i .334607+.942358i 
-     -.975508-.219965i .111481+.993767i  .209974+.977707i .810915+.585164i 
-     -.069838-.997558i .895382-.445298i  .711254-.702936i .960655+.277743i 
-     -.237522+.971382i -.999258-.038509i .629035-.777377i .531425-.847106i 
-     .100099+.994978i  -.976359-.216154i .98822+.153039i  .962451-.271456i 
-     -.960383-.278683i -.272569+.962136i .993257-.115931i -.580516-.814249i
-     ------------------------------------------------------------------------
-     -.998951-.045793i |}, | 1  1  1  1  1  1 |, {| -.0194076-.479672i
-     .975683+.219188i  |   | -1 -1 -1 -1 -1 0 |   | 1                 
-     .776939+.629576i  |   | 1  1  1  1  0  0 |   | 0                 
-     -.65065-.759378i  |   | -1 -1 -1 0  0  0 |   | 0                 
-     .118868+.99291i   |   | 1  1  0  0  0  0 |   | 0                 
-     .975418+.220361i  |   | -1 0  0  0  0  0 |   | 0                 
-     ------------------------------------------------------------------------
-     0                 0                 |, | -.563473-1.00664i
-     0                 0                 |  | 1                
-     -1.50362+6.80773i 0                 |  | 0                
-     1                 0                 |  | 0                
-     0                 -.777358-.425202i |  | 0                
-     0                 1                 |  | 0                
-     ------------------------------------------------------------------------
-     0               0                 |})
-     0               0                 |
-     1.97344-2.9889i 0                 |
-     1               0                 |
-     0               -.435436-.411613i |
-     0               1                 |
+o2 = \displaystyle \left(R,\left\{\left(-{.974254}+{.295465}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.225768}-{.370403}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.23144}+{.621688}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.577197}-{.0475754}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({.580932}-{.172896}\,\mathbf{i}\right)\textit{x11}+\left(-{.329757}-{.451823}\,\mathbf{i}\right)\textit{x32}+\left(-{.117013}+{.278862}\,\mathbf{i}\right)\textit{x53}+{.287333}-{.224914}\,\mathbf{i},\,\left({.0290155}-{.148992}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.387211}+{.475269}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.399371}-{.0773645}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.0177852}+{.0217395}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({1.1922}+{.819504}\,\mathbf{i}\right)\textit{x11}+\left(-{.0188127}+{.422912}\,\mathbf{i}\right)\textit{x32}+\left({.109623}+{.0603083}\,\mathbf{i}\right)\textit{x53}+{.581921}+{.739144}\,\mathbf{i},\,\left(-{.367389}+{.447242}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.478731}+{.28082}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.0900727}-{.135551}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.340846}+{.282263}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.152704}-{.0624646}\,\mathbf{i}\right)\textit{x11}+\left(-{.548172}+{.174143}\,\mathbf{i}\right)\textit{x32}+\left(-{.304138}-{.382157}\,\mathbf{i}\right)\textit{x53}-{.34411}-{.220835}\,\mathbf{i},\,\left({.513501}+{.759735}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.047203}+{.294557}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.214358}+{.0397254}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.13339}+{.487517}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.08314}+{.135708}\,\mathbf{i}\right)\textit{x11}+\left(-{.0330036}+{.196129}\,\mathbf{i}\right)\textit{x32}+\left(-{.140688}-{.100472}\,\mathbf{i}\right)\textit{x53}-{.129565}+{.0599002}\,\mathbf{i},\,\left(-{.939255}-{.464743}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{1.15035}-{.937497}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.698911}-{.578077}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.385395}-{.220711}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.916897}-{.451076}\,\mathbf{i}\right)\textit{x11}+\left(-{.590958}-{.379043}\,\mathbf{i}\right)\textit{x32}+\left(-{.449312}-{.214174}\,\mathbf{i}\right)\textit{x53}-{.498921}-{.0229702}\,\mathbf{i},\,\left({.41754}+{.10012}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.0466682}+{.416638}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.0930236}-{.820593}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.0983766}+{.0376993}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({.165278}-{.425}\,\mathbf{i}\right)\textit{x11}+\left(-{.158013}-{.0368929}\,\mathbf{i}\right)\textit{x32}+\left({.164687}-{.640949}\,\mathbf{i}\right)\textit{x53}+{.103527}-{.623629}\,\mathbf{i}\right\},\left\{<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}\right\},\left\{\begin{pmatrix}
+-{.408248}&-{.371778}+{.142477}\,\mathbf{i}&{.151625}+{.0552137}\,\mathbf{i}&-{.0778023}-{.0971837}\,\mathbf{i}&-{.239755}+{.754234}\,\mathbf{i}&-{.0732219}+{.0395721}\,\mathbf{i}\\
+{.263222}-{.312059}\,\mathbf{i}&-{.42672}-{.109015}\,\mathbf{i}&{.0691843}+{.256383}\,\mathbf{i}&-{.260393}+{.212222}\,\mathbf{i}&{.250566}+{.0650382}\,\mathbf{i}&{.616305}-{.0956722}\,\mathbf{i}\\
+-{.142819}-{.382452}\,\mathbf{i}&{.09683}+{.421362}\,\mathbf{i}&-{.547853}-{.0188528}\,\mathbf{i}&-{.280159}+{.35885}\,\mathbf{i}&-{.0766916}-{.0305378}\,\mathbf{i}&-{.0740895}+{.355454}\,\mathbf{i}\\
+{.163822}+{.373937}\,\mathbf{i}&{.163675}+{.352764}\,\mathbf{i}&{.349278}+{.227641}\,\mathbf{i}&-{.542308}+{.0914414}\,\mathbf{i}&-{.417582}-{.150799}\,\mathbf{i}&{.0783961}-{.0506496}\,\mathbf{i}\\
+{.330833}+{.239199}\,\mathbf{i}&-{.406277}+{.0339928}\,\mathbf{i}&-{.0856274}+{.443685}\,\mathbf{i}&{.251037}+{.378846}\,\mathbf{i}&{.0408614}-{.00743423}\,\mathbf{i}&-{.49952}+{.0716838}\,\mathbf{i}\\
+{.12441}+{.38883}\,\mathbf{i}&-{.270764}+{.264241}\,\mathbf{i}&-{.29057}-{.374846}\,\mathbf{i}&{.384759}+{.0857568}\,\mathbf{i}&-{.315781}-{.0355579}\,\mathbf{i}&{.457031}+{.00189824}\,\mathbf{i}\end{pmatrix}\right\},\begin{pmatrix}
+1&1&1&1&1&1\\
+-1&-1&-1&-1&-1&0\\
+1&1&1&1&0&0\\
+-1&-1&-1&0&0&0\\
+1&1&0&0&0&0\\
+-1&0&0&0&0&0\end{pmatrix},\left\{\begin{pmatrix}
+-{.891276}+{.0401596}\,\mathbf{i}&{0}&{0}\\
+1&{0}&{0}\\
+{0}&-{.93338}+{.265021}\,\mathbf{i}&{0}\\
+{0}&1&{0}\\
+{0}&{0}&-{.5668}-{.206828}\,\mathbf{i}\\
+{0}&{0}&1\end{pmatrix},\,\begin{pmatrix}
+-{.463521}-{.11812}\,\mathbf{i}&{0}&{0}\\
+1&{0}&{0}\\
+{0}&{1.62377}-{4.13979}\,\mathbf{i}&{0}\\
+{0}&1&{0}\\
+{0}&{0}&-{3.18311}-{1.09321}\,\mathbf{i}\\
+{0}&{0}&1\end{pmatrix}\right\}\right)
 
-o2 : Sequence
+i3 : vars(R)
 
-i3 : vars(R)
+o3 = \displaystyle \begin{pmatrix}
+\textit{x11}&\textit{x32}&\textit{x53}\end{pmatrix}
 
-o3 = | x11 x32 x53 |
+o3 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>R^{1}\,\longleftarrow \,R^{3}
 
-             1       3
-o3 : Matrix R  <--- R
+i4 : peek sols
 
-i4 : peek sols
+o4 = <pre style="display:inline-table;vertical-align:0%">
+{Point{ConditionNumber => 4.61467                                                }, Point{ConditionNumber => 95.057                                                   }}<br/>       Coordinates => {-.891276+.04016*ii, -.93338+.265021*ii, -.5668-.206828*ii}         Coordinates => {-.463521-.11812*ii, 1.62377-4.13979*ii, -3.18311-1.09321*ii}<br/>       LastT => 1                                                                         LastT => 1<br/>       SolutionStatus => Regular                                                          SolutionStatus => Regular<br/></pre>
 
-o4 = {Point{ConditionNumber => 1                                                           }, Point{ConditionNumber => 1                                                        }}
-            Coordinates => {-.0194076-.479672*ii, -1.50362+6.80773*ii, -.777358-.425202*ii}         Coordinates => {-.563473-1.00664*ii, 1.97344-2.9889*ii, -.435436-.411613*ii}
-            LastT => 1                                                                              LastT => 1
-            SolutionStatus => Regular                                                               SolutionStatus => Regular
+i5 : peek solutionPlanes
 
-i5 : peek solutionPlanes
+o5 = <pre style="display:inline-table;vertical-align:0%">
+{Matrix{cache => CacheTable{}                                          }, Matrix{cache => CacheTable{}                                            }}<br/>        RawMatrix => -.891276+.04016i 0                0                         RawMatrix => -.463521-.11812i 0                0                 <br/>                     1                0                0                                      1                0                0                 <br/>                     0                -.93338+.265021i 0                                      0                1.62377-4.13979i 0                 <br/>                     0                1                0                                      0                1                0                 <br/>                     0                0                -.5668-.206828i                        0                0                -3.18311-1.09321i <br/>                     0                0                1                                      0                0                1                 <br/><br/>        ring => CC                                                               ring => CC<br/>                  53                                                                       53<br/>                      3                                                                        3<br/>        source => CC                                                             source => CC<br/>                    53                                                                       53<br/>                      6                                                                        6<br/>        target => CC                                                             target => CC<br/>                    53                                                                       53<br/></pre>
 
-o5 = {Matrix{cache => CacheTable{}                                               }, Matrix{cache => CacheTable{}                                            }}
-             RawMatrix => -.0194076-.479672i 0                 0                           RawMatrix => -.563473-1.00664i 0               0                 
-                          1                  0                 0                                        1                 0               0                 
-                          0                  -1.50362+6.80773i 0                                        0                 1.97344-2.9889i 0                 
-                          0                  1                 0                                        0                 1               0                 
-                          0                  0                 -.777358-.425202i                        0                 0               -.435436-.411613i 
-                          0                  0                 1                                        0                 0               1                 
-
-             ring => CC                                                                    ring => CC
-                       53                                                                            53
-                           3                                                                             3
-             source => CC                                                                  source => CC
-                         53                                                                            53
-                           6                                                                             6
-             target => CC                                                                  target => CC
-                         53                                                                            53
-
-i6 : 
+i6 : 
