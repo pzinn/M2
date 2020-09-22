@@ -129,7 +129,7 @@ lookupi := x -> (
 
 toString' = method()
 toString'(Function,Thing) := (toString,x) -> toString x
-toString Expression := v -> toString'(toString,v)
+toString Expression := v -> toString'(simpleToString,v)
 
 toExternalFormat = method(Dispatch=>Thing)
 toExternalFormat Thing := toExternalString
@@ -573,7 +573,7 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 
-spacedOps = set { symbol =>, symbol and, symbol or, symbol ++ }
+spacedOps = set { symbol =>, symbol and, symbol or, symbol ++, symbol |- } -- more?
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
