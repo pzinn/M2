@@ -12,6 +12,7 @@ toString Type := X -> (
 	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
 	  );
      concatenate(toString class X, " of ", toString parent X, "{...", toString(#X), "...}"))
+-*
 toString HashTable := s -> (
      concatenate (
 	  "new ", toString class s,
@@ -22,11 +23,14 @@ toString HashTable := s -> (
 	  else "",
 	  "}"))
 toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
+*-
 toStringn := i -> if i === null then "" else toString i
+-*
 toString BasicList := s -> concatenate(
      if class s =!= List then toString class s,
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
+ *-
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
@@ -101,7 +105,11 @@ toExternalString Sequence := s -> (
      else concatenate("(",mid s,")"))
 -----------------------------------------------------------------------------
 net Manipulator := toString
-net Thing := toString
+net Thing := x -> ( y := expression x;
+    -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
+    if class y === Holder and class y#0 === class x then toString x
+    else net y )
+--net Thing := toString
 -----------------------------------------------------------------------------
 net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
@@ -171,7 +179,6 @@ net BasicList := x -> horizontalJoin deepSplice (
       "{",
       toSequence between(comma,apply(toList x,netn)),
       "}")
-*-
 net MutableList := x -> (
      if #x > 0 
      then horizontalJoin ( net class x, "{...", toString(#x), "...}")
@@ -194,6 +201,7 @@ net MutableHashTable := x -> (
 	  if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
 	  );
      horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
+*-
 net Type := X -> (
      if hasAnAttribute X then (
 	  if hasAttribute(X,PrintNet) then return getAttribute(X,PrintNet);

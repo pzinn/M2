@@ -289,7 +289,11 @@ format Sequence := String => s -> format' s
 protect symbol format
 
 toString = method(Dispatch => Thing, TypicalValue => String)
-toString Thing := simpleToString			    -- if all else fails...
+toString Thing := x -> ( y := expression x;
+    -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
+    if class y === Holder and class y#0 === class x then simpleToString x -- if all else fails...
+    else toString y )
+
 toString String := identity
 toString Symbol := simpleToString
 
