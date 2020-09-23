@@ -62,7 +62,6 @@ texMath' (Function, Descent) := (texMath,x) -> "\\left|\\begin{array}{l}" | conc
 
 texMath' (Function, Parenthesize) := (texMath,x) -> texMath x#0
 
-texMath' (Function, NewFromExpression) := -- for now
 texMath' (Function, RowExpression) := (texMath,w) -> concatenate apply(w,texMath)
 
 --texMath' (Function, Keyword) := (texMath,x) -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
@@ -75,6 +74,7 @@ texMath' (Function, BinaryOperation) := (texMath,m) -> (
      if spacedOps#?(m#0) then concatenate( x, "\\ ", texMath m#0, "\\ ", y ) else concatenate( x, texMath m#0, y )
      )
 
+texMath' (Function, NewFromExpression) := -- for now
 texMath' (Function, Adjacent) := texMath' (Function, FunctionApplication) := (texMath,m) -> (
      p := precedence m;
      fun := m#0;

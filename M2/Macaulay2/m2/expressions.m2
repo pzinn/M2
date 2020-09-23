@@ -129,7 +129,7 @@ lookupi := x -> (
 
 toString' = method()
 toString Thing := v -> toString'(toString,v)
-toString' (Function, Thing) := x -> ( y := expression x;
+toString' (Function, Thing) := (toString,x) -> ( y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
     if instance(y,Holder) and class y#0 === class x then simpleToString x -- if all else fails...
     else toString y )
@@ -156,8 +156,10 @@ toString'(Function, Expression) := (fmt,v) -> (
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
 
+texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
+toString Holder := v -> toString v#0
 
 --toString'(Function, Holder2) := (fmt,v) -> fmt v#0
 toString'(Function, Holder) := (fmt,v) -> fmt v#0
@@ -643,7 +645,7 @@ net Adjacent := net FunctionApplication := m -> (
 NewFromExpression = new WrapperType of Expression
 NewFromExpression.synonym = "New ... From expression"
 expressionValue NewFromExpression := x -> new (expressionValue x#0) from (expressionValue x#1)
-net NewFromExpression := lookup(net,RowExpression)
+net NewFromExpression := lookup(net,Adjacent)
 toString' (Function, NewFromExpression) := (fmt, e) -> "new " | fmt e#0 | " from " | fmt toList e#1
 
  
@@ -1082,9 +1084,16 @@ Expression#{Standard,AfterPrint} = x -> (
 -----------------------------------------------------------------------------
 
 expression VisibleList := v -> new Holder from { apply(v, expression) }
+-*
 expression Thing := x -> new Holder from {
   if hasAttribute(x,ReverseDictionary) then getAttribute(x,ReverseDictionary) else x
   }
+*-
+-- rethink the above
+expression Thing :=
+expression Symbol :=
+expression Function :=
+expression Boolean := x -> new Holder from { x }
 
 -----------------------------------------------------------------------------
 
@@ -1099,8 +1108,6 @@ net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
-net Option := x -> net expression x
-toString Option := x -> toString expression x
 
 SheafExpression = new WrapperType of Expression;
 toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
@@ -1120,8 +1127,6 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
-toString Set := toString @@ expression
-net Set := net @@ expression
 
 expression HashTable := x -> (
          if hasAttribute(x,ReverseDictionary) then new Holder from { getAttribute(x,ReverseDictionary) } else

@@ -287,7 +287,7 @@ makeit1 := (opts) -> (
      remove(opts, Weights);
      remove(opts, VariableBaseName);
      M.Options = new OptionTable from opts;
-     toString M := toExternalString M := x -> toString expression x;     
+--     toString M := toExternalString M := x -> toString expression x;
      if numvars == 0 and not madeTrivialMonoid then (
 	  madeTrivialMonoid = true;
 	  M.RawMonoid = rawMonoid();

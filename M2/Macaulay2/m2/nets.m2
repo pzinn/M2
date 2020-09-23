@@ -22,15 +22,12 @@ toString HashTable := s -> (
 	  then demark(", ", apply(pairs s, (k,v) -> toString k | " => " | toString v) )
 	  else "",
 	  "}"))
-toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
 *-
+toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
 toStringn := i -> if i === null then "" else toString i
--*
-toString BasicList := s -> concatenate(
-     if not instance(s, List) then toString class s,
+toString List := s -> concatenate(
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
- *-
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
