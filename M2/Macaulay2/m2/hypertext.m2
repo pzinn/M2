@@ -3,7 +3,7 @@
 -- html0.m2 -> hypertext.m2
 
 -----------------------------------------------------------------------------
--- Hypertext type declarations
+-- Hypertext type declarations and basic constructors
 -----------------------------------------------------------------------------
 
 -- Hypertext, HypertextParagraph, and HypertextContainer
@@ -21,8 +21,53 @@ HypertextContainer.synonym = "markup list container"
 toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
 toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
 
+new Hypertext from VisibleList := (M,x) -> x
+new Hypertext from Thing  := (M,x) -> {x}
+new Hypertext from Net    := (M,x) -> {toString x}
+
 -----------------------------------------------------------------------------
--- Markup type declarations
+-- URL type declaration and constructor
+-----------------------------------------------------------------------------
+
+URL = new SelfInitializingType of BasicList
+new URL from String := (URL, str) -> { str }
+
+-- relative URLs and filenames
+isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
+
+-- TODO: phase this one out eventually
+toURL = method()
+toURL String := pth -> (
+     if isAbsolutePath pth then concatenate(rootURI,
+	  if fileExists pth then realpath pth
+	  else (
+	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
+	       pth))
+     else if isAbsoluteURL pth then pth
+     else (
+	  r := if htmlDirectory === null then pth else relativizeFilename(htmlDirectory, pth);
+	  if debugLevel == 121 then (
+	       stderr << "--toURL String: htmlDirectory   = " << htmlDirectory << endl;
+	       stderr << "--              pth             = " << pth << endl;
+	       stderr << "--              relative result = " << r << endl;
+	       );
+	  r))
+
+toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
+     -- we assume we are installing an html file in the directory installPrefix|htmlDirectory
+     r := if prefix === installPrefix    -- note: installPrefix might be null, if we aren't installing a package
+          and htmlDirectory =!= null
+          then relativizeFilename(htmlDirectory,tail)
+          else prefix|tail;
+     if debugLevel == 121 then (
+	  stderr << "--toURL(String,String): htmlDirectory = " << htmlDirectory << endl;
+	  stderr << "--                      prefix        = " << prefix << endl;
+	  stderr << "--                      result        = " << r << endl;
+	  );
+     r)
+
+-----------------------------------------------------------------------------
+-- MarkUpType type declarations
 -----------------------------------------------------------------------------
 
 -- MarkUpType
@@ -30,10 +75,6 @@ MarkUpType = new Type of SelfInitializingType
 MarkUpType.synonym = "markup type"
 
 options MarkUpType := X -> if X.?Options then X.Options else new OptionTable from {}
-
-new Hypertext from VisibleList := (M,x) -> x
-new Hypertext from Thing  := (M,x) -> {x}
-new Hypertext from Net    := (M,x) -> {toString x}
 
 -- e.g. a MENU, which does not correspond to an html entity.
 -- It does not have a qname, nor a default method for producing html,
@@ -168,6 +209,8 @@ new BR from List := (X,x) -> if all(x, e -> instance(e, Option)) then x else err
 br = BR{}
 hr = HR{}
 
+isLink = x -> instance(x, TO) or instance(x, TO2) or instance(x, TOH)
+
 new TO   from Thing     :=
 new TOH  from Thing     := (TO, x) -> new TO from {x}
 -- document tags can be sequences or arrays, so keep them intact
@@ -234,12 +277,12 @@ TOH.qname     = "span"
 -----------------------------------------------------------------------------
 -- Add acceptable html attributes to the type of an html tag
 -----------------------------------------------------------------------------
-addAttribute := (T, opts) -> (
+addAttribute = (T, opts) -> (
     T.Options = new OptionTable from apply(opts, opt ->
 	if class opt === Option then opt else opt => null))
 
 -- html global attributes
-htmlGlobalAttr := {
+htmlGlobalAttr = {
     "accesskey",
     "class",
     "contenteditable",
@@ -263,7 +306,7 @@ addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
 
 -- html global and event attributes
-htmlAttr := htmlGlobalAttr | {
+htmlAttr = htmlGlobalAttr | {
     "onafterprint","onbeforeprint","onbeforeunload","onerror","onhashchange",
     "onload","onmessage","onoffline","ononline","onpagehide","onpageshow",
     "onpopstate","onresize","onstorage","onunload","onblur","onchange",

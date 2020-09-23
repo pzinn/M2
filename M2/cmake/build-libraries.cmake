@@ -71,7 +71,7 @@ endif()
 set(CONFIGURE PKG_CONFIG_PATH=$ENV{PKG_CONFIG_PATH} ./configure)
 set(CONFIGURE ${SET_LD_LIBRARY_PATH} ${CONFIGURE})
 set(MAKE      ${SET_LD_LIBRARY_PATH} ${MAKE})
-set(NINJA     ${SET_LD_LIBRARY_PATH} ${NINJA})
+set(NINJA     ${SET_LD_LIBRARY_PATH} ninja)
 
 # TODO: Accumulate information in usr-host/share/config.site to speed up configuration
 # See: https://www.gnu.org/software/autoconf/manual/autoconf-2.60/html_node/Cache-Files.html
@@ -162,7 +162,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries eigen "" EIGEN3_FOUND)
 # https://github.com/ivmai/bdwgc/
 # TODO: add environment variables GC_LARGE_ALLOC_WARN_INTERVAL and GC_ABORT_ON_LEAK
 # Note: Starting with 8.0, libatomic_ops is not necessary for C11 or C++14.
-# FIXME: fix a commit to use instead of master
 ExternalProject_Add(build-bdwgc
   PREFIX            libraries/bdwgc
   SOURCE_DIR        ${CMAKE_SOURCE_DIR}/submodules/bdwgc
@@ -243,6 +242,12 @@ if(NOT MP_FOUND)
     _ADD_COMPONENT_DEPENDENCY(libraries mpir "" MPIR_FOUND)
   endif()
 endif()
+if(NOT MP_ROOT)
+  set(MP_ROOT ${M2_HOST_PREFIX})
+  set(MP_LIBRARY_DIRS ${MP_ROOT}/lib)
+  set(MP_INCLUDE_DIRS ${MP_ROOT}/include)
+endif()
+set(MP_INCLUDE_DIR ${${MP_LIBRARY}_INCLUDE_DIRS})
 
 
 # https://www.mpfr.org/
@@ -280,7 +285,7 @@ ExternalProject_Add(build-mpfr
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in e/CMakeLists.txt
+set(MPFR_INCLUDE_DIR ${MPFR_INCLUDE_DIRS}) # TODO: make this unnecessary in d/CMakeLists.txt
 _ADD_COMPONENT_DEPENDENCY(libraries mpfr mp MPFR_FOUND)
 
 
@@ -334,6 +339,9 @@ ExternalProject_Add_Step(build-ntl wizard
   EXCLUDE_FROM_MAIN ON
   USES_TERMINAL ON
   )
+if(NOT NTL_ROOT)
+  set(NTL_ROOT ${M2_HOST_PREFIX})
+endif()
 if(AUTOTUNE)
   add_dependencies(build-ntl-install build-ntl-wizard)
 endif()
@@ -372,14 +380,15 @@ ExternalProject_Add(build-flint
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+if(NOT FLINT_ROOT)
+  set(FLINT_ROOT ${M2_HOST_PREFIX})
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries flint "mp;mpfr;ntl" FLINT_FOUND)
 
 
 # https://github.com/Singular/Sources/tree/spielwiese/factory
 # https://service.mathematik.uni-kl.de/ftp/pub/Math/Singular/Factory/
 # TODO: what is ftmpl_inst.o?
-set(factory_NTL_HOME_PATH "${M2_HOST_PREFIX} ${NTL_INCLUDE_DIR}/..")
-set(factory_FLINT_HOME_PATH "${M2_HOST_PREFIX} ${FLINT_INCLUDE_DIR}/..")
 ExternalProject_Add(build-factory
   URL               ${M2_SOURCE_URL}/factory-4.1.3.tar.gz
   URL_HASH          SHA256=d004dd7e3aafc9881b2bf42b7bc935afac1326f73ad29d7eef0ad33eb72ee158
@@ -397,8 +406,9 @@ ExternalProject_Add(build-factory
                       ${assertions_setting}
                       --enable-streamio
                       --without-Singular
-                      --with-ntl=${factory_NTL_HOME_PATH}
-                      --with-flint=${factory_FLINT_HOME_PATH}
+                      --with-gmp=${MP_ROOT}
+                      --with-ntl=${NTL_ROOT}
+                      --with-flint=${FLINT_ROOT}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -418,12 +428,9 @@ ExternalProject_Add(build-factory
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-if(FACTORY_FOUND)
-  if(NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
-    message(STATUS "Copying gftables in ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables")
-    file(GLOB   GFTABLES    "${FACTORY_INCLUDE_DIR}/../share/factory/gftables/*")
-    file(COPY ${GFTABLES} DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
-  endif()
+if(GFTABLESDIR AND NOT EXISTS ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory/gftables)
+  message(STATUS "Copying gftables from ${GFTABLESDIR}/gftables")
+  file(COPY ${GFTABLESDIR}/gftables DESTINATION ${M2_DIST_PREFIX}/${M2_INSTALL_DATADIR}/Core/factory)
 endif()
 _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 
@@ -431,24 +438,23 @@ _ADD_COMPONENT_DEPENDENCY(libraries factory "mp;mpfr;ntl;flint" FACTORY_FOUND)
 # https://www.broune.com/frobby/
 # https://github.com/Macaulay2/frobby
 # TODO: to use Frobby as a submodule, it needs to support out-of-tree builds
-set(frobby_CXXFLAGS "${CPPFLAGS} ${CXXFLAGS} -Wno-deprecated-declarations")
 ExternalProject_Add(build-frobby
 #  GIT_REPOSITORY    ${CMAKE_SOURCE_DIR}/submodules/frobby/.git
 #  GIT_TAG           HEAD # WIP: 51c3e075
-  URL               https://github.com/Macaulay2/frobby/archive/d12b7b786a0e50765c1a2878601125ac2f55b68c.tar.gz
-  URL_HASH          SHA256=ccd686a4f76ad21ce55c6534ad17fce1f59ff9382485a1c8fd5fe4e1a80fc8b8
+  URL               https://github.com/Macaulay2/frobby/archive/v0.9.1.tar.gz
+  URL_HASH          SHA256=4bd699ff009973bc2d209ec9abdee33ef09e11de83914046fcc4ce68e7cc25b5
+  DOWNLOAD_NAME     frobby-v0.9.1.tar.gz
   PREFIX            libraries/frobby
   SOURCE_DIR        libraries/frobby/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} library -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      GMP_INC_DIR=${MP_ROOT}/include
+                      GMP_INC_DIR=${MP_INCLUDE_DIRS}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
-                      CXXFLAGS=${frobby_CXXFLAGS}
+                      CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
-                      CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
                       OBJDUMP=${CMAKE_OBJDUMP}
@@ -498,24 +504,34 @@ ExternalProject_Add(build-cddlib
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+if(NOT CDDLIB_ROOT)
+  set(CDDLIB_ROOT ${M2_HOST_PREFIX})
+  set(CDDLIB_LIBRARY_DIR ${CDDLIB_ROOT}/lib)
+  set(CDDLIB_INCLUDE_DIR ${CDDLIB_ROOT}/include)
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries cddlib mp CDDLIB_FOUND)
 
 
 # https://numpi.dm.unipi.it/software/mpsolve
 # Known issue: tests don't work with static library
 ExternalProject_Add(build-mpsolve
-  URL               https://numpi.dm.unipi.it/_media/software/mpsolve/mpsolve-3.1.8.tar.gz
-  URL_HASH          SHA256=34740339d14cf8ca6d3f7da7ca12237b6da642623d14a6d6d5b5fc684c9c0fe5
+  URL               ${M2_SOURCE_URL}/mpsolve-3.2.1.tar.gz
+  URL_HASH          SHA256=3d11428ae9ab2e020f24cabfbcd9e4d9b22ec572cf70af0d44fe8dae1d51e78e
   PREFIX            libraries/mpsolve
   SOURCE_DIR        libraries/mpsolve/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
-  CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/mpsolve/patch-3.2.1
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
+                      --disable-debug # TODO: replace with --enable-debug-build conditionally
                       --disable-examples
                       --disable-ui
                       --disable-documentation
+                      GMP_CFLAGS=-I${MP_INCLUDE_DIRS}
+                      GMP_LDFLAGS=-L${MP_LIBRARY_DIRS}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -527,7 +543,7 @@ ExternalProject_Add(build-mpsolve
   INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C src/libmps install
           COMMAND   ${MAKE} -j${PARALLEL_JOBS} -C include install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/mpsolve
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different README ${M2_INSTALL_LICENSESDIR}/mpsolve
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/mpsolve
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -549,6 +565,7 @@ ExternalProject_Add(build-givaro
                       #-C --cache-file=${CONFIGURE_CACHE}
                       ${shared_setting}
                       $<$<NOT:$<BOOL:${BUILD_NATIVE}>>:--without-archnative>
+                      --with-gmp=${MP_ROOT}
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
@@ -649,6 +666,9 @@ ExternalProject_Add(build-glpk
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
+if(NOT GLPK_ROOT)
+  set(GLPK_ROOT ${M2_HOST_PREFIX})
+endif()
 _ADD_COMPONENT_DEPENDENCY(libraries glpk mp GLPK_FOUND)
 
 
@@ -709,7 +729,6 @@ _ADD_COMPONENT_DEPENDENCY(libraries mathic memtailor MATHIC_FOUND)
 
 
 # https://github.com/Macaulay2/mathicgb
-# TODO: use TBB when it is present
 # TODO: g++ warning: tbb.h contains deprecated functionality.
 # https://www.threadingbuildingblocks.org/docs/help/reference/appendices/deprecated_features.html
 ExternalProject_Add(build-mathicgb
@@ -755,11 +774,11 @@ ExternalProject_Add(build-4ti2
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      $<$<BOOL:${GLPK_FOUND}>:--with-glpk=${GLPK_INCLUDE_DIR}/..>
-                      CPPFLAGS=${CPPFLAGS}
+                      --with-glpk=${GLPK_ROOT}
+                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      "LDFLAGS=${LDFLAGS}  -L${MP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -771,7 +790,7 @@ ExternalProject_Add(build-4ti2
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/4ti2
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different README ${M2_INSTALL_LICENSESDIR}/4ti2
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${4ti2_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
-          COMMAND   ${CMAKE_COMMAND} -E rm -f ${4ti2_PROGRAMS}
+          COMMAND   ${CMAKE_COMMAND} -E remove -f ${4ti2_PROGRAMS}
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -796,8 +815,7 @@ ExternalProject_Add(build-cohomcalg
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-                      LD=${CMAKE_CXX_COMPILER} # correct?
+                      LD=${CMAKE_CXX_COMPILER} # set to g++ in Makefile
   INSTALL_COMMAND   ${CMAKE_STRIP} bin/cohomcalg
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/cohomcalg
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE ${M2_INSTALL_LICENSESDIR}/cohomcalg
@@ -812,12 +830,6 @@ _ADD_COMPONENT_DEPENDENCY(programs cohomcalg "" COHOMCALG)
 
 # https://users-math.au.dk/~jensen/software/gfan/gfan.html
 # gfan needs cddlib and is used by the packages gfanInterface and StatePolytopes
-set(gfan_OPTFLAGS "${CPPFLAGS} -DGMPRATIONAL") # overriding the flags defined in Makefile
-if(CDDLIB_FOUND)
-  set(gfan_OPTFLAGS "${gfan_OPTFLAGS} -I${CDDLIB_INCLUDE_DIR}")
-endif()
-set(gfan_CLINKER  "${CMAKE_C_COMPILER}   ${LDFLAGS}")
-set(gfan_CCLINKER "${CMAKE_CXX_COMPILER} ${LDFLAGS}")
 ExternalProject_Add(build-gfan
   URL               ${M2_SOURCE_URL}/gfan0.6.2.tar.gz
   URL_HASH          SHA256=a674d5e5dc43634397de0d55dd5da3c32bd358d05f72b73a50e62c1a1686f10a
@@ -829,11 +841,13 @@ ExternalProject_Add(build-gfan
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
                       cddnoprefix=yes
+                      "GMP_LINKOPTIONS=-L${MP_LIBRARY_DIRS} -lgmp"
+                      "GMP_INCLUDEOPTIONS=-I${MP_INCLUDE_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
-                      OPTFLAGS=${gfan_OPTFLAGS}
-                      CLINKER=${gfan_CLINKER}
-                      CCLINKER=${gfan_CCLINKER}
+                      "OPTFLAGS=${CPPFLAGS} -DGMPRATIONAL -I${CDDLIB_INCLUDE_DIR}"
+                      "CLINKER=${CMAKE_C_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
+                      "CCLINKER=${CMAKE_CXX_COMPILER} ${LDFLAGS} -L${CDDLIB_LIBRARY_DIR}"
   INSTALL_COMMAND   ${CMAKE_STRIP} gfan
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/gfan
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE COPYING ${M2_INSTALL_LICENSESDIR}/gfan
@@ -847,22 +861,26 @@ _ADD_COMPONENT_DEPENDENCY(programs gfan "mp;cddlib;factory" GFAN)
 
 
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
-# TODO: update to v70a which is 4 years more recent
+# TODO: the shared library target doesn't work on Apple
 ExternalProject_Add(build-lrslib
-  URL               ${M2_SOURCE_URL}/lrslib-062.tar.gz
-  URL_HASH          SHA256=adf92f9c7e70c001340b9c28f414208d49c581df46b550f56ab9a360348e4f09
+  URL               http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-071.tar.gz
+  URL_HASH          SHA256=d3ea5636bfde3011d43c835773fabe131d9251197b6cc666a52d8caa3e1c7816
   PREFIX            libraries/lrslib
   SOURCE_DIR        libraries/lrslib/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
   BUILD_IN_SOURCE   ON
+  PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/lrslib/patch-071
   CONFIGURE_COMMAND true
-  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs
-                      LIBDIR=${M2_HOST_PREFIX}/lib
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} lrs # all-shared
+                      INCLUDEDIR=${MP_INCLUDE_DIRS}
+                      LIBDIR=${MP_LIBRARY_DIRS}
                       CPPFLAGS=${CPPFLAGS}
+                      CFLAGS=${CFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
                       RANLIB=${CMAKE_RANLIB}
-  INSTALL_COMMAND   ${CMAKE_STRIP} lrs
+  INSTALL_COMMAND   ${CMAKE_STRIP} lrs # lrs-shared liblrs.so.1.0.0
+#          COMMAND   ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX} install
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/lrslib
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different lrs ${M2_INSTALL_PROGRAMSDIR}/
@@ -877,11 +895,10 @@ _ADD_COMPONENT_DEPENDENCY(programs lrslib mp LRSLIB)
 # https://github.com/coin-or/Csdp
 # TODO: what to do when OpenMP is not found
 # TODO: set CFLAGS instead of CC, this is tricky due to csdp's Makefile
-set(csdp_CC      "${CMAKE_C_COMPILER} ${OpenMP_C_FLAGS} ${CFLAGS}")
-set(csdp_LIBS    "-L../lib -lsdp ${LA_LIBRARIES} -lm")
 ExternalProject_Add(build-csdp
-  URL               http://www.coin-or.org/download/source/Csdp/Csdp-6.2.0.tgz
-  URL_HASH          SHA256=7f202a15f33483ee205dcfbd0573fdbd74911604bb739a04f8baa35f8a055c5b
+  URL               https://github.com/coin-or/Csdp/archive/releases/6.2.0.tar.gz
+  URL_HASH          SHA256=3d341974af1f8ed70e1a37cc896e7ae4a513375875e5b46db8e8f38b7680b32f
+  DOWNLOAD_NAME     csdp-6.2.0.tar.gz
   PREFIX            libraries/csdp
   SOURCE_DIR        libraries/csdp/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -889,9 +906,9 @@ ExternalProject_Add(build-csdp
   PATCH_COMMAND     patch --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/csdp/patch-6.2.0
   CONFIGURE_COMMAND true
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} prefix=${M2_HOST_PREFIX}
-                      CC=${csdp_CC}
+                      "CC=${CMAKE_C_COMPILER} ${OpenMP_C_FLAGS} ${CFLAGS}"
                       LDLIBS=${OpenMP_C_LDLIBS}
-                      LIBS=${csdp_LIBS}
+                      "LIBS=-L../lib -lsdp ${LA_LIBRARIES} -lm"
   INSTALL_COMMAND   ${CMAKE_STRIP} solver/csdp
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/csdp
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE README ${M2_INSTALL_LICENSESDIR}/csdp
@@ -961,12 +978,12 @@ ExternalProject_Add(build-normaliz
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      --disable-shared
-                      --without-flint
-                      CPPFLAGS=${CPPFLAGS}
+                      --disable-shared # TODO: for polymake --enable-shared
+                      --without-flint # ${FLINT_ROOT}
+                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      "LDFLAGS=${LDFLAGS}  -L${MP_LIBRARY_DIRS}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
                       AR=${CMAKE_AR}
@@ -976,8 +993,7 @@ ExternalProject_Add(build-normaliz
                       OPENMP_CXXFLAGS=${normaliz_OpenMP_CXX_FLAGS}
             COMMAND patch --fuzz=10 --batch -p1 < ${CMAKE_SOURCE_DIR}/libraries/normaliz/patch-libtool
   BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
-  # TODO: do we need the libraries as well, or just the binary?
-  INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz
+  INSTALL_COMMAND   ${CMAKE_STRIP} source/normaliz # TODO: for polymake ${MAKE} -j${PARALLEL_JOBS} install-strip
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/normaliz
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different source/normaliz ${M2_INSTALL_PROGRAMSDIR}/
@@ -990,16 +1006,18 @@ _ADD_COMPONENT_DEPENDENCY(programs normaliz "mp;nauty" NORMALIZ)
 
 
 # http://www.rambau.wm.uni-bayreuth.de/TOPCOM/
-# topcom needs cddlib
 set(topcom_PROGRAMS
-  src-reg/checkregularity src/points2finetriang src/points2chiro src/chiro2circuits src/chiro2cocircuits
-  src/points2allfinetriangs src/points2alltriangs src/points2ntriangs src/points2nfinetriangs
-  src/points2finetriangs src/points2flips src/points2nallfinetriangs src/points2nalltriangs src/points2nflips
-  src/points2triangs src/points2volume)
-set(topcom_CPPFLAGS "${CPPFLAGS}")
-if(CDDLIB_FOUND)
-  set(topcom_CPPFLAGS "${topcom_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
-endif()
+  B_A B_A_center B_D checkregularity cocircuits2facets cross cube cyclic hypersimplex lattice
+  chiro2allfinetriangs   chiro2dual              chiro2nallfinetriangs  chiro2placingtriang
+  chiro2alltriangs       chiro2finetriang        chiro2nalltriangs      chiro2triangs
+  chiro2circuits         chiro2finetriangs       chiro2nfinetriangs
+  chiro2cocircuits       chiro2mintriang         chiro2ntriangs
+  points2allfinetriangs  points2finetriang       points2nalltriangs     points2placingtriang
+  points2alltriangs      points2finetriangs      points2nfinetriangs    points2triangs
+  points2chiro           points2flips            points2nflips          points2volume
+  points2facets          points2nallfinetriangs  points2ntriangs
+  santos_22_triang       santos_dim4_triang      santos_triang)
+list(TRANSFORM topcom_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE topcom_PROGRAMS)
 ExternalProject_Add(build-topcom
   URL               ${M2_SOURCE_URL}/TOPCOM-0.17.8.tar.gz
   URL_HASH          SHA256=3f83b98f51ee859ec321bacabf7b172c25884f14848ab6c628326b987bd8aaab
@@ -1011,18 +1029,18 @@ ExternalProject_Add(build-topcom
   CONFIGURE_COMMAND autoreconf -vif
             COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
-                      CPPFLAGS=${topcom_CPPFLAGS}
+                      "CPPFLAGS=${CPPFLAGS} -I${MP_INCLUDE_DIRS} -I${CDDLIB_INCLUDE_DIR}"
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
-                      LDFLAGS=${LDFLAGS}
+                      "LDFLAGS=${LDFLAGS} -L${MP_LIBRARY_DIRS} -L${CDDLIB_LIBRARY_DIR}"
                       CC=${CMAKE_C_COMPILER}
                       CXX=${CMAKE_CXX_COMPILER}
   BUILD_COMMAND     ${MAKE} -j1 # topcom doesn't like parallel builds
-  # TODO: put topcom programs in a folder?
-  INSTALL_COMMAND   ${CMAKE_STRIP} ${topcom_PROGRAMS}
+  INSTALL_COMMAND   ${MAKE} -j1 install-strip
           COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/topcom
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING README ${M2_INSTALL_LICENSESDIR}/topcom
           COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${topcom_PROGRAMS} ${M2_INSTALL_PROGRAMSDIR}/
+          COMMAND   ${CMAKE_COMMAND} -E remove -f ${topcom_PROGRAMS}
   TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
@@ -1030,17 +1048,18 @@ ExternalProject_Add(build-topcom
   )
 _ADD_COMPONENT_DEPENDENCY(programs topcom cddlib TOPCOM)
 
+###############################################################################
+## Experimental build scripts for other software programs.
+## These programs are not built by default, but the build targets are provided.
 
-# TODO: this is still experimental
-# https://polymake.org
-# Polymake needs gmp, mpfr, cdd, lrs, libnormaliz, nauty and jReality
-#set(polymake_CPPFLAGS "${CPPFLAGS}")
-#if(CDDLIB_FOUND)
-#  set(polymake_CPPFLAGS "${polymake_CPPFLAGS} -I${CDDLIB_INCLUDE_DIR}")
-#endif()
+# https://polymake.org/doku.php/install/install
+# Note: polymake requires ~16G storage and permlib and perl-Term-ReadLine-Gnu on Fedora.
+# TODO: the install target doesn't install polymake in usr-dist, only in usr-host
 ExternalProject_Add(build-polymake
-  URL               https://polymake.org/lib/exe/fetch.php/download/polymake-4.0r1-minimal.tar.bz2
-  URL_HASH          SHA256=b29de50dda6f657f2e82ef6acff62df1b51128a20c5d53bd97226ea22fdc3b52
+#  URL               https://polymake.org/lib/exe/fetch.php/download/polymake-4.1.tar.bz2 # Bundled version
+#  URL_HASH          9ee571c08552672e990d0478f8c1ce13467b769c99049b8afd2fc39fe6ab35d6
+  URL               https://polymake.org/lib/exe/fetch.php/download/polymake-4.1-minimal.tar.bz2 # Minimal version
+  URL_HASH          SHA256=7e8d45bce800007e5c26ce5b7b5ac95731cbfc99df021e715abeb494ae550ac9
   PREFIX            libraries/polymake
   SOURCE_DIR        libraries/polymake/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -1048,23 +1067,99 @@ ExternalProject_Add(build-polymake
   CONFIGURE_COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
                       #-C --cache-file=${CONFIGURE_CACHE}
                       --with-gmp=${MP_ROOT}
+                      --with-cdd=${CDDLIB_ROOT}
+                      --with-flint=${FLINT_ROOT}
+#                      --with-libnormaliz=${M2_HOST_PREFIX}
+#                      --with-lrs=${M2_HOST_PREFIX}
+#                      --with-lrs-include=${CMAKE_BINARY_DIR}/libraries/lrslib/build
+                      --with-nauty-src=${CMAKE_BINARY_DIR}/libraries/nauty/build
+                      --without-bliss
+                      --without-java
+#                      --without-ppl
+#                      --without-scip
+#                      --without-singular
+#                      --without-soplex
+#                      --without-sympol
+                      CFLAGS=${CFLAGS}
+                      "CXXFLAGS=${CPPFLAGS} -std=gnu++14 -w -Wno-mismatched-tags -Wno-deprecated-register"
+                      LDFLAGS=${LDFLAGS}
+                      CC=${CMAKE_C_COMPILER}
+                      CXX=${CMAKE_CXX_COMPILER}
+  BUILD_COMMAND     ${NINJA} -C build/Opt
+  INSTALL_COMMAND   ${NINJA} -C build/Opt install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/polymake
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/polymake
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different ${M2_HOST_PREFIX}/bin/polymake ${M2_INSTALL_PROGRAMSDIR}/
+          COMMAND   ${CMAKE_COMMAND} -E copy_directory
+            ${M2_HOST_PREFIX}/lib/polymake   ${M2_DIST_PREFIX}/${M2_INSTALL_LIBDIR}/Macaulay2/lib
+          COMMAND   ${CMAKE_COMMAND} -E copy_directory
+            ${M2_HOST_PREFIX}/share/polymake ${M2_DIST_PREFIX}/${M2_INSTALL_DATAROOTDIR}
+  TEST_COMMAND      ${MAKE} test
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  USES_TERMINAL_BUILD ON
+  )
+#_ADD_COMPONENT_DEPENDENCY(programs polymake "mp;mpfr;cddlib;flint;normaliz;lrslib;nauty" POLYMAKE)
+
+
+# http://homepages.math.uic.edu/~jan/download.html
+ExternalProject_Add(build-phcpack
+  URL               https://github.com/janverschelde/PHCpack/archive/v2.4.77.tar.gz
+  URL_HASH          SHA256=cc4f4274253dc4a6794d5f7e01f10622b6d3f58bea1f8da83467e6f7e1d90e88
+  DOWNLOAD_NAME     PHCpack-v2.4.77.tar.gz
+  PREFIX            libraries/phcpack
+  SOURCE_DIR        libraries/phcpack/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND true
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS} -C src/Objects phc
+                      CC=${CMAKE_C_COMPILER}
+                      gpp=${CMAKE_CXX_COMPILER}
+  INSTALL_COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/phcpack
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different LICENSE ${M2_INSTALL_LICENSESDIR}/phcpack
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different src/bin/phc ${M2_INSTALL_PROGRAMSDIR}/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} -C src/Objects testall
+  EXCLUDE_FROM_ALL  ON
+  TEST_EXCLUDE_FROM_MAIN ON
+  STEP_TARGETS      install test
+  USES_TERMINAL_BUILD ON
+  USES_TERMINAL_TEST ON
+  )
+#_ADD_COMPONENT_DEPENDENCY(libraries phcpack "???" PHC)
+
+
+# https://www3.nd.edu/~sommese/bertini/
+# NOTE: Bertini's license is restrictive, so we don't build and distribute it by default.
+ExternalProject_Add(build-bertini
+  URL               https://bertini.nd.edu/BertiniSource_v1.6.tar.gz
+  URL_HASH          SHA256=b742d4a55623092eb0c46f8ee644aa487e5decf4ad05eb9297306b599795a424
+  PREFIX            libraries/bertini
+  SOURCE_DIR        libraries/bertini/build
+  DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
+  BUILD_IN_SOURCE   ON
+  CONFIGURE_COMMAND autoreconf -vif
+            COMMAND ${CONFIGURE} --prefix=${M2_HOST_PREFIX}
+                      #-C --cache-file=${CONFIGURE_CACHE}
+                      --disable-shared
                       CPPFLAGS=${CPPFLAGS}
                       CFLAGS=${CFLAGS}
                       CXXFLAGS=${CXXFLAGS}
                       LDFLAGS=${LDFLAGS}
                       CC=${CMAKE_C_COMPILER}
-                      CXX=${CMAKE_CXX_COMPILER}
-  BUILD_COMMAND     ${MAKE}
-  INSTALL_COMMAND   ninja -C build/Opt install
-          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/polymake
-          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/polymake
-#          COMMAND   ${CMAKE_COMMAND} -E copy_if_different polymake ${M2_INSTALL_PROGRAMSDIR}/
-  TEST_COMMAND      ${MAKE} test
+                      CXX=${CMAKE_CXX_COhMPILER}
+  BUILD_COMMAND     ${MAKE} -j${PARALLEL_JOBS}
+  INSTALL_COMMAND   ${MAKE} -j${PARALLEL_JOBS} install
+          COMMAND   ${CMAKE_COMMAND} -E make_directory ${M2_INSTALL_LICENSESDIR}/bertini
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different COPYING ${M2_INSTALL_LICENSESDIR}/bertini
+          COMMAND   ${CMAKE_COMMAND} -E copy_if_different bertini-serial ${M2_INSTALL_PROGRAMSDIR}/
+  TEST_COMMAND      ${MAKE} -j${PARALLEL_JOBS} check
   EXCLUDE_FROM_ALL  ON
   TEST_EXCLUDE_FROM_MAIN ON
   STEP_TARGETS      install test
   )
-#_ADD_COMPONENT_DEPENDENCY(programs polymake "cddlib;lrs;normaliz;nauty" POLYMAKE)
+#_ADD_COMPONENT_DEPENDENCY(libraries bertini "mp;mpfr" BERTINI)
+
 
 ###############################################################################
 ## Post-build actions
@@ -1121,6 +1216,14 @@ get_target_property(PROGRAM_DEPENDENCIES build-programs  MANUALLY_ADDED_DEPENDEN
 string(REGEX REPLACE "(build-|-install)" "" BUILD_LIB_LIST  "${LIBRARY_DEPENDENCIES}")
 string(REGEX REPLACE "(build-|-install)" "" BUILD_PROG_LIST "${PROGRAM_DEPENDENCIES}")
 
+# Report the next step
+if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
+  message(CHECK_FAIL " Some components are missing")
+  message("## Before building Macaulay2, rerun build-libraries and build-programs targets")
+else()
+  message(CHECK_PASS " Everything is in order! 🎉")
+endif()
+
 # Set empty lists to N/A
 foreach(_list IN ITEMS
     BUILD_LIB_LIST INSTALLED_LIBRARIES BUILD_PROG_LIST INSTALLED_PROGRAMS)
@@ -1150,10 +1253,3 @@ if(VERBOSE)
      LDFLAGS           = ${LDFLAGS}\n")
 endif()
 
-# Report the next step
-if(BUILD_LIB_LIST OR BUILD_PROG_LIST)
-  message(CHECK_FAIL " Some components are missing")
-  message("## Rerun build-libraries and build-programs targets first")
-else()
-  message(CHECK_PASS " Everything is in order! 🎉")
-endif()

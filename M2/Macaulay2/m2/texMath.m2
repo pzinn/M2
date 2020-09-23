@@ -293,7 +293,7 @@ suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","bre
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
 texVariable := x -> (
     if x === "" then return "";
-    xx := separate("$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
+    xx := separate("\\$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if #x>4 and substring(x,0,4) === "sqrt" then return "\\sqrt{"|texVariable substring(x,4)|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";

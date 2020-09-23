@@ -134,7 +134,7 @@ availableOffline = () -> (
     hashTable for k in keys offlines list (
         val := offlines#k;
         (maxlimit, filename) := if instance(val, Sequence) then val else (infinity, val);
-        actualfile := relativizeFilename(offlineDirectory | filename);
+        actualfile := offlineDirectory | filename;
         fcncall := if instance(k, ZZ) then (
           "kreuzerSkarke("|k|
             (if maxlimit === infinity then ")" else ", Limit => "|maxlimit|")")
@@ -521,7 +521,7 @@ Description
     elements.
     
     The actual format allowed for matrices is described in @TO "matrixFromString"@.  
-    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO "(matrix, KSEntry)"@
+    After calling @TO "kreuzerSkarke"@ to get a list of @TO "KSEntry"@'s, one uses @TO (matrix, KSEntry)@
     to obtain a matrix .  Then
     use this function to obtain the matrix.
   Example
