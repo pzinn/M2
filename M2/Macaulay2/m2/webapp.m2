@@ -15,19 +15,29 @@ webAppTags := apply((17,18,19,20,28,29,30,31,17),ascii);
 	webAppTexEndTag       -- TeX end ~ \)
 	)=webAppTags;
 
-texMathInside = x -> (
-    if lookup(htmlWithTex,class x) === tex then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x else concatenate(
-	webAppHtmlTag,
-	htmlWithTex x,
-	webAppEndTag
-	))
-htmlInside = x -> (
-    if lookup(htmlWithTex,class x) === tex then concatenate(
-	webAppTexTag,
-	"\\displaystyle ",
-	if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x,
-	webAppTexEndTag
-	) else htmlWithTex x )
+htmlWithTexInner = (x,mode) -> ( -- current mode = false: html, true: tex
+    newmode := lookup(htmlWithTex,class x) === tex;
+    y := if newmode then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x else htmlWithTex x;
+    if debugLevel === 42 then (
+	y = concatenate(
+	    "\\underset{\\tiny ",
+	     texMath class x,
+	     "}{\\boxed{",
+	     if not newmode then webAppHtmlTag,
+	     y,
+	     if not newmode then webAppEndTag,
+	     "}}"
+	     );
+	newmode=true;
+	);
+    concatenate(
+    if mode =!= newmode then if newmode then webAppTexTag else webAppHtmlTag,
+    y,
+    if mode =!= newmode then webAppEndTag
+    ))
+
+texMathInside = x -> htmlWithTexInner(x,true);
+htmlInside = x -> htmlWithTexInner(x,false); -- only used at top level -- no recursing inside html for now
 
 stripTags := s -> replace(concatenate("[",webAppTags,"]"),"",s)
 
@@ -73,7 +83,7 @@ texMathWrapper = x -> (
 expressionDebug=false;
 texMathBackup := texMath
 htmlWithTexBackup := htmlWithTex;
-expressionDebugWrapper := x -> (
+ expressionDebugWrapper := x -> (
     if instance(x,VisibleList) or instance(x,Expression) then (
 	global texMath <- texMathBackup;
 	y := texMath class x;
