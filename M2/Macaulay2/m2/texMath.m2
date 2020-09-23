@@ -275,16 +275,8 @@ texMath Thing := v -> if texMathTable#?v then texMathTable#v else texMath'(texMa
 texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
     -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
-    if class y === Holder and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
+    if instance(y,Holder) and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
     else texMath y )
--*
-texMath' (Function, Thing) := (texMath,x) -> texMath expression x
-texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
-    if lookup(texMath,class x#0) === Thing#texMath and lookup(texMath',Function,class x#0) === Function#(texMath',Function,Thing)
-    then texMath net x#0 else  -- if we're desperate (in particular, for raw objects)
-    texMath1 x#0
-    )
-*-
 texMath' (Function, Holder) := (texMath,x) -> texMath x#0
 
 --texMath Symbol := toString -- the simplest version

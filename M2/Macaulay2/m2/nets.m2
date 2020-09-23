@@ -107,7 +107,7 @@ toExternalString Sequence := s -> (
 net Manipulator := toString
 net Thing := x -> ( y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
-    if class y === Holder and class y#0 === class x then toString x
+    if instance(y,Holder) and class y#0 === class x then toString x
     else net y )
 --net Thing := toString
 -----------------------------------------------------------------------------

@@ -289,13 +289,11 @@ format Sequence := String => s -> format' s
 protect symbol format
 
 toString = method(Dispatch => Thing, TypicalValue => String)
-toString Thing := x -> ( y := expression x;
-    -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
-    if class y === Holder and class y#0 === class x then simpleToString x -- if all else fails...
-    else toString y )
+toString Thing := simpleToString			    -- if all else fails...
 
 toString String := identity
 toString Symbol := simpleToString
+toString ZZ := simpleToString
 
 toExternalString = method(Dispatch => Thing, TypicalValue => String)
 toExternalString Keyword := s -> concatenate("symbol ", simpleToString s)

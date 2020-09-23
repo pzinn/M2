@@ -128,8 +128,11 @@ lookupi := x -> (
      r)
 
 toString' = method()
-toString'(Function,Thing) := (toString,x) -> toString x
-toString Expression := v -> toString'(simpleToString,v)
+toString Thing := v -> toString'(toString,v)
+toString' (Function, Thing) := x -> ( y := expression x;
+    -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
+    if instance(y,Holder) and class y#0 === class x then simpleToString x -- if all else fails...
+    else toString y )
 
 toExternalFormat = method(Dispatch=>Thing)
 toExternalFormat Thing := toExternalString
