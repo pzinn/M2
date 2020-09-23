@@ -58,8 +58,6 @@ ChainComplex == ChainComplex := (C,D) -> (
 ChainComplex == ZZ := (C,i) -> (complete C; all(spots C, i -> C_i == 0))
 ZZ == ChainComplex := (i,C) -> (complete C; all(spots C, i -> C_i == 0))
 
-expression ChainComplex := hold
-
 net ChainComplex := C -> (
      complete C;
      s := sort spots C;

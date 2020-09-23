@@ -289,13 +289,10 @@ format Sequence := String => s -> format' s
 protect symbol format
 
 toString = method(Dispatch => Thing, TypicalValue => String)
-toString Thing := x -> ( y := expression x;
-    -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
-    if class y === Holder and class y#0 === class x then simpleToString x -- if all else fails...
-    else toString y )
-
 toString String := identity
 toString Symbol := simpleToString
+toString ZZ := simpleToString
+toString Nothing := simpleToString
 
 toExternalString = method(Dispatch => Thing, TypicalValue => String)
 toExternalString Keyword := s -> concatenate("symbol ", simpleToString s)
@@ -439,12 +436,12 @@ quit = Command (() -> exit 0)
 erase symbol exit
 exit = Command exitMethod
 
+-*
 toExternalString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toExternalString z#0,")") else toExternalString z#0,
      " => ",
      if precedence z > precedence z#1 then ("(",toExternalString z#1,")") else toExternalString z#1
      )
--*
 toString Option := z -> concatenate splice (
      if precedence z > precedence z#0 then ("(",toString z#0,")") else toString z#0,
      " => ",

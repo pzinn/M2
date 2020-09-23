@@ -234,7 +234,6 @@ GF(Ring) := GaloisField => opts -> (S) -> (
      F.degree = n;
      F.order = p^n;
      F.frac = F;
---     F.texMath ="{\\mathbb F}_{" | F.order | "}"; 
      F.generators = apply(generators S, m -> promote(m,F)); -- this will be wrong if S is a tower
      if S.?generatorSymbols then F.generatorSymbols = S.generatorSymbols;
      if S.?generatorExpressions then F.generatorExpressions = (

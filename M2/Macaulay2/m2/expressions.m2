@@ -1,5 +1,5 @@
 --		Copyright 1993-2002 by Daniel R. Grayson
--- rewritten by P. Zinn-Justin 2018
+-- rewritten by P. Zinn-Justin 2018-2020
 
 protect symbol operator
 protect symbol EmptyName
@@ -108,8 +108,11 @@ lookupi := x -> (
      r)
 
 toString' = method()
-toString'(Function,Thing) := (toString,x) -> toString x
-toString Expression := v -> toString'(simpleToString,v)
+toString Thing := v -> toString'(toString,v)
+toString' (Function, Thing) := (toString,x) -> ( y := expression x;
+    -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
+    if instance(y,Holder) and class y#0 === class x then simpleToString x -- if all else fails...
+    else toString y )
 
 toExternalFormat = method(Dispatch=>Thing)
 toExternalFormat Thing := toExternalString
@@ -133,9 +136,10 @@ toString'(Function, Expression) := (fmt,v) -> (
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
 
---texMath Holder := v -> texMath v#0
+texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
+toString Holder := v -> toString v#0
 
 --toString'(Function, Holder2) := (fmt,v) -> fmt v#0
 toString'(Function, Holder) := (fmt,v) -> fmt v#0
@@ -633,8 +637,7 @@ NewFromExpression.synonym = "New ... From expression"
 expressionValue NewFromExpression := x -> new (expressionValue x#0) from (expressionValue x#1)
 -- temp: spacing needs improving
 net NewFromExpression := lookup(net,Adjacent)
-toString NewFromExpression := lookup(toString,Adjacent)
-
+toString' (Function, NewFromExpression) := (fmt, e) -> "new " | fmt e#0 | " from " | fmt toList e#1
 
 
 -----------------------------------------------------------------------------
@@ -650,8 +653,8 @@ returns = t -> x -> t
 	       precedence Product := returns prec symbol *
  precedence NonAssociativeProduct := returns prec symbol **
 		 precedence Minus := returns strength1 symbol -
-   precedence FunctionApplication := returns prec symbol SPACE
-     precedence NewFromExpression := returns prec symbol SPACE
+   precedence FunctionApplication :=
+     precedence NewFromExpression :=
               precedence Adjacent := returns prec symbol SPACE
 		precedence Divide := returns prec symbol /
 	     precedence Subscript := returns prec symbol _
@@ -1105,9 +1108,6 @@ net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
-net Option := net @@ expression
---texMath Option := x -> texMath expression x
-toString Option := toString @@ expression
 
 SheafExpression = new WrapperType of Expression;
 toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
@@ -1127,9 +1127,6 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 
 -- moved from set.m2 because of loadsequence order
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
-toString Set := x -> toString expression x
-net Set := x -> net expression x
---texMath Set := x -> texMath expression x
 
 expression HashTable := x -> (
          if hasAttribute(x,ReverseDictionary) then return new Holder from { getAttribute(x,ReverseDictionary), class x };
@@ -1139,19 +1136,11 @@ expression HashTable := x -> (
 	 )
 --expressionValue HashTable := x -> applyPairs(x, (k,v) -> (expressionValue k, expressionValue v))
 
-
--- some texMath that got stranded
--*
-texMath BasicList := s -> concatenate(
-     if class s =!= List then texMath class s,
-    "\\left\\{",
-    between(",\\,",apply(toList s,texMath))
-    ,"\\right\\}"
-    )
-*-
-
 expression BasicList := s -> NewFromExpression { expression class s, apply(toList s, expression) }
 
+-- shouldn't look inside these 2
+expression MutableHashTable := hold
+expression MutableList := hold
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -298,7 +298,7 @@ texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
 texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
     -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
-    if class y === Holder and class y#0 === class x then texMath simpleToString x -- if we're desperate (in particular, for raw objects)
+    if instance(y,Holder) and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
     else texMath y )
 -- probably temporary
 texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 then texMath x#0 else texMath simpleToString x#0
@@ -331,7 +331,7 @@ texMath' (Function, MapExpression) := (texMath,x) -> texMath x#0 | "\\," | (if #
 texMath' (Function, List) := (texMath,x) -> concatenate("\\left\\{", between(",\\,", apply(x,texMath)), "\\right\\}")
 texMath' (Function, Array) := (texMath,x) -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
 texMath' (Function, Sequence) := (texMath,x) -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
-texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else (lookup(texMath',Function,Thing)) (texMath,x)
+--texMath' (Function, HashTable) := (texMath,x) -> if x.?texMath then x.texMath else (lookup(texMath',Function,Thing)) (texMath,x)
 
 texMath' (Function, Function) := (texMath,x) -> texMath toString x
 texMath' (Function, MutableList) := (texMath,x) -> concatenate (
@@ -395,3 +395,15 @@ texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}
 
 texMath (Function, SumOfTwists) := (texMath,S) -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
 
+-- MutableHashTable needs manual output...
+texMath' (Function, MutableHashTable) := (texMath,x) -> if hasAttribute(x,ReverseDictionary) then texMath simpleToString getAttribute(x,ReverseDictionary) else concatenate (
+    texMath class x,
+    "\\left\\{",
+    if #x>0 then {"\\ldots",texMath(#x),"\\ldots"},
+    "\\right\\}"
+)
+
+--- ... but not some of its descendants
+texMath' (Function, Ring) :=
+texMath' (Function, Variety) :=
+lookup(texMath',Function,Thing)

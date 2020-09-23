@@ -291,6 +291,7 @@ export {
 	"Name",
 	"Net",
 	"NetFile",
+	"NewFromExpression",
 	"NewFromMethod",
 	"NewMethod",
 	"NewOfFromMethod",

@@ -22,15 +22,12 @@ toString HashTable := s -> (
 	  then demark(", ", apply(pairs s, (k,v) -> toString k | " => " | toString v) )
 	  else "",
 	  "}"))
-toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
 *-
+toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
 toStringn := i -> if i === null then "" else toString i
--*
-toString BasicList := s -> concatenate(
-     if class s =!= List then toString class s,
+toString List := s -> concatenate(
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
- *-
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
@@ -107,7 +104,7 @@ toExternalString Sequence := s -> (
 net Manipulator := toString
 net Thing := x -> ( y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
-    if class y === Holder and class y#0 === class x then toString x
+    if instance(y,Holder) and class y#0 === class x then toString x
     else net y )
 --net Thing := toString
 -----------------------------------------------------------------------------
