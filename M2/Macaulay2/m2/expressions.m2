@@ -1141,6 +1141,10 @@ expression BasicList := s -> NewFromExpression { expression class s, apply(toLis
 expression MutableHashTable := hold
 expression MutableList := hold
 
+-- .. but these are OK (what a mess)
+expression Ring := lookup(expression,HashTable)
+expression RingFamily := lookup(expression,HashTable)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

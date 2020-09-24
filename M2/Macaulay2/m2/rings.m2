@@ -75,8 +75,6 @@ promote = method(Dispatch=>{Thing,Type,Type})
 lift = method(Dispatch=>{Thing,Type,Type}, Options => {Verify => true})
 liftable  = method(Dispatch=>{Thing,Type,Type}, TypicalValue => Boolean)
 
-expression Ring := lookup(expression,HashTable)
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

@@ -394,6 +394,7 @@ texMath' (Function, MutableHashTable) := (texMath,x) -> if texMathTable#?x then 
 
 --- ... but not some of its descendants
 texMath' (Function, Ring) :=
+texMath' (Function, RingFamily) :=
 texMath' (Function, Variety) :=
 lookup(texMath',Function,Thing)
 
