@@ -17,7 +17,8 @@ webAppTags := apply((17,18,19,20,28,29,30,31,17),ascii);
 
 htmlWithTexInner = (x,mode) -> ( -- current mode = false: html, true: tex
     newmode := lookup(htmlWithTex,class x) === tex;
-    y := if newmode then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x else htmlWithTex x;
+--    y := if newmode then if lookup(texMath,class x) === Thing#texMath then texMath'(texMathInside,x) else texMath x else htmlWithTex x;
+    y := if newmode then texMath x else htmlWithTex x;
     if debugLevel === 42 then (
 	y = concatenate(
 	    "\\underset{\\tiny ",
