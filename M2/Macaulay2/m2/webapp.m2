@@ -22,11 +22,11 @@ htmlWithTexInner = (x,mode) -> ( -- current mode = false: html, true: tex
 	y = concatenate(
 	    "\\underset{\\tiny ",
 	     texMath class x,
-	     "}{\\boxed{",
+	     "}{\\fcolorbox{gray}{transparent}{$",
 	     if not newmode then webAppHtmlTag,
 	     y,
 	     if not newmode then webAppEndTag,
-	     "}}"
+	     "$}}"
 	     );
 	newmode=true;
 	);
