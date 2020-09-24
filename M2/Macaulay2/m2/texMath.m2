@@ -288,23 +288,15 @@ texMathTable := new HashTable from {
     }
 
 -- experimental change (same with toString, net, etc)
-texMath Thing := v -> if texMathTable#?v then texMathTable#v else texMath'(texMath,v)
+texMath Thing := v -> texMath'(texMath,v)
 
--*
-texMath' (Function, Thing) := (texMath,x) -> texMath expression x
-texMath' (Function, Holder) := (texMath1,x) -> ( -- we need to avoid loops
-    if lookup(texMath,class x#0) === Thing#texMath and lookup(texMath',Function,class x#0) === Function#(texMath',Function,Thing)
-    then texMath net x#0 else  -- if we're desperate (in particular, for raw objects)
-    texMath1 x#0
-    )
-*-
-texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
+texMath' (Function, Thing) := (texMath1,x) -> if texMathTable#?x then texMathTable#x else if lookup(texMath,class x) =!= Thing#texMath then texMath x else (
+    -- annoying extra test in case texMath redefined directly. e.g. currently: texMath ZZ
+    y := expression x;
     -- we need to avoid loops: objects whose expression is a Holder and whose texMath is undefined
     -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
-    if instance(y,Holder) and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
-    else texMath y )
--- probably temporary: maybe expression of rings should just be their symbol?
---texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 then texMath x#0 else texMath simpleToString x#0
+    if instance(y,Holder) and class y#0 === class x then texMath1 toString x -- if we're desperate (in particular, for raw objects)
+    else texMath1 y )
 texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else texMath x#0
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack, just kept to remind me that:
@@ -325,7 +317,8 @@ texVariable := x -> (
 	);
     if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
     )
-texMath' (Function, Symbol) := (texMath,x) -> texVariable toString x;
+--texMath' (Function, Symbol) := (texMath,x) -> if texMathTable#?x then texMathTable#x else texVariable toString x;
+texMath Symbol := x -> texVariable toString x;
 
 texMath' (Function, SheafExpression) := (texMath,x) -> texMath x#0
 
@@ -383,13 +376,6 @@ texMath' (Function, Bag) := (texMath,x) -> concatenate(
      "\\}"
      )
 
-constantTexMath := new HashTable from {
-    symbol pi => "\\pi",
-    symbol EulerConstant => "\\gamma",
-    symbol ii => "\\mathbf{i}"
-    }
-texMath' (Function, Constant) := (texMath,c) -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0
-
 texMath' (Function, Package) :=
 texMath' (Function, GroebnerBasis) :=
 texMath' (Function, IndeterminateNumber) := (texMath,x) -> texMath toString x
@@ -398,8 +384,8 @@ texMath InfiniteNumber := i -> if i === infinity then "\\infty" else "{-\\infty}
 
 texMath (Function, SumOfTwists) := (texMath,S) -> texMath S#0 | if S#1#0 === neginfinity then "(*)" else "(\\ge" | texMath S#1#0 | ")"
 
--- MutableHashTable needs manual output...
-texMath' (Function, MutableHashTable) := (texMath,x) -> if hasAttribute(x,ReverseDictionary) then texMath simpleToString getAttribute(x,ReverseDictionary) else concatenate (
+-- MutableHashTable needs manual output... annoying that need to check texMathTable just for OO
+texMath' (Function, MutableHashTable) := (texMath,x) -> if texMathTable#?x then texMathTable#x else if hasAttribute(x,ReverseDictionary) then texMath simpleToString getAttribute(x,ReverseDictionary) else concatenate (
     texMath class x,
     "\\left\\{",
     if #x>0 then {"\\ldots",texMath(#x),"\\ldots"},
