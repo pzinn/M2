@@ -31,7 +31,7 @@ htmlWithTexInner = (x,mode) -> ( -- current mode = false: html, true: tex
 	newmode=true;
 	);
     concatenate(
-    if mode =!= newmode then if newmode then webAppTexTag else webAppHtmlTag,
+    if mode =!= newmode then if newmode then webAppTexTag|"\\displaystyle " else webAppHtmlTag,
     y,
     if mode =!= newmode then webAppEndTag
     ))

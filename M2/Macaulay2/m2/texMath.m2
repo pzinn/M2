@@ -300,9 +300,9 @@ texMath' (Function, Thing) := (texMath,x) -> ( y := expression x;
     -- we could have a stricter if lookup(expression,class x) === hold but that might be too restrictive
     if instance(y,Holder) and class y#0 === class x then texMath toString x -- if we're desperate (in particular, for raw objects)
     else texMath y )
--- probably temporary
-texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 then texMath x#0 else texMath simpleToString x#0
-
+-- probably temporary: maybe expression of rings should just be their symbol?
+--texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else if #x === 1 then texMath x#0 else texMath simpleToString x#0
+texMath' (Function, Holder) := (texMath,x) -> if #x === 0 then "" else texMath x#0
 --texMath Symbol := toString -- the simplest version
 -- next version is a horrible hack, just kept to remind me that:
 -- expression should never need to run value of course !!!

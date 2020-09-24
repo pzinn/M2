@@ -136,7 +136,6 @@ toString'(Function, Expression) := (fmt,v) -> (
 --html Holder2 := v -> html v#0
 --net Holder2 := v -> net v#0
 
-texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
 net Holder := v -> net v#0
 toString Holder := v -> toString v#0
@@ -1116,7 +1115,7 @@ expressionValue SheafExpression := x -> sheaf expressionValue x#0
 
 moduleZERO = new ZeroExpression from { 0, Module }
 
--- only used by mathjax.m2 at the moment. note that one can't have a symbol <---
+-- only used by webapp.m2 at the moment. note that one can't have a symbol <---
 MapExpression = new HeaderType of Expression;
 toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { map, toSequence x })
 lineOnTop := (s) -> concatenate(width s : "-") || s
