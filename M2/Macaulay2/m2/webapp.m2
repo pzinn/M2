@@ -6,10 +6,10 @@
 webAppTags := apply((17,18,19,20,28,29,30,31,17),ascii);
     (webAppEndTag,            -- closing tag ~ </span>
 	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
-	webAppOutputTag,      -- it's html but it's output ~ <span class='M2Html M2Output'>
+	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
-	webAppUrlTag,         -- used internally
+	webAppUrlTag,         -- used internally to follow URLs
 	webAppTextTag,        -- other text ~ <span class='M2Text'>
 	webAppTexTag,         -- TeX start ~ \(
 	webAppTexEndTag       -- TeX end ~ \)
@@ -54,10 +54,18 @@ webAppEnd = () -> (
 
 -- output routines for WebApp mode
 
-ZZ#{WebApp,InputPrompt} = lineno -> ZZ#{Standard,InputPrompt} lineno | webAppInputTag
+ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
+    webAppEndTag, -- close previous cell
+    newline,
+    webAppCellTag,
+    interpreterDepth:"i",
+    toString lineno,
+    " : ",
+    webAppInputTag)
+
 ZZ#{WebApp,InputContinuationPrompt} = lineno -> webAppInputContdTag
 
-Thing#{WebApp,BeforePrint} = identity -- not sure what to put there
+Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
@@ -67,7 +75,7 @@ Thing#{WebApp,Print} = x -> (
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     webAppEnd();
     if class y =!= String then error "invalid htmlWithTex output";
-    << endl << oprompt | webAppOutputTag | y | webAppEndTag << endl;
+    << endl << oprompt | webAppHtmlTag | y | webAppEndTag << endl;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
