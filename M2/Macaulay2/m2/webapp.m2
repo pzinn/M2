@@ -40,7 +40,8 @@ htmlWithTexInner = (x,mode) -> ( -- current mode = false: html, true: tex
 texMathInside = x -> htmlWithTexInner(x,true);
 htmlInside = x -> htmlWithTexInner(x,false); -- only used at top level -- no recursing inside html for now
 
-stripTags := s -> replace(concatenate("[",webAppTags,"]"),"",s)
+webAppTagsRegex := concatenate("[",webAppTags,"]")
+stripTags := s -> replace(webAppTagsRegex,"",s)
 
 htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
 -- text stuff: we use html instead of tex, much faster (and better spacing)
@@ -258,6 +259,14 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
 	new webAppPRE from res#0 );
+    -- the help hack 2: TODO get rid of somehow or at least reduce to first line, see examples.m2
+    M2outputRE      := "(\n+)"|webAppCellTag|"i+[1-9][0-9]* : ";
+    M2outputREindex := 1;
+    separateM2output = str -> (
+    	m := regex("^"|webAppCellTag|"i1 : ", str);
+    	if m#?0 then str = substring(m#0#0, str);
+    	while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
+    	separate(M2outputRE, M2outputREindex, str));
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := htmlInside x; -- we compute the htmlWithTex now (in case it produces an error)
