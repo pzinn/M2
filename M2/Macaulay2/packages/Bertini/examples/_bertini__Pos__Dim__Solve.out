@@ -1,71 +1,71 @@
 -- -*- M2-comint -*- hash: 704393788
+
+i1 : R = QQ[x,y,z]
 
-i1 : R = QQ[x,y,z]
-
-o1 = \displaystyle R
+o1 = \displaystyle R
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
+
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
-i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
-
-o2 = \displaystyle \left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}
+o2 = \displaystyle \left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}
 
 o2 : <pre style="display:inline">
 List</pre>
+
+i3 : S = bertiniPosDimSolve F
 
-i3 : S = bertiniPosDimSolve F
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 S</pre>
 
 o3 : <pre style="display:inline">
 NumericalVariety</pre>
+
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
-
-o4 = \displaystyle \left\{\begin{aligned}&<pre style="display:inline">
+o4 = \displaystyle \left\{\begin{aligned}&<pre style="display:inline">
 Point</pre>\left\{\ldots1\ldots\right\}\end{aligned}\right\}
 
 o4 : <pre style="display:inline">
 VerticalList</pre>
+
+i5 : S#1 --first specify dimension
 
-i5 : S#1 --first specify dimension
-
-o5 = \displaystyle \left\{<pre style="display:inline">
+o5 = \displaystyle \left\{<pre style="display:inline">
 WitnessSet</pre>\left\{\ldots6\ldots\right\}\right\}
 
 o5 : <pre style="display:inline">
 List</pre>
+
+i6 : peek oo_0 --then list position
 
-i6 : peek oo_0 --then list position
+o6 = <pre style="display:inline-table;vertical-align:0%">
+WitnessSet{ComponentNumber => 0                                                                      }<br/>           IsIrreducible => true<br/>           Points => {{2.17893e-64-1.27579e-64*ii, 2.29212e-64-1.18853e-64*ii, .0158764-.0423225*ii}}<br/>           Slice => | -.529471+.113221ii -.269765-.817737ii .37666-.945977ii .0340561+.0309599ii |<br/>           WitnessDataFileName => /tmp/M2-87769-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
+
+i7 : PD=primaryDecomposition( ideal F)
 
-o6 = <pre style="display:inline-table;vertical-align:0%">
-WitnessSet{ComponentNumber => 0                                                                      }<br/>           IsIrreducible => true<br/>           Points => {{2.00081e-65+3.47692e-65*ii, -1.75577e-65+3.74055e-65*ii, -.239619-.332517*ii}}<br/>           Slice => | .298978+.583683ii -.0744661-.776972ii -1.10745+.150626ii -.315453-.332155ii |<br/>           WitnessDataFileName => /tmp/M2-122041-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
-
-i7 : PD=primaryDecomposition( ideal F)
-
-o7 = \displaystyle \left\{<pre style="display:inline">
+o7 = \displaystyle \left\{<pre style="display:inline">
 ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\,<pre style="display:inline">
 ideal</pre>\,\left(y,x\right)\right\}
 
 o7 : <pre style="display:inline">
 List</pre>
+
+i8 : dim PD_0
 
-i8 : dim PD_0
+o8 = \displaystyle 2
+
+i9 : degree PD_0
 
-o8 = \displaystyle 2
+o9 = \displaystyle 2
+
+i10 : dim PD_1
 
-i9 : degree PD_0
+o10 = \displaystyle 1
+
+i11 : degree PD_1
 
-o9 = \displaystyle 2
-
-i10 : dim PD_1
-
-o10 = \displaystyle 1
-
-i11 : degree PD_1
-
-o11 = \displaystyle 1
-
-i12 : 
+o11 = \displaystyle 1
+
+i12 : 

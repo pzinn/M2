@@ -1,24 +1,24 @@
 -- -*- M2-comint -*- hash: 370242144
+
+i1 : R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
+
+i3 : (w,ns) = topWitnessSet(f,1);
+
+i4 : w
 
-i1 : R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
-
-i3 : (w,ns) = topWitnessSet(f,1);
-
-i4 : w
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = \displaystyle <pre style="display:inline">
 w</pre>
 
 o4 : <pre style="display:inline">
 WitnessSet</pre>
-
-i5 : L = factorWitnessSet(w)
+
+i5 : L = factorWitnessSet(w)
 found 2 irreducible factors 
 
-o5 = \displaystyle <pre style="display:inline">
+o5 = \displaystyle <pre style="display:inline">
 L</pre>
 
 o5 : <pre style="display:inline">
 NumericalVariety</pre>
-
-i6 : 
+
+i6 : 

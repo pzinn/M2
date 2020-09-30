@@ -1,25 +1,25 @@
 -- -*- M2-comint -*- hash: 39249493
+
+i1 : X = coincidentRootLocus({2,2,1},ZZ/101)
 
-i1 : X = coincidentRootLocus({2,2,1},ZZ/101)
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
 
 o1 : <pre style="display:inline">
 CoincidentRootLocus</pre>
+
+i2 : I = randomInCoisotropic(X,1)
 
-i2 : I = randomInCoisotropic(X,1)
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 ideal</pre>\,\left({t}_{0}^{3}{t}_{1}^{2}+42\,{t}_{0}^{2}{t}_{1}^{3}+32\,{t}_{0}{t}_{1}^{4}-32\,{t}_{1}^{5},{t}_{0}^{4}{t}_{1}+14\,{t}_{0}^{2}{t}_{1}^{3}+4\,{t}_{0}{t}_{1}^{4}-44\,{t}_{1}^{5},{t}_{0}^{5}-40\,{t}_{0}^{2}{t}_{1}^{3}-18\,{t}_{0}{t}_{1}^{4}-36\,{t}_{1}^{5}\right)
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>\frac{{\mathbb Z}}{101}\left[{t}_{0},{t}_{1}\right]
+
+i3 : isInCoisotropic(I,X)
 
-i3 : isInCoisotropic(I,X)
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 true</pre>
-
-i4 : 
+
+i4 : 

@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: -236044926
+
+i1 : A = QQ{x,y,z}
 
-i1 : A = QQ{x,y,z}
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
+
+i2 : I = ncIdeal{x*z-z*x, y*z, x*y^2-y^2*x, x^3*y-y*x^3}
 
-i2 : I = ncIdeal{x*z-z*x, y*z, x*y^2-y^2*x, x^3*y-y*x^3}
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -47,10 +47,10 @@ A</pre>\right\}
 
 o2 : <pre style="display:inline">
 NCIdeal</pre>
+
+i3 : J = quadraticClosure I
 
-i3 : J = quadraticClosure I
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -71,10 +71,10 @@ A</pre>\right\}
 
 o3 : <pre style="display:inline">
 NCIdeal</pre>
+
+i4 : J' = homogDual J
 
-i4 : J' = homogDual J
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -125,5 +125,5 @@ A</pre>\right\}
 
 o4 : <pre style="display:inline">
 NCIdeal</pre>
-
-i5 : 
+
+i5 : 

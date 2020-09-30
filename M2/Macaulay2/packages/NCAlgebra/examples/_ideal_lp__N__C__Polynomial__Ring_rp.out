@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: -1277604553
+
+i1 : A = QQ{x,y}
 
-i1 : A = QQ{x,y}
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
+
+i2 : ideal A
 
-i2 : ideal A
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -23,5 +23,5 @@ A</pre>\right\}
 
 o2 : <pre style="display:inline">
 NCIdeal</pre>
-
-i3 : 
+
+i3 : 

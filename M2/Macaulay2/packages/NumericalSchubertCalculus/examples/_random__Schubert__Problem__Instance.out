@@ -1,8 +1,8 @@
 -- -*- M2-comint -*- hash: 213120892
+
+i1 : randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
 
-i1 : randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
-
-o1 = \displaystyle \left\{\left(\left\{1\right\},\begin{pmatrix}
+o1 = \displaystyle \left\{\left(\left\{1\right\},\begin{pmatrix}
 {.781262}-{.624203}\,\mathbf{i}&-{.462954}-{.886382}\,\mathbf{i}&-{.272832}+{.962062}\,\mathbf{i}&-{.670948}-{.741504}\,\mathbf{i}\\
 {.9868}+{.161945}\,\mathbf{i}&-{.219207}-{.975678}\,\mathbf{i}&{.778029}-{.628229}\,\mathbf{i}&{.118767}+{.992922}\,\mathbf{i}\\
 -{.971549}+{.236839}\,\mathbf{i}&{.157598}-{.987503}\,\mathbf{i}&{.841103}-{.540875}\,\mathbf{i}&-{.396553}+{.918012}\,\mathbf{i}\\
@@ -22,10 +22,10 @@ o1 = \displaystyle \left\{\left(\left\{1\right\},\begin{pmatrix}
 
 o1 : <pre style="display:inline">
 List</pre>
+
+i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
 
-i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
-
-o2 = \displaystyle \left\{\left(\left\{2,\,4\right\},\begin{pmatrix}
+o2 = \displaystyle \left\{\left(\left\{2,\,4\right\},\begin{pmatrix}
 {.996754}-{.0805092}\,\mathbf{i}&-{.909393}-{.415938}\,\mathbf{i}&{.398424}+{.917201}\,\mathbf{i}&-{.688353}+{.725376}\,\mathbf{i}\\
 -{.531694}+{.846937}\,\mathbf{i}&{.92457}+{.381011}\,\mathbf{i}&-{.976915}+{.213627}\,\mathbf{i}&-{.81898}+{.573823}\,\mathbf{i}\\
 {.51095}+{.859611}\,\mathbf{i}&-{.227376}-{.973807}\,\mathbf{i}&{.842765}-{.538281}\,\mathbf{i}&-{.915156}-{.403101}\,\mathbf{i}\\
@@ -45,5 +45,5 @@ o2 = \displaystyle \left\{\left(\left\{2,\,4\right\},\begin{pmatrix}
 
 o2 : <pre style="display:inline">
 List</pre>
-
-i3 : 
+
+i3 : 

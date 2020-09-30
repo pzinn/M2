@@ -1,54 +1,54 @@
 -- -*- M2-comint -*- hash: 1886230761
+
+i1 : QQ[x,y,z];
+
+i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
+
+i3 : describe ring ideal sys
 
-i1 : QQ[x,y,z];
-
-i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
-
-i3 : describe ring ideal sys
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 frac</pre>\left({\mathbb Q}\left[x\,{.}{.}\, z,\textit{Degrees}\ \Rightarrow \ \left\{3:1\right\},\textit{Heft}\ \Rightarrow \ \left\{1\right\},\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&\textit{MonomialSize}\ \Rightarrow \ 32\\&\textit{GRevLex}\ \Rightarrow \ \left\{3:1\right\}\\&\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\textit{DegreeRank}\ \Rightarrow \ 1\right]\right)
+
+i4 : convertedSys = toLaurentPolynomial(sys,w);
+
+i5 : printWidth = 300;
+
+i6 : toString convertedSys
 
-i4 : convertedSys = toLaurentPolynomial(sys,w);
-
-i5 : printWidth = 300;
-
-i6 : toString convertedSys
-
-o6 = <pre style="display:inline">
+o6 = <pre style="display:inline">
 {y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}</pre>
+
+i7 : ring ideal convertedSys
 
-i7 : ring ideal convertedSys
-
-o7 = \displaystyle {\mathbb Q}\,\left\{x,\,y,\,z,\,{w}_{0}\right\}
+o7 = \displaystyle {\mathbb Q}\,\left\{x,\,y,\,z,\,{w}_{0}\right\}
 
 o7 : <pre style="display:inline">
 PolynomialRing</pre>
+
+i8 : describe oo
 
-i8 : describe oo
-
-o8 = \displaystyle {\mathbb Q}\,\left\{x\,{.}{.}\, z,\,{w}_{0},\,\textit{Degrees}\ \Rightarrow \ \left\{4:1\right\},\,\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&\textit{Weights}\ \Rightarrow \ \left\{4:-1\right\}\\&\textit{MonomialSize}\ \Rightarrow \ 32\\&\textit{GroupRevLex}\ \Rightarrow \ 4\\&\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\,\textit{DegreeRank}\ \Rightarrow \ 1,\,\textit{Inverses}\ \Rightarrow \ <pre style="display:inline">
+o8 = \displaystyle {\mathbb Q}\,\left\{x\,{.}{.}\, z,\,{w}_{0},\,\textit{Degrees}\ \Rightarrow \ \left\{4:1\right\},\,\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&\textit{Weights}\ \Rightarrow \ \left\{4:-1\right\}\\&\textit{MonomialSize}\ \Rightarrow \ 32\\&\textit{GroupRevLex}\ \Rightarrow \ 4\\&\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\,\textit{DegreeRank}\ \Rightarrow \ 1,\,\textit{Inverses}\ \Rightarrow \ <pre style="display:inline">
 true</pre>,\,\textit{Global}\ \Rightarrow \ <pre style="display:inline">
 false</pre>\right\}
+
+i9 : P = QQ[x,y,z];
+
+i10 : f = (x*y + z^2*y) / y
 
-i9 : P = QQ[x,y,z];
-
-i10 : f = (x*y + z^2*y) / y
-
-o10 = \displaystyle z^{2}+x
+o10 = \displaystyle z^{2}+x
 
 o10 : <pre style="display:inline">
 frac</pre>\ P
+
+i11 : liftable(f,P)
 
-i11 : liftable(f,P)
-
-o11 = \displaystyle <pre style="display:inline">
+o11 = \displaystyle <pre style="display:inline">
 true</pre>
+
+i12 : lift(f,P)
 
-i12 : lift(f,P)
-
-o12 = \displaystyle z^{2}+x
+o12 = \displaystyle z^{2}+x
 
 o12 : P
-
-i13 : 
+
+i13 : 

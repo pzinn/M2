@@ -1,56 +1,56 @@
 -- -*- M2-comint -*- hash: 240042084
+
+i1 : X = coincidentRootLocus {11,1,1,1,1}
 
-i1 : X = coincidentRootLocus {11,1,1,1,1}
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
 
 o1 : <pre style="display:inline">
 CoincidentRootLocus</pre>
+
+i2 : Y = coincidentRootLocus {13,1,1}
 
-i2 : Y = coincidentRootLocus {13,1,1}
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
 
 o2 : <pre style="display:inline">
 CoincidentRootLocus</pre>
+
+i3 : time X * Y
+     -- used 0.344157 seconds
 
-i3 : time X * Y
-     -- used 0.343212 seconds
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}
 
 o3 : <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>
+
+i4 : time X * Y * Y
+     -- used 0.0825051 seconds
 
-i4 : time X * Y * Y
-     -- used 0.0805048 seconds
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = \displaystyle <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}
 
 o4 : <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>
+
+i5 : I = ideal coincidentRootLocus {4}
 
-i5 : I = ideal coincidentRootLocus {4}
-
-o5 = \displaystyle <pre style="display:inline">
+o5 = \displaystyle <pre style="display:inline">
 ideal</pre>\,\left({t}_{3}^{2}-{t}_{2}{t}_{4},{t}_{2}{t}_{3}-{t}_{1}{t}_{4},{t}_{1}{t}_{3}-{t}_{0}{t}_{4},{t}_{2}^{2}-{t}_{0}{t}_{4},{t}_{1}{t}_{2}-{t}_{0}{t}_{3},{t}_{1}^{2}-{t}_{0}{t}_{2}\right)
 
 o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>{\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4}\right]
+
+i6 : time projectiveJoin(I,I)
+     -- used 0.0499647 seconds
 
-i6 : time projectiveJoin(I,I)
-     -- used 0.0365256 seconds
-
-o6 = \displaystyle <pre style="display:inline">
+o6 = \displaystyle <pre style="display:inline">
 ideal</pre>\left({t}_{2}^{3}-2\,{t}_{1}{t}_{2}{t}_{3}+{t}_{0}{t}_{3}^{2}+{t}_{1}^{2}{t}_{4}-{t}_{0}{t}_{2}{t}_{4}\right)
 
 o6 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>{\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4}\right]
-
-i7 : 
+
+i7 : 

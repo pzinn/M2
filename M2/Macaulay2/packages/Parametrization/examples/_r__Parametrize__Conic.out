@@ -1,18 +1,18 @@
 -- -*- M2-comint -*- hash: 1883920410
-
-i1 : K=QQ;
-
-i2 : R=K[y_0..y_2];
-
-i3 : I=ideal(y_0*y_2-y_1^2+y_2^2);
+
+i1 : K=QQ;
+
+i2 : R=K[y_0..y_2];
+
+i3 : I=ideal(y_0*y_2-y_1^2+y_2^2);
 
 o3 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>R
+
+i4 : rParametrizeConic(I)
 
-i4 : rParametrizeConic(I)
-
-o4 = \displaystyle \begin{pmatrix}
+o4 = \displaystyle \begin{pmatrix}
 {t}_{0}^{2}-{t}_{1}^{2}\\
 -{t}_{0}{t}_{1}\\
 -{t}_{0}^{2}\end{pmatrix}
@@ -20,5 +20,5 @@ o4 = \displaystyle \begin{pmatrix}
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{3}\,\longleftarrow \,\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{1}
-
-i5 : 
+
+i5 : 

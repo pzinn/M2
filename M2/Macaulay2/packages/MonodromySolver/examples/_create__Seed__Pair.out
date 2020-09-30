@@ -1,22 +1,22 @@
 -- -*- M2-comint -*- hash: -1732908762
+
+i1 : setRandomSeed 0
 
-i1 : setRandomSeed 0
+o1 = \displaystyle 0
+
+i2 : R = CC[a,b,c,d][x,y];
+
+i3 : polys = polySystem {a*x+b*y^2,c*x*y+d};
+
+i4 : (p0,x0) := createSeedPair polys;
+
+i5 : polys0=specializeSystem(p0,polys);
+
+i6 : apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
 
-o1 = \displaystyle 0
-
-i2 : R = CC[a,b,c,d][x,y];
-
-i3 : polys = polySystem {a*x+b*y^2,c*x*y+d};
-
-i4 : (p0,x0) := createSeedPair polys;
-
-i5 : polys0=specializeSystem(p0,polys);
-
-i6 : apply(polys0,p->sub(p,{x=>first x0.Coordinates,y=>last x0.Coordinates}))
-
-o6 = \displaystyle \left\{{5.55112}\cdot 10^{-17}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,-{8.32667}\cdot 10^{-17}\,\mathbf{i}\right\}
+o6 = \displaystyle \left\{{5.55112}\cdot 10^{-17}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,-{8.32667}\cdot 10^{-17}\,\mathbf{i}\right\}
 
 o6 : <pre style="display:inline">
 List</pre>
-
-i7 : 
+
+i7 : 

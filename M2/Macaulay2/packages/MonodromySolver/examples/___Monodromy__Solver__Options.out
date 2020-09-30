@@ -1,8 +1,8 @@
 -- -*- M2-comint -*- hash: 585099567
+
+i1 : options monodromySolve
 
-i1 : options monodromySolve
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 OptionTable</pre>\left\{\textit{AugmentEdgeCount}\,\Rightarrow\,0,\,\textit{AugmentGraphFunction}\,\Rightarrow\,,\,\textit{AugmentNodeCount}\,\Rightarrow\,0,\,\textit{AugmentNumberOfRepeats}\,\Rightarrow\,,\,\textit{BatchSize}\,\Rightarrow\,\infty,\,\textit{EdgesSaturated}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{Equivalencer}\,\Rightarrow\,,\,\textit{FilterCondition}\,\Rightarrow\,,\,\textit{GraphInitFunction}\,\Rightarrow\,<pre style="display:inline">
 completeGraphInit</pre>,\,<pre style="display:inline">
@@ -13,5 +13,5 @@ false</pre>\right\}
 
 o1 : <pre style="display:inline">
 OptionTable</pre>
-
-i2 : 
+
+i2 : 

@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: -936231083
+
+i1 : A = QQ{x,y}
 
-i1 : A = QQ{x,y}
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
+
+i2 : g = ncMap(A,A,{y,x})
 
-i2 : g = ncMap(A,A,{y,x})
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -32,10 +32,10 @@ A</pre>\right\}
 
 o2 : <pre style="display:inline">
 NCRingMap</pre>
+
+i3 : I = ncIdeal {x^2*y+y*x^2}
 
-i3 : I = ncIdeal {x^2*y+y*x^2}
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -50,10 +50,10 @@ A</pre>\right\}
 
 o3 : <pre style="display:inline">
 NCIdeal</pre>
+
+i4 : g I
 
-i4 : g I
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -68,5 +68,5 @@ A</pre>\right\}
 
 o4 : <pre style="display:inline">
 NCIdeal</pre>
-
-i5 : 
+
+i5 : 

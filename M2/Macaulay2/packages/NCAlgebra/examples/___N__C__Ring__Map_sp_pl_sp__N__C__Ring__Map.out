@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: -1111221426
+
+i1 : A = QQ{x,y}
 
-i1 : A = QQ{x,y}
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
+
+i2 : f = ncMap(A,A,{x,y})
 
-i2 : f = ncMap(A,A,{x,y})
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -32,10 +32,10 @@ A</pre>\right\}
 
 o2 : <pre style="display:inline">
 NCRingMap</pre>
+
+i3 : g = ncMap(A,A,{y,x})
 
-i3 : g = ncMap(A,A,{y,x})
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -57,10 +57,10 @@ A</pre>\right\}
 
 o3 : <pre style="display:inline">
 NCRingMap</pre>
+
+i4 : h = 3*f + 4*g
 
-i4 : h = 3*f + 4*g
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = \displaystyle <pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -86,18 +86,18 @@ A</pre>\right\}
 
 o4 : <pre style="display:inline">
 NCRingMap</pre>
+
+i5 : matrix h
 
-i5 : matrix h
-
-o5 = \displaystyle <pre style="display:inline">
+o5 = \displaystyle <pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}
 
 o5 : <pre style="display:inline">
 NCMatrix</pre>
+
+i6 : k = h^3
 
-i6 : k = h^3
-
-o6 = \displaystyle <pre style="display:inline">
+o6 = \displaystyle <pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -123,13 +123,13 @@ A</pre>\right\}
 
 o6 : <pre style="display:inline">
 NCRingMap</pre>
+
+i7 : matrix k
 
-i7 : matrix k
-
-o7 = \displaystyle <pre style="display:inline">
+o7 = \displaystyle <pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}
 
 o7 : <pre style="display:inline">
 NCMatrix</pre>
-
-i8 : 
+
+i8 : 

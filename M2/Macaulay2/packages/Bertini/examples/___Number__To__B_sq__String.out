@@ -1,22 +1,22 @@
 -- -*- M2-comint -*- hash: 1570067667
+
+i1 : NumberToB'String(2+5*ii)
 
-i1 : NumberToB'String(2+5*ii)
-
-o1 = <pre style="display:inline">
+o1 = <pre style="display:inline">
 .2e1 .5e1</pre>
-
-i2 : NumberToB'String(1/3,M2Precision=>16)
+
+i2 : NumberToB'String(1/3,M2Precision=>16)
 <pre style="display:inline">
 Warning: rational numbers will be converted to floating point.</pre>
 
-o2 = <pre style="display:inline">
+o2 = <pre style="display:inline">
 .33333333333333331e0 .0e0</pre>
-
-i3 : NumberToB'String(1/3,M2Precision=>128)
+
+i3 : NumberToB'String(1/3,M2Precision=>128)
 <pre style="display:inline">
 Warning: rational numbers will be converted to floating point.</pre>
 
-o3 = <pre style="display:inline">
+o3 = <pre style="display:inline">
 .3333333333333333333333333333333333333338e0 .0e0</pre>
-
-i4 : 
+
+i4 : 

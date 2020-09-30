@@ -1,23 +1,23 @@
 -- -*- M2-comint -*- hash: 2068384117
+
+i1 : R = QQ[w]/ideal(w^2+w+1)
 
-i1 : R = QQ[w]/ideal(w^2+w+1)
-
-o1 = \displaystyle R
+o1 = \displaystyle R
 
 o1 : <pre style="display:inline">
 QuotientRing</pre>
+
+i2 : A = skewPolynomialRing(R,promote(-1,R),{x,y,z})
 
-i2 : A = skewPolynomialRing(R,promote(-1,R),{x,y,z})
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o2 : <pre style="display:inline">
 NCQuotientRing</pre>
+
+i3 : g = ncMap(A,A,{y,z,x})
 
-i3 : g = ncMap(A,A,{y,z,x})
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -45,10 +45,10 @@ A</pre>\right\}
 
 o3 : <pre style="display:inline">
 NCRingMap</pre>
+
+i4 : gList = {g, g^2, g^3}
 
-i4 : gList = {g, g^2, g^3}
-
-o4 = \displaystyle \left\{<pre style="display:inline">
+o4 = \displaystyle \left\{<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -124,10 +124,10 @@ A</pre>\right\}\right\}
 
 o4 : <pre style="display:inline">
 List</pre>
+
+i5 : a = sum apply(3,i-> (gList#i)(x^3))
 
-i5 : a = sum apply(3,i-> (gList#i)(x^3))
-
-o5 = \displaystyle <pre style="display:inline">
+o5 = \displaystyle <pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -141,10 +141,10 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}
 
 o5 : <pre style="display:inline">
 A</pre>
+
+i6 : b = sum apply(3,i-> (gList#i)(x^2*y))
 
-i6 : b = sum apply(3,i-> (gList#i)(x^2*y))
-
-o6 = \displaystyle <pre style="display:inline">
+o6 = \displaystyle <pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -158,10 +158,10 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}
 
 o6 : <pre style="display:inline">
 A</pre>
+
+i7 : c = sum apply(3,i-> (gList#i)(x*y^2))
 
-i7 : c = sum apply(3,i-> (gList#i)(x*y^2))
-
-o7 = \displaystyle <pre style="display:inline">
+o7 = \displaystyle <pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -175,10 +175,10 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}
 
 o7 : <pre style="display:inline">
 A</pre>
+
+i8 : d = sum apply(3,i-> (gList#i)(x*y*z))
 
-i8 : d = sum apply(3,i-> (gList#i)(x*y*z))
-
-o8 = \displaystyle <pre style="display:inline">
+o8 = \displaystyle <pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -188,10 +188,10 @@ A</pre>\right\}\,\Rightarrow\,3\right\}\right\}
 
 o8 : <pre style="display:inline">
 A</pre>
+
+i9 : p = w^2*z^2*y+x^2*z+(1-w)*y^3
 
-i9 : p = w^2*z^2*y+x^2*z+(1-w)*y^3
-
-o9 = \displaystyle <pre style="display:inline">
+o9 = \displaystyle <pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -205,15 +205,15 @@ A</pre>\right\}\,\Rightarrow\,-w+1\right\}\right\}
 
 o9 : <pre style="display:inline">
 A</pre>
+
+i10 : g(p)==p
 
-i10 : g(p)==p
-
-o10 = \displaystyle <pre style="display:inline">
+o10 = \displaystyle <pre style="display:inline">
 false</pre>
+
+i11 : p' = sum apply(3,i-> (gList#i)(p))
 
-i11 : p' = sum apply(3,i-> (gList#i)(p))
-
-o11 = \displaystyle <pre style="display:inline">
+o11 = \displaystyle <pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -233,15 +233,15 @@ A</pre>\right\}\,\Rightarrow\,-w+1\right\}\right\}
 
 o11 : <pre style="display:inline">
 A</pre>
+
+i12 : g(p')==p'
 
-i12 : g(p')==p'
-
-o12 = \displaystyle <pre style="display:inline">
+o12 = \displaystyle <pre style="display:inline">
 true</pre>
+
+i13 : coordinates(p',Basis=>{a,b,c,d})
 
-i13 : coordinates(p',Basis=>{a,b,c,d})
-
-o13 = \displaystyle \begin{pmatrix}
+o13 = \displaystyle \begin{pmatrix}
 -w+1\\
 0\\
 -w\\
@@ -250,5 +250,5 @@ o13 = \displaystyle \begin{pmatrix}
 o13 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>R^{4}\,\longleftarrow \,R^{1}
-
-i14 : 
+
+i14 : 

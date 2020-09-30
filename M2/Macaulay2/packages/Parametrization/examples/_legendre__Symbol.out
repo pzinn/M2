@@ -1,15 +1,15 @@
 -- -*- M2-comint -*- hash: -763239538
+
+i1 : legendreSymbol(4,7)
 
-i1 : legendreSymbol(4,7)
+o1 = \displaystyle 1
+
+i2 : legendreSymbol(5,7)
 
-o1 = \displaystyle 1
+o2 = \displaystyle -1
+
+i3 : legendreSymbol(14,7)
 
-i2 : legendreSymbol(5,7)
-
-o2 = \displaystyle -1
-
-i3 : legendreSymbol(14,7)
-
-o3 = \displaystyle 0
-
-i4 : 
+o3 = \displaystyle 0
+
+i4 : 

@@ -1,24 +1,24 @@
 -- -*- M2-comint -*- hash: 652097609
+
+i1 : A = QQ{x,y,z}
 
-i1 : A = QQ{x,y,z}
-
-o1 = \displaystyle <pre style="display:inline">
+o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
+
+i2 : M = ncMatrix {{x, y, z}}
 
-i2 : M = ncMatrix {{x, y, z}}
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}
 
 o2 : <pre style="display:inline">
 NCMatrix</pre>
+
+i3 : sigma = ncMap(A,A,{y,z,x})
 
-i3 : sigma = ncMap(A,A,{y,z,x})
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -46,21 +46,21 @@ A</pre>\right\}
 
 o3 : <pre style="display:inline">
 NCRingMap</pre>
+
+i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = \displaystyle <pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}
 
 o4 : <pre style="display:inline">
 NCMatrix</pre>
+
+i5 : -N
 
-i5 : -N
-
-o5 = \displaystyle <pre style="display:inline">
+o5 = \displaystyle <pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}
 
 o5 : <pre style="display:inline">
 NCMatrix</pre>
-
-i6 : 
+
+i6 : 

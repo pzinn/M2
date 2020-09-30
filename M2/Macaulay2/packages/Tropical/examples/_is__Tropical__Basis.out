@@ -1,20 +1,20 @@
 -- -*- M2-comint -*- hash: 1397472778
+
+i1 : QQ[x,y,z]
 
-i1 : QQ[x,y,z]
-
-o1 = \displaystyle {\mathbb Q}\left[x,y,z\right]
+o1 = \displaystyle {\mathbb Q}\left[x,y,z\right]
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
+
+i2 : isTropicalBasis({x+y+z,2*x+3*y-z})
 
-i2 : isTropicalBasis({x+y+z,2*x+3*y-z})
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = \displaystyle <pre style="display:inline">
 false</pre>
+
+i3 : isTropicalBasis(flatten entries gens Grassmannian (1,4,QQ[a..l]))
 
-i3 : isTropicalBasis(flatten entries gens Grassmannian (1,4,QQ[a..l]))
-
-o3 = \displaystyle <pre style="display:inline">
+o3 = \displaystyle <pre style="display:inline">
 true</pre>
-
-i4 : 
+
+i4 : 

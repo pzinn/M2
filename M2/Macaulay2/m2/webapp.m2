@@ -160,6 +160,14 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
 	new webAppPRE from res#0 );
+    -- the help hack 2: TODO get rid of somehow or at least reduce to first line, see examples.m2
+    M2outputRE      := "(\n+)"|webAppCellTag|"i+[1-9][0-9]* : ";
+    M2outputREindex := 1;
+    separateM2output = str -> (
+    	m := regex("^"|webAppCellTag|"i1 : ", str);
+    	if m#?0 then str = substring(m#0#0, str);
+    	while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
+    	separate(M2outputRE, M2outputREindex, str));
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	webAppBegin(true);

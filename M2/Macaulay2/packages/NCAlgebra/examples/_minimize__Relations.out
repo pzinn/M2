@@ -1,22 +1,22 @@
 -- -*- M2-comint -*- hash: 807089615
+
+i1 : Q = QQ[a,b,c,d]
 
-i1 : Q = QQ[a,b,c,d]
-
-o1 = \displaystyle Q
+o1 = \displaystyle Q
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
+
+i2 : R = Q/ideal{a*b+c*d}
 
-i2 : R = Q/ideal{a*b+c*d}
-
-o2 = \displaystyle R
+o2 = \displaystyle R
 
 o2 : <pre style="display:inline">
 QuotientRing</pre>
+
+i3 : kRes = res(coker vars R, LengthLimit=>7)
 
-i3 : kRes = res(coker vars R, LengthLimit=>7)
-
-o3 = \displaystyle \underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+o3 = \displaystyle \underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
 a&b&c&d\end{pmatrix}}\,\underset{\vphantom{\Bigg|}1}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
 0&0&-d&0&-c&b&0\\
 0&-d&0&-c&0&0&a\\
@@ -64,10 +64,10 @@ d&0&0&0&0&-a&0&0\\
 
 o3 : <pre style="display:inline">
 ChainComplex</pre>
+
+i4 : M = coker kRes.dd_5
 
-i4 : M = coker kRes.dd_5
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = \displaystyle <pre style="display:inline">
 cokernel</pre>\ \begin{pmatrix}
 b&0&0&0&0&c&0&0\\
 0&a&0&0&c&0&0&0\\
@@ -81,18 +81,18 @@ d&0&0&0&0&-a&0&0\\
 o4 : R<pre style="display:inline">
 -module</pre><pre style="display:inline">
 , quotient of </pre>R^{8}
+
+i5 : B = endomorphismRing(M,Y)
 
-i5 : B = endomorphismRing(M,Y)
-
-o5 = \displaystyle <pre style="display:inline">
+o5 = \displaystyle <pre style="display:inline">
 B</pre>
 
 o5 : <pre style="display:inline">
 NCQuotientRing</pre>
+
+i6 : gensI = gens ideal B
 
-i6 : gensI = gens ideal B
-
-o6 = \displaystyle \left\{<pre style="display:inline">
+o6 = \displaystyle \left\{<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -7208,10 +7208,10 @@ NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\rig
 
 o6 : <pre style="display:inline">
 List</pre>
+
+i7 : gensIMin = minimizeRelations(gensI)
 
-i7 : gensIMin = minimizeRelations(gensI)
-
-o7 = \displaystyle \left\{<pre style="display:inline">
+o7 = \displaystyle \left\{<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -7877,5 +7877,5 @@ NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\rig
 
 o7 : <pre style="display:inline">
 List</pre>
-
-i8 : 
+
+i8 : 

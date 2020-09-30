@@ -1,22 +1,22 @@
 -- -*- M2-comint -*- hash: -24547549
+
+i1 : QQ[x,y,z,w]
 
-i1 : QQ[x,y,z,w]
-
-o1 = \displaystyle {\mathbb Q}\left[x,y,z,w\right]
+o1 = \displaystyle {\mathbb Q}\left[x,y,z,w\right]
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
-
-i2 : I=ideal(x^2-y*z+w^2,w^3-y^3*x+z^3);
+
+i2 : I=ideal(x^2-y*z+w^2,w^3-y^3*x+z^3);
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>{\mathbb Q}\left[x,y,z,w\right]
+
+i3 : T=tropicalVariety I;
+
+i4 : dim T
 
-i3 : T=tropicalVariety I;
-
-i4 : dim T
-
-o4 = \displaystyle 2
-
-i5 : 
+o4 = \displaystyle 2
+
+i5 : 
