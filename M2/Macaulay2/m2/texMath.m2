@@ -318,7 +318,7 @@ texVariable := x -> (
     if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
     )
 --texMath' (Function, Symbol) := (texMath,x) -> if texMathTable#?x then texMathTable#x else texVariable toString x;
-texMath Symbol := x -> texVariable toString x;
+texMath Symbol := x -> if texMathTable#?x then texMathTable#x else texVariable toString x;
 
 texMath' (Function, SheafExpression) := (texMath,x) -> texMath x#0
 
