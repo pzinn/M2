@@ -48,11 +48,17 @@ htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
 htmlWithTex Hypertext := html
 -- the following lines could in principle be for html itself rather than htmlWithTex (and then use the line above for htmlWithTex);
 -- but they conflict with the current defs -- and would cause problems inside Hypertext
+-*
 htmlWithTex Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
     toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> stripTags htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
 htmlWithTex String := x -> concatenate("<pre style=\"display:inline\">\n", stripTags htmlLiteral x,
     if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
     "</pre>")
+*-
+ -- for TESTING purposes
+htmlWithTex String := x -> concatenate("<span class=\"string\">",stripTags htmlLiteral x,"</span>");
+htmlWithTex Net := n -> concatenate("<span class=\"string\" style=\"display:inline-table;vertical-align:",
+    toString(100*(height n-1)), "%\">", apply(unstack n, x -> stripTags htmlLiteral x | "<br/>"), "</span>") -- the % is relative to line-height
 htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
