@@ -57,7 +57,6 @@ webAppEnd = () -> (
 
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     webAppEndTag, -- close previous cell
-    newline,
     webAppCellTag,
     interpreterDepth:"i",
     toString lineno,
