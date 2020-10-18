@@ -138,7 +138,7 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    webAppPRE := new MarkUpType of PRE;
+    webAppPRE := new MarkUpType of PRE; webAppPRE.qname="pre";
     html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
 	"<pre>",
 	webAppTextTag, x, "\n", webAppEndTag,
