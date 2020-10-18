@@ -17,8 +17,8 @@ webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
 
 htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
 
-webAppTagsRegex := concatenate("[",webAppTags,"]")
-stripTags := s -> replace(webAppTagsRegex,"",s)
+webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
+stripTags := s -> replace("\\$","&dollar;",replace(webAppTagsRegex,"",s))
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 htmlWithTex Hypertext := html
