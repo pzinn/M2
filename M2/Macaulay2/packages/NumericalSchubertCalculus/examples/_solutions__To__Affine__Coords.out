@@ -1,6 +1,5 @@
 -- -*- M2-comint -*- hash: 1920086956
-
-i1 : Pblm = {
+i1 : Pblm = {
     ({2,1}, random(RR^6,RR^6)),
     ({2,1}, random(RR^6,RR^6)),
     ({2,1}, random(RR^6,RR^6))
@@ -28,8 +27,7 @@ o1 = \displaystyle \left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 
 o1 : <pre style="display:inline">
 List</pre>
-
-i2 : S = solveSchubertProblem(Pblm, 3,6)
+i2 : S = solveSchubertProblem(Pblm, 3,6)
 
 o2 = \displaystyle \left\{\begin{pmatrix}
 {.362674}+{2.9315}\cdot 10^{-16}\,\mathbf{i}&{5.87881}+{1.11452}\cdot 10^{-13}\,\mathbf{i}&{.067722}-{1.97037}\cdot 10^{-16}\,\mathbf{i}\\
@@ -47,8 +45,7 @@ o2 = \displaystyle \left\{\begin{pmatrix}
 
 o2 : <pre style="display:inline">
 List</pre>
-
-i3 : solutionsToAffineCoords S
+i3 : solutionsToAffineCoords S
 
 o3 = \displaystyle \left\{\begin{pmatrix}
 {1.17594}&-{.247384}&-{1.04186}\\
@@ -66,5 +63,4 @@ o3 = \displaystyle \left\{\begin{pmatrix}
 
 o3 : <pre style="display:inline">
 List</pre>
-
-i4 : 
+i4 : 

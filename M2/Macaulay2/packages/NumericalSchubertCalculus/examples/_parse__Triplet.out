@@ -1,6 +1,5 @@
 -- -*- M2-comint -*- hash: -1135376571
-
-i1 : (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
+i1 : (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
 PHCv2.4.78 released 2020-06-30
 
 the input data for phc -e : 
@@ -10,7 +9,7 @@ the input data for phc -e :
 0
 0
 0
-/tmp/M2-141645-0/3PHCout
+/tmp/M2-1013021-0/3PHCout
 0
 y
 y
@@ -18,50 +17,48 @@ y
 0
 0
 
-writing data to file /tmp/M2-141645-0/2PHCip
-running phc -e, session output to /tmp/M2-141645-0/4PHCses
-                writing output to /tmp/M2-141645-0/3PHCout
-opening output file /tmp/M2-141645-0/5PHCsolutions
-
-i2 : (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
+writing data to file /tmp/M2-1013021-0/2PHCip
+running phc -e, session output to /tmp/M2-1013021-0/4PHCses
+                writing output to /tmp/M2-1013021-0/3PHCout
+opening output file /tmp/M2-1013021-0/5PHCsolutions
+i2 : (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
 
-writing data to file /tmp/M2-141645-0/6PHCinp
-running phc -o, writing output to /tmp/M2-141645-0/7PHCout
+writing data to file /tmp/M2-1013021-0/6PHCinp
+running phc -o, writing output to /tmp/M2-1013021-0/7PHCout
 
-writing data to file /tmp/M2-141645-0/9PHCipt
-writing solutions to /tmp/M2-141645-0/10PHCsolsrunning phc -z ...
+writing data to file /tmp/M2-1013021-0/9PHCipt
+writing solutions to /tmp/M2-1013021-0/10PHCsolsrunning phc -z ...
 the dimension : 6
 the number of flags : 1
 
-o2 = \displaystyle \left(R,\left\{\left(-{.0394326}-{.410898}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.389834}-{.178121}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.103228}-{.244482}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.038366}-{.161348}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({.329271}-{.267198}\,\mathbf{i}\right)\textit{x11}+\left({.161441}+{.0198476}\,\mathbf{i}\right)\textit{x32}+\left(-{.0595184}-{.361241}\,\mathbf{i}\right)\textit{x53}+{.362832}-{.241728}\,\mathbf{i},\,\left(-{.216652}+{.332842}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.270828}+{.219732}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.00594419}+{.222064}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.328841}+{.139701}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.309014}+{.331321}\,\mathbf{i}\right)\textit{x11}+\left(-{.339336}+{.0155589}\,\mathbf{i}\right)\textit{x32}+\left(-{.16613}+{.32537}\,\mathbf{i}\right)\textit{x53}-{.283677}+{.28911}\,\mathbf{i},\,\left({.512104}-{.233431}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.9866}-{.00424958}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.676408}+{.520924}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.315943}-{.109975}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({1.08881}+{.483637}\,\mathbf{i}\right)\textit{x11}+\left({.503724}+{.118856}\,\mathbf{i}\right)\textit{x32}+\left({.238042}+{.359721}\,\mathbf{i}\right)\textit{x53}+{.47498}+{.408147}\,\mathbf{i},\,\left(-{.25229}+{.217507}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.350889}+{.878815}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.110886}-{.303636}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.181658}+{.145689}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.0599327}+{.0252773}\,\mathbf{i}\right)\textit{x11}+\left({.0459233}+{.395494}\,\mathbf{i}\right)\textit{x32}+\left({.0446544}-{.346751}\,\mathbf{i}\right)\textit{x53}-{.251655}-{.403014}\,\mathbf{i},\,\left({.0586747}+{.369979}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.625433}+{.0192049}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.0302289}-{.0983777}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.0499416}+{.0666057}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({.930843}-{.0679909}\,\mathbf{i}\right)\textit{x11}+\left({.408339}+{.0898483}\,\mathbf{i}\right)\textit{x32}+\left({.356794}-{.143785}\,\mathbf{i}\right)\textit{x53}+{.863018}+{.0372624}\,\mathbf{i},\,\left(-{.306306}+{.0573276}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.640768}+{.191632}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.120048}-{.0581394}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.16093}+{.0681047}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.0977749}+{.15771}\,\mathbf{i}\right)\textit{x11}+\left(-{.37714}+{.0398261}\,\mathbf{i}\right)\textit{x32}+\left(-{.0796574}+{.0113744}\,\mathbf{i}\right)\textit{x53}-{.152116}+{.153201}\,\mathbf{i}\right\},\left\{<pre style="display:inline">
+o2 = \displaystyle \left(R,\left\{\left({.393801}-{.630208}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.0380443}-{.499996}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.566118}-{.445507}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.0387492}-{.152246}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({.227727}-{.408516}\,\mathbf{i}\right)\textit{x11}+\left(-{.121801}-{.0728619}\,\mathbf{i}\right)\textit{x32}+\left(-{.00860972}-{.327416}\,\mathbf{i}\right)\textit{x53}-{.193012}-{.171966}\,\mathbf{i},\,\left({.0222668}+{.621574}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.271254}+{.218966}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.0942439}+{.352588}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.10517}+{.381202}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({.097088}+{.0728243}\,\mathbf{i}\right)\textit{x11}+\left({.136666}+{.026277}\,\mathbf{i}\right)\textit{x32}+\left({.0242233}+{.617206}\,\mathbf{i}\right)\textit{x53}-{.0347192}+{.125188}\,\mathbf{i},\,\left(-{.669145}-{.368027}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.773322}-{.738131}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.317167}-{.267459}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.165066}-{.284798}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{1.19973}-{.331672}\,\mathbf{i}\right)\textit{x11}+\left(-{.388071}-{.40921}\,\mathbf{i}\right)\textit{x32}+\left(-{.094899}-{.247896}\,\mathbf{i}\right)\textit{x53}-{.903342}-{.113096}\,\mathbf{i},\,\left({.280244}+{.456765}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.345}-{.240809}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.195448}+{.388754}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.284871}+{.282214}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.221329}-{.337034}\,\mathbf{i}\right)\textit{x11}+\left(-{.157671}+{.276776}\,\mathbf{i}\right)\textit{x32}+\left({.155336}+{.304354}\,\mathbf{i}\right)\textit{x53}-{.0322023}-{.0417251}\,\mathbf{i},\,\left(-{.218152}-{.680215}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left(-{.301091}-{.0945526}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left(-{.169467}-{.554782}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left(-{.323578}+{.0434642}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left(-{.250301}+{.0629677}\,\mathbf{i}\right)\textit{x11}+\left(-{.108552}+{.279334}\,\mathbf{i}\right)\textit{x32}+\left(-{.259756}-{.0740019}\,\mathbf{i}\right)\textit{x53}+{.0960057}+{.189046}\,\mathbf{i},\,\left({.893843}+{.205826}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}\,\textit{x53}+\left({.745017}+{.047391}\,\mathbf{i}\right)\textit{x11}\,\textit{x32}+\left({.753503}+{.0958022}\,\mathbf{i}\right)\textit{x11}\,\textit{x53}+\left({.49466}-{.312996}\,\mathbf{i}\right)\textit{x32}\,\textit{x53}+\left({.437937}+{.171571}\,\mathbf{i}\right)\textit{x11}+\left({.380195}-{.328262}\,\mathbf{i}\right)\textit{x32}+\left({.503882}-{.0937046}\,\mathbf{i}\right)\textit{x53}+{.333278}-{.0995427}\,\mathbf{i}\right\},\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}\right\},\left\{\begin{pmatrix}
--{.408248}-{3.70074}\cdot 10^{-17}\,\mathbf{i}&{.17443}+{.282684}\,\mathbf{i}&-{.384266}+{.31243}\,\mathbf{i}&{.517965}-{.0208192}\,\mathbf{i}&-{.110189}-{.291077}\,\mathbf{i}&-{.316628}-{.109004}\,\mathbf{i}\\
--{.0862094}+{.399042}\,\mathbf{i}&-{.471515}-{.0321214}\,\mathbf{i}&{.198254}-{.458555}\,\mathbf{i}&{.162243}+{.00733281}\,\mathbf{i}&-{.0920253}+{.000117364}\,\mathbf{i}&-{.570506}-{.00873627}\,\mathbf{i}\\
--{.26775}+{.308183}\,\mathbf{i}&{.00604881}-{.377334}\,\mathbf{i}&-{.523306}+{.143599}\,\mathbf{i}&-{.214298}+{.202042}\,\mathbf{i}&{.244548}+{.480246}\,\mathbf{i}&-{.123666}+{.0629975}\,\mathbf{i}\\
--{.114241}-{.391938}\,\mathbf{i}&{.0543587}+{.325157}\,\mathbf{i}&{.2691}+{.233857}\,\mathbf{i}&-{.391487}+{.0755908}\,\mathbf{i}&{.250659}+{.164282}\,\mathbf{i}&-{.567813}+{.162299}\,\mathbf{i}\\
--{.165131}+{.373361}\,\mathbf{i}&-{.157437}+{.467862}\,\mathbf{i}&{.0453437}+{.194718}\,\mathbf{i}&-{.389936}+{.370773}\,\mathbf{i}&-{.446316}-{.00227723}\,\mathbf{i}&{.216803}-{.118118}\,\mathbf{i}\\
--{.405186}+{.0499126}\,\mathbf{i}&-{.187118}+{.369475}\,\mathbf{i}&{.199793}-{.0607248}\,\mathbf{i}&{.242958}-{.332611}\,\mathbf{i}&{.339669}+{.447021}\,\mathbf{i}&{.35934}-{.0649361}\,\mathbf{i}\end{pmatrix}\right\},\begin{pmatrix}
+-{.408248}&{.168305}-{.33416}\,\mathbf{i}&-{.0588625}+{.33205}\,\mathbf{i}&-{.0544269}+{.391949}\,\mathbf{i}&-{.12515}+{.617564}\,\mathbf{i}&{.160499}-{.0150844}\,\mathbf{i}\\
+{.103253}-{.394975}\,\mathbf{i}&-{.525276}+{.0717056}\,\mathbf{i}&{.37002}+{.464236}\,\mathbf{i}&-{.0807084}+{.284053}\,\mathbf{i}&-{.117971}-{.187934}\,\mathbf{i}&{.0708203}+{.241651}\,\mathbf{i}\\
+{.129388}+{.387202}\,\mathbf{i}&-{.259999}+{.183463}\,\mathbf{i}&-{.450995}-{.023174}\,\mathbf{i}&{.374476}+{.159656}\,\mathbf{i}&-{.236557}+{.0359892}\,\mathbf{i}&{.322583}+{.448447}\,\mathbf{i}\\
+{.310203}+{.265407}\,\mathbf{i}&-{.36485}+{.117036}\,\mathbf{i}&{.132761}-{.298172}\,\mathbf{i}&-{.595477}+{.0200769}\,\mathbf{i}&-{.128535}+{.417729}\,\mathbf{i}&{.108337}-{.149117}\,\mathbf{i}\\
+{.405972}+{.0430466}\,\mathbf{i}&{.187755}-{.424517}\,\mathbf{i}&{.20481}-{.204972}\,\mathbf{i}&{.208854}+{.400564}\,\mathbf{i}&-{.326053}-{.254831}\,\mathbf{i}&{.240132}-{.317681}\,\mathbf{i}\\
+-{.0849637}-{.399309}\,\mathbf{i}&-{.10266}-{.323848}\,\mathbf{i}&-{.102427}-{.359069}\,\mathbf{i}&-{.107603}-{.140871}\,\mathbf{i}&{.365908}-{.0174365}\,\mathbf{i}&{.603304}+{.221141}\,\mathbf{i}\end{pmatrix}\right\},\begin{pmatrix}
 1&1&1&1&1&1\\
 -1&-1&-1&-1&-1&0\\
 1&1&1&1&0&0\\
 -1&-1&-1&0&0&0\\
 1&1&0&0&0&0\\
 -1&0&0&0&0&0\end{pmatrix},\left\{\begin{pmatrix}
--{.643529}-{.609882}\,\mathbf{i}&{0}&{0}\\
+{.69904}+{.547278}\,\mathbf{i}&{0}&{0}\\
 1&{0}&{0}\\
-{0}&-{.318403}-{.733332}\,\mathbf{i}&{0}\\
+{0}&-{.924912}-{.0390345}\,\mathbf{i}&{0}\\
 {0}&1&{0}\\
-{0}&{0}&-{1.84679}+{.994147}\,\mathbf{i}\\
+{0}&{0}&{1.53276}-{3.34645}\,\mathbf{i}\\
 {0}&{0}&1\end{pmatrix},\,\begin{pmatrix}
--{.432085}-{.128197}\,\mathbf{i}&{0}&{0}\\
+-{.384989}+{.436078}\,\mathbf{i}&{0}&{0}\\
 1&{0}&{0}\\
-{0}&{.773216}+{3.14795}\,\mathbf{i}&{0}\\
+{0}&-{.815972}+{2.37129}\,\mathbf{i}&{0}\\
 {0}&1&{0}\\
-{0}&{0}&-{.795827}-{.47927}\,\mathbf{i}\\
+{0}&{0}&-{.627453}+{.00391069}\,\mathbf{i}\\
 {0}&{0}&1\end{pmatrix}\right\}\right)
-
-i3 : vars(R)
+i3 : vars(R)
 
 o3 = \displaystyle \begin{pmatrix}
 \textit{x11}&\textit{x32}&\textit{x53}\end{pmatrix}
@@ -69,15 +66,12 @@ o3 = \displaystyle \begin{pmatrix}
 o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>R^{1}\,\longleftarrow \,R^{3}
-
-i4 : peek sols
+i4 : peek sols
 
 o4 = <pre style="display:inline-table;vertical-align:0%">
-{Point{ConditionNumber => 4.12031                                                    }, Point{ConditionNumber => 46.7727                                                  }}<br/>       Coordinates => {-.643529-.609882*ii, -.318403-.733332*ii, -1.84679+.994147*ii}         Coordinates => {-.432085-.128197*ii, .773216+3.14795*ii, -.795827-.47927*ii}<br/>       LastT => 1                                                                             LastT => 1<br/>       SolutionStatus => Regular                                                              SolutionStatus => Regular<br/></pre>
-
-i5 : peek solutionPlanes
+{Point{ConditionNumber => 30.3767                                                 }, Point{ConditionNumber => 14.6477                                                    }}<br/>       Coordinates => {.69904+.547278*ii, -.924912-.039035*ii, 1.53276-3.34645*ii}         Coordinates => {-.384989+.436078*ii, -.815972+2.37129*ii, -.627453+.003911*ii}<br/>       LastT => 1                                                                          LastT => 1<br/>       SolutionStatus => Regular                                                           SolutionStatus => Regular<br/></pre>
+i5 : peek solutionPlanes
 
 o5 = <pre style="display:inline-table;vertical-align:0%">
-{Matrix{cache => CacheTable{}                                              }, Matrix{cache => CacheTable{}                                            }}<br/>        RawMatrix => -.643529-.609882i 0                 0                           RawMatrix => -.432085-.128197i 0                0                <br/>                     1                 0                 0                                        1                 0                0                <br/>                     0                 -.318403-.733332i 0                                        0                 .773216+3.14795i 0                <br/>                     0                 1                 0                                        0                 1                0                <br/>                     0                 0                 -1.84679+.994147i                        0                 0                -.795827-.47927i <br/>                     0                 0                 1                                        0                 0                1                <br/><br/>        ring => CC                                                                   ring => CC<br/>                  53                                                                           53<br/>                      3                                                                            3<br/>        source => CC                                                                 source => CC<br/>                    53                                                                           53<br/>                      6                                                                            6<br/>        target => CC                                                                 target => CC<br/>                    53                                                                           53<br/></pre>
-
-i6 : 
+{Matrix{cache => CacheTable{}                                           }, Matrix{cache => CacheTable{}                                              }}<br/>        RawMatrix => .69904+.547278i 0                 0                          RawMatrix => -.384989+.436078i 0                 0                 <br/>                     1               0                 0                                       1                 0                 0                 <br/>                     0               -.924912-.039035i 0                                       0                 -.815972+2.37129i 0                 <br/>                     0               1                 0                                       0                 1                 0                 <br/>                     0               0                 1.53276-3.34645i                        0                 0                 -.627453+.003911i <br/>                     0               0                 1                                       0                 0                 1                 <br/><br/>        ring => CC                                                                ring => CC<br/>                  53                                                                        53<br/>                      3                                                                         3<br/>        source => CC                                                              source => CC<br/>                    53                                                                        53<br/>                      6                                                                         6<br/>        target => CC                                                              target => CC<br/>                    53                                                                        53<br/></pre>
+i6 : 

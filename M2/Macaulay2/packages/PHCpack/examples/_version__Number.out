@@ -1,17 +1,13 @@
 -- -*- M2-comint -*- hash: -211311793
-
-i1 : v = versionNumber(null)
+i1 : v = versionNumber(null)
 
 o1 = \displaystyle \left(<pre style="display:inline">
 2.4.78</pre>,<pre style="display:inline">
 2020-06-30</pre>\right)
-
-i2 : print v_0
+i2 : print v_0
 <pre style="display:inline">
 2.4.78</pre>
-
-i3 : print v_1
+i3 : print v_1
 <pre style="display:inline">
 2020-06-30</pre>
-
-i4 : 
+i4 : 

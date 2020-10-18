@@ -1,14 +1,12 @@
 -- -*- M2-comint -*- hash: 500845880
-
-i1 : A = QQ{x,y}
+i1 : A = QQ{x,y}
 
 o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-
-i2 : f = x^2+y^2
+i2 : f = x^2+y^2
 
 o2 = \displaystyle <pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -22,8 +20,7 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}
 
 o2 : <pre style="display:inline">
 A</pre>
-
-i3 : bas = flatten entries basis(3,A)
+i3 : bas = flatten entries basis(3,A)
 
 o3 = \displaystyle \left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -77,8 +74,7 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}
 
 o3 : <pre style="display:inline">
 List</pre>
-
-i4 : f*bas
+i4 : f*bas
 
 o4 = \displaystyle \left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -148,5 +144,4 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}
 
 o4 : <pre style="display:inline">
 List</pre>
-
-i5 : 
+i5 : 

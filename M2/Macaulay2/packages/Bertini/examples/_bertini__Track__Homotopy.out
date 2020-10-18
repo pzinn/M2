@@ -1,16 +1,10 @@
 -- -*- M2-comint -*- hash: -1393920928
-
-i1 : R = CC[x,t]; -- include the path variable in the ring
-
-i2 : H = { (x^2-1)*t + (x^2-2)*(1-t)};
-
-i3 : sol1 = point {{1}};
-
-i4 : sol2 = point {{-1}};
-
-i5 : S1= { sol1, sol2  };--solutions to H when t=1
-
-i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
+i1 : R = CC[x,t]; -- include the path variable in the ring
+i2 : H = { (x^2-1)*t + (x^2-2)*(1-t)};
+i3 : sol1 = point {{1}};
+i4 : sol2 = point {{-1}};
+i5 : S1= { sol1, sol2  };--solutions to H when t=1
+i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
 
 o6 = \displaystyle \left\{<pre style="display:inline">
 Point</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
@@ -18,37 +12,29 @@ Point</pre>\left\{\ldots10\ldots\right\}\right\}
 
 o6 : <pre style="display:inline">
 List</pre>
-
-i7 : peek S0_0
+i7 : peek S0_0
 
 o7 = <pre style="display:inline-table;vertical-align:0%">
 Point{ConditionNumber => 1           }<br/>      Coordinates => {-1.41421}<br/>      CycleNumber => 1<br/>      FunctionResidual => 4.44089e-16<br/>      LastT => .0015625<br/>      MaximumPrecision => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 0<br/>      SolutionNumber => -1<br/>      SolutionStatus => Regular<br/></pre>
-
-i8 : R=CC[x,y,t]; -- include the path variable in the ring
-
-i9 : f1=(x^2-y^2);
-
-i10 : f2=(2*x^2-3*x*y+5*y^2);
-
-i11 : H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
-
-i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
+i8 : R=CC[x,y,t]; -- include the path variable in the ring
+i9 : f1=(x^2-y^2);
+i10 : f2=(2*x^2-3*x*y+5*y^2);
+i11 : H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
+i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
 
 o12 = \displaystyle <pre style="display:inline">
 sol1</pre>
 
 o12 : <pre style="display:inline">
 Point</pre>
-
-i13 : sol2=    point{{ -1,1}}
+i13 : sol2=    point{{ -1,1}}
 
 o13 = \displaystyle <pre style="display:inline">
 sol2</pre>
 
 o13 : <pre style="display:inline">
 Point</pre>
-
-i14 : S1={sol1,sol2}--solutions to H when t=1
+i14 : S1={sol1,sol2}--solutions to H when t=1
 
 o14 = \displaystyle \left\{<pre style="display:inline">
 sol1</pre>,\,<pre style="display:inline">
@@ -56,8 +42,7 @@ sol2</pre>\right\}
 
 o14 : <pre style="display:inline">
 List</pre>
-
-i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
+i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
 o15 = \displaystyle \left\{<pre style="display:inline">
 Point</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
@@ -65,5 +50,4 @@ Point</pre>\left\{\ldots10\ldots\right\}\right\}
 
 o15 : <pre style="display:inline">
 List</pre>
-
-i16 : 
+i16 : 

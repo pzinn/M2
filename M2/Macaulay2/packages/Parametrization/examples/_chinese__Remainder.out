@@ -1,7 +1,5 @@
 -- -*- M2-comint -*- hash: 774052082
-
-i1 : chineseRemainder({1,2,3},{3,5,7})
+i1 : chineseRemainder({1,2,3},{3,5,7})
 
 o1 = \displaystyle 52
-
-i2 : 
+i2 : 

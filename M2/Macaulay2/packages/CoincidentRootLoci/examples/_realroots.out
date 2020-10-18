@@ -1,16 +1,13 @@
 -- -*- M2-comint -*- hash: -2142234149
-
-i1 : F = randomBinaryForm 5
+i1 : F = randomBinaryForm 5
 
 o1 = \displaystyle 18\,{t}_{0}^{5}+2\,{t}_{0}^{4}{t}_{1}+9\,{t}_{0}^{3}{t}_{1}^{2}+2\,{t}_{0}^{2}{t}_{1}^{3}+4\,{t}_{0}{t}_{1}^{4}+3\,{t}_{1}^{5}
 
 o1 : {\mathbb Q}\left[{t}_{0},{t}_{1}\right]
-
-i2 : realroots F
+i2 : realroots F
 
 o2 = \displaystyle \left\{\right\}
 
 o2 : <pre style="display:inline">
 List</pre>
-
-i3 : 
+i3 : 

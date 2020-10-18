@@ -1,14 +1,12 @@
 -- -*- M2-comint -*- hash: -1017629464
-
-i1 : A = QQ{x,y,z}
+i1 : A = QQ{x,y,z}
 
 o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-
-i2 : generators A
+i2 : generators A
 
 o2 = \displaystyle \left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -32,8 +30,7 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}
 
 o2 : <pre style="display:inline">
 List</pre>
-
-i3 : gens A
+i3 : gens A
 
 o3 = \displaystyle \left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -57,5 +54,4 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}
 
 o3 : <pre style="display:inline">
 List</pre>
-
-i4 : 
+i4 : 

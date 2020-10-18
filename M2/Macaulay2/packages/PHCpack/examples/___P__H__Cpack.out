@@ -1,20 +1,17 @@
 -- -*- M2-comint -*- hash: -1388999538
-
-i1 : R = CC[x,y,z]
+i1 : R = CC[x,y,z]
 
 o1 = \displaystyle R
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
-
-i2 : system = {y-x^2,z-x^3,x+y+z-1}
+i2 : system = {y-x^2,z-x^3,x+y+z-1}
 
 o2 = \displaystyle \left\{-x^{2}+y,\,-x^{3}+z,\,x+y+z-1\right\}
 
 o2 : <pre style="display:inline">
 List</pre>
-
-i3 : solns = solveSystem(system)
+i3 : solns = solveSystem(system)
 
 o3 = \displaystyle \left\{<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
@@ -23,12 +20,10 @@ Point</pre>\left\{\ldots4\ldots\right\}\right\}
 
 o3 : <pre style="display:inline">
 List</pre>
-
-i4 : numSolns = #solns
+i4 : numSolns = #solns
 
 o4 = \displaystyle 3
-
-i5 : solns/print
+i5 : solns/print
 \displaystyle <pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}
 \displaystyle <pre style="display:inline">
@@ -40,18 +35,15 @@ o5 = \displaystyle \left\{,\,,\,\right\}
 
 o5 : <pre style="display:inline">
 List</pre>
-
-i6 : oneSoln = solns_0
+i6 : oneSoln = solns_0
 
 o6 = \displaystyle <pre style="display:inline">
 oneSoln</pre>
 
 o6 : <pre style="display:inline">
 Point</pre>
-
-i7 : peek oneSoln
+i7 : peek oneSoln
 
 o7 = <pre style="display:inline-table;vertical-align:0%">
 Point{ConditionNumber => 33.3778                                                   }<br/>      Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
-
-i8 : 
+i8 : 

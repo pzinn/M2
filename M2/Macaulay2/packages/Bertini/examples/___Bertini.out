@@ -1,28 +1,24 @@
 -- -*- M2-comint -*- hash: -226670168
-
-i1 : needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
+i1 : needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
 
 o1 = \displaystyle <pre style="display:inline">
 Bertini</pre>
 
 o1 : <pre style="display:inline">
 Package</pre>
-
-i2 : R = CC[x,y]
+i2 : R = CC[x,y]
 
 o2 = \displaystyle R
 
 o2 : <pre style="display:inline">
 PolynomialRing</pre>
-
-i3 : F = {x^2-1,y^2-2}
+i3 : F = {x^2-1,y^2-2}
 
 o3 = \displaystyle \left\{x^{2}-1,\,y^{2}-{2}\right\}
 
 o3 : <pre style="display:inline">
 List</pre>
-
-i4 : solns = bertiniZeroDimSolve(F)
+i4 : solns = bertiniZeroDimSolve(F)
 
 o4 = \displaystyle \left\{<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
@@ -32,5 +28,4 @@ Point</pre>\left\{\ldots14\ldots\right\}\right\}
 
 o4 : <pre style="display:inline">
 List</pre>
-
-i5 : 
+i5 : 

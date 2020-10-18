@@ -1,23 +1,18 @@
 -- -*- M2-comint -*- hash: -679957413
-
-i1 : K=QQ;
-
-i2 : R=K[v,u,z];
-
-i3 : I=ideal(v^8-u^3*(z+u)^5);
+i1 : K=QQ;
+i2 : R=K[v,u,z];
+i3 : I=ideal(v^8-u^3*(z+u)^5);
 
 o3 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>R
-
-i4 : T=K[t_0,t_1]
+i4 : T=K[t_0,t_1]
 
 o4 = \displaystyle T
 
 o4 : <pre style="display:inline">
 PolynomialRing</pre>
-
-i5 : phi=matrix {{t_0^3*t_1^5}, {-t_0^8}, {t_0^8-t_1^8}}
+i5 : phi=matrix {{t_0^3*t_1^5}, {-t_0^8}, {t_0^8-t_1^8}}
 
 o5 = \displaystyle \begin{pmatrix}
 {t}_{0}^{3}{t}_{1}^{5}\\
@@ -27,10 +22,8 @@ o5 = \displaystyle \begin{pmatrix}
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>T^{3}\,\longleftarrow \,T^{1}
-
-i6 : testParametrization(I,phi)
+i6 : testParametrization(I,phi)
 
 o6 = \displaystyle <pre style="display:inline">
 true</pre>
-
-i7 : 
+i7 : 

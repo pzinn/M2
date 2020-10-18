@@ -1,6 +1,5 @@
 -- -*- M2-comint -*- hash: -425483933
-
-i1 : A=random(QQ^3,QQ^3)
+i1 : A=random(QQ^3,QQ^3)
 
 o1 = \displaystyle \begin{pmatrix}
 \frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
@@ -10,17 +9,14 @@ o1 = \displaystyle \begin{pmatrix}
 o1 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
-
-i2 : (perm,LR)=LRdecomposition(A,j->-j);
-
-i3 : perm
+i2 : (perm,LR)=LRdecomposition(A,j->-j);
+i3 : perm
 
 o3 = \displaystyle \left\{0,\,1,\,2\right\}
 
 o3 : <pre style="display:inline">
 List</pre>
-
-i4 : P=transpose (id_(QQ^3))_perm
+i4 : P=transpose (id_(QQ^3))_perm
 
 o4 = \displaystyle \begin{pmatrix}
 1&0&0\\
@@ -30,8 +26,7 @@ o4 = \displaystyle \begin{pmatrix}
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
-
-i5 : R=extractRightUpper(LR)
+i5 : R=extractRightUpper(LR)
 
 o5 = \displaystyle \begin{pmatrix}
 \frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
@@ -41,8 +36,7 @@ o5 = \displaystyle \begin{pmatrix}
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
-
-i6 : L=extractLeftLower(LR)
+i6 : L=extractLeftLower(LR)
 
 o6 = \displaystyle \begin{pmatrix}
 1&0&0\\
@@ -52,10 +46,8 @@ o6 = \displaystyle \begin{pmatrix}
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
-
-i7 : L*R==P*A
+i7 : L*R==P*A
 
 o7 = \displaystyle <pre style="display:inline">
 true</pre>
-
-i8 : 
+i8 : 

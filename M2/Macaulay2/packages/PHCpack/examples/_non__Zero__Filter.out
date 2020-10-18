@@ -1,12 +1,8 @@
 -- -*- M2-comint -*- hash: -2024144972
-
-i1 : R = CC[x,y];
-
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-
-i3 : fSols = solveSystem(f, randomSeed=>3);
-
-i4 : fSols/print
+i1 : R = CC[x,y];
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : fSols = solveSystem(f, randomSeed=>3);
+i4 : fSols/print
 \displaystyle <pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}
 \displaystyle <pre style="display:inline">
@@ -32,10 +28,8 @@ o4 = \displaystyle \left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}
 
 o4 : <pre style="display:inline">
 List</pre>
-
-i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
-
-i6 : nonZeroSols / print
+i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
+i6 : nonZeroSols / print
 \displaystyle <pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}
 \displaystyle <pre style="display:inline">
@@ -57,12 +51,9 @@ o6 = \displaystyle \left\{,\,,\,,\,,\,,\,,\,,\,\right\}
 
 o6 : <pre style="display:inline">
 List</pre>
-
-i7 : f = {x^2+y^2,y*x+x};
-
-i8 : fSols = solveSystem(f);
-
-i9 : fSols/print
+i7 : f = {x^2+y^2,y*x+x};
+i8 : fSols = solveSystem(f);
+i9 : fSols/print
 \displaystyle <pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}
 \displaystyle <pre style="display:inline">
@@ -74,10 +65,8 @@ o9 = \displaystyle \left\{,\,,\,\right\}
 
 o9 : <pre style="display:inline">
 List</pre>
-
-i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
-
-i11 : zeroSols/print
+i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
+i11 : zeroSols/print
 \displaystyle <pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}
 
@@ -85,5 +74,4 @@ o11 = \displaystyle \left\{\right\}
 
 o11 : <pre style="display:inline">
 List</pre>
-
-i12 : 
+i12 : 
