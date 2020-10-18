@@ -3,7 +3,7 @@
 -- htmlWithTex Thing produces some valid html code with possible TeX code
 -- topLevelMode=WebApp produces that plus possible pure text coming from the system
 -- hence, requires tags to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,31,17),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
     (webAppEndTag,            -- closing tag ~ </span>
 	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -11,19 +11,11 @@ webAppTags := apply((17,18,19,20,28,29,30,31,17),ascii);
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
 	webAppTextTag,        -- other text ~ <span class='M2Text'>
-	webAppTexTag,         -- TeX start ~ \(
-	webAppTexEndTag       -- TeX end ~ \)
+	webAppTexTag,         -- effectively deprecated: just uses $
+	webAppTexEndTag       -- effectively deprecated: just uses $
 	)=webAppTags;
 
-texMathStart := "\\(";
-texMathEnd := "\\)";
-texWrap := x -> (  -- similar to 'tex', but only used by webapp.m2 to avoid thread-safety issues -- TODO: rewrite in a thread-safe way
-    y := texMath x;
-    if class y =!= String then error "invalid texMath output";
-    texMathStart | y | texMathEnd
-    )
-
-htmlWithTex Thing := texWrap -- by default, we use tex (as opposed to html)
+htmlWithTex Thing := tex -- by default, we use tex (as opposed to html)
 
 webAppTagsRegex := concatenate("[",webAppTags,"]")
 stripTags := s -> replace(webAppTagsRegex,"",s)
@@ -45,12 +37,8 @@ htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n"
 -- now preparation for output
 
 webAppBegin = (displayStyle) -> (
-    texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
-    texMathEnd = webAppTexEndTag;
     );
 webAppEnd = () -> (
-    texMathStart = "\\(";
-    texMathEnd = "\\)";
     );
 
 -- output routines for WebApp mode
@@ -174,22 +162,18 @@ if topLevelMode === WebApp then (
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global html);
     texMathBackup := texMath;
     htmlBackup := html;
-    texMathInside := x -> if lookup(htmlWithTex,class x) === texWrap then texMathBackup x else concatenate(
+    texMathInside := x -> if lookup(htmlWithTex,class x) === tex then texMathBackup x else concatenate(
 	webAppHtmlTag,
 	htmlWithTex x,
 	webAppEndTag
 	);
     -- ideally we'd just have htmlInside = htmlWithTex but not that simple... (String, Net...)
-    htmlInside := x -> if lookup(htmlWithTex,class x) === texWrap then texWrap x else htmlBackup x;
+    htmlInside := x -> if lookup(htmlWithTex,class x) === tex then tex x else htmlBackup x;
     webAppBegin = (displayStyle) -> (
-	texMathStart = webAppTexTag | (if displayStyle then "\\displaystyle " else "");
-	texMathEnd = webAppTexEndTag;
 	global texMath <- texMathInside;
 	global html <- htmlInside;
     );
     webAppEnd = () -> (
-	texMathStart = "\\(";
-	texMathEnd = "\\)";
 	global texMath <- texMathBackup;
 	global html <- htmlBackup;
     );
