@@ -1,49 +1,49 @@
 -- -*- M2-comint -*- hash: -1326406187
 i1 : R=CC[x,y,z]
 
-o1 = \displaystyle R
+o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : $<pre style="display:inline">
+PolynomialRing</pre>$
 i2 : f=z*x+y
 
-o2 = \displaystyle x\,z+y
+o2 = $x\,z+y$
 
-o2 : R
+o2 : $R$
 i3 : subPoint(f,{x,y},{.1,.2})
 
-o3 = \displaystyle {.1}\,z+{.2}
+o3 = ${.1}\,z+{.2}$
 
-o3 : R
+o3 : $R$
 i4 : subPoint(f,{x,y,z},{.1,.2,.3},SpecifyVariables=>{y})
 
-o4 = \displaystyle x\,z+{.2}
+o4 = $x\,z+{.2}$
 
-o4 : R
+o4 : $R$
 i5 : R=CC_200[x,y,z]
 
-o5 = \displaystyle R
+o5 = $R$
 
-o5 : <pre style="display:inline">
-PolynomialRing</pre>
+o5 : $<pre style="display:inline">
+PolynomialRing</pre>$
 i6 : f=z*x+y
 
-o6 = \displaystyle x\,z+y
+o6 = $x\,z+y$
 
-o6 : R
+o6 : $R$
 i7 : subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
 
-o7 = \displaystyle {.23}
+o7 = ${.23}$
 
-o7 : {\mathbb C}<pre style="display:inline">
- (of precision </pre>53<pre style="display:inline">
+o7 : ${\mathbb C}$<pre style="display:inline">
+ (of precision </pre>$53$<pre style="display:inline">
 )</pre>
 i8 : subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
         0,1},SubIntoCC=>true,M2Precision=>200)
 
-o8 = \displaystyle {.123456789012345678901234567890123456789}
+o8 = ${.123456789012345678901234567890123456789}$
 
-o8 : {\mathbb C}<pre style="display:inline">
- (of precision </pre>200<pre style="display:inline">
+o8 : ${\mathbb C}$<pre style="display:inline">
+ (of precision </pre>$200$<pre style="display:inline">
 )</pre>
 i9 : 

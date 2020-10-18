@@ -1,15 +1,15 @@
 -- -*- M2-comint -*- hash: 692256294
 i1 : X = coincidentRootLocus {3,2,2}
 
-o1 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o1 : $<pre style="display:inline">
+CoincidentRootLocus</pre>$
 i2 : partition X
 
-o2 = \displaystyle \left\{3,\,2,\,2\right\}
+o2 = $\left\{3,\,2,\,2\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
+o2 : $<pre style="display:inline">
+List</pre>$
 i3 : 

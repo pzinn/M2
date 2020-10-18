@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: 1569677465
 i1 : time D77 = realRankBoundary(7,7)
-     -- used 0.399573 seconds
+     -- used 0.357422 seconds
 
-o1 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o1 : $<pre style="display:inline">
+CoincidentRootLocus</pre>$
 i2 : describe D77
 
 o2 = <pre style="display:inline">
@@ -19,14 +19,14 @@ The singular locus is the union of the coincident root loci associated with the 
 ({2, 2, 1, 1, 1},{3, 1, 1, 1, 1})
 The defining polynomial has 1103 terms of degree 12</pre>
 i3 : time D64 = realRankBoundary(6,4)
-     -- used 1.93959 seconds
+     -- used 1.90427 seconds
 
-o3 = \displaystyle \left\{<pre style="display:inline">
+o3 = $\left\{<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">
-JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}\right\}
+JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : $<pre style="display:inline">
+List</pre>$
 i4 : describe first D64
 
 o4 = <pre style="display:inline">
@@ -48,13 +48,13 @@ codim  = 1
 degree = 18
 The defining polynomial has 3140 terms of degree 18</pre>
 i6 : time D74 = realRankBoundary(7,4)
-     -- used 0.378935 seconds
+     -- used 0.377358 seconds
 
-o6 = \displaystyle <pre style="display:inline">
-JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}
+o6 = $<pre style="display:inline">
+JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}$
 
-o6 : <pre style="display:inline">
-JoinOfCoincidentRootLoci</pre>
+o6 : $<pre style="display:inline">
+JoinOfCoincidentRootLoci</pre>$
 i7 : describe D74
 
 o7 = <pre style="display:inline">
@@ -66,15 +66,15 @@ dim    = 6
 codim  = 1
 degree = 24</pre>
 i8 : time D75 = realRankBoundary(7,5)
-     -- used 0.201652 seconds
+     -- used 0.20133 seconds
 
-o8 = \displaystyle \left\{<pre style="display:inline">
+o8 = $\left\{<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">
-JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}\right\}
+JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}\right\}$
 
-o8 : <pre style="display:inline">
-List</pre>
+o8 : $<pre style="display:inline">
+List</pre>$
 i9 : describe D75_0
 
 o9 = <pre style="display:inline">
@@ -104,15 +104,15 @@ dim    = 6
 codim  = 1
 degree = 24</pre>
 i12 : time D76 = realRankBoundary(7,6)
-     -- used 0.000326735 seconds
+     -- used 0.000274657 seconds
 
-o12 = \displaystyle \left\{<pre style="display:inline">
+o12 = $\left\{<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}\right\}
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}\right\}$
 
-o12 : <pre style="display:inline">
-List</pre>
+o12 : $<pre style="display:inline">
+List</pre>$
 i13 : describe D76_0
 
 o13 = <pre style="display:inline">

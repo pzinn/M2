@@ -9,7 +9,7 @@ Schubert problem (2,1)^3 in Gr(3,6)
 Generate flags F: standard flag, oposite flag, and one random
 i8 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
-o8 = \displaystyle \left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
+o8 = $\left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 1&{0}&{0}&{0}&{0}&{0}\\
 {0}&1&{0}&{0}&{0}&{0}\\
 {0}&{0}&1&{0}&{0}&{0}\\
@@ -27,15 +27,15 @@ o8 = \displaystyle \left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 {.0258884}+{.714827}\,\mathbf{i}&{.127435}+{.254482}\,\mathbf{i}&{.606588}+{.848005}\,\mathbf{i}&{.276259}+{.605659}\,\mathbf{i}&{.150294}+{.656391}\,\mathbf{i}&{.987173}+{.568273}\,\mathbf{i}\\
 {.89189}+{.231053}\,\mathbf{i}&{.741046}+{.108386}\,\mathbf{i}&{.191734}+{.403215}\,\mathbf{i}&{.96518}+{.681683}\,\mathbf{i}&{.174853}+{.626892}\,\mathbf{i}&{.184779}+{.370833}\,\mathbf{i}\\
 {.461944}+{.775187}\,\mathbf{i}&{.348931}+{.562428}\,\mathbf{i}&{.615911}+{.0147867}\,\mathbf{i}&{.914199}+{.887381}\,\mathbf{i}&{.350611}+{.379495}\,\mathbf{i}&{.339222}+{.062212}\,\mathbf{i}\\
-{.909047}+{.314897}\,\mathbf{i}&{.246268}+{.153346}\,\mathbf{i}&{.223028}+{.388829}\,\mathbf{i}&{.169813}+{.965004}\,\mathbf{i}&{.237252}+{.116721}\,\mathbf{i}&{.465736}+{.40273}\,\mathbf{i}\end{pmatrix}\right)\right\}
+{.909047}+{.314897}\,\mathbf{i}&{.246268}+{.153346}\,\mathbf{i}&{.223028}+{.388829}\,\mathbf{i}&{.169813}+{.965004}\,\mathbf{i}&{.237252}+{.116721}\,\mathbf{i}&{.465736}+{.40273}\,\mathbf{i}\end{pmatrix}\right)\right\}$
 
-o8 : <pre style="display:inline">
-List</pre>
+o8 : $<pre style="display:inline">
+List</pre>$
 i9 : stdio<<"Generate a random set of flags G"<<endl;
 Generate a random set of flags G
 i10 : G = randomSchubertProblemInstance({l1,l2,l3},k,n)
 
-o10 = \displaystyle \left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
+o10 = $\left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 {.51095}+{.859611}\,\mathbf{i}&-{.227376}-{.973807}\,\mathbf{i}&{.842765}-{.538281}\,\mathbf{i}&-{.915156}-{.403101}\,\mathbf{i}&-{.341238}+{.939977}\,\mathbf{i}&-{.110622}-{.993863}\,\mathbf{i}\\
 -{.923063}-{.384649}\,\mathbf{i}&-{.684587}-{.728932}\,\mathbf{i}&-{.991977}+{.126418}\,\mathbf{i}&{.398109}-{.917338}\,\mathbf{i}&{.989783}-{.142579}\,\mathbf{i}&{.930733}+{.365699}\,\mathbf{i}\\
 {.91893}+{.394421}\,\mathbf{i}&-{.210222}+{.977654}\,\mathbf{i}&{.990088}-{.140449}\,\mathbf{i}&{.233835}+{.972276}\,\mathbf{i}&-{.834955}-{.550318}\,\mathbf{i}&{.491643}-{.870797}\,\mathbf{i}\\
@@ -53,15 +53,15 @@ o10 = \displaystyle \left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 -{.963229}-{.268683}\,\mathbf{i}&-{.536928}-{.843628}\,\mathbf{i}&-{.988351}+{.152194}\,\mathbf{i}&{.781806}+{.623522}\,\mathbf{i}&{.667932}+{.744222}\,\mathbf{i}&-{.876997}+{.480495}\,\mathbf{i}\\
 {.760295}+{.649578}\,\mathbf{i}&-{.540848}-{.841121}\,\mathbf{i}&-{.590944}-{.806712}\,\mathbf{i}&-{.92023}-{.391377}\,\mathbf{i}&-{.96194}+{.273261}\,\mathbf{i}&{.999561}+{.0296182}\,\mathbf{i}\\
 {.136209}-{.99068}\,\mathbf{i}&-{.0626679}-{.998034}\,\mathbf{i}&{.296021}+{.955182}\,\mathbf{i}&{.154803}-{.987945}\,\mathbf{i}&-{.938662}-{.344838}\,\mathbf{i}&{.861477}-{.507797}\,\mathbf{i}\\
--{.36939}-{.929274}\,\mathbf{i}&{.113904}+{.993492}\,\mathbf{i}&{.980864}+{.194693}\,\mathbf{i}&-{.764544}+{.644572}\,\mathbf{i}&{.986813}+{.161867}\,\mathbf{i}&{.983563}+{.180565}\,\mathbf{i}\end{pmatrix}\right)\right\}
+-{.36939}-{.929274}\,\mathbf{i}&{.113904}+{.993492}\,\mathbf{i}&{.980864}+{.194693}\,\mathbf{i}&-{.764544}+{.644572}\,\mathbf{i}&{.986813}+{.161867}\,\mathbf{i}&{.983563}+{.180565}\,\mathbf{i}\end{pmatrix}\right)\right\}$
 
-o10 : <pre style="display:inline">
-List</pre>
+o10 : $<pre style="display:inline">
+List</pre>$
 i11 : stdio<<"We solve with respect to F"<<endl;
 We solve with respect to F
 i12 : S = solveSchubertProblem(F,k,n)
 
-o12 = \displaystyle \left\{\begin{pmatrix}
+o12 = $\left\{\begin{pmatrix}
 {1.19794}+{1.17845}\,\mathbf{i}&{0}&{0}\\
 1&{0}&{0}\\
 {0}&-{.167673}-{.067078}\,\mathbf{i}&{0}\\
@@ -73,10 +73,10 @@ o12 = \displaystyle \left\{\begin{pmatrix}
 {0}&{.666069}-{.500515}\,\mathbf{i}&{0}\\
 {0}&1-{4.05481}\cdot 10^{-17}\,\mathbf{i}&{0}\\
 {0}&{0}&-{.480231}-{.307979}\,\mathbf{i}\\
-{0}&{0}&1+{5.37605}\cdot 10^{-18}\,\mathbf{i}\end{pmatrix}\right\}
+{0}&{0}&1+{5.37605}\cdot 10^{-18}\,\mathbf{i}\end{pmatrix}\right\}$
 
-o12 : <pre style="display:inline">
-List</pre>
+o12 : $<pre style="display:inline">
+List</pre>$
 i13 : FlagsF = F/last;
 i14 : FlagsG = G/last;
 i15 : stdio<< "and we transform the solutions to get solutions with respect to G"<<endl;

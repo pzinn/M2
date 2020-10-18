@@ -1,19 +1,19 @@
 -- -*- M2-comint -*- hash: 807089615
 i1 : Q = QQ[a,b,c,d]
 
-o1 = \displaystyle Q
+o1 = $Q$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : $<pre style="display:inline">
+PolynomialRing</pre>$
 i2 : R = Q/ideal{a*b+c*d}
 
-o2 = \displaystyle R
+o2 = $R$
 
-o2 : <pre style="display:inline">
-QuotientRing</pre>
+o2 : $<pre style="display:inline">
+QuotientRing</pre>$
 i3 : kRes = res(coker vars R, LengthLimit=>7)
 
-o3 = \displaystyle \underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+o3 = $\underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
 a&b&c&d\end{pmatrix}}\,\underset{\vphantom{\Bigg|}1}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
 0&0&-d&0&-c&b&0\\
 0&-d&0&-c&0&0&a\\
@@ -57,13 +57,13 @@ b&0&0&0&0&c&0&0\\
 d&0&0&0&0&-a&0&0\\
 0&d&0&0&-b&0&0&0\\
 0&0&d&0&c&0&a&0\\
-0&0&0&d&0&c&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{8}}
+0&0&0&d&0&c&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{8}}$
 
-o3 : <pre style="display:inline">
-ChainComplex</pre>
+o3 : $<pre style="display:inline">
+ChainComplex</pre>$
 i4 : M = coker kRes.dd_5
 
-o4 = \displaystyle <pre style="display:inline">
+o4 = $<pre style="display:inline">
 cokernel</pre>\ \begin{pmatrix}
 b&0&0&0&0&c&0&0\\
 0&a&0&0&c&0&0&0\\
@@ -72,21 +72,21 @@ b&0&0&0&0&c&0&0\\
 d&0&0&0&0&-a&0&0\\
 0&d&0&0&-b&0&0&0\\
 0&0&d&0&c&0&a&0\\
-0&0&0&d&0&c&0&b\end{pmatrix}
+0&0&0&d&0&c&0&b\end{pmatrix}$
 
-o4 : R<pre style="display:inline">
+o4 : $R$<pre style="display:inline">
 -module</pre><pre style="display:inline">
-, quotient of </pre>R^{8}
+, quotient of </pre>$R^{8}$
 i5 : B = endomorphismRing(M,Y)
 
-o5 = \displaystyle <pre style="display:inline">
-B</pre>
+o5 = $<pre style="display:inline">
+B</pre>$
 
-o5 : <pre style="display:inline">
-NCQuotientRing</pre>
+o5 : $<pre style="display:inline">
+NCQuotientRing</pre>$
 i6 : gensI = gens ideal B
 
-o6 = \displaystyle \left\{<pre style="display:inline">
+o6 = $\left\{<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -7198,13 +7198,13 @@ CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pr
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
 HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{Y}_{31},\,{Y}_{31}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : $<pre style="display:inline">
+List</pre>$
 i7 : gensIMin = minimizeRelations(gensI)
 
-o7 = \displaystyle \left\{<pre style="display:inline">
+o7 = $\left\{<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -7866,8 +7866,8 @@ CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pr
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
 HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{Y}_{29},\,{Y}_{29}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : $<pre style="display:inline">
+List</pre>$
 i8 : 

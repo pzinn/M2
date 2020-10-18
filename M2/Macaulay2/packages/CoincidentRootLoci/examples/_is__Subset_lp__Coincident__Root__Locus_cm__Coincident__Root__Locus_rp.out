@@ -1,33 +1,33 @@
 -- -*- M2-comint -*- hash: -1704902500
 i1 : X = coincidentRootLocus {6,4}
 
-o1 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o1 : $<pre style="display:inline">
+CoincidentRootLocus</pre>$
 i2 : Y = coincidentRootLocus {5,2,2,1}
 
-o2 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o2 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o2 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o2 : $<pre style="display:inline">
+CoincidentRootLocus</pre>$
 i3 : time isSubset(X,Y)
-     -- used 0.000369726 seconds
+     -- used 0.00042897 seconds
 
-o3 = \displaystyle <pre style="display:inline">
-true</pre>
+o3 = $<pre style="display:inline">
+true</pre>$
 i4 : X' = coincidentRootLocus {6,3,1}
 
-o4 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o4 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o4 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o4 : $<pre style="display:inline">
+CoincidentRootLocus</pre>$
 i5 : time isSubset(X',Y)
-     -- used 0.00035013 seconds
+     -- used 0.000417631 seconds
 
-o5 = \displaystyle <pre style="display:inline">
-false</pre>
+o5 = $<pre style="display:inline">
+false</pre>$
 i6 : 

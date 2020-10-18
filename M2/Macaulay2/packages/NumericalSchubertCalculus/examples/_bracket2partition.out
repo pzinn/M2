@@ -3,22 +3,22 @@
 i2 : n = 4;
 i3 : bracket2partition(b,n)
 
-o3 = \displaystyle \left\{2,\,1\right\}
+o3 = $\left\{2,\,1\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : $<pre style="display:inline">
+List</pre>$
 i4 : n = 6;
 i5 : bracket2partition(b,n)
 
-o5 = \displaystyle \left\{4,\,3\right\}
+o5 = $\left\{4,\,3\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : $<pre style="display:inline">
+List</pre>$
 i6 : b = {2,4,6};
 i7 : bracket2partition(b,n)
 
-o7 = \displaystyle \left\{2,\,1,\,0\right\}
+o7 = $\left\{2,\,1,\,0\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : $<pre style="display:inline">
+List</pre>$
 i8 : 

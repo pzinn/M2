@@ -2,13 +2,13 @@
 i1 : R = QQ[a,b];
 i2 : I = ideal(a^2+b^2,a*b);
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>R
+o2 : $<pre style="display:inline">
+Ideal</pre>$<pre style="display:inline">
+ of </pre>$R$
 i3 : initialIdeals(I)  
 
-o3 = \displaystyle \left\{\left\{a\,b,\,a^{2},\,b^{3}\right\},\,\left\{a^{3},\,a\,b,\,b^{2}\right\}\right\}
+o3 = $\left\{\left\{a\,b,\,a^{2},\,b^{3}\right\},\,\left\{a^{3},\,a\,b,\,b^{2}\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : $<pre style="display:inline">
+List</pre>$
 i4 : 

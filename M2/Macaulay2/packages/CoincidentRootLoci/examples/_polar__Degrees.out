@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: 1114966739
 i1 : X = coincidentRootLocus(3,2,2)
 
-o1 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o1 : $<pre style="display:inline">
+CoincidentRootLocus</pre>$
 i2 : time polarDegrees X
-     -- used 0.778067 seconds
+     -- used 0.802888 seconds
 
-o2 = \displaystyle \left\{36,\,80,\,66,\,24\right\}
+o2 = $\left\{36,\,80,\,66,\,24\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
+o2 : $<pre style="display:inline">
+List</pre>$
 i3 : 

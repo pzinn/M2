@@ -2,18 +2,18 @@
 i1 : QQ[x,y,z];
 i2 : I=ideal(x^2+y^2-2*x*y);
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z\right]
+o2 : $<pre style="display:inline">
+Ideal</pre>$<pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z\right]$
 i3 : isPrime I
 
-o3 = \displaystyle <pre style="display:inline">
-false</pre>
+o3 = $<pre style="display:inline">
+false</pre>$
 i4 : T=tropicalVariety(I,Prime=>false)
 
-o4 = \displaystyle <pre style="display:inline">
-T</pre>
+o4 = $<pre style="display:inline">
+T</pre>$
 
-o4 : <pre style="display:inline">
-TropicalCycle</pre>
+o4 : $<pre style="display:inline">
+TropicalCycle</pre>$
 i5 : 

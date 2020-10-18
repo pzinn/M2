@@ -6,8 +6,8 @@
 i4 : makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
 i5 : theIM=importIncidenceMatrix(storeBM2Files)
 
-o5 = \displaystyle \left\{\left\{\left(2,0\right)\right\},\,\left\{\left(2,0\right)\right\}\right\}
+o5 = $\left\{\left\{\left(2,0\right)\right\},\,\left\{\left(2,0\right)\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : $<pre style="display:inline">
+List</pre>$
 i6 : 

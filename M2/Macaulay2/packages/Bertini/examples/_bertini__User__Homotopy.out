@@ -6,48 +6,48 @@
 i5 : S1= { sol1, sol2  };--solutions to H when t=1
 i6 : S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
 
-o6 = \displaystyle \left\{<pre style="display:inline">
+o6 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots14\ldots\right\}\right\}
+Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : $<pre style="display:inline">
+List</pre>$
 i7 : peek S0_0
 
 o7 = <pre style="display:inline-table;vertical-align:0%">
-Point{AccuracyEst => 8.16163e-13        }<br/>      AccuracyEstInternal => 2.54333e-13<br/>      ConditionNumber => 4.91834<br/>      Coordinates => {1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 2.95046e-16<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 1.32045e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 1<br/></pre>
+Point{AccuracyEst => 3.63766e-12        }<br/>      AccuracyEstInternal => 2.75032e-12<br/>      ConditionNumber => 28.4787<br/>      Coordinates => {1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 1.98603e-15<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 4.23108e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 1<br/></pre>
 i8 : R=CC[x,y,t,a]; -- include the path variable in the ring
 i9 : f1=(x^2-y^2);
 i10 : f2=(2*x^2-3*x*y+5*y^2);
 i11 : H = { f1*a + f2*(1-a)}; --H is a list of polynomials in x,y,t
 i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
 
-o12 = \displaystyle <pre style="display:inline">
-sol1</pre>
+o12 = $<pre style="display:inline">
+sol1</pre>$
 
-o12 : <pre style="display:inline">
-Point</pre>
+o12 : $<pre style="display:inline">
+Point</pre>$
 i13 : sol2=    point{{ -1,1}}
 
-o13 = \displaystyle <pre style="display:inline">
-sol2</pre>
+o13 = $<pre style="display:inline">
+sol2</pre>$
 
-o13 : <pre style="display:inline">
-Point</pre>
+o13 : $<pre style="display:inline">
+Point</pre>$
 i14 : S1={sol1,sol2}--solutions to H when t=1
 
-o14 = \displaystyle \left\{<pre style="display:inline">
+o14 = $\left\{<pre style="display:inline">
 sol1</pre>,\,<pre style="display:inline">
-sol2</pre>\right\}
+sol2</pre>\right\}$
 
-o14 : <pre style="display:inline">
-List</pre>
+o14 : $<pre style="display:inline">
+List</pre>$
 i15 : S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
 
-o15 = \displaystyle \left\{<pre style="display:inline">
+o15 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots14\ldots\right\}\right\}
+Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o15 : <pre style="display:inline">
-List</pre>
+o15 : $<pre style="display:inline">
+List</pre>$
 i16 : 

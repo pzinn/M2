@@ -5,7 +5,7 @@
 i4 :  mixedVol = computeMixedVolume polys;
 i5 :  sparseMonodromySolve(polySystem polys,TargetSolutionCount=>mixedVol,NumberOfNodes=>3)
 
-o5 = \displaystyle \left(<pre style="display:inline">
+o5 = $\left(<pre style="display:inline">
 Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
-PointArray</pre>\left\{\ldots4\ldots\right\}\right)
+PointArray</pre>\left\{\ldots4\ldots\right\}\right)$
 i6 : 

@@ -1,47 +1,47 @@
 -- -*- M2-comint -*- hash: -2130591421
 i1 : setRandomSeed 0
 
-o1 = \displaystyle 0
+o1 = $0$
 i2 : declareVariable \ {A,B,C,D,X,Y}
 
-o2 = \displaystyle \left\{<pre style="display:inline">
+o2 = $\left\{<pre style="display:inline">
 InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,A\right\},\,<pre style="display:inline">
 InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,B\right\},\,<pre style="display:inline">
 InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,C\right\},\,<pre style="display:inline">
 InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,D\right\},\,<pre style="display:inline">
 InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,X\right\},\,<pre style="display:inline">
-InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,Y\right\}\right\}
+InputGate</pre>\left\{\textit{Name}\,\Rightarrow\,Y\right\}\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
+o2 : $<pre style="display:inline">
+List</pre>$
 i3 : PS = gateSystem(matrix{{A,B,C,D}},matrix{{X,Y}},matrix{{A*(X-1)^2-B}, {C*(Y+2)^2+D}})
 
-o3 = \displaystyle <pre style="display:inline">
-GateSystem</pre>\left\{\ldots5\ldots\right\}
+o3 = $<pre style="display:inline">
+GateSystem</pre>\left\{\ldots5\ldots\right\}$
 
-o3 : <pre style="display:inline">
-GateSystem</pre>
+o3 : $<pre style="display:inline">
+GateSystem</pre>$
 i4 : solveFamily(point{{1,1,1,1}}, PS)
 
-o4 = \displaystyle \left(<pre style="display:inline">
+o4 = $\left(<pre style="display:inline">
 Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
-PointArray</pre>\left\{\ldots3\ldots\right\}\right)
+PointArray</pre>\left\{\ldots3\ldots\right\}\right)$
 i5 : R=CC[a,b,c,d][x,y]
 
-o5 = \displaystyle R
+o5 = $R$
 
-o5 : <pre style="display:inline">
-PolynomialRing</pre>
+o5 : $<pre style="display:inline">
+PolynomialRing</pre>$
 i6 : F=polySystem {a*(x-1)^2-b, c*(y+2)^2+d}
 
-o6 = \displaystyle <pre style="display:inline">
-F</pre>
+o6 = $<pre style="display:inline">
+F</pre>$
 
-o6 : <pre style="display:inline">
-PolySystem</pre>
+o6 : $<pre style="display:inline">
+PolySystem</pre>$
 i7 : solveFamily(point{{1,1,1,1}}, F)
 
-o7 = \displaystyle \left(<pre style="display:inline">
+o7 = $\left(<pre style="display:inline">
 Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
-PointArray</pre>\left\{\ldots3\ldots\right\}\right)
+PointArray</pre>\left\{\ldots3\ldots\right\}\right)$
 i8 : 

@@ -3,14 +3,14 @@
 i2 : polys = polySystem {a*x+b*y+c*z,d*x*y+e*x*z+f*y*z,g*x*y*z+h};
 i3 : (p0,x0) := createSeedPair polys
 
-o3 = \displaystyle \left(<pre style="display:inline">
+o3 = $\left(<pre style="display:inline">
 Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
-Point</pre>\left\{\ldots1\ldots\right\}\right)
+Point</pre>\left\{\ldots1\ldots\right\}\right)$
 i4 : mixedVolume = computeMixedVolume specializeSystem(p0,polys)
 
-o4 = \displaystyle 6
+o4 = $6$
 i5 : monodromySolve(polys,p0,{x0},SelectEdgeAndDirection=>selectBestEdgeAndDirection, Potential=>potentialE, TargetSolutionCount=>mixedVolume)
 
-o5 = \displaystyle \left(<pre style="display:inline">
-HomotopyNode</pre>\left\{\ldots7\ldots\right\},10\right)
+o5 = $\left(<pre style="display:inline">
+HomotopyNode</pre>\left\{\ldots7\ldots\right\},10\right)$
 i6 : 
