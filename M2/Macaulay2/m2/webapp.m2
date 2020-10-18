@@ -36,7 +36,7 @@ htmlWithTex Descent := x -> concatenate("<pre style=\"display:inline-table\">\n"
 
 -- now preparation for output
 
-webAppBegin = (displayStyle) -> (
+webAppBegin = () -> (
     );
 webAppEnd = () -> (
     );
@@ -59,7 +59,7 @@ Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    webAppBegin(true);
+    webAppBegin();
     y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
     webAppEnd();
     if class y =!= String then error "invalid htmlWithTex output";
@@ -74,7 +74,7 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlWithTexAfterPrint :=  y -> (
     y=deepSplice sequence y;
-    webAppBegin(false);
+    webAppBegin();
     z := htmlWithTex \ y;
     webAppEnd();
     if any(z, x -> class x =!= String) then error "invalid htmlWithTex output";
@@ -152,7 +152,7 @@ if topLevelMode === WebApp then (
     M2outputRE      = "(\n+)"|webAppEndTag|webAppCellTag|"i+[1-9][0-9]* : ";
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
-	webAppBegin(true);
+	webAppBegin();
 	y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
 	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
@@ -169,7 +169,7 @@ if topLevelMode === WebApp then (
 	);
     -- ideally we'd just have htmlInside = htmlWithTex but not that simple... (String, Net...)
     htmlInside := x -> if lookup(htmlWithTex,class x) === tex then tex x else htmlBackup x;
-    webAppBegin = (displayStyle) -> (
+    webAppBegin = () -> (
 	global texMath <- texMathInside;
 	global html <- htmlInside;
     );
