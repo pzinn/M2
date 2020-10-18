@@ -60,7 +60,6 @@ htmlLiteral = s -> if s === null or regex("<|&|]]>|\42|\\$", s) === null then s 
      s = replace("<", "&lt;", s);
      s = replace("]]>", "]]&gt;", s);
      s = replace("\42", "&quot;", s);  -- note: \42 is "
-     s= replace("\\$","&dollar;",s);
      s )
 
 -- tracking indentations
