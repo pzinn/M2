@@ -1,19 +1,13 @@
 -- -*- M2-comint -*- hash: -1408417501
-
-i1 : setRandomSeed 0;
-
-i2 : R=CC[x,y,z];
-
-i3 : F=random(3,R);
+i1 : setRandomSeed 0;
+i2 : R=CC[x,y,z];
+i3 : F=random(3,R);
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
-
-i4 : P=sum apply(gens R,g->diff(g,F)*random CC);
-
-i5 : sparseMonodromySolve polySystem {F,P,random(1,R)-1}
+i4 : P=sum apply(gens R,g->diff(g,F)*random CC);
+i5 : sparseMonodromySolve polySystem {F,P,random(1,R)-1}
 
 o5 = \displaystyle \left(<pre style="display:inline">
 Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
 PointArray</pre>\left\{\ldots4\ldots\right\}\right)
-
-i6 : 
+i6 : 

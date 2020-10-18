@@ -1,10 +1,7 @@
 -- -*- M2-comint -*- hash: -607525885
-
-i1 : R = QQ[x,y,z];
-
-i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
-
-i3 : sols = solveRationalSystem(system)
+i1 : R = QQ[x,y,z];
+i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
+i3 : sols = solveRationalSystem(system)
 
 o3 = \displaystyle \left\{<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
@@ -13,10 +10,8 @@ Point</pre>\left\{\ldots4\ldots\right\}\right\}
 
 o3 : <pre style="display:inline">
 List</pre>
-
-i4 : peek first sols
+i4 : peek first sols
 
 o4 = <pre style="display:inline-table;vertical-align:0%">
 Point{ConditionNumber => 4.87567                }<br/>      Coordinates => {.543689, .295598, .160713}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
-
-i5 : 
+i5 : 

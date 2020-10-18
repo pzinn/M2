@@ -1,40 +1,34 @@
 -- -*- M2-comint -*- hash: 1044499008
-
-i1 : A = QQ{x,y,z}
+i1 : A = QQ{x,y,z}
 
 o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-
-i2 : coefficientRing A
+i2 : coefficientRing A
 
 o2 = \displaystyle {\mathbb Q}
 
 o2 : <pre style="display:inline">
 Ring</pre>
-
-i3 : R = ZZ/101[a,b,c,d]/(ideal(a^2-b^2))
+i3 : R = ZZ/101[a,b,c,d]/(ideal(a^2-b^2))
 
 o3 = \displaystyle R
 
 o3 : <pre style="display:inline">
 QuotientRing</pre>
-
-i4 : B = R{x,y,z}
+i4 : B = R{x,y,z}
 
 o4 = \displaystyle <pre style="display:inline">
 B</pre>
 
 o4 : <pre style="display:inline">
 NCPolynomialRing</pre>
-
-i5 : coefficientRing B
+i5 : coefficientRing B
 
 o5 = \displaystyle R
 
 o5 : <pre style="display:inline">
 QuotientRing</pre>
-
-i6 : 
+i6 : 

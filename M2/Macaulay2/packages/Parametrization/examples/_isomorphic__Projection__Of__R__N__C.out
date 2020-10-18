@@ -1,22 +1,17 @@
 -- -*- M2-comint -*- hash: 706912086
-
-i1 : K=QQ;
-
-i2 : R=K[v,u,z];
-
-i3 : I0=ideal(v^8-u^3*(z+u)^5);
+i1 : K=QQ;
+i2 : R=K[v,u,z];
+i3 : I0=ideal(v^8-u^3*(z+u)^5);
 
 o3 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>R
-
-i4 : J=ideal matrix {{u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6}};
+i4 : J=ideal matrix {{u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6}};
 
 o4 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>R
-
-i5 : I=mapToRNC(I0,J)
+i5 : I=mapToRNC(I0,J)
 
 o5 = \displaystyle <pre style="display:inline">
 ideal</pre>\,\left({x}_{4}{x}_{5}-{x}_{3}{x}_{6},{x}_{3}{x}_{5}-{x}_{2}{x}_{6},{x}_{1}{x}_{5}-{x}_{0}{x}_{6},{x}_{3}{x}_{4}-{x}_{1}{x}_{6},{x}_{2}{x}_{4}-{x}_{0}{x}_{6},{x}_{0}{x}_{4}-{x}_{6}^{2},{x}_{3}^{2}-{x}_{0}{x}_{6},{x}_{2}{x}_{3}-{x}_{0}{x}_{5},{x}_{1}{x}_{3}-{x}_{6}^{2},{x}_{0}{x}_{3}-{x}_{5}{x}_{6},{x}_{1}{x}_{2}-{x}_{5}{x}_{6},{x}_{0}{x}_{2}-{x}_{5}^{2},{x}_{1}^{2}-{x}_{4}{x}_{6},{x}_{0}{x}_{1}-{x}_{3}{x}_{6},{x}_{0}^{2}-{x}_{2}{x}_{6}\right)
@@ -24,8 +19,7 @@ ideal</pre>\,\left({x}_{4}{x}_{5}-{x}_{3}{x}_{6},{x}_{3}{x}_{5}-{x}_{2}{x}_{6},
 o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>{\mathbb Q}\left[{x}_{0},{x}_{1},{x}_{2},{x}_{3},{x}_{4},{x}_{5},{x}_{6}\right]
-
-i6 : isomorphicProjectionOfRNC(I)
+i6 : isomorphicProjectionOfRNC(I)
 
 o6 = \displaystyle \begin{pmatrix}
 {x}_{0}&-{x}_{3}&{x}_{6}\end{pmatrix}
@@ -33,5 +27,4 @@ o6 = \displaystyle \begin{pmatrix}
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>\left({{\mathbb Q}\left[{x}_{0},{x}_{1},{x}_{2},{x}_{3},{x}_{4},{x}_{5},{x}_{6}\right]}\right)^{1}\,\longleftarrow \,\left({{\mathbb Q}\left[{x}_{0},{x}_{1},{x}_{2},{x}_{3},{x}_{4},{x}_{5},{x}_{6}\right]}\right)^{3}
-
-i7 : 
+i7 : 

@@ -1,22 +1,17 @@
 -- -*- M2-comint -*- hash: -1934017729
-
-i1 : K=QQ;
-
-i2 : R=K[v,u,z];
-
-i3 : I0=ideal(v^8-u^3*(z+u)^5);
+i1 : K=QQ;
+i2 : R=K[v,u,z];
+i3 : I0=ideal(v^8-u^3*(z+u)^5);
 
 o3 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>R
-
-i4 : J=ideal matrix {{u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6}};
+i4 : J=ideal matrix {{u^6+4*u^5*z+6*u^4*z^2+4*u^3*z^3+u^2*z^4,v*u^5+3*v*u^4*z+3*v*u^3*z^2+v*u^2*z^3,v^2*u^4+3*v^2*u^3*z+3*v^2*u^2*z^2+v^2*u*z^3,v^3*u^3+2*v^3*u^2*z+v^3*u*z^2,v^4*u^2+v^4*u*z,v^5*u+v^5*z,v^6}};
 
 o4 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>R
-
-i5 : I=mapToRNC(I0,J)
+i5 : I=mapToRNC(I0,J)
 
 o5 = \displaystyle <pre style="display:inline">
 ideal</pre>\,\left({x}_{4}{x}_{5}-{x}_{3}{x}_{6},{x}_{3}{x}_{5}-{x}_{2}{x}_{6},{x}_{1}{x}_{5}-{x}_{0}{x}_{6},{x}_{3}{x}_{4}-{x}_{1}{x}_{6},{x}_{2}{x}_{4}-{x}_{0}{x}_{6},{x}_{0}{x}_{4}-{x}_{6}^{2},{x}_{3}^{2}-{x}_{0}{x}_{6},{x}_{2}{x}_{3}-{x}_{0}{x}_{5},{x}_{1}{x}_{3}-{x}_{6}^{2},{x}_{0}{x}_{3}-{x}_{5}{x}_{6},{x}_{1}{x}_{2}-{x}_{5}{x}_{6},{x}_{0}{x}_{2}-{x}_{5}^{2},{x}_{1}^{2}-{x}_{4}{x}_{6},{x}_{0}{x}_{1}-{x}_{3}{x}_{6},{x}_{0}^{2}-{x}_{2}{x}_{6}\right)
@@ -24,8 +19,7 @@ ideal</pre>\,\left({x}_{4}{x}_{5}-{x}_{3}{x}_{6},{x}_{3}{x}_{5}-{x}_{2}{x}_{6},
 o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>{\mathbb Q}\left[{x}_{0},{x}_{1},{x}_{2},{x}_{3},{x}_{4},{x}_{5},{x}_{6}\right]
-
-i6 : rParametrizeRNC(I)
+i6 : rParametrizeRNC(I)
 
 o6 = \displaystyle \left\{\begin{pmatrix}
 {t}_{0}^{2}{t}_{2}\\
@@ -39,5 +33,4 @@ ideal</pre>\left({t}_{1}^{2}-{t}_{0}{t}_{2}\right)\right\}
 
 o6 : <pre style="display:inline">
 List</pre>
-
-i7 : 
+i7 : 

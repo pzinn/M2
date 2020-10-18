@@ -1,43 +1,38 @@
 -- -*- M2-comint -*- hash: -1142673031
-
-i1 : R = CC[a,b,c,d][x,y];
-
-i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
-
-i3 : (p0, x0) = createSeedPair polys;
-
-i4 : (L, npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0})
---backup directory created: /tmp/M2-58071-0/1
-     -- 0.00544095 seconds elapsed
+i1 : R = CC[a,b,c,d][x,y];
+i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
+i3 : (p0, x0) = createSeedPair polys;
+i4 : (L, npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0})
+--backup directory created: /tmp/M2-948584-0/1
+     -- 0.0100017 seconds elapsed
   H01: 1
-     -- 0.00248759 seconds elapsed
+     -- 0.00278965 seconds elapsed
   H10: 1
-     -- 0.000339528 seconds elapsed
+     -- 0.000342684 seconds elapsed
 number of paths tracked: 2
 found 1 points in the fiber so far
-     -- 0.00296689 seconds elapsed
+     -- 0.00450615 seconds elapsed
   H01: 1
-     -- 0.0104681 seconds elapsed
+     -- 0.0245392 seconds elapsed
   H10: 1
-     -- 0.000323645 seconds elapsed
+     -- 0.00031874 seconds elapsed
 number of paths tracked: 4
 found 1 points in the fiber so far
-     -- 0.00231988 seconds elapsed
+     -- 0.00234647 seconds elapsed
   H01: 1
-     -- 0.00636501 seconds elapsed
+     -- 0.00449359 seconds elapsed
   H10: 1
-     -- 0.000270334 seconds elapsed
+     -- 0.000293336 seconds elapsed
 number of paths tracked: 6
 found 1 points in the fiber so far
-     -- 0.00233763 seconds elapsed
+     -- 0.00255539 seconds elapsed
   H01: 1
-     -- 0.00964515 seconds elapsed
+     -- 0.00253709 seconds elapsed
   H10: 1
-     -- 0.000284293 seconds elapsed
+     -- 0.000251258 seconds elapsed
 number of paths tracked: 8
 found 1 points in the fiber so far
 
 o4 = \displaystyle \left(\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\}\right\},8\right)
-
-i5 : 
+i5 : 

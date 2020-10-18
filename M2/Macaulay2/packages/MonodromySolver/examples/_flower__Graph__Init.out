@@ -1,12 +1,8 @@
 -- -*- M2-comint -*- hash: -1498774810
-
-i1 : R = CC[a,b,c,d][x,y];
-
-i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
-
-i3 : monodromySolve(polys,GraphInitFunction => flowerGraphInit)
+i1 : R = CC[a,b,c,d][x,y];
+i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
+i3 : monodromySolve(polys,GraphInitFunction => flowerGraphInit)
 
 o3 = \displaystyle \left(<pre style="display:inline">
 HomotopyNode</pre>\left\{\ldots7\ldots\right\},24\right)
-
-i4 : 
+i4 : 

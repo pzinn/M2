@@ -1,14 +1,12 @@
 -- -*- M2-comint -*- hash: 1244906468
-
-i1 : A = QQ{x,y,z}
+i1 : A = QQ{x,y,z}
 
 o1 = \displaystyle <pre style="display:inline">
 A</pre>
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-
-i2 : I = ncIdeal{x*z-z*x, y*z, x*y^2-y^2*x, x^3*y-y*x^3}
+i2 : I = ncIdeal{x*z-z*x, y*z, x*y^2-y^2*x, x^3*y-y*x^3}
 
 o2 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -47,8 +45,7 @@ A</pre>\right\}
 
 o2 : <pre style="display:inline">
 NCIdeal</pre>
-
-i3 : J = quadraticClosure I
+i3 : J = quadraticClosure I
 
 o3 = \displaystyle <pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
@@ -71,5 +68,4 @@ A</pre>\right\}
 
 o3 : <pre style="display:inline">
 NCIdeal</pre>
-
-i4 : 
+i4 : 

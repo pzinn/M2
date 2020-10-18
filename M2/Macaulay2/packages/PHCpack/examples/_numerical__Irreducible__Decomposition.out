@@ -1,10 +1,7 @@
 -- -*- M2-comint -*- hash: 522064869
-
-i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
-
-i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
-
-i3 : V=numericalIrreducibleDecomposition(system)
+i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
+i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
+i3 : V=numericalIrreducibleDecomposition(system)
 found 6 irreducible factors 
 
 o3 = \displaystyle <pre style="display:inline">
@@ -12,21 +9,15 @@ V</pre>
 
 o3 : <pre style="display:inline">
 NumericalVariety</pre>
-
-i4 : WitSets=V#5; --witness sets are accessed by dimension
-
-i5 : w=first WitSets;
-
-i6 : w#IsIrreducible
+i4 : WitSets=V#5; --witness sets are accessed by dimension
+i5 : w=first WitSets;
+i6 : w#IsIrreducible
 
 o6 = \displaystyle <pre style="display:inline">
 true</pre>
-
-i7 : R=QQ[x11,x22,x21,x12,x23,x13,x14,x24];
-
-i8 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
-
-i9 : PD=primaryDecomposition(ideal(system))
+i7 : R=QQ[x11,x22,x21,x12,x23,x13,x14,x24];
+i8 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
+i9 : PD=primaryDecomposition(ideal(system))
 
 o9 = \displaystyle \left\{<pre style="display:inline">
 ideal</pre>\,\left(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\textit{x21}\,\textit{x14}-\textit{x11}\,\textit{x24},\textit{x22}\,\textit{x14}-\textit{x12}\,\textit{x24},\textit{x12}\,\textit{x23}-\textit{x22}\,\textit{x13},\textit{x11}\,\textit{x23}-\textit{x21}\,\textit{x13},\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}\right),\,<pre style="display:inline">
@@ -35,13 +26,11 @@ ideal</pre>\,\left(\textit{x13},\textit{x23},\textit{x11}\,\textit{x22}-\textit
 
 o9 : <pre style="display:inline">
 List</pre>
-
-i10 : for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)
+i10 : for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)
 <pre style="display:inline">
 dim =5  degree=4</pre>
 <pre style="display:inline">
 dim =5  degree=2</pre>
 <pre style="display:inline">
 dim =5  degree=2</pre>
-
-i11 : 
+i11 : 

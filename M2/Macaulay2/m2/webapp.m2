@@ -150,25 +150,22 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    webAppPRE := new MarkUpType of PRE;
+    webAppPRE := new MarkUpType of PRE; webAppPRE.qname="pre";
     html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
 	"<pre>",
-	webAppTextTag, x, "\n", webAppEndTag,
+	webAppTextTag,
+	replace("\\$\\{prefix\\}","usr",x#0), -- TEMP fix
+	"\n",
+	webAppEndTag,
 	"</pre>\n"
 	);
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
 	new webAppPRE from res#0 );
-    -- the help hack 2: TODO get rid of somehow or at least reduce to first line, see examples.m2
-    M2outputRE      := "(\n+)"|webAppCellTag|"i+[1-9][0-9]* : ";
-    M2outputREindex := 1;
-    separateM2output = str -> (
-    	m := regex("^"|webAppCellTag|"i1 : ", str);
-    	if m#?0 then str = substring(m#0#0, str);
-    	while str#?-1 and str#-1 == "\n" do str = substring(0, #str - 1, str);
-    	separate(M2outputRE, M2outputREindex, str));
-    -- the print hack
+    -- the help hack 2
+    M2outputRE      = "(\n+)"|webAppEndTag|webAppCellTag;
+   -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	webAppBegin(true);
 	y := htmlWithTex x; -- we compute the htmlWithTex now (in case it produces an error)
