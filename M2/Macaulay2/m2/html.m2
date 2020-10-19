@@ -89,12 +89,13 @@ browser := () -> (
 
 -- This method applies to all types that inherit from Hypertext
 -- Most MarkUpTypes automatically work recursively
-html1 := x -> (if class x === String then htmlLiteral else html) x
+html1 := x -> (if class x === String then htmlLiteral else html) x -- slightly annoying workaround for the ambiguous role of strings in/out of Hypertext
 
 html Hypertext := x -> (
     T := class x;
     qname := T.qname;
     attr := "";
+    if #x==1 and class x#0 === Sequence then x={new Sequence from {x#0}}; -- temporary fix for https://github.com/Macaulay2/M2/issues/1548
     cont := if T.?Options then (
 	(op, ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
 	    "unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
@@ -117,7 +118,7 @@ html Hypertext := x -> (
 
 html LITERAL := x -> concatenate x
 --html String  := x -> htmlLiteral x
-html TEX     := x -> concatenate apply(x, html)
+html TEX     := x -> concatenate apply(x, html1) -- TODO: retire this
 
 html HTML := x -> demark(newline, {
     	///<?xml version="1.0" encoding="utf-8" ?>///,
@@ -153,8 +154,8 @@ html TO2  := x -> (
     if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
     concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
 
-html VerticalList         := x -> html UL apply(x, html)
-html NumberedVerticalList := x -> html OL apply(x, html)
+--html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
+--html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)
 
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser

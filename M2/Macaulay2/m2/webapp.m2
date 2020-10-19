@@ -30,9 +30,16 @@ html String := x -> concatenate("<pre style=\"display:inline\">\n", stripTags ht
 html Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
-	  then html net k -- sucks but no choice
-	  else html net k | " : " | html v
+	  then html k
+	  else html k | " : " | html v
 	  ) | "<br/>"), "</pre>")
+-- a few types are just strings
+html Boolean :=
+html Function :=
+html Type := html @@ toString
+-- except not these descendants
+html RingFamily :=
+html Ring := tex
 
 -- now preparation for output
 
@@ -142,7 +149,7 @@ if topLevelMode === WebApp then (
     html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
 	"<pre>",
 	webAppTextTag,
-	replace("\\$\\{prefix\\}","usr",x#0), -- TEMP fix
+	apply(x,y->replace("\\$\\{prefix\\}","usr",y)), -- TEMP fix
 	"\n",
 	webAppEndTag,
 	"</pre>\n"
@@ -163,7 +170,6 @@ if topLevelMode === WebApp then (
     -- the texMath hack
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
     texMathBackup := texMath;
-    htmlBackup := html;
     texMathInside := x -> if lookup(html,class x) === tex then texMathBackup x else concatenate(
 	webAppHtmlTag,
 	html x,
