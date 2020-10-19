@@ -170,7 +170,7 @@ if topLevelMode === WebApp then (
     -- the texMath hack
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
     texMathBackup := texMath;
-    texMathInside := x -> if lookup(html,class x) === tex then texMathBackup x else concatenate(
+    texMathInside := x -> if lookup(html,class x) === tex or instance(x,Expression) then texMathBackup x else concatenate( -- to avoid trouble with holders
 	webAppHtmlTag,
 	html x,
 	webAppEndTag
