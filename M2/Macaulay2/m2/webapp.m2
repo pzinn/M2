@@ -141,15 +141,18 @@ if topLevelMode === WebApp then (
     webAppPRE := new MarkUpType of PRE; webAppPRE.qname="pre";
     html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
 	"<pre>",
-	webAppTextTag, x, "\n", webAppEndTag,
+	webAppTextTag,
+	replace("\\$\\{prefix\\}","usr",x#0), -- TEMP fix
+	"\n",
+	webAppEndTag,
 	"</pre>\n"
-	);
+	); -- TODO improve this in terms of spacing / see with css too
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
 	new webAppPRE from res#0 );
-    -- the help hack 2
-    M2outputRE      = "(\n+)"|webAppEndTag|webAppCellTag|"i+[1-9][0-9]* : ";
+    -- the help hack 2 (incidentally, this regex is safer
+    M2outputRE      = "(\n+)"|webAppEndTag|webAppCellTag; -- TODO: improve so cleanly separates at Cells
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	webAppBegin();
