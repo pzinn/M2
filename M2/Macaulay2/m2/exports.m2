@@ -724,7 +724,7 @@ export {
 	"hooks",
 	"horizontalJoin",
 	"html",
-	"htmlWithTex",
+--	"htmlWithTex",
 	"httpHeaders",
 	"hypertext",
 	"id",
