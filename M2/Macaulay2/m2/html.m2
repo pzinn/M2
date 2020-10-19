@@ -55,7 +55,7 @@ defaultHEAD = title -> HEAD splice { TITLE title, defaultCharset(), defaultStyle
 -----------------------------------------------------------------------------
 
 -- TODO: urlEncode
-htmlLiteral = s -> if s === null or regex("<|&|]]>|\42|\\$", s) === null then s else (
+htmlLiteral = s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
      s = replace("&", "&amp;", s); -- this one must come first
      s = replace("<", "&lt;", s);
      s = replace("]]>", "]]&gt;", s);
@@ -89,6 +89,8 @@ browser := () -> (
 
 -- This method applies to all types that inherit from Hypertext
 -- Most MarkUpTypes automatically work recursively
+html1 := x -> (if class x === String then htmlLiteral else html) x
+
 html Hypertext := x -> (
     T := class x;
     qname := T.qname;
@@ -105,7 +107,7 @@ html Hypertext := x -> (
     popIndentLevel(1, if #cont == 0
 	then concatenate(head, "<", qname, attr, "/>", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
-	    apply(cont, html), suffix, "</", qname, ">", tail)))
+	    apply(cont, html1), suffix, "</", qname, ">", tail)))
 
 -----------------------------------------------------------------------------
 -- Exceptional (html, MarkUpType) methods
@@ -114,7 +116,7 @@ html Hypertext := x -> (
 -- TOH  -- see format.m2
 
 html LITERAL := x -> concatenate x
-html String  := x -> htmlLiteral x
+--html String  := x -> htmlLiteral x
 html TEX     := x -> concatenate apply(x, html)
 
 html HTML := x -> demark(newline, {
