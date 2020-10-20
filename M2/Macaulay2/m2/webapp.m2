@@ -15,7 +15,9 @@ webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
 	webAppTexEndTag       -- effectively deprecated: just uses $
 	)=webAppTags;
 
-html Thing := tex -- by default, we use tex (as opposed to html)
+texWrap = htmlLiteral @@ tex
+
+html Thing := texWrap -- by default, we use tex (as opposed to html)
 
 webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 stripTags := s -> replace("\\$","&dollar;",replace(webAppTagsRegex,"",s))
@@ -39,11 +41,11 @@ html Function :=
 html Type := html @@ toString
 -- except not these descendants
 html RingFamily :=
-html Ring := tex
+html Ring := texWrap
 
 -- now preparation for output
 
-webAppBegin = () -> (
+webAppBegin = () -> ( -- TODO remove
     );
 webAppEnd = () -> (
     );
@@ -168,17 +170,4 @@ if topLevelMode === WebApp then (
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- the texMath hack
-    currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
-    texMathBackup := texMath;
-    texMathInside := x -> if lookup(html,class x) === tex then texMathBackup x else concatenate(
-	webAppHtmlTag,
-	html x,
-	webAppEndTag
-	);
-    webAppBegin = () -> (
-	global texMath <- texMathInside;
-    );
-    webAppEnd = () -> (
-	global texMath <- texMathBackup;
-    );
-)
+    )
