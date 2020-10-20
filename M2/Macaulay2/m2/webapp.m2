@@ -158,8 +158,8 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
 	new webAppPRE from res#0 );
-    -- the help hack 2 (incidentally, this regex is safer
-    M2outputRE      = "(\n+)"|webAppEndTag|webAppCellTag; -- TODO: improve so cleanly separates at Cells
+    -- the help hack 2 (incidentally, this regex is safer)
+    M2outputRE      = "\n+(?="|webAppEndTag|webAppCellTag|")"; -- TODO: improve so cleanly separates at Cells
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	webAppBegin();
