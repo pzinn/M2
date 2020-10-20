@@ -169,5 +169,6 @@ if topLevelMode === WebApp then (
 	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
-    -- the texMath hack
+    -- the $ issues hack
+    html TT := stripTags @@ (lookup(html, TT))
     )
