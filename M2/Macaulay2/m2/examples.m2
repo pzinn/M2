@@ -12,8 +12,8 @@ processExamplesStrict = true
 -- local utilities
 -----------------------------------------------------------------------------
 
-M2outputRE      = "(\n+)i+[1-9][0-9]* : "
-separateM2output = str -> drop(drop(separate(M2outputRE, 1, str),1),-1)
+M2outputRE      = "\n+(?=i+[1-9][0-9]* : )"
+separateM2output = str -> drop(drop(separate(M2outputRE, str),1),-1)
 
 -----------------------------------------------------------------------------
 -- capture
