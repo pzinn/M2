@@ -15,7 +15,7 @@ webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
 	webAppTexEndTag       -- effectively deprecated: just uses $
 	)=webAppTags;
 
-texWrap = htmlLiteral @@ tex
+texWrap := htmlLiteral @@ tex
 
 html Thing := texWrap -- by default, we use tex (as opposed to html)
 
@@ -41,11 +41,11 @@ html Function :=
 html Type := html @@ toString
 -- except not these descendants
 html RingFamily :=
-html Ring := texWrap
+html Ring := lookup(html,Thing)
 
 -- now preparation for output
 
-webAppBegin = () -> ( -- TODO remove
+webAppBegin = () -> ( -- TODO remove eventually
     );
 webAppEnd = () -> (
     );
@@ -170,5 +170,25 @@ if topLevelMode === WebApp then (
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- the $ issues hack
-    html TT := stripTags @@ (lookup(html, TT))
-    )
+    html TT := stripTags @@ (lookup(html, TT));
+    -- the texMath hack
+    currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
+    texMathBackup := texMath;
+    texMathInside := x -> if lookup(html,class x) === tex or instance(x,Expression) then texMathBackup x else concatenate( -- to avoid trouble with holders
+       webAppHtmlTag,
+       html x,
+       webAppEndTag
+       );
+    webAppBegin = () -> (
+	html RingFamily := -- TODO rewrite this more cleanly
+	html Ring :=
+	html Thing := tex; -- no encoding, makes a mess
+	global texMath <- texMathInside;
+    );
+    webAppEnd = () -> (
+	html RingFamily :=
+	html Ring :=
+	html Thing := texWrap;
+	global texMath <- texMathBackup;
+    );
+)
