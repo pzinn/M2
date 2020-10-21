@@ -15,9 +15,7 @@ webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
 	webAppTexEndTag       -- effectively deprecated: just uses $
 	)=webAppTags;
 
-texWrap = htmlLiteral @@ tex
-
-html Thing := texWrap -- by default, we use tex (as opposed to html)
+html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
 
 webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 stripTags := s -> replace("\\$","&dollar;",replace(webAppTagsRegex,"",s))
@@ -41,7 +39,7 @@ html Function :=
 html Type := html @@ toString
 -- except not these descendants
 html RingFamily :=
-html Ring := texWrap
+html Ring := lookup(html,Thing)
 
 -- now preparation for output
 
@@ -169,6 +167,6 @@ if topLevelMode === WebApp then (
 	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
-    -- the $ issues hack
+    -- the $ issues hack -- TODO better obviously, this is temporary
     html TT := stripTags @@ (lookup(html, TT))
     )
