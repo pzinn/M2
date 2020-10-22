@@ -6,13 +6,13 @@
 webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
     (webAppEndTag,            -- closing tag ~ </span>
 	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
-	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
+	webAppCellTag,        -- start of cell (bundled input + output) ~ <div>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
 	webAppTextTag,        -- other text ~ <span class='M2Text'>
-	webAppTexTag,         -- effectively deprecated: just uses $
-	webAppTexEndTag       -- effectively deprecated: just uses $
+	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
+	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
 
 html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
@@ -167,6 +167,4 @@ if topLevelMode === WebApp then (
 	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
-    -- the $ issues hack -- TODO better obviously, this is temporary
-    html TT := stripTags @@ (lookup(html, TT))
     )
