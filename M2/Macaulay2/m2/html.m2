@@ -130,8 +130,11 @@ html HTML := x -> demark(newline, {
 treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
+fixDollar := x -> replace("\\$","&dollar;",x)
 splitLines := x -> apply(x, y -> if class y === String then demark(newline, lines y) else y) -- effectively, \r\n -> \n and removes last [\r]\n
-html PRE := (lookup(html, PRE)) @@ splitLines
+html PRE := fixDollar @@ (lookup(html, PRE)) @@ splitLines
+html TT := fixDollar @@ (lookup(html, TT))
+html CODE := fixDollar @@ (lookup(html, CODE))
 
 html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")

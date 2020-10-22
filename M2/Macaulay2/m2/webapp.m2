@@ -169,8 +169,6 @@ if topLevelMode === WebApp then (
 	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
-    -- the $ issues hack
-    html TT := stripTags @@ (lookup(html, TT));
     -- the texMath hack
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
     texMathBackup := texMath;
