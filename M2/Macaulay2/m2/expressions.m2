@@ -1222,7 +1222,7 @@ suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","bre
 suffixesRegExp := "("|demark("|",suffixes)|")\\'";
 texVariable := x -> (
     if x === "" then return "";
-    xx := separate("\\$",x); if #xx > 1 then return concatenate between("\\$",texVariable\xx);
+    xx := separate("\\$",x); if #xx > 1 then return concatenate between("\\char'44",texVariable\xx); -- avoid the use of "$" in tex output
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     r := regex(suffixesRegExp,x); if r =!= null then (
@@ -1345,12 +1345,8 @@ texMath MutableList := x -> concatenate (
     ,"\\right\\}"
     )
 
--- strings -- compare with hypertext.m2
-texAltLiteralTable = hashTable { "$" => "\\$", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
-    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
--- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
-texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-texMath String := s -> "\\texttt{" | texAltLiteral s | "}"
+-- strings -- uses texLiteral from latex.m2
+texMath String := s -> "\\texttt{" | texLiteral s | "}"
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
