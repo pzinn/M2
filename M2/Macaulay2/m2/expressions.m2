@@ -1354,12 +1354,8 @@ texMath MutableList := x -> concatenate (
     ,"\\right\\}"
     )
 
--- strings -- compare with hypertext.m2
-texAltLiteralTable = hashTable { "$" => "\\char'44", "\\" => "\\verb|\\|", "{" => "\\{", "}" => "\\}",
-    "&" => "\\&", "^" => "\\verb|^|", "_" => "\\_", " " => "\\ ", "%" => "\\%", "#" => "\\#" }
--- not \^{} for KaTeX compatibility because of https://github.com/Khan/KaTeX/issues/1366
-texAltLiteral = s -> concatenate apply(characters s, c -> if texAltLiteralTable#?c then texAltLiteralTable#c else c)
-texMath String := s -> "\\texttt{" | texAltLiteral s | "}"
+-- strings -- uses texLiteral from latex.m2
+texMath String := s -> "\\texttt{" | texLiteral s | "}"
 -- this truncates very big nets
 maxlen := 3000; -- randomly chosen
 texMath Net := n -> (
