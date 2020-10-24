@@ -95,7 +95,6 @@ html Hypertext := x -> (
     T := class x;
     qname := T.qname;
     attr := "";
-    if #x==1 and class x#0 === Sequence then x={new Sequence from {x#0}}; -- temporary fix for https://github.com/Macaulay2/M2/issues/1548
     cont := if T.?Options then (
 	(op, ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
 	    "unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
