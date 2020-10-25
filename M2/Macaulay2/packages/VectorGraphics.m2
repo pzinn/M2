@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.91",
+        Version => "0.92",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
@@ -98,7 +98,7 @@ GraphicsType List := (T,opts) -> (
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- useful to have output {x,-y,-z,1-z/p}
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- useful to have output {x,-y,-z,1-z/p}
 )
 
 viewPort = g -> (
@@ -147,6 +147,8 @@ updateGraphicsCache := g -> (
     )
 
 project2d := x -> vector {x_0/x_3,x_1/x_3}
+project2d' := x -> vector {x_0/x_3,-x_1/x_3} -- annoying sign
+
 
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new MutableHashTable;
@@ -170,7 +172,7 @@ viewPort1 Circle := g -> (
     )
 distance1 Circle := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    y_2
+    -y_2
     )
 
 Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
@@ -186,7 +188,7 @@ viewPort1 Ellipse := g -> (
     )
 distance1 Ellipse := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    y_2
+    -y_2
     )
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
@@ -219,7 +221,7 @@ viewPort1 Line := g -> (
 distance1 Line := g -> (
     p1 := g.cache.CurrentMatrix * g.Point1;
     p2 := g.cache.CurrentMatrix * g.Point1;
-    0.5*(p1_2+p2_2)
+    -0.5*(p1_2+p2_2)
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -303,27 +305,27 @@ svgLookup := hashTable { -- should be more systematic
     symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
     symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
     symbol Center => (x,m) -> (
-	x = project2d (m*x);
+	x = project2d' (m*x);
 	"cx" => toString x_0,
 	"cy" => toString x_1
 	),
     symbol ScaledRadius => (x,m) ->  "r" => toString x,
     symbol ScaledRadiusX => (x,m) ->  "rx" => toString x,
     symbol ScaledRadiusY => (x,m) ->  "ry" => toString x,
-    symbol PathList => (x,m) -> "d" => demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d(m*y),toString) else y)),
-    symbol Points => (x,m) -> "points" => demark(" ", flatten apply(x, y -> apply(entries project2d(m*y),toString))),
+    symbol PathList => (x,m) -> "d" => demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d'(m*y),toString) else y)),
+    symbol Points => (x,m) -> "points" => demark(" ", flatten apply(x, y -> apply(entries project2d'(m*y),toString))),
     symbol Point => (x,m) -> (
-	x = project2d (m*x);
+	x = project2d' (m*x);
 	"x" => toString x_0,
 	"y" => toString x_1
 	),
     symbol Point1 => (x,m) -> (
-	x = project2d (m*x);
+	x = project2d' (m*x);
 	"x1" => toString x_0,
 	"y1" => toString x_1
 	),
     symbol Point2 => (x,m) -> (
-	x = project2d (m*x);
+	x = project2d' (m*x);
 	"x2" => toString x_0,
 	"y2" => toString x_1
 	),
@@ -385,15 +387,15 @@ expression GraphicsObject := hold
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
-    sum(s,x->(g.cache.CurrentMatrix*x)_2) / #s
+    -sum(s,x->(g.cache.CurrentMatrix*x)_2) / #s
     )
 distance1 GraphicsList := g -> (
-    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, distance) / #(g.Contents)
+    if #(g.Contents) == 0 then 0_RR else -sum(g.Contents, distance) / #(g.Contents)
     )
 GraphicsObject ? GraphicsObject := (x,y) -> (distance y) ? (distance x)
 distance1 GraphicsText := g -> (
     y := g.cache.CurrentMatrix*g.Point;
-    y_2
+    -y_2
     )
 
 graphicsIdCount := 0;
@@ -483,7 +485,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	    "height:",toString g.cache.SizeY,"em;",
 	    if not g#?"stroke-width" then "stroke-width:1%", -- define a default stroke-width
 	),
-	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
+	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
 	};
     if is3d g then ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
@@ -543,8 +545,9 @@ determineSide GraphicsPoly := g -> (
     -- find first 3 coords
     if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
     if #coords<3 then ( remove(g.cache,Filter); return; );
-    coords=apply(take(coords,3),x->(g.cache.CurrentMatrix*x)^{0,1,2});
-    g.cache#"visibility" = if det(matrix coords#0 | matrix coords#1 | matrix coords#2) > 0 then "hidden" else "visible";
+    coords=apply(take(coords,3),x->g.cache.CurrentMatrix*x);
+    coords = {coords#1-coords#0,coords#2-coords#0};
+    g.cache#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
     )
 
 -- lighting
@@ -615,21 +618,18 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
 	if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
     	if #coords>=3 then (
 	    coords=apply(take(coords,3),x->(g.cache.CurrentMatrix*x)^{0,1,2});
-    	    d:=-det(matrix coords#0 | matrix coords#1 | matrix coords#2);
-    	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
+    	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1,0}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
+	    if w_2<0 then w=-w;
 	    scan(l, gg -> (
 	    	    -- compute reflected coords
 		    light := gg.cache.CurrentMatrix*gg.Center;
-	    	    p := light_2/light_3;
-	    	    light=light^{0,1,2};
-	    	    lightrel := light-coords#0;
+	    	    lightrel := light^{0,1,2}-coords#0;
 	    	    sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
 	    	    c := 2*sp/w2;
-	    	    lightmir := light - c*w;
-		    if d<0 then sp=-sp;
+	    	    light = light - c*w;
 		    opts = opts | {
-			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString g#"fill",
-			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(lightmir_0*p/lightmir_2), "y" => toString(lightmir_1*p/lightmir_2), "z" => toString(sp/sqrt(w2)) } },
+			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
+			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(sp/sqrt(w2)) } },
 			feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 			    "operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
@@ -821,8 +821,8 @@ multidoc ///
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
-	Light{(100,0,0),Radius=>10},ViewPort=>{(-100,-100),(100,100)},
-	SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
+	Light{(110,0,0),Radius=>10},ViewPort=>{(-110,-100),(110,100)},
+	SizeY=>30,TransformMatrix=>rotation(-1.5,(4,1,0)))
   Caveat
    Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
  Node
