@@ -150,13 +150,13 @@ function gfxRecompute(el) {
 	    if (el.gfxdata.coords[j] instanceof Float32Array) {
 		var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.coords[j]);
 		if (u[3]<=0) flag=true; else {
-		    var v=[u[0]/u[3],u[1]/u[3]];
+		    var v=[u[0]/u[3],-u[1]/u[3]];
 		    coords.push(u);
 		    s+=v[0]+" "+v[1]+" ";
-		    distance+=u[2]; // not homogenous?
+		    distance+=-u[2]; // not homogenous?
 		}
 	    }
-	    else s+=el.gfxdata.coords[j]+" ";
+	    else s+=el.gfxdata.coords[j]+" "; // what's that for again? obsolete?
 	}
 	if (flag) el.style.display="none"; else {
 	    el.style.display="";
@@ -165,19 +165,23 @@ function gfxRecompute(el) {
 	    // recompute distance as average of distances of vertices
 	    el.gfxdata.distance=distance/coords.length;
 	    if (coords.length>2) {
-		var det = coords[0][2]*coords[1][1]*coords[2][0]-coords[0][1]*coords[1][2]*coords[2][0]-coords[0][2]*coords[1][0]*coords[2][1]+coords[0][0]*coords[1][2]*coords[2][1]+coords[0][1]*coords[1][0]*coords[2][2]-coords[0][0]*coords[1][1]*coords[2][2]; // TODO optimize
+		var u=[coords[1][0]-coords[0][0],coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]];
+		var v=[coords[2][0]-coords[0][0],coords[2][1]-coords[0][1],coords[2][2]-coords[0][2]];
+		var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
 		// visibility
-		if (el.gfxdata.onesided) {
-		    if (det<0) { el.style.visibility="hidden"; return; } else el.style.visibility="visible";
+		if (w[2]<0) {
+		    if (el.gfxdata.onesided) {
+			el.style.visibility="hidden"; return;
+		    } else {
+			w=[-w[0],-w[1],-w[2]];
+		    }
 		}
+		el.style.visibility="visible";
 		// lighting
 		var lightname = el.getAttribute("filter");
 		if (lightname) {
 		    lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
 		    var lightel=document.getElementById(lightname);
-		    var u=[coords[1][0]-coords[0][0],coords[1][1]-coords[0][1],coords[1][2]-coords[0][2]];
-		    var v=[coords[2][0]-coords[0][0],coords[2][1]-coords[0][1],coords[2][2]-coords[0][2]];
-		    var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
 		    var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
 		    for (var j=0; j<lightel.children.length; j++)
 			if (lightel.children[j].tagName == "feSpecularLighting") {
@@ -189,13 +193,11 @@ function gfxRecompute(el) {
 			    var light = new Float32Array(origin.gfxdata.pcenter); // phew
 			    var sp = w[0]*(light[0]-coords[0][0])+w[1]*(light[1]-coords[0][1])+w[2]*(light[2]-coords[0][2]);
 			    var c = 2*sp/w2;
-			    var p = light[2]/light[3]; // eww
 			    for (var i=0; i<3; i++) light[i]-=c*w[i];
-			    if (det<0) sp=-sp;
 			    if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
 				lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-				lightel2.setAttribute("x",light[0]*p/light[2]);
-				lightel2.setAttribute("y",light[1]*p/light[2]);
+				lightel2.setAttribute("x",light[0]/light[3]);
+				lightel2.setAttribute("y",-light[1]/light[3]);
 				lightel2.setAttribute("z",sp/Math.sqrt(w2));
 			    }
 			}
@@ -208,9 +210,9 @@ function gfxRecompute(el) {
 	var u2=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point2);
 	if ((u1[3]<=0)||(u2[3]<=0)) el.style.display="none"; else {
 	    el.style.display="";
-	    var v1=[u1[0]/u1[3],u1[1]/u1[3]];
-	    var v2=[u2[0]/u2[3],u2[1]/u2[3]];
-	    el.gfxdata.distance=0.5*(u1[2]+u2[2]);
+	    var v1=[u1[0]/u1[3],-u1[1]/u1[3]];
+	    var v2=[u2[0]/u2[3],-u2[1]/u2[3]];
+	    el.gfxdata.distance=-0.5*(u1[2]+u2[2]);
 	    el.setAttribute("x1",v1[0]);
 	    el.setAttribute("y1",v1[1]);
 	    el.setAttribute("x2",v2[0]);
@@ -222,8 +224,8 @@ function gfxRecompute(el) {
 	var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point);
 	if (u[3]<=0) el.style.display="none"; else {
 	    el.style.display="";
-	    var v=[u[0]/u[3],u[1]/u[3]];
-	    el.gfxdata.distance=u[2];
+	    var v=[u[0]/u[3],-u[1]/u[3]];
+	    el.gfxdata.distance=-u[2];
 	    el.setAttribute("x",v[0]);
 	    el.setAttribute("y",v[1]);
 	    // rescale font size
@@ -235,8 +237,8 @@ function gfxRecompute(el) {
 	el.gfxdata.pcenter = u; // in case someone needs it ... (light)
 	if (u[3]<=0) el.style.display="none"; else {
 	    el.style.display="";
-	    var v=[u[0]/u[3],u[1]/u[3]];
-	    el.gfxdata.distance=u[2];
+	    var v=[u[0]/u[3],-u[1]/u[3]];
+	    el.gfxdata.distance=-u[2];
 	    el.setAttribute("cx",v[0]);
 	    el.setAttribute("cy",v[1]);
 	    // also, rescale radius
