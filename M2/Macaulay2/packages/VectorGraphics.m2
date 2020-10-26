@@ -98,7 +98,8 @@ GraphicsType List := (T,opts) -> (
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- useful to have output {x,-y,-z,1-z/p}
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,0,1/persp},{0,0,-1/persp,1}} -- output is {x,y,1/p,1-z/p}
+    -- note in particular that distance = p-z = w'/z'
 )
 
 viewPort = g -> (
@@ -172,7 +173,7 @@ viewPort1 Circle := g -> (
     )
 distance1 Circle := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    -y_2
+    y_3/y_2
     )
 
 Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
@@ -188,7 +189,7 @@ viewPort1 Ellipse := g -> (
     )
 distance1 Ellipse := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    -y_2
+    y_3/y_2
     )
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
@@ -221,7 +222,7 @@ viewPort1 Line := g -> (
 distance1 Line := g -> (
     p1 := g.cache.CurrentMatrix * g.Point1;
     p2 := g.cache.CurrentMatrix * g.Point1;
-    -0.5*(p1_2+p2_2)
+    0.5*(p1_3/p1_2+p2_3/p2_2)
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -387,15 +388,15 @@ expression GraphicsObject := hold
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
-    -sum(s,x->(g.cache.CurrentMatrix*x)_2) / #s
+    sum(s,x->(xx:=g.cache.CurrentMatrix*x;xx_3/xx_2)) / #s
     )
 distance1 GraphicsList := g -> (
-    if #(g.Contents) == 0 then 0_RR else -sum(g.Contents, distance) / #(g.Contents)
+    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, distance) / #(g.Contents)
     )
 GraphicsObject ? GraphicsObject := (x,y) -> (distance y) ? (distance x)
 distance1 GraphicsText := g -> (
     y := g.cache.CurrentMatrix*g.Point;
-    -y_2
+    y_3/y_2
     )
 
 graphicsIdCount := 0;
@@ -995,10 +996,10 @@ multidoc ///
   Description
    Text
     A 4x4 matrix that is applied to 3d coordinates for perspective.
-    After this tranformation, the coordinates must be (x,-y,-z,z/p) in the reference frame
-    where the viewer is at (0,0,0) and the screen at z=-p.
-    One can instead provide a real number p, which is equivalent to placing the screen
-    centered at z=0 and the viewer at (0,0,p).
+    After this tranformation, the coordinates must be up to normalization $(x,y,1,z)$
+    where $(x,y)$ are screen coordinates and $z$ the distance from the screen.
+    One can instead provide a real number $p$, which is equivalent to placing the screen
+    centered at $z=0$ and the viewer at 4(0,0,p)$.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
  Node
   Key

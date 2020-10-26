@@ -153,7 +153,7 @@ function gfxRecompute(el) {
 		    var v=[u[0]/u[3],-u[1]/u[3]];
 		    coords.push(u);
 		    s+=v[0]+" "+v[1]+" ";
-		    distance+=-u[2]; // not homogenous?
+		    distance+=u[3]/u[2];
 		}
 	    }
 	    else s+=el.gfxdata.coords[j]+" "; // what's that for again? obsolete?
@@ -212,7 +212,7 @@ function gfxRecompute(el) {
 	    el.style.display="";
 	    var v1=[u1[0]/u1[3],-u1[1]/u1[3]];
 	    var v2=[u2[0]/u2[3],-u2[1]/u2[3]];
-	    el.gfxdata.distance=-0.5*(u1[2]+u2[2]);
+	    el.gfxdata.distance=0.5*(u1[3]/u1[2]+u2[3]/u2[2]);
 	    el.setAttribute("x1",v1[0]);
 	    el.setAttribute("y1",v1[1]);
 	    el.setAttribute("x2",v2[0]);
@@ -225,7 +225,7 @@ function gfxRecompute(el) {
 	if (u[3]<=0) el.style.display="none"; else {
 	    el.style.display="";
 	    var v=[u[0]/u[3],-u[1]/u[3]];
-	    el.gfxdata.distance=-u[2];
+	    el.gfxdata.distance=u[3]/u[2];
 	    el.setAttribute("x",v[0]);
 	    el.setAttribute("y",v[1]);
 	    // rescale font size
@@ -238,7 +238,7 @@ function gfxRecompute(el) {
 	if (u[3]<=0) el.style.display="none"; else {
 	    el.style.display="";
 	    var v=[u[0]/u[3],-u[1]/u[3]];
-	    el.gfxdata.distance=-u[2];
+	    el.gfxdata.distance=u[3]/u[2];
 	    el.setAttribute("cx",v[0]);
 	    el.setAttribute("cy",v[1]);
 	    // also, rescale radius
