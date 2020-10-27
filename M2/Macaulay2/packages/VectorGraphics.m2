@@ -205,7 +205,7 @@ viewPort1 GraphicsText := g -> (
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
     pp := p + vector {
 	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
 	};
     {pp,pp+r}
     )
@@ -679,14 +679,16 @@ radialGradient = true >> o -> stop -> (
 
 GraphicsArrow = new OptionTable from gParse { symbol Points => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", Is3d => false }
 svgMarker := new MarkUpType of HypertextInternalLink
-addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerSizeX" => "3", "markerSizeY" => "4", "refX" => "0", "refY" => "2"})
+addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth" => "3", "markerHeight" => "4", "refX" => "0", "refY" => "2"})
 svgMarker.qname="marker"
+
+m := matrix {{1,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,1}}*perspective 1;
 
 arrow = true >> o -> x -> (
     tag := graphicsId();
     svgMarker {
 	"id" => tag,
-	svg(new Polygon from (GraphicsArrow ++ gParse o),map(RR^4,RR^4,1),map(RR^4,RR^4,1))  -- eww
+	svg(new Polygon from (GraphicsArrow ++ gParse o),m,m)  -- eww
 	}
     )
 
@@ -821,12 +823,12 @@ multidoc ///
     This corresponds to the SVG "specular" lighting, use the property Specular. The location is given by Center.
     By default a Light is invisible (it has opacity 0) and is unaffected by matrix transformations outside it (Static true).
    Example
-    Light{Radius=>10,"fill"=>"yellow"}
+    Light{Radius=>10,"opacity"=>"1","fill"=>"yellow"}
     v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
-	Light{(110,0,0),Radius=>10},ViewPort=>{(-110,-100),(110,100)},
+	Light{(110,0,0),Radius=>10,"opacity"=>"1"},ViewPort=>{(-110,-100),(110,100)},
 	SizeY=>30,TransformMatrix=>rotation(-1.5,(4,1,0)))
   Caveat
    Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
