@@ -3,8 +3,8 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : makeB'InputFile(storeBM2Files,
          AffVariableGroup=>{{x,y}},
          RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
@@ -13,8 +13,8 @@ PolynomialRing</pre>$
 
 o3 = $R$
 
-o3 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o3 : <pre style="display:inline">
+PolynomialRing</pre>
 i4 : makeB'InputFile(storeBM2Files,
          AffVariableGroup=>{{x,y}},
          RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.

@@ -19,8 +19,8 @@ o1 = $\left\{\left(\left\{1\right\},\begin{pmatrix}
 -{.590887}+{.806754}\,\mathbf{i}&-{.726792}+{.686857}\,\mathbf{i}&{.0800129}+{.996794}\,\mathbf{i}&{.742918}+{.669382}\,\mathbf{i}\\
 -{.939129}+{.343564}\,\mathbf{i}&-{.616052}-{.787706}\,\mathbf{i}&{.339065}+{.940763}\,\mathbf{i}&-{.99319}-{.116506}\,\mathbf{i}\end{pmatrix}\right)\right\}$
 
-o1 : $<pre style="display:inline">
-List</pre>$
+o1 : <pre style="display:inline">
+List</pre>
 i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
 
 o2 = $\left\{\left(\left\{2,\,4\right\},\begin{pmatrix}
@@ -41,6 +41,6 @@ o2 = $\left\{\left(\left\{2,\,4\right\},\begin{pmatrix}
 -{.764815}-{.64425}\,\mathbf{i}&-{.64519}-{.764022}\,\mathbf{i}&{.93104}+{.364917}\,\mathbf{i}&{.923802}+{.382872}\,\mathbf{i}\\
 -{.129853}+{.991533}\,\mathbf{i}&{.889567}+{.456804}\,\mathbf{i}&-{.872433}-{.488734}\,\mathbf{i}&-{.636591}-{.771201}\,\mathbf{i}\end{pmatrix}\right)\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : 

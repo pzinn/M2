@@ -3,7 +3,7 @@
 i2 : T=tropicalCycle (F,{1,2});
 i3 : isSimplicial T
 
-o3 = $<pre style="display:inline">
-true</pre>$
+o3 = <pre style="display:inline">
+true</pre>
 i4 : 
 

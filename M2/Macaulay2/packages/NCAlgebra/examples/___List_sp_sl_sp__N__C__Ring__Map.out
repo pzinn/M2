@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : f = ncMap(A,A,{x^2,y^2})
 
 o2 = $<pre style="display:inline">
@@ -28,8 +28,8 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rig
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o2 : $<pre style="display:inline">
-NCRingMap</pre>$
+o2 : <pre style="display:inline">
+NCRingMap</pre>
 i3 : g = ncMap(A,A,{x+y,y})
 
 o3 = $<pre style="display:inline">
@@ -54,8 +54,8 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rig
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o3 : $<pre style="display:inline">
-NCRingMap</pre>$
+o3 : <pre style="display:inline">
+NCRingMap</pre>
 i4 : gens A/f/g
 
 o4 = $\left\{<pre style="display:inline">
@@ -78,8 +78,8 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : gens A/g/f
 
 o5 = $\left\{<pre style="display:inline">
@@ -98,6 +98,6 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : 

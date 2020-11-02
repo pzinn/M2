@@ -7,10 +7,10 @@ o2 = $x^{7}-3\,x^{6}y+5\,x^{5}y^{2}-7\,x^{4}y^{3}+7\,x^{3}y^{4}-5\,x^{2}y^{5}+3
 o2 : ${\mathbb Q}\left[x,y\right]$
 i3 : member(F,coincidentRootLocus {3,2,2})
 
-o3 = $<pre style="display:inline">
-true</pre>$
+o3 = <pre style="display:inline">
+true</pre>
 i4 : member(F,coincidentRootLocus {5,2})
 
-o4 = $<pre style="display:inline">
-false</pre>$
+o4 = <pre style="display:inline">
+false</pre>
 i5 : 

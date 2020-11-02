@@ -15,8 +15,8 @@ o6 = <pre style="display:inline">
 
 o7 = ${\mathbb Q}\,\left\{x,\,y,\,z,\,{w}_{0}\right\}$
 
-o7 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o7 : <pre style="display:inline">
+PolynomialRing</pre>
 i8 : describe oo
 
 o8 = ${\mathbb Q}\,\left\{x\,{.}{.}\, z,\,{w}_{0},\,\textit{Degrees}\ \Rightarrow \ \left\{4:1\right\},\,\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&\textit{Weights}\ \Rightarrow \ \left\{4:-1\right\}\\&\textit{MonomialSize}\ \Rightarrow \ 32\\&\textit{GroupRevLex}\ \Rightarrow \ 4\\&\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\,\textit{DegreeRank}\ \Rightarrow \ 1,\,\textit{Inverses}\ \Rightarrow \ <pre style="display:inline">
@@ -31,8 +31,8 @@ o10 : $<pre style="display:inline">
 frac</pre>\ P$
 i11 : liftable(f,P)
 
-o11 = $<pre style="display:inline">
-true</pre>$
+o11 = <pre style="display:inline">
+true</pre>
 i12 : lift(f,P)
 
 o12 = $z^{2}+x$

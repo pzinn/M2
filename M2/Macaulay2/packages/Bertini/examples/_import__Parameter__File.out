@@ -4,6 +4,6 @@
 
 o2 = $\left\{1,\,{2}\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : 

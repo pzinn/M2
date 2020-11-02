@@ -11,8 +11,8 @@ Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\}\right\}$
 
-o3 : $<pre style="display:inline">
-List</pre>$
+o3 : <pre style="display:inline">
+List</pre>
 i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
 <pre style="display:inline">
 1</pre>
@@ -23,8 +23,8 @@ List</pre>$
 
 o4 = $\left\{\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : sortMainDataComponents(thePoints)
 
 o5 = $\left\{\left\{<pre style="display:inline">
@@ -32,6 +32,6 @@ Point</pre>\left\{\ldots8\ldots\right\}\right\},\,\left\{<pre style="display:i
 Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\}\right\}\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : 

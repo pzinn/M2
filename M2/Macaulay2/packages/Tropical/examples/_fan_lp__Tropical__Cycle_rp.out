@@ -3,16 +3,16 @@
 
 o1 = ${\mathbb Q}\left[x,y,z\right]$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : T=tropicalVariety (ideal(x+3*y+3));
 i3 : fan T
 
 o3 = $<pre style="display:inline">
 Fan</pre>\left\{\ldots1\ldots\right\}$
 
-o3 : $<pre style="display:inline">
-Fan</pre>$
+o3 : <pre style="display:inline">
+Fan</pre>
 i4 : peek o3#cache
 
 o4 = <pre style="display:inline-table;vertical-align:0%">

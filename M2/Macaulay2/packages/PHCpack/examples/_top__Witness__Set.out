@@ -27,8 +27,8 @@ VerticalList{Point{...4...}, Point{...4...}, Point{...4...}}</pre>
 
 o10 = $\left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\,x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\,x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}$
 
-o10 : $<pre style="display:inline">
-List</pre>$
+o10 : <pre style="display:inline">
+List</pre>
 i11 : (w,ns) = topWitnessSet(f,1);
 i12 : dim(w)
 

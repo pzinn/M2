@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : p = y*z + z*y - x^2
 
 o2 = $<pre style="display:inline">
@@ -91,8 +91,8 @@ NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z\right\},\,\t
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o5 : $<pre style="display:inline">
-NCLeftIdeal</pre>$
+o5 : <pre style="display:inline">
+NCLeftIdeal</pre>
 i6 : gens I
 
 o6 = $\left\{<pre style="display:inline">
@@ -127,6 +127,6 @@ A</pre>\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o6 : $<pre style="display:inline">
-List</pre>$
+o6 : <pre style="display:inline">
+List</pre>
 i7 : 

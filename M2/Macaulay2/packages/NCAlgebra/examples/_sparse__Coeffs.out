@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : F = a^2+b^2+c^2+d^2+e^2+f^2+g^2+h^2;
 i3 : sparseCoeffs(F)
 
@@ -19,8 +19,8 @@ o3 = $\begin{pmatrix}
 1\\
 1\end{pmatrix}$
 
-o3 : $<pre style="display:inline">
-Matrix</pre>$<pre style="display:inline">
+o3 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Q}^{8}\,\longleftarrow \,{\mathbb Q}^{1}$
 i4 : bas = flatten entries basis(2,A);
 i5 : #bas
@@ -94,8 +94,8 @@ o6 = $\begin{pmatrix}
 0\\
 1\end{pmatrix}$
 
-o6 : $<pre style="display:inline">
-Matrix</pre>$<pre style="display:inline">
+o6 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Q}^{64}\,\longleftarrow \,{\mathbb Q}^{1}$
 i7 : sparseCoeffs(toList (10:F),Monomials=>bas)
 
@@ -165,7 +165,7 @@ o7 = $\begin{pmatrix}
 0&0&0&0&0&0&0&0&0&0\\
 1&1&1&1&1&1&1&1&1&1\end{pmatrix}$
 
-o7 : $<pre style="display:inline">
-Matrix</pre>$<pre style="display:inline">
+o7 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Q}^{64}\,\longleftarrow \,{\mathbb Q}^{10}$
 i8 : 

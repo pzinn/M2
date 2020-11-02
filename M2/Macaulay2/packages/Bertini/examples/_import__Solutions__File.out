@@ -3,28 +3,28 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : makeB'InputFile(storeBM2Files,
     AffVariableGroup=>{{x,y}},
     B'Polynomials=>{x^2-1,y^3-1});
 i3 : runBertini(storeBM2Files)
 i4 : importSolutionsFile(storeBM2Files)
 
-o4 = $\left\{\left\{1,\,1\right\},\,\left\{1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{1,\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1+{1.11022}\cdot 10^{-16}\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,{1}-{1.05471}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{{1},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-1-{6.93889}\cdot 10^{-18}\,\mathbf{i},\,1+{6.93889}\cdot 10^{-18}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
 
-o5 = $\left\{\left\{1,\,1\right\},\,\left\{-1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,{1}-{1.05471}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{-1-{6.93889}\cdot 10^{-18}\,\mathbf{i},\,1+{6.93889}\cdot 10^{-18}\,\mathbf{i}\right\}\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)
 
-o6 = $\left\{\left\{1,\,1\right\},\,\left\{1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{1,\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1+{1.11022}\cdot 10^{-16}\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\left\{{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,{1}-{1.05471}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{{1},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-1-{6.93889}\cdot 10^{-18}\,\mathbf{i},\,1+{6.93889}\cdot 10^{-18}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
 
-o6 : $<pre style="display:inline">
-List</pre>$
+o6 : <pre style="display:inline">
+List</pre>
 i7 : 

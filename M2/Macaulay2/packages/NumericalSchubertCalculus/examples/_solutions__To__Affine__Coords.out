@@ -25,8 +25,8 @@ o1 = $\left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 {.305423}&{.97723}&{.592747}&{.305946}&{.883549}&{.130004}\\
 {.732358}&{.0595849}&{.831802}&{.53632}&{.942865}&{.522285}\end{pmatrix}\right)\right\}$
 
-o1 : $<pre style="display:inline">
-List</pre>$
+o1 : <pre style="display:inline">
+List</pre>
 i2 : S = solveSchubertProblem(Pblm, 3,6)
 
 o2 = $\left\{\begin{pmatrix}
@@ -43,8 +43,8 @@ o2 = $\left\{\begin{pmatrix}
 {.902762}+{3.64354}\cdot 10^{-17}\,\mathbf{i}&{.284467}+{1.13083}\cdot 10^{-15}\,\mathbf{i}&{.0636297}-{3.18222}\cdot 10^{-16}\,\mathbf{i}\\
 {.141356}+{1.00605}\cdot 10^{-15}\,\mathbf{i}&{.394186}+{2.17642}\cdot 10^{-15}\,\mathbf{i}&-{.0692081}-{8.37779}\cdot 10^{-16}\,\mathbf{i}\end{pmatrix}\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : solutionsToAffineCoords S
 
 o3 = $\left\{\begin{pmatrix}
@@ -61,6 +61,6 @@ o3 = $\left\{\begin{pmatrix}
 {0}&1&{0}\\
 {0}&{0}&1\end{pmatrix}\right\}$
 
-o3 : $<pre style="display:inline">
-List</pre>$
+o3 : <pre style="display:inline">
+List</pre>
 i4 : 

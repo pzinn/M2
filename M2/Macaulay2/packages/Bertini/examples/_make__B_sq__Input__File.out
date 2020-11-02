@@ -3,8 +3,8 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : theDir = temporaryFileName();
 i3 : makeDirectory theDir
 i4 : makeB'InputFile(theDir,
@@ -15,8 +15,8 @@ PolynomialRing</pre>$
 
 o5 = $R$
 
-o5 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o5 : <pre style="display:inline">
+PolynomialRing</pre>
 i6 : makeB'InputFile(theDir,
         BertiniInputConfiguration=>{MPType=>2},
     AffVariableGroup=>{{x1,x2},{y}},
@@ -30,8 +30,8 @@ PolynomialRing</pre>$
 
 o7 = $R$
 
-o7 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o7 : <pre style="display:inline">
+PolynomialRing</pre>
 i8 : makeB'InputFile(theDir,
          BertiniInputConfiguration=>{MPype=>2},
      AffVariableGroup=>{{x1,x2},{y}},

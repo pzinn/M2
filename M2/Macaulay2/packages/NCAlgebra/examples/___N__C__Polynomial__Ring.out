@@ -4,6 +4,6 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : 

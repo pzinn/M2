@@ -4,25 +4,25 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : baseName x
 
 o2 = $x$
 
-o2 : $<pre style="display:inline">
-Symbol</pre>$
+o2 : <pre style="display:inline">
+Symbol</pre>
 i3 : B = QQ{p_1..p_6}
 
 o3 = $<pre style="display:inline">
 B</pre>$
 
-o3 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o3 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i4 : baseName p_1
 
 o4 = ${p}_{1}$
 
-o4 : $<pre style="display:inline">
-IndexedVariable</pre>$
+o4 : <pre style="display:inline">
+IndexedVariable</pre>
 i5 : 

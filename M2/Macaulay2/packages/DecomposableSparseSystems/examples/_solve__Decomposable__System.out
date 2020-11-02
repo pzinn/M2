@@ -5,16 +5,16 @@
 
 o3 = $\left\{\left\{{.702415}-{1.63878}\,\mathbf{i},\,{.217314}-{.267712}\,\mathbf{i}\right\},\,\left\{{.702415}-{1.63878}\,\mathbf{i},\,-{.217314}+{.267712}\,\mathbf{i}\right\},\,\left\{-{.702415}+{1.63878}\,\mathbf{i},\,{.217314}-{.267712}\,\mathbf{i}\right\},\,\left\{-{.702415}+{1.63878}\,\mathbf{i},\,-{.217314}+{.267712}\,\mathbf{i}\right\},\,\left\{{.637282}+{.51731}\,\mathbf{i},\,{.688424}+{.295073}\,\mathbf{i}\right\},\,\left\{{.637282}+{.51731}\,\mathbf{i},\,-{.688424}-{.295073}\,\mathbf{i}\right\},\,\left\{-{.637282}-{.51731}\,\mathbf{i},\,{.688424}+{.295073}\,\mathbf{i}\right\},\,\left\{-{.637282}-{.51731}\,\mathbf{i},\,-{.688424}-{.295073}\,\mathbf{i}\right\},\,\left\{{1.77892}-{.630257}\,\mathbf{i},\,{.239172}-{.221165}\,\mathbf{i}\right\},\,\left\{{1.77892}-{.630257}\,\mathbf{i},\,-{.239172}+{.221165}\,\mathbf{i}\right\},\,\left\{-{1.77892}+{.630257}\,\mathbf{i},\,{.239172}-{.221165}\,\mathbf{i}\right\},\,\left\{-{1.77892}+{.630257}\,\mathbf{i},\,-{.239172}+{.221165}\,\mathbf{i}\right\},\,\left\{{.526478}+{.569343}\,\mathbf{i},\,{.264761}+{.747295}\,\mathbf{i}\right\},\,\left\{{.526478}+{.569343}\,\mathbf{i},\,-{.264761}-{.747295}\,\mathbf{i}\right\},\,\left\{-{.526478}-{.569343}\,\mathbf{i},\,{.264761}+{.747295}\,\mathbf{i}\right\},\,\left\{-{.526478}-{.569343}\,\mathbf{i},\,-{.264761}-{.747295}\,\mathbf{i}\right\}\right\}$
 
-o3 : $<pre style="display:inline">
-List</pre>$
+o3 : <pre style="display:inline">
+List</pre>
 i4 : R=CC[x,y];
 i5 : F = {x^4+3*y^6-1,17*x^2-2*y^2+2};
 i6 : solveDecomposableSystem F
 
 o6 = $\left\{\left\{{.0857238}+{.407474}\,\mathbf{i},\,{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{{.0857238}+{.407474}\,\mathbf{i},\,-{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}-{.407474}\,\mathbf{i},\,{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}-{.407474}\,\mathbf{i},\,-{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{{.0857238}-{.407474}\,\mathbf{i},\,{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{{.0857238}-{.407474}\,\mathbf{i},\,-{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}+{.407474}\,\mathbf{i},\,{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}+{.407474}\,\mathbf{i},\,-{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{{.190028}\,\mathbf{i},\,{.832502}+{9.75543}\cdot 10^{-115}\,\mathbf{i}\right\},\,\left\{{.190028}\,\mathbf{i},\,-{.832502}+{1.01952}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{2.32717}\cdot 10^{-17}-{.190028}\,\mathbf{i},\,{.832502}+{9.75543}\cdot 10^{-115}\,\mathbf{i}\right\},\,\left\{-{2.32717}\cdot 10^{-17}-{.190028}\,\mathbf{i},\,-{.832502}+{1.01952}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
-o6 : $<pre style="display:inline">
-List</pre>$
+o6 : <pre style="display:inline">
+List</pre>
 i7 : A = {matrix{{0,2,4},{0,2,4}},matrix{{0,0,2,2},{0,2,0,2}}};
 i8 : (F,S)=solveDecomposableSystem(A,)
 
@@ -39,6 +39,6 @@ basicSolver: Computed 3 solutions</pre>
 
 o11 = $\left\{\left\{{.0857238}+{.407474}\,\mathbf{i},\,{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{{.0857238}+{.407474}\,\mathbf{i},\,-{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}-{.407474}\,\mathbf{i},\,{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}-{.407474}\,\mathbf{i},\,-{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{{.0857238}-{.407474}\,\mathbf{i},\,{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{{.0857238}-{.407474}\,\mathbf{i},\,-{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}+{.407474}\,\mathbf{i},\,{.412225}-{.720254}\,\mathbf{i}\right\},\,\left\{-{.0857238}+{.407474}\,\mathbf{i},\,-{.412225}+{.720254}\,\mathbf{i}\right\},\,\left\{{4.68871}\cdot 10^{-16}+{.190028}\,\mathbf{i},\,{.832502}+{9.08443}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{4.68871}\cdot 10^{-16}+{.190028}\,\mathbf{i},\,-{.832502}-{8.0649}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{4.92142}\cdot 10^{-16}-{.190028}\,\mathbf{i},\,{.832502}+{9.08443}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{4.92142}\cdot 10^{-16}-{.190028}\,\mathbf{i},\,-{.832502}-{8.0649}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
-o11 : $<pre style="display:inline">
-List</pre>$
+o11 : <pre style="display:inline">
+List</pre>
 i12 : 

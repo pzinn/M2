@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : f = x^2+y^2+2*z^3
 
 o2 = $<pre style="display:inline">
@@ -24,8 +24,8 @@ o2 : $<pre style="display:inline">
 A</pre>$
 i3 : isConstant f
 
-o3 = $<pre style="display:inline">
-false</pre>$
+o3 = <pre style="display:inline">
+false</pre>
 i4 : g = promote(1,A)
 
 o4 = $<pre style="display:inline">
@@ -40,6 +40,6 @@ o4 : $<pre style="display:inline">
 A</pre>$
 i5 : isConstant g
 
-o5 = $<pre style="display:inline">
-true</pre>$
+o5 = <pre style="display:inline">
+true</pre>
 i6 : 

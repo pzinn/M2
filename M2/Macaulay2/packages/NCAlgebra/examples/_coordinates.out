@@ -3,15 +3,15 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-QuotientRing</pre>$
+o1 : <pre style="display:inline">
+QuotientRing</pre>
 i2 : A = skewPolynomialRing(R,promote(-1,R),{x,y,z})
 
 o2 = $<pre style="display:inline">
 A</pre>$
 
-o2 : $<pre style="display:inline">
-NCQuotientRing</pre>$
+o2 : <pre style="display:inline">
+NCQuotientRing</pre>
 i3 : g = ncMap(A,A,{y,z,x})
 
 o3 = $<pre style="display:inline">
@@ -40,8 +40,8 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rig
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o3 : $<pre style="display:inline">
-NCRingMap</pre>$
+o3 : <pre style="display:inline">
+NCRingMap</pre>
 i4 : gList = {g, g^2, g^3}
 
 o4 = $\left\{<pre style="display:inline">
@@ -118,8 +118,8 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rig
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : a = sum apply(3,i-> (gList#i)(x^3))
 
 o5 = $<pre style="display:inline">
@@ -198,8 +198,8 @@ o9 : $<pre style="display:inline">
 A</pre>$
 i10 : g(p)==p
 
-o10 = $<pre style="display:inline">
-false</pre>$
+o10 = <pre style="display:inline">
+false</pre>
 i11 : p' = sum apply(3,i-> (gList#i)(p))
 
 o11 = $<pre style="display:inline">
@@ -224,8 +224,8 @@ o11 : $<pre style="display:inline">
 A</pre>$
 i12 : g(p')==p'
 
-o12 = $<pre style="display:inline">
-true</pre>$
+o12 = <pre style="display:inline">
+true</pre>
 i13 : coordinates(p',Basis=>{a,b,c,d})
 
 o13 = $\begin{pmatrix}
@@ -234,7 +234,7 @@ o13 = $\begin{pmatrix}
 -w\\
 0\end{pmatrix}$
 
-o13 : $<pre style="display:inline">
-Matrix</pre>$<pre style="display:inline">
+o13 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
  </pre>$R^{4}\,\longleftarrow \,R^{1}$
 i14 : 

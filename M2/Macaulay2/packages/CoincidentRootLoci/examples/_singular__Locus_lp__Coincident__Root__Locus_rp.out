@@ -4,10 +4,10 @@
 o1 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : $<pre style="display:inline">
-CoincidentRootLocus</pre>$
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 i2 : time singularLocus X
-     -- used 1.02642 seconds
+     -- used 1.00117 seconds
 
 o2 = $\left\{<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
@@ -17,6 +17,6 @@ CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:i
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : 

@@ -3,14 +3,14 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : system = {y-x^2,z-x^3,x+y+z-1}
 
 o2 = $\left\{-x^{2}+y,\,-x^{3}+z,\,x+y+z-1\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : solns = solveSystem(system)
 
 o3 = $\left\{<pre style="display:inline">
@@ -18,8 +18,8 @@ Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}\right\}$
 
-o3 : $<pre style="display:inline">
-List</pre>$
+o3 : <pre style="display:inline">
+List</pre>
 i4 : numSolns = #solns
 
 o4 = $3$
@@ -31,17 +31,17 @@ Point</pre>\left\{\ldots4\ldots\right\}$
 $<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}$
 
-o5 = $\left\{,\,,\,\right\}$
+o5 = $\left\{,\,,\,\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : oneSoln = solns_0
 
 o6 = $<pre style="display:inline">
 oneSoln</pre>$
 
-o6 : $<pre style="display:inline">
-Point</pre>$
+o6 : <pre style="display:inline">
+Point</pre>
 i7 : peek oneSoln
 
 o7 = <pre style="display:inline-table;vertical-align:0%">

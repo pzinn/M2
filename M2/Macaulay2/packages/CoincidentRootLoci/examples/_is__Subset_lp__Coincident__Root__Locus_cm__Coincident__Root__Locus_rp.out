@@ -4,30 +4,30 @@
 o1 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : $<pre style="display:inline">
-CoincidentRootLocus</pre>$
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 i2 : Y = coincidentRootLocus {5,2,2,1}
 
 o2 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o2 : $<pre style="display:inline">
-CoincidentRootLocus</pre>$
+o2 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 i3 : time isSubset(X,Y)
-     -- used 0.00042897 seconds
+     -- used 0.000354376 seconds
 
-o3 = $<pre style="display:inline">
-true</pre>$
+o3 = <pre style="display:inline">
+true</pre>
 i4 : X' = coincidentRootLocus {6,3,1}
 
 o4 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o4 : $<pre style="display:inline">
-CoincidentRootLocus</pre>$
+o4 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 i5 : time isSubset(X',Y)
-     -- used 0.000417631 seconds
+     -- used 0.0003463 seconds
 
-o5 = $<pre style="display:inline">
-false</pre>$
+o5 = <pre style="display:inline">
+false</pre>
 i6 : 

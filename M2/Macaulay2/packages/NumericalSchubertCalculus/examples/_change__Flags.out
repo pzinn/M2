@@ -29,8 +29,8 @@ o8 = $\left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 {.461944}+{.775187}\,\mathbf{i}&{.348931}+{.562428}\,\mathbf{i}&{.615911}+{.0147867}\,\mathbf{i}&{.914199}+{.887381}\,\mathbf{i}&{.350611}+{.379495}\,\mathbf{i}&{.339222}+{.062212}\,\mathbf{i}\\
 {.909047}+{.314897}\,\mathbf{i}&{.246268}+{.153346}\,\mathbf{i}&{.223028}+{.388829}\,\mathbf{i}&{.169813}+{.965004}\,\mathbf{i}&{.237252}+{.116721}\,\mathbf{i}&{.465736}+{.40273}\,\mathbf{i}\end{pmatrix}\right)\right\}$
 
-o8 : $<pre style="display:inline">
-List</pre>$
+o8 : <pre style="display:inline">
+List</pre>
 i9 : stdio<<"Generate a random set of flags G"<<endl;
 Generate a random set of flags G
 i10 : G = randomSchubertProblemInstance({l1,l2,l3},k,n)
@@ -55,8 +55,8 @@ o10 = $\left\{\left(\left\{2,\,1\right\},\begin{pmatrix}
 {.136209}-{.99068}\,\mathbf{i}&-{.0626679}-{.998034}\,\mathbf{i}&{.296021}+{.955182}\,\mathbf{i}&{.154803}-{.987945}\,\mathbf{i}&-{.938662}-{.344838}\,\mathbf{i}&{.861477}-{.507797}\,\mathbf{i}\\
 -{.36939}-{.929274}\,\mathbf{i}&{.113904}+{.993492}\,\mathbf{i}&{.980864}+{.194693}\,\mathbf{i}&-{.764544}+{.644572}\,\mathbf{i}&{.986813}+{.161867}\,\mathbf{i}&{.983563}+{.180565}\,\mathbf{i}\end{pmatrix}\right)\right\}$
 
-o10 : $<pre style="display:inline">
-List</pre>$
+o10 : <pre style="display:inline">
+List</pre>
 i11 : stdio<<"We solve with respect to F"<<endl;
 We solve with respect to F
 i12 : S = solveSchubertProblem(F,k,n)
@@ -75,8 +75,8 @@ o12 = $\left\{\begin{pmatrix}
 {0}&{0}&-{.480231}-{.307979}\,\mathbf{i}\\
 {0}&{0}&1+{5.37605}\cdot 10^{-18}\,\mathbf{i}\end{pmatrix}\right\}$
 
-o12 : $<pre style="display:inline">
-List</pre>$
+o12 : <pre style="display:inline">
+List</pre>
 i13 : FlagsF = F/last;
 i14 : FlagsG = G/last;
 i15 : stdio<< "and we transform the solutions to get solutions with respect to G"<<endl;

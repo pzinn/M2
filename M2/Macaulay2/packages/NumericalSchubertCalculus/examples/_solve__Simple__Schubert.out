@@ -50,6 +50,6 @@ o5 = $\left\{\begin{pmatrix}
 {1.08396}+{.174263}\,\mathbf{i}&{.551008}+{.0768382}\,\mathbf{i}&{.112884}+{.198469}\,\mathbf{i}\\
 {.689695}-{.590038}\,\mathbf{i}&{.157157}+{.310587}\,\mathbf{i}&{.453721}+{.129014}\,\mathbf{i}\end{pmatrix}\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : 

@@ -3,28 +3,28 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-QuotientRing</pre>$
+o1 : <pre style="display:inline">
+QuotientRing</pre>
 i2 : A = skewPolynomialRing(R,q,{x,y,z,w})
 
 o2 = $<pre style="display:inline">
 A</pre>$
 
-o2 : $<pre style="display:inline">
-NCQuotientRing</pre>$
+o2 : <pre style="display:inline">
+NCQuotientRing</pre>
 i3 : x*y == q*y*x
 
-o3 = $<pre style="display:inline">
-true</pre>$
+o3 = <pre style="display:inline">
+true</pre>
 i4 : Aop = oppositeRing A
 
 o4 = $<pre style="display:inline">
 Aop</pre>$
 
-o4 : $<pre style="display:inline">
-NCQuotientRing</pre>$
+o4 : <pre style="display:inline">
+NCQuotientRing</pre>
 i5 : y*x == q*x*y
 
-o5 = $<pre style="display:inline">
-true</pre>$
+o5 = <pre style="display:inline">
+true</pre>
 i6 : 

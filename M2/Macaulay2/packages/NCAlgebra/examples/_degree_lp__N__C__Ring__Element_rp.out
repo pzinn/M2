@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : f = x^2+y^2+z^3
 
 o2 = $<pre style="display:inline">
@@ -27,20 +27,20 @@ A</pre>$
 o3 = $3$
 i4 : isHomogeneous f
 
-o4 = $<pre style="display:inline">
-false</pre>$
+o4 = <pre style="display:inline">
+false</pre>
 i5 : setWeights(A,{3,3,2,1})
 
 o5 = $<pre style="display:inline">
 A</pre>$
 
-o5 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o5 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i6 : degree f
 
 o6 = $6$
 i7 : isHomogeneous f
 
-o7 = $<pre style="display:inline">
-true</pre>$
+o7 = <pre style="display:inline">
+true</pre>
 i8 : 

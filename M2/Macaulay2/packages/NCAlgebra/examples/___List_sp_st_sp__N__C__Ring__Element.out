@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : f = x^2+y^2
 
 o2 = $<pre style="display:inline">
@@ -72,8 +72,8 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o3 : $<pre style="display:inline">
-List</pre>$
+o3 : <pre style="display:inline">
+List</pre>
 i4 : bas*f
 
 o4 = $\left\{<pre style="display:inline">
@@ -142,6 +142,6 @@ A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y,\,y,\,y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : 

@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : I = ncIdeal{x*z-z*x, y*z, x*y^2-y^2*x, x^3*y-y*x^3}
 
 o2 = $<pre style="display:inline">
@@ -43,8 +43,8 @@ NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,x,\,x,\,x\righ
 A</pre>\right\}\,\Rightarrow\,-1\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o2 : $<pre style="display:inline">
-NCIdeal</pre>$
+o2 : <pre style="display:inline">
+NCIdeal</pre>
 i3 : J = quadraticClosure I
 
 o3 = $<pre style="display:inline">
@@ -66,6 +66,6 @@ NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,z\right\},\,\t
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o3 : $<pre style="display:inline">
-NCIdeal</pre>$
+o3 : <pre style="display:inline">
+NCIdeal</pre>
 i4 : 

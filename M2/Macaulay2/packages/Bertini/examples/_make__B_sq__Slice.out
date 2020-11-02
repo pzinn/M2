@@ -3,21 +3,21 @@
 
 o1 = $\left\{1,\,1\right\}$
 
-o1 : $<pre style="display:inline">
-List</pre>$
+o1 : <pre style="display:inline">
+List</pre>
 i2 : variableGroups={{x0,x1},{y0,y1,y2}}
 
 o2 = $\left\{\left\{\textit{x0},\,\textit{x1}\right\},\,\left\{\textit{y0},\,\textit{y1},\,\textit{y2}\right\}\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : xySlice=makeB'Slice(sliceType,variableGroups)
 
 o3 = $<pre style="display:inline">
 B'Slice</pre>\left\{\ldots4\ldots\right\}$
 
-o3 : $<pre style="display:inline">
-B'Slice</pre>$
+o3 : <pre style="display:inline">
+B'Slice</pre>
 i4 : peek xySlice
 
 o4 = <pre style="display:inline-table;vertical-align:0%">
@@ -35,8 +35,8 @@ f0</pre>,\,<pre style="display:inline">
 f1</pre>,\,<pre style="display:inline">
 f2</pre>\right\}$
 
-o7 : $<pre style="display:inline">
-List</pre>$
+o7 : <pre style="display:inline">
+List</pre>
 i8 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"});
 i9 : f1="x0*y0+x1*y0+x2*y2"
 
@@ -50,29 +50,29 @@ x0*y0^2+x1*y1*y2+x2*y0*y2</pre>
 
 o11 = $\left\{\left\{\textit{x0},\,\textit{x1},\,\textit{x2}\right\},\,\left\{\textit{y0},\,\textit{y1},\,\textit{y2}\right\}\right\}$
 
-o11 : $<pre style="display:inline">
-List</pre>$
+o11 : <pre style="display:inline">
+List</pre>
 i12 : xxSlice=makeB'Slice({2,0},variableGroups)
 
 o12 = $<pre style="display:inline">
 B'Slice</pre>\left\{\ldots4\ldots\right\}$
 
-o12 : $<pre style="display:inline">
-B'Slice</pre>$
+o12 : <pre style="display:inline">
+B'Slice</pre>
 i13 : xySlice=makeB'Slice({1,1},variableGroups)
 
 o13 = $<pre style="display:inline">
 B'Slice</pre>\left\{\ldots4\ldots\right\}$
 
-o13 : $<pre style="display:inline">
-B'Slice</pre>$
+o13 : <pre style="display:inline">
+B'Slice</pre>
 i14 : yySlice=makeB'Slice({0,2},variableGroups)
 
 o14 = $<pre style="display:inline">
 B'Slice</pre>\left\{\ldots4\ldots\right\}$
 
-o14 : $<pre style="display:inline">
-B'Slice</pre>$
+o14 : <pre style="display:inline">
+B'Slice</pre>
 i15 : makeB'InputFile(storeBM2Files,
     HomVariableGroup=>variableGroups,
     B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections);

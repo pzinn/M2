@@ -4,15 +4,15 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : M = ncMatrix {{x, y, z}}
 
 o2 = $<pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o2 : $<pre style="display:inline">
-NCMatrix</pre>$
+o2 : <pre style="display:inline">
+NCMatrix</pre>
 i3 : sigma = ncMap(A,A,{y,z,x})
 
 o3 = $<pre style="display:inline">
@@ -41,27 +41,27 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rig
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o3 : $<pre style="display:inline">
-NCRingMap</pre>$
+o3 : <pre style="display:inline">
+NCRingMap</pre>
 i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
 o4 = $<pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o4 : $<pre style="display:inline">
-NCMatrix</pre>$
+o4 : <pre style="display:inline">
+NCMatrix</pre>
 i5 : N' = ncMatrix {{sigma sigma M}, {sigma M}, {M}}
 
 o5 = $<pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o5 : $<pre style="display:inline">
-NCMatrix</pre>$
+o5 : <pre style="display:inline">
+NCMatrix</pre>
 i6 : N - N'
 
 o6 = $<pre style="display:inline">
 NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o6 : $<pre style="display:inline">
-NCMatrix</pre>$
+o6 : <pre style="display:inline">
+NCMatrix</pre>
 i7 : 

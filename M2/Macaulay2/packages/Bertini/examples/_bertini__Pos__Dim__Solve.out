@@ -3,47 +3,47 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
 o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : S = bertiniPosDimSolve F
 
 o3 = $<pre style="display:inline">
 S</pre>$
 
-o3 : $<pre style="display:inline">
-NumericalVariety</pre>$
+o3 : <pre style="display:inline">
+NumericalVariety</pre>
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
 o4 = $\left\{\begin{aligned}&<pre style="display:inline">
 Point</pre>\left\{\ldots1\ldots\right\}\end{aligned}\right\}$
 
-o4 : $<pre style="display:inline">
-VerticalList</pre>$
+o4 : <pre style="display:inline">
+VerticalList</pre>
 i5 : S#1 --first specify dimension
 
 o5 = $\left\{<pre style="display:inline">
 WitnessSet</pre>\left\{\ldots6\ldots\right\}\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : peek oo_0 --then list position
 
 o6 = <pre style="display:inline-table;vertical-align:0%">
-WitnessSet{ComponentNumber => 0                                                                       }<br/>           IsIrreducible => true<br/>           Points => {{5.32968e-65+3.56348e-64*ii, -1.28064e-64+3.92308e-64*ii, .0117589+.0586276*ii}}<br/>           Slice => | -5.52633+7.55043ii 1.45021-16.4635ii -9.73104-16.3493ii -.844096+.762758ii |<br/>           WitnessDataFileName => /tmp/M2-1143042-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
+WitnessSet{ComponentNumber => 0                                                                     }<br/>           IsIrreducible => true<br/>           Points => {{-4.45922e-72-2.55408e-73*ii, 2.01838e-72+3.79713e-72*ii, .271872-.460077*ii}}<br/>           Slice => | -1.26968+2.90514ii -3.12707-1.35391ii 5.41899+.978856ii -1.92362+2.22703ii |<br/>           WitnessDataFileName => /tmp/M2-160940-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
 i7 : PD=primaryDecomposition( ideal F)
 
 o7 = $\left\{<pre style="display:inline">
 ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\,<pre style="display:inline">
 ideal</pre>\,\left(y,x\right)\right\}$
 
-o7 : $<pre style="display:inline">
-List</pre>$
+o7 : <pre style="display:inline">
+List</pre>
 i8 : dim PD_0
 
 o8 = $2$

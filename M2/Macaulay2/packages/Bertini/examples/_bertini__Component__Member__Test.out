@@ -6,19 +6,19 @@
 o3 = $<pre style="display:inline">
 NV</pre>$
 
-o3 : $<pre style="display:inline">
-NumericalVariety</pre>$
+o3 : <pre style="display:inline">
+NumericalVariety</pre>
 i4 : pts = {{0,0,0}} --z-axis
 
 o4 = $\left\{\left\{0,\,0,\,0\right\}\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : bertiniComponentMemberTest(pts, NV)
 
 o5 = $\left\{\left\{<pre style="display:inline">
 WitnessSet</pre>\left\{\ldots6\ldots\right\}\right\}\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : 

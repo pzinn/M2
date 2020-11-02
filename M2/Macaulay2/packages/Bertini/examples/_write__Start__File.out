@@ -3,7 +3,7 @@
 
 o1 = $\left\{\left\{1,\,0\right\},\,\left\{3,\,4\right\}\right\}$
 
-o1 : $<pre style="display:inline">
-List</pre>$
+o1 : <pre style="display:inline">
+List</pre>
 i2 : writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
 i3 : 

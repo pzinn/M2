@@ -10,6 +10,6 @@ o1 = $0$
 
 o6 = $\left\{{5.55112}\cdot 10^{-17}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,-{8.32667}\cdot 10^{-17}\,\mathbf{i}\right\}$
 
-o6 : $<pre style="display:inline">
-List</pre>$
+o6 : <pre style="display:inline">
+List</pre>
 i7 : 

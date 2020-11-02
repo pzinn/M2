@@ -14,8 +14,8 @@ Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\}\right\}\right\}$
 
-o6 : $<pre style="display:inline">
-List</pre>$
+o6 : <pre style="display:inline">
+List</pre>
 i7 : bPH_0--the solutions to the system with parameters set equal to paramValues0
 
 o7 = $\left\{<pre style="display:inline">
@@ -23,14 +23,14 @@ Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o7 : $<pre style="display:inline">
-List</pre>$
+o7 : <pre style="display:inline">
+List</pre>
 i8 : R=CC[x,y,z,u1,u2]
 
 o8 = $R$
 
-o8 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o8 : <pre style="display:inline">
+PolynomialRing</pre>
 i9 : f1=x^2+y^2-z^2
 
 o9 = $x^{2}+y^{2}-z^{2}$
@@ -45,14 +45,14 @@ o10 : $R$
 
 o11 = $\left\{0,\,1\right\}$
 
-o11 : $<pre style="display:inline">
-List</pre>$
+o11 : <pre style="display:inline">
+List</pre>
 i12 : finalParameters1={1,0}
 
 o12 = $\left\{1,\,0\right\}$
 
-o12 : $<pre style="display:inline">
-List</pre>$
+o12 : <pre style="display:inline">
+List</pre>
 i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})
 
 o13 = $\left\{\left\{<pre style="display:inline">
@@ -61,22 +61,22 @@ Point</pre>\left\{\ldots14\ldots\right\}\right\},\,\left\{<pre style="display:
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\}\right\}\right\}$
 
-o13 : $<pre style="display:inline">
-List</pre>$
+o13 : <pre style="display:inline">
+List</pre>
 i14 : bPH_0--The two solutions for finalParameters0
 
 o14 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o14 : $<pre style="display:inline">
-List</pre>$
+o14 : <pre style="display:inline">
+List</pre>
 i15 : finParamValues={{1},{2}}
 
 o15 = $\left\{\left\{1\right\},\,\left\{2\right\}\right\}$
 
-o15 : $<pre style="display:inline">
-List</pre>$
+o15 : <pre style="display:inline">
+List</pre>
 i16 : bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})
 
 o16 = $\left\{\left\{<pre style="display:inline">
@@ -85,41 +85,41 @@ Point</pre>\left\{\ldots14\ldots\right\}\right\},\,\left\{<pre style="display:
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\}\right\}\right\}$
 
-o16 : $<pre style="display:inline">
-List</pre>$
+o16 : <pre style="display:inline">
+List</pre>
 i17 : bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputStyle=>"OutSolutions")
 
-o17 = $\left\{\left\{\left\{1\right\},\,\left\{-1-{1.38778}\cdot 10^{-17}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{1.41421}-{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}-{1.38778}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}\right\}$
+o17 = $\left\{\left\{\left\{{1}+{5.27356}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{1.41421}-{1.83187}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{-{1.41421}\right\}\right\}\right\}$
 
-o17 : $<pre style="display:inline">
-List</pre>$
+o17 : <pre style="display:inline">
+List</pre>
 i18 : class bPH1_0_0
 
-o18 = $<pre style="display:inline">
-Point</pre>$
+o18 = <pre style="display:inline">
+Point</pre>
 
-o18 : $<pre style="display:inline">
-Type</pre>$
+o18 : <pre style="display:inline">
+Type</pre>
 i19 : class bPH2_0_0
 
-o19 = $<pre style="display:inline">
-List</pre>$
+o19 = <pre style="display:inline">
+List</pre>
 
-o19 : $<pre style="display:inline">
-Type</pre>$
+o19 : <pre style="display:inline">
+Type</pre>
 i20 : dir1 := temporaryFileName(); -- build a directory to store temporary data
 i21 : makeDirectory dir1;
 i22 : bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputStyle=>"OutNone",TopDirectory=>dir1)
 i23 : B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
 
-o23 = $\left\{\left\{1\right\},\,\left\{-1-{1.38778}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o23 = $\left\{\left\{{1}+{5.27356}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
-o23 : $<pre style="display:inline">
-List</pre>$
+o23 : <pre style="display:inline">
+List</pre>
 i24 : B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
 
-o24 = $\left\{\left\{{1.41421}-{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}-{1.38778}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o24 = $\left\{\left\{{1.41421}-{1.83187}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{-{1.41421}\right\}\right\}$
 
-o24 : $<pre style="display:inline">
-List</pre>$
+o24 : <pre style="display:inline">
+List</pre>
 i25 : 

@@ -4,15 +4,15 @@
 o1 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : $<pre style="display:inline">
-CoincidentRootLocus</pre>$
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 i2 : f = map X
 
 o2 = $<pre style="display:inline">
 MultihomogeneousRationalMap</pre>\left\{\ldots13\ldots\right\}$
 
-o2 : $<pre style="display:inline">
-MultihomogeneousRationalMap</pre>$
+o2 : <pre style="display:inline">
+MultihomogeneousRationalMap</pre>
 i3 : describe f
 
 o3 = <pre style="display:inline-table;vertical-align:0%">

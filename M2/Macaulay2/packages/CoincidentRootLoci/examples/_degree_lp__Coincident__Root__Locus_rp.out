@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : $<pre style="display:inline">
-CoincidentRootLocus</pre>$
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
 i2 : degree X
 
 o2 = $1260$

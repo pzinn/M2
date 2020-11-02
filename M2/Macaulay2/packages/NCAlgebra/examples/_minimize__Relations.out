@@ -3,14 +3,14 @@
 
 o1 = $Q$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : R = Q/ideal{a*b+c*d}
 
 o2 = $R$
 
-o2 : $<pre style="display:inline">
-QuotientRing</pre>$
+o2 : <pre style="display:inline">
+QuotientRing</pre>
 i3 : kRes = res(coker vars R, LengthLimit=>7)
 
 o3 = $\underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
@@ -59,8 +59,8 @@ d&0&0&0&0&-a&0&0\\
 0&0&d&0&c&0&a&0\\
 0&0&0&d&0&c&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{8}}$
 
-o3 : $<pre style="display:inline">
-ChainComplex</pre>$
+o3 : <pre style="display:inline">
+ChainComplex</pre>
 i4 : M = coker kRes.dd_5
 
 o4 = $<pre style="display:inline">
@@ -82,8 +82,8 @@ o4 : $R$<pre style="display:inline">
 o5 = $<pre style="display:inline">
 B</pre>$
 
-o5 : $<pre style="display:inline">
-NCQuotientRing</pre>$
+o5 : <pre style="display:inline">
+NCQuotientRing</pre>
 i6 : gensI = gens ideal B
 
 o6 = $\left\{<pre style="display:inline">
@@ -7200,8 +7200,8 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{Y}_{31},\,{Y}_{31}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o6 : $<pre style="display:inline">
-List</pre>$
+o6 : <pre style="display:inline">
+List</pre>
 i7 : gensIMin = minimizeRelations(gensI)
 
 o7 = $\left\{<pre style="display:inline">
@@ -7868,6 +7868,6 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{Y}_{29},\,{Y}_{29}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o7 : $<pre style="display:inline">
-List</pre>$
+o7 : <pre style="display:inline">
+List</pre>
 i8 : 

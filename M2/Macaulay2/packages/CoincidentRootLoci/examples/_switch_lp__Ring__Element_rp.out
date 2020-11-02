@@ -8,15 +8,15 @@ o1 : ${\mathbb Q}\left[{t}_{0},{t}_{1}\right]$
 
 o2 = $\left\{162,\,2,\,\frac{9}{4},\,\frac{3}{14},\,\frac{2}{7},\,\frac{3}{14},\,\frac{9}{14},\,\frac{3}{4},\,7,\,28\right\}$
 
-o2 : $<pre style="display:inline">
-List</pre>$
+o2 : <pre style="display:inline">
+List</pre>
 i3 : I = switch L
 
 o3 = $<pre style="display:inline">
 ideal</pre>\,\left(4\,{t}_{8}-{t}_{9},112\,{t}_{7}-3\,{t}_{9},392\,{t}_{6}-9\,{t}_{9},392\,{t}_{5}-3\,{t}_{9},98\,{t}_{4}-{t}_{9},392\,{t}_{3}-3\,{t}_{9},112\,{t}_{2}-9\,{t}_{9},14\,{t}_{1}-{t}_{9},14\,{t}_{0}-81\,{t}_{9}\right)$
 
-o3 : $<pre style="display:inline">
-Ideal</pre>$<pre style="display:inline">
+o3 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
  of </pre>${\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4},{t}_{5},{t}_{6},{t}_{7},{t}_{8},{t}_{9}\right]$
 i4 : switch I
 
@@ -25,6 +25,6 @@ o4 = $162\,{t}_{0}^{9}+18\,{t}_{0}^{8}{t}_{1}+81\,{t}_{0}^{7}{t}_{1}^{2}+18\,{t
 o4 : ${\mathbb Q}\left[{t}_{0},{t}_{1}\right]$
 i5 : oo == F
 
-o5 = $<pre style="display:inline">
-true</pre>$
+o5 = <pre style="display:inline">
+true</pre>
 i6 : 

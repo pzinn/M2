@@ -6,14 +6,14 @@
 
 o4 = $\left\{1,\,3\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : k = 3;
 i6 : n = 6;
 i7 : partition2bracket(l,k,n)
 
 o7 = $\left\{2,\,4,\,6\right\}$
 
-o7 : $<pre style="display:inline">
-List</pre>$
+o7 : <pre style="display:inline">
+List</pre>
 i8 : 

@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : g = ncMap(A,A,{y,x})
 
 o2 = $<pre style="display:inline">
@@ -28,8 +28,8 @@ A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rig
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o2 : $<pre style="display:inline">
-NCRingMap</pre>$
+o2 : <pre style="display:inline">
+NCRingMap</pre>
 i3 : I = ncIdeal {x^2*y+y*x^2}
 
 o3 = $<pre style="display:inline">
@@ -45,8 +45,8 @@ NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,x,\,x\right\},
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o3 : $<pre style="display:inline">
-NCIdeal</pre>$
+o3 : <pre style="display:inline">
+NCIdeal</pre>
 i4 : g I
 
 o4 = $<pre style="display:inline">
@@ -62,6 +62,6 @@ NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y,\,x\right\},
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o4 : $<pre style="display:inline">
-NCIdeal</pre>$
+o4 : <pre style="display:inline">
+NCIdeal</pre>
 i5 : 

@@ -24,12 +24,12 @@ Point</pre>\left\{\ldots4\ldots\right\}$
 $<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}$
 
-o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
+o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : isCoordinateZero(fSols_0,1,1.0e-10)
 
-o5 = $<pre style="display:inline">
-true</pre>$
+o5 = <pre style="display:inline">
+true</pre>
 i6 : 

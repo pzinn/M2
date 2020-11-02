@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : ideal A
 
 o2 = $<pre style="display:inline">
@@ -19,6 +19,6 @@ NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{\right\},\,\textit
 A</pre>\right\}\,\Rightarrow\,0\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}$
 
-o2 : $<pre style="display:inline">
-NCIdeal</pre>$
+o2 : <pre style="display:inline">
+NCIdeal</pre>
 i3 : 

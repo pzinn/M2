@@ -4,26 +4,26 @@
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
 
-o2 : $<pre style="display:inline">
-Matrix</pre>$<pre style="display:inline">
+o2 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
  </pre>$R^{3}\,\longleftarrow \,R^{4}$
 i3 : I=minors(3,M);
 
-o3 : $<pre style="display:inline">
-Ideal</pre>$<pre style="display:inline">
+o3 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
  of </pre>$R$
 i4 : f=flatten entries gens I;
 i5 : (w,ns) = topWitnessSet(f,2);
 i6 : slcmat = matrix applyTable (entries w.Slice, x->1_CC*realPart x);
 
-o6 : $<pre style="display:inline">
-Matrix</pre>$<pre style="display:inline">
+o6 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
  </pre>${{\mathbb C}}_{53}^{2}\,\longleftarrow \,{{\mathbb C}}_{53}^{7}$
 i7 : Rtwo = ring w.Equations;
 i8 : X = transpose matrix {gens Rtwo | {1_CC}};
 
-o8 : $<pre style="display:inline">
-Matrix</pre>$<pre style="display:inline">
+o8 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
  </pre>$\textit{Rtwo}^{7}\,\longleftarrow \,\textit{Rtwo}^{1}$
 i9 : slcRR = flatten entries (promote(slcmat,Rtwo) * X);
 i10 : fsols = intersectSlice(w,slcRR)
@@ -36,6 +36,6 @@ Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}\right\}$
 
-o10 : $<pre style="display:inline">
-List</pre>$
+o10 : <pre style="display:inline">
+List</pre>
 i11 : 

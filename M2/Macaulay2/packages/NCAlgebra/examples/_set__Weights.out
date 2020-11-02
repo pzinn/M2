@@ -4,8 +4,8 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : w=x^3-y^2
 
 o2 = $<pre style="display:inline">
@@ -22,26 +22,26 @@ o2 : $<pre style="display:inline">
 A</pre>$
 i3 : isHomogeneous w
 
-o3 = $<pre style="display:inline">
-false</pre>$
+o3 = <pre style="display:inline">
+false</pre>
 i4 : setWeights(A, {2,3,1})
 
 o4 = $<pre style="display:inline">
 A</pre>$
 
-o4 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o4 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i5 : isHomogeneous w
 
-o5 = $<pre style="display:inline">
-true</pre>$
+o5 = <pre style="display:inline">
+true</pre>
 i6 : C = QQ{a,b,c}
 
 o6 = $<pre style="display:inline">
 C</pre>$
 
-o6 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o6 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i7 : g = ncMap(C,A,{a^3,b^2,a+b,a-b})
 
 o7 = $<pre style="display:inline">
@@ -72,21 +72,21 @@ C</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rig
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
 C</pre>\right\}$
 
-o7 : $<pre style="display:inline">
-NCRingMap</pre>$
+o7 : <pre style="display:inline">
+NCRingMap</pre>
 i8 : isHomogeneous g
 
-o8 = $<pre style="display:inline">
-false</pre>$
+o8 = <pre style="display:inline">
+false</pre>
 i9 : setWeights(A,{3,2,1,1})
 
 o9 = $<pre style="display:inline">
 A</pre>$
 
-o9 : $<pre style="display:inline">
-NCPolynomialRing</pre>$
+o9 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i10 : isHomogeneous g
 
-o10 = $<pre style="display:inline">
-true</pre>$
+o10 = <pre style="display:inline">
+true</pre>
 i11 : 

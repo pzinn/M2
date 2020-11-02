@@ -24,6 +24,6 @@ o5 = $\left\{\begin{pmatrix}
 -{3.91243}-{.845457}\,\mathbf{i}&-{.528411}-{.900447}\,\mathbf{i}&-{.187047}+{.545512}\,\mathbf{i}\\
 -{4.19554}+{1.93172}\,\mathbf{i}&-{1.11528}-{.480829}\,\mathbf{i}&{.19859}+{1.24706}\,\mathbf{i}\end{pmatrix}\right\}$
 
-o5 : $<pre style="display:inline">
-List</pre>$
+o5 : <pre style="display:inline">
+List</pre>
 i6 : 

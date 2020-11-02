@@ -8,34 +8,34 @@ o2 = $18\,{t}_{0}^{6}+2\,{t}_{0}^{5}{t}_{1}+9\,{t}_{0}^{4}{t}_{1}^{2}+2\,{t}_{0
 
 o2 : ${\mathbb Q}\left[{t}_{0},{t}_{1}\right]$
 i3 : time phi = apolar(n,s)
-     -- used 0.0434691 seconds
+     -- used 0.0454186 seconds
 
 o3 = $<pre style="display:inline">
 RationalMap</pre>\left\{\ldots13\ldots\right\}$
 
-o3 : $<pre style="display:inline">
-RationalMap</pre>$
+o3 : <pre style="display:inline">
+RationalMap</pre>
 i4 : time P = switch plucker phi switch switch F
-     -- used 0.0547548 seconds
+     -- used 0.0550674 seconds
 
 o4 = $<pre style="display:inline">
 ideal</pre>\,\left(20458\,{t}_{0}^{3}{t}_{1}-4533\,{t}_{0}^{2}{t}_{1}^{2}-52230\,{t}_{0}{t}_{1}^{3}+4213\,{t}_{1}^{4},10229\,{t}_{0}^{4}-325779\,{t}_{0}^{2}{t}_{1}^{2}+99734\,{t}_{0}{t}_{1}^{3}+5145\,{t}_{1}^{4}\right)$
 
-o4 : $<pre style="display:inline">
-Ideal</pre>$<pre style="display:inline">
+o4 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
  of </pre>${\mathbb Q}\left[{t}_{0},{t}_{1}\right]$
 i5 : diff(gens P,F) == 0
 
-o5 = $<pre style="display:inline">
-true</pre>$
+o5 = <pre style="display:inline">
+true</pre>
 i6 : time switch phi^* plucker switch P
-     -- used 0.0355624 seconds
+     -- used 0.0487726 seconds
 
 o6 = $18\,{t}_{0}^{6}+2\,{t}_{0}^{5}{t}_{1}+9\,{t}_{0}^{4}{t}_{1}^{2}+2\,{t}_{0}^{3}{t}_{1}^{3}+4\,{t}_{0}^{2}{t}_{1}^{4}+3\,{t}_{0}{t}_{1}^{5}+6\,{t}_{1}^{6}$
 
 o6 : ${\mathbb Q}\left[{t}_{0},{t}_{1}\right]$
 i7 : oo == F
 
-o7 = $<pre style="display:inline">
-true</pre>$
+o7 = <pre style="display:inline">
+true</pre>
 i8 : 

@@ -3,8 +3,8 @@
 
 o1 = $R$
 
-o1 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : f=2*x*y+x*z+y*z+z^2
 
 o2 = $2\,x\,y+x\,z+y\,z+z^{2}$
@@ -19,8 +19,8 @@ o3 : $R$
 
 o4 = $R$
 
-o4 : $<pre style="display:inline">
-PolynomialRing</pre>$
+o4 : <pre style="display:inline">
+PolynomialRing</pre>
 i5 : f=8*x^2+8*y^2+8*z^2+8*w^2+2*x*y+2*x*z+2*y*z+2*x*w+2*y*w+2*z*w
 
 o5 = $8\,w^{2}+2\,w\,x+8\,x^{2}+2\,w\,y+2\,x\,y+8\,y^{2}+2\,w\,z+2\,x\,z+2\,y\,z+8\,z^{2}$

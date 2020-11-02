@@ -24,10 +24,10 @@ Point</pre>\left\{\ldots4\ldots\right\}$
 $<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}$
 
-o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
+o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
 
-o4 : $<pre style="display:inline">
-List</pre>$
+o4 : <pre style="display:inline">
+List</pre>
 i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
 i6 : nonZeroSols / print
 $<pre style="display:inline">
@@ -47,10 +47,10 @@ Point</pre>\left\{\ldots4\ldots\right\}$
 $<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}$
 
-o6 = $\left\{,\,,\,,\,,\,,\,,\,,\,\right\}$
+o6 = $\left\{,\,,\,,\,,\,,\,,\,,\,\right\}$
 
-o6 : $<pre style="display:inline">
-List</pre>$
+o6 : <pre style="display:inline">
+List</pre>
 i7 : f = {x^2+y^2,y*x+x};
 i8 : fSols = solveSystem(f);
 i9 : fSols/print
@@ -61,17 +61,17 @@ Point</pre>\left\{\ldots4\ldots\right\}$
 $<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}$
 
-o9 = $\left\{,\,,\,\right\}$
+o9 = $\left\{,\,,\,\right\}$
 
-o9 : $<pre style="display:inline">
-List</pre>$
+o9 : <pre style="display:inline">
+List</pre>
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 i11 : zeroSols/print
 $<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\}$
 
-o11 = $\left\{\right\}$
+o11 = $\left\{\right\}$
 
-o11 : $<pre style="display:inline">
-List</pre>$
+o11 : <pre style="display:inline">
+List</pre>
 i12 : 

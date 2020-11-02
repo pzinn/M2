@@ -6,7 +6,7 @@ o2 = $325699392019820093805938500473136959995883\,x^{11}-5810907570924644857232
 
 o2 : ${\mathbb Q}\left[x,y\right]$
 i3 : time complexrank F
-     -- used 0.0999057 seconds
+     -- used 0.105717 seconds
 
 o3 = $8$
 i4 : 
