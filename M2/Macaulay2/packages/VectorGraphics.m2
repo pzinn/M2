@@ -294,11 +294,6 @@ updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
 
--*
-LiteralString := new WrapperType of Holder -- to make sure the text inside GraphicsText doesn't get html'ified
-htmlWithTex LiteralString := x -> htmlLiteral x#0
-*-
-
 svgLookup := hashTable { -- should be more systematic
     symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
     symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
