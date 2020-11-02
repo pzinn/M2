@@ -754,8 +754,8 @@ multidoc ///
    Text
     {\bf VectorGraphics} is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GraphicsObject, and are self-initializing.
-    Coordinates can be entered as vectors in $\mathbb{RR}^2$, $\mathbb{RR}^3$ or $\mathbb{RR}^4$
-    ($\mathbb{RR}^4$ is projective coordinates); alternatively, one can enter them as sequences.
+    Coordinates can be entered as vectors in $\mathbb{R}^2$, $\mathbb{R}^3$ or $\mathbb{R}^4$
+    ($\mathbb{R}^4$ is projective coordinates); alternatively, one can enter them as sequences.
     With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
