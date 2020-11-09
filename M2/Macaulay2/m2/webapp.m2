@@ -1,12 +1,11 @@
--- Paul Zinn-Justin 2018
+-- Paul Zinn-Justin 2018-2020
 
--- htmlWithTex Thing produces some valid html code with possible TeX code
--- topLevelMode=WebApp produces that plus possible pure text coming from the system
--- hence, requires tags to help the browser app distinguish html from text
+-- topLevelMode=WebApp definitions
+-- tags are required to help the browser app distinguish html from text
 webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
-    (webAppEndTag,            -- closing tag ~ </span>
+    (webAppEndTag,            -- closing tag ~ </span> or </p>
 	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
-	webAppCellTag,        -- start of cell (bundled input + output) ~ <div>
+	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
@@ -15,38 +14,7 @@ webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
 
-html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
-
 webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
-stripTags := s -> replace("\\$","&dollar;",replace(webAppTagsRegex,"",s))
-
--- text stuff: we use html instead of tex, much faster (and better spacing)
---htmlWithTex Hypertext := html
-html Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
-    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> stripTags htmlLiteral x | "<br/>"), "</pre>") -- the % is relative to line-height
-html String := x -> concatenate("<pre style=\"display:inline\">\n", stripTags htmlLiteral x,
-    if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
-    "</pre>")
-html Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
-     (k,v) -> (
-	  if #v === 0
-	  then html k
-	  else html k | " : " | html v
-	  ) | "<br/>"), "</pre>")
--- a few types are just strings
-html Boolean :=
-html Function :=
-html Type := html @@ toString
--- except not these descendants
-html RingFamily :=
-html Ring := lookup(html,Thing)
-
--- now preparation for output
-
-webAppBegin = () -> ( -- TODO remove
-    );
-webAppEnd = () -> (
-    );
 
 -- output routines for WebApp mode
 
@@ -66,9 +34,7 @@ Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    webAppBegin();
     y := html x; -- we compute the html now (in case it produces an error)
-    webAppEnd();
     if class y =!= String then error "invalid html output";
     << endl << oprompt | webAppHtmlTag | y | webAppEndTag << endl;
     )
@@ -81,9 +47,7 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlAfterPrint :=  y -> (
     y=deepSplice sequence y;
-    webAppBegin();
     z := html \ y;
-    webAppEnd();
     if any(z, x -> class x =!= String) then error "invalid html output";
     << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
@@ -149,22 +113,22 @@ if topLevelMode === WebApp then (
     html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
 	"<pre>",
 	webAppTextTag,
-	apply(x,y->replace("\\$\\{prefix\\}","usr",y)), -- TEMP fix
+	apply(x,y->replace("\\$\\{prefix\\}","usr",y)),
 	"\n",
 	webAppEndTag,
 	"</pre>\n"
-	); -- TODO improve this in terms of spacing / see with css too
+	);
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
 	new webAppPRE from res#0 );
     -- the help hack 2 (incidentally, this regex is safer)
-    M2outputRE      = "\n+(?="|webAppEndTag|webAppCellTag|")"; -- TODO: improve so cleanly separates at Cells
+    M2outputRE      = "\n+(?="|webAppEndTag|webAppCellTag|")"; -- TODO: improve so cleanly separates at Cells once #1553 resolved
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
-	webAppBegin();
 	y := html x; -- we compute the html now (in case it produces an error)
-	webAppEnd();
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
+    -- redefine htmlLiteral to exclude codes
+    htmlLiteral1 = s -> replace("\\$","&dollar;",replace(webAppTagsRegex,"",htmlLiteral s));
     )
