@@ -156,6 +156,34 @@ html TO2  := x -> (
     if isMissingDoc   tag then concatenate(html TT name, " (missing documentation<!-- tag: ", toString tag.Key, " -->)") else
     concatenate(html ANCHOR{"title" => htmlLiteral headline tag, "href"  => toURL htmlFilename tag, htmlLiteral name}))
 
+----------------------------------------------------------------------------
+-- html'ing non Hypertext
+----------------------------------------------------------------------------
+
+html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
+
+htmlLiteral1 = fixDollar @@ htmlLiteral
+
+-- text stuff: we use html instead of tex, much faster (and better spacing)
+html Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
+    toString(100*(height n-1)), "%\">\n", apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</pre>") -- the % is relative to line-height
+html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral1 x,
+    if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
+    "</pre>")
+html Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then html k
+	  else html k | " : " | html v
+	  ) | "<br/>"), "</pre>")
+-- a few types are just strings
+html Boolean :=
+html Function :=
+html Type := html @@ toString
+-- except not these descendants
+html RingFamily :=
+html Ring := lookup(html,Thing)
+
 --html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
 --html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)
 
