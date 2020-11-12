@@ -463,10 +463,13 @@ briefDocumentation Thing       := key -> (
     tag := getOption(rawdoc, symbol DocumentTag);
     -- TODO: when is this not null
     synopsis := getSynopsis(key, tag, rawdoc);
-    if synopsis =!= null then << endl << synopsis << endl
-    else if (title := headline key) =!= null then << endl << key << commentize title << endl;
-    synopsis = documentationValue(getGlobalSymbol toString key, key);
-    if synopsis =!= null then << endl << synopsis << endl;)
+    print if synopsis =!= null then synopsis
+    else DIV {
+	if (title := headline key) =!= null then DIV { key, commentize title },
+	(synopsis = documentationValue(getGlobalSymbol toString key, key);
+	    if synopsis =!= null then synopsis)
+	}
+    )
 
 ? ScriptedFunctor :=
 ? Function :=
