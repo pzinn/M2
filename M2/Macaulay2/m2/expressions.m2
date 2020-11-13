@@ -1228,14 +1228,14 @@ texMath Thing := x -> texMath net x -- if we're desperate (in particular, for ra
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
-suffixesRegExp := "("|demark("|",suffixes)|")\\'";
+suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
 texVariable := x -> (
     if x === "" then return "";
     xx := separate("\\$",x); if #xx > 1 then return concatenate between("{\\char36}",texVariable\xx); -- avoid the use of "$" in tex output
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb "|x#0|"}";
     if last x === "'" then return texVariable substring(x,0,#x-1) | "'";
     r := regex(suffixesRegExp,x); if r =!= null then (
-	r = first r;
+	r = r#1;
 	return "\\"|substring(r,x)|"{"|texVariable substring(x,0,r#0)|"}"
 	);
     if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
