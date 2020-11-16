@@ -577,9 +577,6 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
     "url(#"|tag|")"
 )
 
-noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
---htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode TODO: fix
-
 svgFilter := new MarkUpType of HypertextInternalLink
 addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
 svgFilter.qname="filter"
