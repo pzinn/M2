@@ -155,12 +155,14 @@ if topLevelMode === WebApp then (
     webAppBegin = () -> (
 	html RingFamily := -- TODO rewrite this more cleanly
 	html Ring :=
+	html Monoid :=
 	html Thing := tex; -- encoding is not needed and makes a mess
 	global texMath <- texMathInside;
     );
     webAppEnd = () -> (
 	html RingFamily :=
 	html Ring :=
+	html Monoid :=
 	html Thing := htmlLiteral @@ tex;
 	global texMath <- texMathBackup;
     );
