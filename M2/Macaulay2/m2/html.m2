@@ -178,6 +178,9 @@ html Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort 
 	  else html k | " : " | html v
 	  ) | "<br/>"), "</pre>")
 -- a few types are just strings
+html IndeterminateNumber :=
+html GroebnerBasis :=
+html Package :=
 html Boolean :=
 html Function :=
 html Type := html @@ toString
