@@ -143,7 +143,7 @@ if topLevelMode === WebApp then (
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- redefine htmlLiteral to exclude codes
-    htmlLiteral1 = s -> replace("\\$","&dollar;",replace(webAppTagsRegex,"",htmlLiteral s));
+    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral;
     -- the texMath hack
     currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
     texMathBackup := texMath;

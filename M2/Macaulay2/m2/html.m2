@@ -129,11 +129,8 @@ html HTML := x -> demark(newline, {
 treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
-fixDollar := x -> replace("\\$","&dollar;",x)
 splitLines := x -> apply(x, y -> if class y === String then demark(newline, lines y) else y) -- effectively, \r\n -> \n and removes last [\r]\n
-html PRE := fixDollar @@ (lookup(html, PRE)) @@ splitLines
-html TT := fixDollar @@ (lookup(html, TT))
-html CODE := fixDollar @@ (lookup(html, CODE))
+html PRE := (lookup(html, PRE)) @@ splitLines
 
 html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")
@@ -162,13 +159,11 @@ html TO2  := x -> (
 
 html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
 
-htmlLiteral1 = fixDollar @@ htmlLiteral
-
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 html Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
     toString(if height n+depth n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
-    apply(unstack n, x-> htmlLiteral1 x | "<br/>"), "</pre>")
-html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral1 x,
+    apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
+html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
     if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
     "</pre>")
 html Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
@@ -178,6 +173,7 @@ html Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort 
 	  else html k | " : " | html v
 	  ) | "<br/>"), "</pre>")
 -- a few types are just strings
+html File :=
 html IndeterminateNumber :=
 html GroebnerBasis :=
 html Package :=
