@@ -1,184 +1,157 @@
 -- -*- M2-comint -*- hash: 598874853
+i1 : QQ[x,y];
+i2 : I=ideal(x+y+1);
 
-i1 : QQ[x,y];
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y\right]$
+i3 : T=tropicalVariety(I);
+i4 : rays(T)
 
-i2 : I=ideal(x+y+1);
-
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y\right]
-
-i3 : T=tropicalVariety(I);
-
-i4 : rays(T)
-
-o4 = \displaystyle \begin{pmatrix}
+o4 = $\begin{pmatrix}
 1&-1&0\\
-0&-1&1\end{pmatrix}
+0&-1&1\end{pmatrix}$
 
-o4 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{2}\,\longleftarrow \,{\mathbb Z}^{3}
+o4 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{2}\,\longleftarrow \,{\mathbb Z}^{3}$
+i5 : maxCones(T)
 
-i5 : maxCones(T)
+o5 = $\left\{\left\{1\right\},\,\left\{0\right\},\,\left\{2\right\}\right\}$
 
-o5 = \displaystyle \left\{\left\{1\right\},\,\left\{0\right\},\,\left\{2\right\}\right\}
+o5 : <pre style="display:inline">
+List</pre>
+i6 : linealitySpace T
 
-o5 : <pre style="display:inline">
-List</pre>
+o6 = $0$
 
-i6 : linealitySpace T
+o6 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{2}\,\longleftarrow \,0$
+i7 : fVector fan T
 
-o6 = \displaystyle 0
+o7 = $\left\{1,\,3\right\}$
 
-o6 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{2}\,\longleftarrow \,0
+o7 : <pre style="display:inline">
+List</pre>
+i8 : multiplicities(T)
 
-i7 : fVector fan T
+o8 = $\left\{1,\,1,\,1\right\}$
 
-o7 = \displaystyle \left\{1,\,3\right\}
+o8 : <pre style="display:inline">
+List</pre>
+i9 : QQ[x,y,z,w];
+i10 : I = ideal(w+x+y+z)
 
-o7 : <pre style="display:inline">
-List</pre>
+o10 = $<pre style="display:inline">
+ideal</pre>\left(x+y+z+w\right)$
 
-i8 : multiplicities(T)
+o10 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z,w\right]$
+i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
 
-o8 = \displaystyle \left\{1,\,1,\,1\right\}
+o11 = $<pre style="display:inline">
+T</pre>$
 
-o8 : <pre style="display:inline">
-List</pre>
+o11 : <pre style="display:inline">
+TropicalCycle</pre>
+i12 : rays(T)
 
-i9 : QQ[x,y,z,w];
-
-i10 : I = ideal(w+x+y+z)
-
-o10 = \displaystyle <pre style="display:inline">
-ideal</pre>\left(x+y+z+w\right)
-
-o10 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z,w\right]
-
-i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
-
-o11 = \displaystyle <pre style="display:inline">
-T</pre>
-
-o11 : <pre style="display:inline">
-TropicalCycle</pre>
-
-i12 : rays(T)
-
-o12 = \displaystyle \begin{pmatrix}
+o12 = $\begin{pmatrix}
 3&-1&-1&-1\\
 -1&3&-1&-1\\
 -1&-1&3&-1\\
--1&-1&-1&3\end{pmatrix}
+-1&-1&-1&3\end{pmatrix}$
 
-o12 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{4}
+o12 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{4}$
+i13 : maxCones(T)
 
-i13 : maxCones(T)
+o13 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{1,\,2\right\},\,\left\{1,\,3\right\},\,\left\{2,\,3\right\}\right\}$
 
-o13 = \displaystyle \left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{1,\,2\right\},\,\left\{1,\,3\right\},\,\left\{2,\,3\right\}\right\}
+o13 : <pre style="display:inline">
+List</pre>
+i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
 
-o13 : <pre style="display:inline">
-List</pre>
+o14 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z,w\right]$
+i15 : T= tropicalVariety(I,Prime=>false);
+i16 : rays(T)
 
-i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
-
-o14 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z,w\right]
-
-i15 : T= tropicalVariety(I,Prime=>false);
-
-i16 : rays(T)
-
-o16 = \displaystyle \begin{pmatrix}
+o16 = $\begin{pmatrix}
 1&3&1&-1&1&-1&-1&-1\\
 1&-1&1&3&-1&1&-1&-1\\
 1&-1&-1&-1&1&1&3&-1\\
--3&-1&-1&-1&-1&-1&-1&3\end{pmatrix}
+-3&-1&-1&-1&-1&-1&-1&3\end{pmatrix}$
 
-o16 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{8}
+o16 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{8}$
+i17 : maxCones(T)
 
-i17 : maxCones(T)
+o17 = $\left\{\left\{0\right\},\,\left\{1,\,2\right\},\,\left\{1,\,4\right\},\,\left\{1,\,7\right\},\,\left\{2,\,3\right\},\,\left\{4,\,6\right\},\,\left\{3,\,5\right\},\,\left\{3,\,7\right\},\,\left\{5,\,6\right\},\,\left\{6,\,7\right\}\right\}$
 
-o17 = \displaystyle \left\{\left\{0\right\},\,\left\{1,\,2\right\},\,\left\{1,\,4\right\},\,\left\{1,\,7\right\},\,\left\{2,\,3\right\},\,\left\{4,\,6\right\},\,\left\{3,\,5\right\},\,\left\{3,\,7\right\},\,\left\{5,\,6\right\},\,\left\{6,\,7\right\}\right\}
+o17 : <pre style="display:inline">
+List</pre>
+i18 : multiplicities(T)
 
-o17 : <pre style="display:inline">
-List</pre>
+o18 = $\left\{1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1\right\}$
 
-i18 : multiplicities(T)
+o18 : <pre style="display:inline">
+List</pre>
+i19 : linealitySpace T
 
-o18 = \displaystyle \left\{1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1\right\}
-
-o18 : <pre style="display:inline">
-List</pre>
-
-i19 : linealitySpace T
-
-o19 = \displaystyle \begin{pmatrix}
+o19 = $\begin{pmatrix}
 1\\
 1\\
 1\\
-1\end{pmatrix}
+1\end{pmatrix}$
 
-o19 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}
+o19 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
+i20 : QQ[x,y,z,w];
+i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
 
-i20 : QQ[x,y,z,w];
+o21 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z,w\right]$
+i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
+i23 : rays(T)
 
-i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
-
-o21 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z,w\right]
-
-i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
-
-i23 : rays(T)
-
-o23 = \displaystyle \begin{pmatrix}
+o23 = $\begin{pmatrix}
 -4&4&0&0&4&4\\
 -4&0&4&0&8&0\\
 -4&0&0&4&0&8\\
--3&1&1&1&3&3\end{pmatrix}
+-3&1&1&1&3&3\end{pmatrix}$
 
-o23 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}
+o23 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
+i24 : maxCones(T)
 
-i24 : maxCones(T)
+o24 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{0,\,4\right\},\,\left\{0,\,5\right\},\,\left\{2,\,3\right\},\,\left\{1,\,4\right\},\,\left\{1,\,5\right\},\,\left\{2,\,4\right\},\,\left\{3,\,5\right\},\,\left\{4,\,5\right\}\right\}$
 
-o24 = \displaystyle \left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{0,\,4\right\},\,\left\{0,\,5\right\},\,\left\{2,\,3\right\},\,\left\{1,\,4\right\},\,\left\{1,\,5\right\},\,\left\{2,\,4\right\},\,\left\{3,\,5\right\},\,\left\{4,\,5\right\}\right\}
+o24 : <pre style="display:inline">
+List</pre>
+i25 : linealitySpace T
 
-o24 : <pre style="display:inline">
-List</pre>
-
-i25 : linealitySpace T
-
-o25 = \displaystyle \begin{pmatrix}
+o25 = $\begin{pmatrix}
 0\\
 0\\
 0\\
-1\end{pmatrix}
+1\end{pmatrix}$
 
-o25 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}
+o25 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
+i26 : multiplicities(T)
 
-i26 : multiplicities(T)
+o26 = $\left\{\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\}\right\}$
 
-o26 = \displaystyle \left\{\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\},\,\left\{\right\}\right\}
-
-o26 : <pre style="display:inline">
-List</pre>
-
-i27 : 
+o26 : <pre style="display:inline">
+List</pre>
+i27 : 

@@ -1,31 +1,27 @@
 -- -*- M2-comint -*- hash: 1898416397
+i1 : R = frac(QQ[a])
 
-i1 : R = frac(QQ[a])
+o1 = $R$
 
-o1 = \displaystyle R
+o1 : <pre style="display:inline">
+FractionField</pre>
+i2 : B = skewPolynomialRing(R,a,{x,y,z})
 
-o1 : <pre style="display:inline">
-FractionField</pre>
+o2 = $<pre style="display:inline">
+B</pre>$
 
-i2 : B = skewPolynomialRing(R,a,{x,y,z})
+o2 : <pre style="display:inline">
+NCQuotientRing</pre>
+i3 : M = ncMatrix {{x, y, z}}
 
-o2 = \displaystyle <pre style="display:inline">
-B</pre>
+o3 = $<pre style="display:inline">
+NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o2 : <pre style="display:inline">
-NCQuotientRing</pre>
+o3 : <pre style="display:inline">
+NCMatrix</pre>
+i4 : sigma = ncMap(B,B,{y,z,x})
 
-i3 : M = ncMatrix {{x, y, z}}
-
-o3 = \displaystyle <pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}
-
-o3 : <pre style="display:inline">
-NCMatrix</pre>
-
-i4 : sigma = ncMap(B,B,{y,z,x})
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -49,25 +45,22 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 B</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rightarrow\,<pre style="display:inline">
 B</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
-B</pre>\right\}
+B</pre>\right\}$
 
-o4 : <pre style="display:inline">
-NCRingMap</pre>
+o4 : <pre style="display:inline">
+NCRingMap</pre>
+i5 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-i5 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
+o5 = $<pre style="display:inline">
+NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o5 = \displaystyle <pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}
+o5 : <pre style="display:inline">
+NCMatrix</pre>
+i6 : N*a
 
-o5 : <pre style="display:inline">
-NCMatrix</pre>
+o6 = $<pre style="display:inline">
+NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-i6 : N*a
-
-o6 = \displaystyle <pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}
-
-o6 : <pre style="display:inline">
-NCMatrix</pre>
-
-i7 : 
+o6 : <pre style="display:inline">
+NCMatrix</pre>
+i7 : 

@@ -1,40 +1,32 @@
 -- -*- M2-comint -*- hash: -260309947
+i1 : QQ[x,y,z];
+i2 : I=ideal(x^2-y^2);
 
-i1 : QQ[x,y,z];
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z\right]$
+i3 : isPrime I
 
-i2 : I=ideal(x^2-y^2);
+o3 = <pre style="display:inline">
+false</pre>
+i4 : T=tropicalVariety(I,Prime=>false,ComputeMultiplicities=>true);
+i5 : rays T
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z\right]
+o5 = $0$
 
-i3 : isPrime I
+o5 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{3}\,\longleftarrow \,0$
+i6 : maxCones T
 
-o3 = \displaystyle <pre style="display:inline">
-false</pre>
+o6 = $\left\{\left\{\right\}\right\}$
 
-i4 : T=tropicalVariety(I,Prime=>false,ComputeMultiplicities=>true);
+o6 : <pre style="display:inline">
+List</pre>
+i7 : multiplicities T
 
-i5 : rays T
+o7 = $\left\{2\right\}$
 
-o5 = \displaystyle 0
-
-o5 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{3}\,\longleftarrow \,0
-
-i6 : maxCones T
-
-o6 = \displaystyle \left\{\left\{\right\}\right\}
-
-o6 : <pre style="display:inline">
-List</pre>
-
-i7 : multiplicities T
-
-o7 = \displaystyle \left\{2\right\}
-
-o7 : <pre style="display:inline">
-List</pre>
-
-i8 : 
+o7 : <pre style="display:inline">
+List</pre>
+i8 : 

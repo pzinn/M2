@@ -1,14 +1,10 @@
 -- -*- M2-comint -*- hash: 1872084070
+i1 : R = CC[x,y];
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : (m,q,qsols) = mixedVolume(f,StartSystem=>true);
+i4 : fsols = trackPaths(f,q,qsols)
 
-i1 : R = CC[x,y];
-
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-
-i3 : (m,q,qsols) = mixedVolume(f,StartSystem=>true);
-
-i4 : fsols = trackPaths(f,q,qsols)
-
-o4 = \displaystyle \left\{<pre style="display:inline">
+o4 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
@@ -16,9 +12,8 @@ Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}\right\}
+Point</pre>\left\{\ldots4\ldots\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
-
-i5 : 
+o4 : <pre style="display:inline">
+List</pre>
+i5 : 

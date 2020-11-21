@@ -1,77 +1,65 @@
 -- -*- M2-comint -*- hash: 505971013
+i1 : R = CC[x,y];
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : fSols = solveSystem(f, randomSeed=>3);
+i4 : fSols/print
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
 
-i1 : R = CC[x,y];
+o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
 
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+o4 : <pre style="display:inline">
+List</pre>
+i5 : zeroSols = zeroFilter(fSols,1,1.0e-10);
+i6 : zeroSols / print
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
 
-i3 : fSols = solveSystem(f, randomSeed=>3);
+o6 = $\left\{,\,\right\}$
 
-i4 : fSols/print
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
+o6 : <pre style="display:inline">
+List</pre>
+i7 : f = {x^2+y^2,y*x+x};
+i8 : fSols = solveSystem(f);
+i9 : fSols/print
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
 
-o4 = \displaystyle \left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}
+o9 = $\left\{,\,,\,\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o9 : <pre style="display:inline">
+List</pre>
+i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
+i11 : zeroSols/print
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
 
-i5 : zeroSols = zeroFilter(fSols,1,1.0e-10);
+o11 = $\left\{\right\}$
 
-i6 : zeroSols / print
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-
-o6 = \displaystyle \left\{,\,\right\}
-
-o6 : <pre style="display:inline">
-List</pre>
-
-i7 : f = {x^2+y^2,y*x+x};
-
-i8 : fSols = solveSystem(f);
-
-i9 : fSols/print
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-
-o9 = \displaystyle \left\{,\,,\,\right\}
-
-o9 : <pre style="display:inline">
-List</pre>
-
-i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
-
-i11 : zeroSols/print
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-
-o11 = \displaystyle \left\{\right\}
-
-o11 : <pre style="display:inline">
-List</pre>
-
-i12 : 
+o11 : <pre style="display:inline">
+List</pre>
+i12 : 

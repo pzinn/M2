@@ -1,30 +1,27 @@
 -- -*- M2-comint -*- hash: 453416011
+i1 : X = coincidentRootLocus {5,2,2,1}
 
-i1 : X = coincidentRootLocus {5,2,2,1}
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
+i2 : time subsets X
+     -- used 0.415962 seconds
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o2 = $\left\{<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}\right\}$
 
-i2 : time subsets X
-     -- used 0.407413 seconds
-
-o2 = \displaystyle \left\{<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}\right\}
-
-o2 : <pre style="display:inline">
-List</pre>
-
-i3 : 
+o2 : <pre style="display:inline">
+List</pre>
+i3 : 

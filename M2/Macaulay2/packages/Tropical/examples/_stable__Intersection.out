@@ -1,30 +1,21 @@
 -- -*- M2-comint -*- hash: -1240239537
+i1 : QQ[x,y,z];
+i2 : I = ideal(x^2+y^2+z^2-1);
 
-i1 : QQ[x,y,z];
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z\right]$
+i3 : T1 = tropicalVariety(I);
+i4 : J = ideal(x*y+y*z+x*z+1);
 
-i2 : I = ideal(x^2+y^2+z^2-1);
+o4 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z\right]$
+i5 : T2 = tropicalVariety(J);
+i6 : V = tropicalVariety(I+J);
+i7 : W2 =  stableIntersection(T1,T2,Strategy=>"gfan");
+i8 : V#"Fan" == W2
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z\right]
-
-i3 : T1 = tropicalVariety(I);
-
-i4 : J = ideal(x*y+y*z+x*z+1);
-
-o4 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z\right]
-
-i5 : T2 = tropicalVariety(J);
-
-i6 : V = tropicalVariety(I+J);
-
-i7 : W2 =  stableIntersection(T1,T2,Strategy=>"gfan");
-
-i8 : V#"Fan" == W2
-
-o8 = \displaystyle <pre style="display:inline">
-true</pre>
-
-i9 : 
+o8 = <pre style="display:inline">
+true</pre>
+i9 : 

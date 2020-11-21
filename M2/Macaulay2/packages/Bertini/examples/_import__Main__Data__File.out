@@ -1,23 +1,19 @@
 -- -*- M2-comint -*- hash: 408841555
-
-i1 : makeB'InputFile(storeBM2Files,
+i1 : makeB'InputFile(storeBM2Files,
   AffVariableGroup=>{x,y,z},
   BertiniInputConfiguration=>{{TrackType,1}},
   B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
+i2 : runBertini(storeBM2Files)
+i3 : thePoints=importMainDataFile(storeBM2Files)
 
-i2 : runBertini(storeBM2Files)
-
-i3 : thePoints=importMainDataFile(storeBM2Files)
-
-o3 = \displaystyle \left\{<pre style="display:inline">
+o3 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\}\right\}
+Point</pre>\left\{\ldots8\ldots\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
-
-i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
+o3 : <pre style="display:inline">
+List</pre>
+i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
 <pre style="display:inline">
 1</pre>
 <pre style="display:inline">
@@ -25,19 +21,17 @@ i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can
 <pre style="display:inline">
 1</pre>
 
-o4 = \displaystyle \left\{\right\}
+o4 = $\left\{\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <pre style="display:inline">
+List</pre>
+i5 : sortMainDataComponents(thePoints)
 
-i5 : sortMainDataComponents(thePoints)
-
-o5 = \displaystyle \left\{\left\{<pre style="display:inline">
+o5 = $\left\{\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\}\right\},\,\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\}\right\}\right\}
+Point</pre>\left\{\ldots8\ldots\right\}\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
-
-i6 : 
+o5 : <pre style="display:inline">
+List</pre>
+i6 : 

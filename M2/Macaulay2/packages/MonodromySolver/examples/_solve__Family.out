@@ -1,15 +1,10 @@
 -- -*- M2-comint -*- hash: 411215389
+i1 : R = CC[a,b,c,d,e,f][x,y];
+i2 : q  = a*x^2+b*y+c;
+i3 : l = d*x+e*y+f;
+i4 : (sys, sols) = solveFamily polySystem {q,l}
 
-i1 : R = CC[a,b,c,d,e,f][x,y];
-
-i2 : q  = a*x^2+b*y+c;
-
-i3 : l = d*x+e*y+f;
-
-i4 : (sys, sols) = solveFamily polySystem {q,l}
-
-o4 = \displaystyle \left(<pre style="display:inline">
+o4 = $\left(<pre style="display:inline">
 sys</pre>,<pre style="display:inline">
-PointArray</pre>\left\{\ldots2\ldots\right\}\right)
-
-i5 : 
+PointArray</pre>\left\{\ldots2\ldots\right\}\right)$
+i5 : 

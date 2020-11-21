@@ -1,33 +1,28 @@
 -- -*- M2-comint -*- hash: 519585892
+i1 : QQ[x,y,z]
 
-i1 : QQ[x,y,z]
+o1 = ${\mathbb Q}\left[x,y,z\right]$
 
-o1 = \displaystyle {\mathbb Q}\left[x,y,z\right]
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
+i2 : V = tropicalVariety(ideal(x+y+z))
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o2 = $<pre style="display:inline">
+V</pre>$
 
-i2 : V = tropicalVariety(ideal(x+y+z))
+o2 : <pre style="display:inline">
+TropicalCycle</pre>
+i3 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
 
-o2 = \displaystyle <pre style="display:inline">
-V</pre>
+o3 = $<pre style="display:inline">
+F</pre>$
 
-o2 : <pre style="display:inline">
-TropicalCycle</pre>
+o3 : <pre style="display:inline">
+Fan</pre>
+i4 : mult = {1,2,-3,1}
 
-i3 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
+o4 = $\left\{1,\,2,\,-3,\,1\right\}$
 
-o3 = \displaystyle <pre style="display:inline">
-F</pre>
-
-o3 : <pre style="display:inline">
-Fan</pre>
-
-i4 : mult = {1,2,-3,1}
-
-o4 = \displaystyle \left\{1,\,2,\,-3,\,1\right\}
-
-o4 : <pre style="display:inline">
-List</pre>
-
-i5 : 
+o4 : <pre style="display:inline">
+List</pre>
+i5 : 

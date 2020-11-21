@@ -1,41 +1,35 @@
 -- -*- M2-comint -*- hash: 285553619
+i1 : R = CC[x,y];
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : fSols = solveSystem(f, randomSeed=>3);
+i4 : fSols/print
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
+$<pre style="display:inline">
+Point</pre>\left\{\ldots4\ldots\right\}$
 
-i1 : R = CC[x,y];
+o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
 
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+o4 : <pre style="display:inline">
+List</pre>
+i5 : isCoordinateZero(fSols_0,1,1.0e-10)
 
-i3 : fSols = solveSystem(f, randomSeed=>3);
-
-i4 : fSols/print
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-\displaystyle <pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}
-
-o4 = \displaystyle \left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}
-
-o4 : <pre style="display:inline">
-List</pre>
-
-i5 : isCoordinateZero(fSols_0,1,1.0e-10)
-
-o5 = \displaystyle <pre style="display:inline">
-true</pre>
-
-i6 : 
+o5 = <pre style="display:inline">
+true</pre>
+i6 : 

@@ -69,8 +69,11 @@ runLengthEncode VisibleList := x -> (
     while (xx=runLengthEncode0 x; #x =!= #xx) do x=xx;
     xx
     )
+runLengthEncode VerticalList :=
+runLengthEncode Thing := identity
 runLengthEncode0 = x -> (
      if #x === 0 then return x;
+     x = apply(x, runLengthEncode);
      dupout := true;
      while first(dupout,dupout = false) do x = new class x from (
 	  i0 := null;
@@ -87,8 +90,10 @@ runLengthEncode0 = x -> (
 		    m = m+1; 
 		    continue)
 	       else first(
-		    if oi === symbol oi then (oi = i; m = 1 ; continue) else
-		    if m === 1 then hold oi else if dupin === true then hold m : expression oi else (if instance(i0,BinaryOperation) then i0#1 else expression i0) .. (if instance(oi,BinaryOperation) then oi#2 else expression oi),
+		    if oi === symbol oi then (oi = i; m = 1 ; continue)
+		    else if m === 1 then hold oi
+		    else if dupin === true then hold m : expression oi
+		    else (if instance(i0,BinaryOperation) then i0#1 else expression i0) .. (if instance(oi,BinaryOperation) then oi#2 else expression oi),
 		    (dupin = null; oi = i; m = 1))));
      x)
 

@@ -37,6 +37,7 @@ newPackage select((
             {Name => "Contributers of note: Alex Diaz, Luis Garcia, Shaowei Lin, Sonja Mapes, Mike Stillman, Doug Torrance"}
         },
         Headline => "graphs and directed graphs (digraphs)",
+	Keywords => {"Graph Theory"},
         Configuration => {
             "DotBinary" => "dot",
             "JpgViewer" => "display"
@@ -425,7 +426,6 @@ html Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
      runcmd(graphs'DotBinary  | " -Tsvg " | dotfilename | " -o " | svgfilename);
      G.cache#"svg" = get svgfilename
      )
-htmlWithTex Digraph := html
 
 writeDotFile = method()
 writeDotFile (String, Graph) := (filename, G) -> (

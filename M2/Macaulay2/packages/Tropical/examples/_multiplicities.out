@@ -1,19 +1,15 @@
 -- -*- M2-comint -*- hash: 1207323258
+i1 : QQ[x,y,z]
 
-i1 : QQ[x,y,z]
+o1 = ${\mathbb Q}\left[x,y,z\right]$
 
-o1 = \displaystyle {\mathbb Q}\left[x,y,z\right]
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
+i2 : V = tropicalVariety(ideal(x+y+z));
+i3 : multiplicities V
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o3 = $\left\{1,\,1,\,1\right\}$
 
-i2 : V = tropicalVariety(ideal(x+y+z));
-
-i3 : multiplicities V
-
-o3 = \displaystyle \left\{1,\,1,\,1\right\}
-
-o3 : <pre style="display:inline">
-List</pre>
-
-i4 : 
+o3 : <pre style="display:inline">
+List</pre>
+i4 : 

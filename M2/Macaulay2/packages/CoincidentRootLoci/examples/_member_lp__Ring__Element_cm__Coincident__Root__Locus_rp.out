@@ -1,21 +1,16 @@
 -- -*- M2-comint -*- hash: 1670271720
+i1 : R := QQ[x,y];
+i2 : F = x^7-3*x^6*y+5*x^5*y^2-7*x^4*y^3+7*x^3*y^4-5*x^2*y^5+3*x*y^6-y^7
 
-i1 : R := QQ[x,y];
+o2 = $x^{7}-3\,x^{6}y+5\,x^{5}y^{2}-7\,x^{4}y^{3}+7\,x^{3}y^{4}-5\,x^{2}y^{5}+3\,x\,y^{6}-y^{7}$
 
-i2 : F = x^7-3*x^6*y+5*x^5*y^2-7*x^4*y^3+7*x^3*y^4-5*x^2*y^5+3*x*y^6-y^7
+o2 : ${\mathbb Q}\left[x,y\right]$
+i3 : member(F,coincidentRootLocus {3,2,2})
 
-o2 = \displaystyle x^{7}-3\,x^{6}y+5\,x^{5}y^{2}-7\,x^{4}y^{3}+7\,x^{3}y^{4}-5\,x^{2}y^{5}+3\,x\,y^{6}-y^{7}
+o3 = <pre style="display:inline">
+true</pre>
+i4 : member(F,coincidentRootLocus {5,2})
 
-o2 : {\mathbb Q}\left[x,y\right]
-
-i3 : member(F,coincidentRootLocus {3,2,2})
-
-o3 = \displaystyle <pre style="display:inline">
-true</pre>
-
-i4 : member(F,coincidentRootLocus {5,2})
-
-o4 = \displaystyle <pre style="display:inline">
-false</pre>
-
-i5 : 
+o4 = <pre style="display:inline">
+false</pre>
+i5 : 

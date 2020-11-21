@@ -1,16 +1,14 @@
 -- -*- M2-comint -*- hash: -371089811
+i1 : A = QQ{x,y,z,w}
 
-i1 : A = QQ{x,y,z,w}
+o1 = $<pre style="display:inline">
+A</pre>$
 
-o1 = \displaystyle <pre style="display:inline">
-A</pre>
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
+i2 : f = x^2+y^2+2*z^3
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
-
-i2 : f = x^2+y^2+2*z^3
-
-o2 = \displaystyle <pre style="display:inline">
+o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -20,32 +18,28 @@ A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z,\,z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,2\right\}\right\}
+A</pre>\right\}\,\Rightarrow\,2\right\}\right\}$
 
-o2 : <pre style="display:inline">
-A</pre>
+o2 : $<pre style="display:inline">
+A</pre>$
+i3 : isConstant f
 
-i3 : isConstant f
+o3 = <pre style="display:inline">
+false</pre>
+i4 : g = promote(1,A)
 
-o3 = \displaystyle <pre style="display:inline">
-false</pre>
-
-i4 : g = promote(1,A)
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
 HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}$
 
-o4 : <pre style="display:inline">
-A</pre>
+o4 : $<pre style="display:inline">
+A</pre>$
+i5 : isConstant g
 
-i5 : isConstant g
-
-o5 = \displaystyle <pre style="display:inline">
-true</pre>
-
-i6 : 
+o5 = <pre style="display:inline">
+true</pre>
+i6 : 

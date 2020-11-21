@@ -1,28 +1,23 @@
 -- -*- M2-comint -*- hash: 1549570986
+i1 : R = QQ[x,y];
+i2 : F = x^7+2*x^6*y-x^5*y^2-4*x^4*y^3-x^3*y^4+2*x^2*y^5+x*y^6
 
-i1 : R = QQ[x,y];
+o2 = $x^{7}+2\,x^{6}y-x^{5}y^{2}-4\,x^{4}y^{3}-x^{3}y^{4}+2\,x^{2}y^{5}+x\,y^{6}$
 
-i2 : F = x^7+2*x^6*y-x^5*y^2-4*x^4*y^3-x^3*y^4+2*x^2*y^5+x*y^6
+o2 : $R$
+i3 : X = coincidentRootLocus(4,2,1)
 
-o2 = \displaystyle x^{7}+2\,x^{6}y-x^{5}y^{2}-4\,x^{4}y^{3}-x^{3}y^{4}+2\,x^{2}y^{5}+x\,y^{6}
+o3 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o2 : R
+o3 : <pre style="display:inline">
+CoincidentRootLocus</pre>
+i4 : tangentSpace(X,F)
 
-i3 : X = coincidentRootLocus(4,2,1)
+o4 = $<pre style="display:inline">
+ideal</pre>\,\left(x^{4}y^{3}+2\,x^{3}y^{4}-2\,x\,y^{6}-y^{7},x^{5}y^{2}-4\,x^{3}y^{4}-2\,x^{2}y^{5}+3\,x\,y^{6}+2\,y^{7},x^{6}y+6\,x^{3}y^{4}+3\,x^{2}y^{5}-6\,x\,y^{6}-4\,y^{7},x^{7}-9\,x^{3}y^{4}-6\,x^{2}y^{5}+8\,x\,y^{6}+6\,y^{7}\right)$
 
-o3 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
-
-o3 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-
-i4 : tangentSpace(X,F)
-
-o4 = \displaystyle <pre style="display:inline">
-ideal</pre>\,\left(x^{4}y^{3}+2\,x^{3}y^{4}-2\,x\,y^{6}-y^{7},x^{5}y^{2}-4\,x^{3}y^{4}-2\,x^{2}y^{5}+3\,x\,y^{6}+2\,y^{7},x^{6}y+6\,x^{3}y^{4}+3\,x^{2}y^{5}-6\,x\,y^{6}-4\,y^{7},x^{7}-9\,x^{3}y^{4}-6\,x^{2}y^{5}+8\,x\,y^{6}+6\,y^{7}\right)
-
-o4 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>R
-
-i5 : 
+o4 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>$R$
+i5 : 

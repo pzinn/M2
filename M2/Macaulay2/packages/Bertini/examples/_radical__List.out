@@ -1,24 +1,20 @@
 -- -*- M2-comint -*- hash: -1079190554
+i1 : radicalList({2.000,1.999})
 
-i1 : radicalList({2.000,1.999})
+o1 = $\left\{{2},\,{1.999}\right\}$
 
-o1 = \displaystyle \left\{{2},\,{1.999}\right\}
+o1 : <pre style="display:inline">
+List</pre>
+i2 : radicalList({2.000,1.999},1e-10)
 
-o1 : <pre style="display:inline">
-List</pre>
+o2 = $\left\{{2},\,{1.999}\right\}$
 
-i2 : radicalList({2.000,1.999},1e-10)
+o2 : <pre style="display:inline">
+List</pre>
+i3 : radicalList({2.000,1.999},1e-2)
 
-o2 = \displaystyle \left\{{2},\,{1.999}\right\}
+o3 = $\left\{{2}\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
-
-i3 : radicalList({2.000,1.999},1e-2)
-
-o3 = \displaystyle \left\{{2}\right\}
-
-o3 : <pre style="display:inline">
-List</pre>
-
-i4 : 
+o3 : <pre style="display:inline">
+List</pre>
+i4 : 

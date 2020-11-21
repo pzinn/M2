@@ -1,31 +1,26 @@
 -- -*- M2-comint -*- hash: -1015637339
+i1 : X = coincidentRootLocus {3,3,2}
 
-i1 : X = coincidentRootLocus {3,3,2}
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
+i2 : F = random X
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o2 = $72\,{t}_{0}^{8}-3108\,{t}_{0}^{7}{t}_{1}+56018\,{t}_{0}^{6}{t}_{1}^{2}-546831\,{t}_{0}^{5}{t}_{1}^{3}+3136401\,{t}_{0}^{4}{t}_{1}^{4}-10714113\,{t}_{0}^{3}{t}_{1}^{5}+21001761\,{t}_{0}^{2}{t}_{1}^{6}-21257640\,{t}_{0}{t}_{1}^{7}+8503056\,{t}_{1}^{8}$
 
-i2 : F = random X
+o2 : ${\mathbb Q}\left[{t}_{0},{t}_{1}\right]$
+i3 : member(F,X)
 
-o2 = \displaystyle 72\,{t}_{0}^{8}-3108\,{t}_{0}^{7}{t}_{1}+56018\,{t}_{0}^{6}{t}_{1}^{2}-546831\,{t}_{0}^{5}{t}_{1}^{3}+3136401\,{t}_{0}^{4}{t}_{1}^{4}-10714113\,{t}_{0}^{3}{t}_{1}^{5}+21001761\,{t}_{0}^{2}{t}_{1}^{6}-21257640\,{t}_{0}{t}_{1}^{7}+8503056\,{t}_{1}^{8}
+o3 = <pre style="display:inline">
+true</pre>
+i4 : factor F
 
-o2 : {\mathbb Q}\left[{t}_{0},{t}_{1}\right]
+o4 = $\left({{t}_{0}-9\,{t}_{1}}\right)^{3}\left({2\,{t}_{0}-9\,{t}_{1}}\right)^{3}\left({3\,{t}_{0}-4\,{t}_{1}}\right)^{2}$
 
-i3 : member(F,X)
-
-o3 = \displaystyle <pre style="display:inline">
-true</pre>
-
-i4 : factor F
-
-o4 = \displaystyle \left({{t}_{0}-9\,{t}_{1}}\right)^{3}\left({2\,{t}_{0}-9\,{t}_{1}}\right)^{3}\left({3\,{t}_{0}-4\,{t}_{1}}\right)^{2}
-
-o4 : <pre style="display:inline">
-Expression</pre><pre style="display:inline">
- of class </pre><pre style="display:inline">
-Product</pre>
-
-i5 : 
+o4 : <pre style="display:inline">
+Expression</pre><pre style="display:inline">
+ of class </pre><pre style="display:inline">
+Product</pre>
+i5 : 

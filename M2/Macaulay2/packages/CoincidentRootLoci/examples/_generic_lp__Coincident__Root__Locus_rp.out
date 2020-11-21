@@ -1,51 +1,43 @@
 -- -*- M2-comint -*- hash: -343518489
+i1 : X = coincidentRootLocus {3,1,1}
 
-i1 : X = coincidentRootLocus {3,1,1}
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 = \displaystyle <pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
+i2 : F = generic X
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
+o2 = ${\textit{t0}}_{0}^{3}{\textit{t1}}_{0}{\textit{t2}}_{0}{x}_{0}^{5}+\left({\textit{t0}}_{0}^{3}{\textit{t1}}_{0}{\textit{t2}}_{1}+{\textit{t0}}_{0}^{3}{\textit{t1}}_{1}{\textit{t2}}_{0}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{4}{x}_{1}+\left({\textit{t0}}_{0}^{3}{\textit{t1}}_{1}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{0}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{1}{\textit{t2}}_{0}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{3}{x}_{1}^{2}+\left(3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{1}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{0}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{1}{\textit{t2}}_{0}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{2}{x}_{1}^{3}+\left(3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{1}{\textit{t2}}_{1}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{0}{\textit{t2}}_{1}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{1}{\textit{t2}}_{0}\right){x}_{0}{x}_{1}^{4}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{1}{\textit{t2}}_{1}{x}_{1}^{5}$
 
-i2 : F = generic X
+o2 : ${\mathbb Q}\left[{\textit{t0}}_{0},{\textit{t0}}_{1},{\textit{t1}}_{0},{\textit{t1}}_{1},{\textit{t2}}_{0},{\textit{t2}}_{1}\right]\left[{x}_{0},{x}_{1}\right]$
+i3 : member(F,X)
 
-o2 = \displaystyle {\textit{t0}}_{0}^{3}{\textit{t1}}_{0}{\textit{t2}}_{0}{x}_{0}^{5}+\left({\textit{t0}}_{0}^{3}{\textit{t1}}_{0}{\textit{t2}}_{1}+{\textit{t0}}_{0}^{3}{\textit{t1}}_{1}{\textit{t2}}_{0}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{4}{x}_{1}+\left({\textit{t0}}_{0}^{3}{\textit{t1}}_{1}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{0}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{1}{\textit{t2}}_{0}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{3}{x}_{1}^{2}+\left(3\,{\textit{t0}}_{0}^{2}{\textit{t0}}_{1}{\textit{t1}}_{1}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{0}{\textit{t2}}_{1}+3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{1}{\textit{t2}}_{0}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{0}{\textit{t2}}_{0}\right){x}_{0}^{2}{x}_{1}^{3}+\left(3\,{\textit{t0}}_{0}{\textit{t0}}_{1}^{2}{\textit{t1}}_{1}{\textit{t2}}_{1}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{0}{\textit{t2}}_{1}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{1}{\textit{t2}}_{0}\right){x}_{0}{x}_{1}^{4}+{\textit{t0}}_{1}^{3}{\textit{t1}}_{1}{\textit{t2}}_{1}{x}_{1}^{5}
+o3 = <pre style="display:inline">
+true</pre>
+i4 : factor F
 
-o2 : {\mathbb Q}\left[{\textit{t0}}_{0},{\textit{t0}}_{1},{\textit{t1}}_{0},{\textit{t1}}_{1},{\textit{t2}}_{0},{\textit{t2}}_{1}\right]\left[{x}_{0},{x}_{1}\right]
+o4 = $\left({\textit{t2}}_{0}{x}_{0}+{\textit{t2}}_{1}{x}_{1}\right)\left({\textit{t1}}_{0}{x}_{0}+{\textit{t1}}_{1}{x}_{1}\right)\left({{\textit{t0}}_{0}{x}_{0}+{\textit{t0}}_{1}{x}_{1}}\right)^{3}$
 
-i3 : member(F,X)
+o4 : <pre style="display:inline">
+Expression</pre><pre style="display:inline">
+ of class </pre><pre style="display:inline">
+Product</pre>
+i5 : G = generic(X,Reduce=>true)
 
-o3 = \displaystyle <pre style="display:inline">
-true</pre>
+o5 = ${t}_{0}^{5}{x}_{0}^{5}+\left(3\,{t}_{0}^{4}{t}_{1}+{t}_{0}^{4}{t}_{2}+{t}_{0}^{4}{t}_{3}\right){x}_{0}^{4}{x}_{1}+\left(3\,{t}_{0}^{3}{t}_{1}^{2}+3\,{t}_{0}^{3}{t}_{1}{t}_{2}+3\,{t}_{0}^{3}{t}_{1}{t}_{3}+{t}_{0}^{3}{t}_{2}{t}_{3}\right){x}_{0}^{3}{x}_{1}^{2}+\left({t}_{0}^{2}{t}_{1}^{3}+3\,{t}_{0}^{2}{t}_{1}^{2}{t}_{2}+3\,{t}_{0}^{2}{t}_{1}^{2}{t}_{3}+3\,{t}_{0}^{2}{t}_{1}{t}_{2}{t}_{3}\right){x}_{0}^{2}{x}_{1}^{3}+\left({t}_{0}{t}_{1}^{3}{t}_{2}+{t}_{0}{t}_{1}^{3}{t}_{3}+3\,{t}_{0}{t}_{1}^{2}{t}_{2}{t}_{3}\right){x}_{0}{x}_{1}^{4}+{t}_{1}^{3}{t}_{2}{t}_{3}{x}_{1}^{5}$
 
-i4 : factor F
+o5 : ${\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3}\right]\left[{x}_{0},{x}_{1}\right]$
+i6 : member(G,X)
 
-o4 = \displaystyle \left({\textit{t2}}_{0}{x}_{0}+{\textit{t2}}_{1}{x}_{1}\right)\left({\textit{t1}}_{0}{x}_{0}+{\textit{t1}}_{1}{x}_{1}\right)\left({{\textit{t0}}_{0}{x}_{0}+{\textit{t0}}_{1}{x}_{1}}\right)^{3}
+o6 = <pre style="display:inline">
+true</pre>
+i7 : factor G
 
-o4 : <pre style="display:inline">
-Expression</pre><pre style="display:inline">
- of class </pre><pre style="display:inline">
-Product</pre>
+o7 = $\left({t}_{0}{x}_{0}+{t}_{3}{x}_{1}\right)\left({t}_{0}{x}_{0}+{t}_{2}{x}_{1}\right)\left({{t}_{0}{x}_{0}+{t}_{1}{x}_{1}}\right)^{3}$
 
-i5 : G = generic(X,Reduce=>true)
-
-o5 = \displaystyle {t}_{0}^{5}{x}_{0}^{5}+\left(3\,{t}_{0}^{4}{t}_{1}+{t}_{0}^{4}{t}_{2}+{t}_{0}^{4}{t}_{3}\right){x}_{0}^{4}{x}_{1}+\left(3\,{t}_{0}^{3}{t}_{1}^{2}+3\,{t}_{0}^{3}{t}_{1}{t}_{2}+3\,{t}_{0}^{3}{t}_{1}{t}_{3}+{t}_{0}^{3}{t}_{2}{t}_{3}\right){x}_{0}^{3}{x}_{1}^{2}+\left({t}_{0}^{2}{t}_{1}^{3}+3\,{t}_{0}^{2}{t}_{1}^{2}{t}_{2}+3\,{t}_{0}^{2}{t}_{1}^{2}{t}_{3}+3\,{t}_{0}^{2}{t}_{1}{t}_{2}{t}_{3}\right){x}_{0}^{2}{x}_{1}^{3}+\left({t}_{0}{t}_{1}^{3}{t}_{2}+{t}_{0}{t}_{1}^{3}{t}_{3}+3\,{t}_{0}{t}_{1}^{2}{t}_{2}{t}_{3}\right){x}_{0}{x}_{1}^{4}+{t}_{1}^{3}{t}_{2}{t}_{3}{x}_{1}^{5}
-
-o5 : {\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3}\right]\left[{x}_{0},{x}_{1}\right]
-
-i6 : member(G,X)
-
-o6 = \displaystyle <pre style="display:inline">
-true</pre>
-
-i7 : factor G
-
-o7 = \displaystyle \left({t}_{0}{x}_{0}+{t}_{3}{x}_{1}\right)\left({t}_{0}{x}_{0}+{t}_{2}{x}_{1}\right)\left({{t}_{0}{x}_{0}+{t}_{1}{x}_{1}}\right)^{3}
-
-o7 : <pre style="display:inline">
-Expression</pre><pre style="display:inline">
- of class </pre><pre style="display:inline">
-Product</pre>
-
-i8 : 
+o7 : <pre style="display:inline">
+Expression</pre><pre style="display:inline">
+ of class </pre><pre style="display:inline">
+Product</pre>
+i8 : 

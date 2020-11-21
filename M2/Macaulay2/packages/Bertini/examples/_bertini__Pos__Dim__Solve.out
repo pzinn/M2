@@ -1,71 +1,59 @@
 -- -*- M2-comint -*- hash: 704393788
+i1 : R = QQ[x,y,z]
 
-i1 : R = QQ[x,y,z]
+o1 = $R$
 
-o1 = \displaystyle R
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
-i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+o2 : <pre style="display:inline">
+List</pre>
+i3 : S = bertiniPosDimSolve F
 
-o2 = \displaystyle \left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}
+o3 = $<pre style="display:inline">
+S</pre>$
 
-o2 : <pre style="display:inline">
-List</pre>
+o3 : <pre style="display:inline">
+NumericalVariety</pre>
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-i3 : S = bertiniPosDimSolve F
+o4 = $\left\{\begin{aligned}&<pre style="display:inline">
+Point</pre>\left\{\ldots1\ldots\right\}\end{aligned}\right\}$
 
-o3 = \displaystyle <pre style="display:inline">
-S</pre>
+o4 : <pre style="display:inline">
+VerticalList</pre>
+i5 : S#1 --first specify dimension
 
-o3 : <pre style="display:inline">
-NumericalVariety</pre>
+o5 = $\left\{<pre style="display:inline">
+WitnessSet</pre>\left\{\ldots6\ldots\right\}\right\}$
 
-i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+o5 : <pre style="display:inline">
+List</pre>
+i6 : peek oo_0 --then list position
 
-o4 = \displaystyle \left\{\begin{aligned}&<pre style="display:inline">
-Point</pre>\left\{\ldots1\ldots\right\}\end{aligned}\right\}
+o6 = <pre style="display:inline-table;vertical-align:0%">
+WitnessSet{ComponentNumber => 0                                                                     }<br/>           IsIrreducible => true<br/>           Points => {{-4.45922e-72-2.55408e-73*ii, 2.01838e-72+3.79713e-72*ii, .271872-.460077*ii}}<br/>           Slice => | -1.26968+2.90514ii -3.12707-1.35391ii 5.41899+.978856ii -1.92362+2.22703ii |<br/>           WitnessDataFileName => /tmp/M2-160940-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
+i7 : PD=primaryDecomposition( ideal F)
 
-o4 : <pre style="display:inline">
-VerticalList</pre>
-
-i5 : S#1 --first specify dimension
-
-o5 = \displaystyle \left\{<pre style="display:inline">
-WitnessSet</pre>\left\{\ldots6\ldots\right\}\right\}
-
-o5 : <pre style="display:inline">
-List</pre>
-
-i6 : peek oo_0 --then list position
-
-o6 = <pre style="display:inline-table;vertical-align:0%">
-WitnessSet{ComponentNumber => 0                                                                      }<br/>           IsIrreducible => true<br/>           Points => {{2.00081e-65+3.47692e-65*ii, -1.75577e-65+3.74055e-65*ii, -.239619-.332517*ii}}<br/>           Slice => | .298978+.583683ii -.0744661-.776972ii -1.10745+.150626ii -.315453-.332155ii |<br/>           WitnessDataFileName => /tmp/M2-122041-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
-
-i7 : PD=primaryDecomposition( ideal F)
-
-o7 = \displaystyle \left\{<pre style="display:inline">
+o7 = $\left\{<pre style="display:inline">
 ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\,<pre style="display:inline">
-ideal</pre>\,\left(y,x\right)\right\}
+ideal</pre>\,\left(y,x\right)\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : <pre style="display:inline">
+List</pre>
+i8 : dim PD_0
 
-i8 : dim PD_0
+o8 = $2$
+i9 : degree PD_0
 
-o8 = \displaystyle 2
+o9 = $2$
+i10 : dim PD_1
 
-i9 : degree PD_0
+o10 = $1$
+i11 : degree PD_1
 
-o9 = \displaystyle 2
-
-i10 : dim PD_1
-
-o10 = \displaystyle 1
-
-i11 : degree PD_1
-
-o11 = \displaystyle 1
-
-i12 : 
+o11 = $1$
+i12 : 

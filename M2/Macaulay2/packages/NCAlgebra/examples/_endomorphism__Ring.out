@@ -1,22 +1,19 @@
 -- -*- M2-comint -*- hash: 1964516983
+i1 : Q = QQ[a,b,c]
 
-i1 : Q = QQ[a,b,c]
+o1 = $Q$
 
-o1 = \displaystyle Q
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
+i2 : R = Q/ideal{a*b-c^2}
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o2 = $R$
 
-i2 : R = Q/ideal{a*b-c^2}
+o2 : <pre style="display:inline">
+QuotientRing</pre>
+i3 : kRes = res(coker vars R, LengthLimit=>7)
 
-o2 = \displaystyle R
-
-o2 : <pre style="display:inline">
-QuotientRing</pre>
-
-i3 : kRes = res(coker vars R, LengthLimit=>7)
-
-o3 = \displaystyle \underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+o3 = $\underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
 a&b&c\end{pmatrix}}\,\underset{\vphantom{\Bigg|}1}{R^{3}}\,\xleftarrow{\scriptsize \begin{pmatrix}
 0&-c&b&0\\
 -c&0&0&a\\
@@ -40,35 +37,32 @@ c&0&0&a\end{pmatrix}}\,\underset{\vphantom{\Bigg|}6}{R^{4}}\,\xleftarrow{\script
 0&-a&0&-c\\
 -b&0&-c&0\\
 c&0&a&0\\
-0&c&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{4}}
+0&c&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{4}}$
 
-o3 : <pre style="display:inline">
-ChainComplex</pre>
+o3 : <pre style="display:inline">
+ChainComplex</pre>
+i4 : M = coker kRes.dd_5
 
-i4 : M = coker kRes.dd_5
-
-o4 = \displaystyle <pre style="display:inline">
+o4 = $<pre style="display:inline">
 cokernel</pre>\ \begin{pmatrix}
 0&-a&0&-c\\
 -b&0&-c&0\\
 c&0&a&0\\
-0&c&0&b\end{pmatrix}
+0&c&0&b\end{pmatrix}$
 
-o4 : R<pre style="display:inline">
+o4 : $R$<pre style="display:inline">
 -module</pre><pre style="display:inline">
-, quotient of </pre>R^{4}
+, quotient of </pre>$R^{4}$
+i5 : B = endomorphismRing(M,X)
 
-i5 : B = endomorphismRing(M,X)
+o5 = $<pre style="display:inline">
+B</pre>$
 
-o5 = \displaystyle <pre style="display:inline">
-B</pre>
+o5 : <pre style="display:inline">
+NCQuotientRing</pre>
+i6 : gensI = gens ideal B
 
-o5 : <pre style="display:inline">
-NCQuotientRing</pre>
-
-i6 : gensI = gens ideal B
-
-o6 = \displaystyle \left\{<pre style="display:inline">
+o6 = $\left\{<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -180,14 +174,13 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <pre style="display:inline">
+List</pre>
+i7 : gensIMin = minimizeRelations(gensI)
 
-i7 : gensIMin = minimizeRelations(gensI)
-
-o7 = \displaystyle \left\{<pre style="display:inline">
+o7 = $\left\{<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -215,14 +208,13 @@ CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pr
 NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
 HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : <pre style="display:inline">
+List</pre>
+i8 : maps = B.cache.endomorphismRingGens
 
-i8 : maps = B.cache.endomorphismRingGens
-
-o8 = \displaystyle \left\{\begin{pmatrix}
+o8 = $\left\{\begin{pmatrix}
 0&0&1&0\\
 0&0&0&0\\
 0&0&0&0\\
@@ -238,14 +230,12 @@ o8 = \displaystyle \left\{\begin{pmatrix}
 1&0&0&0\\
 0&0&0&0\\
 0&0&0&0\\
-0&0&0&1\end{pmatrix}\right\}
+0&0&0&1\end{pmatrix}\right\}$
 
-o8 : <pre style="display:inline">
-List</pre>
+o8 : <pre style="display:inline">
+List</pre>
+i9 : maps_3 == maps_0*maps_2
 
-i9 : maps_3 == maps_0*maps_2
-
-o9 = \displaystyle <pre style="display:inline">
-true</pre>
-
-i10 : 
+o9 = <pre style="display:inline">
+true</pre>
+i10 : 

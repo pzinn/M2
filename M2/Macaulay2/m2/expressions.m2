@@ -896,7 +896,7 @@ net MatrixExpression := x -> (
 	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
 	netList(x,Boxes=>{false,{0,#x#0}},matrixDisplayOptions#compactMatrixForm)
      ))
-html MatrixExpression := x -> html TABLE toList x
+--html MatrixExpression := x -> html TABLE toList x
 
 net MatrixDegreeExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
@@ -911,117 +911,6 @@ net VectorExpression := x -> (
 	 x=apply(toList x,y->{(if compactMatrixForm then toCompactString else net)y});
 	netList(x,Boxes=>{false,{0,1}},HorizontalSpace=>1,VerticalSpace=>if compactMatrixForm then 0 else 1,BaseRow=>0,Alignment=>Center)
      ))
-html VectorExpression := x -> html TABLE apply(toList x,y->{y})
-
------------------------------------------------------------------------------
--- tex stuff
-
-
-html Thing := toString
-
-html Expression := v -> (
-     op := class v;
-     p := precedence v;
-     names := apply(toList v,term -> (
-	       if precedence term <= p
-	       then ("(", html term, ")")
-	       else html term));
-     if # v === 0
-     then (
-	  if op.?EmptyName then op.EmptyName
-	  else error("no method for html ", op)
-	  )
-     else (
-	  if op.?operator then demark(op.operator,names)
-	  else error("no method for html ", op)
-	  )
-     )
-
-html Minus := v -> (
-     term := v#0;
-     if precedence term < precedence v
-     then "-(" | html term | ")"
-     else "-" | html term
-     )
-
--*
-texMath Divide := x -> (
-     if precedence x#0 < precedence x
-     then "(" | texMath x#0 | ")"
-     else texMath x#0
-     ) | "/" | (
-     if precedence x#1 < precedence x
-     then "(" | texMath x#1 | ")"
-     else texMath x#1
-     )
-*-
-html Divide := x -> (
-     p := precedence x;
-     a := html x#0;
-     b := html x#1;
-     if precedence x#0 <= p then a = "(" | a | ")";
-     if precedence x#1 <= p then b = "(" | b | ")";
-     a | " / " | b)
-
-html Sum := v -> (
-     n := # v;
-     if n === 0 then "0"
-     else (
-	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i->"+"));
-	  seps#0 = seps#n = "";
-	  v = apply(n, i -> (
-		    if class v#i === Minus
-		    then ( seps#i = "-"; v#i#0 )
-		    else v#i ));
-	  names := apply(n, i -> (
-		    if precedence v#i <= p
-		    then "(" | html v#i | ")"
-		    else html v#i ));
-	  concatenate (
-	       mingle(seps, names)
-	       )))
-
-html Product := v -> (
-     n := # v;
-     if n === 0 then "1"
-     else if n === 1 then html v#0
-     else (
-     	  p := precedence v;
-     	  concatenate apply(#v,
-	       i -> (
-		    term := v#i;
-	       	    if precedence term <= p
-		    then "(" | html term | ")"
-	       	    else html term
-	       	    )
-	       )
-	  )
-     )
-
-html Superscript := v -> (
-     p := precedence v;
-     x := html v#0;
-     y := html v#1;
-     if precedence v#0 <  p then x = "(" | x | ")";
-     concatenate(x,"<sup>",y,"</sup>"))
-
-html Power := v -> (
-     if v#1 === 1 then html v#0
-     else (
-	  p := precedence v;
-	  x := html v#0;
-	  y := html v#1;
-	  if precedence v#0 <  p then x = "(" | x | ")";
-	  concatenate(x,"<sup>",y,"</sup>")))
-
-html Subscript := v -> (
-     p := precedence v;
-     x := html v#0;
-     y := html v#1;
-     if precedence v#0 <  p then x = "(" | x | ")";
-     concatenate(x,"<sub>",y,"</sub>"))
-
 
 ctr := 0
 showTex = method()
@@ -1049,7 +938,7 @@ showTex Thing := x -> (
 show TEX := showTex
 
 -----------------------------------------------------------------------------
-print = x -> (<< net x << endl;)
+print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)
@@ -1144,6 +1033,7 @@ expression MutableList := hold
 -- .. but these are OK (what a mess)
 expression Ring := lookup(expression,HashTable)
 expression RingFamily := lookup(expression,HashTable)
+-- strings -- uses texLiteral from latex.m2
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

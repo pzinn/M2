@@ -1,44 +1,35 @@
 -- -*- M2-comint -*- hash: 1488243299
+i1 : R = CC[x,y];
+i2 : F = {x^2-1,y^2-2};
+i3 : S = bertiniZeroDimSolve F
 
-i1 : R = CC[x,y];
-
-i2 : F = {x^2-1,y^2-2};
-
-i3 : S = bertiniZeroDimSolve F
-
-o3 = \displaystyle \left\{<pre style="display:inline">
+o3 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots14\ldots\right\}\right\}
+Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <pre style="display:inline">
+List</pre>
+i4 : peek S_0
 
-i4 : peek S_0
+o4 = <pre style="display:inline-table;vertical-align:0%">
+Point{AccuracyEst => 1.61642e-12        }<br/>      AccuracyEstInternal => 1.69984e-12<br/>      ConditionNumber => 64.9701<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .000390625<br/>      FunctionResidual => 1.98603e-15<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 1.97416e-15<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 3<br/></pre>
+i5 : R = CC[x];
+i6 : F = {x^2*(x-1)};
+i7 : S = bertiniZeroDimSolve F
 
-o4 = <pre style="display:inline-table;vertical-align:0%">
-Point{AccuracyEst => 2.28484e-13        }<br/>      AccuracyEstInternal => 4.04227e-14<br/>      ConditionNumber => 2.94549<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .000390625<br/>      FunctionResidual => 7.85046e-17<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 2.83635e-17<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 0<br/></pre>
-
-i5 : R = CC[x];
-
-i6 : F = {x^2*(x-1)};
-
-i7 : S = bertiniZeroDimSolve F
-
-o7 = \displaystyle \left\{<pre style="display:inline">
+o7 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots14\ldots\right\}\right\}
+Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : <pre style="display:inline">
+List</pre>
+i8 : B = bertiniZeroDimSolve(F,UseRegeneration=>1)
 
-i8 : B = bertiniZeroDimSolve(F,UseRegeneration=>1)
+o8 = $\left\{<pre style="display:inline">
+Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o8 = \displaystyle \left\{<pre style="display:inline">
-Point</pre>\left\{\ldots14\ldots\right\}\right\}
-
-o8 : <pre style="display:inline">
-List</pre>
-
-i9 : 
+o8 : <pre style="display:inline">
+List</pre>
+i9 : 
