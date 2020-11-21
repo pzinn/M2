@@ -166,12 +166,12 @@ html Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:"
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
     if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
     "</pre>")
-html Descent := x -> concatenate("<pre style=\"display:inline-table\">\n", sort apply(pairs x,
+html Descent := x -> concatenate("<span style=\"display:inline-table\">\n", sort apply(pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then html k
 	  else html k | " : " | html v
-	  ) | "<br/>"), "</pre>")
+	  ) | "<br/>"), "</span>")
 -- a few types are just strings
 html File :=
 html IndeterminateNumber :=
