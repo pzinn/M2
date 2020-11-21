@@ -98,7 +98,7 @@ html Hypertext := x -> (
     cont := if T.?Options then (
 	(op, ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
 	    "unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
-	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format replace("\\$","﹩",val) | attr);
+	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);
 	sequence ct) else x;
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (
