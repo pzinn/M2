@@ -3,36 +3,36 @@
 i2 : polys = polySystem {a*x+b*y^2,c*x*y+d};
 i3 : (p0, x0) = createSeedPair polys;
 i4 : (L, npaths) = dynamicFlowerSolve(polys.PolyMap,p0,{x0})
---backup directory created: /tmp/M2-948584-0/1
-     -- 0.0100017 seconds elapsed
+--backup directory created: /tmp/M2-150498-0/1
+     -- 0.00270816 seconds elapsed
   H01: 1
-     -- 0.00278965 seconds elapsed
+     -- 0.00427932 seconds elapsed
   H10: 1
-     -- 0.000342684 seconds elapsed
+     -- 0.00035393 seconds elapsed
 number of paths tracked: 2
 found 1 points in the fiber so far
-     -- 0.00450615 seconds elapsed
+     -- 0.00278197 seconds elapsed
   H01: 1
-     -- 0.0245392 seconds elapsed
+     -- 0.00284754 seconds elapsed
   H10: 1
-     -- 0.00031874 seconds elapsed
+     -- 0.000321002 seconds elapsed
 number of paths tracked: 4
 found 1 points in the fiber so far
-     -- 0.00234647 seconds elapsed
+     -- 0.00247311 seconds elapsed
   H01: 1
-     -- 0.00449359 seconds elapsed
+     -- 0.00418483 seconds elapsed
   H10: 1
-     -- 0.000293336 seconds elapsed
+     -- 0.00132003 seconds elapsed
 number of paths tracked: 6
 found 1 points in the fiber so far
-     -- 0.00255539 seconds elapsed
+     -- 0.00252065 seconds elapsed
   H01: 1
-     -- 0.00253709 seconds elapsed
+     -- 0.0026356 seconds elapsed
   H10: 1
-     -- 0.000251258 seconds elapsed
+     -- 0.000303553 seconds elapsed
 number of paths tracked: 8
 found 1 points in the fiber so far
 
-o4 = \displaystyle \left(\left\{<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\}\right\},8\right)
+o4 = $\left(\left\{<pre style="display:inline">
+Point</pre>\left\{\ldots8\ldots\right\}\right\},8\right)$
 i5 : 

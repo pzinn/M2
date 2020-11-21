@@ -1,10 +1,10 @@
 -- -*- M2-comint -*- hash: 859958423
 i1 : R=QQ[z,a,b,c]
 
-o1 = \displaystyle R
+o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : makeB'InputFile(storeBM2Files,
          BertiniInputConfiguration=>{MPType=>2},
          AffVariableGroup=>{{z}},

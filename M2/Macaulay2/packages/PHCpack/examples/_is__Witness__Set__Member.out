@@ -6,6 +6,6 @@ found 4 irreducible factors
 i4 : W = first V#4;
 i5 : isWitnessSetMember(W, point{{0,0,0,0,0,0}})
 
-o5 = \displaystyle <pre style="display:inline">
-true</pre>
+o5 = <pre style="display:inline">
+true</pre>
 i6 : 

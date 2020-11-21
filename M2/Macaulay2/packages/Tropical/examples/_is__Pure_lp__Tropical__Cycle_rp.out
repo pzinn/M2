@@ -3,6 +3,6 @@
 i2 : T=tropicalCycle (F,{1,2});
 i3 : isPure T
 
-o3 = \displaystyle <pre style="display:inline">
-false</pre>
+o3 = <pre style="display:inline">
+false</pre>
 i4 : 

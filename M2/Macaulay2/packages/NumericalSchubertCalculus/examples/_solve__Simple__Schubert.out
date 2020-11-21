@@ -12,7 +12,7 @@
 Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags
 i5 : solveSimpleSchubert(SchPblm, k,n)
 
-o5 = \displaystyle \left\{\begin{pmatrix}
+o5 = $\left\{\begin{pmatrix}
 {.426402}+{.387024}\,\mathbf{i}&-{.767149}+{.88679}\,\mathbf{i}&-{.299645}+{.514617}\,\mathbf{i}\\
 {.350714}+{.0538475}\,\mathbf{i}&-{1.21057}+{.628777}\,\mathbf{i}&{.141417}+{.670654}\,\mathbf{i}\\
 -{.00144609}+{.0615438}\,\mathbf{i}&-{1.36249}+{.957226}\,\mathbf{i}&-{.135443}+{.402697}\,\mathbf{i}\\
@@ -48,8 +48,8 @@ o5 = \displaystyle \left\{\begin{pmatrix}
 {.720595}+{.326751}\,\mathbf{i}&{.530465}+{.763105}\,\mathbf{i}&{.073638}+{.0777737}\,\mathbf{i}\\
 {.96532}-{.698926}\,\mathbf{i}&{.256842}+{.425251}\,\mathbf{i}&{.0170751}+{.221298}\,\mathbf{i}\\
 {1.08396}+{.174263}\,\mathbf{i}&{.551008}+{.0768382}\,\mathbf{i}&{.112884}+{.198469}\,\mathbf{i}\\
-{.689695}-{.590038}\,\mathbf{i}&{.157157}+{.310587}\,\mathbf{i}&{.453721}+{.129014}\,\mathbf{i}\end{pmatrix}\right\}
+{.689695}-{.590038}\,\mathbf{i}&{.157157}+{.310587}\,\mathbf{i}&{.453721}+{.129014}\,\mathbf{i}\end{pmatrix}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <pre style="display:inline">
+List</pre>
 i6 : 

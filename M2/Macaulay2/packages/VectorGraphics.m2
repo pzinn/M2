@@ -98,7 +98,8 @@ GraphicsType List := (T,opts) -> (
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- useful to have output {x,-y,-z,1-z/p}
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,-1,persp},{0,0,0,persp}} -- output is {x,y,p-z,p}
+    -- note in particular that distance : p = p-z : p = z' : w'
 )
 
 viewPort = g -> (
@@ -121,23 +122,27 @@ distance = g -> (
 distance1 := method()
 distance1 GraphicsObject := x -> 0_RR
 
+scale := x -> x_3/x_2
+project2d := x -> (scale x)*x^{0,1}
+project2d' := x -> (scale x)*vector {x_0,-x_1} -- annoying sign
+
 updateGraphicsCache := g -> (
     g.cache.ViewPort = viewPort1 g; -- update the range
     g.cache.Distance = distance1 g; -- update the distance
     if g.?OneSided and g.OneSided then determineSide g;
     -- bit of a hack: 2d objects Circle, Ellipse get scaled in a 3d context
     if instance(g,Circle) then (
-	scale := 1/(g.cache.CurrentMatrix*g.Center)_3;
-	g.cache.ScaledRadius=max(0,g.Radius*scale);
+	sc := scale(g.cache.CurrentMatrix*g.Center);
+	g.cache.ScaledRadius=max(0,g.Radius*sc);
 	) else if instance(g,Ellipse) then (
-	scale = 1/(g.cache.CurrentMatrix*g.Center)_3;
-	g.cache.ScaledRadiusX=max(0,g.RadiusX*scale);
-	g.cache.ScaledRadiusY=max(0,g.RadiusY*scale);
+	sc = scale(g.cache.CurrentMatrix*g.Center);
+	g.cache.ScaledRadiusX=max(0,g.RadiusX*sc);
+	g.cache.ScaledRadiusY=max(0,g.RadiusY*sc);
 	) else if instance(g,GraphicsText) then ( -- same for GraphicsText
 	-- choose font size
 	f := if g.?FontSize then g.FontSize else 14.;
-	scale = 1/(g.cache.CurrentMatrix*g.Point)_3;
-	f = max(0,f*scale);
+	sc = scale(g.cache.CurrentMatrix*g.Point);
+	f = max(0,f*sc);
 	g.cache#"font-size"= toString f|"px";
 	if instance(g,GraphicsHtml) then ( -- hack
 	    g.cache#"overflow"="visible"; -- makes width/height irrelevant
@@ -145,10 +150,6 @@ updateGraphicsCache := g -> (
 	    );
 	);
     )
-
-project2d := x -> vector {x_0/x_3,x_1/x_3}
-project2d' := x -> vector {x_0/x_3,-x_1/x_3} -- annoying sign
-
 
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new MutableHashTable;
@@ -165,14 +166,14 @@ Circle = new GraphicsType of GraphicsObject from ( "circle",
     )
 viewPort1 Circle := g -> (
     p := g.cache.CurrentMatrix * g.Center;
-    r:=g.Radius/p_3;
+    r:=g.Radius*(scale p);
     p=project2d p;
     r = vector {r,r};
     { p - r, p + r }
     )
 distance1 Circle := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    -y_2
+    y_2/y_3
     )
 
 Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
@@ -181,14 +182,15 @@ Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
     )
 viewPort1 Ellipse := g -> (
     p := g.cache.CurrentMatrix * g.Center;
-    rx:=g.RadiusX/p_3; ry:=g.RadiusY/p_3;
+    sc := scale p;
+    rx:=g.RadiusX*sc; ry:=g.RadiusY*sc;
     p=project2d p;
     r := vector {rx,ry};
     { p - r, p + r }
     )
 distance1 Ellipse := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    -y_2
+    y_2/y_3
     )
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
@@ -198,12 +200,12 @@ GraphicsText = new GraphicsType of GraphicsObject from ( "text",
 viewPort1 GraphicsText := g -> (
     f := if g.?FontSize then g.FontSize else 14.;
     p := g.cache.CurrentMatrix * g.Point;
-    f=f/p_3;
+    f=f*scale p;
     p=project2d p;
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
     pp := p + vector {
 	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
 	};
     {pp,pp+r}
     )
@@ -221,7 +223,7 @@ viewPort1 Line := g -> (
 distance1 Line := g -> (
     p1 := g.cache.CurrentMatrix * g.Point1;
     p2 := g.cache.CurrentMatrix * g.Point1;
-    -0.5*(p1_2+p2_2)
+    0.5*(p1_2/p1_3+p2_2/p2_3)
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -296,11 +298,6 @@ updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,persepective matrix)
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
 
--*
-LiteralString := new WrapperType of Holder -- to make sure the text inside GraphicsText doesn't get html'ified
-htmlWithTex LiteralString := x -> htmlLiteral x#0
-*-
-
 svgLookup := hashTable { -- should be more systematic
     symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
     symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
@@ -337,7 +334,7 @@ svgLookup := hashTable { -- should be more systematic
 	apply(x, y -> y.cache.SVGElement)
 	),
     symbol TextContent => (x,m) -> x,
-    symbol HtmlContent => (x,m) -> htmlWithTex x
+    symbol HtmlContent => (x,m) -> html x
     }
 
 svg3dLookup := hashTable { -- should be more systematic
@@ -378,7 +375,7 @@ svg (GraphicsObject,List) := (g,l) -> (
 
 svg GraphicsObject := g -> svg(g,{})
 
-htmlWithTex GraphicsObject := html
+--htmlWithTex GraphicsObject := html
 
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
@@ -387,15 +384,15 @@ expression GraphicsObject := hold
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
-    -sum(s,x->(g.cache.CurrentMatrix*x)_2) / #s
+    sum(s,x->(xx:=g.cache.CurrentMatrix*x;xx_2/xx_3)) / #s
     )
 distance1 GraphicsList := g -> (
-    if #(g.Contents) == 0 then 0_RR else -sum(g.Contents, distance) / #(g.Contents)
+    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, distance) / #(g.Contents)
     )
 GraphicsObject ? GraphicsObject := (x,y) -> (distance y) ? (distance x)
 distance1 GraphicsText := g -> (
     y := g.cache.CurrentMatrix*g.Point;
-    -y_2
+    y_2/y_3
     )
 
 graphicsIdCount := 0;
@@ -483,6 +480,7 @@ new SVG from GraphicsObject := (S,g) -> (
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
 	    "height:",toString g.cache.SizeY,"em;",
+	    "stroke-linejoin:round;",
 	    if not g#?"stroke-width" then "stroke-width:1%", -- define a default stroke-width
 	),
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
@@ -546,13 +544,14 @@ determineSide GraphicsPoly := g -> (
     if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
     if #coords<3 then ( remove(g.cache,Filter); return; );
     coords=apply(take(coords,3),x->g.cache.CurrentMatrix*x);
+    coords = apply(coords, x -> (1/x_3)*x^{0,1});
     coords = {coords#1-coords#0,coords#2-coords#0};
     g.cache#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
     )
 
 -- lighting
 Light = new GraphicsType of Circle from ( "circle",
-    { symbol Center => vector {0,0,0,1.}, symbol Radius => 0, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "fill" => "#FFFFFF", "stroke" => "none" },
+    { symbol Center => vector {0,0,0,1.}, symbol Radius => 10, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "opacity" => "0", "fill" => "#FFFFFF", "stroke" => "none" },
     { "r", "cx", "cy" } -- atm these are not inherited
     )
 -- in case it's drawn, it's a circle
@@ -577,9 +576,6 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
     tag := (select(x, y -> instance(y,Option) and y#0==="id"))#0#1;
     "url(#"|tag|")"
 )
-
-noid := x -> select(x,e -> class e =!= Option or e#0 =!= "id")
-htmlWithTex HypertextInternalLink := html @@ noid -- bit of a hack: to prevent id from being printed directly in WebApp mode
 
 svgFilter := new MarkUpType of HypertextInternalLink
 addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
@@ -617,19 +613,20 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
     	-- find first 3 coords
 	if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
     	if #coords>=3 then (
-	    coords=apply(take(coords,3),x->(g.cache.CurrentMatrix*x)^{0,1,2});
-    	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1,0}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
-	    if w_2<0 then w=-w;
+	    coords=apply(take(coords,3),x->(xx:=g.cache.CurrentMatrix*x;(1/xx_3)*xx^{0,1,2}));
+	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
+	    if w_2>0 then w=-w;
 	    scan(l, gg -> (
 	    	    -- compute reflected coords
-		    light := gg.cache.CurrentMatrix*gg.Center;
-	    	    lightrel := light^{0,1,2}-coords#0;
+		    light0 := gg.cache.CurrentMatrix*gg.Center;
+		    light := (1/light0_3)*light0^{0,1,2};
+		    lightrel := light-coords#0;
 	    	    sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
 	    	    c := 2*sp/w2;
 	    	    light = light - c*w;
 		    opts = opts | {
 			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
-			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(sp/sqrt(w2)) } },
+			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0*light0_3/light_2), "y" => toString(-light_1*light0_3/light_2), "z" => toString(4*gg.Radius/light_2) } },
 			feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 			    "operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
@@ -674,14 +671,16 @@ radialGradient = true >> o -> stop -> (
 
 GraphicsArrow = new OptionTable from gParse { symbol Points => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", Is3d => false }
 svgMarker := new MarkUpType of HypertextInternalLink
-addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerSizeX" => "3", "markerSizeY" => "4", "refX" => "0", "refY" => "2"})
+addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth" => "3", "markerHeight" => "4", "refX" => "0", "refY" => "2"})
 svgMarker.qname="marker"
+
+m := matrix {{1,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,1}}*perspective 1;
 
 arrow = true >> o -> x -> (
     tag := graphicsId();
     svgMarker {
 	"id" => tag,
-	svg(new Polygon from (GraphicsArrow ++ gParse o),map(RR^4,RR^4,1),map(RR^4,RR^4,1))  -- eww
+	svg(new Polygon from (GraphicsArrow ++ gParse o),m,m)  -- eww
 	}
     )
 
@@ -752,8 +751,9 @@ multidoc ///
    Text
     {\bf VectorGraphics} is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GraphicsObject, and are self-initializing.
-    Coordinates can be entered as vectors in \mathbb{RR}^2, \mathbb{RR}^3 or \mathbb{RR}^4 (\mathbb{RR}^4 is projective
-    coordinates); alternatively, one can enter them as sequences. With the default perspective matrix,
+    Coordinates can be entered as vectors in $\mathbb{R}^2$, $\mathbb{R}^3$ or $\mathbb{R}^4$
+    ($\mathbb{R}^4$ is projective coordinates); alternatively, one can enter them as sequences.
+    With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
     VectorGraphics options, that are symbols (e.g., {\tt Radius} for circles);
@@ -813,14 +813,14 @@ multidoc ///
    Text
     A source of light for a 3d SVG picture.
     This corresponds to the SVG "specular" lighting, use the property Specular. The location is given by Center.
-    By default a Light is invisible (it has Radius 0) and is unaffected by matrix transformations outside it (Static true).
+    By default a Light is invisible (it has opacity 0) and is unaffected by matrix transformations outside it (Static true).
    Example
-    Light{Radius=>10,"fill"=>"yellow"}
+    Light{Radius=>10,"opacity"=>"1","fill"=>"yellow"}
     v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
-	Light{(110,0,0),Radius=>10},ViewPort=>{(-110,-100),(110,100)},
+	Light{(110,0,0),Radius=>10,"opacity"=>"1"},ViewPort=>{(-110,-100),(110,100)},
 	SizeY=>30,TransformMatrix=>rotation(-1.5,(4,1,0)))
   Caveat
    Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
@@ -928,7 +928,8 @@ multidoc ///
    Distance to the viewer
   Description
    Text
-    Returns the distance (perpendicularly to the screen) to the viewer of a @ TO {VectorGraphics} @ 3d object.
+    Returns the distance (perpendicularly to the screen) to the viewer of a @ TO {VectorGraphics} @ 3d object,
+    normalized so the screen is at distance $1$.
  Node
   Key
    rotation
@@ -994,10 +995,11 @@ multidoc ///
   Description
    Text
     A 4x4 matrix that is applied to 3d coordinates for perspective.
-    After this tranformation, the coordinates must be (x,-y,-z,z/p) in the reference frame
-    where the viewer is at (0,0,0) and the screen at z=-p.
-    One can instead provide a real number p, which is equivalent to placing the screen
-    centered at z=0 and the viewer at (0,0,p).
+    After this tranformation, the coordinates must be up to normalization $(x,y,z,p)$
+    where $(x,y,z>0)$ are coordinates in the reference frame where the observer is at the origin looking in the $z$ direction,
+    and $p$ is the distance from the observer to the screen.
+    One can instead provide a real number $p$, which is equivalent to placing the screen
+    centered at $z=0$ and the viewer at $(0,0,p)$.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
  Node
   Key
@@ -1146,7 +1148,7 @@ multidoc ///
 undocumented { -- there's an annoying conflict with NAG for Point, Points
     Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
-    (expression, GraphicsObject), (html,GraphicsObject), (htmlWithTex,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
+    (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
 }
 
@@ -1230,7 +1232,7 @@ icosa=apply(faces,f->Polygon{apply(f,j->vertices#j),"fill"=>"gray","stroke"=>"no
 i=gList(icosa,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
 
 rnd = () -> random(-1.,1.); cols={"red","green","blue","yellow","magenta","cyan"};
-gList(i, apply(cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"fill"=>c,Specular=>10,AnimMatrix=>rotation(0.02,(rnd(),rnd(),rnd()))}),ViewPort=>{(-200,-200),(200,200)},SizeY=>30)
+gList(i, apply(cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"opacity"=>1,"fill"=>c,Specular=>20,AnimMatrix=>rotation(0.02,(rnd(),rnd(),rnd()))}),ViewPort=>{(-200,-200),(200,200)},SizeY=>30)
 
 subdivide = (v,f) -> (
     u := v#0;
@@ -1289,7 +1291,7 @@ far=-10000;
 screen=1000;
 stars=apply(n,i->(
 z=speed*(random(far,screen)//speed);
-Circle{(random(-200,200),random(-200,200),z),10,"fill"=>"yellow","stroke"=>"none",Blur=>0.3,
+Circle{(random(-200,200),random(-200,200),z),10,"fill"=>"yellow","stroke"=>"none",Blur=>0.3, -- TODO: make blurriness dynamically depend on size
 AnimMatrix=>{((screen-z)//speed)=>translation (0,0,speed),translation (0,0,far-screen),((-far+z)//speed)=>translation (0,0,speed)}}
 ));
 gList(stars,ViewPort=>{(-100,-100),(100,100)})

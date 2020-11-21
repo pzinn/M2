@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: -1559861464
 i1 : A = QQ{x,y}
 
-o1 = \displaystyle <pre style="display:inline">
-A</pre>
+o1 = $<pre style="display:inline">
+A</pre>$
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : f = ncMap(A,A,{x^2,y^2})
 
-o2 = \displaystyle <pre style="display:inline">
+o2 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -26,13 +26,13 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}
+A</pre>\right\}$
 
-o2 : <pre style="display:inline">
-NCRingMap</pre>
+o2 : <pre style="display:inline">
+NCRingMap</pre>
 i3 : g = ncMap(A,A,{x+y,y})
 
-o3 = \displaystyle <pre style="display:inline">
+o3 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
 false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
@@ -52,13 +52,13 @@ HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}
+A</pre>\right\}$
 
-o3 : <pre style="display:inline">
-NCRingMap</pre>
+o3 : <pre style="display:inline">
+NCRingMap</pre>
 i4 : gens A/f @@ g
 
-o4 = \displaystyle \left\{<pre style="display:inline">
+o4 = $\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -72,13 +72,13 @@ CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pr
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
 HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <pre style="display:inline">
+List</pre>
 i5 : gens A/g @@ f
 
-o5 = \displaystyle \left\{<pre style="display:inline">
+o5 = $\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -96,8 +96,8 @@ CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pr
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
 HashTable</pre>\left\{<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <pre style="display:inline">
+List</pre>
 i6 : 

@@ -1,25 +1,25 @@
 -- -*- M2-comint -*- hash: -1556992540
 i1 : QQ[x,y,z,w]
 
-o1 = \displaystyle {\mathbb Q}\left[x,y,z,w\right]
+o1 = ${\mathbb Q}\left[x,y,z,w\right]$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : I=ideal(x^2-y*z+w^2,w^3-x*y^3+z^3);
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>{\mathbb Q}\left[x,y,z,w\right]
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>${\mathbb Q}\left[x,y,z,w\right]$
 i3 : T=tropicalVariety I;
 i4 : rays T
 
-o4 = \displaystyle \begin{pmatrix}
+o4 = $\begin{pmatrix}
 -6&-3&0&1&3&6\\
 -5&-2&-1&1&2&5\\
 -7&-3&-1&1&4&7\\
--6&-3&-1&1&3&7\end{pmatrix}
+-6&-3&-1&1&3&7\end{pmatrix}$
 
-o4 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}
+o4 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
 i5 : 

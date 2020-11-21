@@ -1,10 +1,10 @@
 -- -*- M2-comint -*- hash: 307307630
 i1 : R=QQ[x1,x2,y]
 
-o1 = \displaystyle R
+o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : theDir = temporaryFileName();
 i3 : makeDirectory theDir
 i4 : makeB'InputFile(theDir,
@@ -13,10 +13,10 @@ PolynomialRing</pre>
         B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2});
 i5 : R=QQ[x1,x2,y,X]
 
-o5 = \displaystyle R
+o5 = $R$
 
-o5 : <pre style="display:inline">
-PolynomialRing</pre>
+o5 : <pre style="display:inline">
+PolynomialRing</pre>
 i6 : makeB'InputFile(theDir,
         BertiniInputConfiguration=>{MPType=>2},
     AffVariableGroup=>{{x1,x2},{y}},
@@ -28,10 +28,10 @@ PolynomialRing</pre>
        {f3,y-2}});
 i7 : R=QQ[x1,x2,y,X]
 
-o7 = \displaystyle R
+o7 = $R$
 
-o7 : <pre style="display:inline">
-PolynomialRing</pre>
+o7 : <pre style="display:inline">
+PolynomialRing</pre>
 i8 : makeB'InputFile(theDir,
          BertiniInputConfiguration=>{MPype=>2},
      AffVariableGroup=>{{x1,x2},{y}},

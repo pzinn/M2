@@ -426,7 +426,6 @@ html Digraph := G -> if G.cache#?"svg" then G.cache#"svg" else (
      runcmd(graphs'DotBinary  | " -Tsvg " | dotfilename | " -o " | svgfilename);
      G.cache#"svg" = get svgfilename
      )
-htmlWithTex Digraph := html
 
 writeDotFile = method()
 writeDotFile (String, Graph) := (filename, G) -> (

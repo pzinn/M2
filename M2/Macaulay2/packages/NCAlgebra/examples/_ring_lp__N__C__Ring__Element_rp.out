@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: 532017619
 i1 : A = QQ{x,y,z,w}
 
-o1 = \displaystyle <pre style="display:inline">
-A</pre>
+o1 = $<pre style="display:inline">
+A</pre>$
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i2 : f = x^2+y^2+z^3
 
-o2 = \displaystyle <pre style="display:inline">
+o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
 CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
@@ -18,15 +18,15 @@ A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
 A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z,\,z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}$
 
-o2 : <pre style="display:inline">
-A</pre>
+o2 : $<pre style="display:inline">
+A</pre>$
 i3 : ring f
 
-o3 = \displaystyle <pre style="display:inline">
-A</pre>
+o3 = $<pre style="display:inline">
+A</pre>$
 
-o3 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o3 : <pre style="display:inline">
+NCPolynomialRing</pre>
 i4 : 

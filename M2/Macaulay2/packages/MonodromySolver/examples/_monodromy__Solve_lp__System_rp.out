@@ -1,17 +1,17 @@
 -- -*- M2-comint -*- hash: -957817686
 i1 : R = CC[a,b,c,d][A,B]
 
-o1 = \displaystyle R
+o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : polys = polySystem {A^2*a+B^2*b,A*B*c+d}
 
-o2 = \displaystyle <pre style="display:inline">
-polys</pre>
+o2 = $<pre style="display:inline">
+polys</pre>$
 
-o2 : <pre style="display:inline">
-PolySystem</pre>
+o2 : <pre style="display:inline">
+PolySystem</pre>
 i3 :     setRandomSeed 0;
 i4 :             (V,npaths) = monodromySolve(polys, NumberOfNodes => 3);
 i5 : peek V

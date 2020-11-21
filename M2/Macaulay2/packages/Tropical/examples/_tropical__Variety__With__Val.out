@@ -1,18 +1,18 @@
 -- -*- M2-comint -*- hash: 845208344
 i1 : R = QQ[x,y,z]
 
-o1 = \displaystyle R
+o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
 i2 : I = ideal(x+y+z)
 
-o2 = \displaystyle <pre style="display:inline">
-ideal</pre>\left(x+y+z\right)
+o2 = $<pre style="display:inline">
+ideal</pre>\left(x+y+z\right)$
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>R
+o2 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>$R$
 i3 : tropicalVarietyWithVal(I)
 
 o3 = <pre style="display:inline">

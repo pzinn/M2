@@ -26,16 +26,9 @@ doc ///
 
       If you simply want the minimal betti numbers of a module or ideal {\tt I},
       use @TO "minimalBetti"@.
-    Example
-      I = Grassmannian(1,6, CoefficientRing => ZZ/101);
-      S = ring I
-      elapsedTime C = res(I, FastNonminimal => true)
     Text
       For a non-minimal resolution, @TO betti@ gives the actual ranks of the complex.
       If the option @TT "Minimize => true"@ is given, the minimal Betti numbers are returned.
-    Example
-      betti C
-      betti(C, Minimize=>true)
     Text
       This command is useful if the non-minimal free resolution has already been computed.
       However, as mentioned above, if one wants the minimal betti numbers of an ideal or module,

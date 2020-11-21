@@ -6,12 +6,12 @@
 i5 : S1= { sol1, sol2  };--solutions to H when t=1
 i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
 
-o6 = \displaystyle \left\{<pre style="display:inline">
+o6 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots10\ldots\right\}\right\}
+Point</pre>\left\{\ldots10\ldots\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <pre style="display:inline">
+List</pre>
 i7 : peek S0_0
 
 o7 = <pre style="display:inline-table;vertical-align:0%">
@@ -22,32 +22,32 @@ Point{ConditionNumber => 1           }<br/>      Coordinates => {-1.41421}<br/> 
 i11 : H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
 i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
 
-o12 = \displaystyle <pre style="display:inline">
-sol1</pre>
+o12 = $<pre style="display:inline">
+sol1</pre>$
 
-o12 : <pre style="display:inline">
-Point</pre>
+o12 : <pre style="display:inline">
+Point</pre>
 i13 : sol2=    point{{ -1,1}}
 
-o13 = \displaystyle <pre style="display:inline">
-sol2</pre>
+o13 = $<pre style="display:inline">
+sol2</pre>$
 
-o13 : <pre style="display:inline">
-Point</pre>
+o13 : <pre style="display:inline">
+Point</pre>
 i14 : S1={sol1,sol2}--solutions to H when t=1
 
-o14 = \displaystyle \left\{<pre style="display:inline">
+o14 = $\left\{<pre style="display:inline">
 sol1</pre>,\,<pre style="display:inline">
-sol2</pre>\right\}
+sol2</pre>\right\}$
 
-o14 : <pre style="display:inline">
-List</pre>
+o14 : <pre style="display:inline">
+List</pre>
 i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = \displaystyle \left\{<pre style="display:inline">
+o15 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots10\ldots\right\}\right\}
+Point</pre>\left\{\ldots10\ldots\right\}\right\}$
 
-o15 : <pre style="display:inline">
-List</pre>
+o15 : <pre style="display:inline">
+List</pre>
 i16 : 

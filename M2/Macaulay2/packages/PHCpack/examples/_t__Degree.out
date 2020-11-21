@@ -4,7 +4,7 @@
 i3 : (m,q,qsols) = mixedVolume(f,StartSystem=>true);
 i4 : fsols = trackPaths(f,q,qsols,tDegree => 1)
 
-o4 = \displaystyle \left\{<pre style="display:inline">
+o4 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
@@ -12,8 +12,8 @@ Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}\right\}
+Point</pre>\left\{\ldots4\ldots\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <pre style="display:inline">
+List</pre>
 i5 : 

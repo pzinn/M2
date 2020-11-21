@@ -3,33 +3,33 @@
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 i3 : I=ideal f;
 
-o3 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
- of </pre>R
+o3 : <pre style="display:inline">
+Ideal</pre><pre style="display:inline">
+ of </pre>$R$
 i4 : dim I
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
 
-o4 = \displaystyle 0
+o4 = $0$
 i5 : degree I
 
-o5 = \displaystyle 10
+o5 = $10$
 i6 : m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
 
-o6 = \displaystyle 8
+o6 = $8$
 i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
 
-o7 = \displaystyle \left(8,10\right)
+o7 = $\left(8,10\right)$
 i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
 i9 : q --let's take a look at the start system:
 
-o9 = \displaystyle \left\{\left(-{.205377}-{.978683}\,\mathbf{i}\right)x^{3}y^{5}+\left({.943327}-{.331864}\,\mathbf{i}\right)x^{2}y,\,\left({.673112}+{.739541}\,\mathbf{i}\right)x^{2}-{.911067}-{.412259}\,\mathbf{i}\right\}
+o9 = $\left\{\left(-{.205377}-{.978683}\,\mathbf{i}\right)x^{3}y^{5}+\left({.943327}-{.331864}\,\mathbf{i}\right)x^{2}y,\,\left({.673112}+{.739541}\,\mathbf{i}\right)x^{2}-{.911067}-{.412259}\,\mathbf{i}\right\}$
 
-o9 : <pre style="display:inline">
-List</pre>
+o9 : <pre style="display:inline">
+List</pre>
 i10 : qsols --and its solutions:
 
-o10 = \displaystyle \left\{<pre style="display:inline">
+o10 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
@@ -37,8 +37,8 @@ Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}\right\}
+Point</pre>\left\{\ldots4\ldots\right\}\right\}$
 
-o10 : <pre style="display:inline">
-List</pre>
+o10 : <pre style="display:inline">
+List</pre>
 i11 : 

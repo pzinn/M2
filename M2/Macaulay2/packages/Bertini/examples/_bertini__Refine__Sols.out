@@ -3,35 +3,35 @@
 i2 : F = {x^2-2,y^2-2};
 i3 : sols = bertiniZeroDimSolve (F)
 
-o3 = \displaystyle \left\{<pre style="display:inline">
+o3 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots14\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots14\ldots\right\}\right\}
+Point</pre>\left\{\ldots14\ldots\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <pre style="display:inline">
+List</pre>
 i4 : S = bertiniRefineSols (100, F, sols)
 
-o4 = \displaystyle \left\{<pre style="display:inline">
+o4 = $\left\{<pre style="display:inline">
 Point</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
 Point</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots10\ldots\right\}\right\}
+Point</pre>\left\{\ldots10\ldots\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <pre style="display:inline">
+List</pre>
 i5 : coords = coordinates S_0
 
-o5 = \displaystyle \left\{-{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}
+o5 = $\left\{-{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <pre style="display:inline">
+List</pre>
 i6 : coords_0
 
-o6 = \displaystyle -{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}
+o6 = $-{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}$
 
-o6 : {\mathbb C}<pre style="display:inline">
- (of precision </pre>333<pre style="display:inline">
+o6 : ${\mathbb C}$<pre style="display:inline">
+ (of precision </pre>$333$<pre style="display:inline">
 )</pre>
 i7 : 

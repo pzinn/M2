@@ -1,86 +1,86 @@
 -- -*- M2-comint -*- hash: 781960899
 i1 : A=random(QQ^3,QQ^3)
 
-o1 = \displaystyle \begin{pmatrix}
+o1 = $\begin{pmatrix}
 \frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
 \frac{1}{2}&1&\frac{3}{4}\\
-\frac{9}{4}&\frac{3}{4}&\frac{7}{4}\end{pmatrix}
+\frac{9}{4}&\frac{3}{4}&\frac{7}{4}\end{pmatrix}$
 
-o1 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+o1 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i2 : (perm,LR)=LRdecomposition(A,j->-j);
 i3 : LR
 
-o3 = \displaystyle \begin{pmatrix}
+o3 = $\begin{pmatrix}
 \frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
 \frac{1}{9}&\frac{17}{18}&\frac{7}{12}\\
-\frac{1}{2}&\frac{9}{17}&\frac{47}{68}\end{pmatrix}
+\frac{1}{2}&\frac{9}{17}&\frac{47}{68}\end{pmatrix}$
 
-o3 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+o3 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i4 : P=transpose (id_(QQ^3))_perm
 
-o4 = \displaystyle \begin{pmatrix}
+o4 = $\begin{pmatrix}
 1&0&0\\
 0&1&0\\
-0&0&1\end{pmatrix}
+0&0&1\end{pmatrix}$
 
-o4 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+o4 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i5 : R=extractRightUpper(LR)
 
-o5 = \displaystyle \begin{pmatrix}
+o5 = $\begin{pmatrix}
 \frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
 0&\frac{17}{18}&\frac{7}{12}\\
-0&0&\frac{47}{68}\end{pmatrix}
+0&0&\frac{47}{68}\end{pmatrix}$
 
-o5 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+o5 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i6 : L=extractLeftLower(LR)
 
-o6 = \displaystyle \begin{pmatrix}
+o6 = $\begin{pmatrix}
 1&0&0\\
 \frac{1}{9}&1&0\\
-\frac{1}{2}&\frac{9}{17}&1\end{pmatrix}
+\frac{1}{2}&\frac{9}{17}&1\end{pmatrix}$
 
-o6 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}
+o6 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i7 : L*R==P*A
 
-o7 = \displaystyle <pre style="display:inline">
-true</pre>
+o7 = <pre style="display:inline">
+true</pre>
 i8 : b=random(QQ^3,QQ^1);
 
-o8 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}
+o8 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}$
 i9 : y=forwardSubstitution(LR,P*b)
 
-o9 = \displaystyle \begin{pmatrix}
+o9 = $\begin{pmatrix}
 \frac{7}{9}\\
 \frac{497}{810}\\
--\frac{109}{510}\end{pmatrix}
+-\frac{109}{510}\end{pmatrix}$
 
-o9 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}
+o9 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}$
 i10 : x=backwardSubstitution(LR,y)
 
-o10 = \displaystyle \begin{pmatrix}
+o10 = $\begin{pmatrix}
 \frac{386}{2115}\\
 \frac{1778}{2115}\\
--\frac{218}{705}\end{pmatrix}
+-\frac{218}{705}\end{pmatrix}$
 
-o10 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
- </pre>{\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}
+o10 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}$
 i11 : inverse(A)*b==x
 
-o11 = \displaystyle <pre style="display:inline">
-true</pre>
+o11 = <pre style="display:inline">
+true</pre>
 i12 : 
