@@ -68,11 +68,8 @@ runLengthEncode VisibleList := x -> (
     while (xx=runLengthEncode0 x; #x =!= #xx) do x=xx;
     xx
     )
-runLengthEncode VerticalList :=
-runLengthEncode Thing := identity
 runLengthEncode0 = x -> (
      if #x === 0 then return x;
-     x = apply(x, runLengthEncode);
      dupout := true;
      while first(dupout,dupout = false) do x = new class x from (
 	  i0 := null;
