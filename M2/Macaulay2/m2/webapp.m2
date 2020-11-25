@@ -156,9 +156,27 @@ if topLevelMode === WebApp then (
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- redefine htmlLiteral to exclude codes
-    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral;
+    htmlLiteral0 := htmlLiteral;
+    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral0;
+    -- but should affect html Thing differently:
+    htmlLiteral1 := s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
+	ss := separate(webAppTagsRegex,s);
+	depth := 0; len := 0; sss := "";
+	scan(ss, x -> (
+		sss = sss | (if depth == 0 then htmlLiteral0 x else x);
+		len=len+#x;
+		if len<#s then (
+		    if s#len === webAppEndTag then depth=depth-1 else depth=depth+1;
+		    sss = sss | s#len;
+		    len=len+1;
+		    )
+		));
+	sss);
+    html Monoid :=
+    html RingFamily :=
+    html Ring :=
+    html Thing := htmlLiteral1 @@ tex;
 )
-
 -- obsolete -- function below used to be activated with texMath <- texMath[Color]Wrapper
 -- the debug hack -- the rawhtml is TEMP, of course. currently deactivated
 -*
