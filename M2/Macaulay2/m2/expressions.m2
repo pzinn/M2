@@ -570,7 +570,6 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol ** => "\\otimes ",
     symbol ++ => "\\oplus ",
     symbol != => "\\ne ",
-    symbol = => "=",
     symbol -> => "\\rightarrow ",
     symbol <- => "\\leftarrow ",
     symbol ===> => "{\\large\\Longrightarrow}",
@@ -582,20 +581,18 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol _ => "\\_ ",
     symbol | => "|",
     symbol || => "||",
-    symbol * => "*",
-    symbol + => "+",
-    symbol - => "-",
-    symbol / => "/",
-    symbol // => "//",
     symbol { => "\\{ ",
     symbol } => "\\} ",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
-    symbol : => ":",
-    symbol ; => ";"
+    symbol SPACE => "\\texttt{SPACE}",
+    symbol # => "\\#",
+    symbol #? => "\\#?",
+    symbol % => "\\%",
+    symbol & => "\\&",
+    symbol ^ => "\\wedge",
+    symbol ^^ => "\\wedge\\wedge"
     }
-
-texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
 BinaryOperation.synonym = "binary operation expression"
@@ -1239,7 +1236,7 @@ texVariable := x -> (
 	);
     if #x === 1 or regex("[^[:alnum:]]",x) =!= null then x else "\\textit{"|x|"}"
     )
-texMath Symbol := x -> texVariable toString x;
+texMath Symbol :=  x -> if keywordTexMath#?x then keywordTexMath#x else texVariable toString x
 
 -----------------------------------------------------------------------------
 
