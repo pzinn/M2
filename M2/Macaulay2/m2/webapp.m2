@@ -16,13 +16,6 @@ webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
 
 webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 
--- now preparation for output
-
-webAppBegin = () -> ( -- TODO remove eventually
-    );
-webAppEnd = () -> (
-    );
-
 -- output routines for WebApp mode
 
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
@@ -41,9 +34,7 @@ Nothing#{WebApp,Print} = identity
 
 Thing#{WebApp,Print} = x -> (
     oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
-    webAppBegin();
-    y := html x; -- we compute the html now (in case it produces an error)
-    webAppEnd();
+    y := htmlInside x; -- we compute the html now (in case it produces an error)
     if class y =!= String then error "invalid html output";
     << endl << oprompt | webAppHtmlTag | y | webAppEndTag << endl;
     )
@@ -56,9 +47,7 @@ on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlAfterPrint :=  y -> (
     y=deepSplice sequence y;
-    webAppBegin();
-    z := html \ y;
-    webAppEnd();
+    z := htmlInside \ y;
     if any(z, x -> class x =!= String) then error "invalid html output";
     << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
     )
@@ -137,9 +126,7 @@ if topLevelMode === WebApp then (
     M2outputRE      = "\n+(?="|webAppEndTag|webAppCellTag|")"; -- TODO: improve so cleanly separates at Cells once #1553 resolved
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
-	webAppBegin();
-	y := html x; -- we compute the html now (in case it produces an error)
-	webAppEnd();
+	y := htmlInside x; -- we compute the html now (in case it produces an error)
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- redefine htmlLiteral to exclude codes
@@ -163,18 +150,48 @@ if topLevelMode === WebApp then (
     html RingFamily :=
     html Ring :=
     html Thing := htmlLiteral1 @@ tex;
-    -- the texMath hack
-    currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
-    texMathBackup := texMath;
-    texMathInside := x -> if lookup(html,class x) === lookup(html,Thing) or instance(x,Expression) then texMathBackup x else concatenate( -- to avoid trouble with holders
-       webAppHtmlTag,
-       html x,
-       webAppEndTag
-       );
-    webAppBegin = () -> (
-	global texMath <- texMathInside;
-    );
-    webAppEnd = () -> (
-	global texMath <- texMathBackup;
-    );
 )
+
+-- the texMath hack
+currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
+currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global html);
+texMathBackup := texMath;
+htmlBackup := html;
+texMathInside := x -> if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) then texMathBackup x else concatenate( -- to avoid trouble with holders
+    webAppHtmlTag,
+    html x,
+    webAppEndTag
+    );
+texMathInsideDebug := x -> concatenate(
+    global texMath <- texMathBackup;
+    y:=texMath class x;
+    global texMath <- texMathInsideDebug;
+    "\\underset{\\tiny ",
+    y,
+    "}{\\fcolorbox{gray}{transparent}{\\(",
+    if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) then texMathBackup x else concatenate( -- to avoid trouble with holders
+	webAppHtmlTag,
+	htmlBackup x,
+	webAppEndTag
+	),
+    "\\)}}"
+    );
+htmlDebug := x -> (
+    if instance(x,Hypertext) and (options class x)#?"xmlns" then global html <- htmlBackup; -- don't mess with non HTML
+    first(htmlLiteral1 ("\\(" | texMath x |"\\)"), -- can't use tex cause of annoying tex String def
+    global html <- htmlDebug));
+htmlInside = x -> (
+    if debugLevel == 42 then (
+	    global texMath <- texMathInsideDebug;
+	    global html <- htmlDebug;
+	    y:=html x;
+	    global texMath <- texMathBackup;
+	    global html <- htmlBackup;
+	    )
+	else (
+	    global texMath <- texMathInside;
+	    y=html x;
+	    global texMath <- texMathBackup;
+	    );
+	y);
+
