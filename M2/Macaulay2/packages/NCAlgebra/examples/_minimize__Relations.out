@@ -14,50 +14,50 @@ QuotientRing</pre>
 i3 : kRes = res(coker vars R, LengthLimit=>7)
 
 o3 = $\underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
-a&b&c&d\end{pmatrix}}\,\underset{\vphantom{\Bigg|}1}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
-0&0&-d&0&-c&b&0\\
-0&-d&0&-c&0&0&a\\
--d&0&0&b&a&d&d\\
-c&b&a&0&0&0&0\end{pmatrix}}\,\underset{\vphantom{\Bigg|}2}{R^{7}}\,\xleftarrow{\scriptsize \begin{pmatrix}
-b&a&d&d&0&0&a&b\\
--c&0&a&0&0&0&0&-c\\
-0&-c&0&b&0&0&-c&0\\
-d&0&0&0&a&0&0&0\\
-0&d&0&0&0&b&0&0\\
-0&0&0&d&0&c&a&0\\
-0&0&d&0&c&0&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}3}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
--a&0&0&0&-c&0&0&0\\
-0&-b&0&0&0&-c&0&0\\
--c&0&-b&0&0&0&0&c\\
-0&-c&0&-a&0&0&c&0\\
-d&0&0&0&-b&0&0&0\\
-0&d&0&0&0&-a&0&0\\
-0&0&0&d&0&c&b&0\\
-0&0&d&0&c&0&0&a\end{pmatrix}}\,\underset{\vphantom{\Bigg|}4}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
-b&0&0&0&0&c&0&0\\
-0&a&0&0&c&0&0&0\\
--c&0&0&-a&0&0&0&c\\
-0&-c&-b&0&0&0&c&0\\
-d&0&0&0&0&-a&0&0\\
-0&d&0&0&-b&0&0&0\\
-0&0&d&0&c&0&a&0\\
-0&0&0&d&0&c&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}5}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
-0&a&0&0&c&0&0&0\\
-b&0&0&0&0&c&0&0\\
--c&0&0&-a&0&0&c&0\\
-0&-c&-b&0&0&0&0&c\\
-d&0&0&0&0&-a&0&0\\
-0&d&0&0&-b&0&0&0\\
-0&0&0&d&0&c&b&0\\
-0&0&d&0&c&0&0&a\end{pmatrix}}\,\underset{\vphantom{\Bigg|}6}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
-0&a&0&0&c&0&0&0\\
-b&0&0&0&0&c&0&0\\
--c&0&0&-a&0&0&0&c\\
-0&-c&-b&0&0&0&c&0\\
-d&0&0&0&0&-a&0&0\\
-0&d&0&0&-b&0&0&0\\
-0&0&d&0&c&0&a&0\\
-0&0&0&d&0&c&0&b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{8}}$
+a&amp;b&amp;c&amp;d\end{pmatrix}}\,\underset{\vphantom{\Bigg|}1}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+0&amp;0&amp;-d&amp;0&amp;-c&amp;b&amp;0\\
+0&amp;-d&amp;0&amp;-c&amp;0&amp;0&amp;a\\
+-d&amp;0&amp;0&amp;b&amp;a&amp;d&amp;d\\
+c&amp;b&amp;a&amp;0&amp;0&amp;0&amp;0\end{pmatrix}}\,\underset{\vphantom{\Bigg|}2}{R^{7}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+b&amp;a&amp;d&amp;d&amp;0&amp;0&amp;a&amp;b\\
+-c&amp;0&amp;a&amp;0&amp;0&amp;0&amp;0&amp;-c\\
+0&amp;-c&amp;0&amp;b&amp;0&amp;0&amp;-c&amp;0\\
+d&amp;0&amp;0&amp;0&amp;a&amp;0&amp;0&amp;0\\
+0&amp;d&amp;0&amp;0&amp;0&amp;b&amp;0&amp;0\\
+0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;a&amp;0\\
+0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}3}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+-a&amp;0&amp;0&amp;0&amp;-c&amp;0&amp;0&amp;0\\
+0&amp;-b&amp;0&amp;0&amp;0&amp;-c&amp;0&amp;0\\
+-c&amp;0&amp;-b&amp;0&amp;0&amp;0&amp;0&amp;c\\
+0&amp;-c&amp;0&amp;-a&amp;0&amp;0&amp;c&amp;0\\
+d&amp;0&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+0&amp;d&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;b&amp;0\\
+0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;a\end{pmatrix}}\,\underset{\vphantom{\Bigg|}4}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
+0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
+-c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;0&amp;c\\
+0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;c&amp;0\\
+d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;a&amp;0\\
+0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}5}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
+b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
+-c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;c&amp;0\\
+0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;0&amp;c\\
+d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;b&amp;0\\
+0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;a\end{pmatrix}}\,\underset{\vphantom{\Bigg|}6}{R^{8}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
+b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
+-c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;0&amp;c\\
+0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;c&amp;0\\
+d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;a&amp;0\\
+0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{8}}$
 
 o3 : <pre style="display:inline">
 ChainComplex</pre>
@@ -65,14 +65,14 @@ ChainComplex</pre>
 
 o4 = $<pre style="display:inline">
 cokernel</pre>\ \begin{pmatrix}
-b&0&0&0&0&c&0&0\\
-0&a&0&0&c&0&0&0\\
--c&0&0&-a&0&0&0&c\\
-0&-c&-b&0&0&0&c&0\\
-d&0&0&0&0&-a&0&0\\
-0&d&0&0&-b&0&0&0\\
-0&0&d&0&c&0&a&0\\
-0&0&0&d&0&c&0&b\end{pmatrix}$
+b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
+0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
+-c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;0&amp;c\\
+0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;c&amp;0\\
+d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;a&amp;0\\
+0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;b\end{pmatrix}$
 
 o4 : $R$<pre style="display:inline">
 -module</pre><pre style="display:inline">
