@@ -7,7 +7,7 @@ newPackage(
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "Proper factor",
 	Keywords => {"Miscellaneous"},
-        DebuggingMode => true,
+        DebuggingMode => false,
 	AuxiliaryFiles => false
         )
 
@@ -16,16 +16,19 @@ export {"FactorPolynomialRing"}
 debug Core
 
 commonPairs := (a,b,f) -> combinePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
+subPairs := (a,b) -> combinePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+-- mergePairs could be defined similarly as
+-- mergePairs := (a,b,f) -> combinePairs(a,b, (x,y) -> if x === null then y else if y === null then x else f(x,y));
 
-FactorPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
+FactorPolynomialRing = new Type of PolynomialRing;
 FactorPolynomialRing.synonym = "factorized polynomial ring";
-coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
-factor FactorPolynomialRing := R -> R; -- and that :) and a few more below
+coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings;
+factor FactorPolynomialRing := R -> R;
 expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
 describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
 factor FractionField := F -> frac(factor last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
-leadCoeff = x -> ( -- iterated leadCoefficient
+leadCoeff := x -> ( -- iterated leadCoefficient
     R := ring x;
     if class R === PolynomialRing then leadCoeff leadCoefficient x else
     if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
@@ -44,7 +47,7 @@ factor PolynomialRing := opts -> R -> (
 	if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
         expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e);
 	factor Rf := opts -> identity;
-	factor R := opts -> a -> new Rf from a; -- ideally, would become the default
+	factor R := opts -> a -> new Rf from a; -- factor now uses the factorized ring
 	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1));
 	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
 	if (options R).Inverses then (
@@ -98,8 +101,8 @@ factor PolynomialRing := opts -> R -> (
 	lcm (Rf, Rf) := (a,b) -> a*(b//gcd(a,b)); -- yuck (there's no rawLCM)
 	Rf // Rf := (a,b) -> (
 	    if a#0===0_R then return 0_Rf;
-	    mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
-	    mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+	    mn:=subPairs(a#1,b#1);
+	    mp:=subPairs(b#1,a#1);
 	    if mn==={} and (a#0)%(b#0)===0_R then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
 	);
 	Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
@@ -128,5 +131,18 @@ FactorPolynomialRing _ List := (R,v) -> (
     if (options R).Inverses then new R from { R0_v, {} }
     else new R from { 1_R, sort apply(#v, i-> (R0_i,v#i)) }
     );
+
+-- force the use of the new factor
+Ring Array := PolynomialRing => (R,variables) -> (
+    RM := R monoid variables;
+    factor RM := opts -> a -> (factor RM; factor a);
+    use RM
+    )
+Ring List := PolynomialRing => (R,variables) -> (
+    RM := R monoid (variables,Local => true);
+    factor RM := opts -> a -> (factor RM; factor a);
+    use RM
+    )
+
 
 FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
