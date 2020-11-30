@@ -109,21 +109,13 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    webAppPRE := new MarkUpType of PRE; webAppPRE.qname="pre";
-    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
-	"<pre>",
-	webAppTextTag,
-	apply(x,y->replace("\\$\\{prefix\\}","usr",y)), -- TEMP fix
-	"\n",
-	webAppEndTag,
-	"</pre>\n"
-	); -- TODO improve this in terms of spacing / see with css too
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
-	new webAppPRE from res#0 );
-    -- the help hack 2 (incidentally, this regex is safer)
-    M2outputRE      = "\n+(?="|webAppEndTag|webAppCellTag|")"; -- TODO: improve so cleanly separates at Cells once #1553 resolved
+	new LITERAL from replace("\\$\\{prefix\\}","usr",res#0) -- we mean this: it's already been digested once
+	);
+    -- the help hack 2 (incidentally, this regex is safer than in standard mode)
+    M2outputRE      = "(?="|webAppCellTag|")";
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := htmlInside x; -- we compute the html now (in case it produces an error)
