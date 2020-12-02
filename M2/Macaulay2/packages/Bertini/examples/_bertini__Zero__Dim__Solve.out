@@ -14,7 +14,7 @@ List</pre>
 i4 : peek S_0
 
 o4 = <pre style="display:inline-table;vertical-align:0%">
-Point{AccuracyEst => 1.61642e-12        }<br/>      AccuracyEstInternal => 1.69984e-12<br/>      ConditionNumber => 64.9701<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .000390625<br/>      FunctionResidual => 1.98603e-15<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 1.97416e-15<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 3<br/></pre>
+Point{AccuracyEst => 3.66286e-12        }<br/>      AccuracyEstInternal => 1.17493e-12<br/>      ConditionNumber => 7.12794<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 3.14018e-16<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 1.18754e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 2<br/></pre>
 i5 : R = CC[x];
 i6 : F = {x^2*(x-1)};
 i7 : S = bertiniZeroDimSolve F

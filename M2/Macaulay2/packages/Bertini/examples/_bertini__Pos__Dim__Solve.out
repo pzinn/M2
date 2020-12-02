@@ -35,7 +35,7 @@ List</pre>
 i6 : peek oo_0 --then list position
 
 o6 = <pre style="display:inline-table;vertical-align:0%">
-WitnessSet{ComponentNumber => 0                                                                     }<br/>           IsIrreducible => true<br/>           Points => {{-4.45922e-72-2.55408e-73*ii, 2.01838e-72+3.79713e-72*ii, .271872-.460077*ii}}<br/>           Slice => | -1.26968+2.90514ii -3.12707-1.35391ii 5.41899+.978856ii -1.92362+2.22703ii |<br/>           WitnessDataFileName => /tmp/M2-160940-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
+WitnessSet{ComponentNumber => 0                                                                      }<br/>           IsIrreducible => true<br/>           Points => {{7.42268e-63+5.06932e-62*ii, 4.53545e-62+3.04009e-62*ii, -.181045-.0500121*ii}}<br/>           Slice => | .949447+1.04498ii .529328-1.25567ii -1.07599-1.68326ii -.11062-.358559ii |<br/>           WitnessDataFileName => /tmp/M2-566891-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
 i7 : PD=primaryDecomposition( ideal F)
 
 o7 = $\left\{<pre style="display:inline">

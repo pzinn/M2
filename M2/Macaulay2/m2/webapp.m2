@@ -109,21 +109,13 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    webAppPRE := new MarkUpType of PRE; webAppPRE.qname="pre";
-    html webAppPRE := x -> concatenate( -- we really mean this: the browser will interpret it as pure text so no need to htmlLiteral it
-	"<pre>",
-	webAppTextTag,
-	apply(x,y->replace("\\$\\{prefix\\}","usr",y)), -- TEMP fix
-	"\n",
-	webAppEndTag,
-	"</pre>\n"
-	); -- TODO improve this in terms of spacing / see with css too
     pELBackup:=lookup(processExamplesLoop,ExampleItem);
     processExamplesLoop ExampleItem := x -> (
 	res := pELBackup x;
-	new webAppPRE from res#0 );
-    -- the help hack 2 (incidentally, this regex is safer)
-    M2outputRE      = "\n+(?="|webAppEndTag|webAppCellTag|")"; -- TODO: improve so cleanly separates at Cells once #1553 resolved
+	new LITERAL from replace("\\$\\{prefix\\}","usr",res#0) -- we mean this: it's already been digested once
+	);
+    -- the help hack 2 (incidentally, this regex is safer than in standard mode)
+    M2outputRE      = "(?="|webAppCellTag|")";
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := htmlInside x; -- we compute the html now (in case it produces an error)
@@ -162,10 +154,11 @@ texMathInside := x -> if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing)
     html x,
     webAppEndTag
     );
-texMathInsideDebug := x -> concatenate(
+local texMathDebug,htmlDebug;
+texMathDebug = x -> concatenate(
     global texMath <- texMathBackup;
     y:=texMath class x;
-    global texMath <- texMathInsideDebug;
+    global texMath <- texMathDebug;
     "\\underset{\\tiny ",
     y,
     "}{\\fcolorbox{gray}{transparent}{\\(",
@@ -176,13 +169,25 @@ texMathInsideDebug := x -> concatenate(
 	),
     "\\)}}"
     );
-htmlDebug := x -> (
-    if instance(x,Hypertext) and (options class x)#?"xmlns" then global html <- htmlBackup; -- don't mess with non HTML
-    first(htmlLiteral1 ("\\(" | texMath x |"\\)"), -- can't use tex cause of annoying tex String def
-    global html <- htmlDebug));
+
+htmlDebug = x -> (
+    flag := instance(x,Hypertext) and (options class x)#?"xmlns" or instance(x,PRE); -- don't mess inside non HTML or PRE
+    if flag then (
+	global html <- htmlBackup;
+	global texMath <- texMathInside;
+	);
+    y := if instance(x,Hypertext) then
+    "<span class=\"M2Debug\" data-type=\"" | toString class x | "\">" | htmlBackup x | "</span>"
+    else "\\("|texMathDebug x|"\\)";
+    if flag then (
+	global html <- htmlDebug;
+	global texMath <- texMathDebug;
+    );
+    y
+    )
 htmlInside = x -> (
     if debugLevel == 42 then (
-	    global texMath <- texMathInsideDebug;
+	    global texMath <- texMathDebug;
 	    global html <- htmlDebug;
 	    y:=html x;
 	    global texMath <- texMathBackup;

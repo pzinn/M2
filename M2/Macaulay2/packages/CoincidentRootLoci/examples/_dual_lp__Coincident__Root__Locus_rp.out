@@ -1,14 +1,12 @@
--- -*- M2-comint -*- hash: 11533842
-i1 : time X = coincidentRootLocus {5,3,2,2,1,1}
-     -- used 0.348069 seconds
+-- -*- M2-comint -*- hash: 1371438490
+i1 : X = coincidentRootLocus {5,3,2,2,1,1}
 
 o1 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
 o1 : <pre style="display:inline">
 CoincidentRootLocus</pre>
-i2 : time dual X
-     -- used 0.107036 seconds
+i2 : dual X
 
 o2 = $<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}$
