@@ -89,7 +89,7 @@ o16 : <pre style="display:inline">
 List</pre>
 i17 : bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputStyle=>"OutSolutions")
 
-o17 = $\left\{\left\{\left\{{1}+{5.27356}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{1.41421}-{1.83187}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{-{1.41421}\right\}\right\}\right\}$
+o17 = $\left\{\left\{\left\{1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-{1}-{7.28584}\cdot 10^{-17}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}\right\}$
 
 o17 : <pre style="display:inline">
 List</pre>
@@ -112,13 +112,13 @@ Type</pre>
 i22 : bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputStyle=>"OutNone",TopDirectory=>dir1)
 i23 : B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
 
-o23 = $\left\{\left\{{1}+{5.27356}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o23 = $\left\{\left\{1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-{1}-{7.28584}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
 o23 : <pre style="display:inline">
 List</pre>
 i24 : B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
 
-o24 = $\left\{\left\{{1.41421}-{1.83187}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{-{1.41421}\right\}\right\}$
+o24 = $\left\{\left\{{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
 o24 : <pre style="display:inline">
 List</pre>
