@@ -23,10 +23,10 @@ subPairs := (a,b) -> combinePairs(a,b, (x,y)-> if y===null then continue else if
 FactorPolynomialRing = new Type of PolynomialRing;
 FactorPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings;
-factor FactorPolynomialRing := R -> R;
+factor FactorPolynomialRing := opts -> identity;
 expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
 describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
-factor FractionField := F -> frac(factor last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
+factor FractionField := opts -> F -> frac(factor last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
 leadCoeff := x -> ( -- iterated leadCoefficient
     R := ring x;
