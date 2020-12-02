@@ -154,10 +154,11 @@ texMathInside := x -> if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing)
     html x,
     webAppEndTag
     );
-texMathInsideDebug := x -> concatenate(
+local texMathDebug,htmlDebug;
+texMathDebug = x -> concatenate(
     global texMath <- texMathBackup;
     y:=texMath class x;
-    global texMath <- texMathInsideDebug;
+    global texMath <- texMathDebug;
     "\\underset{\\tiny ",
     y,
     "}{\\fcolorbox{gray}{transparent}{\\(",
@@ -168,13 +169,25 @@ texMathInsideDebug := x -> concatenate(
 	),
     "\\)}}"
     );
-htmlDebug := x -> (
-    if instance(x,Hypertext) and (options class x)#?"xmlns" then global html <- htmlBackup; -- don't mess with non HTML
-    first(htmlLiteral1 ("\\(" | texMath x |"\\)"), -- can't use tex cause of annoying tex String def
-    global html <- htmlDebug));
+
+htmlDebug = x -> (
+    flag := instance(x,Hypertext) and (options class x)#?"xmlns" or instance(x,PRE); -- don't mess inside non HTML or PRE
+    if flag then (
+	global html <- htmlBackup;
+	global texMath <- texMathInside;
+	);
+    y := if instance(x,Hypertext) then
+    "<span class=\"M2Debug\" data-type=\"" | toString class x | "\">" | htmlBackup x | "</span>"
+    else "\\("|texMathDebug x|"\\)";
+    if flag then (
+	global html <- htmlDebug;
+	global texMath <- texMathDebug;
+    );
+    y
+    )
 htmlInside = x -> (
     if debugLevel == 42 then (
-	    global texMath <- texMathInsideDebug;
+	    global texMath <- texMathDebug;
 	    global html <- htmlDebug;
 	    y:=html x;
 	    global texMath <- texMathBackup;
