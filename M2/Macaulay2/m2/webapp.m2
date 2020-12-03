@@ -109,11 +109,7 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    pELBackup:=lookup(processExamplesLoop,ExampleItem);
-    processExamplesLoop ExampleItem := x -> (
-	res := pELBackup x;
-	new LITERAL from replace("\\$\\{prefix\\}","usr",res#0) -- we mean this: it's already been digested once
-	);
+    processExamplesLoop ExampleItem := (x->new LITERAL from replace("\\$\\{prefix\\}","usr",x#0)) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
     -- the print hack
