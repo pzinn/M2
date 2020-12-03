@@ -1173,11 +1173,12 @@ texMath Table := m -> (
 
 texMath MatrixExpression := m -> if all(m,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
     "\\begin{pmatrix}" | newline,
-    between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
+    between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,
+		    if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)))),
     "\\end{pmatrix}"
     )
 texMath MatrixDegreeExpression := m -> if all(m,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
-    mat := applyTable(m#0, texMath);
+    mat := applyTable(m#0,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x);
     deg := apply(m#1,texMath);
     "\\begin{matrix}",
     between(///\\///,apply(#mat, i -> deg#i | "\\vphantom{" | concatenate mat#i | "}")),
@@ -1188,12 +1189,12 @@ texMath MatrixDegreeExpression := m -> if all(m,r->all(r,i->class i===ZeroExpres
     )
 
 texMath VectorExpression := v -> (
-     concatenate(
-	 "\\begin{pmatrix}" | newline,
-	 between(///\\///,apply(toList v,texMath)),
-	 "\\end{pmatrix}"
-	 )
-     )
+    concatenate(
+	"\\begin{pmatrix}" | newline,
+	between(///\\///,apply(toList v,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)),
+	"\\end{pmatrix}"
+	)
+    )
 
 ctr := 0
 showTex = method()
