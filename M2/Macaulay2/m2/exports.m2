@@ -216,7 +216,6 @@ export {
 	"InverseMethod",
 	"Inverses",
 	"Invertible",
-	"Iterate",
 	"Join",
 	"Jupyter",
 	"KeepFiles",
@@ -292,7 +291,6 @@ export {
 	"Options",
 	"Order",
 	"OrderedMonoid",
-	"OutputDictionary",
 	"Outputs",
 	"POSIX",
 	"Package",
@@ -510,7 +508,6 @@ export {
 	"char",
 	"characters",
 	"check",
-	"chi",
 	"class",
 	"clean",
 	"clearAll",
@@ -1221,6 +1218,7 @@ export {
 }
 
 exportMutable {
+	"OutputDictionary",
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",
