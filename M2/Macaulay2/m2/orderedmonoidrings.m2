@@ -366,6 +366,9 @@ expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then 
 describe FactPolynomialRing := R -> Describe (expression fact) (describe last R.baseRings)
 fact FractionField := F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
+commonPairs := (a,b,f) -> combinePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
+subPairs := (a,b) -> combinePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+
 fact PolynomialRing := R -> (
     local Rf;
     if R.?fact then (
@@ -433,8 +436,8 @@ fact PolynomialRing := R -> (
 	lcm (Rf, Rf) := (a,b) -> a*(b//gcd(a,b)); -- yuck (there's no rawLCM)
 	Rf // Rf := (a,b) -> (
 	    if a#0===0_R then return 0_Rf;
-	    mn:=combinePairs(a#1,b#1,(x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
-	    mp:=combinePairs(a#1,b#1,(y,x)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+	    mn:=subPairs(a#1,b#1);
+	    mp:=subPairs(b#1,a#1);
       	    if mn==={} and (a#0)%(b#0)===0_R then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
 	);
 	Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
