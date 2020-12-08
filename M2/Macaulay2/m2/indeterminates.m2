@@ -1,7 +1,5 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
-indeterminates =  new MutableHashTable
-
 varIndices := new MutableHashTable
 
 varList := {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","α","β","γ","δ","ε","ζ","η","θ","ι","κ","λ","μ","ν","ξ","ο","π","ρ","σ","τ","υ","φ","χ","ψ","ω","Α","Β","Γ","Δ","Ε","Ζ","Η","Θ","Ι","Κ","Λ","Μ","Ν","Ξ","Ο","Π","Ρ","Σ","Τ","Υ","Φ","Χ","Ψ","Ω"}
@@ -12,11 +10,9 @@ varName := i -> (
      else "x" | toString(i-#varList))
 
 vars ZZ := i -> (
-     if indeterminates#?i then indeterminates#i else (
-	  x := getSymbol varName i;
-	  indeterminates#i = x;
-	  varIndices#x = i;
-	  x))
+    x := getSymbol varName i;
+    varIndices#x = i;
+    x)
 
 vars List := vars Sequence := args -> apply(flatten splice args, j -> vars j)
 
