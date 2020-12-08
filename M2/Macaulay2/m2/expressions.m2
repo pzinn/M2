@@ -1177,7 +1177,7 @@ texMath MatrixExpression := m -> if all(m,r->all(r,i->class i===ZeroExpression))
 		    if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)))),
     "\\end{pmatrix}"
     )
-texMath MatrixDegreeExpression := m -> if all(m,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
+texMath MatrixDegreeExpression := m -> if all(m#0,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
     mat := applyTable(m#0,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x);
     deg := apply(m#1,texMath);
     "\\begin{matrix}",
