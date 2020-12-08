@@ -215,15 +215,24 @@ texMath' (Function, Table) := (texMath,m) -> (
 
 texMath' (Function, MatrixExpression) := (texMath,m) -> (
     if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
-    else if m#?0 then if #m#0>10 then "{\\left(" | texMath (new Table from toList m) | "\\right)}" -- the extra {} is to discourage line breaks
-     else concatenate(
-      	      "\\begin{pmatrix}" | newline,
-     	      between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
-	      "\\end{pmatrix}" -- notice the absence of final \\ -- so lame. no newline either in case last line is empty
-	      )
-	  )
-      
-texMath' (Function, MatrixDegreeExpression) := (texMath,x) -> texMath MatrixExpression x#0 -- degrees not displayed atm
+    else concatenate(
+	"\\begin{pmatrix}" | newline,
+	between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
+	"\\end{pmatrix}"
+	)
+    )
+
+texMath' (Function, MatrixDegreeExpression) := (texMath,m) -> if all(m#0,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
+    mat := applyTable(m#0,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x);
+    deg := apply(m#1,texMath);
+    "\\begin{matrix}",
+    between(///\\///,apply(#mat, i -> deg#i | "\\vphantom{" | concatenate mat#i | "}")),
+    "\\end{matrix}",
+    "\\begin{pmatrix}" | newline,
+    between(///\\/// | newline, apply(#mat, i -> "\\vphantom{"| deg#i | "}" | concatenate between("&",mat#i))),
+    "\\end{pmatrix}"
+    )
+
 
 texMath' (Function, VectorExpression) := (texMath,v) -> (
      concatenate(
