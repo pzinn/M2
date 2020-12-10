@@ -25,8 +25,6 @@ undocumented {
 	(texMath, MatrixExpression),
 	(texMath, RowExpression),
 	(texMath, TEX),
-	(texMath, Sequence),
-	(texMath, Array),
 	(texMath, TT),
 	(texMath, Product),
 	(texMath, ZZ),
