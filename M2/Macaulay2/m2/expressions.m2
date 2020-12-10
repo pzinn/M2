@@ -1332,13 +1332,23 @@ texMath Set := x -> texMath expression x
 
 -- some texMath that got stranded
 texMath BasicList := s -> concatenate(
-     if class s =!= List then texMath class s,
-    "\\left\\{",
-    between(",\\,",apply(toList s,texMath))
-    ,"\\right\\}"
+    if instance(s,Array) then (
+	opendelim := "[";
+	closedelim := "]";
+	) else if instance(s,Sequence) then (
+	opendelim = "(";
+	closedelim = ")";
+	) else (
+	opendelim = "\\{";
+	closedelim = "\\}";
+	);
+    if not instance(s,VisibleList) then texMath class s,
+    "\\left",
+    opendelim,
+    between(",\\,",apply(toList s,texMath)),
+    "\\right",
+    closedelim
     )
-texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
-texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
 texMath HashTable := x -> if x.?texMath then x.texMath else
 if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
 concatenate flatten (
