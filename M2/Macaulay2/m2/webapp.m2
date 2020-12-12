@@ -145,7 +145,7 @@ currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutabl
 currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global html);
 texMathBackup := texMath;
 htmlBackup := html;
-texMathInside := x -> if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) then texMathBackup x else concatenate( -- to avoid trouble with holders
+texMathInside := x -> if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) or instance(x,Nothing) then texMathBackup x else concatenate( -- to avoid trouble with holders
     webAppHtmlTag,
     html x,
     webAppEndTag
@@ -158,7 +158,7 @@ texMathDebug = x -> concatenate(
     "\\underset{\\tiny ",
     y,
     "}{\\fcolorbox{gray}{transparent}{\\(",
-    if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) then texMathBackup x else concatenate( -- to avoid trouble with holders
+    if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) or instance(x,Nothing) then texMathBackup x else concatenate( -- to avoid trouble with holders
 	webAppHtmlTag,
 	htmlBackup x,
 	webAppEndTag
