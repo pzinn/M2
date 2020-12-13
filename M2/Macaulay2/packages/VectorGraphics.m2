@@ -334,7 +334,7 @@ svgLookup := hashTable { -- should be more systematic
 	apply(x, y -> y.cache.SVGElement)
 	),
     symbol TextContent => (x,m) -> x,
-    symbol HtmlContent => (x,m) -> html x
+    symbol HtmlContent => (x,m) -> x
     }
 
 svg3dLookup := hashTable { -- should be more systematic
