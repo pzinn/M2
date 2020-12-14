@@ -7,7 +7,7 @@ newPackage(
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
-	Keywords => {"Miscellaneous"},
+	Keywords => {"Graphics"},
         DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text"},
@@ -623,7 +623,7 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
 		    lightrel := light-coords#0;
 	    	    sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
 	    	    c := 2*sp/w2;
-	    	    light = light - c*w;
+		    light = light - c*w;
 		    opts = opts | {
 			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
 			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0*light0_3/light_2), "y" => toString(-light_1*light0_3/light_2), "z" => toString(4*gg.Radius/light_2) } },

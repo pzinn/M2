@@ -144,7 +144,7 @@ if topLevelMode === WebApp then (
 	) else ( << net x << endl; );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
-    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex,"",s)) @@ htmlLiteral0;
+    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
     -- but should affect html Thing differently:
     htmlLiteral1 := s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
 	ss := separate(webAppTagsRegex,s);

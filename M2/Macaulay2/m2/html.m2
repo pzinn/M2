@@ -126,11 +126,11 @@ html HTML := x -> demark(newline, {
     	popIndentLevel(pushIndentLevel 1, apply(x, html)),
 	///</html>///})
 
-treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => htmlLiteral toURL y#1 else y)
+treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
-splitLines := x -> apply(x, y -> if class y === String then demark(newline, lines y) else y) -- effectively, \r\n -> \n and removes last [\r]\n
-html PRE := (lookup(html, PRE)) @@ splitLines
+fixNewlines := x -> apply(x, y -> if class y === String then replace("\r\n","\n",y) else y)
+html PRE := (lookup(html, PRE)) @@ fixNewlines
 
 html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")
@@ -145,7 +145,7 @@ html MENU := x -> html redoMENU x
 
 html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
 html TO2  := x -> (
-    tag := getPrimaryTag x#0;
+    tag := getPrimaryTag fixup x#0;
     fkey := format tag;
     -- TODO: add this to htmlLiteral?
     name := if match("^ +$", x#1) then #x#1 : "&nbsp;&nbsp;" else x#1;
@@ -160,18 +160,19 @@ html TO2  := x -> (
 html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
-html Net := n -> concatenate("<pre style=\"display:inline-table;vertical-align:",
+html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
     toString(if height n+depth n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
     apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
-    if #x>0 and last x === "\n" then " ", -- fix for html ignoring trailing \n
+    if #x>0 and last x === "\n" then " " else "", -- fix for html ignoring trailing \n
     "</pre>")
-html Descent := x -> concatenate("<span style=\"display:inline-table\">\n", sort apply(pairs x,
+html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:left\">\n", apply(sortByName pairs x,
      (k,v) -> (
 	  if #v === 0
 	  then html k
 	  else html k | " : " | html v
 	  ) | "<br/>"), "</span>")
+html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
 -- a few types are just strings
 html File :=
 html IndeterminateNumber :=

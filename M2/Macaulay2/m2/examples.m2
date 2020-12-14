@@ -51,7 +51,7 @@ EXAMPLE VisibleList := x -> (
 -- TODO: the output format is provisional
 -- TODO: does't capture stderr
 capture' := capture
-capture = method(Options => { UserMode => true })
+capture = method(Options => { UserMode => true, Package => null })
 capture Net    := opts -> s -> capture(toString s,       opts)
 capture List   := opts -> s -> capture(demark_newline s, opts)
 -- TODO: do this in interp.dd instead
@@ -59,7 +59,8 @@ capture List   := opts -> s -> capture(demark_newline s, opts)
 capture String := opts -> s -> if opts.UserMode then capture' s else (
     -- output is (Boolean, String) => (Err?, Output)
     -- TODO: this should eventually be unnecessary
-    oldThreadLocalVars := (gbTrace, debugLevel, errorDepth, interpreterDepth, debuggingMode, stopIfError, notify);
+    oldMutableVars := new MutableHashTable;
+    scan(flatten apply(loadedPackages, pkg -> pkg#"exported mutable symbols"), symb -> oldMutableVars#symb = value symb);
     interpreterDepth = 1;
 
     oldPrivateDictionary := User#"private dictionary";
@@ -69,15 +70,14 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     pushvar(symbol OutputDictionary, new GlobalDictionary);
 
     User#"private dictionary" = new Dictionary;
-    OutputDictionary = new GlobalDictionary;
     dictionaryPath = {
-	User#"private dictionary", -- this is necessary mainly due to indeterminates.m2
-	oldPrivateDictionary,
 	Core.Dictionary,
 	OutputDictionary,
 	PackageDictionary};
     scan(Core#"pre-installed packages", needsPackage);
-    needsPackage toString currentPackage;
+    needsPackage toString if opts#Package === null then currentPackage else opts#Package;
+    dictionaryPath = prepend(oldPrivateDictionary,      dictionaryPath); -- this is necessary mainly due to T from degreesMonoid
+    dictionaryPath = prepend(User#"private dictionary", dictionaryPath); -- this is necessary mainly due to indeterminates.m2
     currentPackage = User;
 
     ret := capture' s;
@@ -88,7 +88,8 @@ capture String := opts -> s -> if opts.UserMode then capture' s else (
     currentPackage = oldCurrentPackage;
     popvar symbol OutputDictionary;
 
-    (gbTrace, debugLevel, errorDepth, interpreterDepth, debuggingMode, stopIfError, notify) = oldThreadLocalVars;
+    -- TODO: this should eventually be unnecessary
+    scan(keys oldMutableVars, symb -> symb <- oldMutableVars#symb);
     ret)
 protect symbol capture
 
@@ -138,7 +139,7 @@ getExampleOutput := (pkg, fkey) -> (
     output := if fileExists filename
     then ( verboseLog("info: reading cached example results from ", filename); get filename )
     else if width (ex := examples fkey) =!= 0
-    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false) );
+    then ( verboseLog("info: capturing example results on-demand"); last capture(ex, UserMode => false, Package => pkg) );
     pkg#"example results"#fkey = if output === null then {} else separateM2output output)
 
 -- used in installPackage.m2
@@ -157,6 +158,8 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     desc := "example results for " | format fkey;
     -- try capturing in the same process
     if  not match("no-capture-flag", inputs) -- this flag is really necessary, but only sometimes
+    -- TODO: remove this when the effects of capture on other packages is reviewed
+    and     match({"Macaulay2Doc"}, pkg#"pkgname")
     -- FIXME: these are workarounds to prevent bugs, in order of priority for being fixed:
     and not match("(gbTrace|read|run|stderr|stdio|print|<<)", inputs) -- stderr and prints are not handled correctly
     and not match("(notify|stopIfError|debuggingMode)", inputs) -- stopIfError and debuggingMode may be fixable
@@ -165,11 +168,10 @@ captureExampleOutput = (pkg, fkey, inputs, cacheFunc, inf, outf, errf, inputhash
     and not match("(installMethod|load|export|newPackage)", inputs) -- exports may land in the package User
     and not match("(GlobalAssignHook|GlobalReleaseHook)", inputs) -- same as above
     and not match({"ThreadedGB", "RunExternalM2"}, pkg#"pkgname") -- TODO: eventually remove
-    and false -- TODO: this is temporarily here, to be removed after v1.17 is released
     then (
 	desc = concatenate(desc, 62 - #desc);
 	stderr << commentize pad("capturing " | desc, 72) << flush; -- the timing info will appear at the end
-	(err, output) := evaluateWithPackage(pkg, inputs, capture_(UserMode => false));
+	(err, output) := capture(inputs, UserMode => false, Package => pkg);
 	if not err then return outf << M2outputHash << inputhash << endl << output << close);
     -- fallback to using an external process
     stderr << commentize pad("making " | desc, 72) << flush;
@@ -204,8 +206,7 @@ processExamplesLoop ExampleItem := x -> (
     currentExampleCounter = currentExampleCounter + 1;
     result)
 
-processExamples = (pkgname, fkey, docBody) -> (
-    pkg := getpkg pkgname;
+processExamples = (pkg, fkey, docBody) -> (
     currentExampleKey = fkey;
     currentExampleCounter = 0;
     currentExampleResults = getExampleOutput(pkg, fkey);
