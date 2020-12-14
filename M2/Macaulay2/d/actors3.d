@@ -542,8 +542,7 @@ mergepairsfun(e:Expr):Expr := (
      else WrongNumArgs(3));
 setupfun("mergePairs",mergepairsfun);
 
-
-combinepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
+fusepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
      when xx is xl:List do
      when yy is yl:List do (
 	  x := xl.v;
@@ -555,17 +554,17 @@ combinepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	  while true do (
 	       if i >= length(x) then (
 		    while j < length(y) do (
-		    	  when y.j 
-	       		  is yj:Sequence do
-	       		  if length(yj) != 2
-	       		  then return WrongArg(2,"a list of pairs")
+			  when y.j
+			  is yj:Sequence do
+			  if length(yj) != 2
+			  then return WrongArg(2,"a list of pairs")
 			  else (
 				t := applyEEE(f,nullE,yj.1);
-		  	       	when t is err:Error do (
-			       	     if err.message != continueMessage then return t;
-			      	     )
+				when t is err:Error do (
+				     if err.message != continueMessage then return t;
+				     )
 				else (
-			      	     z.n = Sequence(yj.0, t);
+				     z.n = Sequence(yj.0, t);
 				     n = n+1;
 				     );
 				j = j+1;
@@ -576,27 +575,27 @@ combinepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 		    )
 	       else if j >= length(y) then (
 		    while i < length(x) do (
-	       	    	  when x.i
-	       		  is xi:Sequence do 
-	       		  if length(xi) != 2
-	       		  then return WrongArg(1,"a list of pairs")
-	       		  else (
+			  when x.i
+			  is xi:Sequence do
+			  if length(xi) != 2
+			  then return WrongArg(1,"a list of pairs")
+			  else (
 				t := applyEEE(f,xi.1,nullE);
-		  	       	when t is err:Error do (
-			       	     if err.message != continueMessage then return t;
-			      	     )
+				when t is err:Error do (
+				     if err.message != continueMessage then return t;
+				     )
 				else (
-			       	     z.n = Sequence(xi.0, t);
+				     z.n = Sequence(xi.0, t);
 				     n = n+1;
 				     );
-				i = i+1; 
+				i = i+1;
 			       )
 			  else return WrongArg(1,"a list of pairs");
-			  );			  
+			  );
 		    break;
 		    );
 	       when x.i
-	       is xi:Sequence do 
+	       is xi:Sequence do
 	       if length(xi) != 2
 	       then return WrongArg(1,"a list of pairs")
 	       else
@@ -609,29 +608,29 @@ combinepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 		    when c is Error do return c else nothing;
 		    if GreaterS.symbol === c then (
 				t := applyEEE(f,nullE,yj.1);
-		  	       	when t is err:Error do (
-			       	     if err.message != continueMessage then return t;
-			      	     )
+				when t is err:Error do (
+				     if err.message != continueMessage then return t;
+				     )
 				else (
-			      	     z.n = Sequence(yj.0, t);
+				     z.n = Sequence(yj.0, t);
 				     n = n+1;
 				     );
 				j = j+1;
 			 )
 		    else if LessS.symbol === c then (
 				t := applyEEE(f,xi.1,nullE);
-		  	       	when t is err:Error do (
-			       	     if err.message != continueMessage then return t;
-			      	     )
+				when t is err:Error do (
+				     if err.message != continueMessage then return t;
+				     )
 				else (
-			       	     z.n = Sequence(xi.0, t);
+				     z.n = Sequence(xi.0, t);
 				     n=n+1;
 				     );
-				i = i+1; 
+				i = i+1;
 			 )
 		    else (
-		    	 t := applyEEE(f,xi.1,yj.1);
-		  	 when t is err:Error do (
+			 t := applyEEE(f,xi.1,yj.1);
+			 when t is err:Error do (
 			      if err.message != continueMessage then return t;
 			      )
 			 else (
@@ -649,14 +648,14 @@ combinepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 	  Expr(sethash(List(commonAncestor(xl.Class,yl.Class), z,0,false),xl.Mutable | yl.Mutable)))
      else WrongArg(2,"a list")
      else WrongArg(1,"a list"));
-combinepairsfun(e:Expr):Expr := (
+fusepairsfun(e:Expr):Expr := (
      when e
      is a:Sequence do
      if length(a) == 3 then
-     combinepairs(a.0,a.1,a.2)
+     fusepairs(a.0,a.1,a.2)
      else WrongNumArgs(3)
      else WrongNumArgs(3));
-setupfun("combinePairs",combinepairsfun);
+setupfun("fusePairs",fusepairsfun);
 
 --rmergepairs(xx:Expr,yy:Expr,f:Expr):Expr := (
 --     when xx is xl:List do

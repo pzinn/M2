@@ -366,8 +366,8 @@ expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then 
 describe FactPolynomialRing := R -> Describe (expression fact) (describe last R.baseRings)
 fact FractionField := F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
 
-commonPairs := (a,b,f) -> combinePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
-subPairs := (a,b) -> combinePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
+commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
+subPairs := (a,b) -> fusePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
 
 fact PolynomialRing := R -> (
     local Rf;
