@@ -45,11 +45,11 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 
 on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
-htmlAfterPrint :=  y -> (
-    y=deepSplice sequence y;
-    z := htmlInside \ y;
-    if any(z, x -> class x =!= String) then error "invalid html output";
-    << endl << on() | " : " | webAppHtmlTag | concatenate z | webAppEndTag << endl;
+htmlAfterPrint :=  x -> (
+    if class x === Sequence then x = RowExpression deepSplice { x };
+    y := htmlInside x; -- we compute the html now (in case it produces an error)
+    if class y =!= String then error "invalid html output";
+    << endl << on() | " : " | webAppHtmlTag | y | webAppEndTag << endl;
     )
 
 Thing#{WebApp,AfterPrint} = x -> htmlAfterPrint class x;
@@ -157,24 +157,24 @@ texMathDebug = x -> concatenate(
     global texMath <- texMathDebug;
     "\\underset{\\tiny ",
     y,
-    "}{\\fcolorbox{gray}{transparent}{\\(",
+    "}{\\fcolorbox{gray}{transparent}{$",
     if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) or instance(x,Nothing) then texMathBackup x else concatenate( -- to avoid trouble with holders
 	webAppHtmlTag,
 	htmlBackup x,
 	webAppEndTag
 	),
-    "\\)}}"
+    "$}}"
     );
 
 htmlDebug = x -> (
-    flag := instance(x,Hypertext) and (options class x)#?"xmlns" or instance(x,PRE); -- don't mess inside non HTML or PRE
+    flag := instance(x,Hypertext) and (options class x)#?"xmlns"; -- don't mess inside non HTML
     if flag then (
 	global html <- htmlBackup;
 	global texMath <- texMathInside;
 	);
     y := if instance(x,Hypertext) then
     "<span class=\"M2Debug\" data-type=\"" | toString class x | "\">" | htmlBackup x | "</span>"
-    else "\\("|texMathDebug x|"\\)";
+    else tex x;
     if flag then (
 	global html <- htmlDebug;
 	global texMath <- texMathDebug;
