@@ -670,8 +670,9 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      -- we can finesse further the amount of space than in net
-     if div or instance(args,Array) then sep:=""
-     else if instance(args,VisibleList) then sep="\\,"
+     -- see also https://tex.stackexchange.com/questions/2607/spacing-around-left-and-right
+     if div or instance(args,Array) then sep:="\\mathopen{}"
+     else if instance(args,VisibleList) then sep="{}"
      else sep = "\\ ";
      if precedence args > p
      then if pfun >= p
