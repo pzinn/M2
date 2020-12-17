@@ -205,7 +205,7 @@ viewPort1 GraphicsText := g -> (
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
     pp := p + vector {
 	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then 0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
+	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
 	};
     {pp,pp+r}
     )
