@@ -222,7 +222,14 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
 expression Matrix := m -> (
     x := applyTable(entries m, expression);
     d := degrees -* cover *- target m;
-    if not all(d, i -> all(i, j -> j == 0)) then MatrixDegreeExpression {x,d, degrees source m} else MatrixExpression x
+    MatrixExpression {
+	x,
+    	if not all(d, i -> all(i, j -> j == 0)) then {d, degrees source m},
+	if m.cache.?Block and m.cache.Block then {
+	    if (target m).cache.?components then apply((target m).cache.components,rank) else {rank target m},
+    	    if (source m).cache.?components then apply((source m).cache.components,rank) else {rank source m}
+	    }
+	}
     )
 
 net Matrix := m -> net expression m

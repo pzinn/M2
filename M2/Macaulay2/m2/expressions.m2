@@ -521,22 +521,21 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-expressionValue MatrixExpression := x -> matrix applyTable(toList x,expressionValue)
 toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      "matrix {",
-     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
+     between(", ",apply(toList m#0,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
 MatrixDegreeExpression = new HeaderType of Expression
 MatrixDegreeExpression.synonym = "matrix with degrees expression"
-expressionValue MatrixDegreeExpression := x -> (
-    m := expressionValue MatrixExpression x#0;
-    R := ring m;
-    n := degreeLength R;
-    if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
-    then map(R^(-x#1),R^(-x#2),entries m)
-    else m
-    )
-toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,MatrixExpression x#0)
+expressionValue MatrixExpression := x -> (
+    m := matrix applyTable(toList x#0,expressionValue);
+    if #x === 1 or x#1 === null then m else (
+    	R := ring m;
+    	n := degreeLength R;
+    	if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
+    	then map(R^(-x#1),R^(-x#2),entries m)
+    	else m
+    ))
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -670,8 +669,9 @@ texMath Adjacent := texMath FunctionApplication := m -> (
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      -- we can finesse further the amount of space than in net
-     if div or instance(args,Array) then sep:=""
-     else if instance(args,VisibleList) then sep="\\,"
+     -- see also https://tex.stackexchange.com/questions/2607/spacing-around-left-and-right
+     if div or instance(args,Array) then sep:="\\mathopen{}"
+     else if instance(args,VisibleList) then sep="{}"
      else sep = "\\ ";
      if precedence args > p
      then if pfun >= p
@@ -930,19 +930,15 @@ toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x
 toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
-    if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
-    else (
-	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
-	netList(x,Boxes=>{false,{0,#x#0}},matrixDisplayOptions#compactMatrixForm)
-     ))
+    if all(x#0,r->all(r,i->class i===ZeroExpression)) then return "0";
+    degs := #x > 1 and x#1 =!= null;
+    net1 := if compactMatrixForm then toCompactString else net;
+    m := if degs then apply(#x#0,i->apply(prepend(x#1#0#i,x#0#i),net1)) else applyTable(x#0,net1);
+    (hbox,vbox) := if #x >2 and x#2 =!= null then (drop(accumulate(plus,0,x#2#0),-1),prepend(0,accumulate(plus,0,x#2#1))) else (false,{0,#m#0});
+    if degs then vbox = apply(vbox, i -> if i<#m#0 then i+1 else i);
+    netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#compactMatrixForm)
+    )
 --html MatrixExpression := x -> html TABLE toList x
-
-net MatrixDegreeExpression := x -> (
-    if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
-    else (
-	x=apply(#x#0,i->apply(prepend(x#1#i,x#0#i),if compactMatrixForm then toCompactString else net));
-	netList(x,Boxes=>{false,{1,#x#0}},matrixDisplayOptions#compactMatrixForm)
-     ))
 
 net VectorExpression := x -> (
     if all(x,i->class i===ZeroExpression) then "0"
@@ -1171,22 +1167,35 @@ texMath Table := m -> (
 	"\\end{array}}")
 )
 
-texMath MatrixExpression := m -> if all(m,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
-    "\\begin{pmatrix}" | newline,
-    between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,
-		    if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)))),
-    "\\end{pmatrix}"
-    )
-texMath MatrixDegreeExpression := m -> if all(m#0,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
-    mat := applyTable(m#0,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x);
-    deg := apply(m#1,texMath);
-    "\\begin{matrix}",
-    between(///\\///,apply(#mat, i -> deg#i | "\\vphantom{" | concatenate mat#i | "}")),
-    "\\end{matrix}",
-    "\\begin{pmatrix}" | newline,
-    between(///\\/// | newline, apply(#mat, i -> "\\vphantom{"| deg#i | "}" | concatenate between("&",mat#i))),
-    "\\end{pmatrix}"
-    )
+texMath MatrixExpression := x -> (
+    if all(x#0,r->all(r,i->class i===ZeroExpression)) then return "0";
+    degs := #x > 1 and x#1 =!= null;
+    blck := #x > 2 and x#2 =!= null;
+    if blck then ( j := 1; h := 0; );
+    texMath1 := if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x;
+    m := applyTable(x#0,texMath1);
+    concatenate(
+	if degs then (
+	    deg := apply(x#1#0,texMath);
+	    "\\begin{array}{l}",
+	    apply(#m, i -> deg#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
+	    "\\end{array}"
+	    ),
+	"\\left(\\!",
+	"\\begin{array}{",
+	if blck then demark("|",apply(x#2#1,i->i:"c")) else #m#0:"c","}",
+	newline,
+    	apply(#m, i -> concatenate(
+		if degs then "\\vphantom{"| deg#i | "}", 
+		 between("&",m#i),
+		 "\\\\",
+		 newline,
+		 if blck then if h<#x#2#0-1 and j == x#2#0#h then (j=0; h=h+1; "\\hline") else (j=j+1;)
+		 )),
+    	"\\end{array}",
+	"\\!\\right)"
+    	)
+)
 
 texMath VectorExpression := v -> (
     concatenate(
@@ -1332,13 +1341,23 @@ texMath Set := x -> texMath expression x
 
 -- some texMath that got stranded
 texMath BasicList := s -> concatenate(
-     if class s =!= List then texMath class s,
-    "\\left\\{",
-    between(",\\,",apply(toList s,texMath))
-    ,"\\right\\}"
+    if instance(s,Array) then (
+	opendelim := "[";
+	closedelim := "]";
+	) else if instance(s,Sequence) then (
+	opendelim = "(";
+	closedelim = ")";
+	) else (
+	opendelim = "\\{";
+	closedelim = "\\}";
+	);
+    if not instance(s,VisibleList) then texMath class s,
+    "\\left",
+    opendelim,
+    between(",\\,",apply(toList s,texMath)),
+    "\\right",
+    closedelim
     )
-texMath Array := x -> concatenate("\\left[", between(",", apply(x,texMath)), "\\right]")
-texMath Sequence := x -> concatenate("\\left(", between(",", apply(x,texMath)), "\\right)")
 texMath HashTable := x -> if x.?texMath then x.texMath else
 if hasAttribute(x,ReverseDictionary) then texMath toString getAttribute(x,ReverseDictionary) else
 concatenate flatten (
