@@ -224,7 +224,7 @@ expression Matrix := m -> (
     d := degrees -* cover *- target m;
     MatrixExpression {
 	x,
-    	if not all(d, i -> all(i, j -> j == 0)) then {d, degrees source m},
+	if not all(d, i -> all(i, j -> j == 0)) then {apply(d,expression), apply(degrees source m,expression)},
 	if m.cache.?Block and m.cache.Block then {
 	    if (target m).cache.?components then apply((target m).cache.components,rank) else {rank target m},
     	    if (source m).cache.?components then apply((source m).cache.components,rank) else {rank source m}

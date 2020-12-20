@@ -1197,12 +1197,12 @@ texMath MatrixExpression := x -> (
     	)
 )
 
-texMath VectorExpression := v -> (
-    concatenate(
-	"\\begin{pmatrix}" | newline,
-	between(///\\///,apply(toList v,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)),
-	"\\end{pmatrix}"
-	)
+texMath VectorExpression := v -> concatenate(
+    "\\left(\\!",
+    "\\begin{array}{c}" | newline,
+    between(///\\///,apply(toList v,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)),
+    "\\end{array}",
+    "\\!\\right)"
     )
 
 ctr := 0
