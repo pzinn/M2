@@ -529,13 +529,24 @@ MatrixDegreeExpression = new HeaderType of Expression
 MatrixDegreeExpression.synonym = "matrix with degrees expression"
 expressionValue MatrixExpression := x -> (
     m := matrix applyTable(toList x#0,expressionValue);
-    if #x === 1 or x#1 === null then m else (
-    	R := ring m;
-    	n := degreeLength R;
-    	if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
-    	then map(R^(-x#1),R^(-x#2),entries m)
-    	else m
-    ))
+    deg := #x > 1 and x#1 =!= null;
+    blck := #x > 2 and x#2 =!= null;
+    if not deg and not blck then return m;
+    R := ring m;
+    n := degreeLength R;
+    degs := if deg then applyTable(x#1,value) else (
+	zero := toList(n:0);
+	{toList(#x#0:zero),toList(#x#0#0:zero)}
+	);
+    if blck then (
+	source := directSum apply(x#2#0,i->R^i); -- temp
+	target := directSum apply(x#2#1,i->R^i); -- temp
+	) else (
+	target = R^(-degs#0);
+	source = R^(-degs#1);
+	);
+    map(target,source,entries m)
+    )
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -1169,16 +1180,16 @@ texMath Table := m -> (
 
 texMath MatrixExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then return "0";
-    degs := #x > 1 and x#1 =!= null;
+    deg := #x > 1 and x#1 =!= null;
     blck := #x > 2 and x#2 =!= null;
     if blck then ( j := 1; h := 0; );
     texMath1 := if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x;
     m := applyTable(x#0,texMath1);
     concatenate(
-	if degs then (
-	    deg := apply(x#1#0,texMath);
+	if deg then (
+	    degs := apply(x#1#0,texMath);
 	    "\\begin{array}{l}",
-	    apply(#m, i -> deg#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
+	    apply(#m, i -> degs#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
 	    "\\end{array}"
 	    ),
 	"\\left(\\!",
@@ -1186,7 +1197,7 @@ texMath MatrixExpression := x -> (
 	if blck then demark("|",apply(x#2#1,i->i:"c")) else #m#0:"c","}",
 	newline,
     	apply(#m, i -> concatenate(
-		if degs then "\\vphantom{"| deg#i | "}", 
+		if deg then "\\vphantom{"| degs#i | "}", 
 		 between("&",m#i),
 		 "\\\\",
 		 newline,
