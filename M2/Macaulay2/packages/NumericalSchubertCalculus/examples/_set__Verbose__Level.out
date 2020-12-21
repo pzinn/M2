@@ -2,23 +2,23 @@
 i1 : -- The problem of 4 lines w.r.t. random flags
 SchPblm = randomSchubertProblemInstance ({{1},{1},{1},{1}},2,4)
 
-o1 = $\left\{\left(\left\{1\right\},\begin{pmatrix}
-{.781262}-{.624203}\,\mathbf{i}&-{.462954}-{.886382}\,\mathbf{i}&-{.272832}+{.962062}\,\mathbf{i}&-{.670948}-{.741504}\,\mathbf{i}\\
-{.9868}+{.161945}\,\mathbf{i}&-{.219207}-{.975678}\,\mathbf{i}&{.778029}-{.628229}\,\mathbf{i}&{.118767}+{.992922}\,\mathbf{i}\\
--{.971549}+{.236839}\,\mathbf{i}&{.157598}-{.987503}\,\mathbf{i}&{.841103}-{.540875}\,\mathbf{i}&-{.396553}+{.918012}\,\mathbf{i}\\
-{.893324}+{.449414}\,\mathbf{i}&{.360485}-{.932765}\,\mathbf{i}&-{.651048}+{.759036}\,\mathbf{i}&-{.272372}-{.962192}\,\mathbf{i}\end{pmatrix}\right),\,\left(\left\{1\right\},\begin{pmatrix}
-{.696205}+{.717843}\,\mathbf{i}&-{.0281556}+{.999604}\,\mathbf{i}&-{.0562287}-{.998418}\,\mathbf{i}&{.776937}+{.629579}\,\mathbf{i}\\
--{.58234}+{.812945}\,\mathbf{i}&-{.924052}-{.382267}\,\mathbf{i}&{.023444}+{.999725}\,\mathbf{i}&{.570649}+{.821194}\,\mathbf{i}\\
-{.486335}-{.873772}\,\mathbf{i}&-{.970803}-{.23988}\,\mathbf{i}&{.701149}-{.713015}\,\mathbf{i}&-{.863646}+{.504099}\,\mathbf{i}\\
--{.783999}-{.620762}\,\mathbf{i}&{.577597}-{.816322}\,\mathbf{i}&{.357971}+{.933733}\,\mathbf{i}&-{.820726}+{.571321}\,\mathbf{i}\end{pmatrix}\right),\,\left(\left\{1\right\},\begin{pmatrix}
--{.746312}-{.665596}\,\mathbf{i}&{.995687}+{.092774}\,\mathbf{i}&{.168661}+{.985674}\,\mathbf{i}&-{.765803}+{.643076}\,\mathbf{i}\\
--{.936289}-{.351232}\,\mathbf{i}&{.701342}-{.712825}\,\mathbf{i}&-{.286823}-{.957983}\,\mathbf{i}&-{.415126}-{.909764}\,\mathbf{i}\\
--{.164243}+{.98642}\,\mathbf{i}&-{.78761}-{.616174}\,\mathbf{i}&{.976163}-{.21704}\,\mathbf{i}&-{.416188}-{.909278}\,\mathbf{i}\\
-{.85817}-{.513365}\,\mathbf{i}&{.759918}-{.650019}\,\mathbf{i}&{.482783}+{.87574}\,\mathbf{i}&{.975922}-{.218119}\,\mathbf{i}\end{pmatrix}\right),\,\left(\left\{1\right\},\begin{pmatrix}
-{.918399}+{.395655}\,\mathbf{i}&{.719639}-{.694348}\,\mathbf{i}&{.9772}+{.212322}\,\mathbf{i}&-{.998741}-{.0501734}\,\mathbf{i}\\
-{.58629}+{.810101}\,\mathbf{i}&-{.554833}-{.831962}\,\mathbf{i}&{.454813}+{.890587}\,\mathbf{i}&-{.698649}-{.715464}\,\mathbf{i}\\
--{.590887}+{.806754}\,\mathbf{i}&-{.726792}+{.686857}\,\mathbf{i}&{.0800129}+{.996794}\,\mathbf{i}&{.742918}+{.669382}\,\mathbf{i}\\
--{.939129}+{.343564}\,\mathbf{i}&-{.616052}-{.787706}\,\mathbf{i}&{.339065}+{.940763}\,\mathbf{i}&-{.99319}-{.116506}\,\mathbf{i}\end{pmatrix}\right)\right\}$
+o1 = $\left\{\left(\left\{1\right\},\,\begin{pmatrix}
+{.781262}-{.624203}\,\mathbf{i}&amp;-{.462954}-{.886382}\,\mathbf{i}&amp;-{.272832}+{.962062}\,\mathbf{i}&amp;-{.670948}-{.741504}\,\mathbf{i}\\
+{.9868}+{.161945}\,\mathbf{i}&amp;-{.219207}-{.975678}\,\mathbf{i}&amp;{.778029}-{.628229}\,\mathbf{i}&amp;{.118767}+{.992922}\,\mathbf{i}\\
+-{.971549}+{.236839}\,\mathbf{i}&amp;{.157598}-{.987503}\,\mathbf{i}&amp;{.841103}-{.540875}\,\mathbf{i}&amp;-{.396553}+{.918012}\,\mathbf{i}\\
+{.893324}+{.449414}\,\mathbf{i}&amp;{.360485}-{.932765}\,\mathbf{i}&amp;-{.651048}+{.759036}\,\mathbf{i}&amp;-{.272372}-{.962192}\,\mathbf{i}\end{pmatrix}\right),\,\left(\left\{1\right\},\,\begin{pmatrix}
+{.696205}+{.717843}\,\mathbf{i}&amp;-{.0281556}+{.999604}\,\mathbf{i}&amp;-{.0562287}-{.998418}\,\mathbf{i}&amp;{.776937}+{.629579}\,\mathbf{i}\\
+-{.58234}+{.812945}\,\mathbf{i}&amp;-{.924052}-{.382267}\,\mathbf{i}&amp;{.023444}+{.999725}\,\mathbf{i}&amp;{.570649}+{.821194}\,\mathbf{i}\\
+{.486335}-{.873772}\,\mathbf{i}&amp;-{.970803}-{.23988}\,\mathbf{i}&amp;{.701149}-{.713015}\,\mathbf{i}&amp;-{.863646}+{.504099}\,\mathbf{i}\\
+-{.783999}-{.620762}\,\mathbf{i}&amp;{.577597}-{.816322}\,\mathbf{i}&amp;{.357971}+{.933733}\,\mathbf{i}&amp;-{.820726}+{.571321}\,\mathbf{i}\end{pmatrix}\right),\,\left(\left\{1\right\},\,\begin{pmatrix}
+-{.746312}-{.665596}\,\mathbf{i}&amp;{.995687}+{.092774}\,\mathbf{i}&amp;{.168661}+{.985674}\,\mathbf{i}&amp;-{.765803}+{.643076}\,\mathbf{i}\\
+-{.936289}-{.351232}\,\mathbf{i}&amp;{.701342}-{.712825}\,\mathbf{i}&amp;-{.286823}-{.957983}\,\mathbf{i}&amp;-{.415126}-{.909764}\,\mathbf{i}\\
+-{.164243}+{.98642}\,\mathbf{i}&amp;-{.78761}-{.616174}\,\mathbf{i}&amp;{.976163}-{.21704}\,\mathbf{i}&amp;-{.416188}-{.909278}\,\mathbf{i}\\
+{.85817}-{.513365}\,\mathbf{i}&amp;{.759918}-{.650019}\,\mathbf{i}&amp;{.482783}+{.87574}\,\mathbf{i}&amp;{.975922}-{.218119}\,\mathbf{i}\end{pmatrix}\right),\,\left(\left\{1\right\},\,\begin{pmatrix}
+{.918399}+{.395655}\,\mathbf{i}&amp;{.719639}-{.694348}\,\mathbf{i}&amp;{.9772}+{.212322}\,\mathbf{i}&amp;-{.998741}-{.0501734}\,\mathbf{i}\\
+{.58629}+{.810101}\,\mathbf{i}&amp;-{.554833}-{.831962}\,\mathbf{i}&amp;{.454813}+{.890587}\,\mathbf{i}&amp;-{.698649}-{.715464}\,\mathbf{i}\\
+-{.590887}+{.806754}\,\mathbf{i}&amp;-{.726792}+{.686857}\,\mathbf{i}&amp;{.0800129}+{.996794}\,\mathbf{i}&amp;{.742918}+{.669382}\,\mathbf{i}\\
+-{.939129}+{.343564}\,\mathbf{i}&amp;-{.616052}-{.787706}\,\mathbf{i}&amp;{.339065}+{.940763}\,\mathbf{i}&amp;-{.99319}-{.116506}\,\mathbf{i}\end{pmatrix}\right)\right\}$
 
 o1 : <pre style="display:inline">
 List</pre>
@@ -26,14 +26,14 @@ List</pre>
 i3 : S = solveSchubertProblem(SchPblm,2,4)
 
 o3 = $\left\{\begin{pmatrix}
--{1.65573}-{.600637}\,\mathbf{i}&{.0201935}+{.0437095}\,\mathbf{i}\\
--{1.23037}-{1.66989}\,\mathbf{i}&-{.0308057}-{.00120618}\,\mathbf{i}\\
-{1.35971}-{.743988}\,\mathbf{i}&-{.0713133}-{.049047}\,\mathbf{i}\\
--{.397038}-{1.8974}\,\mathbf{i}&{.0102261}-{.024397}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
--{.154703}+{.175591}\,\mathbf{i}&{.0376857}+{.0683239}\,\mathbf{i}\\
--{.801221}-{.0354303}\,\mathbf{i}&-{.00368075}+{.0317504}\,\mathbf{i}\\
-{.325581}-{2.08048}\,\mathbf{i}&-{.0350432}-{.250817}\,\mathbf{i}\\
--{.475895}-{.209388}\,\mathbf{i}&-{.0336427}+{.0141017}\,\mathbf{i}\end{pmatrix}\right\}$
+-{1.65573}-{.600637}\,\mathbf{i}&amp;{.0201935}+{.0437095}\,\mathbf{i}\\
+-{1.23037}-{1.66989}\,\mathbf{i}&amp;-{.0308057}-{.00120618}\,\mathbf{i}\\
+{1.35971}-{.743988}\,\mathbf{i}&amp;-{.0713133}-{.049047}\,\mathbf{i}\\
+-{.397038}-{1.8974}\,\mathbf{i}&amp;{.0102261}-{.024397}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
+-{.154703}+{.175591}\,\mathbf{i}&amp;{.0376857}+{.0683239}\,\mathbf{i}\\
+-{.801221}-{.0354303}\,\mathbf{i}&amp;-{.00368075}+{.0317504}\,\mathbf{i}\\
+{.325581}-{2.08048}\,\mathbf{i}&amp;-{.0350432}-{.250817}\,\mathbf{i}\\
+-{.475895}-{.209388}\,\mathbf{i}&amp;-{.0336427}+{.0141017}\,\mathbf{i}\end{pmatrix}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
@@ -42,104 +42,104 @@ List</pre>
 i6 : S = solveSchubertProblem(SchPblm,2,4)
 <pre style="display:inline">
 -- playCheckers</pre>
--- cpu time = .00471533
+-- cpu time = .00517143
 <pre style="display:inline">
 -- making a recursive call to resolveNode</pre>
 <pre style="display:inline">
 -- playCheckers</pre>
--- cpu time = .00256483
+-- cpu time = .00281941
 <pre style="display:inline">
 -- making a recursive call to resolveNode</pre>
 <pre style="display:inline">
 -- playCheckers</pre>
--- cpu time = .000383127
+-- cpu time = .000365768
 <pre style="display:inline">
 resolveNode reached node of no remaining conditions</pre>
--- time to make equations: .00421183
+-- time to make equations: .00464246
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00515714 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .0131179
--- time of performing one checker move: .00109003
--- time of performing one checker move: .000962005
--- time to make equations: .00446446
+ -- trackHomotopy time = .0212015 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .0143943
+-- time of performing one checker move: .00106403
+-- time of performing one checker move: .00107357
+-- time to make equations: .00451004
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0124309 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .0138252
--- time to make equations: .00751166
+ -- trackHomotopy time = .0200587 sec. for [{1, 2, 3, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .014047
+-- time to make equations: .00490909
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .00731858 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
--- time of performing one checker move: .0165444
--- time to make equations: .00432828
+ -- trackHomotopy time = .00785803 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 2}]
+-- time of performing one checker move: .0149437
+-- time to make equations: .00525675
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0162875 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
--- time of performing one checker move: .0138604
--- time to make equations: .0099064
+ -- trackHomotopy time = .0172222 sec. for [{2, 3, 1, 0}, {2, infinity, infinity, 1}]
+-- time of performing one checker move: .0163211
+-- time to make equations: .0104583
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0577836 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
--- time of performing one checker move: .0215387
--- time to make equations: .0111681
+ -- trackHomotopy time = .0487026 sec. for [{0, 1, 2, 3}, {infinity, 1, 2, infinity}]
+-- time of performing one checker move: .0285984
+-- time to make equations: .0105293
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0261801 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
--- time of performing one checker move: .0230045
--- time of performing one checker move: .00121134
--- time of performing one checker move: .00109283
--- time to make equations: .0102151
+ -- trackHomotopy time = .0268154 sec. for [{0, 1, 3, 2}, {infinity, 1, infinity, 2}]
+-- time of performing one checker move: .0231439
+-- time of performing one checker move: .00130274
+-- time of performing one checker move: .00111763
+-- time to make equations: .0102078
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0249678 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
--- time of performing one checker move: .0252056
+ -- trackHomotopy time = .0582826 sec. for [{1, 3, 2, 0}, {infinity, 3, infinity, 1}]
+-- time of performing one checker move: .0312022
 <pre style="display:inline">
 -- making a recursive call to resolveNode</pre>
 <pre style="display:inline">
 -- playCheckers</pre>
--- cpu time = .00274418
+-- cpu time = .00241675
 <pre style="display:inline">
 -- making a recursive call to resolveNode</pre>
 <pre style="display:inline">
 -- playCheckers</pre>
--- cpu time = .000319733
+-- cpu time = .000305986
 <pre style="display:inline">
 resolveNode reached node of no remaining conditions</pre>
--- time to make equations: .00470457
+-- time to make equations: .00458646
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0211426 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
--- time of performing one checker move: .0149477
--- time of performing one checker move: .00433845
--- time to make equations: .00435107
+ -- trackHomotopy time = .0154576 sec. for [{0, 1, 2, 3}, {0, infinity, 2, infinity}]
+-- time of performing one checker move: .0260359
+-- time of performing one checker move: .00105581
+-- time to make equations: .00494615
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0124869 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
--- time of performing one checker move: .0136929
--- time of performing one checker move: .00109545
--- time of performing one checker move: .000752989
--- time of performing one checker move: .000975747
--- time of performing one checker move: .0010898
--- time of performing one checker move: .000787758
--- time of performing one checker move: .0011914
--- time of performing one checker move: .00112502
--- time to make equations: .0096313
+ -- trackHomotopy time = .0224851 sec. for [{0, 2, 3, 1}, {0, infinity, infinity, 2}]
+-- time of performing one checker move: .0150651
+-- time of performing one checker move: .000979528
+-- time of performing one checker move: .000745034
+-- time of performing one checker move: .00109882
+-- time of performing one checker move: .00138919
+-- time of performing one checker move: .000991634
+-- time of performing one checker move: .00116676
+-- time of performing one checker move: .00117249
+-- time to make equations: .0105504
 Setup time: 0
 Computing time:0
- -- trackHomotopy time = .0272792 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
--- time of performing one checker move: .0218807
--- time of performing one checker move: .0015135
+ -- trackHomotopy time = .0923704 sec. for [{1, 3, 2, 0}, {1, infinity, infinity, 3}]
+-- time of performing one checker move: .0327327
+-- time of performing one checker move: .00158365
 
 o6 = $\left\{\begin{pmatrix}
--{1.65573}-{.600637}\,\mathbf{i}&{.0201935}+{.0437095}\,\mathbf{i}\\
--{1.23037}-{1.66989}\,\mathbf{i}&-{.0308057}-{.00120618}\,\mathbf{i}\\
-{1.35971}-{.743988}\,\mathbf{i}&-{.0713133}-{.049047}\,\mathbf{i}\\
--{.397038}-{1.8974}\,\mathbf{i}&{.0102261}-{.024397}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
--{.154703}+{.175591}\,\mathbf{i}&{.0376857}+{.0683239}\,\mathbf{i}\\
--{.801221}-{.0354303}\,\mathbf{i}&-{.00368075}+{.0317504}\,\mathbf{i}\\
-{.325581}-{2.08048}\,\mathbf{i}&-{.0350432}-{.250817}\,\mathbf{i}\\
--{.475895}-{.209388}\,\mathbf{i}&-{.0336427}+{.0141017}\,\mathbf{i}\end{pmatrix}\right\}$
+-{1.65573}-{.600637}\,\mathbf{i}&amp;{.0201935}+{.0437095}\,\mathbf{i}\\
+-{1.23037}-{1.66989}\,\mathbf{i}&amp;-{.0308057}-{.00120618}\,\mathbf{i}\\
+{1.35971}-{.743988}\,\mathbf{i}&amp;-{.0713133}-{.049047}\,\mathbf{i}\\
+-{.397038}-{1.8974}\,\mathbf{i}&amp;{.0102261}-{.024397}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
+-{.154703}+{.175591}\,\mathbf{i}&amp;{.0376857}+{.0683239}\,\mathbf{i}\\
+-{.801221}-{.0354303}\,\mathbf{i}&amp;-{.00368075}+{.0317504}\,\mathbf{i}\\
+{.325581}-{2.08048}\,\mathbf{i}&amp;-{.0350432}-{.250817}\,\mathbf{i}\\
+-{.475895}-{.209388}\,\mathbf{i}&amp;-{.0336427}+{.0141017}\,\mathbf{i}\end{pmatrix}\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>

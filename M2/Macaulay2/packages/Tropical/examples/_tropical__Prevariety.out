@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 1364290900
 i1 : QQ[x_1,x_2,x_3,x_4]
 
-o1 = ${\mathbb Q}\left[{x}_{1},{x}_{2},{x}_{3},{x}_{4}\right]$
+o1 = ${\mathbb Q}\mathopen{}\left[{x}_{1},\,{x}_{2},\,{x}_{3},\,{x}_{4}\right]$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
@@ -20,7 +20,7 @@ o3 : <pre style="display:inline">
 Fan</pre>
 i4 : QQ[x_0,x_1]
 
-o4 = ${\mathbb Q}\left[{x}_{0},{x}_{1}\right]$
+o4 = ${\mathbb Q}\mathopen{}\left[{x}_{0},\,{x}_{1}\right]$
 
 o4 : <pre style="display:inline">
 PolynomialRing</pre>
@@ -33,7 +33,7 @@ o5 : <pre style="display:inline">
 Fan</pre>
 i6 : QQ[x_0,x_1]
 
-o6 = ${\mathbb Q}\left[{x}_{0},{x}_{1}\right]$
+o6 = ${\mathbb Q}\mathopen{}\left[{x}_{0},\,{x}_{1}\right]$
 
 o6 : <pre style="display:inline">
 PolynomialRing</pre>

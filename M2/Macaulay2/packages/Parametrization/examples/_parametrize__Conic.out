@@ -20,5 +20,5 @@ o5 = $\begin{pmatrix}
 
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{3}\,\longleftarrow \,\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{1}$
+ </pre>$\left({{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1}\right]}\right)^{3}\,\longleftarrow \,\left({{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1}\right]}\right)^{1}$
 i6 : 

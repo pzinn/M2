@@ -13,22 +13,19 @@ o2 : <pre style="display:inline">
 List</pre>
 i3 : L = solveSystem(S)
 
-o3 = $\left\{<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}\right\}$
+o3 = $\left\{\left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\},\,\left\{1+\mathbf{i},\,1-\mathbf{i},\,-1-{3.34476}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
 i4 : oneSoln = L_0
 
-o4 = $<pre style="display:inline">
-oneSoln</pre>$
+o4 = $\left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\}$
 
 o4 : <pre style="display:inline">
 Point</pre>
 i5 : peek oneSoln
 
-o5 = <pre style="display:inline-table;vertical-align:0%">
+o5 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 Point{ConditionNumber => 6.32111     }<br/>      Coordinates => {1-ii, 1+ii, -1}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
 i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
 

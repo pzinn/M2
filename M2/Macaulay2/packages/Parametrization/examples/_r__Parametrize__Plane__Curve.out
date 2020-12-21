@@ -20,7 +20,7 @@ o5 = $\begin{pmatrix}
 
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$\left({\frac{{\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2}\right]}{{t}_{1}^{2}-{t}_{0}{t}_{2}}}\right)^{3}\,\longleftarrow \,\left({\frac{{\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2}\right]}{{t}_{1}^{2}-{t}_{0}{t}_{2}}}\right)^{1}$
+ </pre>$\left({\frac{{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1},\,{t}_{2}\right]}{{t}_{1}^{2}-{t}_{0}{t}_{2}}}\right)^{3}\,\longleftarrow \,\left({\frac{{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1},\,{t}_{2}\right]}{{t}_{1}^{2}-{t}_{0}{t}_{2}}}\right)^{1}$
 i6 : rParametrizePlaneCurve(I,J,parametrizeConic=>true)
 
 o6 = $\begin{pmatrix}
@@ -30,7 +30,7 @@ o6 = $\begin{pmatrix}
 
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{3}\,\longleftarrow \,\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{1}$
+ </pre>$\left({{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1}\right]}\right)^{3}\,\longleftarrow \,\left({{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1}\right]}\right)^{1}$
 i7 : K=QQ;
 i8 : R=K[v,u,z];
 i9 : I=ideal(u^5+2*u^2*v*z^2+2*u^3*v*z+u*v^2*z^2-4*u*v^3*z+2*v^5);
@@ -52,5 +52,5 @@ o11 = $\begin{pmatrix}
 
 o11 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{3}\,\longleftarrow \,\left({{\mathbb Q}\left[{t}_{0},{t}_{1}\right]}\right)^{1}$
+ </pre>$\left({{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1}\right]}\right)^{3}\,\longleftarrow \,\left({{\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1}\right]}\right)^{1}$
 i12 : 

@@ -4,7 +4,7 @@
 i3 : (w,ns) = topWitnessSet(f,1)
 
 o3 = $\left(<pre style="display:inline">
-w</pre>,\left\{\right\}\right)$
+w</pre>,\,\left\{\right\}\right)$
 i4 : dim(w)
 
 o4 = $1$

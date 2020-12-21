@@ -1,60 +1,71 @@
 -- -*- M2-comint -*- hash: -291598696
--- COMPILE TIME: Sep  9 2017, 07:55:04
---loading configuration for package "PHCpack" from file /Users/leykin/Library/Application Support/Macaulay2/init-PHCpack.m2
---loading configuration for package "NumericalAlgebraicGeometry" from file /Users/leykin/Library/Application Support/Macaulay2/init-NumericalAlgebraicGeometry.m2
---loading configuration for package "Bertini" from file /Users/leykin/Library/Application Support/Macaulay2/init-Bertini.m2
+i1 : (ipt, otp) := PieriHomotopies(2,2);
+i2 : print ipt
+$\left\{\begin{pmatrix}
+-{.5}&amp;-{.124196}+{.419784}\,\mathbf{i}\\
+-{.227044}+{.445479}\,\mathbf{i}&amp;-{.385377}+{.100424}\,\mathbf{i}\\
+{.253659}-{.43088}\,\mathbf{i}&amp;-{.37181}+{.619424}\,\mathbf{i}\\
+{.294812}-{.403839}\,\mathbf{i}&amp;{.300332}-{.193978}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
+-{.5}&amp;-{.378631}-{.0380399}\,\mathbf{i}\\
+-{.124412}+{.484274}\,\mathbf{i}&amp;-{.381979}+{.119086}\,\mathbf{i}\\
+-{.499764}+{.0153691}\,\mathbf{i}&amp;-{.000319749}+{.547089}\,\mathbf{i}\\
+-{.387777}-{.31564}\,\mathbf{i}&amp;{.576442}+{.252014}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
+-{.5}&amp;{.321853}+{.0984157}\,\mathbf{i}\\
+{.111705}+{.487362}\,\mathbf{i}&amp;-{.423962}-{.111902}\,\mathbf{i}\\
+-{.27183}-{.419653}\,\mathbf{i}&amp;-{.140631}+{.349936}\,\mathbf{i}\\
+-{.269398}+{.421218}\,\mathbf{i}&amp;-{.415809}+{.615898}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
+-{.5}&amp;-{.25225}-{.614125}\,\mathbf{i}\\
+-{.108676}-{.488047}\,\mathbf{i}&amp;-{.621174}-{.126567}\,\mathbf{i}\\
+-{.452748}-{.212177}\,\mathbf{i}&amp;{.278586}+{.0237399}\,\mathbf{i}\\
+{.0393588}-{.498448}\,\mathbf{i}&amp;-{.151182}+{.237307}\,\mathbf{i}\end{pmatrix}\right\}$
+i3 : print otp
+$\left\{\begin{pmatrix}
+1&amp;{0}\\
+{.194425}-{.702483}\,\mathbf{i}&amp;-{.554355}+{.349748}\,\mathbf{i}\\
+{.0153635}+{.713946}\,\mathbf{i}&amp;1\\
+{0}&amp;{1.15348}-{1.21032}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
+1&amp;{0}\\
+{.729993}+{.66908}\,\mathbf{i}&amp;{.0511677}+{1.12528}\,\mathbf{i}\\
+{.798243}+{.111209}\,\mathbf{i}&amp;1\\
+{0}&amp;{.778033}-{1.09386}\,\mathbf{i}\end{pmatrix}\right\}$
+i4 : in0 = ipt_0
 
-i1 : (ipt, otp) := PieriHomotopies(2,2);
+o4 = $\begin{pmatrix}
+-{.5}&amp;-{.124196}+{.419784}\,\mathbf{i}\\
+-{.227044}+{.445479}\,\mathbf{i}&amp;-{.385377}+{.100424}\,\mathbf{i}\\
+{.253659}-{.43088}\,\mathbf{i}&amp;-{.37181}+{.619424}\,\mathbf{i}\\
+{.294812}-{.403839}\,\mathbf{i}&amp;{.300332}-{.193978}\,\mathbf{i}\end{pmatrix}$
 
-i2 : print ipt
-{| -.378914 .0143078 |, | -.0406802 -.771705 |, | -.202557  -.48006  |, | -.205564 -.0885202 |}
- | -.204915 -.194005 |  | -.06954   -.565402 |  | .884776   -.245425 |  | .629768  -.757175  |
- | -.791523 -.43746  |  | .868679   .0766639 |  | -.0982694 -.837138 |  | .681055  .469347   |
- | -.433504 .877944  |  | .48878    -.280919 |  | .408026   .0922517 |  | .311929  .445604   |
+o4 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${{\mathbb C}}_{53}^{4}\,\longleftarrow \,{{\mathbb C}}_{53}^{2}$
+i5 : out0 = otp_0
 
-i3 : print otp
-{| 1       0         |, | 1       0        |}
- | 76.6411 1         |  | .769083 1        |
- | 19.0424 .225339   |  | 2.01685 -28.3204 |
- | 0       -.0202375 |  | 0       -12.8936 |
+o5 = $\begin{pmatrix}
+1&amp;{0}\\
+{.194425}-{.702483}\,\mathbf{i}&amp;-{.554355}+{.349748}\,\mathbf{i}\\
+{.0153635}+{.713946}\,\mathbf{i}&amp;1\\
+{0}&amp;{1.15348}-{1.21032}\,\mathbf{i}\end{pmatrix}$
 
-i4 : in0 = ipt_0
+o5 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${{\mathbb C}}_{53}^{4}\,\longleftarrow \,{{\mathbb C}}_{53}^{2}$
+i6 : m = in0|out0
 
-o4 = | -.378914 .0143078 |
-     | -.204915 -.194005 |
-     | -.791523 -.43746  |
-     | -.433504 .877944  |
+o6 = $\begin{pmatrix}
+-{.5}&amp;-{.124196}+{.419784}\,\mathbf{i}&amp;1&amp;{0}\\
+-{.227044}+{.445479}\,\mathbf{i}&amp;-{.385377}+{.100424}\,\mathbf{i}&amp;{.194425}-{.702483}\,\mathbf{i}&amp;-{.554355}+{.349748}\,\mathbf{i}\\
+{.253659}-{.43088}\,\mathbf{i}&amp;-{.37181}+{.619424}\,\mathbf{i}&amp;{.0153635}+{.713946}\,\mathbf{i}&amp;1\\
+{.294812}-{.403839}\,\mathbf{i}&amp;{.300332}-{.193978}\,\mathbf{i}&amp;{0}&amp;{1.15348}-{1.21032}\,\mathbf{i}\end{pmatrix}$
 
-                4          2
-o4 : Matrix CC    <--- CC
-              53         53
+o6 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${{\mathbb C}}_{53}^{4}\,\longleftarrow \,{{\mathbb C}}_{53}^{4}$
+i7 : det m
 
-i5 : out0 = otp_0
+o7 = $-{7.78192182751629}\cdot 10^{-16}+{9.79423557765089}\cdot 10^{-16}\,\mathbf{i}$
 
-o5 = | 1       0         |
-     | 76.6411 1         |
-     | 19.0424 .225339   |
-     | 0       -.0202375 |
-
-                4          2
-o5 : Matrix CC    <--- CC
-              53         53
-
-i6 : m = in0|out0
-
-o6 = | -.378914 .0143078 1       0         |
-     | -.204915 -.194005 76.6411 1         |
-     | -.791523 -.43746  19.0424 .225339   |
-     | -.433504 .877944  0       -.0202375 |
-
-                4          4
-o6 : Matrix CC    <--- CC
-              53         53
-
-i7 : det m
-
-o7 = 1.21947052028595e-14-9.5005518152328e-49*ii
-
-o7 : CC (of precision 53)
-
-i8 : 
+o7 : ${\mathbb C}$<pre style="display:inline">
+ (of precision </pre>$53$<pre style="display:inline">
+)</pre>
+i8 : 

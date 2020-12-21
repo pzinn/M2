@@ -4,7 +4,7 @@
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[{x}_{0},{x}_{1},{x}_{2}\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[{x}_{0},\,{x}_{1},\,{x}_{2}\right]$
 i3 : T=tropicalVariety (I,Symmetry=>{{1,0,2}, {2,1,0} })
 
 o3 = $<pre style="display:inline">

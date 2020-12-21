@@ -6,10 +6,7 @@
 i2 : runBertini(storeBM2Files)
 i3 : thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\}\right\}$
+o3 = $\left\{\left\{-{.00880453}-{.00127011}\,\mathbf{i},\,{0},\,-{.491445}-{.870954}\,\mathbf{i}\right\},\,\left\{{.880727}-{.658957}\,\mathbf{i},\,-{1.09632}-{.147655}\,\mathbf{i},\,-{.48198}-{.868262}\,\mathbf{i}\right\},\,\left\{-{.88381}+{.660697}\,\mathbf{i},\,{1.08888}+{.134467}\,\mathbf{i},\,-{.500861}-{.873521}\,\mathbf{i}\right\}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
@@ -27,10 +24,7 @@ o4 : <pre style="display:inline">
 List</pre>
 i5 : sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\}\right\},\,\left\{<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots8\ldots\right\}\right\}\right\}$
+o5 = $\left\{\left\{\left\{-{.00880453}-{.00127011}\,\mathbf{i},\,{0},\,-{.491445}-{.870954}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{.880727}-{.658957}\,\mathbf{i},\,-{1.09632}-{.147655}\,\mathbf{i},\,-{.48198}-{.868262}\,\mathbf{i}\right\},\,\left\{-{.88381}+{.660697}\,\mathbf{i},\,{1.08888}+{.134467}\,\mathbf{i},\,-{.500861}-{.873521}\,\mathbf{i}\right\}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

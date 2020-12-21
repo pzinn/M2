@@ -4,7 +4,7 @@
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y\right]$
 i3 : T=tropicalVariety(I);
 i4 : rays(T)
 
@@ -48,7 +48,7 @@ ideal</pre>\left(x+y+z+w\right)$
 
 o10 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z,w\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z,\,w\right]$
 i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
 
 o11 = $<pre style="display:inline">
@@ -77,7 +77,7 @@ List</pre>
 
 o14 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z,w\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z,\,w\right]$
 i15 : T= tropicalVariety(I,Prime=>false);
 i16 : rays(T)
 
@@ -118,7 +118,7 @@ Matrix</pre><pre style="display:inline">
 
 o21 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z,w\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z,\,w\right]$
 i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
 i23 : rays(T)
 

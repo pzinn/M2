@@ -29,16 +29,16 @@ Matrix</pre><pre style="display:inline">
 i7 : traceMatrix(I,ib)
 
 o7 = $\begin{pmatrix}
-4&0&0&0\\
-0&4&0&8\,u-4\\
-0&0&8\,u+4&0\\
-0&8\,u-4&0&16\end{pmatrix}$
+4&amp;0&amp;0&amp;0\\
+0&amp;4&amp;0&amp;8\,u-4\\
+0&amp;0&amp;8\,u+4&amp;0\\
+0&amp;8\,u-4&amp;0&amp;16\end{pmatrix}$
 
 o7 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\left({<pre style="display:inline">
-frac</pre>\left({\mathbb Q}\left[u\right]\right)}\right)^{4}\,\longleftarrow \,\left({<pre style="display:inline">
-frac</pre>\left({\mathbb Q}\left[u\right]\right)}\right)^{4}$
+frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)}\right)^{4}\,\longleftarrow \,\left({<pre style="display:inline">
+frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)}\right)^{4}$
 i8 : K=QQ;
 i9 : R=K[v,u,z];
 i10 : I=ideal(v^3-u^2*z)
@@ -59,15 +59,15 @@ Matrix</pre><pre style="display:inline">
 i14 : traceMatrix(I,ib)
 
 o14 = $\begin{pmatrix}
-3&0&0\\
-0&0&3\,u\\
-0&3\,u&0\end{pmatrix}$
+3&amp;0&amp;0\\
+0&amp;0&amp;3\,u\\
+0&amp;3\,u&amp;0\end{pmatrix}$
 
 o14 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\left({<pre style="display:inline">
-frac</pre>\left({\mathbb Q}\left[u\right]\right)}\right)^{3}\,\longleftarrow \,\left({<pre style="display:inline">
-frac</pre>\left({\mathbb Q}\left[u\right]\right)}\right)^{3}$
+frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)}\right)^{3}\,\longleftarrow \,\left({<pre style="display:inline">
+frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)}\right)^{3}$
 i15 : K=QQ;
 i16 : R=K[v,u,z];
 i17 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
@@ -85,16 +85,16 @@ Matrix</pre><pre style="display:inline">
 i21 : traceMatrix(I,ib)
 
 o21 = $\begin{pmatrix}
-6&0&0&0&\frac{-28\,u^{2}-56\,u-28}{5}&0\\
-0&0&0&\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&0&\frac{-36\,u^{3}-36\,u^{2}}{5}\\
-0&0&\frac{-28\,u^{4}-84\,u^{3}-84\,u^{2}-28\,u}{5}&0&\frac{-36\,u^{4}-36\,u^{3}}{5}&0\\
-0&\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&0&\frac{-36\,u^{4}}{5}&0&\frac{196\,u^{4}+980\,u^{3}+1372\,u^{2}+588\,u}{25}\\
-\frac{-28\,u^{2}-56\,u-28}{5}&0&\frac{-36\,u^{4}-36\,u^{3}}{5}&0&\frac{196\,u^{4}+784\,u^{3}+1176\,u^{2}+784\,u+196}{25}&0\\
-0&\frac{-36\,u^{3}-36\,u^{2}}{5}&0&\frac{196\,u^{4}+980\,u^{3}+1372\,u^{2}+588\,u}{25}&0&\frac{420\,u^{4}+1764\,u^{3}+1260\,u^{2}-84\,u}{25}\end{pmatrix}$
+6&amp;0&amp;0&amp;0&amp;\frac{-28\,u^{2}-56\,u-28}{5}&amp;0\\
+0&amp;0&amp;0&amp;\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{3}-36\,u^{2}}{5}\\
+0&amp;0&amp;\frac{-28\,u^{4}-84\,u^{3}-84\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{4}-36\,u^{3}}{5}&amp;0\\
+0&amp;\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{4}}{5}&amp;0&amp;\frac{196\,u^{4}+980\,u^{3}+1372\,u^{2}+588\,u}{25}\\
+\frac{-28\,u^{2}-56\,u-28}{5}&amp;0&amp;\frac{-36\,u^{4}-36\,u^{3}}{5}&amp;0&amp;\frac{196\,u^{4}+784\,u^{3}+1176\,u^{2}+784\,u+196}{25}&amp;0\\
+0&amp;\frac{-36\,u^{3}-36\,u^{2}}{5}&amp;0&amp;\frac{196\,u^{4}+980\,u^{3}+1372\,u^{2}+588\,u}{25}&amp;0&amp;\frac{420\,u^{4}+1764\,u^{3}+1260\,u^{2}-84\,u}{25}\end{pmatrix}$
 
 o21 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\left({<pre style="display:inline">
-frac</pre>\left({\mathbb Q}\left[u\right]\right)}\right)^{6}\,\longleftarrow \,\left({<pre style="display:inline">
-frac</pre>\left({\mathbb Q}\left[u\right]\right)}\right)^{6}$
+frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)}\right)^{6}\,\longleftarrow \,\left({<pre style="display:inline">
+frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)}\right)^{6}$
 i22 : 

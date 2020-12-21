@@ -19,7 +19,7 @@ o5 = $10$
 o6 = $8$
 i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
 
-o7 = $\left(8,10\right)$
+o7 = $\left(8,\,10\right)$
 i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
 i9 : q --let's take a look at the start system:
 
@@ -29,15 +29,7 @@ o9 : <pre style="display:inline">
 List</pre>
 i10 : qsols --and its solutions:
 
-o10 = $\left\{<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\},\,<pre style="display:inline">
-Point</pre>\left\{\ldots4\ldots\right\}\right\}$
+o10 = $\left\{\left\{{.979319}-{.202321}\,\mathbf{i},\,{.930645}-{.365923}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,{.916812}+{.399319}\,\mathbf{i}\right\},\,\left\{{.979319}-{.202321}\,\mathbf{i},\,{.365923}+{.930645}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,-{.399319}+{.916812}\,\mathbf{i}\right\},\,\left\{{.979319}-{.202321}\,\mathbf{i},\,-{.930645}+{.365923}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,-{.916812}-{.399319}\,\mathbf{i}\right\},\,\left\{{.979319}-{.202321}\,\mathbf{i},\,-{.365923}-{.930645}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,{.399319}-{.916812}\,\mathbf{i}\right\}\right\}$
 
 o10 : <pre style="display:inline">
 List</pre>

@@ -20,27 +20,26 @@ o3 : <pre style="display:inline">
 NumericalVariety</pre>
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = $\left\{\begin{aligned}&<pre style="display:inline">
-Point</pre>\left\{\ldots1\ldots\right\}\end{aligned}\right\}$
+o4 = $\left\{\begin{aligned}&amp;\left\{-{1.44242}\cdot 10^{-62}-{5.3853}\cdot 10^{-62}\,\mathbf{i},\,-{1.12753}\cdot 10^{-62}+{5.7115}\cdot 10^{-62}\,\mathbf{i},\,-{.197328}-{.213071}\,\mathbf{i}\right\}\end{aligned}\right\}$
 
 o4 : <pre style="display:inline">
 VerticalList</pre>
 i5 : S#1 --first specify dimension
 
 o5 = $\left\{<pre style="display:inline">
-WitnessSet</pre>\left\{\ldots6\ldots\right\}\right\}$
+(dim=1,deg=1)</pre>\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
 i6 : peek oo_0 --then list position
 
-o6 = <pre style="display:inline-table;vertical-align:0%">
-WitnessSet{ComponentNumber => 0                                                                      }<br/>           IsIrreducible => true<br/>           Points => {{7.42268e-63+5.06932e-62*ii, 4.53545e-62+3.04009e-62*ii, -.181045-.0500121*ii}}<br/>           Slice => | .949447+1.04498ii .529328-1.25567ii -1.07599-1.68326ii -.11062-.358559ii |<br/>           WitnessDataFileName => /tmp/M2-566891-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
+o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
+WitnessSet{ComponentNumber => 0                                                                     }<br/>           IsIrreducible => true<br/>           Points => {{-1.44242e-62-5.3853e-62*ii, -1.12753e-62+5.7115e-62*ii, -.197328-.213071*ii}}<br/>           Slice => | .350876+.153094ii -1.11532-.401837ii 1.28438-.212788ii .298783+.231676ii |<br/>           WitnessDataFileName => /tmp/M2-472262-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
 i7 : PD=primaryDecomposition( ideal F)
 
 o7 = $\left\{<pre style="display:inline">
 ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\,<pre style="display:inline">
-ideal</pre>\,\left(y,x\right)\right\}$
+ideal</pre>{}\left(y,\,x\right)\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>

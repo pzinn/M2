@@ -17,7 +17,7 @@ List</pre>
 i5 : bertiniComponentMemberTest(pts, NV)
 
 o5 = $\left\{\left\{<pre style="display:inline">
-WitnessSet</pre>\left\{\ldots6\ldots\right\}\right\}\right\}$
+(dim=1,deg=1)</pre>\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

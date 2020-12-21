@@ -95,7 +95,7 @@ o15 : <pre style="display:inline">
 B'Section</pre>
 i16 : peek rHomogeSection
 
-o16 = <pre style="display:inline-table;vertical-align:0%">
+o16 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 B'Section{B'Homogenization => x+y+z                                                                                                         }<br/>          B'NumberCoefficients => {.534614-.175945*ii, .426704-.97539*ii, -.478803+.0416008*ii}<br/>          B'SectionString => (.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))<br/></pre>
 i17 : print rHomogeSection#B'SectionString
 <pre style="display:inline">

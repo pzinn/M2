@@ -2,9 +2,9 @@
 i1 : A=random(QQ^3,QQ^3)
 
 o1 = $\begin{pmatrix}
-\frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
-\frac{1}{2}&1&\frac{3}{4}\\
-\frac{9}{4}&\frac{3}{4}&\frac{7}{4}\end{pmatrix}$
+\frac{9}{2}&amp;\frac{1}{2}&amp;\frac{3}{2}\\
+\frac{1}{2}&amp;1&amp;\frac{3}{4}\\
+\frac{9}{4}&amp;\frac{3}{4}&amp;\frac{7}{4}\end{pmatrix}$
 
 o1 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
@@ -19,9 +19,9 @@ List</pre>
 i4 : P=transpose (id_(QQ^3))_perm
 
 o4 = $\begin{pmatrix}
-1&0&0\\
-0&1&0\\
-0&0&1\end{pmatrix}$
+1&amp;0&amp;0\\
+0&amp;1&amp;0\\
+0&amp;0&amp;1\end{pmatrix}$
 
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
@@ -29,9 +29,9 @@ Matrix</pre><pre style="display:inline">
 i5 : R=extractRightUpper(LR)
 
 o5 = $\begin{pmatrix}
-\frac{9}{2}&\frac{1}{2}&\frac{3}{2}\\
-0&\frac{17}{18}&\frac{7}{12}\\
-0&0&\frac{47}{68}\end{pmatrix}$
+\frac{9}{2}&amp;\frac{1}{2}&amp;\frac{3}{2}\\
+0&amp;\frac{17}{18}&amp;\frac{7}{12}\\
+0&amp;0&amp;\frac{47}{68}\end{pmatrix}$
 
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
@@ -39,9 +39,9 @@ Matrix</pre><pre style="display:inline">
 i6 : L=extractLeftLower(LR)
 
 o6 = $\begin{pmatrix}
-1&0&0\\
-\frac{1}{9}&1&0\\
-\frac{1}{2}&\frac{9}{17}&1\end{pmatrix}$
+1&amp;0&amp;0\\
+\frac{1}{9}&amp;1&amp;0\\
+\frac{1}{2}&amp;\frac{9}{17}&amp;1\end{pmatrix}$
 
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">

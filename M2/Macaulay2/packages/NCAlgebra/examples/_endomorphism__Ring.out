@@ -13,42 +13,42 @@ o2 : <pre style="display:inline">
 QuotientRing</pre>
 i3 : kRes = res(coker vars R, LengthLimit=>7)
 
-o3 = $\underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\scriptsize \begin{pmatrix}
-a&amp;b&amp;c\end{pmatrix}}\,\underset{\vphantom{\Bigg|}1}{R^{3}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+o3 = $\underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
+a&amp;b&amp;c\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}1}{R^{3}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-c&amp;b&amp;0\\
 -c&amp;0&amp;0&amp;a\\
-b&amp;a&amp;-c&amp;-c\end{pmatrix}}\,\underset{\vphantom{\Bigg|}2}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+b&amp;a&amp;-c&amp;-c\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}2}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 a&amp;0&amp;0&amp;c\\
 0&amp;b&amp;c&amp;0\\
 0&amp;c&amp;a&amp;0\\
-c&amp;0&amp;0&amp;b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}3}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+c&amp;0&amp;0&amp;b\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}3}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 -b&amp;0&amp;0&amp;-c\\
 0&amp;-a&amp;-c&amp;0\\
 0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a\end{pmatrix}}\,\underset{\vphantom{\Bigg|}4}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+c&amp;0&amp;0&amp;a\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}4}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;0&amp;-c\\
 -b&amp;0&amp;-c&amp;0\\
 c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}5}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+0&amp;c&amp;0&amp;b\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}5}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;-c&amp;0\\
 -b&amp;0&amp;0&amp;-c\\
 0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a\end{pmatrix}}\,\underset{\vphantom{\Bigg|}6}{R^{4}}\,\xleftarrow{\scriptsize \begin{pmatrix}
+c&amp;0&amp;0&amp;a\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}6}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;0&amp;-c\\
 -b&amp;0&amp;-c&amp;0\\
 c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b\end{pmatrix}}\,\underset{\vphantom{\Bigg|}7}{R^{4}}$
+0&amp;c&amp;0&amp;b\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}7}{R^{4}}$
 
 o3 : <pre style="display:inline">
 ChainComplex</pre>
 i4 : M = coker kRes.dd_5
 
 o4 = $<pre style="display:inline">
-cokernel</pre>\ \begin{pmatrix}
-0&amp;-a&amp;0&amp;-c\\
--b&amp;0&amp;-c&amp;0\\
-c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b\end{pmatrix}$
+cokernel</pre>\ \begin{matrix}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}0&amp;-a&amp;0&amp;-c\\
+\vphantom{\left\{4\right\}}-b&amp;0&amp;-c&amp;0\\
+\vphantom{\left\{4\right\}}c&amp;0&amp;a&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;c&amp;0&amp;b\end{pmatrix}$
 
 o4 : $R$<pre style="display:inline">
 -module</pre><pre style="display:inline">
@@ -214,23 +214,23 @@ o7 : <pre style="display:inline">
 List</pre>
 i8 : maps = B.cache.endomorphismRingGens
 
-o8 = $\left\{\begin{pmatrix}
-0&amp;0&amp;1&amp;0\\
-0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0\\
-0&amp;1&amp;0&amp;0\end{pmatrix},\,\begin{pmatrix}
-0&amp;0&amp;0&amp;0\\
-0&amp;1&amp;0&amp;0\\
-0&amp;0&amp;1&amp;0\\
-0&amp;0&amp;0&amp;0\end{pmatrix},\,\begin{pmatrix}
-0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;1\\
-1&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0\end{pmatrix},\,\begin{pmatrix}
-1&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;1\end{pmatrix}\right\}$
+o8 = $\left\{\begin{matrix}\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}0&amp;0&amp;1&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0\end{pmatrix},\,\begin{matrix}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\\\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;1&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\end{pmatrix},\,\begin{matrix}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\\\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1\\
+\vphantom{\left\{4\right\}}1&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\end{pmatrix},\,\begin{matrix}\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}1&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1\end{pmatrix}\right\}$
 
 o8 : <pre style="display:inline">
 List</pre>
