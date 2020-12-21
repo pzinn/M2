@@ -1180,7 +1180,7 @@ texMath Table := m -> (
 
 texMath MatrixExpression := x -> (
     if all(x#0,r->all(r,i->class i===ZeroExpression)) then return "0";
-    deg := #x > 1 and x#1 =!= null;
+    deg := #x > 1 and x#1 =!= null and x#1#0 =!= null;
     blck := #x > 2 and x#2 =!= null;
     if blck then ( j := 1; h := 0; );
     texMath1 := if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x;
@@ -1194,7 +1194,8 @@ texMath MatrixExpression := x -> (
 	    ),
 	"\\left(\\!",
 	"\\begin{array}{",
-	if blck then demark("|",apply(x#2#1,i->i:"c")) else #m#0:"c","}",
+	if blck then demark("|",apply(x#2#1,i->i:"c")) else #m#0:"c",
+	"}",
 	newline,
     	apply(#m, i -> concatenate(
 		if deg then "\\vphantom{"| degs#i | "}", 
