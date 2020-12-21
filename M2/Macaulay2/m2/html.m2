@@ -163,7 +163,7 @@ html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;
     toString(if height n+depth n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
     apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
-    if #x>0 and last x === "\n" then " " else "", -- fix for html ignoring trailing \n
+    if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
     "</pre>")
 html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:left\">\n", apply(sortByName pairs x,
      (k,v) -> (

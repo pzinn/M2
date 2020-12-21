@@ -5,7 +5,7 @@ newPackage(
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
-                  HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+                  HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
         DebuggingMode => false,
