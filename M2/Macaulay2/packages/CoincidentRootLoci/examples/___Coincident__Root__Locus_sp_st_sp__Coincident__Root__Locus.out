@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 240042084
+-- -*- M2-comint -*- hash: 1005296485
 i1 : X = coincidentRootLocus {11,1,1,1,1}
 
 o1 = $<pre style="display:inline">
@@ -13,16 +13,14 @@ CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
 o2 : <pre style="display:inline">
 CoincidentRootLocus</pre>
-i3 : time X * Y
-     -- used 0.337879 seconds
+i3 : X * Y
 
 o3 = $<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}$
 
 o3 : <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>
-i4 : time X * Y * Y
-     -- used 0.0804794 seconds
+i4 : X * Y * Y
 
 o4 = $<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}$
@@ -32,18 +30,17 @@ JoinOfCoincidentRootLoci</pre>
 i5 : I = ideal coincidentRootLocus {4}
 
 o5 = $<pre style="display:inline">
-ideal</pre>\,\left({t}_{3}^{2}-{t}_{2}{t}_{4},{t}_{2}{t}_{3}-{t}_{1}{t}_{4},{t}_{1}{t}_{3}-{t}_{0}{t}_{4},{t}_{2}^{2}-{t}_{0}{t}_{4},{t}_{1}{t}_{2}-{t}_{0}{t}_{3},{t}_{1}^{2}-{t}_{0}{t}_{2}\right)$
+ideal</pre>{}\left({t}_{3}^{2}-{t}_{2}{t}_{4},\,{t}_{2}{t}_{3}-{t}_{1}{t}_{4},\,{t}_{1}{t}_{3}-{t}_{0}{t}_{4},\,{t}_{2}^{2}-{t}_{0}{t}_{4},\,{t}_{1}{t}_{2}-{t}_{0}{t}_{3},\,{t}_{1}^{2}-{t}_{0}{t}_{2}\right)$
 
 o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4}\right]$
-i6 : time projectiveJoin(I,I)
-     -- used 0.0378996 seconds
+ of </pre>${\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1},\,{t}_{2},\,{t}_{3},\,{t}_{4}\right]$
+i6 : projectiveJoin(I,I)
 
 o6 = $<pre style="display:inline">
 ideal</pre>\left({t}_{2}^{3}-2\,{t}_{1}{t}_{2}{t}_{3}+{t}_{0}{t}_{3}^{2}+{t}_{1}^{2}{t}_{4}-{t}_{0}{t}_{2}{t}_{4}\right)$
 
 o6 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4}\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1},\,{t}_{2},\,{t}_{3},\,{t}_{4}\right]$
 i7 : 

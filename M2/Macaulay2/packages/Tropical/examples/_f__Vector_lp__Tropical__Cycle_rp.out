@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 142020468
 i1 : QQ[x,y,z]
 
-o1 = ${\mathbb Q}\left[x,y,z\right]$
+o1 = ${\mathbb Q}\mathopen{}\left[x,\,y,\,z\right]$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>

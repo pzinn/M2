@@ -4,7 +4,7 @@
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z\right]$
 i3 : tropicalVarietyWithVal (I,Valuation=>7)
 
 o3 = <pre style="display:inline">
@@ -62,6 +62,7 @@ MAXIMAL_CONES
 {0 2}
 {0 3}
 
- </pre>
+
+</pre>
 i4 : 
 

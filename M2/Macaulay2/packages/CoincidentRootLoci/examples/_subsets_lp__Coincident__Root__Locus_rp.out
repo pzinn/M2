@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 453416011
+-- -*- M2-comint -*- hash: -524453410
 i1 : X = coincidentRootLocus {5,2,2,1}
 
 o1 = $<pre style="display:inline">
@@ -6,8 +6,7 @@ CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
 o1 : <pre style="display:inline">
 CoincidentRootLocus</pre>
-i2 : time subsets X
-     -- used 0.415962 seconds
+i2 : subsets X
 
 o2 = $\left\{<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">

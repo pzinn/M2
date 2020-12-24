@@ -1,10 +1,13 @@
--- -*- M2-comint -*- hash: 411215389
-i1 : R = CC[a,b,c,d,e,f][x,y];
-i2 : q  = a*x^2+b*y+c;
-i3 : l = d*x+e*y+f;
-i4 : (sys, sols) = solveFamily polySystem {q,l}
+-- -*- M2-comint -*- hash: -1254879311
+i1 : setRandomSeed 0
 
-o4 = $\left(<pre style="display:inline">
+o1 = $0$
+i2 : R = CC[a,b,c,d,e,f][x,y];
+i3 : q  = a*x^2+b*y+c;
+i4 : l = d*x+e*y+f;
+i5 : (sys, sols) = solveFamily(polySystem{q,l}, NumberOfNodes=>3)
+
+o5 = $\left(<pre style="display:inline">
 sys</pre>,<pre style="display:inline">
-PointArray</pre>\left\{\ldots2\ldots\right\}\right)$
-i5 : 
+PointArray</pre>\left\{\ldots3\ldots\right\}\right)$
+i6 : 

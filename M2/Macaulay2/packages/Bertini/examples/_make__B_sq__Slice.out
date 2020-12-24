@@ -20,7 +20,7 @@ o3 : <pre style="display:inline">
 B'Slice</pre>
 i4 : peek xySlice
 
-o4 = <pre style="display:inline-table;vertical-align:0%">
+o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 B'Slice{B'NumberCoefficients => {{1.49144+.713846*ii, -.840113+1.1986*ii}, {.014842+1.23548*ii, -.214468+.911293*ii, -.486176+.400577*ii}}                       }<br/>        B'SectionString => {(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1), (.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)}<br/>        ListB'Sections => {B'Section{...2...}, B'Section{...2...}}<br/>        NameB'Slice => null<br/></pre>
 i5 : for i in  xySlice#B'SectionString do print i
 <pre style="display:inline">

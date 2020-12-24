@@ -7,9 +7,9 @@ texMathShort' = (texMath,m) -> (
     texRow := row -> if #row>8 then { texMath first row, "\\cdots", texMath last row } else texMath\row;
     x = if #x>10 then ( t:= texRow first x; {t, toList(#t:"\\vphantom{\\Big|}\\vdots"), texRow last x } ) else texRow\x;
     concatenate(
-	"\\begin{pmatrix}" | newline,
+	"\\left(\\begin{smallmatrix}" | newline,
 	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
-	"\\end{pmatrix}"
+	"\\end{smallmatrix}\\right)"
 	      )
     )
 
@@ -86,8 +86,9 @@ texMath' (Function, Adjacent) := texMath' (Function, FunctionApplication) := (te
      div := instance(fun,Divide);
      pfun := if div then strength1 symbol symbol else precedence fun;
      -- we can finesse further the amount of space than in net
-     if div or instance(args,Array) then sep:="" -- something wrong: VisibleLists should be Holder'ed?
-     else if instance(args,VisibleList) then sep="\\,"
+     -- see also https://tex.stackexchange.com/questions/2607/spacing-around-left-and-right
+     if div or instance(args,Array) then sep:="\\mathopen{}"
+     else if instance(args,VisibleList) then sep="{}"
      else sep = "\\ ";
      if precedence args > p
      then if pfun >= p

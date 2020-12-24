@@ -4,14 +4,14 @@
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z\right]$
 i3 : T=tropicalVariety I;
 i4 : L=linealitySpace T
 
 o4 = $\begin{pmatrix}
-1&0\\
-1&0\\
-0&1\end{pmatrix}$
+1&amp;0\\
+1&amp;0\\
+0&amp;1\end{pmatrix}$
 
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">

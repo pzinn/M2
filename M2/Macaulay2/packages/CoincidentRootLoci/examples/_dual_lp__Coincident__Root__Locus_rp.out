@@ -1,14 +1,12 @@
--- -*- M2-comint -*- hash: 11533842
-i1 : time X = coincidentRootLocus {5,3,2,2,1,1}
-     -- used 0.348069 seconds
+-- -*- M2-comint -*- hash: 1371438490
+i1 : X = coincidentRootLocus {5,3,2,2,1,1}
 
 o1 = $<pre style="display:inline">
 CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
 o1 : <pre style="display:inline">
 CoincidentRootLocus</pre>
-i2 : time dual X
-     -- used 0.107036 seconds
+i2 : dual X
 
 o2 = $<pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>\left\{\ldots6\ldots\right\}$
@@ -24,7 +22,7 @@ o3 : <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>
 i4 : ring Y
 
-o4 = ${\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4},{t}_{5},{t}_{6}\right]$
+o4 = ${\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1},\,{t}_{2},\,{t}_{3},\,{t}_{4},\,{t}_{5},\,{t}_{6}\right]$
 
 o4 : <pre style="display:inline">
 PolynomialRing</pre>
@@ -54,7 +52,7 @@ CoincidentRootLocus</pre>
 
 o10 = $3\,{t}_{0}^{6}+12\,{t}_{0}^{5}{t}_{1}+15\,{t}_{0}^{4}{t}_{1}^{2}+80\,{t}_{0}^{3}{t}_{1}^{3}-209655\,{t}_{0}^{2}{t}_{1}^{4}+2582604\,{t}_{0}{t}_{1}^{5}-8474625\,{t}_{1}^{6}$
 
-o10 : ${\mathbb Q}\left[{t}_{0},{t}_{1}\right]$
+o10 : ${\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1}\right]$
 i11 : member(G,Y)
 
 o11 = <pre style="display:inline">
@@ -63,7 +61,7 @@ true</pre>
 
 o12 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[{t}_{0},{t}_{1},{t}_{2},{t}_{3},{t}_{4},{t}_{5},{t}_{6}\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[{t}_{0},\,{t}_{1},\,{t}_{2},\,{t}_{3},\,{t}_{4},\,{t}_{5},\,{t}_{6}\right]$
 i13 : describe Y
 
 o13 = <pre style="display:inline">

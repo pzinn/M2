@@ -4,7 +4,7 @@
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y\right]$
 i3 : T=tropicalVariety (I,IsHomogeneous=>false)
 
 o3 = $<pre style="display:inline">

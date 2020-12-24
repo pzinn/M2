@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: -24547549
 i1 : QQ[x,y,z,w]
 
-o1 = ${\mathbb Q}\left[x,y,z,w\right]$
+o1 = ${\mathbb Q}\mathopen{}\left[x,\,y,\,z,\,w\right]$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
@@ -9,7 +9,7 @@ PolynomialRing</pre>
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z,w\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z,\,w\right]$
 i3 : T=tropicalVariety I;
 i4 : dim T
 

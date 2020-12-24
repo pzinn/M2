@@ -4,13 +4,13 @@
 
 o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z\right]$
 i3 : T1 = tropicalVariety(I);
 i4 : J = ideal(x*y+y*z+x*z+1);
 
 o4 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\left[x,y,z\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z\right]$
 i5 : T2 = tropicalVariety(J);
 i6 : V = tropicalVariety(I+J);
 i7 : W2 =  stableIntersection(T1,T2,Strategy=>"gfan");

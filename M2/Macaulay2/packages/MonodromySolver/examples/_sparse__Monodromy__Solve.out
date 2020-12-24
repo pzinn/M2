@@ -1,13 +1,16 @@
--- -*- M2-comint -*- hash: -1408417501
-i1 : setRandomSeed 0;
+-- -*- M2-comint -*- hash: 1474347240
+i1 : setRandomSeed 2020;
 i2 : R=CC[x,y,z];
 i3 : F=random(3,R);
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
 i4 : P=sum apply(gens R,g->diff(g,F)*random CC);
-i5 : sparseMonodromySolve polySystem {F,P,random(1,R)-1}
+i5 : PS = polySystem {F,P,random(1,R)-1};
+i6 : sols = sparseMonodromySolve PS;
+i7 : for i from 0 to 5 list norm evaluate(PS, sols#i)
 
-o5 = $\left(<pre style="display:inline">
-Point</pre>\left\{\ldots1\ldots\right\},<pre style="display:inline">
-PointArray</pre>\left\{\ldots4\ldots\right\}\right)$
-i6 : 
+o7 = $\left\{{2.83052}\cdot 10^{-16},\,{3.46945}\cdot 10^{-16},\,{1.94289}\cdot 10^{-16},\,{5.97873}\cdot 10^{-16},\,{1.11974}\cdot 10^{-15},\,{3.92523}\cdot 10^{-16}\right\}$
+
+o7 : <pre style="display:inline">
+List</pre>
+i8 : 

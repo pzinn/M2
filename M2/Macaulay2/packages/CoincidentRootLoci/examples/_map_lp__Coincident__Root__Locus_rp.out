@@ -15,6 +15,6 @@ o2 : <pre style="display:inline">
 MultihomogeneousRationalMap</pre>
 i3 : describe f
 
-o3 = <pre style="display:inline-table;vertical-align:0%">
+o3 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 rational map defined by multiforms of degree {3, 2, 2}<br/>source variety: PP^1 x PP^1 x PP^1<br/>target variety: PP^7<br/>image: 3-dimensional variety of degree 36 in PP^7 cut out by 364 hypersurfaces of degree 6<br/>dominance: false<br/>birationality: false<br/>coefficient ring: QQ<br/></pre>
 i4 : 
