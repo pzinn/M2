@@ -17,8 +17,9 @@ peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
      if depth === 0 then expression s
      else Describe RowExpression {
 	  expression class s,
-	  "{", ColumnExpression between (", ", apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))), "}" }
-      )
+	  new VerticalList from apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))
+      }
+  )
 
 peek'(ZZ,List) := (depth,s) -> (
      if depth === 0 then Describe expression s
@@ -42,23 +43,21 @@ peek'(ZZ,HashTable) := (depth,s) -> (
 	  expression class s,
 	  if parent s =!= Nothing 
 	  then (" of ", expression parent s) else "",
-	  "{",
-	  new ColumnExpression from
+	  new VerticalList from
 	  apply(
 	       sortByName pairs s,
 	       (key,value) -> BinaryOperation ( symbol =>,
 		   peek'(depth-1,key),
 		   peek'(depth-1,value),
-		   " ")),
-	   "}"
+		   " "))
 	  ))
 
 peek'(ZZ,Dictionary) := (depth,d) -> (
      if depth === 0 then Describe expression d
      else Describe RowExpression splice (
-	  expression class d, "{",
-	  new ColumnExpression from apply(sort pairs d, (lhs,rhs) -> BinaryOperation ( symbol =>, peek lhs ,peek'(depth-1,rhs))),
-	  "}"))
+	  expression class d,
+	  new VerticalList from apply(sort pairs d, (lhs,rhs) -> BinaryOperation ( symbol =>, peek lhs ,peek'(depth-1,rhs)))
+	  ))
 
 peek = s -> peek'(1,s)
 typicalValues#peek = Expression
