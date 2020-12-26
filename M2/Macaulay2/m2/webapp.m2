@@ -117,6 +117,9 @@ if topLevelMode === WebApp then (
 	y := htmlInside x; -- we compute the html now (in case it produces an error)
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
+    -- the show hack
+    showURL := lookup(show,URL);
+    show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
     htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
