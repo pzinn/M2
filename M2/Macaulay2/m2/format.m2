@@ -160,14 +160,13 @@ info HEADER3 := Hop(info,"-")
 net  HR :=
 info HR := x -> concatenate(printWidth:"-")
 
-net  TT :=
-info TT := x -> concatenate toSequence noopts x   -- should just be strings here
+net  PRE  :=
+net   TT  :=
+net CODE  :=
+info TT   :=
+info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
-net  PRE := x -> net concatenate x
-info PRE := x -> wrap(printWidth, "-", net concatenate noopts x)
-
-net  CODE :=
-info CODE := x -> stack lines concatenate noopts x
+info PRE  := x -> wrap(printWidth, "-", concatenate apply(noopts x,toString))
 
 ULop := op -> x -> (
      s := "  * ";

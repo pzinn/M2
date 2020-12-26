@@ -128,8 +128,15 @@ html HTML := x -> demark(newline, {
 treatImgSrc := x -> apply(x, y -> if class y === Option and y#0 === "src" then "src" => toURL y#1 else y)
 html IMG := (lookup(html, IMG)) @@ treatImgSrc
 
-fixNewlines := x -> apply(x, y -> if class y === String then replace("\r\n","\n",y) else y)
-html PRE := (lookup(html, PRE)) @@ fixNewlines
+fixNewLines := method()
+fixNewLines Hypertext :=
+fixNewLines Nothing :=
+fixNewLines Option := identity
+fixNewLines Thing := x -> replace("\r\n","\n",toString x)
+-- non HTML types should *not* be KaTeX-ified inside these tags:
+html PRE :=
+html TT :=
+html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
 
 html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
 html COMMENT := x -> concatenate("<!--",x,"-->")
