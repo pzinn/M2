@@ -1035,6 +1035,9 @@ expression Ring := lookup(expression,HashTable)
 expression RingFamily := lookup(expression,HashTable)
 -- strings -- uses texLiteral from latex.m2
 
+-- experimental: new short type
+Short = new WrapperType of Expression
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
