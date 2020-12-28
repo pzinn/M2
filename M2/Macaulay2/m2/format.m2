@@ -216,13 +216,13 @@ net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", toList \ toList ag);
+     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 1, noopts \ toList \ toList sequence ag);
      printWidth = save;
      r)
 info TABLE := x -> (
      s := printWidth;
      if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netList(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
+     ret := netList(Boxes=>true, applyTable(noopts \ toList \ noopts \\ toList x,info));
      printWidth = s;
      ret)
 
