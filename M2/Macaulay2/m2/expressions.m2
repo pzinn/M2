@@ -1409,6 +1409,31 @@ texMath Net := n -> (
     "\\begin{aligned}" | s | "\\end{aligned}"
     )
 
+-- experimental
+Dots := new Type of HashTable
+precedence Dots := returns prec symbol SPACE
+cdots:=new Dots from {symbol texMath=>"\\cdots"}
+vdots:=new Dots from {symbol texMath=>"\\vphantom{\\big|}\\smash{\\vdots}"} -- bad spacing
+ddots:=new Dots from {symbol texMath=>"\\ddots"}
+texMathShort = method(Dispatch => Thing, TypicalValue => String)
+texMathShort Thing := texMath;
+texMathShort MatrixExpression := m -> (
+    if all(m#0,r->all(r,i->class i===ZeroExpression)) then return "0";
+    texRow := row -> apply(if #row>8 then { first row, cdots, last row } else row,texMathShort);
+    x := apply(if #m#0>8 then {first m#0,if #m#0#0>8 then {vdots,ddots,vdots} else toList(#m#0#0:vdots),last m#0} else m#0,texRow);
+    concatenate(
+	"\\left(\\begin{smallmatrix}" | newline,
+	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
+	"\\end{smallmatrix}\\right)"
+	      )
+    )
+texMathShort Product :=
+texMathShort Sum := x -> texMath if #x>8 then (class x) { first x, cdots, last x } else x -- for now, doesn't recurse
+
+Short = new WrapperType of Holder
+short = x -> Short { expression x }
+texMath Short := x -> texMathShort x#0
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
