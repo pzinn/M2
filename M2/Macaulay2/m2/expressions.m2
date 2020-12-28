@@ -908,7 +908,7 @@ net SparseMonomialVectorExpression := v -> (
 	  )
      )
 
-net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
+net Table := x -> netList (toList x, HorizontalSpace=>2, BaseRow => 0, Boxes => false)
 
 compactMatrixForm=true; -- governs net MatrixExpression
 matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Alignment => Left },

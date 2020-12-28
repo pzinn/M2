@@ -179,6 +179,7 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  else html k | " : " | html v
 	  ) | "<br/>"), "</span>")
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
+html Table := x -> html TABLE toList x
 -- a few types are just strings
 html File :=
 html IndeterminateNumber :=

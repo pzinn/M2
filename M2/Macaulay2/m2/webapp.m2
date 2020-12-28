@@ -120,12 +120,11 @@ if topLevelMode === WebApp then (
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
-    -- the userSymbols hack: conflicts with code
--*    listSymbols List := x -> TABLE prepend(
-     apply({"symbol  ", "class  ", "value  ", "location of symbol"},
-	 s->style(TH s,"text-decoration"=>"underline","text-align"=>"left")),
+    -- the userSymbols hack: by now mostly differs in "robust" stuff
+    listSymbols List := x -> Describe TABLE prepend(
+     apply({"symbol", "class", "value", "location of symbol"},s->TH s),
      apply(x, s -> {s,class value s,value s,TT symbolLocation s})
-     );*-
+     );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
     htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;

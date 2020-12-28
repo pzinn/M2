@@ -168,6 +168,8 @@ info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
 info PRE  := x -> wrap(printWidth, "-", concatenate apply(noopts x,toString))
 
+net TH := Hop(net, "-")
+
 ULop := op -> x -> (
      s := "  * ";
      printWidth = printWidth - #s;
@@ -216,7 +218,7 @@ net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 1, noopts \ toList \ toList sequence ag);
+     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, noopts \ toList \ toList sequence ag);
      printWidth = save;
      r)
 info TABLE := x -> (
