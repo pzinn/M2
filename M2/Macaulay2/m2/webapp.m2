@@ -136,10 +136,11 @@ if topLevelMode === WebApp then (
 		if #x>0 and x#0 === webAppEndTag then depth=depth-1 else depth=depth+1;
 		if depth <= 0 then htmlLiteral0 x else x
 		)));
+    html Short :=
     html Monoid :=
     html RingFamily :=
     html Ring :=
-    html Thing := htmlLiteral1 @@ tex;
+    html Thing := htmlLiteral1 @@ tex; -- ugly
 )
 
 -- the texMath hack

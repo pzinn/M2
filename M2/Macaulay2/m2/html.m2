@@ -167,7 +167,7 @@ html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
 html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
-    toString(if height n+depth n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
+    toString(if #n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
     apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
     if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
@@ -189,6 +189,7 @@ html Boolean :=
 html Function :=
 html Type := html @@ toString
 -- except not these descendants
+html Short :=
 html Monoid :=
 html RingFamily :=
 html Ring := lookup(html,Thing)

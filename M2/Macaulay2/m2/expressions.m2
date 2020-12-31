@@ -1370,24 +1370,53 @@ texMath MutableList := x -> concatenate (
 -- strings -- uses texLiteral from latex.m2
 texMath String := s -> "\\texttt{" | texLiteral s | "}"
 -- this truncates very big nets
-maxlen := 3000; -- randomly chosen
-texMath Net := n -> (
-    dep := depth n; hgt := height n;
-    s:="";
-    len:=0; i:=0;
-    scan(unstack n, x->(
-	    i=i+1;
-	    len=len+#x;
-	    if i<#n and len>maxlen then (
-		s=s|"\\vdots\\\\"|"\\vphantom{\\big|}" | texMath last n | "\\\\";
-		if i<hgt then (hgt=i; dep=1) else dep=i+1-hgt;
-		break
-		);
-	    s=s|"&\\vphantom{\\big|}" | texMath x | "\n";
-	    if i<#n then s=s|"\\\\[-1mm]";
-	    ));
-    "\\begin{aligned}" | s | "\\end{aligned}"
+texMath Net := n -> concatenate(
+    "\\begin{array}{l}",
+    between(///\\/// | newline,apply(unstack n,texMath)),
+    "\\end{array}"
     )
+
+-- experimental
+Dots = new Type of Symbol
+texMath Dots := x -> (
+    if x === vdots then "\\vphantom{\\big|}\\smash{\\vdots}" -- bad spacing
+    else
+    "\\" | simpleToString x
+    )
+toString Dots := net Dots := x -> "..."
+cdots=new Dots from symbol cdots
+ddots=new Dots from symbol ddots
+vdots=new Dots from symbol vdots
+ldots=new Dots from symbol ldots
+
+shortLength := 8
+texMathShort = method(Dispatch => Thing, TypicalValue => String)
+texMathShort Thing := texMathShort @@ expression
+texMathShort Expression := x -> texMath x -- not texMath !
+texMathShort MatrixExpression := m -> (
+    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
+    texRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,texMathShort);
+    x := apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m} else toList m,texRow);
+    concatenate(
+	"\\left(\\begin{smallmatrix}" | newline,
+	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
+	"\\end{smallmatrix}\\right)"
+	      )
+    )
+texMathShort MatrixDegreeExpression := x -> (lookup(texMathShort,MatrixExpression)) x#0
+texMathShort Product :=
+texMathShort Sum := x -> texMath if #x>shortLength then (class x) { first x, cdots, last x } else x -- for now, doesn't recurse
+texMathShort String := s -> if #s > shortLength then concatenate apply({first s,ldots,last s},texMath) else texMath s
+texMathShort Net := n -> concatenate(
+    "\\begin{array}{l}",
+    between(///\\/// | newline,
+	apply(if #n > shortLength then {first n,vdots,last n} else unstack n, texMathShort)),
+    "\\end{array}")
+
+Short = new WrapperType of Holder
+short = x -> Short { unhold expression x }
+texMath Short := x -> texMathShort x#0
+unhold Short := identity
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
