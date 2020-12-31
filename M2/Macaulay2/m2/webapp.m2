@@ -115,6 +115,7 @@ if topLevelMode === WebApp then (
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := htmlInside x; -- we compute the html now (in case it produces an error)
+	if class y =!= String then error "invalid html output";
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- the show hack
@@ -127,21 +128,14 @@ if topLevelMode === WebApp then (
      );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
-    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
+    htmlLiteral = (s -> if s === null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
     -- but should affect html Thing differently:
-    htmlLiteral1 := s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
-	ss := separate(webAppTagsRegex,s);
-	depth := 0; len := 0; sss := "";
-	scan(ss, x -> (
-		sss = sss | (if depth == 0 then htmlLiteral0 x else x);
-		len=len+#x;
-		if len<#s then (
-		    if s#len === webAppEndTag then depth=depth-1 else depth=depth+1;
-		    sss = sss | s#len;
-		    len=len+1;
-		    )
-		));
-	sss);
+    htmlLiteral1 := s -> if s === null then s else (
+	depth := -1;
+	concatenate apply(separate("(?="|webAppTagsRegex|")",s), x -> (
+		if #x>0 and x#0 === webAppEndTag then depth=depth-1 else depth=depth+1;
+		if depth <= 0 then htmlLiteral0 x else x
+		)));
     html Monoid :=
     html RingFamily :=
     html Ring :=
