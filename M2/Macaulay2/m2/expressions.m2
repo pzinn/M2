@@ -1378,11 +1378,7 @@ texMath Net := n -> concatenate(
 
 -- experimental
 Dots = new Type of Symbol
-texMath Dots := x -> (
-    if x === vdots then "\\vphantom{\\big|}\\smash{\\vdots}" -- bad spacing
-    else
-    "\\" | simpleToString x
-    )
+texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
 toString Dots := net Dots := x -> "..."
 cdots=new Dots from symbol cdots
 ddots=new Dots from symbol ddots

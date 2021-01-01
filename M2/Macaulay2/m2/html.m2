@@ -179,7 +179,6 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  else html k | " : " | html v
 	  ) | "<br/>"), "</span>")
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
-html Table := x -> html TABLE toList x
 -- a few types are just strings
 html File :=
 html IndeterminateNumber :=
@@ -189,10 +188,13 @@ html Boolean :=
 html Function :=
 html Type := html @@ toString
 -- except not these descendants
-html Short :=
 html Monoid :=
 html RingFamily :=
 html Ring := lookup(html,Thing)
+
+-- experimental
+html Short := x -> if lookup(html,class x#0) === lookup(html,Thing) then (lookup(html,Thing)) x else html x#0 -- clumsy
+
 
 --html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
 --html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)

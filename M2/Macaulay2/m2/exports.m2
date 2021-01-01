@@ -1062,6 +1062,7 @@ export {
 	"sheafExt",
 	"sheafHom",
 	"shield",
+	"short",
 	"show",
 	"showClassStructure",
 	"showHtml",

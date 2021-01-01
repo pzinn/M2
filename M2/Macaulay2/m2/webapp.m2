@@ -123,8 +123,8 @@ if topLevelMode === WebApp then (
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
     -- the userSymbols hack: by now mostly differs in "robust" stuff
     listSymbols List := x -> Describe TABLE prepend(
-     apply({"symbol", "class", "value", "location of symbol"},s->TH s),
-     apply(x, s -> {s,class value s,value s,TT symbolLocation s})
+     apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
+     apply(x, y -> apply({y,short class value y,short value y,TT symbolLocation y},s->TD {s}))
      );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
@@ -136,7 +136,6 @@ if topLevelMode === WebApp then (
 		if #x>0 and x#0 === webAppEndTag then depth=depth-1 else depth=depth+1;
 		if depth <= 0 then htmlLiteral0 x else x
 		)));
-    html Short :=
     html Monoid :=
     html RingFamily :=
     html Ring :=
