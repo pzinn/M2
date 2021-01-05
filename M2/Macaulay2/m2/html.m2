@@ -138,8 +138,8 @@ html PRE :=
 html TT :=
 html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
 
-html CDATA   := x -> concatenate("<![CDATA[",x,"]]>")
-html COMMENT := x -> concatenate("<!--",x,"-->")
+html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
+html COMMENT := x -> concatenate("<!--", x, "-->", newline)
 
 html HREF := x -> (
      r := concatenate apply(splice if #x > 1 then drop(x, 1) else x, html1);
