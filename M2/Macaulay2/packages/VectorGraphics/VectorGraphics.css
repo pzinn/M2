@@ -11,10 +11,6 @@ svg.M2Svg {
     cursor: grab;
 }
 
-.katex svg.M2Svg path { /* because of KaTeX annoying def */
-    stroke: inherit;
-}
-
 svg.M2Svg text {
 /*    font-size: 14px; /* /* just a reminder since code in M2 anyway:
 absolute sounds bad but actually it's not really absolute since it's in svg units */
