@@ -2,14 +2,14 @@
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
-    (webAppEndTag,            -- closing tag ~ </span> or </p>
-	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
+webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
+    (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
+	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
+	webAppCellEndTag,     -- closing tag for cell ~ </p>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
-	webAppTextTag,        -- other text ~ <span class='M2Text'>
 	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
@@ -19,7 +19,7 @@ webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 -- output routines for WebApp mode
 
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
-    webAppEndTag, -- close previous cell
+    webAppCellEndTag, -- close previous cell
     webAppCellTag,
     interpreterDepth:"i",
     toString lineno,
