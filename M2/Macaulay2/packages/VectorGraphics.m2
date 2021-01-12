@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.92",
+        Version => "0.93",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
@@ -474,9 +474,9 @@ new SVG from GraphicsObject := (S,g) -> (
     r = { r#0-margin*rr, r#1+margin*rr }; rr = (1+2*margin)*rr;
     --
 --    tag := graphicsId();
+    classTag := "M2Svg";
     ss := SVG {
 	"preserveAspectRatio" => "none",
-	"class" => "M2Svg",
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
 	    "height:",toString g.cache.SizeY,"em;",
@@ -486,7 +486,11 @@ new SVG from GraphicsObject := (S,g) -> (
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
 	};
-    if is3d g then ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
+    if is3d g then (
+	ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
+	classTag = classTag | " M2SvgClickable";
+	);
+    ss = append(ss,"class" => classTag);
     if axes =!= null then ss = append(ss, axes);
     if axeslabels =!= null then ss = append(ss, axeslabels);
     ss = append(ss,main);

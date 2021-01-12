@@ -8,6 +8,9 @@ svg.M2Svg {
     stroke-opacity: 1;
     fill: none;
     fill-opacity: 1;
+}
+
+svg.M2SvgClickable {
     cursor: grab;
 }
 
