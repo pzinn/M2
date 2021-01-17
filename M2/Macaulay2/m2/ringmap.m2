@@ -387,6 +387,8 @@ map(Ring,Ring,List) := RingMap => opts -> (S,R,m) -> (
      if #m>0 and all(m, o -> class o === Option) then sub2(S,R,m)
      else map(S,R,matrix(S,{m}),opts)
      )
+ 
+map(Ring,Ring,Vector) := RingMap => opts -> (S,R,v) -> map(S,R,transpose matrix v);
 
 substitute(Matrix,List) := Matrix => (f,v) -> (sub2(,ring f,v)) f
 substitute(Module,List) := Module => (M,v) -> (sub2(,ring M,v)) M
