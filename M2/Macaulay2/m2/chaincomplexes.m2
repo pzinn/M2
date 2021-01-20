@@ -72,17 +72,18 @@ texMath ChainComplex := C -> (
      s := sort spots C;
      if # s === 0 then "0" else
      concatenate apply(s,i->(
-	     if i>s#0 then "\\,\\xleftarrow{" | texMathShort C.dd_i | "}\\,",
+	     if i>s#0 then "\\,\\xleftarrow{" | texMath short C.dd_i | "}\\,",
 	     texUnder(texMath C_i,i)
 	     ))
       )
 
-texMathShort ChainComplex := C -> (
+-* short ChainComplex := C -> (
      complete C;
      s := sort spots C;
      if # s === 0 then "0" else
      concatenate between("\\longleftarrow",apply(s,i->texUnder(texMath C_i,i)))
       )
+*-
 
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of GradedModuleMap

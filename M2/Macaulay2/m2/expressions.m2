@@ -1379,14 +1379,13 @@ texMath MutableList := x -> concatenate (
 
 -- strings -- uses texLiteral from latex.m2
 texMath String := s -> "\\texttt{" | texLiteral s | "}"
--- this truncates very big nets
 texMath Net := n -> concatenate(
     "\\begin{array}{l}",
     between(///\\/// | newline,apply(unstack n,texMath)),
     "\\end{array}"
     )
 
--- experimental
+-- shortening expressions
 Dots = new Type of Symbol
 texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
 toString Dots := net Dots := x -> "..."
@@ -1396,33 +1395,19 @@ vdots=new Dots from symbol vdots
 ldots=new Dots from symbol ldots
 
 shortLength := 8
-texMathShort = method(Dispatch => Thing, TypicalValue => String)
-texMathShort Thing := texMathShort @@ expression
-texMathShort Expression := x -> texMath x -- not texMath !
-texMathShort MatrixExpression := m -> (
-    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    texRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,texMathShort);
-    x := apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m} else toList m,texRow);
-    concatenate(
-	"\\left(\\begin{smallmatrix}" | newline,
-	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
-	"\\end{smallmatrix}\\right)"
-	      )
-    )
-texMathShort MatrixDegreeExpression := x -> (lookup(texMathShort,MatrixExpression)) x#0
-texMathShort Product :=
-texMathShort Sum := x -> texMath if #x>shortLength then (class x) { first x, cdots, last x } else x -- for now, doesn't recurse
-texMathShort String := s -> if #s > shortLength then concatenate apply({first s,ldots,last s},texMath) else texMath s
-texMathShort Net := n -> concatenate(
-    "\\begin{array}{l}",
-    between(///\\/// | newline,
-	apply(if #n > shortLength then {first n,vdots,last n} else unstack n, texMathShort)),
-    "\\end{array}")
-
-Short = new WrapperType of Holder
-short = x -> Short { unhold expression x }
-texMath Short := x -> texMathShort x#0
-unhold Short := identity
+short = method(Dispatch => Thing, TypicalValue => Expression)
+short Thing := short @@ expression
+short Expression := identity
+short MatrixExpression := m -> (
+    shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
+    new MatrixExpression from apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
+	else toList m,short)) -- TODO add small option -> smallmatrix
+short MatrixDegreeExpression := x -> short(new MatrixExpression from x#0) -- TODO combine with MatrixExpression upgrade
+short VisibleList :=
+short Product :=
+short Sum := x -> apply(if #x>shortLength then new class x from { first x, if instance(x,VisibleList) then ldots else cdots, last x } else x,short)
+short String := s -> if #s > shortLength then RowExpression {first s,ldots,last s} else s
+-- short Net -- TODO. need a ColumnExpression???
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

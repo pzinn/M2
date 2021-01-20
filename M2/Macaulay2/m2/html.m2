@@ -192,10 +192,6 @@ html Monoid :=
 html RingFamily :=
 html Ring := lookup(html,Thing)
 
--- experimental
-html Short := x -> if lookup(html,class x#0) === lookup(html,Thing) then (lookup(html,Thing)) x else html x#0 -- clumsy
-
-
 --html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
 --html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)
 

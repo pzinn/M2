@@ -381,6 +381,23 @@ globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
 net GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
 expression GraphicsObject := hold
+short GraphicsObject := g -> (
+    if g.?SizeX then (
+	if g.?SizeY then (
+	    if g.SizeX<3.2 and g.SizeY<2 then return hold g;
+	    f := min(3.2/g.SizeX,2/g.SizeY);
+	    hold(g++{SizeX=>f*g.SizeX,SizeY=>f*g.SizeY})
+	    )
+	else (
+	    if g.SizeX<3.2 then hold g else hold(g++{SizeX=>3.2})
+	    )
+	) else (
+	if g.?SizeY then (
+	    if g.SizeY<2 then hold g else hold(g++{SizeY=>2})
+	    )
+	else hold(g++{SizeY=>2})
+	)
+    )
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
