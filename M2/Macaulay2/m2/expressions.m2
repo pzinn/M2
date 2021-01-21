@@ -601,7 +601,9 @@ keywordTexMath := new HashTable from { -- both unary and binary keywords
     symbol % => "\\%",
     symbol & => "\\&",
     symbol ^ => "\\wedge",
-    symbol ^^ => "\\wedge\\wedge"
+    symbol ^^ => "\\wedge\\wedge",
+    symbol <| => "\\langle",
+    symbol |> => "\\rangle"
     }
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
@@ -1343,16 +1345,11 @@ texMath Set := x -> texMath expression x
 
 -- some texMath that got stranded
 texMath BasicList := s -> concatenate(
-    if instance(s,Array) then (
-	opendelim := "[";
-	closedelim := "]";
-	) else if instance(s,Sequence) then (
-	opendelim = "(";
-	closedelim = ")";
-	) else (
-	opendelim = "\\{";
-	closedelim = "\\}";
-	);
+    (opendelim,closedelim) :=
+    if instance(s,Array) then ("[","]")
+    else if instance(s,Sequence) then ("(",")")
+    else if instance(s,AngleBarList) then ("<",">")
+    else ("\\{","\\}");
     if not instance(s,VisibleList) then texMath class s,
     "\\left",
     opendelim,
