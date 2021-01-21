@@ -1197,8 +1197,7 @@ export {
 	"~",
 	-- experimental
 	"BlockMatrix",
-	"CompactMatrix",
-	"SmallMatrix"
+	"CompactMatrix"
 }
 
 export {

@@ -943,14 +943,14 @@ toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x
 toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,SmallMatrix=>false,Degrees=>null};
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
     (opts,x) = override(opts,toSequence x);
     m := toList x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if opts.CompactMatrix then toCompactString else net;
     m = if opts.Degrees =!= null then apply(#m,i->apply(prepend(opts.Degrees#0#i,m#i),net1)) else applyTable(m,net1);
-    (hbox,vbox) := if opts.BlockMatrix =!= null then (drop(accumulate(plus,0,opts.BlockMatrix#0),-1),prepend(0,accumulate(plus,0,opts.BlockMatrix#1))) else (false,{0,#m});
-    if opts.Degrees =!= null then vbox = apply(vbox, i -> if i<#m then i+1 else i);
+    (hbox,vbox) := if opts.BlockMatrix =!= null then (drop(accumulate(plus,0,opts.BlockMatrix#0),-1),prepend(0,accumulate(plus,0,opts.BlockMatrix#1))) else (false,{0,#m#0});
+    if opts.Degrees =!= null then vbox = apply(vbox, i -> if i<#m#0 then i+1 else i);
     netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#(opts.CompactMatrix))
     )
 
@@ -1184,23 +1184,23 @@ texMath Table := m -> (
 )
 
 texMath MatrixExpression := x -> (
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,SmallMatrix=>false,Degrees=>null};
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
     (opts,x) = override(opts,toSequence x);
     m := toList x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if opts.CompactMatrix then toCompactString else net;
     if opts.BlockMatrix =!= null then ( j := 1; h := 0; );
-    texMath1 := if opts.CompactMatrix then texMath else x -> "\\displaystyle "|texMath x;
-    m = applyTable(m,texMath1);
+--    texMath1 := if opts.CompactMatrix then texMath else x -> "\\displaystyle "|texMath x;
+    m = applyTable(m,texMath);
     concatenate(
 	if opts.Degrees =!= null then (
 	    degs := apply(opts.Degrees#0,texMath);
-	    if opts.SmallMatrix then "\\begin{smallmatrix}" else "\\begin{array}{l}",
+	    if opts.CompactMatrix then "\\begin{smallmatrix}" else "\\begin{array}{l}",
 	    apply(#m, i -> degs#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
-	    if opts.SmallMatrix then "\\end{smallmatrix}" else "\\end{array}"
+	    if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}"
 	    ),
 	"\\left(\\!",
-	if opts.SmallMatrix then "\\begin{smallmatrix}" else {
+	if opts.CompactMatrix then "\\begin{smallmatrix}" else {
 	    "\\begin{array}{",
 	    if opts.BlockMatrix =!= null then demark("|",apply(opts.BlockMatrix#1,i->i:"c")) else #m#0:"c",
 	    "}"
@@ -1213,7 +1213,7 @@ texMath MatrixExpression := x -> (
 		 newline,
 		 if opts.BlockMatrix =!= null then if h<#opts.BlockMatrix#0-1 and j == opts.BlockMatrix#0#h then (j=0; h=h+1; "\\hline\n") else (j=j+1;)
 		 )),
-	if opts.SmallMatrix then "\\end{smallmatrix}" else "\\end{array}",
+	if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}",
 	"\\!\\right)"
 	)
 )
@@ -1413,14 +1413,13 @@ short = method(Dispatch => Thing, TypicalValue => Expression)
 short Thing := short @@ expression
 short Expression := identity
 short MatrixExpression := x -> (
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,SmallMatrix=>false,Degrees=>null};
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
     (opts,x) = override(opts,toSequence x);
     m := toList x;
     shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
     new MatrixExpression from {
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
 	    else toList m,short),
-	SmallMatrix=>true,
 	CompactMatrix=>true
 	}
     )

@@ -108,6 +108,7 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
+    compactMatrixForm = false;
     -- the help hack: if started in WebApp mode, help is compiled in it as well
     processExamplesLoop ExampleItem := (x->new LITERAL from replace("\\$\\{prefix\\}","usr",x#0)) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)

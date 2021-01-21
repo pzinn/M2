@@ -75,7 +75,7 @@ net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are ess
 texMath GradedModuleMap := f -> (
      d := f.degree;
      s := sort intersection(spots f.source, spots f.target / (i -> i - d));
-     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> RowExpression {i+d, ":", MapExpression { target f_i, source f_i, f_i }, ":", i})
+     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> expression(i+d) : MapExpression { target f_i, source f_i, f_i } : expression i)
 )
 
 
