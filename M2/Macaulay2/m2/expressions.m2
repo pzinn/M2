@@ -533,22 +533,18 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-expressionValue MatrixExpression := x -> matrix applyTable(toList x,expressionValue)
+expressionValue MatrixExpression := x -> (
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
+    (opts,x) = override(opts,toSequence x);
+    m := matrix applyTable(toList x,expressionValue);
+    if opts.Degrees === null then m else (
+    R := ring m;
+    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
+    ))
 toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
      "matrix {",
-     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
+     between(", ",apply(m#0,row->("{", between(", ",apply(row,fmt)), "}"))),
      "}" )
-MatrixDegreeExpression = new HeaderType of Expression
-MatrixDegreeExpression.synonym = "matrix with degrees expression"
-expressionValue MatrixDegreeExpression := x -> (
-    m := expressionValue MatrixExpression x#0;
-    R := ring m;
-    n := degreeLength R;
-    if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
-    then map(R^(-x#1),R^(-x#2),entries m)
-    else m
-    )
-toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,MatrixExpression x#0)
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
