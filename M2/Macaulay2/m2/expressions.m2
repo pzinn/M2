@@ -533,18 +533,24 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-expressionValue MatrixExpression := x -> (
+matrixOpts := x -> ( -- helper function
     opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
     (opts,x) = override(opts,toSequence x);
-    m := matrix applyTable(toList x,expressionValue);
+    if class x === Sequence then x = toList x else if class x#0 =!= List then x = { x }; -- for backwards compatibility
+    (opts,x)
+    )
+expressionValue MatrixExpression := x -> (
+    (opts,m) := matrixOpts x;
+    m = matrix applyTable(m,expressionValue);
     if opts.Degrees === null then m else (
     R := ring m;
     map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
     ))
-toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
-     "matrix {",
-     between(", ",apply(m#0,row->("{", between(", ",apply(row,fmt)), "}"))),
-     "}" )
+toString'(Function,MatrixExpression) := (fmt,x) -> concatenate(
+    (opts,m) := matrixOpts x;
+    "matrix {",
+    between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
+    "}" )
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -939,9 +945,7 @@ toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x
 toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
-    (opts,x) = override(opts,toSequence x);
-    m := toList x;
+    (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if opts.CompactMatrix then toCompactString else net;
     m = if opts.Degrees =!= null then apply(#m,i->apply(prepend(opts.Degrees#0#i,m#i),net1)) else applyTable(m,net1);
@@ -1180,9 +1184,7 @@ texMath Table := m -> (
 )
 
 texMath MatrixExpression := x -> (
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
-    (opts,x) = override(opts,toSequence x);
-    m := toList x;
+    (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if opts.CompactMatrix then toCompactString else net;
     if opts.BlockMatrix =!= null then ( j := 1; h := 0; );
