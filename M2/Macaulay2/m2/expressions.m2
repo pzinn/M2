@@ -1199,9 +1199,9 @@ texMath MatrixExpression := x -> (
 	    apply(#m, i -> degs#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
 	    if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}"
 	    ),
-	"\\left(\\!",
+	"\\left(",
 	if opts.CompactMatrix then "\\begin{smallmatrix}" else {
-	    "\\begin{array}{",
+	    "\\!\\begin{array}{",
 	    if opts.BlockMatrix =!= null then demark("|",apply(opts.BlockMatrix#1,i->i:"c")) else #m#0:"c",
 	    "}"
 	    },
@@ -1213,16 +1213,19 @@ texMath MatrixExpression := x -> (
 		 newline,
 		 if opts.BlockMatrix =!= null then if h<#opts.BlockMatrix#0-1 and j == opts.BlockMatrix#0#h then (j=0; h=h+1; "\\hline\n") else (j=j+1;)
 		 )),
-	if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}",
-	"\\!\\right)"
+	if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\right)"
 	)
 )
 
 texMath VectorExpression := v -> (
     concatenate(
-	"\\begin{pmatrix}" | newline,
-	between(///\\///,apply(toList v,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x)),
-	"\\end{pmatrix}"
+	"\\left(",
+	if compactMatrixForm then "\\begin{smallmatrix}" else "\\!\\begin{array}{c}",
+	newline,
+	between(///\\///,apply(toList v,texMath)),
+	if compactMatrixForm then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\right)"
 	)
     )
 
@@ -1423,9 +1426,15 @@ short MatrixExpression := x -> (
 	CompactMatrix=>true
 	}
     )
+short VectorExpression :=
 short VisibleList :=
 short Product :=
-short Sum := x -> apply(if #x>shortLength then new class x from { first x, if instance(x,VisibleList) then ldots else cdots, last x } else x,short)
+short Sum := x -> apply(if #x>shortLength then new class x from {
+	first x,
+	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
+	last x
+	}
+    else x,short)
 short String := s -> if #s > shortLength then RowExpression {first s,ldots,last s} else s
 -- short Net -- TODO. need a ColumnExpression???
 
