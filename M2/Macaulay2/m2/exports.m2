@@ -1194,7 +1194,11 @@ export {
 	"|-",
 	"||",
 	"}",
-	"~"
+	"~",
+	-- experimental
+	"BlockMatrix",
+	"CompactMatrix",
+	"SmallMatrix"
 }
 
 export {
