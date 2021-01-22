@@ -1433,8 +1433,8 @@ short Sum := x -> apply(if #x>shortLength then new class x from {
 	last x
 	}
     else x,short)
-short String := s -> if #s > shortLength then RowExpression {first s,ldots,last s} else s
--- short Net -- TODO. need a ColumnExpression???
+short String := s -> if #s > shortLength then first s | "..." | last s else s
+short Net := n -> if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
