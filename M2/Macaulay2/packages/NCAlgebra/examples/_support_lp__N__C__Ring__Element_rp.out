@@ -1,61 +1,61 @@
 -- -*- M2-comint -*- hash: 628702003
-i1 : A = QQ{x,y,z,w}
+i1 : A = QQ{x,y,z,w}
 
-o1 = $<pre style="display:inline">
-A</pre>$
+o1 = $<pre style="display:inline">
+A</pre>$
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
-i2 : f = x^2+y^2+z^3
+o1 : <pre style="display:inline">
+NCPolynomialRing</pre>
+i2 : f = x^2+y^2+z^3
 
-o2 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x,\,x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z,\,z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}$
+o2 = $<pre style="display:inline">
+A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x,\,x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z,\,z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}$
 
-o2 : $<pre style="display:inline">
-A</pre>$
-i3 : sup = support f
+o2 : $<pre style="display:inline">
+A</pre>$
+i3 : sup = support f
 
-o3 = $\left\{<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
+o3 = $\left\{<pre style="display:inline">
+A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
-i4 : first sup
+o3 : <pre style="display:inline">
+List</pre>
+i4 : first sup
 
-o4 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}$
+o4 = $<pre style="display:inline">
+A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+A</pre>\right\}\,\Rightarrow\,1\right\}\right\}$
 
-o4 : $<pre style="display:inline">
-A</pre>$
-i5 : 
+o4 : $<pre style="display:inline">
+A</pre>$
+i5 : 

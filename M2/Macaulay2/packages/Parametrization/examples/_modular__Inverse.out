@@ -1,15 +1,15 @@
 -- -*- M2-comint -*- hash: 857769211
-i1 : modularInverse(5,7)
+i1 : modularInverse(5,7)
 
-o1 = $3$
-i2 : modularInverse(5,16)
+o1 = $3$
+i2 : modularInverse(5,16)
 
-o2 = $13$
-i3 : modularInverse(4,16)
+o2 = $13$
+i3 : modularInverse(4,16)
 
-o3 = <pre style="display:inline">
-false</pre>
-i4 : modularInverse(1234567,12345678)
+o3 = <pre style="display:inline">
+false</pre>
+i4 : modularInverse(1234567,12345678)
 
-o4 = $10802467$
-i5 : 
+o4 = $10802467$
+i5 : 

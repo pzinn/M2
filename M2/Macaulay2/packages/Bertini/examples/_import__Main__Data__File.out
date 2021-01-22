@@ -1,31 +1,31 @@
 -- -*- M2-comint -*- hash: 408841555
-i1 : makeB'InputFile(storeBM2Files,
-  AffVariableGroup=>{x,y,z},
-  BertiniInputConfiguration=>{{TrackType,1}},
-  B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
-i2 : runBertini(storeBM2Files)
-i3 : thePoints=importMainDataFile(storeBM2Files)
+i1 : makeB'InputFile(storeBM2Files,
+  AffVariableGroup=>{x,y,z},
+  BertiniInputConfiguration=>{{TrackType,1}},
+  B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
+i2 : runBertini(storeBM2Files)
+i3 : thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{\left\{-{.00880453}-{.00127011}\,\mathbf{i},\,{0},\,-{.491445}-{.870954}\,\mathbf{i}\right\},\,\left\{{.880727}-{.658957}\,\mathbf{i},\,-{1.09632}-{.147655}\,\mathbf{i},\,-{.48198}-{.868262}\,\mathbf{i}\right\},\,\left\{-{.88381}+{.660697}\,\mathbf{i},\,{1.08888}+{.134467}\,\mathbf{i},\,-{.500861}-{.873521}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{-{.193327}-{.537376}\,\mathbf{i},\,-{1.3026}\cdot 10^{-16}+{1.05919}\cdot 10^{-16}\,\mathbf{i},\,{.455304}-{1.05776}\,\mathbf{i}\right\},\,\left\{-{1.64945}-{.338326}\,\mathbf{i},\,{1.04641}-{.730565}\,\mathbf{i},\,-{.139584}-{1.47883}\,\mathbf{i}\right\},\,\left\{{.587837}+{.14571}\,\mathbf{i},\,-{.874223}-{.218466}\,\mathbf{i},\,{.506917}-{.545734}\,\mathbf{i}\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
-i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
-<pre style="display:inline">
-1</pre>
-<pre style="display:inline">
-1</pre>
-<pre style="display:inline">
-1</pre>
+o3 : <pre style="display:inline">
+List</pre>
+i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
+<pre style="display:inline">
+1</pre>
+<pre style="display:inline">
+1</pre>
+<pre style="display:inline">
+1</pre>
 
-o4 = $\left\{\right\}$
+o4 = $\left\{\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
-i5 : sortMainDataComponents(thePoints)
+o4 : <pre style="display:inline">
+List</pre>
+i5 : sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{\left\{-{.00880453}-{.00127011}\,\mathbf{i},\,{0},\,-{.491445}-{.870954}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{.880727}-{.658957}\,\mathbf{i},\,-{1.09632}-{.147655}\,\mathbf{i},\,-{.48198}-{.868262}\,\mathbf{i}\right\},\,\left\{-{.88381}+{.660697}\,\mathbf{i},\,{1.08888}+{.134467}\,\mathbf{i},\,-{.500861}-{.873521}\,\mathbf{i}\right\}\right\}\right\}$
+o5 = $\left\{\left\{\left\{-{.193327}-{.537376}\,\mathbf{i},\,-{1.3026}\cdot 10^{-16}+{1.05919}\cdot 10^{-16}\,\mathbf{i},\,{.455304}-{1.05776}\,\mathbf{i}\right\}\right\},\,\left\{\left\{-{1.64945}-{.338326}\,\mathbf{i},\,{1.04641}-{.730565}\,\mathbf{i},\,-{.139584}-{1.47883}\,\mathbf{i}\right\},\,\left\{{.587837}+{.14571}\,\mathbf{i},\,-{.874223}-{.218466}\,\mathbf{i},\,{.506917}-{.545734}\,\mathbf{i}\right\}\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
-i6 : 
+o5 : <pre style="display:inline">
+List</pre>
+i6 : 

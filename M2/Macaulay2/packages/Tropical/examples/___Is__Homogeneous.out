@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: 130646979
-i1 : QQ[x,y];
-i2 : I=ideal(x+y+1);
+i1 : QQ[x,y];
+i2 : I=ideal(x+y+1);
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[x,\,y\right]$
-i3 : T=tropicalVariety (I,IsHomogeneous=>false)
+ of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, y\right]$
+i3 : T=tropicalVariety (I,IsHomogeneous=>false)
 
-o3 = $<pre style="display:inline">
-T</pre>$
+o3 = $<pre style="display:inline">
+T</pre>$
 
-o3 : <pre style="display:inline">
-TropicalCycle</pre>
-i4 : 
-
+o3 : <pre style="display:inline">
+TropicalCycle</pre>
+i4 : 
+

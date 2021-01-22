@@ -360,10 +360,12 @@ document {
      TT "MatrixExpression", " is a type of ", TO "Expression", " representing
      a matrix.",
      PARA{},
-     EXAMPLE ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
+     EXAMPLE {
+	 ///MatrixExpression {{a,b,c},{a,bb,ccc}}///,
 	 ///R=QQ[x,y];///,
          ///MatrixExpression {applyTable({{x^2-y^2,x^3-y^3},{x^2-4*y^2,x^3+y^3}},factor),Degrees=>{{{-2},{-3}},{{0},{0}}}}///,
-	 ///value oo///,
+	 ///value oo///
+	 },
      SeeAlso => {"Table"}
      }
 

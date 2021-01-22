@@ -1,66 +1,73 @@
 -- -*- M2-comint -*- hash: 1920086956
-i1 : Pblm = {
-    ({2,1}, random(RR^6,RR^6)),
-    ({2,1}, random(RR^6,RR^6)),
-    ({2,1}, random(RR^6,RR^6))
-    }
+i1 : Pblm = {
+    ({2,1}, random(RR^6,RR^6)),
+    ({2,1}, random(RR^6,RR^6)),
+    ({2,1}, random(RR^6,RR^6))
+    }
 
-o1 = $\left\{\left(\left\{2,\,1\right\},\,\begin{pmatrix}
+o1 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}&amp;{.89189}&amp;{.0741835}&amp;{.741046}&amp;{.830833}&amp;{.191734}\\
 {.673395}&amp;{.231053}&amp;{.808694}&amp;{.108386}&amp;{.538554}&amp;{.403215}\\
 {.29398}&amp;{.461944}&amp;{.362835}&amp;{.348931}&amp;{.873665}&amp;{.615911}\\
 {.632944}&amp;{.775187}&amp;{.706096}&amp;{.562428}&amp;{.415912}&amp;{.0147867}\\
 {.0258884}&amp;{.909047}&amp;{.127435}&amp;{.246268}&amp;{.606588}&amp;{.223028}\\
-{.714827}&amp;{.314897}&amp;{.254482}&amp;{.153346}&amp;{.848005}&amp;{.388829}\end{pmatrix}\right),\,\left(\left\{2,\,1\right\},\,\begin{pmatrix}
+{.714827}&amp;{.314897}&amp;{.254482}&amp;{.153346}&amp;{.848005}&amp;{.388829}\\
+\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.557119}&amp;{.96518}&amp;{.0647412}&amp;{.174853}&amp;{.444183}&amp;{.184779}\\
 {.873708}&amp;{.681683}&amp;{.877846}&amp;{.626892}&amp;{.644366}&amp;{.370833}\\
 {.7037}&amp;{.914199}&amp;{.0340514}&amp;{.350611}&amp;{.194945}&amp;{.339222}\\
 {.681869}&amp;{.887381}&amp;{.507989}&amp;{.379495}&amp;{.518585}&amp;{.062212}\\
 {.276259}&amp;{.169813}&amp;{.150294}&amp;{.237252}&amp;{.987173}&amp;{.465736}\\
-{.605659}&amp;{.965004}&amp;{.656391}&amp;{.116721}&amp;{.568273}&amp;{.40273}\end{pmatrix}\right),\,\left(\left\{2,\,1\right\},\,\begin{pmatrix}
+{.605659}&amp;{.965004}&amp;{.656391}&amp;{.116721}&amp;{.568273}&amp;{.40273}\\
+\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.164647}&amp;{.562839}&amp;{.0645275}&amp;{.501243}&amp;{.205375}&amp;{.0821679}\\
 {.713493}&amp;{.629991}&amp;{.283709}&amp;{.154289}&amp;{.276652}&amp;{.10394}\\
 {.909537}&amp;{.479826}&amp;{.977573}&amp;{.467203}&amp;{.0958269}&amp;{.280679}\\
 {.566034}&amp;{.815167}&amp;{.212436}&amp;{.765564}&amp;{.605398}&amp;{.475179}\\
 {.305423}&amp;{.97723}&amp;{.592747}&amp;{.305946}&amp;{.883549}&amp;{.130004}\\
-{.732358}&amp;{.0595849}&amp;{.831802}&amp;{.53632}&amp;{.942865}&amp;{.522285}\end{pmatrix}\right)\right\}$
+{.732358}&amp;{.0595849}&amp;{.831802}&amp;{.53632}&amp;{.942865}&amp;{.522285}\\
+\end{array}\!\right)\right)\right\}$
 
-o1 : <pre style="display:inline">
-List</pre>
-i2 : S = solveSchubertProblem(Pblm, 3,6)
+o1 : <pre style="display:inline">
+List</pre>
+i2 : S = solveSchubertProblem(Pblm, 3,6)
 
-o2 = $\left\{\begin{pmatrix}
+o2 = $\left\{\left(\!\begin{array}{ccc}
 {.362674}+{2.9315}\cdot 10^{-16}\,\mathbf{i}&amp;{5.87881}+{1.11452}\cdot 10^{-13}\,\mathbf{i}&amp;{.067722}-{1.97037}\cdot 10^{-16}\,\mathbf{i}\\
 -{.168148}+{2.2113}\cdot 10^{-16}\,\mathbf{i}&amp;{10.2268}+{2.04131}\cdot 10^{-13}\,\mathbf{i}&amp;{.359604}-{2.59885}\cdot 10^{-16}\,\mathbf{i}\\
 {.287667}+{9.65377}\cdot 10^{-17}\,\mathbf{i}&amp;{5.41301}+{1.03735}\cdot 10^{-13}\,\mathbf{i}&amp;{.178413}-{2.30875}\cdot 10^{-16}\,\mathbf{i}\\
 {.399967}+{2.07847}\cdot 10^{-16}\,\mathbf{i}&amp;{10.4365}+{2.01988}\cdot 10^{-13}\,\mathbf{i}&amp;{.172408}-{2.23804}\cdot 10^{-16}\,\mathbf{i}\\
 {.893699}+{8.50128}\cdot 10^{-18}\,\mathbf{i}&amp;{2.90938}+{5.72692}\cdot 10^{-14}\,\mathbf{i}&amp;{.127632}-{7.94735}\cdot 10^{-17}\,\mathbf{i}\\
--{.108865}+{2.34736}\cdot 10^{-16}\,\mathbf{i}&amp;{5.44614}+{1.10221}\cdot 10^{-13}\,\mathbf{i}&amp;{.099289}-{2.09229}\cdot 10^{-16}\,\mathbf{i}\end{pmatrix},\,\begin{pmatrix}
+-{.108865}+{2.34736}\cdot 10^{-16}\,\mathbf{i}&amp;{5.44614}+{1.10221}\cdot 10^{-13}\,\mathbf{i}&amp;{.099289}-{2.09229}\cdot 10^{-16}\,\mathbf{i}\\
+\end{array}\!\right),\,\left(\!\begin{array}{ccc}
 {.675164}+{1.25641}\cdot 10^{-15}\,\mathbf{i}&amp;{.770431}+{2.20073}\cdot 10^{-15}\,\mathbf{i}&amp;-{.0909566}-{7.88961}\cdot 10^{-16}\,\mathbf{i}\\
 {.0675706}+{9.47738}\cdot 10^{-16}\,\mathbf{i}&amp;{.870501}+{4.03075}\cdot 10^{-15}\,\mathbf{i}&amp;{.150312}-{1.04061}\cdot 10^{-15}\,\mathbf{i}\\
 {.390574}+{4.13749}\cdot 10^{-16}\,\mathbf{i}&amp;{.658364}+{2.04833}\cdot 10^{-15}\,\mathbf{i}&amp;-{.00751668}-{9.24455}\cdot 10^{-16}\,\mathbf{i}\\
 {.621526}+{8.90807}\cdot 10^{-16}\,\mathbf{i}&amp;{1.17845}+{3.98842}\cdot 10^{-15}\,\mathbf{i}&amp;-{.0078269}-{8.9614}\cdot 10^{-16}\,\mathbf{i}\\
 {.902762}+{3.64354}\cdot 10^{-17}\,\mathbf{i}&amp;{.284467}+{1.13083}\cdot 10^{-15}\,\mathbf{i}&amp;{.0636297}-{3.18222}\cdot 10^{-16}\,\mathbf{i}\\
-{.141356}+{1.00605}\cdot 10^{-15}\,\mathbf{i}&amp;{.394186}+{2.17642}\cdot 10^{-15}\,\mathbf{i}&amp;-{.0692081}-{8.37779}\cdot 10^{-16}\,\mathbf{i}\end{pmatrix}\right\}$
+{.141356}+{1.00605}\cdot 10^{-15}\,\mathbf{i}&amp;{.394186}+{2.17642}\cdot 10^{-15}\,\mathbf{i}&amp;-{.0692081}-{8.37779}\cdot 10^{-16}\,\mathbf{i}\\
+\end{array}\!\right)\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
-i3 : solutionsToAffineCoords S
+o2 : <pre style="display:inline">
+List</pre>
+i3 : solutionsToAffineCoords S
 
-o3 = $\left\{\begin{pmatrix}
+o3 = $\left\{\left(\!\begin{array}{ccc}
 {1.17594}&amp;-{.247384}&amp;-{1.04186}\\
 -{2.59821}&amp;{1.69933}&amp;{5.94898}\\
 -{.743029}&amp;{.890962}&amp;{1.94183}\\
 {1}&amp;{0}&amp;{0}\\
 {0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{1}\end{pmatrix},\,\begin{pmatrix}
+{0}&amp;{0}&amp;{1}\\
+\end{array}\!\right),\,\left(\!\begin{array}{ccc}
 -{.0717886}&amp;{.515973}&amp;{1.79675}\\
 {1.97727}&amp;-{.796664}&amp;-{3.12795}\\
 {.504284}&amp;{.067644}&amp;{.113771}\\
 {1}&amp;{0}&amp;{0}\\
 {0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;1\end{pmatrix}\right\}$
+{0}&amp;{0}&amp;1\\
+\end{array}\!\right)\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
-i4 : 
+o3 : <pre style="display:inline">
+List</pre>
+i4 : 

@@ -1,66 +1,66 @@
 -- -*- M2-comint -*- hash: 1898434637
-i1 : R = frac(QQ[a])
+i1 : R = frac(QQ[a])
 
-o1 = $R$
+o1 = $R$
 
-o1 : <pre style="display:inline">
-FractionField</pre>
-i2 : B = skewPolynomialRing(R,a,{x,y,z})
+o1 : <pre style="display:inline">
+FractionField</pre>
+i2 : B = skewPolynomialRing(R,a,{x,y,z})
 
-o2 = $<pre style="display:inline">
-B</pre>$
+o2 = $<pre style="display:inline">
+B</pre>$
 
-o2 : <pre style="display:inline">
-NCQuotientRing</pre>
-i3 : M = ncMatrix {{x, y, z}}
+o2 : <pre style="display:inline">
+NCQuotientRing</pre>
+i3 : M = ncMatrix {{x, y, z}}
 
-o3 = $<pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}$
+o3 = $<pre style="display:inline">
+NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o3 : <pre style="display:inline">
-NCMatrix</pre>
-i4 : sigma = ncMap(B,B,{y,z,x})
+o3 : <pre style="display:inline">
+NCMatrix</pre>
+i4 : sigma = ncMap(B,B,{y,z,x})
 
-o4 = $<pre style="display:inline">
-NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
-false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{x\,\Rightarrow\,<pre style="display:inline">
-B</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-B</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-B</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,y\,\Rightarrow\,<pre style="display:inline">
-B</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-B</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-B</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,z\,\Rightarrow\,<pre style="display:inline">
-B</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-B</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-B</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rightarrow\,<pre style="display:inline">
-B</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
-B</pre>\right\}$
+o4 = $<pre style="display:inline">
+NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
+false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{x\,\Rightarrow\,<pre style="display:inline">
+B</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+B</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+B</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,y\,\Rightarrow\,<pre style="display:inline">
+B</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+B</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+B</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,z\,\Rightarrow\,<pre style="display:inline">
+B</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+B</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+B</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rightarrow\,<pre style="display:inline">
+B</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
+B</pre>\right\}$
 
-o4 : <pre style="display:inline">
-NCRingMap</pre>
-i5 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
+o4 : <pre style="display:inline">
+NCRingMap</pre>
+i5 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
-o5 = $<pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}$
+o5 = $<pre style="display:inline">
+NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o5 : <pre style="display:inline">
-NCMatrix</pre>
-i6 : a*N
+o5 : <pre style="display:inline">
+NCMatrix</pre>
+i6 : a*N
 
-o6 = $<pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}$
+o6 = $<pre style="display:inline">
+NCMatrix</pre>\left\{\ldots6\ldots\right\}$
 
-o6 : <pre style="display:inline">
-NCMatrix</pre>
-i7 : 
+o6 : <pre style="display:inline">
+NCMatrix</pre>
+i7 : 

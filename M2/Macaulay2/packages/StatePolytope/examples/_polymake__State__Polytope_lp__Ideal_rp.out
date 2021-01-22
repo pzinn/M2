@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: -1936625649
-i1 : R = QQ[a..d];
-i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);  
+i1 : R = QQ[a..d];
+i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);  
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>$R$
-i3 : polymakeStatePolytope(I)
+ of </pre>$R$
+i3 : polymakeStatePolytope(I)
 
-o3 = $\left\{\left\{11,\,7,\,7,\,11\right\},\,\left\{7,\,15,\,3,\,11\right\},\,\left\{4,\,18,\,6,\,8\right\},\,\left\{3,\,18,\,9,\,6\right\},\,\left\{11,\,3,\,15,\,7\right\},\,\left\{8,\,6,\,18,\,4\right\},\,\left\{6,\,9,\,18,\,3\right\},\,\left\{3,\,15,\,15,\,3\right\}\right\}$
+o3 = $\left\{\left\{11,\,7,\,7,\,11\right\},\,\left\{7,\,15,\,3,\,11\right\},\,\left\{4,\,18,\,6,\,8\right\},\,\left\{3,\,18,\,9,\,6\right\},\,\left\{11,\,3,\,15,\,7\right\},\,\left\{8,\,6,\,18,\,4\right\},\,\left\{6,\,9,\,18,\,3\right\},\,\left\{3,\,15,\,15,\,3\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
-i4 : 
+o3 : <pre style="display:inline">
+List</pre>
+i4 : 

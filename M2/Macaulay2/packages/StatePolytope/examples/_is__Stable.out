@@ -1,21 +1,21 @@
 -- -*- M2-comint -*- hash: -165032171
-i1 : R = QQ[a..d];
-i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
+i1 : R = QQ[a..d];
+i2 : I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>$R$
-i3 : isStable(3,I)
+ of </pre>$R$
+i3 : isStable(3,I)
 
-o3 = <pre style="display:inline">
-true</pre>
-i4 : I = ideal(a^2,b^2,b*c);
+o3 = <pre style="display:inline">
+true</pre>
+i4 : I = ideal(a^2,b^2,b*c);
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>$R$
-i5 : isStable(3,I) 
+ of </pre>$R$
+i5 : isStable(3,I) 
 
-o5 = <pre style="display:inline">
-false</pre>
-i6 : 
+o5 = <pre style="display:inline">
+false</pre>
+i6 : 

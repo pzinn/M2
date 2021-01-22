@@ -1,41 +1,42 @@
 -- -*- M2-comint -*- hash: -2131607528
-i1 : R = CC[x,y,z];
-i2 : L = { z*(x+y), z*(x-y) };
-i3 : WitSets = cascade(L)
+i1 : R = CC[x,y,z];
+i2 : L = { z*(x+y), z*(x-y) };
+i3 : WitSets = cascade(L)
 
-o3 = $<pre style="display:inline">
-WitSets</pre>$
+o3 = $<pre style="display:inline">
+WitSets</pre>$
 
-o3 : <pre style="display:inline">
-NumericalVariety</pre>
-i4 : W=first WitSets#2
+o3 : <pre style="display:inline">
+NumericalVariety</pre>
+i4 : W=first WitSets#2
 
-o4 = $<pre style="display:inline">
-W</pre>$
+o4 = $<pre style="display:inline">
+W</pre>$
 
-o4 : <pre style="display:inline">
-WitnessSet</pre>
-i5 : W#Equations
+o4 : <pre style="display:inline">
+WitnessSet</pre>
+i5 : W#Equations
 
-o5 = $<pre style="display:inline">
-ideal</pre>{}\left(\left(-{.380139}+{.924929}\,\mathbf{i}\right)\textit{zz1}+\left({.547606}+{.836736}\,\mathbf{i}\right)\textit{zz2}-x\,z-y\,z,\,\left({.45571}-{.890128}\,\mathbf{i}\right)\textit{zz1}+\left(-{.663772}-{.747935}\,\mathbf{i}\right)\textit{zz2}-x\,z+y\,z,\,-\textit{zz1}+\left({.537862}+{.843033}\,\mathbf{i}\right)\textit{zz2}\right)$
+o5 = $<pre style="display:inline">
+ideal</pre>{}\left(\left(-{.380139}+{.924929}\,\mathbf{i}\right)\textit{zz1}+\left({.547606}+{.836736}\,\mathbf{i}\right)\textit{zz2}-x\,z-y\,z,\,\left({.45571}-{.890128}\,\mathbf{i}\right)\textit{zz1}+\left(-{.663772}-{.747935}\,\mathbf{i}\right)\textit{zz2}-x\,z+y\,z,\,-\textit{zz1}+\left({.537862}+{.843033}\,\mathbf{i}\right)\textit{zz2}\right)$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${{\mathbb C}}_{53}{}\left\{x,\,y,\,z,\,\textit{zz1},\,\textit{zz2}\right\}$
-i6 : W#Points
+ of </pre>${{\mathbb C}}_{53}{}\left\{x\,{.}{.}\, z,\,\textit{zz1},\,\textit{zz2}\right\}$
+i6 : W#Points
 
-o6 = $\left\{\begin{aligned}&amp;\left\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\cdot 10^{-32}+{7.65273}\cdot 10^{-33}\,\mathbf{i},\,-{2.28184}\cdot 10^{-32}-{4.87389}\cdot 10^{-33}\,\mathbf{i},\,-{1.6382}\cdot 10^{-32}+{1.66152}\cdot 10^{-32}\,\mathbf{i}\right\}\end{aligned}\right\}$
+o6 = $\left\{\begin{aligned}&amp;\left\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\cdot 10^{-32}+{7.65273}\cdot 10^{-33}\,\mathbf{i},\,-{2.28184}\cdot 10^{-32}-{4.87389}\cdot 10^{-33}\,\mathbf{i},\,-{1.6382}\cdot 10^{-32}+{1.66152}\cdot 10^{-32}\,\mathbf{i}\right\}\end{aligned}\right\}$
 
-o6 : <pre style="display:inline">
-VerticalList</pre>
-i7 : W#Slice
+o6 : <pre style="display:inline">
+VerticalList</pre>
+i7 : W#Slice
 
-o7 = $\begin{pmatrix}
+o7 = $\left(\!\begin{array}{cccccc}
 {.205377}+{.978683}\,\mathbf{i}&amp;{.673112}+{.739541}\,\mathbf{i}&amp;{.943327}-{.331864}\,\mathbf{i}&amp;-{.911067}-{.412259}\,\mathbf{i}&amp;{.497812}+{.867285}\,\mathbf{i}&amp;-{.883724}+{.468009}\,\mathbf{i}\\
--{.759495}+{.650513}\,\mathbf{i}&amp;-{.89022}-{.45553}\,\mathbf{i}&amp;-{.972487}+{.232959}\,\mathbf{i}&amp;-{.595572}-{.803302}\,\mathbf{i}&amp;-{.236638}-{.971598}\,\mathbf{i}&amp;{.871298}-{.490754}\,\mathbf{i}\end{pmatrix}$
+-{.759495}+{.650513}\,\mathbf{i}&amp;-{.89022}-{.45553}\,\mathbf{i}&amp;-{.972487}+{.232959}\,\mathbf{i}&amp;-{.595572}-{.803302}\,\mathbf{i}&amp;-{.236638}-{.971598}\,\mathbf{i}&amp;{.871298}-{.490754}\,\mathbf{i}\\
+\end{array}\!\right)$
 
-o7 : <pre style="display:inline">
+o7 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${{\mathbb C}}_{53}^{2}\,\longleftarrow \,{{\mathbb C}}_{53}^{6}$
-i8 : 
+ </pre>${{\mathbb C}}_{53}^{2}\,\longleftarrow \,{{\mathbb C}}_{53}^{6}$
+i8 : 
