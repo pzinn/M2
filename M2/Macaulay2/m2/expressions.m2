@@ -536,7 +536,7 @@ MatrixExpression.synonym = "matrix expression"
 matrixOpts := x -> ( -- helper function
     opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
     (opts,x) = override(opts,toSequence x);
-    if class x === Sequence then x = toList x else if class x#0 =!= List then x = { x }; -- for backwards compatibility
+    if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
     (opts,x)
     )
 expressionValue MatrixExpression := x -> (
