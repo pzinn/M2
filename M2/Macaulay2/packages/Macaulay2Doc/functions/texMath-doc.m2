@@ -54,7 +54,6 @@ undocumented {
 	(texMath, IndexedVariableTable),
 	(texMath, MapExpression),
 	(texMath, Matrix),
-	(texMath, MatrixDegreeExpression),
 	(texMath, Module),
         (texMath, MutableList),
 	(texMath, MutableMatrix),
