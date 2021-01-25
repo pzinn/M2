@@ -38,7 +38,7 @@ o14 : <pre style="display:inline">
 List</pre>
 i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\left\{{.539504}-{.30441}\,\mathbf{i},\,-{.00763727}-{.391706}\,\mathbf{i}\right\},\,\left\{{.964563}-{1.32436}\,\mathbf{i},\,{1.02674}+{.139739}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{-{.626168}-{.280875}\,\mathbf{i},\,-{.031466}-{.432898}\,\mathbf{i}\right\},\,\left\{-{.533324}-{.819908}\,\mathbf{i},\,-{.616503}+{.0509697}\,\mathbf{i}\right\}\right\}$
 
 o15 : <pre style="display:inline">
 List</pre>
