@@ -41,13 +41,16 @@ expression PolynomialRing := R -> (
      if hasAttribute(R,ReverseDictionary) then return expression getAttribute(R,ReverseDictionary);
      k := last R.baseRings;
      T := if (options R).Local === true then List else Array;
-     (expression k) (new T from R.generatorExpressions)
-)
+     (expression k) (new T from toSequence runLengthEncode R.generatorExpressions)
+     )
 
 describe PolynomialRing := R -> (
      k := last R.baseRings;
      Describe (expression k) (expressionMonoid monoid R)) -- not describe k, we only expand one level
-toExternalString PolynomialRing := R -> toString describe R;
+--toExternalString PolynomialRing := R -> toString describe R;
+toExternalString PolynomialRing := R -> (
+     k := last R.baseRings;
+     toString ((expression if hasAttribute(k,ReverseDictionary) then getAttribute(k,ReverseDictionary) else k) (expression monoid R)))
 
 degreeLength PolynomialRing := (RM) -> degreeLength RM.FlatMonoid
 
@@ -66,20 +69,13 @@ degreesRing List := PolynomialRing => memoize(
 	       S.generatorSymbols = S.generatorExpressions = S.generators = {};
 	       S.indexSymbols = S.indexStrings = new HashTable;
 	       S)
-	  else fact(ZZ degreesMonoid hft) -- might create problems. need to test more thoroughly
---	  else ZZ degreesMonoid hft
-	  )
+	  else ZZ degreesMonoid hft)
 
-degreesRing ZZ := PolynomialRing => memoize(
-    n -> if n == 0 then degreesRing {} else -- ZZ degreesMonoid n
-    fact(ZZ degreesMonoid n) -- might create problems. need to test more thoroughly
-    )
+degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then degreesRing {} else ZZ degreesMonoid n )
 
 degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
      else error "no degreesRing for this ring")
-
-addDegreesRing PolynomialRing := PolynomialRing => R -> try R.addDegreesRing else degreesRing R;
 
 degreesRing Ring := R -> error "no degreesRing for this ring"
 
@@ -95,7 +91,7 @@ standardForm RingElement := (f) -> (
      (cc,mm) := rawPairs(raw k, raw f);
      new HashTable from toList apply(cc, mm, (c,m) -> (standardForm m, new k from c)))
 
--- this way turns out to be much slower by x10
+-- this way turns out to be much slower by a factor of 10
 -- standardForm RingElement := (f) -> (
 --      R := ring f;
 --      k := coefficientRing R;
@@ -113,7 +109,7 @@ listForm RingElement := (f) -> (
      (cc,mm) := rawPairs(raw k, raw f);
      toList apply(cc, mm, (c,m) -> (exponents(n,m), promote(c,k))))
 
--- this way turns out to be much slower by x10
+-- this way turns out to be much slower by a factor of 10
 -- listForm RingElement := (f) -> (
 --      R := ring f;
 --      k := coefficientRing R;
@@ -130,8 +126,6 @@ protect indexStrings
 protect generatorSymbols
 protect generatorExpressions
 protect indexSymbols
-
-fact=method();
 
 InexactFieldFamily OrderedMonoid := (T,M) -> (default T) M
 Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
@@ -236,7 +230,6 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
 	  if flatmonoid.?degreesRing then RM.degreesRing = flatmonoid.degreesRing;
-	  if flatmonoid.?addDegreesRing then RM.addDegreesRing = flatmonoid.addDegreesRing;
 	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;
@@ -266,16 +259,43 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  );
      	  if M.Options.Inverses === true then (
 	       denominator RM := f -> RM_( - min \ apply(transpose exponents f,x->x|{0}) );
---               denominator RM := f -> RM_( - min \ transpose prepend(toList(RM.numallvars:0),
---		       apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m)))); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
 	       numerator RM := f -> f * denominator f;
 	       );
-	  fact RM := a -> new fact RM from a; -- destined to supplant factor
-	  factor RM := opts -> a -> factor fact a;
-	  isPrime RM := f -> (
+	  factor RM := opts -> f -> (
+	       c := 1_R; 
+	       if (options RM).Inverses then (
+        	   minexps:=min\transpose apply(toList (rawPairs(raw RM.basering,raw f))#1,m->exponents(RM.numallvars,m));
+		   f=f*RM_(-minexps); -- get rid of monomial in factor if f Laurent polynomial
+		   c=RM_minexps;
+		   );
+	       (facs,exps) := rawFactor raw f;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	       leadCoeff := x->( -- iterated leadCoefficient
+		   R:=ring x;
+		   if class R === PolynomialRing then leadCoeff leadCoefficient x else
+		   if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
+    	    	   x);
+     	       facs = apply(#facs, i -> (
+		       p:=new RM from facs#i;
+		       if leadCoeff p >= 0 then p else (if odd(exps#i) then c=-c; -p)
+		       ));
+    	       if liftable(facs#0,RM.basering) then (
+		    -- factory returns the possible constant factor in front
+	       	    assert(exps#0 == 1);
+		    c = c*(facs#0);
+		    facs = drop(facs,1);
+		    exps = drop(exps,1);
+		    );
+	       if #facs != 0 then (facs,exps) = toSequence transpose sort transpose {toList facs, toList exps};
+	       if c != 1 then (
+		    -- we put the possible constant (and monomial for Laurent polynomials) at the end
+		    facs = append(facs,c);
+		    exps = append(exps,1);
+		    );
+	       new Product from apply(facs,exps,(p,n) -> new Power from {p,n}));
+	  isPrime RM := {} >> o -> f -> (
 	      v := factor f;
 	      cnt := 0; -- counts number of factors
-	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1; if cnt>1 then break ));
+	      scan(v, x -> ( if not isUnit(x#0) then cnt=cnt+x#1 ));
 	      cnt == 1 -- cnt=0 is invertible element; cnt>1 is composite element; cnt=1 is prime element
 	       );
 	  RM.generatorSymbols = M.generatorSymbols;
@@ -283,7 +303,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  RM.generatorExpressions = (
 	       M.generatorExpressions
 	       -- apply(M.generatorExpressions,RM.generators,(e,x) -> (new Holder2 from {e#0,x}))
-	       ); -- never actually used
+	       );
 	  RM.indexSymbols = new HashTable from join(
 	       if R.?indexSymbols then apply(pairs R.indexSymbols, (nm,x) -> nm => new RM from rawPromote(raw RM,raw x)) else {},
 	       apply(num, i -> M.generatorSymbols#i => RM_i)
@@ -343,131 +363,11 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o.MonomialOrder = selmo(v,o.MonomialOrder);
      o.Variables = o.Variables_v;
      o.Degrees = o.Degrees_v;
-     o.DegreesRing=degreesRing R;
-     o.AddDegreesRing=addDegreesRing R;
      o = new OptionTable from o;
      (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
 
 antipode = method();
 antipode RingElement := (f) -> new ring f from rawAntipode raw f;
-
--- factorized stuff
-leadCoeff = x -> ( -- iterated leadCoefficient
-    R := ring x;
-    if class R === PolynomialRing then leadCoeff leadCoefficient x else
-    if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
-    x);
-
-FactPolynomialRing = new Type of PolynomialRing; -- seems useless to define a new type...
-FactPolynomialRing.synonym = "factorized polynomial ring";
-coefficientRing FactPolynomialRing := R -> coefficientRing last R.baseRings; -- ... except for that
-fact FactPolynomialRing := R -> R; -- and that :) and a few more below
-expression FactPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression fact) (expression last R.baseRings)
-describe FactPolynomialRing := R -> Describe (expression fact) (describe last R.baseRings)
-fact FractionField := F -> frac(fact last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
-
-commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
-subPairs := (a,b) -> fusePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
-
-fact PolynomialRing := R -> (
-    local Rf;
-    if R.?fact then (
-    	Rf=R.fact;
-     	)
-    else (
-	Rf=new FactPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
-	R.fact=Rf;
-	Rf.baseRings=append(R.baseRings,R);
-	commonEngineRingInitializations Rf;
-	if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
---	expression Rf := a -> (expression a#0)* new Product from apply(a#1,(f,e)->new Power from (expression f,e)); -- a#0 *must* be a constant (or a monomial if Inverses=true). in principle it gets converted automatically to expression by *
-        expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e); -- subtly different from the above
-	factor Rf := opts -> a -> new Product from apply((if a#0 != 1 then {(a#0,1)} else {})|a#1,u->new Power from u); -- we have to include a#0 in the product so it doesn't get expression'ed, and raise it to the power 1, to follow the convention of usual factor. for now, ignores options
-	value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1)); -- should we cache it? can't really cache except in ring itself which sucks
-	raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
-	if (options R).Inverses then (
-	denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
-	numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) }; 
-	)
-	else
-	(
-	denominator Rf := a -> new Rf from { denominator a#0, {} };
-	numerator Rf := a -> new Rf from { numerator a#0, a#1 }; 
-	);
-	new Rf from R := (A,a) -> (
-	    if (options R).Inverses then (
-		-- a bit of a hack if a==0, but works
-		minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
-		a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial.
-		c:=R_minexps;
-		)
-	    else c = 1_R;
-	    fe := toList apply append(rawFactor raw a,(f,e)->(
-		    ff:=new R from f;
-		    if (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
-		    if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
-		);
-	    if liftable(fe#0#0,R.basering) then (
-		-- factory returns the possible constant factor in front
-		assert(fe#0#1 == 1);
-		c = c*(fe#0#0);
-		fe=drop(fe,1);
-		);
-	    { c, -- constant term
-		sort fe }  -- technically the sort should be on f, not on fe -- but should be the same. warning, do not change/remove sorting, needed by mergePairs
-	    );
-	new Rf from RawRingElement := (A,a) -> new Rf from (new R from a); -- promote uses this
-	-- various redefinitions (there might be a more clever way to automate this?)
-	Rf.generators=apply(generators R,a->new Rf from a);
-	Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
-	Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
-	Rf#0=new Rf from { 0_R, {} };
-	Rf#1=new Rf from { 1_R, {} };
-	-- then operations!
-	Rf * Rf := (a,b) -> if a#0===0_R or b#0===0_R then 0_Rf else new Rf from { a#0*b#0, mergePairs(a#1,b#1,plus) }; -- ha!
-	Rf ^ ZZ := (a,n) -> (
-	if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else if a#1 =!= {} then error "division is not defined in this ring" else new Rf from {(a#0)^n,{}} -- negative value of n can only occur for constant/monomial
-	);
-	- Rf := a -> new Rf from { -a#0, a#1 };
-	-- to avoid #321
-	--    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), if a#0==0 then b#1 else if b#0==0 then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
-	--    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
-	gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), if a#0===0_R then b#1 else if b#0===0_R then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
-	lcm (Rf, Rf) := (a,b) -> a*(b//gcd(a,b)); -- yuck (there's no rawLCM)
-	Rf // Rf := (a,b) -> (
-	    if a#0===0_R then return 0_Rf;
-	    mn:=subPairs(a#1,b#1);
-	    mp:=subPairs(b#1,a#1);
-      	    if mn==={} and (a#0)%(b#0)===0_R then new Rf from { (a#0)//(b#0), mp } else new Rf from ((value new Rf from {a#0,mp})//(value new Rf from {b#0,mn}))
-	);
-	Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
-	Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
-	Rf == Rf := (a,b) -> ( c:=gcd(a,b); value(a//c) == value(b//c) ); -- this is almost, but not quite the same as asking for equality of every factor (!)
-        --Rf == Rf := (a,b) -> ( -- understand cryptic remark above
-	--    );
-	-- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
-	RingMap Rf := (p,x) -> (
-     	R := source p;
-     	S := target p;
-	local pp;
-     	if R === ring x then pp = a -> promote(rawRingMapEval(raw p,raw a),S) else pp = a -> promote(rawRingMapEval(raw p,raw promote(a,R)),S);
-    	-- should perhaps test if promote is possible, else error "ring element not in source of ring map, and not promotable to it";
-	(pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
-	);
-	-- experimental
-	lowestPart(ZZ,Rf) := (d,x) -> lowestPart x; -- no checking performed
-	lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e);
-	remove(Rf,symbol vars); -- in case R had already cached its vars
-	);
-	Rf
-    );
-
--- this is an optimization: the product would take forever
-FactPolynomialRing _ List := (R,v) -> (
-    R0 := last R.baseRings;
-    if (options R).Inverses then new R from { R0_v, {} }
-    else new R from { 1_R, sort apply(#v, i-> (R0_i,v#i)) }
-    );
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

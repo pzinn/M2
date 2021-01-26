@@ -73,6 +73,7 @@ export {
 	"AfterPrint",
 	"Algorithm",
 	"Alignment",
+	"AngleBarList",
 	"Array",
 	"Ascending",
 	"AssociativeExpression",
@@ -262,7 +263,6 @@ export {
 	"Manipulator",
 	"MapExpression",
 	"Matrix",
-	"MatrixDegreeExpression",
 	"MatrixExpression",
 	"MaxReductionCount",
 	"MaximalRank",
@@ -456,6 +456,7 @@ export {
 	"\\",
 	"\\\\",
 	"]",
+       "<|", "|>",
 	"^",
 	"^*",
 	"^**",
@@ -1081,6 +1082,7 @@ export {
 	"sheafExt",
 	"sheafHom",
 	"shield",
+	"short",
 	"show",
 	"showClassStructure",
 	"showHtml",
@@ -1211,7 +1213,10 @@ export {
 	"|-",
 	"||",
 	"}",
-	"~"
+	"~",
+	-- experimental
+	"BlockMatrix",
+	"CompactMatrix"
 }
 
 export {

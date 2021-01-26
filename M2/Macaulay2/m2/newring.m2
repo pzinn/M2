@@ -29,11 +29,11 @@ newRing QuotientRing := opts -> R -> (
      S := newRing(A, opts);
      if numgens S != numgens R then error "newRing: cannot change the number of variables";
      S / image substitute(p,vars S))
-newRing FactPolynomialRing := opts -> (R) -> (
+-* newRing FactPolynomialRing := opts -> (R) -> (
     R0 := newRing(last R.baseRings,opts);
     fact R0
     );
-
+*-
 -----------------------------
 -- tensor product of rings --
 -----------------------------

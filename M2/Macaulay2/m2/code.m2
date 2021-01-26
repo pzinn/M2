@@ -46,7 +46,7 @@ codeFunction := (f,depth) -> (
 	  else stack(
 	       syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
 	       getSourceLines locate f,
-	       if #syms > 0 then indent listSymbols syms,
+	       if #syms > 0 then indent net listSymbols syms,
 	       if codeHelper#?(functionBody f) 
 	       then toSequence apply(
 		    codeHelper#(functionBody f) f, 

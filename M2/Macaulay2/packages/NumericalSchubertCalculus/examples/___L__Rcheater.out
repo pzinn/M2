@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: -1537369413
-i1 : R := ZZ;
-i2 : n := 6;
-i3 : m := matrix{{3, 2, 4, 6}};
+i1 : R := ZZ;
+i2 : n := 6;
+i3 : m := matrix{{3, 2, 4, 6}};
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{1}\,\longleftarrow \,{\mathbb Z}^{4}$
-i4 : t := LRtriple(n,m);
+ </pre>${\mathbb Z}^{1}\,\longleftarrow \,{\mathbb Z}^{4}$
+i4 : t := LRtriple(n,m);
 PHCv2.4.78 released 2020-06-30
 
 the input data for phc -e : 
@@ -16,7 +16,7 @@ the input data for phc -e :
 0
 0
 0
-/tmp/M2-478611-0/3PHCout
+/tmp/M2-1242500-0/3PHCout
 0
 y
 y
@@ -24,9 +24,9 @@ y
 0
 0
 
-writing data to file /tmp/M2-478611-0/2PHCip
-running phc -e, session output to /tmp/M2-478611-0/4PHCses
-                writing output to /tmp/M2-478611-0/3PHCout
-opening output file /tmp/M2-478611-0/5PHCsolutions
-i5 : w := wrapTriplet(t);
-i6 : 
+writing data to file /tmp/M2-1242500-0/2PHCip
+running phc -e, session output to /tmp/M2-1242500-0/4PHCses
+                writing output to /tmp/M2-1242500-0/3PHCout
+opening output file /tmp/M2-1242500-0/5PHCsolutions
+i5 : w := wrapTriplet(t);
+i6 : 

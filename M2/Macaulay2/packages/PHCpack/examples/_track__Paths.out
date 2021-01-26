@@ -1,11 +1,11 @@
 -- -*- M2-comint -*- hash: 1872084070
-i1 : R = CC[x,y];
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-i3 : (m,q,qsols) = mixedVolume(f,StartSystem=>true);
-i4 : fsols = trackPaths(f,q,qsols)
+i1 : R = CC[x,y];
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : (m,q,qsols) = mixedVolume(f,StartSystem=>true);
+i4 : fsols = trackPaths(f,q,qsols)
 
-o4 = $\left\{\left\{-{.894935}-{.624334}\,\mathbf{i},\,{.143333}+{1.14868}\,\mathbf{i}\right\},\,\left\{-{1.59272}+{2.61012}\cdot 10^{-54}\,\mathbf{i},\,{.964857}-{4.0934}\cdot 10^{-55}\,\mathbf{i}\right\},\,\left\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\right\},\,\left\{{1.33076}+{.335184}\,\mathbf{i},\,-{.62414}-{.513163}\,\mathbf{i}\right\},\,\left\{{1.33076}-{.335184}\,\mathbf{i},\,-{.62414}+{.513163}\,\mathbf{i}\right\},\,\left\{-{.764107}+{4.59177}\cdot 10^{-41}\,\mathbf{i},\,-{.544612}-{9.18355}\cdot 10^{-41}\,\mathbf{i}\right\},\,\left\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\right\},\,\left\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{-{.894935}-{.624334}\,\mathbf{i},\,{.143333}+{1.14868}\,\mathbf{i}\right\},\,\left\{-{1.59272}+{2.61012}\cdot 10^{-54}\,\mathbf{i},\,{.964857}-{4.0934}\cdot 10^{-55}\,\mathbf{i}\right\},\,\left\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\right\},\,\left\{{1.33076}+{.335184}\,\mathbf{i},\,-{.62414}-{.513163}\,\mathbf{i}\right\},\,\left\{{1.33076}-{.335184}\,\mathbf{i},\,-{.62414}+{.513163}\,\mathbf{i}\right\},\,\left\{-{.764107}+{4.59177}\cdot 10^{-41}\,\mathbf{i},\,-{.544612}-{9.18355}\cdot 10^{-41}\,\mathbf{i}\right\},\,\left\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\right\},\,\left\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
-i5 : 
+o4 : <pre style="display:inline">
+List</pre>
+i5 : 

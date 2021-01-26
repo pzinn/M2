@@ -1,15 +1,15 @@
 -- -*- M2-comint -*- hash: 1595779360
-i1 : X = coincidentRootLocus(3,2,2)
+i1 : X = coincidentRootLocus(3,2,2)
 
-o1 = $<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-i2 : polarDegrees X
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
+i2 : polarDegrees X
 
-o2 = $\left\{36,\,80,\,66,\,24\right\}$
+o2 = $\left\{36,\,80,\,66,\,24\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
-i3 : 
+o2 : <pre style="display:inline">
+List</pre>
+i3 : 

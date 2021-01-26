@@ -326,7 +326,7 @@ getNonUnit = R -> if R.?Engine and R.Engine then (
      if r != 0 then new R from r)
 
 
-FactPolynomialRing / Ideal := QuotientRing => (F,I) -> I.cache.QuotientRing = (last F.baseRings)/((map(last F.baseRings,F))I);
+-- FactPolynomialRing / Ideal := QuotientRing => (F,I) -> I.cache.QuotientRing = (last F.baseRings)/((map(last F.baseRings,F))I);
 -- possibly temp: we lose factoring when taking quotients. though seems reasonable
 
 -- nextPrime and getPrimeWithRootOfUnity, written by Frank Schreyer.

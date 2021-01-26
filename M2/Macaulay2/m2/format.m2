@@ -119,7 +119,9 @@ scan({net, info},
 	parser' HypertextContainer := x -> (BK, apply(toSequence x, parser'), BK);
 	-- rendering for special types
 	parser' String := identity;
-	parser' Option := x -> ();
+	parser' COMMENT :=
+	parser' LITERAL :=
+	parser' Option  := x -> ();
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
@@ -160,14 +162,15 @@ info HEADER3 := Hop(info,"-")
 net  HR :=
 info HR := x -> concatenate(printWidth:"-")
 
-net  TT :=
-info TT := x -> concatenate toSequence noopts x   -- should just be strings here
+net  PRE  :=
+net   TT  :=
+net CODE  :=
+info TT   :=
+info CODE :=  x -> horizontalJoin apply(noopts x,net)
 
-net  PRE := x -> net concatenate x
-info PRE := x -> wrap(printWidth, "-", net concatenate noopts x)
+info PRE  := x -> wrap(printWidth, "-", concatenate apply(noopts x,toString))
 
-net  CODE :=
-info CODE := x -> stack lines concatenate noopts x
+net TH := Hop(net, "-")
 
 ULop := op -> x -> (
      s := "  * ";
@@ -211,19 +214,23 @@ info HREF := x -> (
      if #x === 1 then x#0
      else if match ("^mailto:",x#0) then toString x#1
      -- x#0 is sometimes the relative path to the file, but not from the current directory
-     else toString x#1 | " (see " | x#0 | " )")
+     else (
+	  r := horizontalJoin \\ net \ toList splice drop(x, 1);
+	  r | " (see " | x#0 | " )"
+	  )
+     )
 
 net TABLE :=  x -> (
      (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", toList \ toList ag);
+     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, noopts \ toList \ toList sequence ag);
      printWidth = save;
      r)
 info TABLE := x -> (
      s := printWidth;
      if printWidth > 2 then printWidth = printWidth - 2;
-     ret := netList(Boxes=>true, applyTable(toList \ noopts \\ toList x,info));
+     ret := netList(Boxes=>true, applyTable(noopts \ toList \ noopts \\ toList x,info));
      printWidth = s;
      ret)
 

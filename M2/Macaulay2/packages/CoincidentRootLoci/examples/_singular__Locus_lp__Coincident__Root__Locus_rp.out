@@ -1,21 +1,21 @@
 -- -*- M2-comint -*- hash: 764798863
-i1 : X = coincidentRootLocus {3,2,2,1,1,1,1}
+i1 : X = coincidentRootLocus {3,2,2,1,1,1,1}
 
-o1 = $<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
+o1 = $<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
 
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-i2 : singularLocus X
+o1 : <pre style="display:inline">
+CoincidentRootLocus</pre>
+i2 : singularLocus X
 
-o2 = $\left\{<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}\right\}$
+o2 = $\left\{<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\},\,<pre style="display:inline">
+CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
-i3 : 
+o2 : <pre style="display:inline">
+List</pre>
+i3 : 

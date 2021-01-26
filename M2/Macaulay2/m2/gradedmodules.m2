@@ -38,6 +38,14 @@ net GradedModule := C -> (
 	  printWidth = savePW;
 	  res))
   
+texUnder = (x,y) -> "\\underset{\\vphantom{\\Big|}"|y|"}{"|x|"}"
+
+texMath GradedModule := C -> (
+     s := sort spots C;
+     if # s === 0 then "0"
+     else demark("\\quad ",apply(s,i->texUnder(texMath C_i,i)))
+      )
+
 length GradedModule := (M) -> (
      s := spots M;
      if #s === 0 then 0 else max s - min s)
@@ -47,7 +55,7 @@ GradedModuleMap.synonym = "graded module map"
 source GradedModuleMap := GradedModule => f -> f.source
 target GradedModuleMap := GradedModule => f -> f.target
 ring GradedModuleMap := (f) -> ring source f
-net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are essentially identical -- merge? except the weird intersection vs union???
+net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are essentially identical...
      d := f.degree;
      v := between("",
 	  apply( sort toList (
@@ -63,6 +71,13 @@ net GradedModuleMap := f -> (  -- net GradedModule & net ChainComplexMap are ess
 	  );
      if # v === 0 then "0"
      else stack v)
+
+texMath GradedModuleMap := f -> (
+     d := f.degree;
+     s := sort intersection(spots f.source, spots f.target / (i -> i - d));
+     texMath if #s === 0 then ZERO else new VerticalList from apply(s,i-> expression(i+d) : MapExpression { target f_i, source f_i, f_i } : expression i)
+)
+
 
 GradedModuleMap _ ZZ := Matrix => (f,i) -> (
      if f#?i then f#i else map((target f)_(i+f.degree),(source f)_i,0)

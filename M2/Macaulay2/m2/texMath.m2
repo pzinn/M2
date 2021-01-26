@@ -42,11 +42,15 @@ texMath' (Function, GradedModule) := (texMath,C) -> (
 
 
 
+
 texMath' (Function, ChainComplex) := (texMath,C) -> (
      complete C;
      s := sort spots C;
      if # s === 0 then "0" else
-     concatenate apply(s,i->if i==s#0 then texUnder(texMath C_i,i) else "\\,\\xleftarrow{\\scriptsize " | texMathShort'(texMath,C.dd_i) | "}\\," | texUnder(texMath C_i,i) )
+     concatenate apply(s,i->(
+	     if i>s#0 then "\\,\\xleftarrow{" | texMath short C.dd_i | "}\\,",
+	     texUnder(texMath C_i,i)
+	     ))
       )
 
 texMath BettiTally := v -> (
@@ -214,34 +218,48 @@ texMath' (Function, Table) := (texMath,m) -> (
 	"\\end{array}}")
 )
 
-texMath' (Function, MatrixExpression) := (texMath,m) -> (
-    if all(m,r->all(r,i->class i===ZeroExpression)) then "0"
-    else concatenate(
-	"\\begin{pmatrix}" | newline,
-	between(///\\/// | newline, apply(toList m, row -> concatenate between("&",apply(row,texMath)))),
-	"\\end{pmatrix}"
+texMath' (Function, MatrixExpression) := (texMath,x) -> (
+    (opts,m) := matrixOpts x;
+    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
+    if opts.BlockMatrix =!= null then ( j := 1; h := 0; );
+--    texMath1 := if opts.CompactMatrix then texMath else x -> "\\displaystyle "|texMath x;
+    m = applyTable(m,texMath);
+    concatenate(
+	if opts.Degrees =!= null then (
+	    degs := apply(opts.Degrees#0,texMath);
+	    if opts.CompactMatrix then "\\begin{smallmatrix}" else "\\begin{array}{l}",
+	    apply(#m, i -> degs#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
+	    if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}"
+	    ),
+	"\\left(",
+	if opts.CompactMatrix then "\\begin{smallmatrix}" else {
+	    "\\!\\begin{array}{",
+	    if opts.BlockMatrix =!= null then demark("|",apply(opts.BlockMatrix#1,i->i:"c")) else #m#0:"c",
+	    "}"
+	    },
+	newline,
+	apply(#m, i -> concatenate(
+		if opts.Degrees =!= null then "\\vphantom{"| degs#i | "}",
+		 between("&",m#i),
+		 "\\\\",
+		 newline,
+		 if opts.BlockMatrix =!= null then if h<#opts.BlockMatrix#0-1 and j == opts.BlockMatrix#0#h then (j=0; h=h+1; "\\hline\n") else (j=j+1;)
+		 )),
+	if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\right)"
 	)
-    )
-
-texMath' (Function, MatrixDegreeExpression) := (texMath,m) -> if all(m#0,r->all(r,i->class i===ZeroExpression)) then "0" else concatenate(
-    mat := applyTable(m#0,if compactMatrixForm then texMath else x -> "\\displaystyle "|texMath x);
-    deg := apply(m#1,texMath);
-    "\\begin{matrix}",
-    between(///\\///,apply(#mat, i -> deg#i | "\\vphantom{" | concatenate mat#i | "}")),
-    "\\end{matrix}",
-    "\\begin{pmatrix}" | newline,
-    between(///\\/// | newline, apply(#mat, i -> "\\vphantom{"| deg#i | "}" | concatenate between("&",mat#i))),
-    "\\end{pmatrix}"
-    )
-
+)
 
 texMath' (Function, VectorExpression) := (texMath,v) -> (
-     concatenate(
-	 "\\begin{pmatrix}" | newline,
-	 between(///\\///,apply(toList v,texMath)),
-	 "\\end{pmatrix}"
-	 )
-     )
+    concatenate(
+	"\\left(",
+	if compactMatrixForm then "\\begin{smallmatrix}" else "\\!\\begin{array}{c}",
+	newline,
+	between(///\\///,apply(toList v,texMath)),
+	if compactMatrixForm then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\right)"
+	)
+    )
 
 texMath' (Function, RR) := (texMath,x) -> if not isANumber x then texMath toString x else if isInfinite x then if x>0 then texMath infinity else texMath (-infinity) else "{"|format(printingPrecision,printingAccuracy,printingLeadLimit,printingTrailLimit,"}\\cdot 10^{",x)|"}"
 
@@ -286,7 +304,9 @@ texMathTable := new HashTable from {
     pi => "\\pi ",
     EulerConstant => "\\gamma ",
     ii => "\\mathbf{i}",
-    OO => "\\mathcal{O}"
+    OO => "\\mathcal{O}",
+    symbol <| => "\\langle",
+    symbol |> => "\\rangle"
     }
 
 -- experimental change (same with toString, net, etc)

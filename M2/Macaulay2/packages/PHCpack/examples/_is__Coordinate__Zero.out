@@ -1,25 +1,25 @@
 -- -*- M2-comint -*- hash: 285553619
-i1 : R = CC[x,y];
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-i3 : fSols = solveSystem(f, randomSeed=>3);
-i4 : fSols/print
-$\left\{-1,\,{0}\right\}$
-$\left\{1,\,{0}\right\}$
-$\left\{-{1.59272}+{2.45455}\cdot 10^{-91}\,\mathbf{i},\,{.964857}-{1.22727}\cdot 10^{-91}\,\mathbf{i}\right\}$
-$\left\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\right\}$
-$\left\{-{.764107}-{1.96364}\cdot 10^{-90}\,\mathbf{i},\,-{.544612}+{7.85455}\cdot 10^{-90}\,\mathbf{i}\right\}$
-$\left\{{1.33076}-{.335184}\,\mathbf{i},\,-{.62414}+{.513163}\,\mathbf{i}\right\}$
-$\left\{-{.894935}-{.624334}\,\mathbf{i},\,{.143333}+{1.14868}\,\mathbf{i}\right\}$
-$\left\{{1.33076}+{.335184}\,\mathbf{i},\,-{.62414}-{.513163}\,\mathbf{i}\right\}$
-$\left\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\right\}$
-$\left\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\right\}$
+i1 : R = CC[x,y];
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : fSols = solveSystem(f, randomSeed=>3);
+i4 : fSols/print
+$\left\{-1,\,{0}\right\}$
+$\left\{1,\,{0}\right\}$
+$\left\{-{1.59272}+{2.45455}\cdot 10^{-91}\,\mathbf{i},\,{.964857}-{1.22727}\cdot 10^{-91}\,\mathbf{i}\right\}$
+$\left\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\right\}$
+$\left\{-{.764107}-{1.96364}\cdot 10^{-90}\,\mathbf{i},\,-{.544612}+{7.85455}\cdot 10^{-90}\,\mathbf{i}\right\}$
+$\left\{{1.33076}-{.335184}\,\mathbf{i},\,-{.62414}+{.513163}\,\mathbf{i}\right\}$
+$\left\{-{.894935}-{.624334}\,\mathbf{i},\,{.143333}+{1.14868}\,\mathbf{i}\right\}$
+$\left\{{1.33076}+{.335184}\,\mathbf{i},\,-{.62414}-{.513163}\,\mathbf{i}\right\}$
+$\left\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\right\}$
+$\left\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\right\}$
 
-o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
+o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
-i5 : isCoordinateZero(fSols_0,1,1.0e-10)
+o4 : <pre style="display:inline">
+List</pre>
+i5 : isCoordinateZero(fSols_0,1,1.0e-10)
 
-o5 = <pre style="display:inline">
-true</pre>
-i6 : 
+o5 = <pre style="display:inline">
+true</pre>
+i6 : 

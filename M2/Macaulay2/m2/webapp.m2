@@ -2,14 +2,14 @@
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,(18,36),(36,17)),ascii);
-    (webAppEndTag,            -- closing tag ~ </span> or </p>
-	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
+webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
+    (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
+	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
+	webAppCellEndTag,     -- closing tag for cell ~ </p>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
-	webAppTextTag,        -- other text ~ <span class='M2Text'>
 	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
@@ -44,7 +44,7 @@ htmlInside = x -> htmlInner(x,false); -- only used at top level -- no recursing 
 -- output routines for WebApp mode
 
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
-    webAppEndTag, -- close previous cell
+    webAppCellEndTag, -- close previous cell
     webAppCellTag,
     interpreterDepth:"i",
     toString lineno,
@@ -133,6 +133,7 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
+    compactMatrixForm = false;
     -- the help hack: if started in WebApp mode, help is compiled in it as well
     processExamplesLoop ExampleItem := (x->new LITERAL from replace("\\$\\{prefix\\}","usr",x#0)) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
@@ -140,38 +141,31 @@ if topLevelMode === WebApp then (
     -- the print hack
     print = x -> if topLevelMode === WebApp then (
 	y := htmlInside x; -- we compute the html now (in case it produces an error)
+	if class y =!= String then error "invalid html output";
 	<< webAppHtmlTag | y | webAppEndTag << endl;
 	) else ( << net x << endl; );
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
-    -- the userSymbols hack
-    listSymbols List := x -> TABLE prepend(
-     apply({"symbol", "class", "value", "location of symbol"},
-	 s->style(TH s,"text-decoration"=>"underline","text-align"=>"left")),
-     apply(x, s -> {s,class value s,value s,TT symbolLocation s})
+    -- the userSymbols hack: by now mostly differs in "robust" stuff
+    listSymbols List := x -> Describe TABLE prepend(
+     apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
+     apply(x, y -> apply({y,short class value y,short value y,TT symbolLocation y},s->TD {s}))
      );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
-    htmlLiteral = (s -> if s===null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
+    htmlLiteral = (s -> if s === null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
     -- but should affect html Thing differently:
-    htmlLiteral1 := s -> if s === null or regex("<|&|]]>|\42", s) === null then s else (
-	ss := separate(webAppTagsRegex,s);
-	depth := 0; len := 0; sss := "";
-	scan(ss, x -> (
-		sss = sss | (if depth == 0 then htmlLiteral0 x else x);
-		len=len+#x;
-		if len<#s then (
-		    if s#len === webAppEndTag then depth=depth-1 else depth=depth+1;
-		    sss = sss | s#len;
-		    len=len+1;
-		    )
-		));
-	sss);
+    htmlLiteral1 := s -> if s === null then s else (
+	depth := -1;
+	concatenate apply(separate("(?="|webAppTagsRegex|")",s), x -> (
+		if #x>0 and x#0 === webAppEndTag then depth=depth-1 else depth=depth+1;
+		if depth <= 0 then htmlLiteral0 x else x
+		)));
     html Monoid :=
     html RingFamily :=
     html Ring :=
-    html Thing := htmlLiteral1 @@ tex;
+    html Thing := htmlLiteral1 @@ tex; -- ugly
 )
 -- obsolete -- function below used to be activated with texMath <- texMath[Color]Wrapper
 -- the debug hack -- the rawhtml is TEMP, of course. currently deactivated

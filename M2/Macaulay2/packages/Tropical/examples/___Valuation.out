@@ -1,13 +1,13 @@
 -- -*- M2-comint -*- hash: 1991115338
-i1 : QQ[x,y, z];
-i2 : I=ideal(x+y+z);
+i1 : QQ[x,y, z];
+i2 : I=ideal(x+y+z);
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[x,\,y,\,z\right]$
-i3 : tropicalVarietyWithVal (I,Valuation=>7)
+ of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
+i3 : tropicalVarietyWithVal (I,Valuation=>7)
 
-o3 = <pre style="display:inline">
+o3 = <pre style="display:inline">
 _application PolyhedralFan
 _version 2.2
 _type PolyhedralFan
@@ -63,6 +63,6 @@ MAXIMAL_CONES
 {0 3}
 
 
-</pre>
-i4 : 
-
+</pre>
+i4 : 
+

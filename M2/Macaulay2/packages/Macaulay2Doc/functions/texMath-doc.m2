@@ -54,7 +54,6 @@ undocumented {
 	(texMath, IndexedVariableTable),
 	(texMath, MapExpression),
 	(texMath, Matrix),
-	(texMath, MatrixDegreeExpression),
 	(texMath, Module),
         (texMath, MutableList),
 	(texMath, MutableMatrix),
@@ -88,7 +87,7 @@ document {
 	  String => {TT "x", " converted to TeX math format"}
 	  },
      "The main difference between this and ", TO tex, " is that the
-     surrouding dollar signs aren't there.",
+     surrounding dollar signs aren't there.",
      EXAMPLE {
 	  "R = ZZ[x];",
       	  "texMath (x-1)^6",

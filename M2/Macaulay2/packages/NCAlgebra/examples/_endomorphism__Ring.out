@@ -1,241 +1,253 @@
 -- -*- M2-comint -*- hash: 1964516983
-i1 : Q = QQ[a,b,c]
+i1 : Q = QQ[a,b,c]
 
-o1 = $Q$
+o1 = $Q$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
-i2 : R = Q/ideal{a*b-c^2}
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
+i2 : R = Q/ideal{a*b-c^2}
 
-o2 = $R$
+o2 = $R$
 
-o2 : <pre style="display:inline">
-QuotientRing</pre>
-i3 : kRes = res(coker vars R, LengthLimit=>7)
+o2 : <pre style="display:inline">
+QuotientRing</pre>
+i3 : kRes = res(coker vars R, LengthLimit=>7)
 
-o3 = $\underset{\vphantom{\Bigg|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
-a&amp;b&amp;c\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}1}{R^{3}}\,\xleftarrow{\left(\begin{smallmatrix}
+o3 = $\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
+a&amp;b&amp;c\\
+\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}1}{R^{3}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-c&amp;b&amp;0\\
 -c&amp;0&amp;0&amp;a\\
-b&amp;a&amp;-c&amp;-c\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}2}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
+b&amp;a&amp;-c&amp;-c\\
+\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}2}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 a&amp;0&amp;0&amp;c\\
 0&amp;b&amp;c&amp;0\\
 0&amp;c&amp;a&amp;0\\
-c&amp;0&amp;0&amp;b\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}3}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
+c&amp;0&amp;0&amp;b\\
+\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}3}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 -b&amp;0&amp;0&amp;-c\\
 0&amp;-a&amp;-c&amp;0\\
 0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}4}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
+c&amp;0&amp;0&amp;a\\
+\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}4}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;0&amp;-c\\
 -b&amp;0&amp;-c&amp;0\\
 c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}5}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
+0&amp;c&amp;0&amp;b\\
+\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}5}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;-c&amp;0\\
 -b&amp;0&amp;0&amp;-c\\
 0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}6}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
+c&amp;0&amp;0&amp;a\\
+\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}6}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;0&amp;-c\\
 -b&amp;0&amp;-c&amp;0\\
 c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b\end{smallmatrix}\right)}\,\underset{\vphantom{\Bigg|}7}{R^{4}}$
+0&amp;c&amp;0&amp;b\\
+\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}7}{R^{4}}$
 
-o3 : <pre style="display:inline">
-ChainComplex</pre>
-i4 : M = coker kRes.dd_5
+o3 : <pre style="display:inline">
+ChainComplex</pre>
+i4 : M = coker kRes.dd_5
 
-o4 = $<pre style="display:inline">
-cokernel</pre>\ \begin{matrix}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\end{matrix}\begin{pmatrix}
+o4 = $<pre style="display:inline">
+cokernel</pre>\ \begin{array}{l}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\\\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;-a&amp;0&amp;-c\\
 \vphantom{\left\{4\right\}}-b&amp;0&amp;-c&amp;0\\
 \vphantom{\left\{4\right\}}c&amp;0&amp;a&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;c&amp;0&amp;b\end{pmatrix}$
+\vphantom{\left\{4\right\}}0&amp;c&amp;0&amp;b\\
+\end{array}\!\right)$
 
-o4 : $R$<pre style="display:inline">
+o4 : $R$<pre style="display:inline">
 -module</pre><pre style="display:inline">
-, quotient of </pre>$R^{4}$
-i5 : B = endomorphismRing(M,X)
+, quotient of </pre>$R^{4}$
+i5 : B = endomorphismRing(M,X)
 
-o5 = $<pre style="display:inline">
-B</pre>$
+o5 = $<pre style="display:inline">
+B</pre>$
 
-o5 : <pre style="display:inline">
-NCQuotientRing</pre>
-i6 : gensI = gens ideal B
+o5 : <pre style="display:inline">
+NCQuotientRing</pre>
+i6 : gensI = gens ideal B
 
-o6 = $\left\{<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
+o6 = $\left\{<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{1},\,{X}_{1}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots2\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{3},\,{X}_{3}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
-i7 : gensIMin = minimizeRelations(gensI)
+o6 : <pre style="display:inline">
+List</pre>
+i7 : gensIMin = minimizeRelations(gensI)
 
-o7 = $\left\{<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{2},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{0},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
+o7 = $\left\{<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{2},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{0},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,-1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{0},\,{X}_{0}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\},\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
+CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\},\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
+HashTable</pre>\left\{<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{{X}_{2},\,{X}_{2}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCPolynomialRing</pre>\left\{\ldots38\ldots\right\}\right\}\,\Rightarrow\,1\right\}\right\}\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
-i8 : maps = B.cache.endomorphismRingGens
+o7 : <pre style="display:inline">
+List</pre>
+i8 : maps = B.cache.endomorphismRingGens
 
-o8 = $\left\{\begin{matrix}\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\end{matrix}\begin{pmatrix}
+o8 = $\left\{\begin{array}{l}\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\\\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;0&amp;1&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0\end{pmatrix},\,\begin{matrix}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\\\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0\\
+\end{array}\!\right),\,\begin{array}{l}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\\\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;1&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\end{pmatrix},\,\begin{matrix}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\\\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\end{array}\!\right),\,\begin{array}{l}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\\\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\\\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1\\
 \vphantom{\left\{4\right\}}1&amp;0&amp;0&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\end{pmatrix},\,\begin{matrix}\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\end{matrix}\begin{pmatrix}
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
+\end{array}\!\right),\,\begin{array}{l}\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\\\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}1&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1\end{pmatrix}\right\}$
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1\\
+\end{array}\!\right)\right\}$
 
-o8 : <pre style="display:inline">
-List</pre>
-i9 : maps_3 == maps_0*maps_2
+o8 : <pre style="display:inline">
+List</pre>
+i9 : maps_3 == maps_0*maps_2
 
-o9 = <pre style="display:inline">
-true</pre>
-i10 : 
+o9 = <pre style="display:inline">
+true</pre>
+i10 : 

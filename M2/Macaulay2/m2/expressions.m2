@@ -533,22 +533,24 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-expressionValue MatrixExpression := x -> matrix applyTable(toList x,expressionValue)
-toString'(Function,MatrixExpression) := (fmt,m) -> concatenate(
-     "matrix {",
-     between(", ",apply(toList m,row->("{", between(", ",apply(row,fmt)), "}"))),
-     "}" )
-MatrixDegreeExpression = new HeaderType of Expression
-MatrixDegreeExpression.synonym = "matrix with degrees expression"
-expressionValue MatrixDegreeExpression := x -> (
-    m := expressionValue MatrixExpression x#0;
-    R := ring m;
-    n := degreeLength R;
-    if all(x#1|x#2, y->(class y === List and #y===n) or (class y === ZZ and n===1))
-    then map(R^(-x#1),R^(-x#2),entries m)
-    else m
+matrixOpts = x -> ( -- helper function
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
+    (opts,x) = override(opts,toSequence x);
+    if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
+    (opts,x)
     )
-toString'(Function,MatrixDegreeExpression) := (fmt,x) -> toString'(fmt,MatrixExpression x#0)
+expressionValue MatrixExpression := x -> (
+    (opts,m) := matrixOpts x;
+    m = matrix applyTable(m,expressionValue);
+    if opts.Degrees === null then m else (
+    R := ring m;
+    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
+    ))
+toString'(Function,MatrixExpression) := (fmt,x) -> concatenate(
+    (opts,m) := matrixOpts x;
+    "matrix {",
+    between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
+    "}" )
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -891,19 +893,14 @@ toCompactParen1 = x -> if precedence x < prec symbol * and class x =!= Minus the
 toCompactString Divide := x -> toCompactParen1 x#0 | "/" | toCompactParen1 x#1
 
 net MatrixExpression := x -> (
-    if all(x,r->all(r,i->class i===ZeroExpression)) then "0"
-    else (
-	x=applyTable(toList x,if compactMatrixForm then toCompactString else net);
-	netList(x,Boxes=>{false,{0,#x#0}},matrixDisplayOptions#compactMatrixForm)
-     ))
---html MatrixExpression := x -> html TABLE toList x
-
-net MatrixDegreeExpression := x -> (
-    if all(x#0,r->all(r,i->class i===ZeroExpression)) then "0"
-    else (
-	x=apply(#x#0,i->apply(prepend(x#1#i,x#0#i),if compactMatrixForm then toCompactString else net));
-	netList(x,Boxes=>{false,{1,#x#0}},matrixDisplayOptions#compactMatrixForm)
-     ))
+    (opts,m) := matrixOpts x;
+    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
+    net1 := if opts.CompactMatrix then toCompactString else net;
+    m = if opts.Degrees =!= null then apply(#m,i->apply(prepend(opts.Degrees#0#i,m#i),net1)) else applyTable(m,net1);
+    (hbox,vbox) := if opts.BlockMatrix =!= null then (drop(accumulate(plus,0,opts.BlockMatrix#0),-1),prepend(0,accumulate(plus,0,opts.BlockMatrix#1))) else (false,{0,#m#0});
+    if opts.Degrees =!= null then vbox = apply(vbox, i -> if i<#m#0 then i+1 else i);
+    netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#(opts.CompactMatrix))
+    )
 
 net VectorExpression := x -> (
     if all(x,i->class i===ZeroExpression) then "0"
@@ -1035,8 +1032,41 @@ expression Ring := lookup(expression,HashTable)
 expression RingFamily := lookup(expression,HashTable)
 -- strings -- uses texLiteral from latex.m2
 
--- experimental: new short type
-Short = new WrapperType of Expression
+-- shortening expressions
+Dots = new Type of Symbol
+texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
+toString Dots := net Dots := x -> "..."
+cdots=new Dots from symbol cdots
+ddots=new Dots from symbol ddots
+vdots=new Dots from symbol vdots
+ldots=new Dots from symbol ldots
+
+shortLength := 8
+short = method(Dispatch => Thing, TypicalValue => Expression)
+short Thing := short @@ expression
+short Expression := identity
+short MatrixExpression := x -> (
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
+    (opts,x) = override(opts,toSequence x);
+    m := toList x;
+    shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
+    new MatrixExpression from {
+	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
+	    else toList m,short),
+	CompactMatrix=>true
+	}
+    )
+short VectorExpression :=
+short VisibleList :=
+short Product :=
+short Sum := x -> apply(if #x>shortLength then new class x from {
+	first x,
+	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
+	last x
+	}
+    else x,short)
+short String := s -> if #s > shortLength then first s | "..." | last s else s
+short Net := n -> if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

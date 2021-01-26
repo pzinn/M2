@@ -12,7 +12,6 @@ toString Type := X -> (
 	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
 	  );
      concatenate(toString class X, " of ", toString parent X))
--*
 toString HashTable := s -> (
      concatenate (
 	  "new ", toString class s,
@@ -22,13 +21,14 @@ toString HashTable := s -> (
 	  then demark(", ", apply(pairs s, (k,v) -> toString k | " => " | toString v) )
 	  else "",
 	  "}"))
-*-
 toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
 toStringn := i -> if i === null then "" else toString i
-toString List := s -> concatenate(
+toString BasicList := s -> concatenate(
+     if class s =!= List then toString class s,
      "{", between(", ",apply(toList s,toStringn)), "}"
      )
 toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
+toString AngleBarList := s -> concatenate ( "<|", between(", ",toStringn \ toList s), "|>" )
 toString Sequence := s -> (
      if # s === 1 then concatenate("1 : (",toString s#0,")")
      else concatenate("(",between(",",toStringn \ s),")")
@@ -67,7 +67,9 @@ toString Manipulator := f -> (
 toExternalString String := format
 
 toString Net := x -> demark("\n",unstack x)
-toExternalString Net := x -> concatenate(format toString x, "^", toString(height x - 1))
+toExternalString Net := x -> if height x + depth x == 0 then
+     concatenate("(horizontalJoin())", "^", toString height x) else
+     concatenate(format toString x, "^", toString(height x - 1))
 
 toExternalString MutableHashTable := s -> (
      if hasAttribute(s,ReverseDictionary) then return toString getAttribute(s,ReverseDictionary);
@@ -102,11 +104,7 @@ toExternalString Sequence := s -> (
      else concatenate("(",mid s,")"))
 -----------------------------------------------------------------------------
 net Manipulator := toString
-net Thing := x -> ( y := expression x;
-    -- we need to avoid loops: objects whose expression is a Holder and whose net is undefined
-    if instance(y,Holder) and class y#0 === class x then toString x
-    else net y )
---net Thing := toString
+net Thing := toString
 -----------------------------------------------------------------------------
 net Symbol := toString
 File << Symbol := File => (o,s) -> o << toString s		    -- provisional
@@ -170,7 +168,10 @@ net Array := x -> horizontalJoin deepSplice (
      "[",
      toSequence between(comma,apply(x,netn)),
      "]")
--*
+net AngleBarList := x -> horizontalJoin deepSplice (
+     "<|",
+     toSequence between(comma,apply(x,netn)),
+     "|>")
 net BasicList := x -> horizontalJoin deepSplice (
       net class x, 
       "{",
@@ -198,7 +199,6 @@ net MutableHashTable := x -> (
 	  if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
 	  );
      horizontalJoin ( net class x, if #x > 0 then ("{...", toString(#x), "...}") else "{}" ))
-*-
 net Type := X -> (
      if hasAnAttribute X then (
 	  if hasAttribute(X,PrintNet) then return getAttribute(X,PrintNet);
@@ -269,7 +269,9 @@ commentize = method(Dispatch => Thing)
 commentize Nothing   := s -> ""
 commentize BasicList := s -> commentize horizontalJoin s
 commentize String    := s -> concatenate(" -- ", between("\n -- ", separate s))
-commentize Net       := S -> stack(commentize \ unstack S)
+commentize Net       := S -> (
+    baseline := height S - if height S == -depth S then 0 else 1;
+    (stack(commentize \ unstack S))^baseline)
 
 printerr = msg -> (stderr << commentize msg << endl;) -- always return null
 warning  = msg -> if debugLevel > 0 then (

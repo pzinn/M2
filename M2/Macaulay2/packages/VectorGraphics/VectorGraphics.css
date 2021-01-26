@@ -8,11 +8,10 @@ svg.M2Svg {
     stroke-opacity: 1;
     fill: none;
     fill-opacity: 1;
-    cursor: grab;
 }
 
-.katex svg.M2Svg path { /* because of KaTeX annoying def */
-    stroke: inherit;
+svg.M2SvgClickable {
+    cursor: grab;
 }
 
 svg.M2Svg text {

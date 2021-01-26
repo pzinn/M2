@@ -1,58 +1,58 @@
 -- -*- M2-comint -*- hash: 704393788
-i1 : R = QQ[x,y,z]
+i1 : R = QQ[x,y,z]
 
-o1 = $R$
+o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
-i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
-i3 : S = bertiniPosDimSolve F
+o2 : <pre style="display:inline">
+List</pre>
+i3 : S = bertiniPosDimSolve F
 
-o3 = $<pre style="display:inline">
-S</pre>$
+o3 = $<pre style="display:inline">
+S</pre>$
 
-o3 : <pre style="display:inline">
-NumericalVariety</pre>
-i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+o3 : <pre style="display:inline">
+NumericalVariety</pre>
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = $\left\{\begin{aligned}&amp;\left\{-{1.44242}\cdot 10^{-62}-{5.3853}\cdot 10^{-62}\,\mathbf{i},\,-{1.12753}\cdot 10^{-62}+{5.7115}\cdot 10^{-62}\,\mathbf{i},\,-{.197328}-{.213071}\,\mathbf{i}\right\}\end{aligned}\right\}$
+o4 = $\left\{\begin{aligned}&amp;\left\{-{3.08517}\cdot 10^{-59}-{6.42454}\cdot 10^{-60}\,\mathbf{i},\,{2.62825}\cdot 10^{-60}-{3.14826}\cdot 10^{-59}\,\mathbf{i},\,{.0395884}+{.298266}\,\mathbf{i}\right\}\end{aligned}\right\}$
 
-o4 : <pre style="display:inline">
-VerticalList</pre>
-i5 : S#1 --first specify dimension
+o4 : <pre style="display:inline">
+VerticalList</pre>
+i5 : S#1 --first specify dimension
 
-o5 = $\left\{<pre style="display:inline">
-(dim=1,deg=1)</pre>\right\}$
+o5 = $\left\{<pre style="display:inline">
+(dim=1,deg=1)</pre>\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
-i6 : peek oo_0 --then list position
+o5 : <pre style="display:inline">
+List</pre>
+i6 : peek oo_0 --then list position
 
-o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-WitnessSet{ComponentNumber => 0                                                                     }<br/>           IsIrreducible => true<br/>           Points => {{-1.44242e-62-5.3853e-62*ii, -1.12753e-62+5.7115e-62*ii, -.197328-.213071*ii}}<br/>           Slice => | .350876+.153094ii -1.11532-.401837ii 1.28438-.212788ii .298783+.231676ii |<br/>           WitnessDataFileName => /tmp/M2-472262-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
-i7 : PD=primaryDecomposition( ideal F)
+o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
+WitnessSet{ComponentNumber => 0                                                                                     }<br/>           IsIrreducible => true<br/>           Points => {{-3.08517e-59-6.42454e-60*ii, 2.62825e-60-3.14826e-59*ii, .0395884+.298266*ii}}<br/>           Slice => |  - 1.41068 + .378583*ii  - .55197 + .791931*ii  - 1.53362 + 1.0091*ii  .361694 + .417478*ii  |<br/>           WitnessDataFileName => /tmp/M2-1236511-0/1/witness_data<br/>                                3      2      2       2     3      2<br/>           Equations => ideal (x  + x*y  + x*z  - x, x y + y  + y*z  - y)<br/></pre>
+i7 : PD=primaryDecomposition( ideal F)
 
-o7 = $\left\{<pre style="display:inline">
-ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\,<pre style="display:inline">
-ideal</pre>{}\left(y,\,x\right)\right\}$
+o7 = $\left\{<pre style="display:inline">
+ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\,<pre style="display:inline">
+ideal</pre>{}\left(y,\,x\right)\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
-i8 : dim PD_0
+o7 : <pre style="display:inline">
+List</pre>
+i8 : dim PD_0
 
-o8 = $2$
-i9 : degree PD_0
+o8 = $2$
+i9 : degree PD_0
 
-o9 = $2$
-i10 : dim PD_1
+o9 = $2$
+i10 : dim PD_1
 
-o10 = $1$
-i11 : degree PD_1
+o10 = $1$
+i11 : degree PD_1
 
-o11 = $1$
-i12 : 
+o11 = $1$
+i12 : 

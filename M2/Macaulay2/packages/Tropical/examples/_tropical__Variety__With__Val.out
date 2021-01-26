@@ -1,25 +1,25 @@
 -- -*- M2-comint -*- hash: 845208344
-i1 : R = QQ[x,y,z]
+i1 : R = QQ[x,y,z]
 
-o1 = $R$
+o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
-i2 : I = ideal(x+y+z)
+o1 : <pre style="display:inline">
+PolynomialRing</pre>
+i2 : I = ideal(x+y+z)
 
-o2 = $<pre style="display:inline">
-ideal</pre>\left(x+y+z\right)$
+o2 = $<pre style="display:inline">
+ideal</pre>\left(x+y+z\right)$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>$R$
-i3 : tropicalVarietyWithVal(I)
+ of </pre>$R$
+i3 : tropicalVarietyWithVal(I)
 
-o3 = <pre style="display:inline">
-Can't handle the given valuation. Maybe no valuation given? Then use tropicalVariety</pre>
-i4 : tropicalVarietyWithVal(I, Valuation=>11)
+o3 = <pre style="display:inline">
+Can't handle the given valuation. Maybe no valuation given? Then use tropicalVariety</pre>
+i4 : tropicalVarietyWithVal(I, Valuation=>11)
 
-o4 = <pre style="display:inline">
+o4 = <pre style="display:inline">
 _application PolyhedralFan
 _version 2.2
 _type PolyhedralFan
@@ -75,9 +75,9 @@ MAXIMAL_CONES
 {0 3}
 
 
-</pre>
-i5 : tropicalVarietyWithVal(I, Valuation=>x)
+</pre>
+i5 : tropicalVarietyWithVal(I, Valuation=>x)
 
-o5 = <pre style="display:inline">
-We have not implemented Puiseux valuation yet</pre>
-i6 : 
+o5 = <pre style="display:inline">
+We have not implemented Puiseux valuation yet</pre>
+i6 : 
