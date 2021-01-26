@@ -77,6 +77,8 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
      else error "no degreesRing for this ring")
 
+addDegreesRing PolynomialRing := PolynomialRing => R -> try R.addDegreesRing else degreesRing R;
+
 degreesRing Ring := R -> error "no degreesRing for this ring"
 
 generators PolynomialRing := opts -> R -> (
@@ -230,6 +232,7 @@ Ring OrderedMonoid := PolynomialRing => (			  -- no memoize
 	  commonEngineRingInitializations RM;
 	  RM.monoid = M;
 	  if flatmonoid.?degreesRing then RM.degreesRing = flatmonoid.degreesRing;
+	  if flatmonoid.?addDegreesRing then RM.addDegreesRing = flatmonoid.addDegreesRing;
 	  if flatmonoid.?degreesMonoid then RM.degreesMonoid = flatmonoid.degreesMonoid;
 	  RM.isCommutative = not Weyl and not RM.?SkewCommutative;
      	  ONE := RM#1;

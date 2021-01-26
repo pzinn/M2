@@ -201,10 +201,10 @@ hilbertSeries Module := opts -> (M) -> (
      if ord === infinity then (
      	  num := poincare M; -- 'poincare' treats monomial ideals correctly (as the corresponding quotient module)
      	  denom := tally degrees A.FlatMonoid;
-	  if class T === FactPolynomialRing then -- ideally it'd be always the case
+-*	  if class T === FactPolynomialRing then -- ideally it'd be always the case
 	  r := num / product(apply(pairs denom, (i,e) -> (1-T_i)^e)) -- cleaner this way (can't use weight as in poincare because ring may be a quotient...) but causes problems, see right below
-	  else
-	  r = Divide{
+	  else *-
+	  r := Divide{
 	       num,
 	       Product apply(sort apply(pairs denom, (i,e) -> {1 - T_i,e}), t -> Power t)};
 	  M.cache#exactKey = r;
@@ -215,7 +215,7 @@ hilbertSeries Module := opts -> (M) -> (
 	       num = numerator h; -- not quite poincare M because of Reduce => true...
 	       if num == 0 then 0_T else (
 		   denom0 := denominator h;
-		   if class class denom0 === FactPolynomialRing then denom0=denom0#1; -- <sigh>
+--		   if class class denom0 === FactPolynomialRing then denom0=denom0#1; -- <sigh>
 		   wts := (options ring M).Heft;
 		   (lo,hi) := weightRange(wts,num);
 		   if ord <= lo then 0_T else (

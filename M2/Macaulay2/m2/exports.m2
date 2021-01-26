@@ -9,7 +9,6 @@ export {
 	"lowestPart",
 	"concatRows",
 	"concatCols",
-	"FactPolynomialRing",
 	"ColumnExpression",
 	"color",
 	"ColoredExpression",

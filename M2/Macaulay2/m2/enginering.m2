@@ -305,14 +305,14 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 F.baseRings=append(F.baseRings,R);
 	 promote(R,F) := (x,F) -> (f numerator x)/(f denominator x);
 	 oldnum := F#numerator; oldden := F#denominator;
-	 if class R === FactPolynomialRing then (
+-*	 if class R === FactPolynomialRing then (
 	     raw F := a -> rawFraction(F.RawRing,raw oldnum a, raw oldden a); -- only for Fact!
 	     numerator F := (x) -> (g oldnum x)*((g oldden x)#0)^(-1);
 	     denominator F := (x) -> ( r := g oldden x; new R from {1_(last R.baseRings), r#1} );
-	 ) else (
+	 ) else ( *-
      	     numerator F := (x) -> g oldnum x;
      	     denominator F := (x) -> g oldden x;
-	     );
+--	     );
 	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";
 	 fraction(R,R) := (x,y) -> (f (numerator x*denominator y))/(f (numerator y*denominator x));
 	 return F;
@@ -334,12 +334,12 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 num := numerator f;
 	 if den === 1_(ring den) then expression num else expression num / expression den
 	 );
-     if class R =!= FactPolynomialRing then ( -- ordinary polynomial ring
+--     if class R =!= FactPolynomialRing then ( -- ordinary polynomial ring
      	 numerator F := (f) -> new R from rawNumerator raw f;
      	 denominator F := (f) -> new R from rawDenominator raw f;
      	 fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
      	 fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
-	 )
+-*	 )
      else -- factorized one: we effectively override (almost) all operations
      (
 	 new F from R := (A,a) -> fraction(a,1_R);
@@ -369,7 +369,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
 	 F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer
 	 F#0 = new F from { 0_R, 1_R };
 	 F#1 = new F from { 1_R, 1_R };
-     	 );
+     	 ); *-
      F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
      if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
      if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
