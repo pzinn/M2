@@ -86,7 +86,7 @@ Nothing#{WebApp,AfterPrint} = identity
 
 RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f," ",new MapExpression from {target f,source f})
 
-Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
+-- Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
 
 CoherentSheaf#{WebApp,AfterPrint} = F -> (
      X := variety F;
