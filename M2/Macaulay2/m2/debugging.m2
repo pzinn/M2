@@ -14,7 +14,7 @@ processArgs := args -> concatenate (
 	  ),
      apply(args, x -> if class x === Symbol then ("\n", symbolLocation x, ": here is the first use of '",toString x, "'") else "")
      )
-olderror := error
+olderror = error
 error = args -> (
      -- this is the body of the "error" function, which prints out error messages
      olderror processArgs args)
