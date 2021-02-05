@@ -75,6 +75,7 @@ export {
 	"Binary",
 	"BinaryOperation",
 	"Binomial",
+	"BlockMatrix",
 	"Boolean",
 	"Boxes",
 	"CC",
@@ -96,6 +97,7 @@ export {
 	"Cofactor",
 	"CoherentSheaf",
 	"Command",
+	"CompactMatrix",
 	"CompiledFunction",
 	"CompiledFunctionBody",
 	"CompiledFunctionClosure",
@@ -1194,10 +1196,7 @@ export {
 	"|-",
 	"||",
 	"}",
-	"~",
-	-- experimental
-	"BlockMatrix",
-	"CompactMatrix"
+	"~"
 }
 
 export {

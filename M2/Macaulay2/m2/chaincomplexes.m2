@@ -77,14 +77,6 @@ texMath ChainComplex := C -> (
 	     ))
       )
 
--* short ChainComplex := C -> (
-     complete C;
-     s := sort spots C;
-     if # s === 0 then "0" else
-     concatenate between("\\longleftarrow",apply(s,i->texUnder(texMath C_i,i)))
-      )
-*-
-
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of GradedModuleMap
 ChainComplexMap.synonym = "chain complex map"
