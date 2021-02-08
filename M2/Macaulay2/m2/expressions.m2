@@ -201,12 +201,9 @@ OneExpression.synonym = "one expression"
 ONE = new OneExpression from {1}
 unhold OneExpression := identity
 -----------------------------------------------------------------------------
-Parenthesize = new WrapperType of Expression
+Parenthesize = new WrapperType of Holder
 Parenthesize.synonym = "possibly parenthesized expression"
-net Parenthesize := net @@ first
-toString'(Function, Parenthesize) := (fmt,v) -> fmt v#0
-expressionValue Parenthesize := first
-texMath Parenthesize := x -> texMath x#0
+unhold Parenthesize := identity
 -----------------------------------------------------------------------------
 Sum = new WrapperType of AssociativeExpression
 Sum.synonym = "sum expression"
@@ -345,15 +342,15 @@ Adjacent = new HeaderType of Expression
 Adjacent.synonym = "adjacent expression"
 expressionValue Adjacent := x -> (expressionValue x#0) (expressionValue x#1)
 -----------------------------------------------------------------------------
-prepend0 := (e,x) -> prepend(e#0, x)
-append0 := (x,e) -> append(x, e#0)
+prepend0 := (e,x) -> prepend(unhold e, x)
+append0 := (x,e) -> append(x, unhold e)
 Equation == Equation        := join
 Equation == Expression      := append
 Equation == Holder          := append0
 Expression == Equation      := prepend
 Holder     == Equation      := prepend0
 Expression == Expression    := Equation => (x,y) -> new Equation from {x,y}
-Holder     == Holder        := (x,y) -> new Equation from {x#0,y#0}
+Holder     == Holder        := (x,y) -> new Equation from {unhold x,unhold y}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
 ZeroExpression + Expression := (x,y) -> y
@@ -369,7 +366,7 @@ Expression + Expression     := Sum => (x,y) -> new Sum from {x,y}
        - ZeroExpression     := identity
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
-           - Holder         := x -> new Minus from {x#0}
+           - Holder         := x -> new Minus from {unhold x}
 Expression - Expression     := Sum => (x,y) -> x + Minus y
 Thing - Minus               := Sum => (x,y) -> expression x + y#0
 Product    * OneExpression  :=
@@ -495,9 +492,9 @@ expressionBinaryOperators =
 
 scan(expressionBinaryOperators, op -> (
     f := try Expression#(op,Expression,Expression) else installMethod(op,Expression,Expression,(x,y) -> BinaryOperation{op,x,y});
-    installMethod(op,Expression,Holder,(x,y) -> f(x,y#0));
-    installMethod(op,Holder,Expression,(x,y) -> f(x#0,y));
-    installMethod(op,Holder,Holder,(x,y) -> f(x#0,y#0));
+    installMethod(op,Expression,Holder,(x,y) -> f(x,unhold y));
+    installMethod(op,Holder,Expression,(x,y) -> f(unhold x,y));
+    installMethod(op,Holder,Holder,(x,y) -> f(unhold x,unhold y));
     g := try binaryOperatorFunctions#op else f; -- subtly different
     installMethod(op,Expression,Thing,(x,y) ->  g(x,expression y));
     installMethod(op,Thing,Expression,(x,y) ->  g(expression x,y));

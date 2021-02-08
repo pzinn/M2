@@ -254,10 +254,11 @@ makeit1 := (opts) -> (
 	  -- apply(varlist,M.generators,(e,x) -> new Holder2 from {expression e,x})
 	  );
      processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
-     processTrms := trms -> (
-	  if # trms === 1
-	  then processTrm trms#0
-	  else new Product from apply(trms, processTrm));
+     processTrms := facts -> (
+	  if # facts === 0 then ONE -- cleaner than empty product
+	  else if # facts === 1
+	  then processTrm facts#0
+	  else new Product from apply(facts, processTrm));
      expression M := x -> (
 	  hold processTrms rawSparseListFormMonomial x.RawMonomial -- hold needed if single variable
 	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
