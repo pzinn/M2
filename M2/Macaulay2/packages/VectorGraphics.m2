@@ -1164,7 +1164,7 @@ multidoc ///
   Key
    GraphicsType
   Headline
-   A particular type of type used by VectorGraphics, similar to @ TO{SelfInitializingType}.
+   A particular type of type used by VectorGraphics, similar to SelfInitializingType.
 ///
 undocumented { -- there's an annoying conflict with NAG for Point, Points
     Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
