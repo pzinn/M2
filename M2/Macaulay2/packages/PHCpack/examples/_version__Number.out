@@ -4,6 +4,9 @@
 o1 = $\left(<pre style="display:inline">
 2.4.78</pre>,\,<pre style="display:inline">
 2020-06-30</pre>\right)$
+
+o1 : <pre style="display:inline">
+Sequence</pre>
 i2 : print v_0
 <pre style="display:inline">
 2.4.78</pre>

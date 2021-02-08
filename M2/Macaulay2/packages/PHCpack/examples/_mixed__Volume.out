@@ -20,6 +20,9 @@ o6 = $8$
 i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
 
 o7 = $\left(8,\,10\right)$
+
+o7 : <pre style="display:inline">
+Sequence</pre>
 i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
 i9 : q --let's take a look at the start system:
 
