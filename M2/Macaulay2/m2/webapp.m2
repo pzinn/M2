@@ -78,13 +78,12 @@ Module#{WebApp,AfterPrint} = M -> htmlAfterPrint(
 	)
     )
 
-Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
-
 Net#{WebApp,AfterPrint} = identity
 
 Nothing#{WebApp,AfterPrint} = identity
 
-RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f," ",new MapExpression from {target f,source f})
+Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} =
+RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f, " ", new MapExpression from {target f,source f})
 
 -- Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
 
