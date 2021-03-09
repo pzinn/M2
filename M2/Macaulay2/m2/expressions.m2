@@ -1103,7 +1103,7 @@ texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
     concatenate(x,"^{",y,"}") -- no braces around x
     )
 
@@ -1111,16 +1111,16 @@ texMath Superscript := v -> if v#1 === moduleZERO then "0" else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left({" | x | "}\\right)";
+    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
     concatenate(x,"^{",y,"}") -- no braces around x
     )
 
 texMath Subscript := v -> (
      p := precedence v;
      x := texMath v#0;
-     if class v#1 === Sequence then y:=demark(",", apply(v#1,texMath)) else y = texMath v#1; -- no parentheses
+     y := if class v#1 === Sequence then demark(",", apply(v#1,texMath)) else texMath v#1; -- no () for sequences
      if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
-     concatenate("{",x,"}_{",y,"}")
+     concatenate(x,"_{",y,"}") -- no braces around x
      )
 
 -*
