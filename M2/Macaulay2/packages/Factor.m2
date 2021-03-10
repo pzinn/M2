@@ -16,6 +16,7 @@ export {"FactorPolynomialRing"}
 debug Core
 
 commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
+-- commonPairs should probably be defined in d for optimization purposes
 subPairs := (a,b) -> fusePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
 -- mergePairs could be defined similarly as
 -- mergePairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null then y else if y === null then x else f(x,y));
@@ -26,7 +27,7 @@ coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings;
 factor FactorPolynomialRing := opts -> identity;
 expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
 describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
-factor FractionField := opts -> F -> frac(factor last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
+factor FractionField := opts -> F -> frac(factor last F.baseRings)  -- simpler to do it in this order -- though needs more checking (see also below)
 
 leadCoeff := x -> ( -- iterated leadCoefficient
     R := ring x;
@@ -154,9 +155,19 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
     if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
     if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
     if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
+    if (last R.baseRings).?frac then promote((last R.baseRings).frac,F) := (x,F) -> new F from {factor numerator x,factor denominator x};
     F
 )
 
+frac PolynomialRing := R -> (
+    F := (lookup(frac,EngineRing)) R;
+    if R.?factor and R.factor.?frac then (
+	Ff := R.factor.frac;
+	F.factor = Ff;
+	promote(F,Ff) := (x,Ff) -> new Ff from {factor numerator x,factor denominator x};
+	);
+    F
+    )
 
 newRing FactorPolynomialRing := opts -> (R) -> factor(newRing(last R.baseRings,opts))
 
