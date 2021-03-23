@@ -18,7 +18,7 @@ Ideal</pre><pre style="display:inline">
 
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${{\mathbb C}}_{53}^{2}\,\longleftarrow \,{{\mathbb C}}_{53}^{7}$
+ </pre>${\mathbb C}_{53}^{2}\,\longleftarrow \,{\mathbb C}_{53}^{7}$
 i7 : Rtwo = ring w.Equations;
 i8 : X = transpose matrix {gens Rtwo | {1_CC}};
 

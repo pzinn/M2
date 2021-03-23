@@ -66,6 +66,7 @@ undocumented {
     (html, Net),
     (html, Monoid),
     (html, Package),
+    (html, Program),
     (html, Ring),
     (html, RingFamily),
     (html, Thing),

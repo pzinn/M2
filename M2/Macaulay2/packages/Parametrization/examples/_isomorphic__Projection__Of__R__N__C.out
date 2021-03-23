@@ -14,18 +14,18 @@ Ideal</pre><pre style="display:inline">
 i5 : I=mapToRNC(I0,J)
 
 o5 = $<pre style="display:inline">
-ideal</pre>{}\left({x}_{4}{x}_{5}-{x}_{3}{x}_{6},\,{x}_{3}{x}_{5}-{x}_{2}{x}_{6},\,{x}_{1}{x}_{5}-{x}_{0}{x}_{6},\,{x}_{3}{x}_{4}-{x}_{1}{x}_{6},\,{x}_{2}{x}_{4}-{x}_{0}{x}_{6},\,{x}_{0}{x}_{4}-{x}_{6}^{2},\,{x}_{3}^{2}-{x}_{0}{x}_{6},\,{x}_{2}{x}_{3}-{x}_{0}{x}_{5},\,{x}_{1}{x}_{3}-{x}_{6}^{2},\,{x}_{0}{x}_{3}-{x}_{5}{x}_{6},\,{x}_{1}{x}_{2}-{x}_{5}{x}_{6},\,{x}_{0}{x}_{2}-{x}_{5}^{2},\,{x}_{1}^{2}-{x}_{4}{x}_{6},\,{x}_{0}{x}_{1}-{x}_{3}{x}_{6},\,{x}_{0}^{2}-{x}_{2}{x}_{6}\right)$
+ideal</pre>{}\left(x_{4}x_{5}-x_{3}x_{6},\,x_{3}x_{5}-x_{2}x_{6},\,x_{1}x_{5}-x_{0}x_{6},\,x_{3}x_{4}-x_{1}x_{6},\,x_{2}x_{4}-x_{0}x_{6},\,x_{0}x_{4}-x_{6}^{2},\,x_{3}^{2}-x_{0}x_{6},\,x_{2}x_{3}-x_{0}x_{5},\,x_{1}x_{3}-x_{6}^{2},\,x_{0}x_{3}-x_{5}x_{6},\,x_{1}x_{2}-x_{5}x_{6},\,x_{0}x_{2}-x_{5}^{2},\,x_{1}^{2}-x_{4}x_{6},\,x_{0}x_{1}-x_{3}x_{6},\,x_{0}^{2}-x_{2}x_{6}\right)$
 
 o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[{x}_{0}\,{.}{.}\, {x}_{6}\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{6}\right]$
 i6 : isomorphicProjectionOfRNC(I)
 
 o6 = $\left(\!\begin{array}{ccc}
-{x}_{0}&amp;-{x}_{3}&amp;{x}_{6}\\
+x_{0}&amp;-x_{3}&amp;x_{6}\\
 \end{array}\!\right)$
 
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$\left({{\mathbb Q}\mathopen{}\left[{x}_{0}\,{.}{.}\, {x}_{6}\right]}\right)^{1}\,\longleftarrow \,\left({{\mathbb Q}\mathopen{}\left[{x}_{0}\,{.}{.}\, {x}_{6}\right]}\right)^{3}$
+ </pre>$\left({\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{6}\right]\right)^{1}\,\longleftarrow \,\left({\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{6}\right]\right)^{3}$
 i7 : 

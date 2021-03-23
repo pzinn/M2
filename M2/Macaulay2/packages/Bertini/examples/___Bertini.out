@@ -20,7 +20,7 @@ o3 : <pre style="display:inline">
 List</pre>
 i4 : solns = bertiniZeroDimSolve(F)
 
-o4 = $\left\{\left\{1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,{1.41421}-{8.88178}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{1,\,-{1.41421}-{6.93889}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1,\,{1.41421}-{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1},\,-{1.41421}+{1.22125}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\,{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{1,\,-{1.41421}+{1.38778}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\,{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1},\,-{1.41421}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>
