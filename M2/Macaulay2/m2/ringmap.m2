@@ -148,8 +148,9 @@ RingMap Number := (p,m) -> fff(p, promote(m,source p))
 RingMap Matrix := Matrix => (p,m) -> (
      R := source p;
      S := target p;
-     if R =!= ring m 
-     then error "expected source of ring map to be the same as ring of matrix";
+     if R =!= ring m then (
+	 m = try promote(m,R) else  error "expected source of ring map to be the same as ring of matrix";
+	 );
      F := p target m;
      E := p source m;
      map(F,E,map(S,rawRingMapEval(raw p, raw cover F, raw m)), Degree => p.cache.DegreeMap degree m))
