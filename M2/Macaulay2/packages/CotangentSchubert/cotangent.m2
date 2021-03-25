@@ -18,53 +18,56 @@ globalVars = dims -> (
     ω=new AryString from splice apply(d+1, i->dimdiffs_i:i);
     I = unique permutations ω; -- unique? eww
     )
+BBs=new IndexedVariableTable;
 q := getSymbol "q"; zbar := getSymbol "zbar";
-BK_0 = FK_0 = frac(factor(ZZ[q,DegreeRank=>0])); -- init index table
-FK1 = frac(factor(ZZ[q,zbar,DegreeRank=>0])); -- same as FK_1, really but diff variable name
-FF=BB=null; segreClassTable=new HashTable; Rc := null; -- eww TEMP
+FK_0 = frac(factor(ZZ[q,DegreeRank=>0])); -- init index table
+FK1 = factor(ZZ[q,zbar,DegreeRank=>0]); -- same as FK_1, really but diff variable name
+FF=AA=BB=null; segreClassTable=new HashTable; 
+Rc := Rcnum := Rcden := null; -- eww TEMP
 
 KTRmatrix = () -> (
     V1:=FK1^(d+1); q:=FK1_0; zbar:=FK1_1;
-    Rc0:=1/(1-q^2*zbar)*map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
+    Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
             if i==j then (i*(d+2),i*(d+2))=>1-q^2*zbar 
             else ((i*(d+1)+j,j*(d+1)+i)=>q*(1-zbar),
                 (i*(d+1)+j,i*(d+1)+j)=>(1-q^2)* if i<j then 1 else zbar)));
-    Rc = (ring,i,j) -> (map(ring,FK1,{ring_0,ring_(j+1)/ring_(i+1)}))Rc0;
+    Rcden0:=1-q^2*zbar;
+    Rc0 := 1/Rcden0 * promote(Rcnum0,frac FK1);
+    Rc = (qq,z1,z2) -> (map(ring z2,frac FK1,{qq,z2/z1}))Rc0;
+    Rcnum = (qq,z1,z2) -> (map(ring z2,FK1,{qq,z2*z1^(-1)}))Rcnum0;
+    Rcden = (qq,z1,z2) -> (map(ring z2,FK1,{qq,z2*z1^(-1)}))Rcden0;
     )
+
+setupBorel = dims -> (
+    y := getSymbol "y";
+    if not BBs#?n then BBs_n = FF[y_1..y_n]; -- in terms of Chern roots
+    c := getSymbol "c"; p := getSymbol "p";
+    R1 := FF new Array from apply(d+1, i-> apply(1..dimdiffs#i, j-> c_(i,j))); -- in terms of Chern classes
+    f := map(BBs_n,R1,apply(gens R1,v->(
+                inds:=(baseName v)#1;
+                elem(inds#1,apply(dims#(inds#0)..dims#(inds#0+1)-1,j->BBs_n_j))
+                )));
+    R2 := FF new Array from apply(I,i->p_i);
+    idem := flatten table(#I,#I,(i,j)->R2_i*R2_j-(if i==j then R2_i else 0));
+    R2 = R2 / trim ideal append(idem,(sum gens R2)-1); -- in terms of idempotents
+    g := map(R2,BBs_n,
+        apply(n,j->sum(#I,i->R2_i*FF_((flatten subs I#i)#j+1))));
+    -- do we really need to compute the kernel? technically K_T ring is R1/ kernel(g*f)
+    -- advantage is, in the quotient we would be able to invert 1-y_i/z_j ...
+    BB = BBs_n / kernel g;
+    AA = R1 / kernel(g*f);
+);
 
 setupKTBorel = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
-    globalVars dims;
-    z := getSymbol "z"; y := getSymbol "y"; -- q := getSymbol "q";
-    if not FK#?n then FK_n = factor(frac(ZZ[q,z_1..z_n,DegreeRank=>0]));
-    FF=FK_n;
-    -- R = FF[y_1..y_n]; -- in terms of Chern roots
-    if not BK#?n then BK_n = factor(frac(ZZ[q,z_1..z_n,y_1..y_n,DegreeRank=>0])); -- in terms of Chern roots -- frac is for convenience
-    BB=BK_n;
-    -*
-    c = symbol c; p = symbol p;
-    R1 = FF new Array from apply(d+1, i-> apply(1..dimdiffs#i, j-> c_(i,j))); -- in terms of Chern classes
-    f=map(R,R1,apply(gens R1,v->(
-                inds:=(baseName v)#1;
-                elem(inds#1,apply(dims#(inds#0)..dims#(inds#0+1)-1,j->y_(j+1)))
-                )));
-    R2 = FF new Array from apply(I,i->p_i);
-    idem = flatten table(I,I,(i,j)->p_i*p_j-(if i==j then p_i else 0));
-    R2 = R2 / trim ideal append(idem,sum(I,i->p_i)-1); -- in terms of idempotents
-    use FF; -- annoying
-    g = map(R2,R, gens FF | -- annoying
-        apply(n,j->sum(I,i->p_i*z_((flatten subs i)#j+1))));
-    -- do we really need to compute the kernel? technically K_T ring is R1/ kernel(g*f)
-    -- advantage is, in the quotient we would be able to invert 1-y_i/z_j ...
-    *-
-    -- next, R-matrix with dummy variables zbar=z''/z'=y_*/z_*
-    KTRmatrix();
-    (FF,BB,I) -- or whatever
+    setupKT dims;
+    setupBorel dims;
+    (AA,BB,I) -- or whatever
     );
 setupKT = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
     globalVars dims;
-    z := getSymbol "z"; y := getSymbol "y"; -- q := getSymbol "q";
+    z := getSymbol "z";
     if not FK#?n then FK_n = factor(frac(ZZ[q,z_1..z_n,DegreeRank=>0]));
     FF=FK_n;
     KTRmatrix();
@@ -72,26 +75,25 @@ setupKT = dims -> ( -- dims = list of dim(V_i)
     );
 ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
 BH_0 = FH_0 = frac(factor(ZZ[ℏ])); -- init index table
-FH1 = frac(factor(ZZ[ℏ,xbar])); -- same as FH_1, really but diff variable name
+FH1 = factor(ZZ[ℏ,xbar]); -- same as FH_1, really but diff variable name
 HTRmatrix = () -> (
     V1:=FH1^(d+1); ℏ:=FH1_0; xbar:=FH1_1;
-    Rc0:=1/(ℏ-xbar)*map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
+    Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
             if i==j then (i*(d+2),i*(d+2))=>ℏ-xbar
             else ((i*(d+1)+j,j*(d+1)+i)=>xbar,
                 (i*(d+1)+j,i*(d+1)+j)=>ℏ)));
-    Rc = (ring,i,j) -> (map(ring,FH1,{ring_0,ring_(j+1)-ring_(i+1)}))Rc0;
+    Rcden0:=ℏ-xbar;
+    Rc0 := 1/Rcden0 * promote(Rcnum0,frac FH1);
+    Rc = (hh,x1,x2) -> (map(ring hh,frac FH1,{hh,x2-x1}))Rc0;
+    Rcnum = (hh,x1,x2) -> (map(ring hh,FH1,{hh,x2-x1}))Rcnum0;
+    Rcden = (hh,x1,x2) -> (map(ring hh,FH1,{hh,x2-x1}))Rcden0;
 )
 setupHTBorel = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
-    globalVars dims;
-    x := getSymbol "x"; y := getSymbol "y";
-    if not FH#?n then FH_n = factor(frac(ZZ[ℏ,x_1..x_n]));
-    FF=FH_n;
-    -- R = F[y_1..y_n]; -- in terms of Chern roots
-    if not BH#?n then BH_n = factor(frac(ZZ[ℏ,x_1..x_n,y_1..y_n])); -- in terms of Chern roots -- frac is for convenience
-    BB=BH_n;
-    HTRmatrix();
-    (BB,FF,I))
+    setupHT dims;
+    setupBorel dims;
+    (AA,BB,I) -- or whatever
+);
 setupHT = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
     globalVars dims;
@@ -108,30 +110,30 @@ Z:=null; -- eww
 segreClassBorel = i -> (
     if Z === null then segreClassesBorel();
     i=new AryString from i;
-    Z_(0,ind i)
+    Z_(0,ind i) -- not quite there yet: should be in AA, not BB
     );
 
 -- a different approach to restriction to fixed points
-restrictMap := i -> map(FF,BB, gens FF | apply(n,j->FF_((flatten subs i)#j+1)));
+restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
 restrict = P -> vector apply(I,i->(restrictMap i) P);
 
 Vector @ Vector := (v,w) -> vector apply(entries v,entries w,times); -- componentwise multiplication
-
 
 segreClassesBorel = () -> (
     -- check that setup TODO
     -- monodromy matrix
     V:=BB^(d+1);
-    T:=map(V^**(n+1),V^**(n+1),1);
-    scan(n,i->T=T*(map(V^**i,V^**i,1)**(Rc (BB,i,n))**map(V^**(n-1-i),V^**(n-1-i),1)));
     W:=V^**n;
     Z=map(BB^1,W,{{rank W-1:0,1}});
     scan(n,i->(
-            -- print i;
-            Z=Z*submatrix(sub(T,BB_(n+1)=>BB_(2*n-i)),{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
-            -- print Z;
+    	    T:=map(V^**(n+1),V^**(n+1),1);
+    	    scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (FF_0,FF_(j+1),BB_(n-1-i)))**map(V^**(n-1-j),V^**(n-1-j),1)));
+--            print i;
+            Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
+--            print Z;
             ));
-    matrix transpose apply(I, i -> entries restrict segreClassBorel i)
+    scan(n,i->scan(n,j-> Z = Z*(Rcden(FF_0,FF_(j+1),BB_i))^(-1)));
+    apply(I, i -> segreClassBorel i)
     -- segreClasssi=segreClasss^(-1);
     );
 
@@ -146,7 +148,7 @@ segreClass = i -> (
 segreClasses = () -> (
     -- check that setup TODO
     V:=FF^(d+1); Rcheck := new IndexedVariableTable;
-    scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF,j,j+1))**map(V^**(n-2-j),V^**(n-2-j),1)); -- precompute R-matrices
+    scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1)); -- precompute R-matrices
     indω:=ind ω;
     vecω:=vector apply((d+1)^n,j->if j==indω then 1 else 0);
     fixedPoint = memoize( i -> ( -- this returns the restrictions to a given fixed point

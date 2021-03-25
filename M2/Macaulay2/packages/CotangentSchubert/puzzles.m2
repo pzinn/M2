@@ -245,7 +245,7 @@ fugacityH = p -> (
 			) else (
 			if X == W then ( s=1; t=1; ) else if X == U then (  s=1; t=0; ) else ( s=0; t=0; ); -- A_n scalar products ~ A_1 scalar products
 			);
-                    (map(FF,FH1,{FF_0,FF_(n-i)-FF_(j+1)})) fug_(s,t)
+                    (map(FF,frac FH1,{FF_0,FF_(n-i)-FF_(j+1)})) fug_(s,t)
                     ))))
 -- K_T fugacity
 q:=FK1_0; zbar:=FK1_1;
@@ -262,7 +262,7 @@ fugacityK = p -> (  -- for now, only d=1
         product(n-1, i -> product(n-1-i, j -> (
 		    X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0); V := p#(i,j+1,1);
 		    X = ind1 X; W = ind1 W; U = ind1 U; V = ind1 V;
-                    (map(FF,FK1,{FF_0,FF_(n-i)/FF_(j+1)})) fugK_(U*3+V,X*3+W)
+                    (map(FF,frac FK1,{FF_0,FF_(n-i)/FF_(j+1)})) fugK_(U*3+V,X*3+W)
 		    )))
     )
 fugacity = p -> if class FF === FractionField and toString FF_0 === "q" then fugacityK p else fugacityH p -- primitive
