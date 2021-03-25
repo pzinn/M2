@@ -255,15 +255,16 @@ fugK = 1/(1-q^2*zbar) * matrix {{1 - q^2*zbar, 0, 0, 0, 0, 0, 0, -((-1 + q)*(1 +
  {0, 0, 1 - q^2*zbar, 0, -((-1 + q)*(1 + q)), 0, 0, 0, 0}, {0, 0, 0, 0, 0, -(q*(-1 + zbar)), 0, 0, 0}, 
  {0, 0, 0, (-1 + q)*q*(1 + q), 0, 0, 0, 0, 1 - q^2*zbar}};
 ind1 := x -> position(states#1,y->y===x);
-fugacityK = p -> (  -- for now, only d=1
-        n:=p.Size; z:=getSymbol "z"; q:=getSymbol "z";
-        if not FK#?n then FK_n = frac(factor(ZZ[q,z_1..z_n]));
-	FF = FK_n;
-        product(n-1, i -> product(n-1-i, j -> (
-		    X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0); V := p#(i,j+1,1);
-		    X = ind1 X; W = ind1 W; U = ind1 U; V = ind1 V;
-                    (map(FF,frac FK1,{FF_0,FF_(n-i)/FF_(j+1)})) fugK_(U*3+V,X*3+W)
-		    )))
+fugacityK = p -> (
+    if p.Steps>1 then error "K-fugacities at d=1 only";  -- for now, only d=1
+    n:=p.Size; z:=getSymbol "z"; q:=getSymbol "q";
+    if not FK#?n then FK_n = frac(factor(ZZ[q,z_1..z_n]));
+    FF = FK_n;
+    product(n-1, i -> product(n-1-i, j -> (
+		X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0); V := p#(i,j+1,1);
+		X = ind1 X; W = ind1 W; U = ind1 U; V = ind1 V;
+		(map(FF,frac FK1,{FF_0,FF_(n-i)/FF_(j+1)})) fugK_(U*3+V,X*3+W)
+		)))
     )
 fugacity = p -> if class FF === FractionField and toString FF_0 === "q" then fugacityK p else fugacityH p -- primitive
 
