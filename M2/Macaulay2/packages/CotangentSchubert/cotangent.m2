@@ -2,7 +2,7 @@ export {"setupKT","setupHT","segreClasses","segreClass",
     "setupKTBorel","setupHTBorel","segreClassesBorel","segreClassBorel",
     "restrict"};
 
-elem = (i,vars) -> sum(subsets(vars,i), x -> product x);
+elem = (i,vars) -> sum(subsets(vars,i), product);
 -- build ring of K_T(T*flag)
 AryString = new Type of List; -- could we just use sequences?
 new AryString from String := (T,s) -> apply(ascii s,i->i-48);
@@ -40,23 +40,20 @@ KTRmatrix = () -> (
 
 setupBorel = dims -> (
     y := getSymbol "y";
-    if not BBs#?n then BBs_n = FF[y_1..y_n]; -- in terms of Chern roots
+    if not BBs#?n then (
+        BB0 := FF[y_1..y_n]; -- in terms of Chern roots
+        J := ideal apply(1..n,k->sum(subsets(gens BB0,k),product)-sum(subsets(FF_1..FF_n,k),product));
+        BBs_n = BB0/J;
+        );
+    BB = BBs_n;
     c := getSymbol "c"; p := getSymbol "p";
     R1 := FF new Array from apply(d+1, i-> apply(1..dimdiffs#i, j-> c_(i,j))); -- in terms of Chern classes
     f := map(BBs_n,R1,apply(gens R1,v->(
                 inds:=(baseName v)#1;
                 elem(inds#1,apply(dims#(inds#0)..dims#(inds#0+1)-1,j->BBs_n_j))
                 )));
-    R2 := FF new Array from apply(I,i->p_i);
-    idem := flatten table(#I,#I,(i,j)->R2_i*R2_j-(if i==j then R2_i else 0));
-    R2 = R2 / trim ideal append(idem,(sum gens R2)-1); -- in terms of idempotents
-    g := map(R2,BBs_n,
-        apply(n,j->sum(#I,i->R2_i*FF_((flatten subs I#i)#j+1))));
-    -- do we really need to compute the kernel? technically K_T ring is R1/ kernel(g*f)
-    -- advantage is, in the quotient we would be able to invert 1-y_i/z_j ...
-    BB = BBs_n / kernel g;
-    AA = R1 / kernel(g*f);
-);
+    AA = R1 / kernel f; -- should f be available somehow?
+    );
 
 setupKTBorel = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
@@ -87,13 +84,13 @@ HTRmatrix = () -> (
     Rc = (hh,x1,x2) -> (map(ring hh,frac FH1,{hh,x2-x1}))Rc0;
     Rcnum = (hh,x1,x2) -> (map(ring hh,FH1,{hh,x2-x1}))Rcnum0;
     Rcden = (hh,x1,x2) -> (map(ring hh,FH1,{hh,x2-x1}))Rcden0;
-)
+    )
 setupHTBorel = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
     setupHT dims;
     setupBorel dims;
     (AA,BB,I) -- or whatever
-);
+    );
 setupHT = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
     globalVars dims;
@@ -126,11 +123,11 @@ segreClassesBorel = () -> (
     W:=V^**n;
     Z=map(BB^1,W,{{rank W-1:0,1}});
     scan(n,i->(
-    	    T:=map(V^**(n+1),V^**(n+1),1);
-    	    scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (FF_0,FF_(j+1),BB_(n-1-i)))**map(V^**(n-1-j),V^**(n-1-j),1)));
---            print i;
+            T:=map(V^**(n+1),V^**(n+1),1);
+            scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (FF_0,FF_(j+1),BB_(n-1-i)))**map(V^**(n-1-j),V^**(n-1-j),1)));
+            --            print i;
             Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
---            print Z;
+            --            print Z;
             ));
     scan(n,i->scan(n,j-> Z = Z*(Rcden(FF_0,FF_(j+1),BB_i))^(-1)));
     apply(I, i -> segreClassBorel i)
