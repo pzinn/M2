@@ -103,15 +103,14 @@ Module#{WebApp,AfterPrint} = M -> htmlAfterPrint(
 	)
     )
 
-Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (Matrix, if isFreeModule target f and isFreeModule source f then (" ", new MapExpression from {target f,source f}))
-
 Net#{WebApp,AfterPrint} = identity
 
 Nothing#{WebApp,AfterPrint} = identity
 
-RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f," ",new MapExpression from {target f,source f})
+Matrix#{WebApp,AfterPrint} = Matrix#{WebApp,AfterNoPrint} =
+RingMap#{WebApp,AfterPrint} = RingMap#{WebApp,AfterNoPrint} = f -> htmlAfterPrint (class f, " ", new MapExpression from {target f,source f})
 
-Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
+-- Sequence#{WebApp,AfterPrint} = Sequence#{WebApp,AfterNoPrint} = identity
 
 CoherentSheaf#{WebApp,AfterPrint} = F -> (
      X := variety F;
@@ -147,7 +146,10 @@ if topLevelMode === WebApp then (
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
-    -- the userSymbols hack: by now mostly differs in "robust" stuff
+    -- the error hack
+    oldolderror := olderror;
+    olderror = args -> oldolderror apply(deepSplice sequence args, s -> replace(webAppTagsRegex," ",s));
+    -- the userSymbols hack (TEMP): by now mostly differs in "robust" stuff
     listSymbols List := x -> Describe TABLE prepend(
      apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
      apply(x, y -> apply({y,short class value y,short value y,TT symbolLocation y},s->TD {s}))

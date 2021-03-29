@@ -22,7 +22,7 @@ o3 : <pre style="display:inline">
 JoinOfCoincidentRootLoci</pre>
 i4 : ring Y
 
-o4 = ${\mathbb Q}\mathopen{}\left[{t}_{0}\,{.}{.}\, {t}_{6}\right]$
+o4 = ${\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{6}\right]$
 
 o4 : <pre style="display:inline">
 PolynomialRing</pre>
@@ -50,9 +50,9 @@ o9 : <pre style="display:inline">
 CoincidentRootLocus</pre>
 i10 : G = random Y
 
-o10 = $3\,{t}_{0}^{6}+12\,{t}_{0}^{5}{t}_{1}+15\,{t}_{0}^{4}{t}_{1}^{2}+80\,{t}_{0}^{3}{t}_{1}^{3}-209655\,{t}_{0}^{2}{t}_{1}^{4}+2582604\,{t}_{0}{t}_{1}^{5}-8474625\,{t}_{1}^{6}$
+o10 = $3\,t_{0}^{6}+12\,t_{0}^{5}t_{1}+15\,t_{0}^{4}t_{1}^{2}+80\,t_{0}^{3}t_{1}^{3}-209655\,t_{0}^{2}t_{1}^{4}+2582604\,t_{0}t_{1}^{5}-8474625\,t_{1}^{6}$
 
-o10 : ${\mathbb Q}\mathopen{}\left[{t}_{0}\,{.}{.}\, {t}_{1}\right]$
+o10 : ${\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]$
 i11 : member(G,Y)
 
 o11 = <pre style="display:inline">
@@ -61,7 +61,7 @@ true</pre>
 
 o12 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[{t}_{0}\,{.}{.}\, {t}_{6}\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{6}\right]$
 i13 : describe Y
 
 o13 = <pre style="display:inline">

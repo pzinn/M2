@@ -190,6 +190,7 @@ SegreClasses
 SemidefiniteProgramming
 SumsOfSquares
 MultiGradedRationalMap
+AssociativeAlgebras
 VirtualResolutions
 Quasidegrees
 DiffAlg
@@ -220,3 +221,6 @@ NumericalLinearAlgebra
 ResLengthThree
 MonomialOrbits
 MultiprojectiveVarieties
+RationalPoints2
+SuperLinearAlgebra
+CotangentSchubert

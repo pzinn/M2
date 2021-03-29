@@ -22,7 +22,7 @@ ideal</pre>{}\left(\left(-{.380139}+{.924929}\,\mathbf{i}\right)\textit{zz1}+\l
 
 o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${{\mathbb C}}_{53}{}\left\{x\,{.}{.}\, z,\,\textit{zz1},\,\textit{zz2}\right\}$
+ of </pre>${\mathbb C}_{53}{}\left\{x\,{.}{.}\, z,\,\textit{zz1},\,\textit{zz2}\right\}$
 i6 : W#Points
 
 o6 = $\left\{\begin{aligned}&amp;\left\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\cdot 10^{-32}+{7.65273}\cdot 10^{-33}\,\mathbf{i},\,-{2.28184}\cdot 10^{-32}-{4.87389}\cdot 10^{-33}\,\mathbf{i},\,-{1.6382}\cdot 10^{-32}+{1.66152}\cdot 10^{-32}\,\mathbf{i}\right\}\end{aligned}\right\}$
@@ -38,5 +38,5 @@ o7 = $\left(\!\begin{array}{cccccc}
 
 o7 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${{\mathbb C}}_{53}^{2}\,\longleftarrow \,{{\mathbb C}}_{53}^{6}$
+ </pre>${\mathbb C}_{53}^{2}\,\longleftarrow \,{\mathbb C}_{53}^{6}$
 i8 : 

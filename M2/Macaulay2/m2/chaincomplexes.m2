@@ -67,7 +67,6 @@ net ChainComplex := C -> (
 	  b := s#-1;
 	  horizontalJoin between(" <-- ", apply(a .. b,i -> stack (net C_i," ",net i)))))
 
-
 -----------------------------------------------------------------------------
 ChainComplexMap = new Type of GradedModuleMap
 ChainComplexMap.synonym = "chain complex map"

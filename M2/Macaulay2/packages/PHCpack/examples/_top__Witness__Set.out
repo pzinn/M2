@@ -5,6 +5,9 @@
 
 o3 = $\left(<pre style="display:inline">
 w</pre>,\,\left\{\right\}\right)$
+
+o3 : <pre style="display:inline">
+Sequence</pre>
 i4 : dim(w)
 
 o4 = $1$

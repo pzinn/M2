@@ -6,13 +6,13 @@
 i5 : paramValues1={0,1+2*ii,0};
 i6 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2,u3},{paramValues0 ,paramValues1 })
 
-o6 = $\left\{\left\{\left\{{11.3376}+{.56228}\,\mathbf{i},\,{1}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{{13.3247}+{9.14824}\cdot 10^{-14}\,\mathbf{i},\,1-{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{11.3376}-{.56228}\,\mathbf{i},\,1\right\}\right\},\,\left\{\left\{{11}-{5.9508}\cdot 10^{-14}\,\mathbf{i},\,{2}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{13}-{1.98952}\cdot 10^{-13}\,\mathbf{i},\,{2}-{2.18714}\cdot 10^{-14}\,\mathbf{i}\right\},\,\left\{{12}-{1.35891}\cdot 10^{-13}\,\mathbf{i},\,{2}+{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}\right\}$
+o6 = $\left\{\left\{\left\{{13.3247}-{8.9706}\cdot 10^{-14}\,\mathbf{i},\,{1}-{1.11022}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{{11.3376}-{.56228}\,\mathbf{i},\,{1}-{1.11022}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{{11.3376}+{.56228}\,\mathbf{i},\,{1}-{1.27676}\cdot 10^{-15}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{13}-{1.16351}\cdot 10^{-13}\,\mathbf{i},\,{2}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{12}-{4.23661}\cdot 10^{-13}\,\mathbf{i},\,{2}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{11}-{2.72671}\cdot 10^{-13}\,\mathbf{i},\,{2}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>
 i7 : bPH_0--the solutions to the system with parameters set equal to paramValues0
 
-o7 = $\left\{\left\{{11.3376}+{.56228}\,\mathbf{i},\,{1}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{{13.3247}+{9.14824}\cdot 10^{-14}\,\mathbf{i},\,1-{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{11.3376}-{.56228}\,\mathbf{i},\,1\right\}\right\}$
+o7 = $\left\{\left\{{13.3247}-{8.9706}\cdot 10^{-14}\,\mathbf{i},\,{1}-{1.11022}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{{11.3376}-{.56228}\,\mathbf{i},\,{1}-{1.11022}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{{11.3376}+{.56228}\,\mathbf{i},\,{1}-{1.27676}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>
@@ -46,13 +46,13 @@ o12 : <pre style="display:inline">
 List</pre>
 i13 : bPH=bertiniParameterHomotopy( {f1,f2}, {u1,u2},{finalParameters0 ,finalParameters1 },HomVariableGroup=>{x,y,z})
 
-o13 = $\left\{\left\{\left\{1,\,-{1.02966}\cdot 10^{-17}-{1.25156}\cdot 10^{-17}\,\mathbf{i},\,-{1}\right\},\,\left\{1,\,-{7.48398}\cdot 10^{-17}-{2.04906}\cdot 10^{-17}\,\mathbf{i},\,1\right\}\right\},\,\left\{\left\{-{1.57988}\cdot 10^{-16}+{4.39718}\cdot 10^{-16}\,\mathbf{i},\,{1}+{1.11022}\cdot 10^{-16}\,\mathbf{i},\,1\right\},\,\left\{-{1.13732}\cdot 10^{-15}-{1.00119}\cdot 10^{-15}\,\mathbf{i},\,-{1}-{6.245}\cdot 10^{-16}\,\mathbf{i},\,1\right\}\right\}\right\}$
+o13 = $\left\{\left\{\left\{1,\,{7.55459}\cdot 10^{-22}+{1.23471}\cdot 10^{-21}\,\mathbf{i},\,1\right\},\,\left\{1,\,-{3.35523}\cdot 10^{-18}+{7.55757}\cdot 10^{-18}\,\mathbf{i},\,-1\right\}\right\},\,\left\{\left\{{1.05866}\cdot 10^{-16}+{2.47742}\cdot 10^{-16}\,\mathbf{i},\,1,\,-1+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{6.91651}\cdot 10^{-17}-{4.99798}\cdot 10^{-17}\,\mathbf{i},\,1,\,1\right\}\right\}\right\}$
 
 o13 : <pre style="display:inline">
 List</pre>
 i14 : bPH_0--The two solutions for finalParameters0
 
-o14 = $\left\{\left\{1,\,-{1.02966}\cdot 10^{-17}-{1.25156}\cdot 10^{-17}\,\mathbf{i},\,-{1}\right\},\,\left\{1,\,-{7.48398}\cdot 10^{-17}-{2.04906}\cdot 10^{-17}\,\mathbf{i},\,1\right\}\right\}$
+o14 = $\left\{\left\{1,\,{7.55459}\cdot 10^{-22}+{1.23471}\cdot 10^{-21}\,\mathbf{i},\,1\right\},\,\left\{1,\,-{3.35523}\cdot 10^{-18}+{7.55757}\cdot 10^{-18}\,\mathbf{i},\,-1\right\}\right\}$
 
 o14 : <pre style="display:inline">
 List</pre>
@@ -64,13 +64,13 @@ o15 : <pre style="display:inline">
 List</pre>
 i16 : bPH1=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x})
 
-o16 = $\left\{\left\{\left\{-{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{1-{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\}\right\},\,\left\{\left\{-{1.41421}-{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{1.41421}-{4.16334}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}\right\}$
+o16 = $\left\{\left\{\left\{1-{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-1\right\}\right\},\,\left\{\left\{{1.41421}\right\},\,\left\{-{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}\right\}$
 
 o16 : <pre style="display:inline">
 List</pre>
 i17 : bPH2=bertiniParameterHomotopy( {"x^2-u1"}, {u1},finParamValues,AffVariableGroup=>{x},OutputStyle=>"OutSolutions")
 
-o17 = $\left\{\left\{\left\{-{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{1-{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\}\right\},\,\left\{\left\{-{1.41421}-{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{1.41421}-{4.16334}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}\right\}$
+o17 = $\left\{\left\{\left\{1-{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-1\right\}\right\},\,\left\{\left\{{1.41421}\right\},\,\left\{-{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}\right\}$
 
 o17 : <pre style="display:inline">
 List</pre>
@@ -93,13 +93,13 @@ Type</pre>
 i22 : bPH5=bertiniParameterHomotopy( {"x^2-u1"}, {u1},{{1},{2}},AffVariableGroup=>{x},OutputStyle=>"OutNone",TopDirectory=>dir1)
 i23 : B0=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_0")
 
-o23 = $\left\{\left\{-{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{1-{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o23 = $\left\{\left\{1-{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\},\,\left\{-1\right\}\right\}$
 
 o23 : <pre style="display:inline">
 List</pre>
 i24 : B1=importSolutionsFile(dir1,NameSolutionsFile=>"ph_jade_1")
 
-o24 = $\left\{\left\{-{1.41421}-{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{1.41421}-{4.16334}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o24 = $\left\{\left\{{1.41421}\right\},\,\left\{-{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
 o24 : <pre style="display:inline">
 List</pre>

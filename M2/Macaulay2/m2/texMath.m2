@@ -1,18 +1,5 @@
 -- in the new version, all types here should have expression XXX := hold
 
--- should be made a method and primed
-texMathShort' = (texMath,m) -> (
-    if m == 0 then return "0";
-    x := entries m;
-    texRow := row -> if #row>8 then { texMath first row, "\\cdots", texMath last row } else texMath\row;
-    x = if #x>10 then ( t:= texRow first x; {t, toList(#t:"\\vphantom{\\Big|}\\vdots"), texRow last x } ) else texRow\x;
-    concatenate(
-	"\\left(\\begin{smallmatrix}" | newline,
-	between(///\\/// | newline, apply(x, row -> concatenate between("&",row))),
-	"\\end{smallmatrix}\\right)"
-	      )
-    )
-
 texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
 
 union := (x,y) -> keys(set x + set y)
@@ -182,7 +169,7 @@ texMath' (Function, Subscript) := (texMath,v) -> (
      x := texMath v#0;
      if class v#1 === Sequence then y:=demark(",", apply(v#1,texMath)) else y = texMath v#1; -- no parentheses
      if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
-     concatenate("{",x,"}_{",y,"}")
+     concatenate(x,"_{",y,"}")
      )
 
 texMath' (Function, SparseVectorExpression) := (texMath,v) -> (

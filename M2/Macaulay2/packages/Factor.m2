@@ -16,6 +16,7 @@ export {"FactorPolynomialRing"}
 debug Core
 
 commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
+-- commonPairs should probably be defined in d for optimization purposes
 subPairs := (a,b) -> fusePairs(a,b, (x,y)-> if y===null then continue else if x===null then y else if y>x then y-x else continue);
 -- mergePairs could be defined similarly as
 -- mergePairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null then y else if y === null then x else f(x,y));
@@ -26,7 +27,7 @@ coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings;
 factor FactorPolynomialRing := opts -> identity;
 expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
 describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
-factor FractionField := opts -> F -> frac(factor last F.baseRings); -- simpler to do it in this order -- though needs more checking (see also below)
+factor FractionField := opts -> F -> frac(factor last F.baseRings)  -- simpler to do it in this order -- though needs more checking (see also below)
 
 leadCoeff := x -> ( -- iterated leadCoefficient
     R := ring x;
@@ -124,6 +125,55 @@ factor PolynomialRing := opts -> R -> (
 	);
 	Rf
     );
+
+frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
+    F := (lookup(frac,EngineRing)) R;
+    -- a bunch of things need to be redefined
+    new F from R := (A,a) -> fraction(a,1_R);
+    new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
+    promote(R,F) := (x,F) -> new F from x;
+    lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
+    numerator F := a -> a#0;
+    denominator F := a -> a#1;
+    value F := a-> value numerator a / value denominator a;
+    raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
+    fraction(R,R) := (r,s) -> (
+	g:=gcd(r,s);
+	if isField coefficientRing R then g=g*s#0; -- no constant in the denominator
+	new F from {r//g, s//g}
+	);
+    fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
+    F * F := (x,y) -> fraction(numerator x*numerator y,denominator x*denominator y);
+    F + F := (x,y) -> fraction(numerator x*denominator y+numerator y*denominator x,denominator x*denominator y);
+    F - F := (x,y) -> fraction(numerator x*denominator y-numerator y*denominator x,denominator x*denominator y);
+    - F := x -> fraction(-numerator x, denominator x);
+    F ^ ZZ := (x,n) -> if n>=0 then fraction( (numerator x)^n, (denominator x)^n ) else fraction( (denominator x)^-n, (numerator x)^-n );
+    -- F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
+    F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer
+    F#0 = new F from { 0_R, 1_R };
+    F#1 = new F from { 1_R, 1_R };
+    if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
+    if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
+    if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
+    if (last R.baseRings).?frac then promote((last R.baseRings).frac,F) := (x,F) -> new F from {factor numerator x,factor denominator x};
+    F
+)
+
+frac PolynomialRing := R -> (
+    F := (lookup(frac,EngineRing)) R;
+    if R.?factor and R.factor.?frac then (
+	Ff := R.factor.frac;
+	F.factor = Ff;
+	promote(F,Ff) := (x,Ff) -> new Ff from {factor numerator x,factor denominator x};
+	);
+    F
+    )
+
+newRing FactorPolynomialRing := opts -> (R) -> factor(newRing(last R.baseRings,opts))
+
+FactorPolynomialRing / Ideal := QuotientRing => (F,I) -> I.cache.QuotientRing = (last F.baseRings)/((map(last F.baseRings,F))I);
+--- possibly temp: for now, we lose factoring when taking quotients
+
 
 -- this is an optimization: the product would take forever
 FactorPolynomialRing _ List := (R,v) -> (

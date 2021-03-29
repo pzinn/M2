@@ -73,14 +73,14 @@ o12 = $\left\{\left(\!\begin{array}{ccc}
 {0}&amp;-{.167673}-{.067078}\,\mathbf{i}&amp;{0}\\
 {0}&amp;1&amp;{0}\\
 {0}&amp;{0}&amp;{.777616}-{.719709}\,\mathbf{i}\\
-{0}&amp;{0}&amp;1-{3.60426}\cdot 10^{-17}\,\mathbf{i}\\
+{0}&amp;{0}&amp;1+{1.86488}\cdot 10^{-17}\,\mathbf{i}\\
 \end{array}\!\right),\,\left(\!\begin{array}{ccc}
 {.28234}+{1.41066}\,\mathbf{i}&amp;{0}&amp;{0}\\
 1&amp;{0}&amp;{0}\\
 {0}&amp;{.666069}-{.500515}\,\mathbf{i}&amp;{0}\\
-{0}&amp;1-{4.05481}\cdot 10^{-17}\,\mathbf{i}&amp;{0}\\
+{0}&amp;{1}+{4.11625}\cdot 10^{-18}\,\mathbf{i}&amp;{0}\\
 {0}&amp;{0}&amp;-{.480231}-{.307979}\,\mathbf{i}\\
-{0}&amp;{0}&amp;1+{5.37605}\cdot 10^{-18}\,\mathbf{i}\\
+{0}&amp;{0}&amp;{1}+{1.14677}\cdot 10^{-17}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
 o12 : <pre style="display:inline">

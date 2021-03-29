@@ -257,10 +257,11 @@ makeit1 := (opts) -> (
 	  -- apply(varlist,M.generators,(e,x) -> new Holder2 from {expression e,x})
 	  );
      processTrm := (k,v) -> if v =!= 1 then Power{M.generatorExpressions#k, v} else M.generatorExpressions#k;
-     processTrms := trms -> (
-	  if # trms === 1
-	  then processTrm trms#0
-	  else new Product from apply(trms, processTrm));
+     processTrms := facts -> (
+	  if # facts === 0 then ONE -- cleaner than empty product
+	  else if # facts === 1
+	  then processTrm facts#0
+	  else new Product from apply(facts, processTrm));
      expression M := x -> (
 	  hold processTrms rawSparseListFormMonomial x.RawMonomial -- hold needed if single variable
 	  -- new Holder2 from { processTrms rawSparseListFormMonomial x.RawMonomial, x }
@@ -368,8 +369,15 @@ makeit1 := (opts) -> (
      M)
 
 processDegrees := (degs,degrk,nvars,degring,adddegring) -> (
-    -- pre-process degs
-    if degs =!= null then (
+     if not (degrk === null or instance(degrk,ZZ)) then error("DegreeRank => ... : expected an integer or null");
+     if degs === null then degs = (
+	  if degrk === null then (
+	       degrk = 1;
+	       apply(nvars,i->{1})
+	       )
+	  else apply(nvars, i -> apply(degrk, j -> if j === i or i >= degrk and j === degrk-1  then 1 else 0))
+	  )
+     else (
      	  if not instance(degs,List) then error "Degrees: expected a list";
      	  degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
 	  degs = apply(degs, d -> (
