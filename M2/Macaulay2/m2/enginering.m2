@@ -321,56 +321,20 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      F.frac = F;
      F.baseRings = append(R.baseRings,R);
      commonEngineRingInitializations F;
-     factor F := options -> f -> factor(numerator f,options) / factor(denominator f,options);
-     fact F := f -> (fact numerator f) / (fact denominator f);
+     factor F := options -> f -> factor numerator f / factor denominator f; -- options?
      toString F := x -> toString expression x;
      net F := x -> net expression x;
      baseName F := (f) -> (
 	  if denominator f != 1 
 	  then error "expected a generator"
 	  else baseName numerator f);
-     expression F := (f) -> (
-	 den := denominator f;
-	 num := numerator f;
-	 if den === 1_(ring den) then expression num else expression num / expression den
-	 );
---     if class R =!= FactPolynomialRing then ( -- ordinary polynomial ring
-     	 numerator F := (f) -> new R from rawNumerator raw f;
-     	 denominator F := (f) -> new R from rawDenominator raw f;
-     	 fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
-     	 fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
--*	 )
-     else -- factorized one: we effectively override (almost) all operations
-     (
-	 new F from R := (A,a) -> fraction(a,1_R);
-         new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
-	 promote(R,F) := (x,F) -> new F from x;
-	 lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
-    	 numerator F := a -> a#0;
-	 denominator F := a -> a#1;
-	 value F := a-> value numerator a / value denominator a;
-	 raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
-	 fraction(R,R) := (r,s) -> (
-	     g:=gcd(r,s);
-	     if coefficientRing R === ZZ then (
-		 rp:=rawPairs(raw ZZ,raw (s//g));
-		 e:=apply(rp#1,x->sum exponents(numgens R,x));
-		 if rp#0#(position(e,x->x==min e))<raw 0 then g=-g; -- lame workaround for #740
-		 ) else g=g*s#0; -- no constant in the denominator
-	     new F from {r//g, s//g}
-	     );
-	 fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
-	 F * F := (x,y) -> fraction(numerator x*numerator y,denominator x*denominator y);
-	 F + F := (x,y) -> fraction(numerator x*denominator y+numerator y*denominator x,denominator x*denominator y);
-	 F - F := (x,y) -> fraction(numerator x*denominator y-numerator y*denominator x,denominator x*denominator y);
-	 - F := x -> fraction(-numerator x, denominator x);
-	 F ^ ZZ := (x,n) -> if n>=0 then fraction( (numerator x)^n, (denominator x)^n ) else fraction( (denominator x)^-n, (numerator x)^-n );
-	 -- F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
-	 F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer
-	 F#0 = new F from { 0_R, 1_R };
-	 F#1 = new F from { 1_R, 1_R };
-     	 ); *-
+     expression F := (f) -> expression numerator f / expression denominator f;
+     numerator F := (f) -> new R from rawNumerator raw f;
+     denominator F := (f) -> new R from rawDenominator raw f;
+     fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
+     fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
      F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
+     F.generators = apply(generators R, m -> promote(m,F));
      if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
      if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
      if R.?generatorExpressions then F.generatorExpressions = (
