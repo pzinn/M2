@@ -1,19 +1,23 @@
 newPackage(
-        "CotangentSchubert",
-        AuxiliaryFiles => true,
-        Version => "0.1", 
-        Date => "22 Mar 2021",
-        Authors => {{Name => "Paul Zinn-Justin",
-                  Email => "pzinn@unimelb.edu.au",
-                  HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
-        Headline => "Cotangent Schubert calculus",
-        Keywords => {"Schubert","motivic","CSM"},
-        PackageImports => {"Factor", "VectorGraphics"},
-        AuxiliaryFiles=> true
-        )
+    "CotangentSchubert",
+    AuxiliaryFiles => true,
+    Version => "0.1", 
+    Date => "22 Mar 2021",
+    Authors => {{Name => "Paul Zinn-Justin",
+            Email => "pzinn@unimelb.edu.au",
+            HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
+    Headline => "Cotangent Schubert calculus",
+    Keywords => {"Schubert","motivic","CSM"},
+    PackageImports => {"Factor", "VectorGraphics"},
+    AuxiliaryFiles=> true
+    )
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
 end
+
+-- TODO
+-- use sparse matrices?
+-- implement transfer matrix for puzzles
 
 (FF,I)=setupKT(1,2)
 segreCls=segreClasses()
