@@ -162,8 +162,9 @@ segreClasses = () -> (
 
 end
 
-(I,segreClasses)=setupKT(1,2)
-segreInv=segreClasses^(-1);
+setupKT(1,2)
+segreCls=segreClasses();
+segreInv=segreCls^(-1);
 segreInv*restrict(segreClass{0,1}*segreClass{1,0})
 Table table(I,I,(i,j)->segreInv*restrict(segreClass i * segreClass j))
 
