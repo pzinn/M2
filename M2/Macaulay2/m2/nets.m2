@@ -4,35 +4,6 @@
 
 Net#{Standard,AfterPrint} = identity
 
-toString MutableHashTable := s -> (
-     concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
-toString Type := X -> (
-     if hasAnAttribute X then (
-	  if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
-	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
-	  );
-     concatenate(toString class X, " of ", toString parent X))
-toString HashTable := s -> (
-     concatenate (
-	  "new ", toString class s,
-	  if parent s =!= Nothing then (" of ", toString parent s),
-	  " from {",
-	  if # s > 0
-	  then demark(", ", apply(pairs s, (k,v) -> toString k | " => " | toString v) )
-	  else "",
-	  "}"))
-toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
-toStringn := i -> if i === null then "" else toString i
-toString BasicList := s -> concatenate(
-     if class s =!= List then toString class s,
-     "{", between(", ",apply(toList s,toStringn)), "}"
-     )
-toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
-toString AngleBarList := s -> concatenate ( "<|", between(", ",toStringn \ toList s), "|>" )
-toString Sequence := s -> (
-     if # s === 1 then concatenate("1 : (",toString s#0,")")
-     else concatenate("(",between(",",toStringn \ s),")")
-     )
 net Command := toString Command := toExternalString Command := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "-*Command*-"
      )

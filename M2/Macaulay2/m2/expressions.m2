@@ -1066,6 +1066,38 @@ short Sum := x -> apply(if #x>shortLength then new class x from {
 short String := s -> if #s > shortLength then first s | "..." | last s else s
 short Net := n -> if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
+
+toString'(Function, MutableHashTable) := (toString, s) -> (
+     concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
+toString'(Function,  Type) := (toString, X) -> (
+     if hasAnAttribute X then (
+	  if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
+	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	  );
+     concatenate(toString class X, " of ", toString parent X))
+toString'(Function,  HashTable) := (toString, s) -> (
+     concatenate (
+	  "new ", toString class s,
+	  if parent s =!= Nothing then (" of ", toString parent s),
+	  " from {",
+	  if # s > 0
+	  then demark(", ", apply(pairs s, (k,v) -> toString k | " => " | toString v) )
+	  else "",
+	  "}"))
+toString'(Function,  MutableList) := (toString, s) -> concatenate(toString class s,"{...",toString(#s),"...}")
+toStringn := i -> if i === null then "" else toString i
+toString'(Function,  BasicList) := (toString, s) -> concatenate(
+     if class s =!= List then toString class s,
+     "{", between(", ",apply(toList s,toStringn)), "}"
+     )
+toString'(Function,  Array) := (toString, s) -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
+toString'(Function,  AngleBarList) := (toString, s) -> concatenate ( "<|", between(", ",toStringn \ toList s), "|>" )
+toString'(Function,  Sequence) := (toString, s) -> (
+     if # s === 1 then concatenate("1 : (",toString s#0,")")
+     else concatenate("(",between(",",toStringn \ s),")")
+     )
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
