@@ -1,28 +1,0 @@
--- -*- M2-comint -*- hash: -1764815559
-i1 : X = coincidentRootLocus {3,2}
-
-o1 = $<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
-
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-i2 : ring X
-
-o2 = ${\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{5}\right]$
-
-o2 : <pre style="display:inline">
-PolynomialRing</pre>
-i3 : X' = coincidentRootLocus({3,2},ZZ/3331,Variable=>x)
-
-o3 = $<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
-
-o3 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-i4 : ring X'
-
-o4 = $\frac{{\mathbb Z}}{3331}\mathopen{}\left[x_{0}\,{.}{.}\, x_{5}\right]$
-
-o4 : <pre style="display:inline">
-PolynomialRing</pre>
-i5 : 
