@@ -2,13 +2,26 @@ export {"setupKT","setupHT","segreClasses","segreClass",
     "setupKTBorel","setupHTBorel","segreClassesBorel","segreClassBorel",
     "restrict"};
 
-elem = (i,vars) -> sum(subsets(vars,i), product);
+-- next two functions should be memoized
+elem = (i,vrs) -> sum(subsets(vrs,i), product);
+expandElem = (P,vrs,els) -> (
+    if P == 0 then return 0;
+    c := coefficients(P,Variables=>vrs);
+    M := c#0_(0,0); C := c#1_(0,0);
+    e := append((first exponents M)_(apply(vrs,index)),0);
+    ee := apply(#vrs, i -> e#i - e#(i+1));
+    if any(ee, i->i<0) then error "nonsymmetric polynomial";
+    Q := P - C * product(#vrs, i -> (elem(i+1,vrs))^(ee#i));
+    sub(C,ring first els) * product(#vrs, i -> (els#i)^(ee#i)) + expandElem(Q,vrs,els)
+    )
+
 -- build ring of K_T(T*flag)
 AryString = new Type of List; -- could we just use sequences?
 new AryString from String := (T,s) -> apply(ascii s,i->i-48);
 texMath AryString := s -> concatenate between("\\,",apply(s,toString))
 net AryString := toString AryString := s -> concatenate apply(s,toString)
 n:=0; d:=0; ω:={}; I:={}; dimdiffs:={}; subs := s -> error "setup first"; -- eww TEMP
+fixedPoint := null; -- eww
 globalVars = dims -> (
     n = last dims;
     subs = s -> apply(#dims,i->positions(s,j->j==i));
@@ -17,18 +30,19 @@ globalVars = dims -> (
     -- list of fixed points
     ω=new AryString from splice apply(d+1, i->dimdiffs_i:i);
     I = unique permutations ω; -- unique? eww
+    fixedPoint=null;
     )
 BBs=new IndexedVariableTable;
 q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_0 = frac(factor(ZZ[q,DegreeRank=>0])); -- init index table
 FK1 = factor(ZZ[q,zbar,DegreeRank=>0]); -- same as FK_1, really but diff variable name
-FF=AA=BB=null; segreClassTable=new HashTable; 
+FF=AA=BB=null; segreClassTable=new HashTable;
 Rc := Rcnum := Rcden := null; -- eww TEMP
 
 KTRmatrix = () -> (
     V1:=FK1^(d+1); q:=FK1_0; zbar:=FK1_1;
     Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
-            if i==j then (i*(d+2),i*(d+2))=>1-q^2*zbar 
+            if i==j then (i*(d+2),i*(d+2))=>1-q^2*zbar
             else ((i*(d+1)+j,j*(d+1)+i)=>q*(1-zbar),
                 (i*(d+1)+j,i*(d+1)+j)=>(1-q^2)* if i<j then 1 else zbar)));
     Rcden0:=1-q^2*zbar;
@@ -38,6 +52,9 @@ KTRmatrix = () -> (
     Rcden = (qq,z1,z2) -> (map(ring z2,FK1,{qq,z2*z1^(-1)}))Rcden0;
     )
 
+debug Core
+
+AfromB := null; AB=null; Z:=null; -- eww
 setupBorel = dims -> (
     y := getSymbol "y";
     if not BBs#?n then (
@@ -53,13 +70,24 @@ setupBorel = dims -> (
                 elem(inds#1,apply(dims#(inds#0)..dims#(inds#0+1)-1,j->BBs_n_j))
                 )));
     AA = R1 / kernel f; -- should f be available somehow?
+    promote(AA,BB) := (a,XX) -> f lift(a,R1); -- eww
+    -- now the reverse transformation
+    AfromB = b -> (
+        AB = FF monoid (BB0.generatorSymbols | R1.generatorSymbols); -- no using it
+        --    	AB := FF [BB0.generatorSymbols | R1.generatorSymbols]; -- no using it fails because of https://github.com/Macaulay2/M2/issues/2020
+        if ring b =!= BB then error "wrong ring";
+        b = sub(b,AB);
+        scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
+        sub(b,AA)
+        );
+    Z=null;
     );
 
 setupKTBorel = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
     setupKT dims;
     setupBorel dims;
-    (AA,BB,I) -- or whatever
+    (AA,BB,AfromB,I) -- or whatever
     );
 setupKT = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);
@@ -103,7 +131,6 @@ setupHT = dims -> ( -- dims = list of dim(V_i)
 
 ind := i -> sum(#i,j->(d+1)^j*i_(#i-1-j));
 
-Z:=null; -- eww
 segreClassBorel = i -> (
     if Z === null then segreClassesBorel();
     i=new AryString from i;
@@ -134,7 +161,6 @@ segreClassesBorel = () -> (
     -- segreClasssi=segreClasss^(-1);
     );
 
-fixedPoint := null; -- eww
 segreClass = i -> (
     if fixedPoint === null then segreClasses();
     i=new AryString from i;
