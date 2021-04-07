@@ -8,7 +8,8 @@ newPackage(
     Headline => "Proper factor",
     Keywords => {"Miscellaneous"},
     DebuggingMode => false,
-    AuxiliaryFiles => false
+    AuxiliaryFiles => false,
+    Configuration => { "DegreesRings" => false }
     )
 
 export {"FactorPolynomialRing"}
@@ -59,7 +60,7 @@ factor PolynomialRing := opts -> R -> (
         numerator Rf := a -> new Rf from { numerator a#0, a#1 };
         );
     new Rf from R := (A,a) -> (
-        if (options R).Inverses then (
+        if (options R).Inverses and opts.Inverses then (
             -- a bit of a hack if a==0, but works
             minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
             a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial.
@@ -68,7 +69,7 @@ factor PolynomialRing := opts -> R -> (
         else c = 1_R;
         fe := toList apply append(rawFactor raw a,(f,e)->(
                 ff:=new R from f;
-                if (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+                if (options R).Inverses and opts.Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
                 if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
             );
         if liftable(fe#0#0,R.basering) then (
@@ -221,3 +222,13 @@ decompose Ideal := List => options minimalPrimes >> opts -> I -> (
     )
 
 FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
+
+if ((options Factor).Configuration#"DegreesRings") then (
+-- degrees rings
+olddR := lookup(degreesRing,List);
+degreesRing List := PolynomialRing => memoize(
+     hft -> if #hft === 0 then olddR {} else factor (ZZ degreesMonoid hft));
+
+degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then olddR {} else factor(ZZ degreesMonoid n));
+)
+
