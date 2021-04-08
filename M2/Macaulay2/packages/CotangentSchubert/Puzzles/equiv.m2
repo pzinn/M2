@@ -1,6 +1,3 @@
--- auxiliary file: list of equivariant rhombi
-{
-    {},
-    {{"1","0","1","0"}},
-    {{"1","0","1","0"},{"2","0","2","0"},{"2","1","2","1"},{"21","0","21","0"},{"2","10","2","10"},{"21","10","21","10"},{"2(10)","0","2(10)","0"},{"2","(21)0","2","(21)0"}}
-}
+equivRhombi = d -> try myget ("equiv-"|toString d|".m2") else error "Equivariant tiles not implemented for this value of d";
+-- memoize?
+
