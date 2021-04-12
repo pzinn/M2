@@ -20,8 +20,8 @@ AryString = new Type of List; -- could we just use sequences?
 new AryString from String := (T,s) -> apply(ascii s,i->i-48);
 texMath AryString := s -> concatenate between("\\,",apply(s,toString))
 net AryString := toString AryString := s -> concatenate apply(s,toString)
-n:=0; d:=0; ω:={}; I:={}; dimdiffs:={}; subs := s -> error "setup first"; -- eww TEMP
-fixedPoint := null; -- eww
+n:=0; d:=0; ω:={}; I:={}; dimdiffs:={};
+subs := null; fixedPoint := null; -- eww
 globalVars = dims -> (
     n = last dims;
     subs = s -> apply(#dims,i->positions(s,j->j==i));
@@ -34,22 +34,22 @@ globalVars = dims -> (
     )
 BBs=new IndexedVariableTable;
 q := getSymbol "q"; zbar := getSymbol "zbar";
+FK_-1 = factor(ZZ[q,zbar,DegreeRank=>0]); -- same as FK_1, really but diff variable name (and no frac)
 FK_0 = frac(factor(ZZ[q,DegreeRank=>0])); -- init index table
-FK1 = factor(ZZ[q,zbar,DegreeRank=>0]); -- same as FK_1, really but diff variable name
 FF=AA=BB=null; segreClassTable=new HashTable;
 Rc := Rcnum := Rcden := null; -- eww TEMP
 
 KTRmatrix = () -> (
-    V1:=FK1^(d+1); q:=FK1_0; zbar:=FK1_1;
+    V1:=FK_-1^(d+1); q:=FK_-1_0; zbar:=FK_-1_1;
     Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
             if i==j then (i*(d+2),i*(d+2))=>1-q^2*zbar
             else ((i*(d+1)+j,j*(d+1)+i)=>q*(1-zbar),
                 (i*(d+1)+j,i*(d+1)+j)=>(1-q^2)* if i<j then 1 else zbar)));
     Rcden0:=1-q^2*zbar;
-    Rc0 := 1/Rcden0 * promote(Rcnum0,frac FK1);
-    Rc = (qq,z1,z2) -> (map(ring z2,frac FK1,{qq,z2/z1}))Rc0;
-    Rcnum = (qq,z1,z2) -> (map(ring z2,FK1,{qq,z2*z1^(-1)}))Rcnum0;
-    Rcden = (qq,z1,z2) -> (map(ring z2,FK1,{qq,z2*z1^(-1)}))Rcden0;
+    Rc0 := 1/Rcden0 * promote(Rcnum0,frac FK_-1);
+    Rc = (qq,z1,z2) -> (map(ring z2,frac FK_-1,{qq,z2/z1}))Rc0;
+    Rcnum = (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2*z1^(-1)}))Rcnum0;
+    Rcden = (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2*z1^(-1)}))Rcden0;
     )
 
 debug Core
@@ -58,7 +58,7 @@ AfromB := null; AB=null; Z:=null; -- eww
 setupBorel = dims -> (
     y := getSymbol "y";
     if not BBs#?n then (
-        BB0 := FF[y_1..y_n]; -- in terms of Chern roots
+        BB0 := FF(monoid[y_1..y_n]); -- in terms of Chern roots
         J := ideal apply(1..n,k->sum(subsets(gens BB0,k),product)-sum(subsets(FF_1..FF_n,k),product));
         BBs_n = BB0/J;
         );
@@ -73,11 +73,13 @@ setupBorel = dims -> (
     promote(AA,BB) := (a,XX) -> f lift(a,R1); -- eww
     -- now the reverse transformation
     AfromB = b -> (
-        AB = FF monoid (BB0.generatorSymbols | R1.generatorSymbols); -- no using it
-        --    	AB := FF [BB0.generatorSymbols | R1.generatorSymbols]; -- no using it fails because of https://github.com/Macaulay2/M2/issues/2020
+        AB := FF monoid (BB0.generatorSymbols | R1.generatorSymbols); -- no using it
         if ring b =!= BB then error "wrong ring";
         b = sub(b,AB);
-        scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
+        -- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
+	-- fails because of https://github.com/Macaulay2/M2/issues/2020
+	v := seq -> apply(toList seq, j -> AB_j);
+	scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
         sub(b,AA)
         );
     Z=null;
@@ -99,19 +101,19 @@ setupKT = dims -> ( -- dims = list of dim(V_i)
     (FF,I)
     );
 ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
-BH_0 = FH_0 = frac(factor(ZZ[ℏ])); -- init index table
-FH1 = factor(ZZ[ℏ,xbar]); -- same as FH_1, really but diff variable name
+FH_-1 = factor(ZZ[ℏ,xbar]); -- same as FH_1, really but diff variable name (and no frac)
+FH_0 = frac(factor(ZZ[ℏ])); -- init index table
 HTRmatrix = () -> (
-    V1:=FH1^(d+1); ℏ:=FH1_0; xbar:=FH1_1;
+    V1:=FH_-1^(d+1); ℏ:=FH_-1_0; xbar:=FH_-1_1;
     Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
             if i==j then (i*(d+2),i*(d+2))=>ℏ-xbar
             else ((i*(d+1)+j,j*(d+1)+i)=>xbar,
                 (i*(d+1)+j,i*(d+1)+j)=>ℏ)));
     Rcden0:=ℏ-xbar;
-    Rc0 := 1/Rcden0 * promote(Rcnum0,frac FH1);
-    Rc = (hh,x1,x2) -> (map(ring hh,frac FH1,{hh,x2-x1}))Rc0;
-    Rcnum = (hh,x1,x2) -> (map(ring hh,FH1,{hh,x2-x1}))Rcnum0;
-    Rcden = (hh,x1,x2) -> (map(ring hh,FH1,{hh,x2-x1}))Rcden0;
+    Rc0 := 1/Rcden0 * promote(Rcnum0,frac FH_-1);
+    Rc = (hh,x1,x2) -> (map(ring hh,frac FH_-1,{hh,x2-x1}))Rc0;
+    Rcnum = (hh,x1,x2) -> (map(ring hh,FH_-1,{hh,x2-x1}))Rcnum0;
+    Rcden = (hh,x1,x2) -> (map(ring hh,FH_-1,{hh,x2-x1}))Rcden0;
     )
 setupHTBorel = dims -> ( -- dims = list of dim(V_i)
     if first dims !=0 then dims=prepend(0,dims);

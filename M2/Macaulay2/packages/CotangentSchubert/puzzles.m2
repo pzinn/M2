@@ -11,11 +11,10 @@
 --
 -- there are various type of fugacities ~ more or less same as puzzle pieces
 --
--- TODO: restructure in the same way as kogan. fugacities should move too
 
 Puzzle = new Type of HashTable;
 
-puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/Puzzles/";
+puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/puzzles/";
 myload = x -> load (puzzleDir|x)
 myget = x -> value get (puzzleDir|x) -- ewww
 
@@ -145,7 +144,8 @@ vg = p -> gList (
 digit := s -> #s==1 and first ascii s >=48 and first ascii s <= 48+9;
 valid := (x,y) -> x === y or (x === "#" and digit y) or x === "*" or x === "**";
 
-Puzzle ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,last) -- cf similar method for OptionTable
+Puzzle ++ HashTable := (opts1, opts2) -> merge(opts1,opts2,last)
+Puzzle ++ List := (opts1, opts2) -> opts1 ++ new class opts1 from opts2 -- cf similar method for OptionTable
 
 initPuzzle = opts >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
@@ -187,7 +187,7 @@ puzzle = opts >> o -> args -> (
             ) else (
             -- down triangles
             scan(downTriangles, x -> if valid(p#(i+1,j,0),x#0) and valid(p#(i,j+1,1),x#1) and valid(p#(i,j,2),x#2) then (
-                    recurse(i,j+1,0,p++{(i,j,2)=>x#2,(i+1,j,0)=>x#0,(i,j+1,1)=>x#1,if #x>3 then (i,j,downTriStyle)=>x#3});
+                    recurse(i,j+1,0,p++{(i+1,j,0)=>x#0,(i,j+1,1)=>x#1,(i,j,2)=>x#2,if #x>3 then (i,j,downTriStyle)=>x#3});
             )));
         );
 
