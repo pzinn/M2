@@ -22,7 +22,7 @@ toString HashTable := s -> (
 	  else "",
 	  "}"))
 toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
-toStringn := i -> if i === null then "" else toString i
+toStringn := i -> if i === null or (class i === Holder and i#0 === null) then "" else toString i
 toString BasicList := s -> concatenate(
      if class s =!= List then toString class s,
      "{", between(", ",apply(toList s,toStringn)), "}"
