@@ -9,8 +9,8 @@ kogan = (d,Kth,Kinv,Generic,Equivariant) -> (
     	basicTriangles := apply(toList(0..d),i->{" ",toString i,toString i}) 
     	| apply(toList(0..d),i->{toString i," ",toString i})
     	| flatten apply(toList(0..d), j->apply(toList(0..j-1),i->{toString i,toString j,toString i | toString j}));
-	if Kth =!= false then upTriangles = basicTriangles | toList splice table(0..Kth,Kth+1..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
-	if Kinv =!= false then downTriangles = basicTriangles | toList splice table(0..Kinv,Kinv+1..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
+	upTriangles = if Kth === false then basicTriangles else basicTriangles | toList splice table(0..Kth,Kth+1..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
+	downTriangles = if Kinv === false then basicTriangles else basicTriangles | toList splice table(0..Kinv,Kinv+1..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
 	-- what's going on here?? what's the value of Kth for? shouldn't it be detected automatically?
 	-- TODO: have two numbers or something instead of d
 	);

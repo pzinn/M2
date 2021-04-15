@@ -9,8 +9,13 @@ newPackage(
     Headline => "Cotangent Schubert calculus",
     Keywords => {"Schubert","motivic","CSM"},
     PackageImports => {"Factor", "VectorGraphics"},
-    AuxiliaryFiles=> true
+    AuxiliaryFiles => true,
+    DebuggingMode => true
     )
+
+opts = new OptionTable from {Kth => false, Equivariant => true, Generic => true} -- common options
+export {"Kth", "Equivariant" };
+
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
 end
@@ -19,24 +24,22 @@ end
 -- use sparse matrices?
 -- implement transfer matrix for puzzles
 
-(FF,I)=setupKT(1,2)
+(FF,I)=setupCotangent(1,2,Kth=>true)
 segreCls=segreClasses()
 segreInv=segreCls^(-1);
--- Table table(I,I,(i,j)->segreInv*restrict(segreClassBorel i * segreClassBorel j))
 Table table(I,I,(i,j)->segreInv*(segreClass i @ segreClass j))
 L=puzzle("01","01",Generic=>true,Equivariant=>true)
-fugacityVector L
+fugacityVector(L,Kth=>true)
 
-(FF,I)=setupHT(2,4)
-segreCls=segreClasses()
-segreInv=segreCls^(-1);
--- Table table(I,I,(i,j)->segreInv*restrict(segreClassBorel i * segreClassBorel j))
-Table table(I,I,(i,j)->segreInv*(segreClass i @ segreClass j))
-L=puzzle("0101","0101",Generic=>true,Equivariant=>true)
-fugacityVector L
+(AA,BB,f,I)=setupCotangent(2,4,Presentation=>Borel,Equivariant=>false,Kth=>true)
+segreCls=segreClasses();
+L=puzzle("0101","0101",Generic=>true,Equivariant=>false)
+fugacityVector(L,Kth=>true)
+(segreCls*oo)_0
+segreCls_(0,1)^2
 
 -- d=2
-(FF,I)=setupHT(1,2,4)
+(FF,I)=setupCotangent(1,2,4)
 segreCls=segreClasses();
 i1=I#1;i2=I#2;
 a=(segreClass i1)@(segreClass i2);
@@ -46,7 +49,7 @@ a==b
 Table table(I,I,(i1,i2)->(segreClass i1)@(segreClass i2)==segreClasses*(fugacityVector puzzle(i1,i2,Generic=>true,Equivariant=>true)))
 
 -- note that for large examples, no need to compute the inverse
-(FF,I)=setupHT(1,2,3,4)
+(FF,I)=setupCotangent(1,2,3,4)
 segreCls=segreClasses();
 i1="3021"; i2="2130"; -- interesting because separated "3 2 " * " 1 0"
 a=(segreClass i1)@(segreClass i2);
