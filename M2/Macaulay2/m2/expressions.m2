@@ -1367,7 +1367,7 @@ texMath BasicList := s -> concatenate(
     if not instance(s,VisibleList) then texMath class s,
     "\\left",
     opendelim,
-    between(",\\,",apply(toList s,texMath)),
+    if #s>0 then between(",\\,",apply(toList s,texMath)) else "\\,",
     "\\right",
     closedelim
     )

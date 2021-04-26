@@ -7,15 +7,17 @@ newPackage(
             HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Proper factor",
     Keywords => {"Miscellaneous"},
-    DebuggingMode => false,
+    DebuggingMode => true,
     AuxiliaryFiles => false,
     Configuration => { "DegreesRings" => false }
     )
 
-export {"FactorPolynomialRing"}
-protect oldfactor
+export {"FactorPolynomialRing","OldFactor"}
+protect oldFactor
 
 debug Core
+factorOpts := new OptionTable from {Inverses=>false,OldFactor=>false}; -- new options for factor
+(frame factor)#0 = factorOpts;
 
 commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
 -- commonPairs should probably be defined in d for optimization purposes
@@ -45,9 +47,8 @@ factor PolynomialRing := opts -> R -> (
     commonEngineRingInitializations Rf;
     if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
     expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e);
-    factor Rf := opts -> identity;
-    if not R.?oldfactor then R.oldfactor = R#factor;
-    factor R := opts -> a -> new Rf from a; -- factor now uses the factorized ring
+    factor Rf := opts1 -> a -> if opts.OldFactor or opts1.OldFactor then Product apply(if a#0 == 1 then a#1 else prepend((a#0,1),a#1),u->Power u) else a;
+    factor R := opts1 -> a -> factor(opts1,new Rf from a); -- factor now uses the factorized ring unless option says otherwise
     value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1));
     raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
     if (options R).Inverses then (
@@ -60,7 +61,7 @@ factor PolynomialRing := opts -> R -> (
         numerator Rf := a -> new Rf from { numerator a#0, a#1 };
         );
     new Rf from R := (A,a) -> (
-        if (options R).Inverses and opts.Inverses then (
+        if (options R).Inverses then (
             -- a bit of a hack if a==0, but works
             minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
             a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial.
@@ -183,52 +184,33 @@ FactorPolynomialRing _ List := (R,v) -> (
     );
 
 -- force the use of the new factor
-Ring Array := PolynomialRing => (R,variables) -> (
-    RM := R monoid variables;
-    RM.oldfactor = RM#factor;
-    factor RM := opts -> a -> (factor RM; factor a);
-    use RM
-    )
-Ring List := PolynomialRing => (R,variables) -> (
-    RM := R monoid (variables,Local => true);
-    RM.oldfactor = RM#factor;
-    factor RM := opts -> a -> (factor RM; factor a);
+Ring Array :=
+Ring List := (R,variables) -> (
+    RM := R monoid if instance(variables,List) then (variables,Local=>true) else variables;
+    oldFactor := RM#factor;
+    factor RM := opts -> a -> if opts.OldFactor then oldFactor a else (factor RM; factor(opts,a));
     use RM
     )
 
 -- some functions need old factor
-debug MinimalPrimes;
-minimalPrimes Ideal := List => opts -> I -> (
-    R := ring I; local newfactor;
-    if R.?oldfactor then (
-        newfactor = R.factor;
-        R.factor = R.oldfactor;
-        );
-    first(
-        minprimesHelper(I, (minimalPrimes, Ideal), opts),
-        if R.?oldfactor then R.factor=newfactor
-        )
-    )
-decompose Ideal := List => options minimalPrimes >> opts -> I -> (
-    R := ring I; local newfactor;
-    if R.?oldfactor then (
-        newfactor = R#factor;
-        R#factor = R.oldfactor;
-        );
-    first(
-        minprimesHelper(I, (minimalPrimes, Ideal), opts),
-        if R.?oldfactor then R#factor=newfactor
-        )
-    )
+-- ugly hack for now, we'll see later
+factorOpts1 = new OptionTable from {Inverses=>false,OldFactor=>true}
+f := value MinimalPrimes#"private dictionary"#"factors"
+g := RingElement#f
+f RingElement := (F) -> (
+(frame factor)#0 = factorOpts1;
+first(g value F,
+(frame factor)#0 = factorOpts)
+)
 
 FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
 
 if ((options Factor).Configuration#"DegreesRings") then (
 -- degrees rings
-olddR := lookup(degreesRing,List);
+dR0 := degreesRing {};
 degreesRing List := PolynomialRing => memoize(
-     hft -> if #hft === 0 then olddR {} else factor (ZZ degreesMonoid hft));
+     hft -> if #hft === 0 then dR0 else factor (ZZ degreesMonoid hft));
 
-degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then olddR {} else factor(ZZ degreesMonoid n));
+degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then dR0 else factor(ZZ degreesMonoid n));
 )
 
