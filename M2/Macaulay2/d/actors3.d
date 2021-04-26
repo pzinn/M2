@@ -17,7 +17,7 @@ override(h:HashTable,v:Sequence,numopts:int):Expr := (
      numargs := length(v) - numopts;
      newargs := nullE;
      if numargs == 0 then (newargs = emptySequenceE;)
-     else if numargs == 1 then foreach x in v do (if !isOption(x) then newargs = x)
+     else if numargs == -1 then foreach x in v do (if !isOption(x) then newargs = x)
      else (
 	  newargs = Expr(
 	       new Sequence len numargs do (
@@ -48,7 +48,7 @@ override(v:Sequence,numopts:int):Expr := (
      numargs := length(v) - numopts;
      newargs := nullE;
      if numargs == 0 then (newargs = emptySequenceE;)
-     else if numargs == 1 then foreach x in v do (if !isOption(x) then newargs = x)
+     else if numargs == -1 then foreach x in v do (if !isOption(x) then newargs = x)
      else (
 	  newargs = Expr(
 	       new Sequence len numargs do (
@@ -81,11 +81,11 @@ override(e:Expr):Expr := (
 	       is h:HashTable do (
 		    if h.Mutable then WrongArg("an immutable hash table")
 		    else when args.1 is v:Sequence do override(h,v,numOptions(v))
-		    else override(h,Sequence(args.1),if isOption(args.1) then 1 else 0)
+		    else override(h,Sequence(args.1),if isOption(args.1) then 1 else 2) -- hack TODO rewrite
 		    )
 	       is Nothing do (
 		    when args.1 is v:Sequence do override(v,numOptions(v))
-		    else override(Sequence(args.1),if isOption(args.1) then 1 else 0)
+		    else override(Sequence(args.1),if isOption(args.1) then 1 else 2) -- hack TODO rewrite
 		    )
 	       else WrongArg(1,"a hashtable"))
 	  else WrongNumArgs(2))

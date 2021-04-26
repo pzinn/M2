@@ -13,7 +13,7 @@ new OptionTable from List := (OptionTable,opts) -> (
 installMethod(symbol >>, OptionTable, Function, Function => 
   (opts,f) -> args -> (
        -- Common code for functions created with >> to process options and arguments.
-       uncurry(f, override (opts,args))
+       uncurry(f, ((opts1,args1):=override (opts,args); (opts1,unsequence args1)))
        )
   )
 
@@ -35,7 +35,7 @@ installMethod(symbol >>, Boolean, Function, Function =>
   (opts,f) -> args -> (
        -- Common code for functions created with >> to separate options from arguments.
        -- uncurry(f, (new OptionTable from toList select(args, i -> instance(i,Option)), select(args, i -> not instance(i,Option))))
-       uncurry(f, override (,args))
+       uncurry(f, ((opts1,args1):=override (,args); (opts1,unsequence args1)))
        )
   )
 
