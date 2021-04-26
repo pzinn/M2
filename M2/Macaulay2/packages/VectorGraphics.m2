@@ -16,7 +16,7 @@ newPackage(
 
 export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
-    "gList", "viewPort", "is3d", "distance", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
+    "gList", "viewPort", "is3d", "distance", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot", "listPlot",
     "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "SizeX", "SizeY", "ViewPort",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
     "Blur", "Static", "PathList", "Axes", "Margin", "Mesh",
@@ -32,6 +32,7 @@ protect ScaledRadius
 protect ScaledRadiusX
 protect ScaledRadiusY
 protect GraphicsId
+protect OptionKeys
 
 debug Core
 
@@ -88,12 +89,15 @@ gParse Vector := x -> (
      )
 gParse GraphicsObject := identity
 
-GraphicsType List := (T,opts) -> (
-    opts0 := T.Options;
+GraphicsType VisibleList := (T,l) -> (
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     gParseFlag = false;
-    temp := gParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
-    new T from (if gParseFlag then append(temp,symbol Is3d => true) else temp)
+    (opts,args) := override(,toSequence l); -- works because of override fix of issue #1548
+    opts = gParse opts;
+    args = sequence args;
+    args = apply(#args, i -> T.OptionKeys#i => gParse args#i);
+    if gParseFlag then args=append(args,symbol Is3d => true);
+    new T from T.Options ++ args ++ opts
 )
 
 perspective = g -> (
@@ -153,7 +157,8 @@ updateGraphicsCache := g -> (
 
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new MutableHashTable;
-    g.Options=x#1; -- TODO: should it be an actual table? then have to suppress the BS syntax
+    g.OptionKeys=apply(x#1,y->y#0); -- not just keys Options because keep track of ordering of args
+    g.Options=new OptionTable from x#1;
     g.SVGElement = new MarkUpType of Hypertext;
     addAttribute(g.SVGElement,svgAttr | if #x>=3 then x#2 else {});
     g.SVGElement.qname = x#0;
@@ -161,7 +166,7 @@ new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
 
 
 Circle = new GraphicsType of GraphicsObject from ( "circle",
-    { symbol Center => vector {0.,0.}, symbol Radius => 50. },
+    { symbol Center => vector {0.,0.,0.,1.}, symbol Radius => 50. },
     { "r", "cx", "cy" }
     )
 viewPort1 Circle := g -> (
@@ -177,7 +182,7 @@ distance1 Circle := g -> (
     )
 
 Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
-    { symbol Center => vector {0.,0.}, symbol RadiusX => 50., symbol RadiusY => 50. },
+    { symbol Center => vector {0.,0.,0.,1.}, symbol RadiusX => 50., symbol RadiusY => 50. },
     { "rx", "ry", "cx", "cy" }
     )
 viewPort1 Ellipse := g -> (
@@ -194,7 +199,7 @@ distance1 Ellipse := g -> (
     )
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
-    { Point => vector {0.,0.}, symbol TextContent => "" },
+    { Point => vector {0.,0.,0.,1.}, symbol TextContent => "" },
     { "x", "y" }
     )
 viewPort1 GraphicsText := g -> (
@@ -211,7 +216,7 @@ viewPort1 GraphicsText := g -> (
     )
 
 Line = new GraphicsType of GraphicsObject from ( "line",
-    { Point1 => vector {0.,0.}, Point2 => vector {50.,50.}},
+    { Point1 => vector {0.,0.,0.,1.}, Point2 => vector {50.,50.,0.,1.}},
     { "x1", "y1", "x2", "y2" }
     )
 viewPort1 Line := g -> (
@@ -241,11 +246,11 @@ viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw 
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
 -- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
 gList = x -> (
-    x=flatten toList sequence x;
-    x1 := select(x, y -> instance(y,GraphicsObject));
-    x2 := select(x, y -> instance(y,Option));
-    if any(x1,is3d) then x2 = append(x2, Is3d => true);
-    GraphicsList append(x2,symbol Contents => x1)
+    x=deepSplice toSequence x;
+    (opts,args) := override(,x);
+    args = flatten splice { args };
+    if any(args,is3d) then opts = opts ++  { Is3d => true };
+    GraphicsList (opts,symbol Contents => args )
     )
 viewPort1 GraphicsList := x -> (
     s := nonnull apply(x.Contents, y->y.cache.ViewPort);
@@ -258,7 +263,7 @@ viewPort1 GraphicsList := x -> (
 )
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
-    { Point => vector {0.,0.}, symbol HtmlContent => null },
+    { Point => vector {0.,0.,0.,1.}, symbol HtmlContent => null },
     { "x", "y" }
     )
 viewPort1 GraphicsHtml := g -> (
@@ -374,8 +379,6 @@ svg (GraphicsObject,List) := (g,l) -> (
 )
 
 svg GraphicsObject := g -> svg(g,{})
-
---htmlWithTex GraphicsObject := html
 
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
@@ -765,6 +768,12 @@ plot = true >> o -> (P,r) -> (
 	)
     )
 )
+
+listPlot = true >> o -> l -> (
+    if #l === 0 then return; print ("listPlot:",l,o);
+    if not instance(first l,Vector) and not instance(first l,VisibleList) then l=apply(#l,i->(i,l#i));
+    gList (apply(l,x->Circle{Center=>x,Radius=>0.1}),Polyline{Points=>l},o)
+    )
 
 beginDocumentation()
 multidoc ///
@@ -1173,7 +1182,7 @@ multidoc ///
 ///
 undocumented { -- there's an annoying conflict with NAG for Point, Points
     Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
-    (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
+    (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,VisibleList),
     (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
 }

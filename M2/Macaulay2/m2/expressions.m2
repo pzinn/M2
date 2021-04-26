@@ -531,10 +531,10 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
 matrixOpts := x -> ( -- helper function
+    print net toList x;
     opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null,mutable=>false};
     (opts,x) = override(opts,toSequence x);
-    if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
-    (opts,x)
+    (opts,toList unsequence x) -- for backwards compatibility
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
