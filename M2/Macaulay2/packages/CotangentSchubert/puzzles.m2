@@ -16,7 +16,10 @@ Puzzle = new Type of HashTable;
 
 puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/puzzles/";
 myload = x -> load (puzzleDir|x)
-myget = x -> value get (puzzleDir|x) -- ewww
+myget = memoize(x -> first(
+	value get (puzzleDir|x), -- ewww
+	if debugLevel>0 then << x << " loaded" << endl
+	))
 
 puzzleOpts := opts ++ {Steps => null, Separated => null, Kinv => false, Labels => true, Paths => false};
 export {"Steps", "Kinv", "Separated", "Size", "Labels", "Paths"}; -- move to main file

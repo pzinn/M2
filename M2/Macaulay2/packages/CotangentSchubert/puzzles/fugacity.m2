@@ -11,11 +11,7 @@ states3:=makeStates 3;
 ind := x -> position(states3,y->y===x);
 fugacityH = p -> (
     n:=p.Size;
-    if not FH#?n then (
-        x:=getSymbol "x"; ℏ:=getSymbol "ℏ";
-        FH_n = frac(factor(ZZ[ℏ,x_1..x_n]));
-        );
-    FF = FH_n;
+    defineFH n;
     product(n-1, i -> product(n-1-i, j -> (
                 X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0);
                 if not p#Separated then (
@@ -34,26 +30,23 @@ fugacityK = p -> (
     n:=p.Size;
     if p#Separated then error "K-Fugacities not implemented yet for separated";
     if p#Equivariant then (
-        use FK_-1; -- not great
+        FF = FK_0;
         (uptrifug,downtrifug) := try myget ("fugacity-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
         --(uptrifug,downtrifug) := myget ("fugacity-"|toString d|".m2");
+	FF = FK_-1; -- not great
         rhfug := try myget ("fugacity-equiv-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
-        if not FK#?n then (
-            z:=getSymbol "z"; q:=getSymbol "q";
-            FK_n = frac(factor(ZZ[q,z_1..z_n]));
-            );
-        FF = FK_n;
+	defineFK n;
         product(n-1, i -> product(n-1-i, j ->
-                (map(FF,frac FK_-1,{FF_0,FF_(n-i)/FF_(j+1)})) rhfug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0))
+                (map(FF,FK_-1,{FF_0,FF_(n-i)/FF_(j+1)})) rhfug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0))
                 )) * product(n,i->(
-                (map(FF,frac FK_-1,{FF_0,1})) uptrifug#(p#(i,n-1-i,0),p#(i,n-1-i,1),p#(i,n-1-i,2))
+                uptrifug#(p#(i,n-1-i,0),p#(i,n-1-i,1),p#(i,n-1-i,2))
                 )
             )
         ) else (
         FF = FK_0;
         (uptrifug,downtrifug) = try myget ("fugacity-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
         product(n, i -> product(n-i, j ->
-                uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2))* if j+i==n-1 then 1 else downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
+                uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2)) * if j+i==n-1 then 1 else downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
         )
     )
 

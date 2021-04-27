@@ -38,6 +38,7 @@ globalVars = dims0 -> (
 q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_-1 = frac(factor(ZZ[q,zbar,DegreeRank=>0])); -- same as FK_1, really but diff variable name
 FK_0 = frac(factor(ZZ[q,DegreeRank=>0]));
+promote(FK_0,FK_-1):= (a,XX) -> (map(FK_-1,FK_0)) a -- why isn't that automatic??
 FF=AA=BB=null;
 Rc := Rcnum := Rcden := null; -- eww TEMP
 
@@ -57,6 +58,7 @@ Z:=null; -- eww
 ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
 FH_-1 = frac(factor(ZZ[ℏ,xbar])); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ[ℏ]));
+promote(FH_0,FH_-1):= (a,XX) -> (map(FH_-1,FH_0)) a -- why isn't that automatic??
 HTRmatrix = () -> (
     V1:=FH_-1^(d+1); ℏ:=FH_-1_0; xbar:=FH_-1_1;
     Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
@@ -72,18 +74,33 @@ HTRmatrix = () -> (
 
 debug Core -- to use "generatorSymbols" and "frame"
 
+defineFK = n -> FF = (
+    if not FK#?n then (
+        z := getSymbol "z"; q := getSymbol "q";
+        FK_n = factor(frac(ZZ[q,z_1..z_n,DegreeRank=>0]));
+        promote(FK_0,FK_n):= (a,XX) -> (map(FK_n,FK_0)) a; -- why isn't that automatic??
+        );
+    FK_n
+    )
+
+defineFH = n -> FF = (
+    if not FH#?n then (
+        x := getSymbol "x"; ℏ := getSymbol "ℏ";
+        FH_n = factor(frac(ZZ[ℏ,x_1..x_n]));
+        promote(FH_0,FH_n):= (a,XX) -> (map(FH_n,FH_0)) a -- why isn't that automatic??
+        );
+    FH_n
+    )
+
+
 -- build ring of H/K_T(T*flag)
 setupEquivLoc = () -> (
     if not curCotOpts#Equivariant then error "Equivariant localization requires Equivariant option";
     if curCotOpts.Kth then (
-        z := getSymbol "z";
-        if not FK#?n then FK_n = factor(frac(ZZ[q,z_1..z_n,DegreeRank=>0]));
-        FF=FK_n;
+        defineFK n;
         KTRmatrix();
         ) else (
-        x := getSymbol "x";
-        if not FH#?n then FH_n = factor(frac(ZZ[ℏ,x_1..x_n]));
-        FF=FH_n;
+        defineFH n;
         HTRmatrix();
         );
     fixedPoint=null;

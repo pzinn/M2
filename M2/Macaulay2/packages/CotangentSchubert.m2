@@ -20,10 +20,6 @@ load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
 end
 
--- TODO
--- use sparse matrices?
--- implement transfer matrix for puzzles
-
 (FF,I)=setupCotangent(1,2,Kth=>true)
 segreCls=segreClasses()
 segreInv=segreCls^(-1);
