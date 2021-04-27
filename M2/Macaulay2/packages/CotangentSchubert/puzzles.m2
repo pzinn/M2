@@ -190,6 +190,7 @@ puzzle = puzzleOpts >> o -> args -> (
     recurse := (i,j,o,p) -> ( -- o=0/1: up/down triangle needs filling
         if i == n then (
             lst#(#lst)=p;
+	    if debugLevel>0 then << "one puzzle completed" << endl;
             ) else if o==0 then (
             -- up triangles
             scan(upTriangles, x -> if valid(p#(i,j,0),x#0) and valid(p#(i,j,1),x#1) and valid(p#(i,j,2),x#2) then (
