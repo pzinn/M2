@@ -1,5 +1,10 @@
 -- -*- M2-comint -*- hash: -1388999538
+<<<<<<< HEAD
 i1 : R = CC[x,y,z]
+=======
+Hello world from process 0 out of 1 processes
+-- COMPILE TIME: Feb 24 2021, 10:08:22
+>>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
 
 o1 = $R$
 
@@ -37,6 +42,33 @@ o6 : <pre style="display:inline">
 Point</pre>
 i7 : peek oneSoln
 
+<<<<<<< HEAD
 o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 Point{ConditionNumber => 33.3778                                                   }<br/>      Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
 i8 : 
+=======
+i5 : solns/print
+{-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}
+{.543689, .295598, .160713}
+{-.771845+1.11514*ii, -.647799-1.72143*ii, 2.41964+.606291*ii}
+
+o5 = {, , }
+
+o5 : List
+
+i6 : oneSoln = solns_0
+
+o6 = oneSoln
+
+o6 : Point
+
+i7 : peek oneSoln
+
+o7 = Point{ConditionNumber => 33.3778                                                   }
+           Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}
+           LastT => 1
+           SolutionStatus => Regular
+
+i8 : 
+Bye world from process 0 out of 1 processes
+>>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
