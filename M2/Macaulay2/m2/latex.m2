@@ -106,7 +106,7 @@ texMath VerticalList := s -> concatenate(
 texMath NumberedVerticalList := s -> concatenate(
     "\\left\\{\\begin{aligned}", demark("\\\\", apply(#s, i -> i | ".\\quad&" | texMath s#i)), "\\end{aligned}\\right\\}")
 
-texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L==0 then delim else demark_delim apply(toList L, texMath), "\\right", cl)
+texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L==0 then "\\," else demark_delim apply(toList L, texMath), "\\right", cl)
 texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
 texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
 texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
