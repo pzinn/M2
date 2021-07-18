@@ -16,7 +16,8 @@ export {"FactorPolynomialRing","OldFactor"}
 protect oldFactor
 
 debug Core
-factorOpts := new OptionTable from {Inverses=>false,OldFactor=>false}; -- new options for factor
+factorOpts := new OptionTable from {Inverses=>false,OldFactor=>true}; -- new options for factor
+-- oldFactor => false would be nicer but for now too many compatibility problems
 (frame factor)#0 = factorOpts;
 
 commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
@@ -194,15 +195,20 @@ Ring List := (R,variables) -> (
 
 -- some functions need old factor
 -- ugly hack for now, we'll see later
+-*
 factorOpts1 = new OptionTable from {Inverses=>false,OldFactor=>true}
-f := value MinimalPrimes#"private dictionary"#"factors"
-g := RingElement#f
-f RingElement := (F) -> (
-(frame factor)#0 = factorOpts1;
-first(g value F,
-(frame factor)#0 = factorOpts)
-)
-
+scan({(MinimalPrimes#"private dictionary"#"factors",RingElement,value),(Core#"private dictionary"#"decompose",Ideal,identity)},
+    (f,T,ff)->(
+	f=value f;
+	g := T#f;
+	f T := F -> (
+	    (frame factor)#0 = factorOpts1;
+	    first(g ff F,
+		(frame factor)#0 = factorOpts)
+	    );
+	)
+    )
+*-
 FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
 
 if ((options Factor).Configuration#"DegreesRings") then (
