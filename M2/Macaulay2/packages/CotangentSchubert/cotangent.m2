@@ -117,7 +117,7 @@ setupBorel = () -> (
         FF=FH_0;
         HTRmatrix();
         );
-    BB0 := FF(monoid[y_1..y_n,MonomialOrder=>{Weights=>{n:1},RevLex}]); -- in terms of Chern roots
+    BB0 := FF(monoid[y_1..y_n]); -- in terms of Chern roots
     J := ideal apply(1..n,k->sum(subsets(gens BB0,k),product)
         -if curCotOpts.Equivariant then sum(subsets(FF_1..FF_n,k),product) else if curCotOpts.Kth then binomial(n,k) else 0);
     BB = BB0/J;
@@ -127,8 +127,9 @@ setupBorel = () -> (
                 inds:=(baseName v)#1;
                 elem(inds#1,apply(dims#(inds#0)..dims#(inds#0+1)-1,j->BB_j))
                 )));
-    AA = R1 / kernel f; -- should f be available somehow?
-    promote(AA,BB) := (a,XX) -> f lift(a,R1); -- eww
+    AA = R1 / kernel f;
+    ff := f*map(R1,AA); -- should ff be available somehow?
+    promote(AA,BB) := (a,XX) -> ff a;
     Z=null;
     (AA,BB,I)
     )

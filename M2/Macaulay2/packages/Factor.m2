@@ -197,6 +197,7 @@ Ring List := (R,variables) -> (
 -- ugly hack for now, we'll see later
 -*
 factorOpts1 = new OptionTable from {Inverses=>false,OldFactor=>true}
+-- version 1
 scan({(MinimalPrimes#"private dictionary"#"factors",RingElement,value),(Core#"private dictionary"#"decompose",Ideal,identity)},
     (f,T,ff)->(
 	f=value f;
@@ -208,7 +209,16 @@ scan({(MinimalPrimes#"private dictionary"#"factors",RingElement,value),(Core#"pr
 	    );
 	)
     )
+-- version 2
+f := value MinimalPrimes#"private dictionary"#"factors"
+g := RingElement#f
+f RingElement := (F) -> (
+(frame factor)#0 = factorOpts1;
+first(g value F,
+(frame factor)#0 = factorOpts)
+)
 *-
+
 FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
 
 if ((options Factor).Configuration#"DegreesRings") then (
@@ -220,3 +230,7 @@ degreesRing List := PolynomialRing => memoize(
 degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then dR0 else factor(ZZ degreesMonoid n));
 )
 
+beginDocumentation()
+multidoc ///
+///
+end

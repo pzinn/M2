@@ -18,6 +18,10 @@ export {"Kth", "Equivariant" };
 
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
+
+beginDocumentation()
+multidoc ///
+///
 end
 
 (FF,I)=setupCotangent(1,2,Kth=>true)
