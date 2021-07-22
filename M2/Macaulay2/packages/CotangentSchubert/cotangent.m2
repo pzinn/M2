@@ -1,7 +1,8 @@
 export {"setupCotangent",
     "segreClasses","segreClass",
+    "schubertClasses","schubertClass",
     "restrict", "fullToPartial", "basisCoeffs",
-    "pushforwardToPoint", "pushforwardToPointFromCotangent",
+    "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection",
     "Presentation", "Borel", "EquivLoc"};
 
 cotOpts := opts ++ { Presentation => EquivLoc }
@@ -48,11 +49,11 @@ globalVars = dims0 -> (
     I = unique permutations ω; -- unique? eww
     )
 q := getSymbol "q"; zbar := getSymbol "zbar";
-FK_-1 = frac(factor(ZZ[q,zbar,DegreeRank=>0])); -- same as FK_1, really but diff variable name
-FK_0 = frac(factor(ZZ[q,DegreeRank=>0]));
+FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
+FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
 promoteFromMap(FK_0,FK_-1);
 FF=AA=BB=null;
-Rc := Rcnum := Rcden := null; -- eww TEMP
+Rc := Rcnum := Rcden := Rcz := null; -- eww TEMP
 
 KTRmatrix = () -> (
     V1:=FK_-1^(d+1); q:=FK_-1_0; zbar:=FK_-1_1;
@@ -60,16 +61,22 @@ KTRmatrix = () -> (
             if i==j then (i*(d+2),i*(d+2))=>1-q^2*zbar
             else ((i*(d+1)+j,j*(d+1)+i)=>q*(1-zbar),
                 (i*(d+1)+j,i*(d+1)+j)=>(1-q^2)* if i<j then 1 else zbar)));
+    Rcz0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
+            if i==j then (i*(d+2),i*(d+2))=>1
+            else ((i*(d+1)+j,j*(d+1)+i)=>if i<j then 1-zbar^(-1) else 0,
+                (i*(d+1)+j,i*(d+1)+j)=>if i<j then 1 else zbar^(-1)))); -- note the annoying ^(-1)
     Rcden0:=1-q^2*zbar;
     Rc0 := 1/Rcden0 * Rcnum0;
+     -- TODO rewrite next 4 statements better
     Rc = (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2/z1}))Rc0;
     Rcnum = (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2*z1^(-1)}))Rcnum0;
     Rcden = (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2*z1^(-1)}))Rcden0;
+    Rcz = (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2*z1^(-1)}))Rcz0;
     )
 Z:=null; -- eww
 ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
-FH_-1 = frac(factor(ZZ[ℏ,xbar])); -- same as FH_1, really but diff variable name
-FH_0 = frac(factor(ZZ[ℏ]));
+FH_-1 = frac(factor(ZZ (monoid[ℏ,xbar]))); -- same as FH_1, really but diff variable name
+FH_0 = frac(factor(ZZ (monoid[ℏ])));
 promoteFromMap(FH_0,FH_-1);
 HTRmatrix = () -> (
     V1:=FH_-1^(d+1); ℏ:=FH_-1_0; xbar:=FH_-1_1;
@@ -77,11 +84,17 @@ HTRmatrix = () -> (
             if i==j then (i*(d+2),i*(d+2))=>ℏ-xbar
             else ((i*(d+1)+j,j*(d+1)+i)=>xbar,
                 (i*(d+1)+j,i*(d+1)+j)=>ℏ)));
+    Rcz0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
+            if i==j then (i*(d+2),i*(d+2))=>1
+            else ((i*(d+1)+j,j*(d+1)+i)=>if i<j then xbar else 0,
+                (i*(d+1)+j,i*(d+1)+j)=>1)));
     Rcden0:=ℏ-xbar;
     Rc0 := 1/Rcden0 * Rcnum0;
+     -- TODO rewrite next 4 statements better
     Rc = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rc0;
     Rcnum = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rcnum0;
     Rcden = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rcden0;
+    Rcz = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rcz0;
     )
 
 debug Core -- to use "generatorSymbols" and "frame"
@@ -89,7 +102,7 @@ debug Core -- to use "generatorSymbols" and "frame"
 defineFK = n -> FF = (
     if not FK#?n then (
         z := getSymbol "z"; q := getSymbol "q";
-        FK_n = factor(frac(ZZ[q,z_1..z_n,DegreeRank=>0]));
+        FK_n = factor(frac(ZZ (monoid[q,z_1..z_n,DegreeRank=>0])));
         promoteFromMap(FK_0,FK_n);
         );
     FK_n
@@ -98,12 +111,34 @@ defineFK = n -> FF = (
 defineFH = n -> FF = (
     if not FH#?n then (
         x := getSymbol "x"; ℏ := getSymbol "ℏ";
-        FH_n = factor(frac(ZZ[ℏ,x_1..x_n]));
+        FH_n = factor(frac(ZZ (monoid[ℏ,x_1..x_n])));
         promoteFromMap(FH_0,FH_n);
         );
     FH_n
     )
 
+-- define product of weights in tangent space at fixed points
+
+weights:=null; -- in G/P
+cotweights:=null; -- in T*G/P
+zeroSect:=null; -- [G/P] in T*G/P
+zeroSectInv:=null; -- its inverse
+
+zeroSection = () -> if zeroSect === null then error "Set up first" else zeroSect
+
+KTweights = () -> (
+    weights = matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) };
+    zeroSect = vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
+    zeroSectInv = vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
+    cotweights = matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) };
+    )
+
+HTweights = () -> (
+    weights = matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) };
+    zeroSect = vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
+    zeroSectInv = vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
+    cotweights = matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) };
+    )
 
 -- build ring of H/K_T(T*flag)
 setupEquivLoc = () -> (
@@ -111,9 +146,11 @@ setupEquivLoc = () -> (
     if curCotOpts.Kth then (
         defineFK n;
         KTRmatrix();
+	KTweights();
         ) else (
         defineFH n;
         HTRmatrix();
+	HTweights();
         );
     fixedPoint=null;
     (FF,I)
@@ -129,20 +166,21 @@ setupBorel = () -> (
         FF=FH_0;
         HTRmatrix();
         );
-    BB0 := FF(monoid[y_1..y_n]); -- in terms of Chern roots
-    J := ideal apply(1..n,k->sum(subsets(gens BB0,k),product)
-        -if curCotOpts.Equivariant then sum(subsets(FF_1..FF_n,k),product) else if curCotOpts.Kth then binomial(n,k) else 0);
+    BB0 := FF(monoid[y_1..y_n,DegreeRank=>if curCotOpts.Kth then 0 else 1]); -- in terms of Chern roots
+    J := ideal apply(1..n,k->elem(k,gens BB0)
+        -if curCotOpts.Equivariant then elem(k,FF_1..FF_n) else if curCotOpts.Kth then binomial(n,k) else 0);
     BB = BB0/J;
-    c := getSymbol "c"; p := getSymbol "p";
-    R1 := FF new Array from apply(d+1, i-> apply(1..dimdiffs#i, j-> c_(i,j))); -- in terms of Chern classes
+--    R1 := FF monoid new Array from apply(d+1, i-> apply(1..dimdiffs#i, j-> c_(i,j))); -- in terms of Chern classes
+    R1 := FF monoid new Array from append(flatten apply(d+1, i-> -- in terms of Chern classes, new labelling
+	    apply(1..dimdiffs#i, j-> y_(dims#i+1..dims#(i+1),j))), Degrees=>splice apply(d+1,i->1..dimdiffs#i));
     f := map(BB,R1,apply(gens R1,v->(
-                inds:=(baseName v)#1;
-                elem(inds#1,apply(dims#(inds#0)..dims#(inds#0+1)-1,j->BB_j))
+		inds:=(baseName v)#1;
+                elem(inds#1,apply(inds#0,j->BB_(j-1)))
                 )));
     AA = R1 / kernel f;
-    ff := f*map(R1,AA); -- should ff be available somehow?
-    promoteFromMap(AA,BB,ff);
+    promoteFromMap(AA,BB,f*map(R1,AA));
     Z=null;
+    zeroSect = product(n,j->product(n,k->if ω#j<ω#k then if curCotOpts.Kth then 1-FF_0^2*BB_j*BB_k^(-1) else FF_0-BB_j+BB_k else 1));
     (AA,BB,FF,I)
     )
 
@@ -174,14 +212,6 @@ setupCotangent = cotOpts >> o -> dims -> (
     else error "Unknown presentation"
     )
 
-ind := i -> sum(#i,j->(d+1)^j*i_(#i-1-j));
-
-segreClassBorel = i -> (
-    if Z === null then segreClassesBorel();
-    i=new AryString from i;
-    Z_(0,ind i) -- in BB. should it be in AA?
-    );
-
 -- restriction to fixed points in the Borel presentation.
 restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
 restrict = method(Dispatch => Thing)
@@ -194,6 +224,14 @@ restrict RingElement := b -> (
 restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one-row matrices
 
 Vector @ Vector := (v,w) -> vector apply(entries v,entries w,times); -- componentwise multiplication
+
+ind := i -> sum(#i,j->(d+1)^j*i_(#i-1-j));
+
+segreClassBorel = i -> (
+    if Z === null then segreClassesBorel();
+    i=new AryString from i;
+    Z_(0,ind i) -- in BB. should it be in AA?
+    );
 
 segreClassesBorel = () -> (
     -- monodromy matrix
@@ -253,37 +291,99 @@ segreClasses = i -> (
     )
 
 
-pushforwardToPoint=method(); -- pushforward to a point from K(G/B)
+pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint RingElement := pushforwardToPoint Number := x -> (
+    -- promote to BB first? or on the contrary fullToPartial to AA? in any case careful that this is not! pushforward from K(G/B)
     if curCotOpts === null then error "Set up first";
     if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
-    (basisCoeffs x)_(0,0)
+    (basisCoeffs x)_(0,0) -- TODO: this is only in K full flag. in H check degree? partial flag? in general will need some matrix just like weights
     )
 pushforwardToPoint Matrix := m -> (
     if curCotOpts === null then error "Set up first";
     if curCotOpts#Presentation === Borel then
     matrix applyTable(entries m,pushforwardToPoint)
-    else null
-    -- TODO: multiplication by appropriate thingie
+    else weights*m
     )
-pushforwardToPoint Vector := v -> vector pushforwardToPoint matrix v
+pushforwardToPoint Vector := v -> (weights*v)_0
 
-local zeroSection;
-
-pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/B))
+pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/P))
 pushforwardToPointFromCotangent RingElement := pushforwardToPointFromCotangent Number := x -> (
+    -- promote to BB first? or on the contrary fullToPartial to AA?
     if curCotOpts === null then error "Set up first";
     if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
-    (basisCoeffs x*zeroSection)_(0,0) -- TODO: define this
+    if zeroSectInv === null then zeroSectInv = zeroSect^(-1); -- compute only if needed (slow)
+    (basisCoeffs(zeroSectInv*x))_(0,0) -- -- TODO: this is only in K full flag. in H check degree? partial flag?
     )
 pushforwardToPointFromCotangent Matrix := m -> (
     if curCotOpts === null then error "Set up first";
     if curCotOpts#Presentation === Borel then
     matrix applyTable(entries m,pushforwardToPointFromCotangent)
-    else null
-    -- TODO: multiplication by appropriate thingie
+    else cotweights*m
     )
-pushforwardToPointFromCotangent Vector := v -> vector pushforwardToPointFromCotangent matrix v
+pushforwardToPointFromCotangent Vector := v -> (cotweights*v)_0
+
+-- TODO: check schubert* below
+
+schubertClassBorel = i -> (
+    if Z === null then schubertClassesBorel();
+    i=new AryString from i;
+    Z_(0,ind i) -- in BB. should it be in AA?
+    );
+
+schubertClassesBorel = () -> (
+    -- monodromy matrix
+    V:=BB^(d+1);
+    W:=V^**n;
+    Z=map(BB^1,W,{{rank W-1:0,1}});
+    scan(n,i->(
+            T:=map(V^**(n+1),V^**(n+1),1);
+            scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcz (FF_0,
+                            if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_(n-1-i))
+                        )**map(V^**(n-1-j),V^**(n-1-j),1)));
+            --print i;
+            Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
+            --print Z;
+            ));
+    matrix {apply(I, i -> schubertClassBorel i)}
+    );
+
+schubertClassEquivLoc = i -> (
+    if fixedPoint === null then schubertClassesEquivLoc();
+    i=new AryString from i;
+    indi:=ind i;
+    vector apply(I,ii->(fixedPoint ii)_indi)
+    );
+
+schubertClassesEquivLoc = () -> (
+    V:=FF^(d+1); Rcheck := new IndexedVariableTable;
+    scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rcz (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1)); -- precompute R-matrices
+    indω:=ind ω;
+    vecω:=vector apply((d+1)^n,j->if j==indω then 1 else 0);
+    fixedPoint = memoize( i -> ( -- this returns the restrictions to a given fixed point
+            if i === ω then return vecω;
+            -- find first descent
+            j:=position(0..n-2,k->i#k>i#(k+1));
+            tau0:=new AryString from apply(n,k->if k==j then j+1 else if k==j+1 then j else k);
+            tau:=map(FF,FF,prepend(FF_0,(drop(gens FF,1))_tau0));
+            Rcheck_j*(tau (fixedPoint i_tau0))
+            ));
+    inds := ind \ I;
+    matrix apply(I,i->(entries fixedPoint i)_inds)
+    );
+
+schubertClass = i -> (
+    if curCotOpts === null then error "Set up first";
+    if curCotOpts#Presentation === Borel then schubertClassBorel i
+    else if curCotOpts#Presentation === EquivLoc then schubertClassEquivLoc i
+    else error "Unknown presentation"
+    )
+
+schubertClasses = i -> (
+    if curCotOpts === null then error "Set up first";
+    if curCotOpts#Presentation === Borel then schubertClassesBorel i
+    else if curCotOpts#Presentation === EquivLoc then schubertClassesEquivLoc i
+    else error "Unknown presentation"
+    )
 
 end
 

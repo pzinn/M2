@@ -257,6 +257,8 @@ if ((options Factor).Configuration#"DegreesRings") then (
     degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then dR0 else factor(ZZ degreesMonoid n));
 )
 
+end
+
 beginDocumentation()
 multidoc ///
  Node
@@ -277,7 +279,7 @@ multidoc ///
  Node
   Key
    FactorPolynomialRing
-  HeadLine
+  Headline
    A polynomial ring with factorized entries
   Description
    Text
@@ -286,4 +288,3 @@ multidoc ///
     R = factor ( QQ[x,y] );
     x^2-y^2   
 ///
-end
