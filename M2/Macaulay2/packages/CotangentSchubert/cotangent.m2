@@ -1,6 +1,7 @@
 export {"setupCotangent",
     "segreClasses","segreClass",
-    "restrict", "fullToPartial",
+    "restrict", "fullToPartial", "basisCoeffs",
+    "pushforwardToPoint", "pushforwardToPointFromCotangent",
     "Presentation", "Borel", "EquivLoc"};
 
 cotOpts := opts ++ { Presentation => EquivLoc }
@@ -18,6 +19,17 @@ expandElem := (P,vrs,els) -> (
     Q := P - C * product(#vrs, i -> (elem(i+1,vrs))^(ee#i));
     sub(C,ring first els) * product(#vrs, i -> (els#i)^(ee#i)) + expandElem(Q,vrs,els)
     )
+
+-- automate promotion
+promoteFromMap = method()
+promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
+    promote(R,S) := (a,S1) -> f a;
+    promote(Matrix,R,S) :=
+    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
+    promote(Module,R,S) := (M,R1,S1) -> f M;
+    promote(List,R,S) := (L,R1,S1) -> f\L;
+    )
+promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 
 AryString = new Type of List; -- could we just use sequences?
 new AryString from String := (T,s) -> apply(ascii s,i->i-48);
@@ -38,7 +50,7 @@ globalVars = dims0 -> (
 q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_-1 = frac(factor(ZZ[q,zbar,DegreeRank=>0])); -- same as FK_1, really but diff variable name
 FK_0 = frac(factor(ZZ[q,DegreeRank=>0]));
-promote(FK_0,FK_-1):= (a,XX) -> (map(FK_-1,FK_0)) a -- why isn't that automatic??
+promoteFromMap(FK_0,FK_-1);
 FF=AA=BB=null;
 Rc := Rcnum := Rcden := null; -- eww TEMP
 
@@ -58,7 +70,7 @@ Z:=null; -- eww
 ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
 FH_-1 = frac(factor(ZZ[ℏ,xbar])); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ[ℏ]));
-promote(FH_0,FH_-1):= (a,XX) -> (map(FH_-1,FH_0)) a -- why isn't that automatic??
+promoteFromMap(FH_0,FH_-1);
 HTRmatrix = () -> (
     V1:=FH_-1^(d+1); ℏ:=FH_-1_0; xbar:=FH_-1_1;
     Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
@@ -78,7 +90,7 @@ defineFK = n -> FF = (
     if not FK#?n then (
         z := getSymbol "z"; q := getSymbol "q";
         FK_n = factor(frac(ZZ[q,z_1..z_n,DegreeRank=>0]));
-        promote(FK_0,FK_n):= (a,XX) -> (map(FK_n,FK_0)) a; -- why isn't that automatic??
+        promoteFromMap(FK_0,FK_n);
         );
     FK_n
     )
@@ -87,7 +99,7 @@ defineFH = n -> FF = (
     if not FH#?n then (
         x := getSymbol "x"; ℏ := getSymbol "ℏ";
         FH_n = factor(frac(ZZ[ℏ,x_1..x_n]));
-        promote(FH_0,FH_n):= (a,XX) -> (map(FH_n,FH_0)) a -- why isn't that automatic??
+        promoteFromMap(FH_0,FH_n);
         );
     FH_n
     )
@@ -129,9 +141,9 @@ setupBorel = () -> (
                 )));
     AA = R1 / kernel f;
     ff := f*map(R1,AA); -- should ff be available somehow?
-    promote(AA,BB) := (a,XX) -> ff a;
+    promoteFromMap(AA,BB,ff);
     Z=null;
-    (AA,BB,I)
+    (AA,BB,FF,I)
     )
 
 -- now the reverse transformation
@@ -147,6 +159,9 @@ fullToPartial RingElement := b -> (
     sub(b,AA)
     );
 fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
+
+-- a simple function that seems like it should already exist
+basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
 
 setupCotangent = cotOpts >> o -> dims -> (
     curCotOpts = o;
@@ -171,10 +186,12 @@ segreClassBorel = i -> (
 restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
 restrict = method(Dispatch => Thing)
 restrict RingElement := b -> (
+    if curCotOpts === null then error "Set up first";
+    if not curCotOpts#Equivariant then error "needs equivariance";
     if ring b =!= BB then try b = promote(b,BB) else error "wrong ring";
     vector apply(I,i->(restrictMap i) b)
     );
-restrict Matrix := m -> matrix apply(flatten entries m,restrict)
+restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one-row matrices
 
 Vector @ Vector := (v,w) -> vector apply(entries v,entries w,times); -- componentwise multiplication
 
@@ -235,6 +252,38 @@ segreClasses = i -> (
     else error "Unknown presentation"
     )
 
+
+pushforwardToPoint=method(); -- pushforward to a point from K(G/B)
+pushforwardToPoint RingElement := pushforwardToPoint Number := x -> (
+    if curCotOpts === null then error "Set up first";
+    if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
+    (basisCoeffs x)_(0,0)
+    )
+pushforwardToPoint Matrix := m -> (
+    if curCotOpts === null then error "Set up first";
+    if curCotOpts#Presentation === Borel then
+    matrix applyTable(entries m,pushforwardToPoint)
+    else null
+    -- TODO: multiplication by appropriate thingie
+    )
+pushforwardToPoint Vector := v -> vector pushforwardToPoint matrix v
+
+local zeroSection;
+
+pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/B))
+pushforwardToPointFromCotangent RingElement := pushforwardToPointFromCotangent Number := x -> (
+    if curCotOpts === null then error "Set up first";
+    if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
+    (basisCoeffs x*zeroSection)_(0,0) -- TODO: define this
+    )
+pushforwardToPointFromCotangent Matrix := m -> (
+    if curCotOpts === null then error "Set up first";
+    if curCotOpts#Presentation === Borel then
+    matrix applyTable(entries m,pushforwardToPointFromCotangent)
+    else null
+    -- TODO: multiplication by appropriate thingie
+    )
+pushforwardToPointFromCotangent Vector := v -> vector pushforwardToPointFromCotangent matrix v
 
 end
 
