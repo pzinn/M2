@@ -1,4 +1,4 @@
-export {"setupCotangent",
+export {"setupCotangent", "chernClass",
     "segreClasses","segreClass",
     "schubertClasses","schubertClass",
     "restrict", "fullToPartial", "basisCoeffs",
@@ -140,6 +140,9 @@ HTweights = () -> (
     cotweights = matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) };
     )
 
+chernClass = new IndexedVariableTable;
+clearChernClass := () -> scan(keys chernClass, i -> if class i === Sequence then remove(chernClass,i))
+
 -- build ring of H/K_T(T*flag)
 setupEquivLoc = () -> (
     if not curCotOpts#Equivariant then error "Equivariant localization requires Equivariant option";
@@ -152,9 +155,16 @@ setupEquivLoc = () -> (
         HTRmatrix();
 	HTweights();
         );
+    -- Chern classes
+    clearChernClass();
+    scan(d+1, i-> scan(1..dimdiffs#i, j-> chernClass_(j,i)=vector apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))))));
+    -- targ := vector apply(I,i->1); scan(1..d,i->scan(dims#i,j->targ=targ@chernClass_(dimdiffs#i,i))); print targ;
     fixedPoint=null;
     (FF,I)
     )
+
+nzpf:=null; -- index of nonzero pushforward basis element
+pfsign:=null;
 
 setupBorel = () -> (
     y := getSymbol "y";
@@ -170,16 +180,27 @@ setupBorel = () -> (
     J := ideal apply(1..n,k->elem(k,gens BB0)
         -if curCotOpts.Equivariant then elem(k,FF_1..FF_n) else if curCotOpts.Kth then binomial(n,k) else 0);
     BB = BB0/J;
---    R1 := FF monoid new Array from apply(d+1, i-> apply(1..dimdiffs#i, j-> c_(i,j))); -- in terms of Chern classes
-    R1 := FF monoid new Array from append(flatten apply(d+1, i-> -- in terms of Chern classes, new labelling
-	    apply(1..dimdiffs#i, j-> y_(dims#i+1..dims#(i+1),j))), Degrees=>splice apply(d+1,i->1..dimdiffs#i));
-    f := map(BB,R1,apply(gens R1,v->(
-		inds:=(baseName v)#1;
-                elem(inds#1,apply(inds#0,j->BB_(j-1)))
-                )));
+    -- Chern classes
+    clearChernClass();
+    lst := transpose splice apply(d+1, i-> apply(1..dimdiffs#i, j-> 
+	    {y_(j,toList(dims#i+1..dims#(i+1))),chernClass_(j,i),elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k))}));
+    -- variable name, alias, expression in terms of Chern roots
+    R1 := FF monoid new Array from append(lst#0, Degrees=>splice apply(d+1,i->1..dimdiffs#i));
+    f := map(BB,R1,lst#2);
     AA = R1 / kernel f;
+    scan(lst#1,gens AA,(c,a)-> c <- a);
     promoteFromMap(AA,BB,f*map(R1,AA));
     Z=null;
+    -- find element whose pushforward is nonzero
+    if curCotOpts.Kth then (
+	nzpf = 0;
+	pfsign = 1;
+	) else (
+	-- should be product of det line bundles ^ dims of flags i.e.: product(1..d,i->chernClass_(dimdiffs#i,i)^(dims#i));
+	degs := flatten last degrees basis AA;
+	nzpf = position(degs, d -> d == max degs);
+	pfsign = (-1)^(sum(1..d,i->dims#i*dimdiffs#i));
+	);
     zeroSect = product(n,j->product(n,k->if ω#j<ω#k then if curCotOpts.Kth then 1-FF_0^2*BB_j*BB_k^(-1) else FF_0-BB_j+BB_k else 1));
     (AA,BB,FF,I)
     )
@@ -188,6 +209,7 @@ setupBorel = () -> (
 fullToPartial = method(Dispatch => Thing)
 fullToPartial RingElement := b -> (
     if ring b =!= BB then try b = promote(b,BB) else error "wrong ring";
+    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
     AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
     b = sub(b,AB);
     -- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
@@ -293,10 +315,10 @@ segreClasses = i -> (
 
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint RingElement := pushforwardToPoint Number := x -> (
-    -- promote to BB first? or on the contrary fullToPartial to AA? in any case careful that this is not! pushforward from K(G/B)
     if curCotOpts === null then error "Set up first";
     if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
-    (basisCoeffs x)_(0,0) -- TODO: this is only in K full flag. in H check degree? partial flag? in general will need some matrix just like weights
+    if ring x === BB then x = fullToPartial x else x = promote(x,AA); -- careful that this is not! pushforward from K(G/B)
+    pfsign*(basisCoeffs x)_(nzpf,0)
     )
 pushforwardToPoint Matrix := m -> (
     if curCotOpts === null then error "Set up first";
@@ -308,11 +330,11 @@ pushforwardToPoint Vector := v -> (weights*v)_0
 
 pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/P))
 pushforwardToPointFromCotangent RingElement := pushforwardToPointFromCotangent Number := x -> (
-    -- promote to BB first? or on the contrary fullToPartial to AA?
     if curCotOpts === null then error "Set up first";
     if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
+    if ring x === BB then x = fullToPartial x else x = promote(x,AA); -- careful that this is not! pushforward from K(G/B)
     if zeroSectInv === null then zeroSectInv = zeroSect^(-1); -- compute only if needed (slow)
-    (basisCoeffs(zeroSectInv*x))_(0,0) -- -- TODO: this is only in K full flag. in H check degree? partial flag?
+    pfsign*(basisCoeffs(zeroSectInv*x))_(nzpf,0)
     )
 pushforwardToPointFromCotangent Matrix := m -> (
     if curCotOpts === null then error "Set up first";
@@ -321,8 +343,6 @@ pushforwardToPointFromCotangent Matrix := m -> (
     else cotweights*m
     )
 pushforwardToPointFromCotangent Vector := v -> (cotweights*v)_0
-
--- TODO: check schubert* below
 
 schubertClassBorel = i -> (
     if Z === null then schubertClassesBorel();
