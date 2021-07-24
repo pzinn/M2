@@ -34,12 +34,14 @@ fugacityK = p -> (
 	    ) else (
 	    FF=FK_0;
 	    defineFK n;
-            product(n, i -> product(n-i, j ->
+	    dbg := x -> x;
+	    cnv := x -> if x === " " then p.Separation-1/2 else value x;
+            product(n, i -> product(n-i, j -> (
                     --uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2))
-		    if p#(i,j,0)!=" " and p#(i,j,1)!=" " and p#(i,j,0)<p#(i,j,1) then FF_0^(-1) else 1  -- ???
-		    * if j+i==n-1 then 1 else --downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
-		    if p#(i,j,0)!=" " and p#(i,j,1)!=" " and p#(i,j,0)<p#(i,j,1) then FF_0 else 1 -- ???
-            ))
+		    (dbg if cnv p#(i,j,0)>cnv p#(i,j,1) then -FF_0 else 1)  -- ???
+		    * (dbg if j+i==n-1 then 1 else --downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
+		    if cnv p#(i+1,j,0)>cnv p#(i,j+1,1) then -FF_0^(-1) else 1) -- ???
+            )))
 	)
     )
     else if p#Equivariant then (
