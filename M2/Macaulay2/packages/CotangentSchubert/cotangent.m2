@@ -24,11 +24,11 @@ expandElem := (P,vrs,els) -> (
 -- automate promotion
 promoteFromMap = method()
 promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
---    promote(R,S) := (a,S1) -> f a;
---    promote(Matrix,R,S) :=
---    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
---    promote(Module,R,S) := (M,R1,S1) -> f M;
---    promote(List,R,S) := (L,R1,S1) -> f\L;
+    promote(R,S) := (a,S1) -> f a;
+    promote(Matrix,R,S) :=
+    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
+    promote(Module,R,S) := (M,R1,S1) -> f M;
+    promote(List,R,S) := (L,R1,S1) -> f\L;
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 
