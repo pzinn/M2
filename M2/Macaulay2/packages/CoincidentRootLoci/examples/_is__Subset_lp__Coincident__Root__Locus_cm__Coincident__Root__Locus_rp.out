@@ -1,31 +1,0 @@
--- -*- M2-comint -*- hash: 1039626124
-i1 : X = coincidentRootLocus {6,4}
-
-o1 = $<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
-
-o1 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-i2 : Y = coincidentRootLocus {5,2,2,1}
-
-o2 = $<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
-
-o2 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-i3 : isSubset(X,Y)
-
-o3 = <pre style="display:inline">
-true</pre>
-i4 : X' = coincidentRootLocus {6,3,1}
-
-o4 = $<pre style="display:inline">
-CoincidentRootLocus</pre>\left\{\ldots10\ldots\right\}$
-
-o4 : <pre style="display:inline">
-CoincidentRootLocus</pre>
-i5 : isSubset(X',Y)
-
-o5 = <pre style="display:inline">
-false</pre>
-i6 : 

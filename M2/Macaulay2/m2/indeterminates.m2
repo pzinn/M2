@@ -1,5 +1,8 @@
 --		Copyright 1993-1999 by Daniel R. Grayson
 
+needs "expressions.m2"
+needs "methods.m2"
+
 varIndices := new MutableHashTable
 
 varList := {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","α","β","γ","δ","ε","ζ","η","θ","ι","κ","λ","μ","ν","ξ","ο","π","ρ","σ","τ","υ","φ","χ","ψ","ω","Α","Β","Γ","Δ","Ε","Ζ","Η","Θ","Ι","Κ","Λ","Μ","Ν","Ξ","Ο","Π","Ρ","Σ","Τ","Υ","Φ","Χ","Ψ","Ω"}
@@ -38,7 +41,7 @@ for i from 0 to #varList-2 do succS#(varList#i) = varList#(i+1)
 succ = method()
 succ(ZZ,ZZ) := (x,y) -> x+1 === y
 succ(Sequence,Sequence) := (x,y) -> ( -- for multiple indices
-    #x === #y and all(#x-1,i-> x#i === y#i) and x#(#x-1)+1 === y#(#x-1)
+    #x === #y and all(#x-1,i-> x#i === y#i) and succ(last x,last y)
 )
 succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === symbol .. and (
     succ (x#2,y#1) or (

@@ -1,9 +1,43 @@
 --		Copyright 1996-2000 by Daniel R. Grayson
 
+needs "set.m2" -- for demark
+needs "methods.m2"
+
 -- nets
+
+Net.synonym = "net"
 
 Net#{Standard,AfterPrint} = identity
 
+toString MutableHashTable := s -> (
+     concatenate ( toString class s, if parent s =!= Nothing then (" of ", toString parent s), "{...", toString(#s), "...}"))
+toString Type := X -> (
+     if hasAnAttribute X then (
+	  if hasAttribute(X,PrintNames) then return getAttribute(X,PrintNames);
+	  if hasAttribute(X,ReverseDictionary) then return toString getAttribute(X,ReverseDictionary);
+	  );
+     concatenate(toString class X, " of ", toString parent X))
+toString HashTable := s -> (
+     concatenate (
+	  "new ", toString class s,
+	  if parent s =!= Nothing then (" of ", toString parent s),
+	  " from {",
+	  if # s > 0
+	  then demark(", ", apply(pairs s, (k,v) -> toString k | " => " | toString v) )
+	  else "",
+	  "}"))
+toString MutableList := s -> concatenate(toString class s,"{...",toString(#s),"...}")
+toStringn := i -> if i === null or (class i === Holder and i#0 === null) then "" else toString i
+toString BasicList := s -> concatenate(
+     if class s =!= List then toString class s,
+     "{", between(", ",apply(toList s,toStringn)), "}"
+     )
+toString Array := s -> concatenate ( "[", between(", ",toStringn \ toList s), "]" )
+toString AngleBarList := s -> concatenate ( "<|", between(", ",toStringn \ toList s), "|>" )
+toString Sequence := s -> (
+     if # s === 1 then concatenate("1 : (",toString s#0,")")
+     else concatenate("(",between(",",toStringn \ s),")")
+     )
 net Command := toString Command := toExternalString Command := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary) else "-*Command*-"
      )
@@ -189,6 +223,15 @@ netList = method(Options => {
 	  })
 
 maxN := x -> if #x === 0 then 0 else max x
+
+spaces = n -> concatenate n
+dashes = n -> concatenate(n:"-")
+
+centerString = (wid, s) -> (
+    n := width s;
+    if n === wid then s else (
+	w := (wid-n+1)//2;
+	horizontalJoin(spaces w,s,spaces(wid-w-n))))
 
 alignmentFunctions := new HashTable from {
      Left => (wid,n) -> n | horizontalJoin(wid - width n : " "^(- depth n)),

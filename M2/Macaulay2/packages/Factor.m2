@@ -1,20 +1,28 @@
 newPackage(
     "Factor",
     Version => "0.1",
-    Date => "Nov 29, 2020",
+    Date =>  "Jul 21, 2021", -- "Nov 29, 2020",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Proper factor",
     Keywords => {"Miscellaneous"},
-    DebuggingMode => false,
-    AuxiliaryFiles => false
+    DebuggingMode => true,
+    AuxiliaryFiles => false,
+    Configuration => { "DegreesRings" => false, "OldFactor" => true, "FactorLeadMonomial" => false }
+    -- "OldFactor" => false would be nicer but for now too many compatibility problems
     )
 
 export {"FactorPolynomialRing"}
-protect oldfactor
+
+OldFactor := (options Factor).Configuration#"OldFactor";
+FactorLeadMonomial := (options Factor).Configuration#"FactorLeadMonomial";
 
 debug Core
+-*
+factorOpts := new OptionTable from {Inverses=>false}; -- new options for factor
+(frame factor)#0 = factorOpts;
+*-
 
 commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
 -- commonPairs should probably be defined in d for optimization purposes
@@ -44,9 +52,14 @@ factor PolynomialRing := opts -> R -> (
     commonEngineRingInitializations Rf;
     if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
     expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e);
-    factor Rf := opts -> identity;
-    if not R.?oldfactor then R.oldfactor = R#factor;
-    factor R := opts -> a -> new Rf from a; -- factor now uses the factorized ring
+    oldFactor := R#factor;
+    if OldFactor then (
+    	factor Rf := opts1 -> a -> Product apply(if a#0 == 1 then a#1 else append(a#1,(a#0,1)),u->Power u); -- emulation of old factor
+	-- factor R is untouched
+	) else (
+    	factor Rf := opts1 -> identity;
+    	factor R := a -> new Rf from a;
+	);
     value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1));
     raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
     if (options R).Inverses then (
@@ -66,9 +79,26 @@ factor PolynomialRing := opts -> R -> (
             c:=R_minexps;
             )
         else c = 1_R;
-        fe := toList apply append(rawFactor raw a,(f,e)->(
+	-*
+   	       R1 := R.basering;	
+	       isSimpleNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1; 
+	       fe := if isSimpleNumberField R1 then (
+		   (R', toR') := flattenRing(R, CoefficientRing=>QQ);
+		   minp := (ideal R')_0;
+		   ((fs,es) -> (for f in fs list raw (map(R, R', generators R|{R_0})) new R' from f, es)) (
+		       rawFactor(raw toR' a, raw minp)) -- apply rawFactor, but the factors need to be converted back to R
+	       ) else if instance(R1, FractionField) then (
+        	   denom := lcm \\ (t -> denominator t_1) \ listForm a;
+        	   baseR := (baseRing R1)(R.monoid);
+		   a = (map(baseR, R, generators baseR)) (denom * a);
+		   ((fs,es) -> (for i in (0..<#fs) list raw (((map(R, baseR, generators R)) new baseR from fs_i) * if i==0 then 1/denom else 1), es)) (
+		       rawFactor raw a) -- similar: convert back to R, and put denom back into the leadCoefficient
+	       ) else rawFactor raw a;	-- example value: ((11, x+1, x-1, 2x+3), (1, 1, 1, 1)); constant term is first, if there is one
+	*-
+	fe := rawFactor raw a;
+        fe = toList apply append(fe,(f,e)->(
                 ff:=new R from f;
-                if (options R).Inverses and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+                if (options R).Inverses and FactorLeadMonomial and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
                 if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
             );
         if liftable(fe#0#0,R.basering) then (
@@ -182,42 +212,79 @@ FactorPolynomialRing _ List := (R,v) -> (
     );
 
 -- force the use of the new factor
-Ring Array := PolynomialRing => (R,variables) -> (
-    RM := R monoid variables;
-    RM.oldfactor = RM#factor;
-    factor RM := opts -> a -> (factor RM; factor a);
-    use RM
-    )
-Ring List := PolynomialRing => (R,variables) -> (
-    RM := R monoid (variables,Local => true);
-    RM.oldfactor = RM#factor;
-    factor RM := opts -> a -> (factor RM; factor a);
-    use RM
+if not OldFactor then (
+    Ring Array :=
+    Ring List := (R,variables) -> (
+    	RM := R monoid if instance(variables,List) then (variables,Local=>true) else variables;
+    	factor RM := opts -> a -> (factor RM; factor(opts,a));
+    	use RM
+    	)
     )
 
 -- some functions need old factor
-debug MinimalPrimes;
-minimalPrimes Ideal := List => opts -> I -> (
-    R := ring I; local newfactor;
-    if R.?oldfactor then (
-        newfactor = R.factor;
-        R.factor = R.oldfactor;
-        );
-    first(
-        minprimesHelper(I, (minimalPrimes, Ideal), opts),
-        if R.?oldfactor then R.factor=newfactor
-        )
+-- ugly hack for now, we'll see later
+-*
+factorOpts1 = new OptionTable from {Inverses=>false,OldFactor=>true}
+-- version 1
+scan({(MinimalPrimes#"private dictionary"#"factors",RingElement,value),(Core#"private dictionary"#"decompose",Ideal,identity)},
+    (f,T,ff)->(
+	f=value f;
+	g := T#f;
+	f T := F -> (
+	    (frame factor)#0 = factorOpts1;
+	    first(g ff F,
+		(frame factor)#0 = factorOpts)
+	    );
+	)
     )
-decompose Ideal := List => options minimalPrimes >> opts -> I -> (
-    R := ring I; local newfactor;
-    if R.?oldfactor then (
-        newfactor = R#factor;
-        R#factor = R.oldfactor;
-        );
-    first(
-        minprimesHelper(I, (minimalPrimes, Ideal), opts),
-        if R.?oldfactor then R#factor=newfactor
-        )
-    )
+-- version 2
+f := value MinimalPrimes#"private dictionary"#"factors"
+g := RingElement#f
+f RingElement := (F) -> (
+(frame factor)#0 = factorOpts1;
+first(g value F,
+(frame factor)#0 = factorOpts)
+)
+*-
 
 FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
+
+if ((options Factor).Configuration#"DegreesRings") then (
+    -- degrees rings
+    dR0 := degreesRing {};
+    degreesRing List := PolynomialRing => memoize(
+     	hft -> if #hft === 0 then dR0 else factor (ZZ degreesMonoid hft));
+    degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then dR0 else factor(ZZ degreesMonoid n));
+)
+
+end
+
+beginDocumentation()
+multidoc ///
+ Node
+  Key
+   Factor
+  Headline
+   A package to work with factorized expressions
+  Description
+   Text
+    @EM Factor@ is a package that defines a new type of polynomial rings, @TO FactorPolynomialRing@. You can mostly use them
+    as ordinary polynomial rings (with some caveats to be described below); the difference is that elements are displayed in
+    a factorized form. In fact, they are also stored internally in a factorized form.
+    [description of the package options]
+  Caveat
+    Some functions, most notably @TO decompose@, do not work on factorized polynomial rings,
+    and require the traditional form produced by factor.
+    If you need them you should leave the option "OldFactor" to its default false.
+ Node
+  Key
+   FactorPolynomialRing
+  Headline
+   A polynomial ring with factorized entries
+  Description
+   Text
+    Factorized polynomial rings are simply produced by the command @TO factor@
+   Example
+    R = factor ( QQ[x,y] );
+    x^2-y^2   
+///
