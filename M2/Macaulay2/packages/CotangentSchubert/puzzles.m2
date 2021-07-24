@@ -21,9 +21,10 @@ myget = memoize(x -> first(
 	if debugLevel>0 then << x << " loaded" << endl
 	))
 
-puzzleOpts := opts ++ {Steps => null, Separated => null, Kinv => false, Labels => true, Paths => false};
-export {"Steps", "Kinv", "Separated", "Size", "Labels", "Paths"}; -- move to main file
+puzzleOpts := opts ++ {Steps => null, Kinv => false, Labels => true, Paths => false};
+export {"Steps", "Kinv", "Size", "Labels", "Paths"}; -- move to main file
 -- lots of global variables, not thread-safe!
+protect Separation;
 upTriangles=downTriangles=rhombi={};
 apply({rhombusStyle,downTriStyle,upTriStyle},protect);
 
@@ -40,8 +41,8 @@ tiles := o -> (
     if debugLevel>0 then << "rebuilding tiles" << newline;
     curPuzzleOpts = o;
     d := o.Steps;
-    if o#Separated then (
-        (upTriangles,downTriangles,rhombi) = kogan(d,o.Kth,o.Kinv,o.Generic,o.Equivariant);
+    if o#?Separation then (
+        (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Kth,o.Kinv,o.Generic,o.Equivariant);
         return;
         );
     if o#Generic then (
@@ -162,12 +163,13 @@ Puzzle == Puzzle := (p,q) -> (new List from p) == (new List from q)
 
 initPuzzle = true >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
-    args = apply(args, a -> if instance(a,String) then characters a else apply(a,toString));
+    args = apply(args, a -> apply(if instance(a,String) then characters a else apply(a,toString),c->replace("_"," ",c)));
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
+    separated := any(join args, s -> s===" ");
     new Puzzle from pairs o | { Size=>n,
-        if o.Steps === null then Steps => max flatten apply(join args,ascii) - 48,
-        if o.Separated === null then Separated => any(join args, s -> s===" ")
+	if separated then Separation => max flatten apply(args#1,ascii) - 48,
+        if o.Steps === null then Steps => max flatten apply(join args,ascii) - 48
         } | flatten flatten apply(n, i ->
         apply(n-i, j -> {
                 (i,j,0) => if i==0 then args#1#j else "**",

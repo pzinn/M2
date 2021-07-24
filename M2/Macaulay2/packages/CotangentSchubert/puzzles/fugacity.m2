@@ -9,12 +9,12 @@ fug = matrix { { 1,0,0 },
     };
 states3:=makeStates 3;
 ind := x -> position(states3,y->y===x);
-fugacityH = p -> (
+fugacityH = p -> ( -- equivariant H
     n:=p.Size;
     defineFH n;
     product(n-1, i -> product(n-1-i, j -> (
                 X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0);
-                if not p#Separated then (
+                if not p#?Separation then (
                     X = ind X; W = ind W; U = ind U;
                     s := scalar_(U,X);
                     t := scalar_(W,X); -- print(i,j,X,W,U,s,t);
@@ -28,8 +28,21 @@ fugacityH = p -> (
 fugacityK = p -> (
     d:=p.Steps;
     n:=p.Size;
-    if p#Separated then error "K-Fugacities not implemented yet for separated";
-    if p#Equivariant then (
+    if p#?Separation then (
+	if p#Equivariant then (
+	    error "K-fugacities not implemented yet for separated equivariant";
+	    ) else (
+	    FF=FK_0;
+	    defineFK n;
+            product(n, i -> product(n-i, j ->
+                    --uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2))
+		    if p#(i,j,0)!=" " and p#(i,j,1)!=" " and p#(i,j,0)<p#(i,j,1) then FF_0^(-1) else 1  -- ???
+		    * if j+i==n-1 then 1 else --downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
+		    if p#(i,j,0)!=" " and p#(i,j,1)!=" " and p#(i,j,0)<p#(i,j,1) then FF_0 else 1 -- ???
+            ))
+	)
+    )
+    else if p#Equivariant then (
         FF = FK_0;
         (uptrifug,downtrifug) := try myget ("fugacity-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
         --(uptrifug,downtrifug) := myget ("fugacity-"|toString d|".m2");
@@ -46,14 +59,15 @@ fugacityK = p -> (
         FF = FK_0;
         (uptrifug,downtrifug) = try myget ("fugacity-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
         product(n, i -> product(n-i, j ->
-                uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2)) * if j+i==n-1 then 1 else downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
+                uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2))
+		* if j+i==n-1 then 1 else downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
         )
     )
 
 fugacity = true >> o -> p -> (
     if #o>0 then p = p ++ o; -- change options
     if not p#Generic then error "Non generic fugacities not implemented yet";
-    if not p#Separated and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
+    if not p#?Separation and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
     if not p#Equivariant and not p#Kth then return 1; -- ha
     (if p#Kth then fugacityK else fugacityH) p
     )
