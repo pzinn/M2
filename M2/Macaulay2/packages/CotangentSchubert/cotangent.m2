@@ -24,11 +24,12 @@ expandElem := (P,vrs,els) -> (
 -- automate promotion
 promoteFromMap = method()
 promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
---    promote(R,S) := (a,S1) -> f a;
---    promote(Matrix,R,S) :=
---    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
---    promote(Module,R,S) := (M,R1,S1) -> f M;
---    promote(List,R,S) := (L,R1,S1) -> f\L;
+    promote(R,S) := (a,S1) -> f a;
+    promote(Matrix,R,S) :=
+    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
+    promote(Module,R,S) := (M,R1,S1) -> f M;
+    promote(List,R,S) := (L,R1,S1) -> f\L;
+    S.baseRings = prepend(R,S.baseRings); -- temporary -- until promotability test improved in enginering.m2
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 
@@ -99,7 +100,7 @@ HTRmatrix = () -> (
 
 debug Core -- to use "generatorSymbols" and "frame"
 
-defineFK = n -> FF = (
+defineFK = n -> (
     if not FK#?n then (
         z := getSymbol "z"; q := getSymbol "q";
         FK_n = factor(frac(ZZ (monoid[q,z_1..z_n,DegreeRank=>0])));
@@ -108,7 +109,7 @@ defineFK = n -> FF = (
     FK_n
     )
 
-defineFH = n -> FF = (
+defineFH = n -> (
     if not FH#?n then (
         x := getSymbol "x"; ℏ := getSymbol "ℏ";
         FH_n = factor(frac(ZZ (monoid[ℏ,x_1..x_n])));
@@ -147,11 +148,11 @@ clearChernClass := () -> scan(keys chernClass, i -> if class i === Sequence then
 setupEquivLoc = () -> (
     if not curCotOpts#Equivariant then error "Equivariant localization requires Equivariant option";
     if curCotOpts.Kth then (
-        defineFK n;
+        FF = defineFK n;
         KTRmatrix();
 	KTweights();
         ) else (
-        defineFH n;
+        FF = defineFH n;
         HTRmatrix();
 	HTweights();
         );

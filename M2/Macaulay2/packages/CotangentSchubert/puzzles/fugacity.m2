@@ -1,7 +1,7 @@
 -- H_T first
 -- input table of scalar products d<=3
 scalar = matrix {{0,0,0,0,1,1,0,1,0,0,1,1,1,1,0,1,1,0,1,0,1,1,1,1,1,2,1},{1,0,0,0,0,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,1,1,2,1,1,1,1},{1,1,0,0,1,0,0,1,1,1,0,1,0,1,0,2,1,1,1,0,0,0,1,1,1,1,1},{1,1,1,0,1,1,1,0,0,0,1,0,0,1,0,1,1,1,1,0,0,1,1,1,2,1,0},{0,1,0,0,0,0,1,0,1,0,1,1,0,1,0,1,0,1,1,1,1,1,1,2,1,1,1},{0,1,1,0,1,0,0,0,0,1,1,1,1,0,0,1,1,1,2,1,0,1,0,1,1,1,1},{1,0,1,0,1,1,0,1,0,1,0,0,1,0,1,1,2,1,1,0,0,1,1,0,1,1,1},{0,1,1,1,1,1,1,0,0,0,2,1,1,1,0,0,0,0,1,1,1,1,0,1,1,1,0},{1,0,1,1,1,2,1,1,0,0,1,0,1,1,1,0,1,0,0,0,1,1,1,0,1,1,0},{1,1,0,1,1,1,1,1,1,0,1,1,0,2,0,1,0,0,0,0,1,0,1,1,1,1,0},{1,1,1,0,0,0,1,0,1,1,0,0,0,0,1,1,1,2,1,1,0,1,1,1,1,0,1},{1,1,1,1,0,1,2,0,1,0,1,0,0,1,1,0,0,1,0,1,1,1,1,1,1,0,0},{1,2,1,1,1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,0,0,0,1,1,0,0},{0,0,1,0,0,1,1,0,0,0,1,0,1,0,1,0,1,1,1,1,1,2,1,1,1,1,1},{1,1,1,1,2,1,0,1,0,1,1,1,1,1,0,1,1,0,1,0,0,0,0,0,1,1,0},{0,0,0,1,0,1,1,1,1,0,1,1,1,1,1,0,0,0,0,1,2,1,1,1,0,1,1},{0,1,0,1,1,0,0,1,1,1,1,2,1,1,0,1,0,0,1,1,1,0,0,1,0,1,1},{1,0,0,1,1,1,0,2,1,1,0,1,1,1,1,1,1,0,0,0,1,0,1,0,0,1,1},{1,1,0,1,0,0,1,1,2,1,0,1,0,1,1,1,0,1,0,1,1,0,1,1,0,0,1},{2,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,1,0,0},{1,1,2,1,1,1,1,0,0,1,1,0,1,0,1,0,1,1,1,1,0,1,0,0,1,0,0},{1,1,1,1,1,0,0,1,1,2,0,1,1,0,1,1,1,1,1,1,0,0,0,0,0,0,1},{0,0,1,1,1,1,0,1,0,1,1,1,2,0,1,0,1,0,1,1,1,1,0,0,0,1,1},{1,0,1,1,0,1,1,1,1,1,0,0,1,0,2,0,1,1,0,1,1,1,1,0,0,0,1},{0,0,0,0,0,0,0,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,2},{0,1,1,1,0,0,1,0,1,1,1,1,1,0,1,0,0,1,1,2,1,1,0,1,0,0,1},{1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0}};
-ℏ:=FH_-1_0; xbar:=FH_-1_1;
+ℏ:=FH_0_0; xbar:=FH_-1_1;
 -- H_T fugacity in terms of scalar products d<=3
 fug = matrix { { 1,0,0 },
     {ℏ/(ℏ-xbar),xbar/(ℏ-xbar),0},
@@ -24,42 +24,37 @@ fugacityH = p -> ( -- equivariant H
                 (map(FF,frac FH_-1,{FF_0,FF_(n-i)-FF_(j+1)})) fug_(s,t)
                 ))))
 
+q:=FK_0_0; zbar:=FK_-1_1;
 --
 fugacityK = p -> (
     d:=p.Steps;
     n:=p.Size;
     if p#?Separation then (
 	if p#Equivariant then (
+	    defineFK n;
 	    error "K-fugacities not implemented yet for separated equivariant";
 	    ) else (
-	    FF=FK_0;
-	    defineFK n;
-	    dbg := x -> x;
-	    cnv := x -> if x === " " then p.Separation-1/2 else value x;
             product(n, i -> product(n-i, j -> (
-                    --uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2))
-		    (dbg if cnv p#(i,j,0)>cnv p#(i,j,1) then -FF_0 else 1)  -- ???
-		    * (dbg if j+i==n-1 then 1 else --downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
-		    if cnv p#(i+1,j,0)>cnv p#(i,j+1,1) then -FF_0^(-1) else 1) -- ???
+		    (if p#(i,j,0)==" " or p#(i,j,1)==" " or p#(i,j,0)<p#(i,j,1) then 1
+			else if p#(i,j,0)>=p#Separation and p#(i,j,1)<p#Separation then -q^(-1) else -q)  -- ???
+		    * (if j+i==n-1 or p#(i+1,j,0)==" " or p#(i,j+1,1)==" " or p#(i+1,j,0)<p#(i,j+1,1) then 1
+			else if p#(i+1,j,0)>=p#Separation and p#(i,j+1,1)<p#Separation then -q else -q^(-1)) -- ???
             )))
 	)
     )
     else if p#Equivariant then (
-        FF = FK_0;
-        (uptrifug,downtrifug) := try myget ("fugacity-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
+        (uptrifug,downtrifug) := try (myget ("fugacity-"|toString d|".m2"))(q) else error "K-fugacities not implemented for this value of d";
         --(uptrifug,downtrifug) := myget ("fugacity-"|toString d|".m2");
-	FF = FK_-1; -- not great
-        rhfug := try myget ("fugacity-equiv-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
+        rhfug := try (myget ("fugacity-equiv-"|toString d|".m2"))(q,zbar) else error "K-fugacities not implemented for this value of d";
 	defineFK n;
         product(n-1, i -> product(n-1-i, j ->
-                (map(FF,FK_-1,{FF_0,FF_(n-i)/FF_(j+1)})) rhfug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0))
+                (map(FK_n,FK_-1,{FK_n_0,FK_n_(n-i)/FK_n_(j+1)})) rhfug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0))
                 )) * product(n,i->(
                 uptrifug#(p#(i,n-1-i,0),p#(i,n-1-i,1),p#(i,n-1-i,2))
                 )
             )
         ) else (
-        FF = FK_0;
-        (uptrifug,downtrifug) = try myget ("fugacity-"|toString d|".m2") else error "K-fugacities not implemented for this value of d";
+        (uptrifug,downtrifug) = try (myget ("fugacity-"|toString d|".m2"))(q) else error "K-fugacities not implemented for this value of d";
         product(n, i -> product(n-i, j ->
                 uptrifug#(p#(i,j,0),p#(i,j,1),p#(i,j,2))
 		* if j+i==n-1 then 1 else downtrifug#(p#(i+1,j,0),p#(i,j+1,1),p#(i,j,2))))
