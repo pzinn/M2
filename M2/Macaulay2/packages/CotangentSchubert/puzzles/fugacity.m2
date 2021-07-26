@@ -18,10 +18,10 @@ fugacityH = p -> ( -- equivariant H
                     X = ind X; W = ind W; U = ind U;
                     s := scalar_(U,X);
                     t := scalar_(W,X); -- print(i,j,X,W,U,s,t);
-                    ) else (
+                    ) else ( -- Sep possibly wrong
                     if X == W then ( s=1; t=1; ) else if X == U then (  s=1; t=0; ) else ( s=0; t=0; ); -- A_n scalar products ~ A_1 scalar products
                     );
-                (map(FF,frac FH_-1,{FF_0,FF_(n-i)-FF_(j+1)})) fug_(s,t)
+                (map(FH_n,FH_-1,{FH_n_0,FH_n_(n-i)-FH_n_(j+1)})) fug_(s,t)
                 ))))
 
 q:=FK_0_0; zbar:=FK_-1_1;
@@ -30,19 +30,27 @@ fugacityK = p -> (
     d:=p.Steps;
     n:=p.Size;
     if p#?Separation then (
-	if p#Equivariant then (
+	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
+			else if a>=p#Separation and b<p#Separation then -q^(-1) else -q;
+	if p#Equivariant then ( -- Sep possibly wrong
 	    defineFK n;
-	    error "K-fugacities not implemented yet for separated equivariant";
+            product(n-1, i -> product(n-1-i, j ->
+		    (
+			z := FK_n_(n-i)/FK_n_(j+1);
+			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
+			if a==b then (1-z)/(1-q^2*z) else if a==d then 1 -- power of q probably wrong
+			else ((1-q^2)/(1-q^2*z) * if a<b then 1 else z)
+			)
+                    )) * product(n,i->(
+                    tri(p#(i,n-1-i,0),p#(i,n-1-i,1))
+                    )
+		)
 	    ) else (
-            product(n, i -> product(n-i, j -> (
-		    (if p#(i,j,0)==" " or p#(i,j,1)==" " or p#(i,j,0)<p#(i,j,1) then 1
-			else if p#(i,j,0)>=p#Separation and p#(i,j,1)<p#Separation then -q^(-1) else -q)  -- ???
-		    * (if j+i==n-1 or p#(i+1,j,0)==" " or p#(i,j+1,1)==" " or p#(i+1,j,0)<p#(i,j+1,1) then 1
-			else if p#(i+1,j,0)>=p#Separation and p#(i,j+1,1)<p#Separation then -q else -q^(-1)) -- ???
+            product(n, i -> product(n-i, j -> tri(p#(i,j,0),p#(i,j,1))
+		    * (if j+i==n-1 then 1 else (tri(p#(i+1,j,0),p#(i,j+1,1)))^(-1)
             )))
 	)
-    )
-    else if p#Equivariant then (
+    ) else if p#Equivariant then (
         (uptrifug,downtrifug) := try (myget ("fugacity-"|toString d|".m2"))(q) else error "K-fugacities not implemented for this value of d";
         --(uptrifug,downtrifug) := myget ("fugacity-"|toString d|".m2");
         rhfug := try (myget ("fugacity-equiv-"|toString d|".m2"))(q,zbar) else error "K-fugacities not implemented for this value of d";
