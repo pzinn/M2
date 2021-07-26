@@ -375,20 +375,7 @@ net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
-<<<<<<< HEAD
 --texMath CC := x -> texMath expression x
-=======
-texMath CC := x -> texMath expression x
-texMath RR := x -> (
-    if not isANumber x then texMath toString x else
-    if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
-    else "{" | format(
-	printingPrecision,
-	printingAccuracy,
-	printingLeadLimit,
-	printingTrailLimit,
-	"}\\cdot 10^{", x ) | "}")
->>>>>>> 7ee50d464b5586814b987bd5b22cf2c91c3191c6
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;

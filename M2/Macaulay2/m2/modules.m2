@@ -149,7 +149,7 @@ new Module from Sequence := (Module,x) -> (
 
 degreesMonoid Module := GeneralOrderedMonoid => M -> degreesMonoid ring M
 degreesRing Module := PolynomialRing => M -> degreesRing ring M
-addDegreesRing Module := PolynomialRing => M -> addDegreesRing ring M
+--addDegreesRing Module := PolynomialRing => M -> addDegreesRing ring M
 degreeLength Module := M -> degreeLength ring M
 raw Module := M -> M.RawFreeModule
 ring Module := M -> M.ring

@@ -1191,7 +1191,6 @@ texMath VectorExpression := v -> (
 	)
     )
 
->>>>>>> 7ee50d464b5586814b987bd5b22cf2c91c3191c6
 -----------------------------------------------------------------------------
 print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
 -----------------------------------------------------------------------------
@@ -1289,7 +1288,6 @@ expression MutableList := hold
 expression Ring := lookup(expression,HashTable)
 expression RingFamily := lookup(expression,HashTable)
 -- strings -- uses texLiteral from latex.m2
-=======
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := x -> texMath expression x

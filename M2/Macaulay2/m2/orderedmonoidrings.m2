@@ -83,7 +83,7 @@ degreesRing PolynomialRing := PolynomialRing => R -> (
      if R.?degreesRing then R.degreesRing
      else error "no degreesRing for this ring")
 
-addDegreesRing PolynomialRing := PolynomialRing => R -> try R.addDegreesRing else degreesRing R;
+-- addDegreesRing PolynomialRing := PolynomialRing => R -> try R.addDegreesRing else degreesRing R;
 
 degreesRing Ring := R -> error "no degreesRing for this ring"
 

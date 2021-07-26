@@ -61,6 +61,8 @@ texMath' (Function, RowExpression) := (texMath,w) -> concatenate apply(w,texMath
 
 --texMath' (Function, Keyword) := (texMath,x) -> if keywordTexMath#?x then keywordTexMath#x else texMath toString x
 
+spacedOps := set { symbol =>, symbol and, symbol or, symbol xor, symbol ++ }
+
 texMath' (Function, BinaryOperation) := (texMath,m) -> (
      x := texMath m#1;
      y := texMath m#2;
@@ -205,6 +207,13 @@ texMath' (Function, Table) := (texMath,m) -> (
 	"\\end{array}}")
 )
 
+matrixOpts := x -> ( -- helper function
+    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null,mutable=>false};
+    (opts,x) = override(opts,toSequence x);
+    if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
+    (opts,x)
+    )
+
 texMath' (Function, MatrixExpression) := (texMath,x) -> (
     (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
@@ -253,7 +262,7 @@ texMath' (Function, RR) := (texMath,x) -> if not isANumber x then texMath toStri
 texMath ZZ := toString -- eventually, change
 tex Thing := x -> concatenate("$",texMath x,"$")
 
-texMathTable := new HashTable from {
+texMathTable = new HashTable from {
     symbol |- => "\\vdash ",
     symbol .. => "\\,{.}{.}\\, ",
     symbol ..< => "\\,{.}{.}{<}\\, ",
