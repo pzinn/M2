@@ -99,7 +99,7 @@ toSameRing = (m,n) -> (
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
      if # ind === 2
-     then promote(rawMatrixEntry(m.RawMatrix, ind#0, ind#1), ring m)
+     then promote(rawMatrixEntry(raw m, ind#0, ind#1), ring m)
      else error "expected a sequence of length two"
      )
 
@@ -119,10 +119,10 @@ Matrix == Matrix := (f,g) -> (
 
 Matrix == Number :=
 Matrix == RingElement := (m,f) -> m - f == 0		    -- slow!
-Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
+Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero raw m else m - i == 0
 
 Matrix + Matrix := Matrix => (
-     (f,g) -> map(target f, source f, f.RawMatrix + g.RawMatrix)
+     (f,g) -> map(target f, source f, raw f + raw g)
      ) @@ toSameRing
 Matrix + RingElement := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix := (r,f) -> if r == 0 then f else r*id_(target f) + f
@@ -130,7 +130,7 @@ Number + Matrix := (i,f) -> if i === 0 then f else i*id_(target f) + f
 Matrix + Number := (f,i) -> if i === 0 then f else f + i*id_(target f)
 
 Matrix - Matrix := Matrix => (
-     (f,g) -> map(target f, source f, f.RawMatrix - g.RawMatrix)
+     (f,g) -> map(target f, source f, raw f - raw g)
      ) @@ toSameRing
 Matrix - RingElement := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix := (r,f) -> if r == 0 then -f else r*id_(target f) - f
@@ -141,7 +141,7 @@ Matrix - Number := (f,i) -> if i === 0 then f else f - i*id_(target f)
      symbol ring => ring f,
      symbol source => source f,
      symbol target => target f,
-     symbol RawMatrix => - f.RawMatrix,
+     symbol RawMatrix => - raw f,
      symbol cache => new CacheTable
      }
 
@@ -151,10 +151,10 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	  N := source n;
 	  nraw := (
 	       if m.?RingMap
-	       then nraw = rawRingMapEval(raw m.RingMap, raw m.RingMap cover target n, n.RawMatrix)
-	       else n.RawMatrix
+	       then nraw = rawRingMapEval(raw m.RingMap, raw m.RingMap cover target n, raw n)
+	       else raw n
 	       );
-	  q := reduce(M,m.RawMatrix * nraw);
+	  q := reduce(M,raw m * nraw);
 	  map(
 	       M,
 	       N,
@@ -188,7 +188,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       then degree m + degree n + dif#0
  	       else toList (degreeLength ring m:0)
 	       );
-	  f := m.RawMatrix * n.RawMatrix;
+	  f := raw m * raw n;
 	  f = rawMatrixRemake2(rawTarget f, rawSource f, deg, f, 0);
 	  f = reduce(M,f);
 	  if n.?RingMap 
@@ -203,7 +203,7 @@ transpose Matrix := Matrix => (cacheValue symbol transpose) (
      (m) -> (
      	  if not (isFreeModule source m and isFreeModule target m) 
      	  then error "expected a map between free modules";
-     	  map(dual source m, dual target m, rawDual m.RawMatrix)))
+     	  map(dual source m, dual target m, rawDual raw m)))
 
 Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
      u := m * v#0;
@@ -231,7 +231,7 @@ toExternalString Matrix := m -> toString describe m;
 
 isIsomorphism Matrix := f -> cokernel f == 0 and kernel f == 0
 
-isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous target m and isHomogeneous source m and rawIsHomogeneous m.RawMatrix ) )
+isHomogeneous Matrix := (cacheValue symbol isHomogeneous) ( m -> ( isHomogeneous target m and isHomogeneous source m and rawIsHomogeneous raw m ) )
 
 isWellDefined Matrix := f -> matrix f * presentation source f % presentation target f == 0
 
@@ -456,7 +456,7 @@ bothFree := (f,g) -> (
      or not isFreeModule source g or not isFreeModule target g then error "expected a homomorphism between free modules"
      else (f,g))
 
-diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing 
+diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(raw f, raw g)) ) @@ bothFree @@ toSameRing 
 diff(RingElement, RingElement) := RingElement => (f,g) -> (diff(matrix{{f}},matrix{{g}}))_(0,0)
 diff(Matrix, RingElement) := (m,f) -> diff(m,matrix{{f}})
 diff(RingElement, Matrix) := (f,m) -> diff(matrix{{f}},m)
@@ -466,7 +466,7 @@ diff(Vector, Vector) := (v,w) -> diff(matrix{v}, transpose matrix{w})
 diff(Matrix, Vector) := (m,w) -> diff(m,transpose matrix {w})
 diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 
-contract(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing
+contract(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(raw f, raw g)) ) @@ bothFree @@ toSameRing
 contract(RingElement, RingElement) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
 contract(Matrix, RingElement) := (m,f) -> contract(m,matrix{{f}})
 contract(RingElement, Matrix) := (f,m) -> contract(matrix{{f}},m)
@@ -493,12 +493,12 @@ jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)
 jacobian Ring := Matrix => (R) -> jacobian presentation R ** R
 
 leadTerm(ZZ, Matrix) := Matrix => (i,m) -> (
-     map(target m, source m, rawInitial(i,m.RawMatrix)))
+     map(target m, source m, rawInitial(i,raw m)))
 
 leadTerm(ZZ, RingElement) := RingElement => (i,f) -> (leadTerm(i,matrix{{f}}))_(0,0)
 
 leadTerm(Matrix) := Matrix => m -> (
-     map(target m, source m, rawInitial(-1,m.RawMatrix)))
+     map(target m, source m, rawInitial(-1,raw m)))
 
 borel Matrix := Matrix => m -> generators borel monomialIdeal m
 
