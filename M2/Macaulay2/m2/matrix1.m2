@@ -383,7 +383,7 @@ Matrix ** Matrix := Matrix => ((f,g) -> (
      R := ring target f;
      map(target f ** target g, 
 	  source f ** source g, 
-	  map(R, f.RawMatrix ** g.RawMatrix),
+	  map(R, raw f ** raw g),
 	  Degree => degree f + degree g))) @@ toSameRing
 
 Matrix ** Number := (f,r) -> r * f
@@ -637,11 +637,11 @@ Matrix ^ Array := Matrix => (f,v) -> (target f)^v * f
 
 entries Matrix := (m) -> (
      R := ring target m;
-     m = m.RawMatrix;
+     m = raw m;
      applyTable ( entries m, r -> promote(r,R) )
      )
 
-getshift := (f) -> rawMultiDegree f.RawMatrix
+getshift := (f) -> rawMultiDegree raw f
 
 degree Matrix := List => (f) -> (
      M := source f;

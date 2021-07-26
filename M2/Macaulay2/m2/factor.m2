@@ -103,7 +103,7 @@ factor QQ := opts -> (r) -> factor numerator r / factor denominator r
 topCoefficients = method()
 topCoefficients Matrix := f -> (
      R := ring f;
-     (monoms, coeffs) := rawTopCoefficients f.RawMatrix;
+     (monoms, coeffs) := rawTopCoefficients raw f;
      (map(R,monoms), map(R,coeffs)))
 topCoefficients RingElement := f -> (
      if f == 0 then (1_(ring f), f)

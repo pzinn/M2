@@ -933,7 +933,7 @@ chainComplex GradedModule := ChainComplex => {} >> opts -> (M) -> (
      C)
 -----------------------------------------------------------------------------
 
-tens := (R,f,g) -> map(R, rawTensor( f.RawMatrix, g.RawMatrix ))
+tens := (R,f,g) -> map(R, rawTensor( raw f, raw g ))
 
 ChainComplex ** ChainComplex := ChainComplex => (C,D) -> (
      R := ring C;

@@ -451,8 +451,8 @@ homogenize(Matrix, RingElement, List) := Matrix => (f,v,wts) -> (
      -- why did we have this?
      -- wts = apply(wts, i -> if instance(i,InfiniteNumber) then 0 else i);
      i := homogCheck(R,f,v,wts);
-     if debugLevel > 10 then << (new FunctionApplication from {rawHomogenize, (f.RawMatrix, index v, wts)}) << endl;
-     map(target f, source f, rawHomogenize(f.RawMatrix, i, wts)))
+     if debugLevel > 10 then << (new FunctionApplication from {rawHomogenize, (raw f, index v, wts)}) << endl;
+     map(target f, source f, rawHomogenize(raw f, i, wts)))
 
 homogenize(RingElement, RingElement) :=
 homogenize(Matrix, RingElement) := Matrix => (f,n) -> (
@@ -607,7 +607,7 @@ rsort Matrix := o -> (f) -> f_(reverse sortColumns(f,o))
 selectInSubring = method()
 
 selectInSubring(ZZ, Matrix) := Matrix => (i,m) -> (
-     p := rawEliminateVariables(i,m.RawMatrix);
+     p := rawEliminateVariables(i,raw m);
      submatrix(m, p))
 
 divideByVariable = method()
@@ -617,7 +617,7 @@ divideByVariable(Matrix, RingElement) := Matrix => (m,v) -> (
          error("must divide by a variable in the ring ", ring m);
      i := index v;
      if i === null then error "expected a generator of the ring";
-     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, i, -1);
+     (m1,topdegree) := rawDivideByVariable(raw m, i, -1);
      (map(ring m, m1), topdegree))
 
 divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
@@ -625,12 +625,12 @@ divideByVariable(Matrix, RingElement, ZZ) := Matrix => (m,v,d) -> (
          error("must divide by a variable in the ring ", ring m);
      i := index v;
      if i === null then error "expected a generator of the ring";
-     (m1,topdegree) := rawDivideByVariable(m.RawMatrix, i, d);
+     (m1,topdegree) := rawDivideByVariable(raw m, i, d);
      (map(ring m, m1), topdegree))
 
 compress = method()
 
-compress Matrix := Matrix => (m) -> map(target m,, rawMatrixCompress m.RawMatrix)
+compress Matrix := Matrix => (m) -> map(target m,, rawMatrixCompress raw m)
 
 diagonalMatrix = method(TypicalValue => Matrix)
 diagonalMatrix(RingFamily,ZZ,ZZ,List) := (R,m,n,vals) -> diagonalMatrix(default R,m,n,vals)
