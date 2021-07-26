@@ -7,9 +7,9 @@ fug = matrix { { 1,0,0 },
     {ℏ/(ℏ-xbar),xbar/(ℏ-xbar),0},
     {4*ℏ^2/(ℏ-xbar)/(4*ℏ-xbar),ℏ*xbar/(ℏ-xbar)/(4*ℏ-xbar),-xbar*(3*ℏ-xbar)/(ℏ-xbar)/(4*ℏ-xbar)}
     };
-states3:=makeStates 3;
-ind := x -> position(states3,y->y===x);
 fugacityH = p -> ( -- equivariant H
+    states3:=makeStates 3;
+    ind := x -> position(states3,y->y===x);
     n:=p.Size;
     defineFH n;
     product(n-1, i -> product(n-1-i, j -> (
@@ -18,7 +18,7 @@ fugacityH = p -> ( -- equivariant H
                     X = ind X; W = ind W; U = ind U;
                     s := scalar_(U,X);
                     t := scalar_(W,X); -- print(i,j,X,W,U,s,t);
-                    ) else ( -- Sep possibly wrong
+                    ) else (
                     if X == W then ( s=1; t=1; ) else if X == U then (  s=1; t=0; ) else ( s=0; t=0; ); -- A_n scalar products ~ A_1 scalar products
                     );
                 (map(FH_n,FH_-1,{FH_n_0,FH_n_(n-i)-FH_n_(j+1)})) fug_(s,t)
@@ -31,15 +31,18 @@ fugacityK = p -> (
     n:=p.Size;
     if p#?Separation then (
 	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
-			else if a>=p#Separation and b<p#Separation then -q^(-1) else -q;
-	if p#Equivariant then ( -- Sep possibly wrong
+			else if a>=p#Separation and b<p#Separation then -q^(-1) else -q; -- probably wrong needs more checks
+	if p#Equivariant then (
 	    defineFK n;
             product(n-1, i -> product(n-1-i, j ->
 		    (
 			z := FK_n_(n-i)/FK_n_(j+1);
 			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
-			if a==b then (1-z)/(1-q^2*z) else if a==d then 1 -- power of q probably wrong
-			else ((1-q^2)/(1-q^2*z) * if a<b then 1 else z)
+			if a==b then (1-z)/(1-q^2*z) else if a==d then 1
+			else ((1-q^2)/(1-q^2*z)
+			    * (if a>b or a==" " or b==" " then 1 else z) -- probably wrong
+			    * (tri(a,b))^(-1) * tri(d,c)
+			    )
 			)
                     )) * product(n,i->(
                     tri(p#(i,n-1-i,0),p#(i,n-1-i,1))
