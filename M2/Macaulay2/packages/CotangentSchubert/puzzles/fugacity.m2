@@ -38,7 +38,7 @@ fugacityK = p -> (
 		    (
 			z := FK_n_(n-i)/FK_n_(j+1);
 			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
-			if a==b then (1-z)/(1-q^2*z) else if a==d then 1
+			if a==b then (if a==" " then q else 1)*(1-z)/(1-q^2*z) else if a==d then 1
 			else ((1-q^2)/(1-q^2*z)
 			    * (if a>b or a==" " or b==" " then 1 else z) -- probably wrong
 			    * (tri(a,b))^(-1) * tri(d,c)
