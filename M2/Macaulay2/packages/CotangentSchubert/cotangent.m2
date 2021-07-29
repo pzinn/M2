@@ -202,9 +202,6 @@ setupEquivLoc = () -> (
     (FF,I)
     )
 
-local nzpf; -- index of nonzero pushforward basis element TODO move
-local pfsign;
-
 setupBorel = () -> (
     y := getSymbol "y";
     BB0 := FF(monoid[y_1..y_n,DegreeRank=>if curCotOpts.Kth then 0 else 1]); -- in terms of Chern roots
@@ -232,16 +229,6 @@ setupBorel = () -> (
 	v := seq -> apply(toList seq, j -> AB_j);
 	scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
 	sub(b,AA)
-	);
-    -- find element whose pushforward is nonzero
-    if curCotOpts.Kth then (
-	nzpf = 0;
-	pfsign = 1;
-	) else (
-	-- should be product of det line bundles ^ dims of flags i.e.: product(1..d,i->chernClass_(dimdiffs#i,i)^(dims#i));
-	degs := flatten last degrees basis AA;
-	nzpf = position(degs, d -> d == max degs);
-	pfsign = (-1)^(sum(1..d,i->dims#i*dimdiffs#i));
 	);
     evals#zeroSection = () -> product(n,j->product(n,k->if ω#j<ω#k then if curCotOpts.Kth then 1-FF_0^2*BB_j*BB_k^(-1) else FF_0-BB_j+BB_k else 1));
     evals#zeroSectionInv = () -> product(n,j->product(n,k->if ω#j<ω#k then if curCotOpts.Kth then (1-FF_0^2*BB_j*BB_k^(-1))^(-1) else (FF_0-BB_j+BB_k)^(-1) else 1));
@@ -293,9 +280,25 @@ setupBorel = () -> (
 	);
     -- restriction to fixed points
     restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
-    restrict FF :=
     restrict AA :=
     restrict BB := b -> vector apply(I,i->(restrictMap i) b);
+    -- pushforwads
+    -- find element whose pushforward is nonzero
+    local nzpf; -- index of nonzero pushforward basis element
+    local pfsign;
+    if curCotOpts.Kth then (
+	nzpf = 0;
+	pfsign = 1;
+	) else (
+	-- should be product of det line bundles ^ dims of flags i.e.: product(1..d,i->chernClass_(dimdiffs#i,i)^(dims#i));
+	degs := flatten last degrees basis AA;
+	nzpf = position(degs, d -> d == max degs);
+	pfsign = (-1)^(sum(1..d,i->dims#i*dimdiffs#i));
+	);
+    pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
+    pushforwardToPoint AA := a -> pfsign*(basisCoeffs a)_(nzpf,0);
+    pushforwardToPointFromCotangent BB := b -> pushforwardToPointFromCotangent fullToPartial b;
+    pushforwardToPointFromCotangent AA := a -> pfsign*(basisCoeffs(zeroSectionInv()*a))_(nzpf,0);
     --
     (AA,BB,FF,I)
     )
@@ -316,12 +319,12 @@ setupCotangent = cotOpts >> o -> dims -> (
 -- the defs below are just placeholders (try to promote to latest FF) or apply-type
 -- restriction to fixed points
 restrict = method(Dispatch => Thing)
-restrict Thing := r -> try restrict promote(r,FF) else error "Not applicable (set up first?)";
+restrict Thing := r -> try restrict promote(r,BB) else error "Not applicable (set up first?)";
 restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one-row matrices
 
 -- from full flag to partial flag
 fullToPartial = method(Dispatch => Thing)
-fullToPartial Thing := r -> try fullToPartial promote(r,FF) else error "Not applicable (set up first?)";
+fullToPartial Thing := r -> try fullToPartial promote(r,BB) else error "Not applicable (set up first?)";
 fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 
 -- a simple function that seems like it should already exist
@@ -330,36 +333,15 @@ basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x)
 Vector @ Vector := (v,w) -> vector apply(entries v,entries w,times); -- componentwise multiplication
 Vector ^^ ZZ := (v,n) -> vector apply(entries v, a -> a^n); -- componentwise power
 
--- TODO: the methods below needs to be rewritten so that they are defined by setup* *for rings*
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
-pushforwardToPoint RingElement := pushforwardToPoint Number := x -> (
-    if curCotOpts === null then error "Set up first";
-    if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
-    if ring x === BB then x = fullToPartial x else x = promote(x,AA); -- careful that this is not! pushforward from K(G/B)
-    pfsign*(basisCoeffs x)_(nzpf,0)
-    )
-pushforwardToPoint Matrix := m -> (
-    if curCotOpts === null then error "Set up first";
-    if curCotOpts#Presentation === Borel then
-    matrix applyTable(entries m,pushforwardToPoint)
-    else weights()*m
-    )
-pushforwardToPoint Vector := v -> (weights()*v)_0
+pushforwardToPoint Thing := r -> try pushforwardToPoint promote(r,AA) else error "Not applicable (set up first?)";
+pushforwardToPoint Matrix := m -> if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint) else weights()*m; -- TODO rethink second case
+pushforwardToPoint Vector := v -> (weights()*v)_0 -- sadly Module is Immutable
 
 pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/P))
-pushforwardToPointFromCotangent RingElement := pushforwardToPointFromCotangent Number := x -> (
-    if curCotOpts === null then error "Set up first";
-    if curCotOpts#Presentation =!= Borel then error "Borel presentation only";
-    if ring x === BB then x = fullToPartial x else x = promote(x,AA); -- careful that this is not! pushforward from K(G/B)
-    pfsign*(basisCoeffs(zeroSectionInv()*x))_(nzpf,0)
-    )
-pushforwardToPointFromCotangent Matrix := m -> (
-    if curCotOpts === null then error "Set up first";
-    if curCotOpts#Presentation === Borel then
-    matrix applyTable(entries m,pushforwardToPointFromCotangent)
-    else cotweights()*m
-    )
-pushforwardToPointFromCotangent Vector := v -> (cotweights()*v)_0
+pushforwardToPointFromCotangent Thing := r -> try pushforwardToPointFromCotangent promote(r,AA) else error "Not applicable (set up first?)";
+pushforwardToPointFromCotangent Matrix := m -> if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent) else cotweights()*m; -- TODO rethink
+pushforwardToPointFromCotangent Vector := v -> (cotweights()*v)_0 -- sadly Module is Immutable
 
 
 end
