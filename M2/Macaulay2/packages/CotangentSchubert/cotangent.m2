@@ -118,9 +118,11 @@ defineFH = n -> (
     )
 
 local evals;
-eval := sym -> (
-    sym <-
-     args -> if evals#?(sym,args) then evals#(sym,args) else evals#(sym,args) = (evals#(value sym)) args; -- similar to memoize except table of memorized results is outside so can be reset
+eval := sym -> ( -- similar to memoize except table of memorized results is outside so can be reset
+    sym <- args -> if evals#?(sym,args) then evals#(sym,args)
+    else if evals#?sym then evals#(sym,args) = (evals#sym) args
+    else error "Set up first";
+    sym = value sym;
 )
 eval zeroSection; -- [G/P] in T*G/P
 eval local zeroSectionInv; -- its inverse
@@ -219,6 +221,18 @@ setupBorel = () -> (
     AA = R1 / kernel f;
     scan(lst#1,gens AA,(c,a)-> c <- a);
     promoteFromMap(AA,BB,f*map(R1,AA));
+    -- reverse transformation
+    fullToPartial FF :=
+    fullToPartial BB := b -> (
+	if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
+	AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
+	b = sub(b,AB);
+	-- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
+	-- fails because of https://github.com/Macaulay2/M2/issues/2020
+	v := seq -> apply(toList seq, j -> AB_j);
+	scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
+	sub(b,AA)
+	);
     -- find element whose pushforward is nonzero
     if curCotOpts.Kth then (
 	nzpf = 0;
@@ -277,6 +291,11 @@ setupBorel = () -> (
 	i=new AryString from i;
 	(schubertClasses())_(0,position(I,j->j==i))
 	);
+    -- restriction to fixed points
+    restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
+    restrict FF :=
+    restrict AA :=
+    restrict BB := b -> vector apply(I,i->(restrictMap i) b);
     --
     (AA,BB,FF,I)
     )
@@ -293,38 +312,25 @@ setupCotangent = cotOpts >> o -> dims -> (
     else error "Unknown presentation"
     )
 
+-- the methods below are defined for appropriate rings by setup
+-- the defs below are just placeholders (try to promote to latest FF) or apply-type
+-- restriction to fixed points
+restrict = method(Dispatch => Thing)
+restrict Thing := r -> try restrict promote(r,FF) else error "Not applicable (set up first?)";
+restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one-row matrices
+
 -- from full flag to partial flag
 fullToPartial = method(Dispatch => Thing)
-fullToPartial RingElement := b -> (
-    if ring b =!= BB then try b = promote(b,BB) else error "wrong ring";
-    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
-    AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
-    b = sub(b,AB);
-    -- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
-    -- fails because of https://github.com/Macaulay2/M2/issues/2020
-    v := seq -> apply(toList seq, j -> AB_j);
-    scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
-    sub(b,AA)
-    );
+fullToPartial Thing := r -> try fullToPartial promote(r,FF) else error "Not applicable (set up first?)";
 fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 
 -- a simple function that seems like it should already exist
 basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
 
--- restriction to fixed points in the Borel presentation.
-restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
-restrict = method(Dispatch => Thing)
-restrict RingElement := b -> (
-    if curCotOpts === null then error "Set up first";
-    if not curCotOpts#Equivariant then error "needs equivariance";
-    if ring b =!= BB then try b = promote(b,BB) else error "wrong ring";
-    vector apply(I,i->(restrictMap i) b)
-    );
-restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one-row matrices
-
 Vector @ Vector := (v,w) -> vector apply(entries v,entries w,times); -- componentwise multiplication
 Vector ^^ ZZ := (v,n) -> vector apply(entries v, a -> a^n); -- componentwise power
 
+-- TODO: the methods below needs to be rewritten so that they are defined by setup* *for rings*
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint RingElement := pushforwardToPoint Number := x -> (
     if curCotOpts === null then error "Set up first";
