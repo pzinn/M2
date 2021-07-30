@@ -38,8 +38,8 @@ new AryString from String := (T,s) -> apply(ascii s,i->i-48);
 texMath AryString := s -> concatenate between("\\,",apply(s,x -> if class x === String then x else texMath x))
 net AryString := toString AryString := s -> concatenate apply(s,toString)
 n:=0; d:=0; ω:={}; I:={}; dimdiffs:={}; dims:={};
-local subs; local fixedPoint; -- eww
-globalVars = dims0 -> (
+local subs; protect fixedPoint;--local fixedPoint; -- eww
+globalVars = dims0 -> ( -- TODO retire
     dims = if first dims0 == 0 then dims0 else prepend(0,dims0);
     n = last dims;
     subs = s -> apply(#dims,i->positions(s,j->j==i));
@@ -117,6 +117,7 @@ defineFH = n -> (
     FH_n
     )
 
+-*
 local evals;
 eval := sym -> ( -- similar to memoize except table of memorized results is outside so can be reset
     sym <- args -> if evals#?(sym,args) then evals#(sym,args)
@@ -124,20 +125,24 @@ eval := sym -> ( -- similar to memoize except table of memorized results is outs
     else error "Set up first";
     sym = value sym;
 )
---eval zeroSection; -- [G/P] in T*G/P
---eval local zeroSectionInv; -- its inverse
+eval zeroSection; -- [G/P] in T*G/P
+eval local zeroSectionInv; -- its inverse
 eval local weights; -- weights in tangent space at fixed points in G/P
 eval local cotweights; -- in T*G/P
---eval segreClasses;
---eval segreClass;
---eval schubertClasses;
---eval schubertClass;
+eval segreClasses;
+eval segreClass;
+eval schubertClasses;
+eval schubertClass;
+*-
 -- new paradigm
+protect weights;
+protect cotweights;
+local lastSetup;
 mymoize = fun -> (
     fun' := memoize fun;
     x -> (
-	if class x === Sequence then x = unsequence if #x === 0 or not instance(x#0,Type) then prepend(BB,x) else x
-	else if not instance(x,Type) then x = (BB,x);   -- default = latest BB? TODO better
+	if class x === Sequence and #x === 0 then x=lastSetup
+	else if (class x === Sequence and not instance(x#0,HashTable)) or (class x =!= Sequence and not instance(x,HashTable)) then x = (lastSetup,x);
 	fun' x
     ))
 zeroSection1 = method(Dispatch=>Type) -- used internally
@@ -172,59 +177,40 @@ setupCommon = () -> (
 	FF = if curCotOpts#Equivariant then defineFH n else FH_0;
 	HTRmatrix();
         );
-    evals = new MutableHashTable;
+--    evals = new MutableHashTable;
 )
-
 
 setupEquivLoc = () -> (
     if not curCotOpts#Equivariant then error "Equivariant localization requires Equivariant option";
-    if curCotOpts.Kth then (
-	evals#weights = () -> matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) };
---	evals#zeroSection = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
---	evals#zeroSectionInv = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
-	evals#cotweights = () -> matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) };
-	) else (
-	evals#weights = () -> matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) };
---	evals#zeroSection = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
---	evals#zeroSectionInv = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
-	evals#cotweights = matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) };
-	);
     -- precompute R-matrices
     V:=FF^(d+1); Rcheck := new IndexedVariableTable; Rcheckz := new IndexedVariableTable;
     scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
     scan(n-1,j->Rcheckz_j = map(V^**j,V^**j,1)**(Rcz (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
-    fixedPoint = memoize( (segre,i) -> ( -- this returns the restrictions to a given fixed point segre=true: segre; segre=false: schubert
+    -- the module Hack -- Modules are immutable, so put functions in cache
+    lastSetup = M := FF^#I;
+    M.cache#fixedPoint = memoize( (segre,i) -> ( -- this returns the restrictions to a given fixed point segre=true: segre; segre=false: schubert
             -- find first descent
             j:=position(0..n-2,k->i#k>i#(k+1));
             tau0:=new AryString from apply(n,k->if k==j then j+1 else if k==j+1 then j else k);
             tau:=map(FF,FF,prepend(FF_0,(drop(gens FF,1))_tau0));
-            (tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
+            (tau (M.cache#fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
             ), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
+--    M.cache#indexes=I; -- TODO use (right now global ind is used)
+    if curCotOpts.Kth then (
+	M.cache#weights = () -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) });
+	M.cache#zeroSection    = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1)        else 1))});
+	M.cache#zeroSectionInv = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))});
+	M.cache#cotweights = () -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) });
+	) else (
+	M.cache#weights = () -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) });
+	M.cache#zeroSection    = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1)        else 1))});
+	M.cache#zeroSectionInv = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))});
+	M.cache#cotweights = map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) });
+	);
     -- Chern classes
     clearChernClass();
-    scan(d+1, i-> scan(1..dimdiffs#i, j-> chernClass_(j,i)=vector apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))))));
-    -- segre motivic/SM Classes
-    evals#segreClass = i -> (
-	i=new AryString from i;
-	indi:=ind i;
-	vector apply(I,ii->(fixedPoint(true,ii))_(0,indi))
-	);
-    evals#segreClasses = () -> (
-	inds := ind \ I;
-	concatRows apply(I,i->(fixedPoint(true,i))_inds)
-	);
-    -- schubert Classes
-    evals#schubertClass = i -> (
-	i=new AryString from i;
-	indi:=ind i;
-	vector apply(I,ii->(fixedPoint(false,ii))_(0,indi))
-	);
-    evals#schubertClasses = () -> (
-	inds := ind \ I;
-	concatRows apply(I,i->(fixedPoint(false,i))_inds)
-	);
-    --
-    (FF,I)
+    scan(d+1, i-> scan(1..dimdiffs#i, j-> chernClass_(j,i)=new M from matrix apply(I,s->{elem(j,apply((subs s)#i,k->FF_(k+1)))})));
+    (M,FF,I)
     )
 
 setupBorel = () -> (
@@ -232,7 +218,7 @@ setupBorel = () -> (
     BB0 := FF(monoid[y_1..y_n,DegreeRank=>if curCotOpts.Kth then 0 else 1]); -- in terms of Chern roots
     J := ideal apply(1..n,k->elem(k,gens BB0)
         -if curCotOpts.Equivariant then elem(k,FF_1..FF_n) else if curCotOpts.Kth then binomial(n,k) else 0);
-    BB = BB0/J;
+    BB = BB0/J; lastSetup=BB;
     -- Chern classes
     clearChernClass();
     lst := transpose splice apply(d+1, i-> apply(1..dimdiffs#i, j-> 
@@ -316,7 +302,7 @@ setupBorel = () -> (
     -- restriction to fixed points
     restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
     restrict AA :=
-    restrict BB := b -> vector apply(I,i->(restrictMap i) b);
+    restrict BB := b -> vector apply(I,i->(restrictMap i) b); -- TODO where is M?
     -- pushforwads
     -- find element whose pushforward is nonzero
     local nzpf; -- index of nonzero pushforward basis element
@@ -365,20 +351,47 @@ fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 -- a simple function that seems like it should already exist
 basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
 
--- TODO possibly rethink if own type of module
-Vector @ Vector := (v,w) -> vector apply(entries v,entries w,times); -- componentwise multiplication
-Vector ^^ ZZ := (v,n) -> vector apply(entries v, a -> a^n); -- componentwise power
+-- Vector methods (for equiv loc)
+Vector @ Vector := (v,w) -> new class v from matrix apply(entries v,entries w,(x,y)->{x*y}); -- componentwise multiplication
+Vector ^^ ZZ := (v,n) -> new class v from matrix apply(entries v, a -> {a^n}); -- componentwise power
 
--- TODO: rewrite
+-- segre motivic/SM classes equiv loc
+segreClass1 (Vector,VisibleList) :=
+segreClass1 (Vector,String) := (M,i) -> (
+    i=new AryString from i;
+    indi:=ind i; -- TODO rewrite
+    new M from matrix apply(I,ii->{(M.cache#fixedPoint(true,ii))_(0,indi)})
+    );
+segreClasses1 Vector := M -> (
+	inds := ind \ I; -- TODO rewrite
+--	concatRows apply(I,i->(fixedPoint(true,i))_inds) -- TODO: source/target
+	map(M,M, apply(I,i->first entries (M.cache#fixedPoint(true,i))_inds))
+	);
+-- schubert classes equiv loc
+schubertClass1 (Vector,VisibleList) :=
+schubertClass1 (Vector,String) := (M,i) -> (
+    i=new AryString from i;
+    indi:=ind i; -- TODO rewrite
+    new M from matrix apply(I,ii->{(M.cache#fixedPoint(false,ii))_(0,indi)}) -- TODO check
+    );
+schubertClasses1 Vector := M -> (
+	inds := ind \ I; -- TODO rewrite
+--	concatRows apply(I,i->(fixedPoint(true,i))_inds) -- TODO: source/target
+	map(M,M, apply(I,i->first entries (M.cache#fixedPoint(false,i))_inds)) -- TODO check
+	);
+-- zero section equiv loc
+zeroSection1 Vector := M -> M.cache#zeroSection ()
+
+-- pushforward equiv loc or matrix
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint Thing := r -> try pushforwardToPoint promote(r,AA) else error "Not applicable (set up first?)";
-pushforwardToPoint Matrix := m -> if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint) else weights()*m; -- TODO rethink second case
-pushforwardToPoint Vector := v -> (weights()*v)_0 -- sadly Module is Immutable
+pushforwardToPoint Matrix := m -> if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint) else (target m).cache#weights()*m; -- TODO check second case
+pushforwardToPoint Vector := v -> ((class v).cache#weights()*v)_0 -- TODO add check
 
 pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/P))
 pushforwardToPointFromCotangent Thing := r -> try pushforwardToPointFromCotangent promote(r,AA) else error "Not applicable (set up first?)";
-pushforwardToPointFromCotangent Matrix := m -> if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent) else cotweights()*m; -- TODO rethink
-pushforwardToPointFromCotangent Vector := v -> (cotweights()*v)_0 -- sadly Module is Immutable
+pushforwardToPointFromCotangent Matrix := m -> if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent) else (target m).cache#cotweights()*m; -- TODO check
+pushforwardToPointFromCotangent Vector := v -> ((class v).cache#cotweights()*v)_0 -- TODO
 
 
 end
