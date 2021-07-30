@@ -124,14 +124,39 @@ eval := sym -> ( -- similar to memoize except table of memorized results is outs
     else error "Set up first";
     sym = value sym;
 )
-eval zeroSection; -- [G/P] in T*G/P
-eval local zeroSectionInv; -- its inverse
+--eval zeroSection; -- [G/P] in T*G/P
+--eval local zeroSectionInv; -- its inverse
 eval local weights; -- weights in tangent space at fixed points in G/P
 eval local cotweights; -- in T*G/P
-eval segreClasses;
-eval segreClass;
-eval schubertClasses;
-eval schubertClass;
+--eval segreClasses;
+--eval segreClass;
+--eval schubertClasses;
+--eval schubertClass;
+-- new paradigm
+mymoize = fun -> (
+    fun' := memoize fun;
+    x -> (
+	if class x === Sequence then x = unsequence if #x === 0 or not instance(x#0,Type) then prepend(BB,x) else x
+	else if not instance(x,Type) then x = (BB,x);   -- default = latest BB? TODO better
+	fun' x
+    ))
+zeroSection1 = method(Dispatch=>Type) -- used internally
+zeroSection = mymoize zeroSection1
+
+zeroSectionInv1 = method(Dispatch=>Type)
+zeroSectionInv = mymoize zeroSectionInv1
+
+segreClasses1 = method(Dispatch=>Type)
+segreClasses = mymoize segreClasses1
+
+segreClass1 = method(Dispatch=>{Type,Thing})
+segreClass = mymoize segreClass1
+
+schubertClasses1 = method(Dispatch=>Type)
+schubertClasses = mymoize schubertClasses1
+
+schubertClass1 = method(Dispatch=>{Type,Thing})
+schubertClass = mymoize schubertClass1
 
 chernClass = new IndexedVariableTable;
 clearChernClass := () -> scan(keys chernClass, i -> if class i === Sequence then remove(chernClass,i))
@@ -155,13 +180,13 @@ setupEquivLoc = () -> (
     if not curCotOpts#Equivariant then error "Equivariant localization requires Equivariant option";
     if curCotOpts.Kth then (
 	evals#weights = () -> matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) };
-	evals#zeroSection = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
-	evals#zeroSectionInv = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
+--	evals#zeroSection = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
+--	evals#zeroSectionInv = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
 	evals#cotweights = () -> matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) };
 	) else (
 	evals#weights = () -> matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) };
-	evals#zeroSection = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
-	evals#zeroSectionInv = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
+--	evals#zeroSection = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
+--	evals#zeroSectionInv = () -> vector apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
 	evals#cotweights = matrix { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) };
 	);
     -- precompute R-matrices
@@ -230,10 +255,12 @@ setupBorel = () -> (
 	scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
 	sub(b,AA)
 	);
-    evals#zeroSection = () -> product(n,j->product(n,k->if ω#j<ω#k then if curCotOpts.Kth then 1-FF_0^2*BB_j*BB_k^(-1) else FF_0-BB_j+BB_k else 1));
-    evals#zeroSectionInv = () -> product(n,j->product(n,k->if ω#j<ω#k then if curCotOpts.Kth then (1-FF_0^2*BB_j*BB_k^(-1))^(-1) else (FF_0-BB_j+BB_k)^(-1) else 1));
+    zeroSection1 BB := BB -> product(n,j->product(n,k->if ω#j<ω#k then if curCotOpts.Kth then 1-FF_0^2*BB_j*BB_k^(-1) else FF_0-BB_j+BB_k else 1)); -- TODO move if out of def
+    zeroSection1 AA := AA -> fullToPartial zeroSection BB;
+    zeroSectionInv1 BB := BB -> (zeroSection BB)^(-1);
+    zeroSectionInv1 AA := AA -> (zeroSection AA)^(-1);
     -- segre Classes
-    evals#segreClasses = () -> (
+    segreClasses1 BB := BB -> (
 	-- monodromy matrix
 	V:=BB^(d+1);
 	W:=V^**n;
@@ -250,14 +277,18 @@ setupBorel = () -> (
 	scan(n,i->scan(n,j-> Z = Z*(Rcden(FF_0,
 			if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i))^(-1)));
 	inds := ind \ I;
-	Z_inds -- in BB. should it be in AA?
+	Z_inds
 	);
-    evals#segreClass = i -> (
+    segreClasses1 AA := AA -> fullToPartial segreClasses BB;
+    segreClass1 (AA,VisibleList) :=
+    segreClass1 (BB,VisibleList) :=
+    segreClass1 (AA,String) :=
+    segreClass1 (BB,String) := (X,i) -> (
 	i=new AryString from i;
-	(segreClasses())_(0,position(I,j->j==i))
+	(segreClasses X)_(0,position(I,j->j==i))
 	);
     -- Schubert classes
-    evals#schubertClasses = () -> (
+    schubertClasses1 BB := BB -> (
 	-- monodromy matrix
 	V:=BB^(d+1);
 	W:=V^**n;
@@ -272,11 +303,15 @@ setupBorel = () -> (
 		--print Z;
 		));
 	inds := ind \ I;
-	Z_inds -- in BB. should it be in AA?
+	Z_inds
 	);
-    evals#schubertClass = i -> (
+    schubertClasses1 AA := AA -> fullToPartial schubertClasses BB;
+    schubertClass1 (AA,VisibleList) :=
+    schubertClass1 (BB,VisibleList) :=
+    schubertClass1 (AA,String) :=
+    schubertClass1 (BB,String) := (X,i) -> (
 	i=new AryString from i;
-	(schubertClasses())_(0,position(I,j->j==i))
+	(schubertClasses X)_(0,position(I,j->j==i))
 	);
     -- restriction to fixed points
     restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
@@ -297,8 +332,8 @@ setupBorel = () -> (
 	);
     pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
     pushforwardToPoint AA := a -> pfsign*(basisCoeffs a)_(nzpf,0);
-    pushforwardToPointFromCotangent BB := b -> pushforwardToPointFromCotangent fullToPartial b;
-    pushforwardToPointFromCotangent AA := a -> pfsign*(basisCoeffs(zeroSectionInv()*a))_(nzpf,0);
+    pushforwardToPointFromCotangent BB := b -> pushforwardToPoint (zeroSectionInv BB * b);
+    pushforwardToPointFromCotangent AA := a -> pushforwardToPoint (zeroSectionInv AA * a);
     --
     (AA,BB,FF,I)
     )
@@ -330,9 +365,11 @@ fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 -- a simple function that seems like it should already exist
 basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
 
+-- TODO possibly rethink if own type of module
 Vector @ Vector := (v,w) -> vector apply(entries v,entries w,times); -- componentwise multiplication
 Vector ^^ ZZ := (v,n) -> vector apply(entries v, a -> a^n); -- componentwise power
 
+-- TODO: rewrite
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint Thing := r -> try pushforwardToPoint promote(r,AA) else error "Not applicable (set up first?)";
 pushforwardToPoint Matrix := m -> if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint) else weights()*m; -- TODO rethink second case
