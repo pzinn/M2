@@ -7,6 +7,11 @@ export {"setupCotangent", "chernClass",
 
 cotOpts := opts ++ { Presentation => EquivLoc }
 
+debug Core -- to use basering, generatorSymbols, frame
+
+-- a simple function that seems like it should already exist
+basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
+
 -- next two functions should be memoized
 elem := (i,vrs) -> sum(subsets(vrs,i), product);
 expandElem := (P,vrs,els) -> (
@@ -32,23 +37,22 @@ promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 
+-- labeling of classes
 AryString = new Type of List; -- could we just use sequences?
 new AryString from String := (T,s) -> apply(ascii s,i->i-48);
 texMath AryString := s -> concatenate between("\\,",apply(s,x -> if class x === String then x else texMath x))
 net AryString := toString AryString := s -> concatenate apply(s,toString)
 
+-- common rings
 q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
 FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
 promoteFromMap(FK_0,FK_-1);
-FF=AA=BB=null;
 
 ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
 FH_-1 = frac(factor(ZZ (monoid[ℏ,xbar]))); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ (monoid[ℏ])));
 promoteFromMap(FH_0,FH_-1);
-
-debug Core -- to use "generatorSymbols" and "frame"
 
 defineFK = n -> (
     if not FK#?n then (
@@ -68,28 +72,9 @@ defineFH = n -> (
     FH_n
     )
 
--*
-local evals;
-eval := sym -> ( -- similar to memoize except table of memorized results is outside so can be reset
-    sym <- args -> if evals#?(sym,args) then evals#(sym,args)
-    else if evals#?sym then evals#(sym,args) = (evals#sym) args
-    else error "Set up first";
-    sym = value sym;
-)
-eval zeroSection; -- [G/P] in T*G/P
-eval local zeroSectionInv; -- its inverse
-eval local weights; -- weights in tangent space at fixed points in G/P
-eval local cotweights; -- in T*G/P
-eval segreClasses;
-eval segreClass;
-eval schubertClasses;
-eval schubertClass;
-*-
--- new paradigm
+-- modified memoize
 protect sClass;
 protect sClasses;
-protect weights;
-protect cotweights;
 local lastSetup;
 mymoize = fun -> (
     fun' := memoize fun;
@@ -120,23 +105,29 @@ schubertClass = mymoize schubertClass1
 chernClass1 = method(Dispatch=>{Type,Thing});
 chernClass = mymoize chernClass1
 
+-- for internal use
+weights1 = method(Dispatch=>Type)
+weights = mymoize weights1
+cotweights1 = method(Dispatch=>Type)
+cotweights = mymoize cotweights1
+
+-- main function: set up everything
 setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
     if #dims0 === 0 or unique dims0 === {0} then error "Please specify nonzero dimensions";
-    -- global parameters
+    -- "global" parameters
     dims := if first dims0 == 0 then dims0 else prepend(0,dims0);
     n := last dims;
     subs := s -> apply(#dims,i->positions(s,j->j==i));
     d := #dims - 2; -- # steps - 2 since includes trivial first and last
     dimdiffs := apply(d+1, i-> dims#(i+1)-dims#i);
-    -- list of fixed points
-    ω:=new AryString from splice apply(d+1, i->dimdiffs_i:i);
+    ω:=new AryString from splice apply(d+1, i->dimdiffs_i:i); -- list of fixed points
     I := unique permutations ω; -- unique? eww
     ind := i -> sum(#i,j->(d+1)^j*i_(#i-1-j));
     -- redefine default puzzle opts
     (frame puzzle)#0 = applyPairs((frame puzzle)#0,(k,v) -> (k,if curCotOpts#?k then curCotOpts#k else v)); -- TODO use Factor's new "fuse"
     -- set up base ring and R-matrices
     if curCotOpts.Kth then (
-	FF = if curCotOpts#Equivariant then defineFK n else FK_0;
+	FF := if curCotOpts#Equivariant then defineFK n else FK_0;
 	V1:=FK_-1^(d+1); q:=FK_-1_0; zbar:=FK_-1_1;
 	Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
 		if i==j then (i*(d+2),i*(d+2))=>1-q^2*zbar
@@ -176,17 +167,19 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	y := getSymbol "y";
 	BB0 := FF(monoid[y_1..y_n,DegreeRank=>if curCotOpts.Kth then 0 else 1]); -- in terms of Chern roots
 	J := ideal apply(1..n,k->elem(k,gens BB0)
-            -if curCotOpts.Equivariant then elem(k,FF_1..FF_n) else if curCotOpts.Kth then binomial(n,k) else 0);
-	BB = BB0/J; lastSetup=BB;
+            -if curCotOpts.Equivariant then elem(k,drop(gens FF,1)) else if curCotOpts.Kth then binomial(n,k) else 0);
+	BB := BB0/J; lastSetup=BB;
 	-- Chern classes
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
 	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
 	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
 	R1 := FF monoid new Array from append(v\inds, Degrees=>splice apply(d+1,i->1..dimdiffs#i));
 	f := map(BB,R1,e\inds);
-	AA = R1 / kernel f;
-	chernClass1 (AA,VisibleList) := (AA,ji) -> v ji;
-	chernClass1 (BB,VisibleList) := (BB,ji) -> e ji;
+	AA := R1 / kernel f;
+	chernClass1 (AA,Sequence) := (AA,ji) -> v ji;
+	chernClass1 (AA,ZZ,ZZ) := (AA,j,i) -> v (j,i);
+	chernClass1 (BB,Sequence) := (BB,ji) -> e ji;
+	chernClass1 (BB,ZZ,ZZ) := (BB,j,i) -> e (j,i);
 	promoteFromMap(AA,BB,f*map(R1,AA));
 	-- reverse transformation
 	fullToPartial FF :=
@@ -289,8 +282,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	V:=FF^(d+1); Rcheck := new IndexedVariableTable; Rcheckz := new IndexedVariableTable;
 	scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
 	scan(n-1,j->Rcheckz_j = map(V^**j,V^**j,1)**(Rcz (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
-	-- the module Hack -- Modules are immutable, so put functions in cache
-	lastSetup = M := FF^#I;
+	-- the module Hack -- Modules are immutable, and we can't use cache (need different hash)
+	M := new MutableHashTable from FF^#I;
+	vectorM := l -> new M from {map(M,FF^1,apply(splice l,i->{i}))};
 	fixedPoint := memoize( (segre,i) -> ( -- this returns the restrictions to a given fixed point segre=true: segre; segre=false: schubert
 		-- find first descent
 		j:=position(0..n-2,k->i#k>i#(k+1));
@@ -299,89 +293,88 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		(tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
 		), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
 	-- segre & schubert classes
-	M.cache#sClass = (segre,i) -> (
+	M#sClass = (segre,i) -> ( -- TODO rewrite (?)
 	    indi:=ind i;
-	    new M from matrix apply(I,ii->{(fixedPoint(segre,ii))_(0,indi)})
+	    vectorM apply(I,ii->(fixedPoint(segre,ii))_(0,indi))
 	    );
-	M.cache#sClasses = segre -> (
+	M#sClasses = segre -> ( -- TODO rewrite
 	    inds := ind \ I;
-	    map(M,M, apply(I,i->first entries (fixedPoint(segre,i))_inds))
+	    map(M,FF^#I, apply(I,i->first entries (fixedPoint(segre,i))_inds))
 	    );
 	if curCotOpts.Kth then (
-	    M.cache#weights = () -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) });
-	    M.cache#zeroSection    = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1)        else 1))});
-	    M.cache#zeroSectionInv = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))});
-	    M.cache#cotweights = () -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) });
+	    weights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) });
+	    zeroSection1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
+	    zeroSectionInv1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
+	    cotweights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) });
 	    ) else (
-	    M.cache#weights = () -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) });
-	    M.cache#zeroSection    = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1)        else 1))});
-	    M.cache#zeroSectionInv = () -> new M from matrix apply(I,i->{product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))});
-	    M.cache#cotweights = map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) });
+	    weights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) });
+	    zeroSection1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
+	    zeroSectionInv1 = M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
+	    cotweights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) });
 	    );
 	-- Chern classes
-	M.cache#chernClass = (j,i) -> new M from matrix apply(I,s->{elem(j,apply((subs s)#i,k->FF_(k+1)))});
+	M#chernClass = (j,i) -> vectorM apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1)))); -- TODO rewrite
+	-- pushforward to point
+	pushforwardToPoint M  := m -> ((weights M)*m)_0;
+	pushforwardToPointFromCotangent M  := m -> ((cotweights M)*m)_0;
+	lastSetup = M = new Module from M;
 	(M,FF,I)
     ) else error "Unknown presentation"
     )
 
 -- the methods below are defined for appropriate rings by setup
--- the defs below are just placeholders (try to promote to latest FF) or apply-type
+-- the defs below are just placeholders (try to promote to latest) or apply-type
 -- restriction to fixed points
 restrict = method(Dispatch => Thing)
-restrict Thing := r -> try restrict promote(r,BB) else error "Not applicable (set up first?)";
+restrict Number := restrict RingElement := r -> try restrict promote(r,lastSetup) else error "Not applicable (set up first?)"; -- really?
 restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one-row matrices
 
 -- from full flag to partial flag
 fullToPartial = method(Dispatch => Thing)
-fullToPartial Thing := r -> try fullToPartial promote(r,BB) else error "Not applicable (set up first?)";
+fullToPartial Number := fullToPartial RingElement := r -> try fullToPartial promote(r,lastSetup) else error "Not applicable (set up first?)"; -- really?
 fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 
--- a simple function that seems like it should already exist
-basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
+-- Vector methods
+Vector @ Vector := (v,w) -> new class v from {map(class v,(ring v)^1, apply(entries v,entries w,(x,y)->{x*y}))}; -- componentwise multiplication
+Vector ^^ ZZ := (v,n) -> new class v from {map(class v,(ring v)^1, apply(entries v, a -> {a^n}))}; -- componentwise power
 
--- Vector methods (for equiv loc)
-Vector @ Vector := (v,w) -> new class v from matrix apply(entries v,entries w,(x,y)->{x*y}); -- componentwise multiplication
-Vector ^^ ZZ := (v,n) -> new class v from matrix apply(entries v, a -> {a^n}); -- componentwise power
-
--- segre motivic/SM classes equiv loc
+-- segre motivic/SM classes
 segreClass1 (Vector,VisibleList) :=
-segreClass1 (Vector,String) := (M,i) -> M.cache#sClass(true,new AryString from i);
-segreClasses1 Vector := M -> M.cache#sClasses true;
--- schubert classes equiv loc
+segreClass1 (Vector,String) := (M,i) -> M#sClass(true,new AryString from i);
+segreClasses1 Vector := M -> M#sClasses true;
+-- schubert classes
 schubertClass1 (Vector,VisibleList) :=
-schubertClass1 (Vector,String) := (M,i) -> M.cache#sClass(false,new AryString from i);
-schubertClasses1 Vector := M -> M.cache#sClasses false;
--- zero section equiv loc
-zeroSection1 Vector := M -> M.cache#zeroSection ()
+schubertClass1 (Vector,String) := (M,i) -> M#sClass(false,new AryString from i);
+schubertClasses1 Vector := M -> M#sClasses false;
 -- chern classes of (duals of) tautological bundles
-chernClass (Vector,Thing) := (M,x) -> M.cache#chernClass x
+chernClass1 (Vector,Sequence) := (M,ji) -> M#chernClass ji
+chernClass1 (Vector,ZZ,ZZ) := (M,j,i) -> M#chernClass (j,i)
 
--- pushforward equiv loc or matrix
+-- pushforward
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
-pushforwardToPoint Thing := r -> try pushforwardToPoint promote(r,AA) else error "Not applicable (set up first?)";
+pushforwardToPoint Number := pushforwardToPoint RingElement := r -> try pushforwardToPoint promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPoint Matrix := m -> (
     if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint)
-    else if (target m).cache#?weights then (target m).cache#weights()*m
+    else if (target m)#?weights1 then (weights target m)*m
     else error "can't pushforward"
     )
-pushforwardToPoint Vector := v -> if (class v).cache#?weights then ((class v).cache#weights()*v)_0 else error "can't pushforward"
 
 pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/P))
-pushforwardToPointFromCotangent Thing := r -> try pushforwardToPointFromCotangent promote(r,AA) else error "Not applicable (set up first?)";
+pushforwardToPointFromCotangent Number := pushforwardToPointFromCotangent RingElement := r -> try pushforwardToPointFromCotangent promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPointFromCotangent Matrix := m -> (
     if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent)
-    else if (target m).cache#?cotweights then (target m).cache#cotweights()*m
+    else if (target m)#?cotweights1 then (cotweights target m)*m
     else error "can't pushforward"
     )
-pushforwardToPointFromCotangent Vector := v -> if (class v).cache#?cotweights then ((class v).cache#cotweights()*v)_0 else error "can't pushforward"
-
 
 end
 
-(FF,I)=setupCotangent(1,2,Kth=>true)
+(M,FF,I)=setupCotangent(1,2,Kth=>true)
 segreCls=segreClasses();
 segreInv=segreCls^(-1);
 Table table(I,I,(i,j)->segreInv*(segreClass i @ segreClass j))
+Table table(I,I,(i,j)->fugacityVector puzzle(i,j))
+oo==ooo
 
 (AA,BB,f,I) = setupCotangent(1,3,Kth=>true,Presentation=>Borel)
 segreCls = segreClasses();

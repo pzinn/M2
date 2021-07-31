@@ -102,12 +102,12 @@ fugacityVector = true >> o -> L -> (
 end
 
 needsPackage "CotangentSchubert"
-(FF,I)=setupCotangent(1,2,3,Kth=>true)
+(M,FF,I)=setupCotangent(1,2,3,Kth=>true)
 segreCls = segreClasses();
 T=table(I,I,(i,j)->segreCls^(-1)*(segreClass i @ segreClass j));
 TT=table(I,I,(i,j)->fugacityVector puzzle(i,j,Generic=>true,Equivariant=>true,Kth=>true));
 T==TT
 
-(FF,I)=setupCotangent(1,2,3,4,Kth=>true)
+(M,FF,I)=setupCotangent(1,2,3,4,Kth=>true)
 segreCls = segreClasses();
 segreInv = segreCls^(-1);
