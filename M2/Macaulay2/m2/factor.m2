@@ -21,6 +21,9 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      else if factoryAlmostGood R then (
 	  if (options R).Inverses then (r,s) = (numerator r, numerator s);
  	  new ring r from rawGCD(raw r, raw s))
+     else (
+	 (R1,f,g) := flattenRing(R,Result=>3);
+	 if factoryAlmostGood R1 then g gcd(f r,f s)
      else if instance(R,PolynomialRing) and numgens R == 1 and isField coefficientRing R then monic (
 	  -- does this depend on the monomial order in R, too?
 	  -- would this code work for more than one variable?
@@ -31,7 +34,7 @@ gcd(RingElement,RingElement) := RingElement => (r,s) -> (
 	       a := (syz( matrix{{r,s}}, SyzygyLimit => 1 ))_(0,0);
 	       if s%a != 0 then error "can't find gcd in this ring";
 	       s // a))
-     else notImplemented())
+     else notImplemented()))
 
 gcdCoefficients(RingElement,RingElement) := (f,g) -> (	    -- ??
      R := ring f;
