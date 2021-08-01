@@ -32,8 +32,10 @@ FactorPolynomialRing = new Type of PolynomialRing;
 FactorPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings;
 factor FactorPolynomialRing := opts -> identity;
-expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
-describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
+--expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
+expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression last R.baseRings)_factor
+--describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
+describe FactorPolynomialRing := R -> Describe (describe last R.baseRings)_factor
 factor FractionField := opts -> F -> frac(factor(opts,last F.baseRings))  -- simpler to do it in this order -- though needs more checking (see also below)
 
 leadCoeff := x -> ( -- iterated leadCoefficient
@@ -219,6 +221,9 @@ if not OldFactor then (
     	use RM
     	)
     )
+
+-- alternate syntax (looks prettier)
+PolynomialRing _ Function := (R,f) -> if f===factor then factor R else "syntax error"
 
 -- some functions need old factor
 -- ugly hack for now, we'll see later

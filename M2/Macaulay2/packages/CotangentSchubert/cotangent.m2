@@ -309,7 +309,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    ) else (
 	    weights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) });
 	    zeroSection1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
-	    zeroSectionInv1 = M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
+	    zeroSectionInv1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
 	    cotweights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) });
 	    );
 	-- Chern classes
