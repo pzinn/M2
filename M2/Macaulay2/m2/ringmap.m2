@@ -121,7 +121,7 @@ map(Ring,Ring,Matrix) := RingMap => opts -> (R,S,m) -> (
 	  symbol target => R,
 	  symbol source => S,
 	  symbol matrix => mE,
-	  symbol RawRingMap => rawRingMap m.RawMatrix,
+	  symbol RawRingMap => rawRingMap raw m,
 	  symbol Matrix => degmapmatrix,
 	  symbol cache => new CacheTable from {
 	       symbol DegreeMap => degmap,

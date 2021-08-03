@@ -263,23 +263,32 @@ if ((options Factor).Configuration#"DegreesRings") then (
 
 oldmap1 := lookup(map,Module,Nothing,List);
 oldmap2 := lookup(map,Module,Module,RawMatrix);
-oldraw := lookup(raw,Matrix);
 oldentries := lookup(entries,Matrix);
 oldplus := lookup(symbol +,Matrix,Matrix);
+oldminus1 := lookup(symbol -,Matrix);
 oldminus := lookup(symbol -,Matrix,Matrix);
 oldtimes := lookup(symbol *,Matrix,Matrix);
 oldtimess := lookup(symbol *,ZZ,Matrix);
+oldtranspose := lookup(transpose,Matrix);
+oldtensor := lookup(symbol **,Matrix,Matrix);
 -- degrees missing
 
 isFactored = X -> instance(ring X,FactorPolynomialRing) or (instance(ring X,FractionField) and instance(last (ring X).baseRings,FactorPolynomialRing));
 
+protect sparseEntries;
 
-entries Matrix := m -> if isFactored m then m.entries else oldentries m;
+entries Matrix := m -> if m.?RawMatrix then oldentries m else if m.?entries then m.entries else (
+    R:=ring m;
+    r:=rank source m; s:=rank target m;
+    l := new MutableList from apply(r*s,i->0_R);
+    scanPairs(m.sparseEntries, (k,v) -> l#(k#0*r+k#1) = v); -- TODO check
+    pack(l,r)
+    )
 
-raw Matrix := m -> if isFactored m then (
-    	  p := toSequence applyTable(m.entries,raw);
+raw Matrix := m -> if m.?RawMatrix then m.RawMatrix else (
+    	  p := toSequence applyTable(entries m,raw); -- TODO sparse
 	  rawMatrix2(raw cover target m, raw cover source m, degreeLength ring target m : 0, flatten p,0) -- TODO degrees
-	  ) else oldraw m; -- TEMP
+	  )
 
 map(Module,ZZ,List) := 
 map(Module,Nothing,List) := 
@@ -288,21 +297,13 @@ map(Module,Module,List) := opts -> (M,N,p) -> (
 	R := ring M;
 	rankN := if class N === ZZ then N else if class N === Module then rank N else #p#0;
 	p=splice p;
-	if all(p,o->instance(o,Option)) then (
-	    rows := apply(p, o -> o#0#0);
-            cols := apply(p, o -> o#0#1);
-	    rankM := rank M;
-	    -- TEMP sparse not implemented yet
-	    pp := new MutableList from apply(rankM*rankN,i->0);
-	    scan(p, o -> pp#(o#0#0*rankN+o#0#1) = o#1);
-	    p = pack(new List from pp,rankN);
-	    );
 	new Matrix from {
 	    symbol target => M,
 	    symbol source => if class N === Module then N else R^rankN,
 	    symbol ring => R,
 	    symbol cache => new CacheTable,
-	    symbol entries => p
+	    if all(p,o->instance(o,Option)) then symbol sparseEntries => hashTable apply(p,o->o#0=>promote(o#1,R)) 
+	    else symbol entries => applyTable(p,r->promote(r,R))
 	    }
 	));
 
@@ -312,7 +313,7 @@ map(Module,Module,RawMatrix) := opts -> (M,N,m) -> if not isFactored M then (old
     	  symbol ring => R,
 	  symbol target => M,
 	  symbol source => N,
-	  symbol RawMatrix => m, -- not used
+--	  symbol RawMatrix => m, -- not used
 	  symbol entries => applyTable(entries m, r -> promote(r,R)),
 	  symbol cache => new CacheTable
 	  }
@@ -321,50 +322,83 @@ map(Module,Module,RawMatrix) := opts -> (M,N,m) -> if not isFactored M then (old
 -- for binary operations, too restrictive to ask for both rings to be factored!
 
 Matrix + Matrix := (f,g) -> if not isFactored f or not isFactored g then oldplus(f,g) else (
-         R := ring f;
 	 new Matrix from {
-    	  symbol ring => R,
+    	  symbol ring => ring f,
 	  symbol target => target f,
 	  symbol source => source f, -- TODO: cheecks
-	  symbol entries => apply(rank target f, i-> apply(rank source f,j->f.entries#i#j+g.entries#i#j)),
+	  if f.?sparseEntries and g.?sparseEntries then symbol sparseEntries => merge(f.sparseEntries,g.sparseEntries,plus)
+	  else symbol entries => (
+	      	 ef := entries f;
+	 	 eg := entries g;
+	      	 apply(rank target f, i-> apply(rank source f,j->ef#i#j+eg#i#j))
+		 ),
 	  symbol cache => new CacheTable
 	  }
     )
 
-Matrix - Matrix := (f,g) -> if not isFactored f or not isFactored g then oldminus(f,g) else (
-         R := ring f;
-	 new Matrix from {
-    	  symbol ring => R,
-	  symbol target => target f,
-	  symbol source => source f, -- TODO: cheecks
-	  symbol entries => apply(rank target f, i-> apply(rank source f,j->f.entries#i#j-g.entries#i#j)),
-	  symbol cache => new CacheTable
-	  }
-    )
+- Matrix := f -> if not isFactored f then oldminus1 f else new Matrix from {
+    symbol Ring => ring f,
+    symbol target => target f,
+    symbol source => source f,
+    if f.?sparseEntries then symbol sparseEntries => applyValues(f.sparseEntries, r->-r) else symbol entries => applyTable(entries f,r->-r),
+    symbol cache => new CacheTable
+    }
+
+Matrix - Matrix := (f,g) -> if not isFactored f or not isFactored g then oldminus(f,g) else f+(-g)
 
 Matrix * Matrix := (f,g) -> if not isFactored f or not isFactored g then oldtimes(f,g) else (
-         R := ring f;
 	 new Matrix from {
-    	  symbol ring => R,
+    	  symbol ring => ring f,
 	  symbol target => target f,
 	  symbol source => source g, -- TODO: cheecks
-	  symbol entries => apply(rank target f, i-> apply(rank source g,j->sum(rank source f,k->f.entries#i#k*g.entries#k#j))),
+	  if f.?sparseEntries and g.?sparseEntries then symbol sparseEntries => combine(f.sparseEntries,g.sparseEntries,(k,k')->if k#1==k'#0 then (k#0,k'#1) else continue,times,plus)
+	  else symbol entries => (
+	      ef := entries f;
+	      eg := entries g;
+	      apply(rank target f, i-> apply(rank source g,j->sum(rank source f,k->ef#i#k*eg#k#j)))
+	      ),
 	  symbol cache => new CacheTable
 	  }
     )
 
 ZZ * Matrix :=
-RingElement * Matrix := (r,m) -> if not isFactored m then oldtimess (r,m) else (
-    S := ring m;
+RingElement * Matrix := (r,f) -> if not isFactored f then oldtimess (r,f) else (
+    S := ring f;
     try r = promote(r,S) else error "can't promote scalar to ring of matrix";
-	 new Matrix from {
-    	  symbol ring => S,
-	  symbol target => target m,
-	  symbol source => source m,
-	  symbol entries => applyTable(m.entries, x -> r*x),
+    new Matrix from {
+    	symbol Ring => S,
+    	symbol target => target f,
+    	symbol source => source f,
+    	if f.?sparseEntries then symbol sparseEntries => applyValues(f.sparseEntries, r'->r*r') else symbol entries => applyTable(entries f,r'->r*r'),
+    	symbol cache => new CacheTable
+    	}
+    )
+
+Matrix ** Matrix := (f,g) -> if not isFactored f or not isFactored g then oldtimes(f,g) else (
+    r:=rank target g;
+    s:=rank source g;
+    new Matrix from {
+	symbol ring => ring f,
+	symbol target => target f ** target g,
+	symbol source => source f ** source g,
+	if f.?sparseEntries and g.?sparseEntries then symbol sparseEntries => combine(f.sparseEntries,g.sparseEntries,(k,k')->(k#0*r+k'#0,k#1*s+k'#1),times,plus)
+	else symbol entries => (
+	      ef := entries f;
+	      eg := entries g;
+	      apply(rank target f * rank target g, i-> apply(rank source f * rank source g,j->ef#(i//r)#(j//s)*eg#(i%r)#(j%s)))
+	      ),
 	  symbol cache => new CacheTable
 	  }
     )
+
+transpose Matrix := m -> if not isFactored m then oldtranspose m else new Matrix from {
+    	  symbol ring => ring m,
+	  symbol target => dual source m,
+	  symbol source => dual target m,
+	  if m.?sparseEntries then symbol sparseEntries => applyKeys(m.sparseEntries,reverse) else symbol entries => transpose m.entries,
+	  symbol cache => new CacheTable
+	  }
+    
 
 -- still missing: ring map on matrix    
 
