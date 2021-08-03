@@ -261,6 +261,114 @@ if ((options Factor).Configuration#"DegreesRings") then (
     degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then dR0 else factor(ZZ degreesMonoid n));
 )
 
+oldmap1 := lookup(map,Module,Nothing,List);
+oldmap2 := lookup(map,Module,Module,RawMatrix);
+oldraw := lookup(raw,Matrix);
+oldentries := lookup(entries,Matrix);
+oldplus := lookup(symbol +,Matrix,Matrix);
+oldminus := lookup(symbol -,Matrix,Matrix);
+oldtimes := lookup(symbol *,Matrix,Matrix);
+oldtimess := lookup(symbol *,ZZ,Matrix);
+-- degrees missing
+
+isFactored = X -> instance(ring X,FactorPolynomialRing) or (instance(ring X,FractionField) and instance(last (ring X).baseRings,FactorPolynomialRing));
+
+
+entries Matrix := m -> if isFactored m then m.entries else oldentries m;
+
+raw Matrix := m -> if isFactored m then (
+    	  p := toSequence applyTable(m.entries,raw);
+	  rawMatrix2(raw cover target m, raw cover source m, degreeLength ring target m : 0, flatten p,0) -- TODO degrees
+	  ) else oldraw m; -- TEMP
+
+map(Module,ZZ,List) := 
+map(Module,Nothing,List) := 
+map(Module,Module,List) := opts -> (M,N,p) -> (
+    if not isFactored M then (oldmap1 opts) (M,N,p) else (
+	R := ring M;
+	rankN := if class N === ZZ then N else if class N === Module then rank N else #p#0;
+	p=splice p;
+	if all(p,o->instance(o,Option)) then (
+	    rows := apply(p, o -> o#0#0);
+            cols := apply(p, o -> o#0#1);
+	    rankM := rank M;
+	    -- TEMP sparse not implemented yet
+	    pp := new MutableList from apply(rankM*rankN,i->0);
+	    scan(p, o -> pp#(o#0#0*rankN+o#0#1) = o#1);
+	    p = pack(new List from pp,rankN);
+	    );
+	new Matrix from {
+	    symbol target => M,
+	    symbol source => if class N === Module then N else R^rankN,
+	    symbol ring => R,
+	    symbol cache => new CacheTable,
+	    symbol entries => p
+	    }
+	));
+
+map(Module,Module,RawMatrix) := opts -> (M,N,m) -> if not isFactored M then (oldmap2 opts) (M,N,m) else (
+         R := ring M;
+	 new Matrix from {
+    	  symbol ring => R,
+	  symbol target => M,
+	  symbol source => N,
+	  symbol RawMatrix => m, -- not used
+	  symbol entries => applyTable(entries m, r -> promote(r,R)),
+	  symbol cache => new CacheTable
+	  }
+    )
+
+-- for binary operations, too restrictive to ask for both rings to be factored!
+
+Matrix + Matrix := (f,g) -> if not isFactored f or not isFactored g then oldplus(f,g) else (
+         R := ring f;
+	 new Matrix from {
+    	  symbol ring => R,
+	  symbol target => target f,
+	  symbol source => source f, -- TODO: cheecks
+	  symbol entries => apply(rank target f, i-> apply(rank source f,j->f.entries#i#j+g.entries#i#j)),
+	  symbol cache => new CacheTable
+	  }
+    )
+
+Matrix - Matrix := (f,g) -> if not isFactored f or not isFactored g then oldminus(f,g) else (
+         R := ring f;
+	 new Matrix from {
+    	  symbol ring => R,
+	  symbol target => target f,
+	  symbol source => source f, -- TODO: cheecks
+	  symbol entries => apply(rank target f, i-> apply(rank source f,j->f.entries#i#j-g.entries#i#j)),
+	  symbol cache => new CacheTable
+	  }
+    )
+
+Matrix * Matrix := (f,g) -> if not isFactored f or not isFactored g then oldtimes(f,g) else (
+         R := ring f;
+	 new Matrix from {
+    	  symbol ring => R,
+	  symbol target => target f,
+	  symbol source => source g, -- TODO: cheecks
+	  symbol entries => apply(rank target f, i-> apply(rank source g,j->sum(rank source f,k->f.entries#i#k*g.entries#k#j))),
+	  symbol cache => new CacheTable
+	  }
+    )
+
+ZZ * Matrix :=
+RingElement * Matrix := (r,m) -> if not isFactored m then oldtimess (r,m) else (
+    S := ring m;
+    try r = promote(r,S) else error "can't promote scalar to ring of matrix";
+	 new Matrix from {
+    	  symbol ring => S,
+	  symbol target => target m,
+	  symbol source => source m,
+	  symbol entries => applyTable(m.entries, x -> r*x),
+	  symbol cache => new CacheTable
+	  }
+    )
+
+-- still missing: ring map on matrix    
+
+
 end
 
 beginDocumentation()
