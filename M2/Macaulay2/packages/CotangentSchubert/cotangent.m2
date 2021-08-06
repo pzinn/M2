@@ -117,8 +117,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
     -- "global" parameters
     dims := if first dims0 == 0 then dims0 else prepend(0,dims0);
     n := last dims;
-    subs := s -> apply(#dims,i->positions(s,j->j==i));
     d := #dims - 2; -- # steps - 2 since includes trivial first and last
+    subs := s -> apply(d+1,i->positions(s,j->j==i));
     dimdiffs := apply(d+1, i-> dims#(i+1)-dims#i);
     ω:=new AryString from splice apply(d+1, i->dimdiffs_i:i); -- list of fixed points
     I := unique permutations ω; -- unique? eww
@@ -254,9 +254,11 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    (schubertClasses X)_(0,position(I,j->j==i))
 	    );
 	-- restriction to fixed points
-	restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
-	restrict AA :=
-	restrict BB := b -> vector apply(I,i->(restrictMap i) b); -- TODO where is M?
+	if curCotOpts#Equivariant then (
+	    restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
+	    restrict AA :=
+	    restrict BB := b -> vector apply(I,i->(restrictMap i) b); -- TODO where is M?
+	    );
 	-- pushforwards
 	-- find element whose pushforward is nonzero
 	local nzpf; -- index of nonzero pushforward basis element
@@ -337,6 +339,7 @@ fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 -- Vector methods
 Vector @ Vector := (v,w) -> new class v from {map(class v,(ring v)^1, apply(entries v,entries w,(x,y)->{x*y}))}; -- componentwise multiplication
 Vector ^^ ZZ := (v,n) -> new class v from {map(class v,(ring v)^1, apply(entries v, a -> {a^n}))}; -- componentwise power
+Vector @ Matrix := (v,w) -> map(class v,source w, apply(entries v,entries w,(x,y)->apply(y,yy->x*yy))); -- componentwise multiplication
 
 -- segre motivic/SM classes
 segreClass1 (Vector,VisibleList) :=
