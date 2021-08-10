@@ -17,6 +17,7 @@ gcd(RingElement,ZZ) := (r,s) -> gcd(promote(s,ring r),r)
 gcd(RingElement,RingElement) := RingElement => (r,s) -> (
      R := ring r;
      if ring s =!= R then error "gcd: expected elements in the same ring";
+     if instance(R,QuotientRing) then error "gcd: unimplemented for this ring";
      if isField R then if r == 0 and s == 0 then 0_R else 1_R
      else if factoryAlmostGood R then (
 	  if (options R).Inverses then (r,s) = (numerator r, numerator s);
