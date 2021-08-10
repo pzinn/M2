@@ -168,7 +168,8 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
         if s == 0 then error "division by 0";
         g:=gcd(r,s);
         if isField coefficientRing R then g=g*s#0 -- no constant in the denominator
-        else if coefficientRing R === ZZ and lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
+--        else if coefficientRing R === ZZ and lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
+        else try if lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
         new F from {r//g, s//g}
         );
     fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
