@@ -45,8 +45,8 @@ net AryString := toString AryString := s -> concatenate apply(s,toString)
 
 -- common rings
 q := getSymbol "q"; zbar := getSymbol "zbar";
-FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]),FactorLeadMonomial=>true)); -- same as FK_1, really but diff variable name
-FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0]),FactorLeadMonomial=>true));
+FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
+FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
 promoteFromMap(FK_0,FK_-1);
 
 ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
@@ -57,7 +57,7 @@ promoteFromMap(FH_0,FH_-1);
 defineFK = n -> (
     if not FK#?n then (
         z := getSymbol "z"; -- q := getSymbol "q";
-        FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0]),FactorLeadMonomial=>true));
+        FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0])));
         promoteFromMap(FK_0,FK_n);
         );
     FK_n

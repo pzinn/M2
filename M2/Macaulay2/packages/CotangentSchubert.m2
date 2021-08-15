@@ -8,10 +8,13 @@ newPackage(
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Cotangent Schubert calculus",
     Keywords => {"Schubert","motivic","CSM"},
-    PackageImports => {"Factor", "VectorGraphics"},
+    PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => true,
+    Configuration => { "Factor" => false }
     )
+
+if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
 opts = new OptionTable from {Kth => false, Equivariant => true, Generic => true} -- common options
 export {"Kth", "Equivariant" };
