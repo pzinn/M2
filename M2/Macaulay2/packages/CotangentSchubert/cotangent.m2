@@ -105,42 +105,38 @@ html DiagonalAlgebra := lookup(html,Thing);
 
 -- ex: D=new DiagonalAlgebra from ZZ^3; x=new D from {1,2,3}; x^2-x+1
 
--- modified memoize TODO retire
 local lastSetup;
-mymoize = fun -> (
-    fun' := memoize fun;
-    x -> (
-	if class x === Sequence and #x === 0 then x=lastSetup
-	else if (class x === Sequence and not instance(x#0,HashTable)) or (class x =!= Sequence and not instance(x,HashTable)) then x = (lastSetup,x);
-	fun' x
-    ))
-zeroSection1 = method(Dispatch=>Type) -- used internally
-zeroSection = mymoize zeroSection1
+addLastSetup = f -> installMethod(f,() -> f lastSetup);
+addLastSetup1 = f -> f Thing := x -> f(x,lastSetup);
+addLastSetup2 = f -> f (Thing,Thing) := (x,y) -> f(x,y,lastSetup);
 
-zeroSectionInv1 = method(Dispatch=>Type)
-zeroSectionInv = mymoize zeroSectionInv1
+zeroSection = method(Dispatch=>{Type}) -- note the {}
+addLastSetup(zeroSection);
 
-segreClasses1 = method(Dispatch=>Type)
-segreClasses = mymoize segreClasses1
+zeroSectionInv = method(Dispatch=>{Type})
+addLastSetup(zeroSectionInv);
 
-segreClass1 = method(Dispatch=>{Type,Thing})
-segreClass = mymoize segreClass1
+segreClasses = method(Dispatch=>{Type})
+addLastSetup(segreClasses);
 
-schubertClasses1 = method(Dispatch=>Type)
-schubertClasses = mymoize schubertClasses1
+segreClass = method(Dispatch=>{Thing,Type})
+addLastSetup1(segreClass);
 
-schubertClass1 = method(Dispatch=>{Type,Thing})
-schubertClass = mymoize schubertClass1
+schubertClasses = method(Dispatch=>{Type})
+addLastSetup(schubertClasses);
 
--- rename tautoBundle to avoid confusion with motivic classes?
-chernClass1 = method(Dispatch=>{Type,Thing});
-chernClass = mymoize chernClass1
+schubertClass = method(Dispatch=>{Thing,Type})
+addLastSetup1(schubertClass);
+
+-- rename tautClass to avoid confusion with motivic classes?
+chernClass = method(Dispatch=>{Thing,Thing,Type});
+addLastSetup2(chernClass);
 
 -- for internal use
-weights1 = method(Dispatch=>Type)
-weights = mymoize weights1
-cotweights1 = method(Dispatch=>Type)
-cotweights = mymoize cotweights1
+weights = method(Dispatch=>{Type})
+addLastSetup(weights);
+cotweights = method(Dispatch=>{Type})
+addLastSetup(cotweights);
 
 -- main function: set up everything
 setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
@@ -207,10 +203,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from append(v\inds, Degrees=>splice apply(d+1,i->1..dimdiffs#i));
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	chernClass1 (AA,Sequence) := (AA,ji) -> v ji;
-	chernClass1 (AA,ZZ,ZZ) := (AA,j,i) -> v (j,i);
-	chernClass1 (BB,Sequence) := (BB,ji) -> e ji;
-	chernClass1 (BB,ZZ,ZZ) := (BB,j,i) -> e (j,i);
+	chernClass (ZZ,ZZ,AA) := (j,i,AA) -> v (j,i);
+	chernClass (ZZ,ZZ,BB) := (j,i,BB) -> e (j,i);
 	promoteFromMap(AA,BB,f*map(R1,AA));
 	-- reverse transformation
 	fullToPartial FF :=
@@ -224,63 +218,63 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
 	    sub(b,AA)
 	    );
-	zeroSection1 BB := if curCotOpts.Kth then
+	zeroSection BB := (cacheValue zeroSection) (if curCotOpts.Kth then
 	BB -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
-	else BB -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1));
-	zeroSection1 AA := AA -> fullToPartial zeroSection BB;
-	zeroSectionInv1 BB := BB -> (zeroSection BB)^(-1);
-	zeroSectionInv1 AA := AA -> (zeroSection AA)^(-1);
+	else BB -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1)));
+	zeroSection AA := (cacheValue zeroSection) (AA -> fullToPartial zeroSection BB);
+	zeroSectionInv BB := (cacheValue zeroSectionInv) (BB -> (zeroSection BB)^(-1));
+	zeroSectionInv AA := (cacheValue zeroSectionInv) (AA -> (zeroSection AA)^(-1));
 	-- segre Classes
-	segreClasses1 BB := BB -> (
-	    -- monodromy matrix
-	    V:=BB^(d+1);
-	    W:=V^**n;
-	    Z:=map(BB^1,W,{{rank W-1:0,1}});
-	    scan(n,i->(
-		    T:=map(V^**(n+1),V^**(n+1),1);
-		    scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (FF_0,
-				    if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_(n-1-i))
-				)**map(V^**(n-1-j),V^**(n-1-j),1)));
-		    --print i;
-		    Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
-		    --print Z;
-		    ));
-	    scan(n,i->scan(n,j-> Z = Z*(Rcden(FF_0,
-			    if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i))^(-1)));
-	    inds := ind \ I;
-	    Z_inds
-	    );
-	segreClasses1 AA := AA -> fullToPartial segreClasses BB;
-	segreClass1 (AA,VisibleList) :=
-	segreClass1 (BB,VisibleList) :=
-	segreClass1 (AA,String) :=
-	segreClass1 (BB,String) := (X,i) -> (
+	segreClasses BB := (cacheValue segreClasses) ( BB -> (
+		-- monodromy matrix
+		V:=BB^(d+1);
+		W:=V^**n;
+		Z:=map(BB^1,W,{{rank W-1:0,1}});
+		scan(n,i->(
+			T:=map(V^**(n+1),V^**(n+1),1);
+			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (FF_0,
+					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_(n-1-i))
+				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
+			--print i;
+			Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
+			--print Z;
+			));
+		scan(n,i->scan(n,j-> Z = Z*(Rcden(FF_0,
+				if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i))^(-1)));
+		inds := ind \ I;
+		Z_inds
+		));
+	segreClasses AA := (cacheValue segreClasses) (AA -> fullToPartial segreClasses BB);
+	segreClass (List,AA) :=
+	segreClass (List,BB) :=
+	segreClass (String,AA) :=
+	segreClass (String,BB) := (i,X) -> (
 	    i=new AryString from i;
 	    (segreClasses X)_(0,position(I,j->j==i))
 	    );
 	-- Schubert classes
-	schubertClasses1 BB := BB -> (
-	    -- monodromy matrix
-	    V:=BB^(d+1);
-	    W:=V^**n;
-	    Z:=map(BB^1,W,{{rank W-1:0,1}});
-	    scan(n,i->(
-		    T:=map(V^**(n+1),V^**(n+1),1);
-		    scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcz (FF_0,
-				    if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_(n-1-i))
-				)**map(V^**(n-1-j),V^**(n-1-j),1)));
-		    --print i;
-		    Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
-		    --print Z;
-		    ));
-	    inds := ind \ I;
-	    Z_inds
-	    );
-	schubertClasses1 AA := AA -> fullToPartial schubertClasses BB;
-	schubertClass1 (AA,VisibleList) :=
-	schubertClass1 (BB,VisibleList) :=
-	schubertClass1 (AA,String) :=
-	schubertClass1 (BB,String) := (X,i) -> (
+	schubertClasses BB := (cacheValue schubertClasses) ( BB -> (
+		-- monodromy matrix
+		V:=BB^(d+1);
+		W:=V^**n;
+		Z:=map(BB^1,W,{{rank W-1:0,1}});
+		scan(n,i->(
+			T:=map(V^**(n+1),V^**(n+1),1);
+			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcz (FF_0,
+					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_(n-1-i))
+				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
+			--print i;
+			Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
+			--print Z;
+			));
+		inds := ind \ I;
+		Z_inds
+		));
+	schubertClasses AA := (cacheValue schubertClasses) (AA -> fullToPartial schubertClasses BB);
+	schubertClass (List,AA) :=
+	schubertClass (List,BB) :=
+	schubertClass (String,AA) :=
+	schubertClass (String,BB) := (i,X) -> (
 	    i=new AryString from i;
 	    (schubertClasses X)_(0,position(I,j->j==i))
 	    );
@@ -326,41 +320,39 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		(tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
 		), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
 	-- segre & schubert classes
-	segreClass1 (D,VisibleList) :=
-	segreClass1 (D,String) := (D,i) -> (
+	segreClass (List,D) :=
+	segreClass (String,D) := (i,D) -> (
 	    i=new AryString from i;
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
 	    );
-	schubertClass1 (D,VisibleList) :=
-	schubertClass1 (D,String) := (D,i) -> (
+	schubertClass (List,D) :=
+	schubertClass (String,D) := (i,D) -> (
 	    i=new AryString from i;
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(false,ii))_(0,indi))
 	    );
-	segreClasses1 D := D -> (
-	    inds := ind \ I;
-	    map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
-	    );
-	schubertClasses1 D := D -> (
-	    inds := ind \ I;
-	    map(M,M, apply(I,i->first entries (fixedPoint(false,i))_inds))
-	    );
+	segreClasses D := (cacheValue segreClasses) ( D -> (
+		inds := ind \ I;
+		map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
+		));
+	schubertClasses D := (cacheValue schubertClasses) ( D -> (
+		inds := ind \ I;
+		map(M,M, apply(I,i->first entries (fixedPoint(false,i))_inds))
+		));
 	if curCotOpts.Kth then (
-	    weights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) });
-	    zeroSection1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
-	    zeroSectionInv1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
-	    cotweights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) });
+	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
+	    zeroSection D := (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
+	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))));
+	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) }));
 	    ) else (
-	    weights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) });
-	    zeroSection1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
-	    zeroSectionInv1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
-	    cotweights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) });
+	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) }));
+	    zeroSection D := (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1))));
+	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
+	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) }));
 	    );
 	-- Chern classes
-	v = (j,i) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
-	chernClass1 (D,Sequence) := (AA,ji) -> v ji;
-	chernClass1 (D,ZZ,ZZ) := (AA,j,i) -> v (j,i);
+	chernClass (ZZ,ZZ,D) := (j,i,AA) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
 	-- pushforward to point
 	pushforwardToPoint D  := m -> ((weights D)*m)_0;
 	pushforwardToPointFromCotangent D  := m -> ((cotweights D)*m)_0;
@@ -387,7 +379,7 @@ pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint Number := pushforwardToPoint RingElement := r -> try pushforwardToPoint promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPoint Matrix := m -> (
     if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint)
-    else if (target m)#?weights1 then (weights target m)*m -- TODO doesn't work any more :( use lastSetup?
+    else if (target m)#?weights then (weights target m)*m -- TODO doesn't work any more :( use lastSetup?
     else error "can't pushforward"
     )
 
@@ -395,7 +387,7 @@ pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G
 pushforwardToPointFromCotangent Number := pushforwardToPointFromCotangent RingElement := r -> try pushforwardToPointFromCotangent promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPointFromCotangent Matrix := m -> (
     if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent)
-    else if (target m)#?cotweights1 then (cotweights target m)*m
+    else if (target m)#?cotweights then (cotweights target m)*m
     else error "can't pushforward"
     )
 
