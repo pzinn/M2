@@ -72,9 +72,40 @@ defineFH = n -> (
     FH_n
     )
 
--- modified memoize
-protect sClass;
-protect sClasses;
+-- diagonal algebra
+DiagonalAlgebra = new Type of Type;
+new DiagonalAlgebra from Module := (X,M) -> (
+    D := new DiagonalAlgebra of Vector from hashTable { global Module => M };
+    new D from List := (D,l) -> new D from vector l;
+    new D from Vector := (D,v) -> (
+	if class v =!= M then try (
+	    v = promote(v,ring M);
+	    assert(class v === M);
+	    ) else error "wrong type of vector";
+	v);
+    new D from Number :=
+    new D from RingElement := (D,x) -> new D from apply(rank M,i->x);
+    vector D := d -> new M from d;
+    matrix D := opts -> d -> diagonalMatrix entries d;
+    D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
+    D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power
+    D + Number := D + RingElement := (v,x) -> v + new D from x;
+    Number + D := RingElement + D := (x,v) -> v + new D from x;
+    D - Number := D - RingElement := (v,x) -> v - new D from x;
+    Number - D := RingElement - D := (x,v) -> - v + new D from x;
+    D == Vector := Vector == D := (x,y) -> x#0 == y#0;
+    D)
+ring DiagonalAlgebra := D -> ring D.Module;
+rank DiagonalAlgebra := D -> rank D.Module;
+expression DiagonalAlgebra := D -> if hasAttribute(D,ReverseDictionary) then return expression getAttribute(D,ReverseDictionary) else (expression DiagonalAlgebra) D.Module;
+net DiagonalAlgebra := D -> net expression D;
+toString DiagonalAlgebra := D -> toString expression D;
+texMath DiagonalAlgebra := D -> texMath expression D;
+html DiagonalAlgebra := lookup(html,Thing);
+
+-- ex: D=new DiagonalAlgebra from ZZ^3; x=new D from {1,2,3}; x^2-x+1
+
+-- modified memoize TODO retire
 local lastSetup;
 mymoize = fun -> (
     fun' := memoize fun;
@@ -284,9 +315,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	V:=FF^(d+1); Rcheck := new IndexedVariableTable; Rcheckz := new IndexedVariableTable;
 	scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
 	scan(n-1,j->Rcheckz_j = map(V^**j,V^**j,1)**(Rcz (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
-	-- the module Hack -- Modules are immutable, and we can't use cache (need different hash)
-	M := new MutableHashTable from FF^#I;
-	vectorM := l -> new M from {map(M,FF^1,apply(splice l,i->{i}))};
+	-- Module are immutable so can't use them. DiagonalAlgebra aren't
+	M := FF^#I;
+	D := new DiagonalAlgebra from M;
 	fixedPoint := memoize( (segre,i) -> ( -- this returns the restrictions to a given fixed point segre=true: segre; segre=false: schubert
 		-- find first descent
 		j:=position(0..n-2,k->i#k>i#(k+1));
@@ -295,32 +326,46 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		(tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
 		), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
 	-- segre & schubert classes
-	M#sClass = (segre,i) -> ( -- TODO rewrite (?)
+	segreClass1 (D,VisibleList) :=
+	segreClass1 (D,String) := (D,i) -> (
+	    i=new AryString from i;
 	    indi:=ind i;
-	    vectorM apply(I,ii->(fixedPoint(segre,ii))_(0,indi))
+	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
 	    );
-	M#sClasses = segre -> ( -- TODO rewrite
+	schubertClass1 (D,VisibleList) :=
+	schubertClass1 (D,String) := (D,i) -> (
+	    i=new AryString from i;
+	    indi:=ind i;
+	    new D from apply(I,ii->(fixedPoint(false,ii))_(0,indi))
+	    );
+	segreClasses1 D := D -> (
 	    inds := ind \ I;
-	    map(M,FF^#I, apply(I,i->first entries (fixedPoint(segre,i))_inds))
+	    map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
+	    );
+	schubertClasses1 D := D -> (
+	    inds := ind \ I;
+	    map(M,M, apply(I,i->first entries (fixedPoint(false,i))_inds))
 	    );
 	if curCotOpts.Kth then (
-	    weights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) });
-	    zeroSection1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
-	    zeroSectionInv1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
-	    cotweights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) });
+	    weights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) });
+	    zeroSection1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1)));
+	    zeroSectionInv1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1)));
+	    cotweights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) });
 	    ) else (
-	    weights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) });
-	    zeroSection1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
-	    zeroSectionInv1 M := M -> vectorM apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
-	    cotweights1 M := M -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) });
+	    weights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) });
+	    zeroSection1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1)));
+	    zeroSectionInv1 D := D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1)));
+	    cotweights1 D := D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) });
 	    );
 	-- Chern classes
-	M#chernClass = (j,i) -> vectorM apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1)))); -- TODO rewrite
+	v = (j,i) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
+	chernClass1 (D,Sequence) := (AA,ji) -> v ji;
+	chernClass1 (D,ZZ,ZZ) := (AA,j,i) -> v (j,i);
 	-- pushforward to point
-	pushforwardToPoint M  := m -> ((weights M)*m)_0;
-	pushforwardToPointFromCotangent M  := m -> ((cotweights M)*m)_0;
-	lastSetup = M = new Module from M;
-	(M,FF,I)
+	pushforwardToPoint D  := m -> ((weights D)*m)_0;
+	pushforwardToPointFromCotangent D  := m -> ((cotweights D)*m)_0;
+	lastSetup = D;
+	(D,FF,I)
     ) else error "Unknown presentation"
     )
 
@@ -336,29 +381,13 @@ fullToPartial = method(Dispatch => Thing)
 fullToPartial Number := fullToPartial RingElement := r -> try fullToPartial promote(r,lastSetup) else error "Not applicable (set up first?)"; -- really?
 fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 
--- Vector methods
-Vector @ Vector := (v,w) -> new class v from {map(class v,(ring v)^1, apply(entries v,entries w,(x,y)->{x*y}))}; -- componentwise multiplication
-Vector ^^ ZZ := (v,n) -> new class v from {map(class v,(ring v)^1, apply(entries v, a -> {a^n}))}; -- componentwise power
-Vector @ Matrix := (v,w) -> map(class v,source w, apply(entries v,entries w,(x,y)->apply(y,yy->x*yy))); -- componentwise multiplication
-
--- segre motivic/SM classes
-segreClass1 (Vector,VisibleList) :=
-segreClass1 (Vector,String) := (M,i) -> M#sClass(true,new AryString from i);
-segreClasses1 Vector := M -> M#sClasses true;
--- schubert classes
-schubertClass1 (Vector,VisibleList) :=
-schubertClass1 (Vector,String) := (M,i) -> M#sClass(false,new AryString from i);
-schubertClasses1 Vector := M -> M#sClasses false;
--- chern classes of (duals of) tautological bundles
-chernClass1 (Vector,Sequence) := (M,ji) -> M#chernClass ji
-chernClass1 (Vector,ZZ,ZZ) := (M,j,i) -> M#chernClass (j,i)
 
 -- pushforward
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint Number := pushforwardToPoint RingElement := r -> try pushforwardToPoint promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPoint Matrix := m -> (
     if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint)
-    else if (target m)#?weights1 then (weights target m)*m
+    else if (target m)#?weights1 then (weights target m)*m -- TODO doesn't work any more :( use lastSetup?
     else error "can't pushforward"
     )
 
@@ -375,7 +404,7 @@ end
 (M,FF,I)=setupCotangent(1,2,Kth=>true)
 segreCls=segreClasses();
 segreInv=segreCls^(-1);
-Table table(I,I,(i,j)->segreInv*(segreClass i @ segreClass j))
+Table table(I,I,(i,j)->segreInv*(segreClass i * segreClass j))
 Table table(I,I,(i,j)->fugacityVector puzzle(i,j))
 oo==ooo
 
