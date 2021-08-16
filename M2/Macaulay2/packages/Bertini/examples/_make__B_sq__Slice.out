@@ -14,7 +14,7 @@ List</pre>
 i3 : xySlice=makeB'Slice(sliceType,variableGroups)
 
 o3 = $<pre style="display:inline">
-B'Slice</pre>\left\{\ldots4\ldots\right\}$
+B'Slice</pre>\left\{\ldots 4\ldots\right\}$
 
 o3 : <pre style="display:inline">
 B'Slice</pre>
@@ -55,21 +55,21 @@ List</pre>
 i12 : xxSlice=makeB'Slice({2,0},variableGroups)
 
 o12 = $<pre style="display:inline">
-B'Slice</pre>\left\{\ldots4\ldots\right\}$
+B'Slice</pre>\left\{\ldots 4\ldots\right\}$
 
 o12 : <pre style="display:inline">
 B'Slice</pre>
 i13 : xySlice=makeB'Slice({1,1},variableGroups)
 
 o13 = $<pre style="display:inline">
-B'Slice</pre>\left\{\ldots4\ldots\right\}$
+B'Slice</pre>\left\{\ldots 4\ldots\right\}$
 
 o13 : <pre style="display:inline">
 B'Slice</pre>
 i14 : yySlice=makeB'Slice({0,2},variableGroups)
 
 o14 = $<pre style="display:inline">
-B'Slice</pre>\left\{\ldots4\ldots\right\}$
+B'Slice</pre>\left\{\ldots 4\ldots\right\}$
 
 o14 : <pre style="display:inline">
 B'Slice</pre>

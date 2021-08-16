@@ -6,7 +6,7 @@
 i2 : runBertini(storeBM2Files)
 i3 : thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{\left\{-{.0621448}+{.143507}\,\mathbf{i},\,{1.19688}\cdot 10^{-18}+{1.98034}\cdot 10^{-17}\,\mathbf{i},\,{.472871}+{.894902}\,\mathbf{i}\right\},\,\left\{-{1.03841}+{.41081}\,\mathbf{i},\,{1.00004}+{.000104712}\,\mathbf{i},\,{.410709}+{1.03841}\,\mathbf{i}\right\},\,\left\{{.775}-{.276461}\,\mathbf{i},\,-{.907324}+{.181681}\,\mathbf{i},\,{.503184}+{.753404}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{-{.12165}-{.0505799}\,\mathbf{i},\,{5.91602}\cdot 10^{-18}-{4.5665}\cdot 10^{-18}\,\mathbf{i},\,{.338255}+{.950232}\,\mathbf{i}\right\},\,\left\{-{.995201}+{.413416}\,\mathbf{i},\,-{.979551}+{.0465868}\,\mathbf{i},\,{.459774}+{.99411}\,\mathbf{i}\right\},\,\left\{{.891252}-{.375839}\,\mathbf{i},\,{1.04583}+{.136756}\,\mathbf{i},\,{.217947}+{.880698}\,\mathbf{i}\right\}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
@@ -18,13 +18,13 @@ List</pre>
 <pre style="display:inline">
 1</pre>
 
-o4 = $\left\{\right\}$
+o4 = $\left\{\,\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>
 i5 : sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{\left\{-{.0621448}+{.143507}\,\mathbf{i},\,{1.19688}\cdot 10^{-18}+{1.98034}\cdot 10^{-17}\,\mathbf{i},\,{.472871}+{.894902}\,\mathbf{i}\right\}\right\},\,\left\{\left\{-{1.03841}+{.41081}\,\mathbf{i},\,{1.00004}+{.000104712}\,\mathbf{i},\,{.410709}+{1.03841}\,\mathbf{i}\right\},\,\left\{{.775}-{.276461}\,\mathbf{i},\,-{.907324}+{.181681}\,\mathbf{i},\,{.503184}+{.753404}\,\mathbf{i}\right\}\right\}\right\}$
+o5 = $\left\{\left\{\left\{-{.12165}-{.0505799}\,\mathbf{i},\,{5.91602}\cdot 10^{-18}-{4.5665}\cdot 10^{-18}\,\mathbf{i},\,{.338255}+{.950232}\,\mathbf{i}\right\}\right\},\,\left\{\left\{-{.995201}+{.413416}\,\mathbf{i},\,-{.979551}+{.0465868}\,\mathbf{i},\,{.459774}+{.99411}\,\mathbf{i}\right\},\,\left\{{.891252}-{.375839}\,\mathbf{i},\,{1.04583}+{.136756}\,\mathbf{i},\,{.217947}+{.880698}\,\mathbf{i}\right\}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

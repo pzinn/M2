@@ -1,12 +1,7 @@
 -- -*- M2-comint -*- hash: 1886230761
-<<<<<<< HEAD
 i1 : QQ[x,y,z];
 i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : describe ring ideal sys
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
 
 o3 = $<pre style="display:inline">
 frac</pre>\left({\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,\textit{Degrees}\ \Rightarrow \ \left\{3:1\right\},\,\textit{Heft}\ \Rightarrow \ \left\{1\right\},\,\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&amp;\textit{MonomialSize}\ \Rightarrow \ 32\\&amp;\textit{GRevLex}\ \Rightarrow \ \left\{3:1\right\}\\&amp;\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\,\textit{DegreeRank}\ \Rightarrow \ 1\right]\right)$
@@ -42,42 +37,5 @@ true</pre>
 
 o12 = $z^{2}+x$
 
-<<<<<<< HEAD
 o12 : $P$
 i13 : 
-=======
-o7 = QQ {x..z, w }
-                0
-
-o7 : PolynomialRing
-
-i8 : describe oo
-
-o8 = QQ {x..z, w , Degrees => {4:1}, MonomialOrder => {Weights => {4:-1} }, DegreeRank => 1, Inverses => true, Global => false}
-                0                                     {MonomialSize => 32}
-                                                      {GroupRevLex => 4  }
-                                                      {Position => Up    }
-
-i9 : P = QQ[x,y,z];
-
-i10 : f = (x*y + z^2*y) / y
-
-       2
-o10 = z  + x
-
-o10 : frac P
-
-i11 : liftable(f,P)
-
-o11 = true
-
-i12 : lift(f,P)
-
-       2
-o12 = z  + x
-
-o12 : P
-
-i13 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568

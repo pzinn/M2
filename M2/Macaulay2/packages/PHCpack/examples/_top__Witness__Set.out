@@ -1,15 +1,10 @@
 -- -*- M2-comint -*- hash: -1010838168
-<<<<<<< HEAD
 i1 : R = CC[x,y,z];
 i2 : f = { x^2 - y, x^3 - z };
 i3 : (w,ns) = topWitnessSet(f,1)
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
 
 o3 = $\left(<pre style="display:inline">
-w</pre>,\,\left\{\right\}\right)$
+w</pre>,\,\left\{\,\right\}\right)$
 
 o3 : <pre style="display:inline">
 Sequence</pre>
@@ -46,40 +41,5 @@ o12 = $1$
 o13 = $3$
 i14 : #ns
 
-<<<<<<< HEAD
 o14 = $10$
 i15 : 
-=======
-i7 : toString slice(w)
-
-o7 = {(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z
-     +(-.911067-.412259*ii)*zz1-.883724+.468009*ii}
-
-i8 : toString points(w)
-
-o8 = VerticalList{Point{...4...}, Point{...4...}, Point{...4...}}
-
-i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
-
-        3     2              3      3                             2
-o10 = {x  - 2x  - x*y + 2y, x y - 2x  - y*z + 2z, x*y*z - 2x*y - z  + 2z}
-
-o10 : List
-
-i11 : (w,ns) = topWitnessSet(f,1);
-
-i12 : dim(w)
-
-o12 = 1
-
-i13 : degree(w)
-
-o13 = 3
-
-i14 : #ns
-
-o14 = 10
-
-i15 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568

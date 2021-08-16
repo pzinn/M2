@@ -1,38 +1,36 @@
 -- -*- M2-comint -*- hash: 1888889335
---loading configuration for package "FourTiTwo" from file /home/lily/.Macaulay2/init-FourTiTwo.m2
---loading configuration for package "Topcom" from file /home/lily/.Macaulay2/init-Topcom.m2
---loading configuration for package "MonomialIntegerPrograms" from file /home/lily/.Macaulay2/init-MonomialIntegerPrograms.m2
-Using default executable name "scip".
-To change this, load package using CustomPath option.
-Current value of ScipPrintLevel is 1.
-To set a custom default value, load package using CustomScipPrintLevel option.
+<pre style="display:inline">
+Using default executable name &quot;scip&quot;.
+To change this, load package using CustomPath option.</pre>
+<pre style="display:inline">
+Current value of ScipPrintLevel is 0.
+To set a custom default value, load package using CustomScipPrintLevel option.</pre>
+i1 : R = QQ[x,y,z,w,v];
+i2 : I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
 
-i1 : R = QQ[x,y,z,w,v];
+o2 : <pre style="display:inline">
+MonomialIdeal</pre><pre style="display:inline">
+ of </pre>$R$
+i3 : ScipPrintLevel = 0;
+i4 : L1 = topMinimalPrimesIP I
 
-i2 : I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
+o4 = $\left\{\,\right\}$
 
-o2 : MonomialIdeal of R
+o4 : <pre style="display:inline">
+List</pre>
+i5 : L2 = topMinimalPrimesIP(I, IgnorePrimes=>L1)
 
-i3 : ScipPrintLevel = 0;
+o5 = $\left\{\,\right\}$
 
-i4 : L1 = topMinimalPrimesIP I
+o5 : <pre style="display:inline">
+List</pre>
+i6 : minimalPrimes I
 
-o4 = {monomialIdeal (y, z, v), monomialIdeal (y, z, w)}
+o6 = $\left\{<pre style="display:inline">
+monomialIdeal</pre>{}\left(y,\,z,\,w\right),\,<pre style="display:inline">
+monomialIdeal</pre>{}\left(y,\,z,\,v\right),\,<pre style="display:inline">
+monomialIdeal</pre>{}\left(x,\,y,\,w,\,v\right)\right\}$
 
-o4 : List
-
-i5 : L2 = topMinimalPrimesIP(I, IgnorePrimes=>L1)
-
-o5 = {monomialIdeal (x, y, w, v)}
-
-o5 : List
-
-i6 : minimalPrimes I
-
-o6 = {monomialIdeal (y, z, w), monomialIdeal (y, z, v), monomialIdeal (x, y,
-     ------------------------------------------------------------------------
-     w, v)}
-
-o6 : List
-
-i7 : 
+o6 : <pre style="display:inline">
+List</pre>
+i7 : 

@@ -7,26 +7,5 @@ o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{1}\,\longleftarrow \,{\mathbb Z}^{4}$
 i4 : t := LRtriple(n,m);
-PHCv2.4.79 released 2020-07-30
-
-the input data for phc -e : 
-5
-6
-[ 2 4 6 ]^3;
-0
-0
-0
-/tmp/M2-580001-0/3PHCout
-0
-y
-y
-0
-0
-0
-
-writing data to file /tmp/M2-580001-0/2PHCip
-running phc -e, session output to /tmp/M2-580001-0/4PHCses
-                writing output to /tmp/M2-580001-0/3PHCout
-opening output file /tmp/M2-580001-0/5PHCsolutions
 i5 : w := wrapTriplet(t);
 i6 : 

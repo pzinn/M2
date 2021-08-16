@@ -9,16 +9,16 @@ NCPolynomialRing</pre>
 i2 : f = x^2+y^2+2*z^3
 
 o2 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x,\,x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{z,\,z,\,z\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,2\right\}\right\}$
+A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+HashTable</pre>\left\{\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\,x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\,y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\,z,\,z\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 2\right\}\right)\right\}$
 
 o2 : $<pre style="display:inline">
 A</pre>$
@@ -29,12 +29,12 @@ false</pre>
 i4 : g = promote(1,A)
 
 o4 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}$
+A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+HashTable</pre>\left\{\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{\,\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
 
 o4 : $<pre style="display:inline">
 A</pre>$

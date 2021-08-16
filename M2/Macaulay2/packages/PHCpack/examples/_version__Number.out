@@ -1,16 +1,10 @@
 -- -*- M2-comint -*- hash: -211311793
-<<<<<<< HEAD
 i1 : v = versionNumber(null)
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
 
 o1 = $\left(<pre style="display:inline">
 2.4.79</pre>,\,<pre style="display:inline">
 2020-07-30</pre>\right)$
 
-<<<<<<< HEAD
 o1 : <pre style="display:inline">
 Sequence</pre>
 i2 : print v_0
@@ -20,17 +14,3 @@ Sequence</pre>
 <pre style="display:inline">
 2020-07-30</pre>
 i4 : 
-=======
-o1 = (2.4.77, 2020-06-12)
-
-o1 : Sequence
-
-i2 : print v_0
-2.4.77
-
-i3 : print v_1
-2020-06-12
-
-i4 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568

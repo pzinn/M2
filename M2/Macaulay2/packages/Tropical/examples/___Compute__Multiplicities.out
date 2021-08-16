@@ -19,7 +19,7 @@ Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{3}\,\longleftarrow \,0$
 i6 : maxCones T
 
-o6 = $\left\{\left\{\right\}\right\}$
+o6 = $\left\{\left\{\,\right\}\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>

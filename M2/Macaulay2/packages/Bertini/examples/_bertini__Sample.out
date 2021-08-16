@@ -27,7 +27,7 @@ o4 : <pre style="display:inline">
 WitnessSet</pre>
 i5 : bertiniSample(4, W)
 
-o5 = $\left\{\left\{{1.64455}\cdot 10^{-20}-{2.95225}\cdot 10^{-20}\,\mathbf{i},\,{0},\,{.237386}-{.626621}\,\mathbf{i}\right\},\,\left\{-{3.64265}\cdot 10^{-20}+{1.38923}\cdot 10^{-20}\,\mathbf{i},\,{2.29691}\cdot 10^{-320}+{1.39574}\cdot 10^{-320}\,\mathbf{i},\,{.333468}-{.460734}\,\mathbf{i}\right\},\,\left\{{6.52084}\cdot 10^{-21}+{1.04456}\cdot 10^{-21}\,\mathbf{i},\,-{9.50582}\cdot 10^{-321}+{3.99205}\cdot 10^{-321}\,\mathbf{i},\,{.301358}-{.353473}\,\mathbf{i}\right\},\,\left\{{3.60771}\cdot 10^{-21}-{5.40502}\cdot 10^{-21}\,\mathbf{i},\,{0},\,{.329891}-{.496907}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{{6.0276}\cdot 10^{-322}-{1.43279}\cdot 10^{-322}\,\mathbf{i},\,{0},\,-{.291715}-{.239109}\,\mathbf{i}\right\},\,\left\{{0},\,{0},\,-{.423735}-{.24548}\,\mathbf{i}\right\},\,\left\{{0},\,{0},\,-{.377065}-{.287879}\,\mathbf{i}\right\},\,\left\{{0},\,{0},\,-{.349358}-{.151996}\,\mathbf{i}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

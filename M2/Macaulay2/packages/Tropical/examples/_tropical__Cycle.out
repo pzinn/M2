@@ -15,7 +15,7 @@ List</pre>
 i3 : tropicalCycle(F, mult)
 
 o3 = $<pre style="display:inline">
-TropicalCycle</pre>\left\{\ldots2\ldots\right\}$
+TropicalCycle</pre>\left\{\ldots 2\ldots\right\}$
 
 o3 : <pre style="display:inline">
 TropicalCycle</pre>

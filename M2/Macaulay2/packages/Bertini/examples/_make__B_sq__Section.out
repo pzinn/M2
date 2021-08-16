@@ -2,7 +2,7 @@
 i1 : s=makeB'Section({x,y,z})
 
 o1 = $<pre style="display:inline">
-B'Section</pre>\left\{\ldots2\ldots\right\}$
+B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o1 : <pre style="display:inline">
 B'Section</pre>
@@ -23,7 +23,7 @@ FunctionClosure</pre>
 i4 : sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
 
 o4 = $<pre style="display:inline">
-B'Section</pre>\left\{\ldots2\ldots\right\}$
+B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o4 : <pre style="display:inline">
 B'Section</pre>
@@ -43,7 +43,7 @@ FunctionClosure</pre>
 i7 : sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
 
 o7 = $<pre style="display:inline">
-B'Section</pre>\left\{\ldots2\ldots\right\}$
+B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o7 : <pre style="display:inline">
 B'Section</pre>
@@ -56,7 +56,7 @@ List</pre>
 i9 : affineSection=makeB'Section({x,y,z,1})
 
 o9 = $<pre style="display:inline">
-B'Section</pre>\left\{\ldots2\ldots\right\}$
+B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o9 : <pre style="display:inline">
 B'Section</pre>
@@ -75,7 +75,7 @@ List</pre>
 i12 : affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
 
 o12 = $<pre style="display:inline">
-B'Section</pre>\left\{\ldots3\ldots\right\}$
+B'Section</pre>\left\{\ldots 3\ldots\right\}$
 
 o12 : <pre style="display:inline">
 B'Section</pre>
@@ -89,7 +89,7 @@ o13 = <pre style="display:inline">
 i15 : rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
 
 o15 = $<pre style="display:inline">
-B'Section</pre>\left\{\ldots3\ldots\right\}$
+B'Section</pre>\left\{\ldots 3\ldots\right\}$
 
 o15 : <pre style="display:inline">
 B'Section</pre>
@@ -107,7 +107,7 @@ y^3-x*y+1</pre>
 i19 : s1=makeB'Section({x,y,1})
 
 o19 = $<pre style="display:inline">
-B'Section</pre>\left\{\ldots2\ldots\right\}$
+B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o19 : <pre style="display:inline">
 B'Section</pre>

@@ -14,7 +14,7 @@ List</pre>
 i3 : tropicalPrevariety L
 
 o3 = $<pre style="display:inline">
-Fan</pre>\left\{\ldots1\ldots\right\}$
+Fan</pre>\left\{\ldots 1\ldots\right\}$
 
 o3 : <pre style="display:inline">
 Fan</pre>
@@ -27,7 +27,7 @@ PolynomialRing</pre>
 i5 : tropicalPrevariety({x_0+x_1+1}, {{1,0}})
 
 o5 = $<pre style="display:inline">
-Fan</pre>\left\{\ldots1\ldots\right\}$
+Fan</pre>\left\{\ldots 1\ldots\right\}$
 
 o5 : <pre style="display:inline">
 Fan</pre>
@@ -40,7 +40,7 @@ PolynomialRing</pre>
 i7 : tropicalPrevariety({x_0+x_1+1,x_0+x_1},Strategy => "gfan")
 
 o7 = $<pre style="display:inline">
-Fan</pre>\left\{\ldots1\ldots\right\}$
+Fan</pre>\left\{\ldots 1\ldots\right\}$
 
 o7 : <pre style="display:inline">
 Fan</pre>

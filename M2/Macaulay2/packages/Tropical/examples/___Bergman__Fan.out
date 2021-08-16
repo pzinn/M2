@@ -1,31 +1,32 @@
 -- -*- M2-comint -*- hash: -1587567648
+i1 : M=uniformMatroid(2,3);
+i2 : T=BergmanFan(M);
+i3 : rays T
 
-i1 : M=uniformMatroid(2,3);
+o3 = $\left(\!\begin{array}{ccc}
+0&amp;0&amp;0\\
+1&amp;-1&amp;0\\
+0&amp;-1&amp;1\\
+\end{array}\!\right)$
 
-i2 : T=BergmanFan(M);
+o3 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{3}\,\longleftarrow \,{\mathbb Z}^{3}$
+i4 : maxCones T
 
-i3 : rays T
+o4 = $\left\{\left\{2\right\},\,\left\{0\right\},\,\left\{1\right\}\right\}$
 
-o3 = | 0 0  0 |
-     | 1 -1 0 |
-     | 0 -1 1 |
+o4 : <pre style="display:inline">
+List</pre>
+i5 : linealitySpace T
 
-              3        3
-o3 : Matrix ZZ  <--- ZZ
+o5 = $\left(\!\begin{array}{c}
+1\\
+1\\
+1\\
+\end{array}\!\right)$
 
-i4 : maxCones T
-
-o4 = {{2}, {0}, {1}}
-
-o4 : List
-
-i5 : linealitySpace T
-
-o5 = | 1 |
-     | 1 |
-     | 1 |
-
-              3        1
-o5 : Matrix ZZ  <--- ZZ
-
-i6 : 
+o5 : <pre style="display:inline">
+Matrix</pre><pre style="display:inline">
+ </pre>${\mathbb Z}^{3}\,\longleftarrow \,{\mathbb Z}^{1}$
+i6 : 

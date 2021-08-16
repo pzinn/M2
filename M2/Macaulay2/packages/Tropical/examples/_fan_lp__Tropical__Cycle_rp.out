@@ -9,7 +9,7 @@ PolynomialRing</pre>
 i3 : fan T
 
 o3 = $<pre style="display:inline">
-Fan</pre>\left\{\ldots1\ldots\right\}$
+Fan</pre>\left\{\ldots 1\ldots\right\}$
 
 o3 : <pre style="display:inline">
 Fan</pre>

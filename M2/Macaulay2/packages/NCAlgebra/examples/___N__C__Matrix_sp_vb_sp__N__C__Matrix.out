@@ -9,14 +9,14 @@ NCPolynomialRing</pre>
 i2 : M = ncMatrix {{a,b,c,d},{b,c,d,a}}
 
 o2 = $<pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}$
+NCMatrix</pre>\left\{\ldots 6\ldots\right\}$
 
 o2 : <pre style="display:inline">
 NCMatrix</pre>
 i3 : N = M | 2*M | -3*M
 
 o3 = $<pre style="display:inline">
-NCMatrix</pre>\left\{\ldots6\ldots\right\}$
+NCMatrix</pre>\left\{\ldots 6\ldots\right\}$
 
 o3 : <pre style="display:inline">
 NCMatrix</pre>

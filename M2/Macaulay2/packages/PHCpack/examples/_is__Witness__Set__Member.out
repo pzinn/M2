@@ -1,33 +1,11 @@
 -- -*- M2-comint -*- hash: 1951696658
-<<<<<<< HEAD
 i1 : R = CC[x11,x22,x21,x12,x23,x13];
 i2 : system = {x11*x22-x21*x12,x12*x23-x22*x13};
 i3 : V = numericalIrreducibleDecomposition (system);
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
-
-i1 : R = CC[x11,x22,x21,x12,x23,x13];
-
-i2 : system = {x11*x22-x21*x12,x12*x23-x22*x13};
-
-i3 : V = numericalIrreducibleDecomposition (system);
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
 found 4 irreducible factors 
 i4 : W = first V#4;
 i5 : isWitnessSetMember(W, point{{0,0,0,0,0,0}})
 
-<<<<<<< HEAD
 o5 = <pre style="display:inline">
 true</pre>
 i6 : 
-=======
-i4 : W = first V#4;
-
-i5 : isWitnessSetMember(W, point{{0,0,0,0,0,0}})
-
-o5 = true
-
-i6 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568

@@ -1,5 +1,4 @@
 -- -*- M2-comint -*- hash: -1229619679
-<<<<<<< HEAD
 i1 : R = CC[x,y];
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 i3 : I=ideal f;
@@ -8,20 +7,6 @@ o3 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>$R$
 i4 : dim I
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
-
-i1 : R = CC[x,y];
-
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-
-i3 : I=ideal f;
-
-o3 : Ideal of R
-
-i4 : dim I
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
 
@@ -49,11 +34,6 @@ List</pre>
 
 o10 = $\left\{\left\{{.979319}-{.202321}\,\mathbf{i},\,{.930645}-{.365923}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,{.916812}+{.399319}\,\mathbf{i}\right\},\,\left\{{.979319}-{.202321}\,\mathbf{i},\,{.365923}+{.930645}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,-{.399319}+{.916812}\,\mathbf{i}\right\},\,\left\{{.979319}-{.202321}\,\mathbf{i},\,-{.930645}+{.365923}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,-{.916812}-{.399319}\,\mathbf{i}\right\},\,\left\{{.979319}-{.202321}\,\mathbf{i},\,-{.365923}-{.930645}\,\mathbf{i}\right\},\,\left\{-{.979319}+{.202321}\,\mathbf{i},\,{.399319}-{.916812}\,\mathbf{i}\right\}\right\}$
 
-<<<<<<< HEAD
 o10 : <pre style="display:inline">
 List</pre>
 i11 : 
-=======
-i11 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568

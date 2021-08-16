@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 521315531
+-- -*- M2-comint -*- hash: -1827806061
 i1 : k = 3;
 i2 : n = 6;
 i3 : SchPblm = {
@@ -8,11 +8,9 @@
     ({1}, random(CC^6,CC^6)),
     ({1}, random(CC^6,CC^6))
     };
-i4 : stdio << "Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags"<<endl;
-Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags
-i5 : solveSimpleSchubert(SchPblm, k,n)
+i4 : solveSimpleSchubert(SchPblm, k,n)
 
-o5 = $\left\{\left(\!\begin{array}{ccc}
+o4 = $\left\{\left(\!\begin{array}{ccc}
 {.426402}+{.387024}\,\mathbf{i}&amp;-{.767149}+{.88679}\,\mathbf{i}&amp;-{.299645}+{.514617}\,\mathbf{i}\\
 {.350714}+{.0538475}\,\mathbf{i}&amp;-{1.21057}+{.628777}\,\mathbf{i}&amp;{.141417}+{.670654}\,\mathbf{i}\\
 -{.00144609}+{.0615438}\,\mathbf{i}&amp;-{1.36249}+{.957226}\,\mathbf{i}&amp;-{.135443}+{.402697}\,\mathbf{i}\\
@@ -56,6 +54,6 @@ o5 = $\left\{\left(\!\begin{array}{ccc}
 {.689695}-{.590038}\,\mathbf{i}&amp;{.157157}+{.310587}\,\mathbf{i}&amp;{.453721}+{.129014}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o5 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
-i6 : 
+i5 : 

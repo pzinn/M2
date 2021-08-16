@@ -9,23 +9,23 @@ NCPolynomialRing</pre>
 i2 : g = ncMap(A,A,{y,x})
 
 o2 = $<pre style="display:inline">
-NCRingMap</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\right\},\,\textit{Derivation}\,\Rightarrow\,<pre style="display:inline">
-false</pre>,\,\textit{functionHash}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{x\,\Rightarrow\,<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\},\,y\,\Rightarrow\,<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{source}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{target}\,\Rightarrow\,<pre style="display:inline">
+NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\,\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+false</pre>,\,\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
+HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
+A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+HashTable</pre>\left\{\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right),\,y\ \Rightarrow \ \left(<pre style="display:inline">
+A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+HashTable</pre>\left\{\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right)\right\}\right),\,\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\,\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o2 : <pre style="display:inline">
@@ -33,16 +33,16 @@ NCRingMap</pre>
 i3 : I = ncIdeal {x^2*y+y*x^2}
 
 o3 = $<pre style="display:inline">
-NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x,\,x,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,x,\,x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCIdeal</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\,\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
+A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+HashTable</pre>\left\{\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\,x,\,y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\,x,\,x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o3 : <pre style="display:inline">
@@ -50,16 +50,16 @@ NCIdeal</pre>
 i4 : g I
 
 o4 = $<pre style="display:inline">
-NCIdeal</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\right\},\,\textit{generators}\,\Rightarrow\,\left\{<pre style="display:inline">
-A</pre>\left\{\textit{cache}\,\Rightarrow\,<pre style="display:inline">
-CacheTable</pre>\left\{\ldots1\ldots\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>,\,\textit{terms}\,\Rightarrow\,<pre style="display:inline">
-HashTable</pre>\left\{<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{x,\,y,\,y\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1,\,<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\,\Rightarrow\,\left\{y,\,y,\,x\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
-A</pre>\right\}\,\Rightarrow\,1\right\}\right\}\right\},\,\textit{ring}\,\Rightarrow\,<pre style="display:inline">
+NCIdeal</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\,\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
+A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+HashTable</pre>\left\{\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\,y,\,y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\,y,\,x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o4 : <pre style="display:inline">
