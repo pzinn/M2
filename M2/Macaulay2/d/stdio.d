@@ -155,6 +155,11 @@ init():void := (
 	       stdIO.outisatty = false;
 	       )
 	  else
+	  if arg === "--webapp" then (
+	       stdIO.echo = true;
+	       stdIO.readline = false;
+	  )
+	  else
 	  if arg === "--read-only-files" then (
 	       readonlyfiles = true;
 	       )
