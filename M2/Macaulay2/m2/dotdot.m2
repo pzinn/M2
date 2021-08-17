@@ -1,60 +1,21 @@
 --		Copyright 2009 by Daniel R. Grayson
+-- rewritten by P. Zinn-Justin 2021
 
 needs "code.m2"
 needs "indeterminates.m2"
 needs "ofcm.m2"
 needs "variables.m2"
 
--- this code should go after the last method installed for baseName
-scan(join(apply(methods baseName,last),{MonoidElement}), X -> if X =!= Symbol and X =!= IndexedVariable and X =!= Thing and not ancestor(Expression,X) then (
-	  err1 := lookup(symbol .., Thing, Thing);
-	  err2 := lookup(symbol ..<, Thing, Thing);
-	  X .. X := (a,z) -> (
-	       a' := try baseName a else err1(a,z);
-	       z' := try baseName z else err1(a,z);
-	       if a === a' and z === z' then err1(a,z);
-	       r := a' .. z';
-	       if value a' =!= a or value z' =!= z then return r;
-	       r' := apply(r,value);
-	       if same apply(r', class) then r' else r);
-	  X ..< X := (a,z) -> (
-	       a' := try baseName a else err1(a,z);
-	       z' := try baseName z else err1(a,z);
-	       if a === a' and z === z' then err1(a,z);
-	       r := a' ..< z';
-	       if value a' =!= a or value z' =!= z then return r;
-	       r' := apply(r,value);
-	       if same apply(r', class) then r' else r);
-	  X .. Thing := (a,z) -> (
-	       a' := try baseName a else err1(a,z);
-	       if a === a' then err1(a,z);
-	       r := a' .. z;
-	       if value a' =!= a then return r;
-	       r' := apply(r,value);
-	       if same apply(r', class) then r' else r);
-	  X ..< Thing := (a,z) -> (
-	       a' := try baseName a else err1(a,z);
-	       if a === a' then err1(a,z);
-	       r := a' ..< z;
-	       if value a' =!= a then return r;
-	       r' := apply(r,value);
-	       if same apply(r', class) then r' else r);
-	  Thing .. X := (a,z) -> (
-	       z' := try baseName z else err1(a,z);
-	       if z === z' then err1(a,z);
-	       r := a .. z';
-	       if value z' =!= z then return r;
-	       r' := apply(r,value);
-	       if same apply(r', class) then r' else r);
-	  Thing ..< X := (a,z) -> (
-	       z' := try baseName z else err1(a,z);
-	       if z === z' then err1(a,z);
-	       r := a ..< z';
-	       if value z' =!= z then return r;
-	       r' := apply(r,value);
-	       if same apply(r', class) then r' else r);
-	  ))
-
+scan({symbol ..,symbol ..<},{(x,y)->x..y,(x,y)->x..<y},(sym,fun)->(
+	installMethod(sym,RingElement,RingElement, (x,y) -> (
+    		if class x =!= class y then try x = promote(x,class y) else try y=promote(y,class x);
+    		R := class x;
+    		i := index x;
+    		j := index y;
+    		if R === class y and instance(i,ZZ) and instance(j,ZZ) then apply(fun(i,j),k->R_k) else fun(baseName x,baseName y)
+		));
+	installMethod(sym,Thing,Thing, (x,y) -> fun(baseName x,baseName y))
+    ))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
