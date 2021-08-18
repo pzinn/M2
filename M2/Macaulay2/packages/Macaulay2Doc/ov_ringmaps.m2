@@ -351,11 +351,11 @@ document {
      of ", TT "ker", " is an ideal and the output of ", TT "coimage", " is a
      ring or quotient ring.",
      EXAMPLE {
-	  "R = QQ[x,y,w]; U = QQ[s,t,u]/ideal(s^2);",
-	  "H = map(U,R,matrix{{s^2,t^3,u^4}})",
+	  "R = QQ[x,y,w]; U = QQ[s,t]/ideal(s^4+t^4);",
+	  "H = map(U,R,matrix{{s^2,s*t,t^2}})",
 	  "ker H",
 	  "coimage H"
 	  }
      -- if module and ring map are homogeneous, and Hilbert F is known,
-     -- this is used in computing the kernel (or image).
+     -- this is used in computing the kernel (or coimage).
      }
