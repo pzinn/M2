@@ -7,7 +7,7 @@ needs "varieties.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,14,15,(17,36),(36,18)),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -15,6 +15,8 @@ webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
+	webAppOutputPromptTag,-- output prompt
+	webAppInputPromptTag, -- input prompt
 	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
@@ -26,8 +28,10 @@ webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     webAppCellEndTag, -- close previous cell
     webAppCellTag,
+    webAppInputPromptTag,
     interpreterDepth:"i",
     toString lineno,
+    webAppEndTag,
     " : ",
     webAppInputTag)
 
@@ -37,18 +41,18 @@ Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+on := () -> concatenate(webAppOutputPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
+
 Thing#{WebApp,Print} = x -> (
-    oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     y := htmlInside x; -- we compute the html now (in case it produces an error)
     if class y =!= String then error "invalid html output";
-    << endl << oprompt | webAppHtmlTag | y | webAppEndTag << endl;
+    << endl << on() | " = " | webAppHtmlTag | y | webAppEndTag << endl;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
 
 -- afterprint
 
-on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlAfterPrint :=  x -> (
     if class x === Sequence then x = RowExpression deepSplice { x };
