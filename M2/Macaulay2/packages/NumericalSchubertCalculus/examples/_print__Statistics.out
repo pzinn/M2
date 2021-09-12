@@ -1,15 +1,15 @@
 -- -*- M2-comint -*- hash: 1309898240
-i1 : k = 3;
-i2 : n = 6;
-i3 : SchPblm = {
+i1 : k = 3;
+i2 : n = 6;
+i3 : SchPblm = {
     ({2,1}, random(CC^6,CC^6)),
     ({2,1}, random(CC^6,CC^6)),
     ({2,1}, random(CC^6,CC^6))
     };
-i4 : resetStatistics()
-i5 : solveSchubertProblem(SchPblm, k,n)
+i4 : resetStatistics()
+i5 : solveSchubertProblem(SchPblm, k,n)
 
-o5 = $\left\{\left(\!\begin{array}{ccc}
+o5 = $\left\{\left(\!\begin{array}{ccc}
 -{.973546}-{.443329}\,\mathbf{i}&amp;-{.193482}-{.957391}\,\mathbf{i}&amp;-{.460977}-{.267623}\,\mathbf{i}\\
 {.153343}-{.291038}\,\mathbf{i}&amp;{.339479}-{1.30008}\,\mathbf{i}&amp;-{.577303}-{.171329}\,\mathbf{i}\\
 {.326239}-{.770744}\,\mathbf{i}&amp;{.120186}-{1.46205}\,\mathbf{i}&amp;-{.0769985}-{.323186}\,\mathbf{i}\\
@@ -25,9 +25,9 @@ o5 = $\left\{\left(\!\begin{array}{ccc}
 -{4.19554}+{1.93172}\,\mathbf{i}&amp;-{1.11528}-{.480829}\,\mathbf{i}&amp;{.19859}+{1.24706}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : printStatistics()
+i6 : printStatistics()
 # moves of type {} = 2
 # moves of type {0, 0, 0} = 3
 # moves of type {0, 1, 0} = 2
@@ -39,5 +39,5 @@ List</pre>
 # moves of type {2, 0, 0} = 3
 # moves of type {2, 1, 0} = 1
 # moves of type {2, 2, 0} = 12
-tracking time = .195868
-i7 : 
+tracking time = .336555
+i7 : 

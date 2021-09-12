@@ -1,163 +1,163 @@
 -- -*- M2-comint -*- hash: 1595612603
-i1 : QQ[x,y];
-i2 : I=ideal(x+y+1);
+i1 : QQ[x,y];
+i2 : I=ideal(x+y+1);
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, y\right]$
-i3 : T=tropicalVariety(I);
-i4 : rays(T)
+i3 : T=tropicalVariety(I);
+i4 : rays(T)
 
-o4 = $\left(\!\begin{array}{ccc}
+o4 = $\left(\!\begin{array}{ccc}
 1&amp;-1&amp;0\\
 0&amp;-1&amp;1\\
 \end{array}\!\right)$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{2}\,\longleftarrow \,{\mathbb Z}^{3}$
-i5 : maxCones(T)
+i5 : maxCones(T)
 
-o5 = $\left\{\left\{1\right\},\,\left\{0\right\},\,\left\{2\right\}\right\}$
+o5 = $\left\{\left\{1\right\},\,\left\{0\right\},\,\left\{2\right\}\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : linealitySpace T
+i6 : linealitySpace T
 
-o6 = $0$
+o6 = $0$
 
-o6 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{2}\,\longleftarrow \,0$
-i7 : Polyhedra$fVector fan T
+i7 : Polyhedra$fVector fan T
 
-o7 = $\left\{1,\,3\right\}$
+o7 = $\left\{1,\,3\right\}$
 
-o7 : <pre style="display:inline">
+o7 : <pre style="display:inline">
 List</pre>
-i8 : multiplicities(T)
+i8 : multiplicities(T)
 
-o8 = $\left\{1,\,1,\,1\right\}$
+o8 = $\left\{1,\,1,\,1\right\}$
 
-o8 : <pre style="display:inline">
+o8 : <pre style="display:inline">
 List</pre>
-i9 : QQ[x,y,z,w];
-i10 : I = ideal(w+x+y+z)
+i9 : QQ[x,y,z,w];
+i10 : I = ideal(w+x+y+z)
 
-o10 = $<pre style="display:inline">
+o10 = $<pre style="display:inline">
 ideal</pre>\left(x+y+z+w\right)$
 
-o10 : <pre style="display:inline">
+o10 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
-i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
+i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
 
-o11 = $<pre style="display:inline">
+o11 = $<pre style="display:inline">
 T</pre>$
 
-o11 : <pre style="display:inline">
+o11 : <pre style="display:inline">
 TropicalCycle</pre>
-i12 : rays(T)
+i12 : rays(T)
 
-o12 = $\left(\!\begin{array}{cccc}
+o12 = $\left(\!\begin{array}{cccc}
 3&amp;-1&amp;-1&amp;-1\\
 -1&amp;3&amp;-1&amp;-1\\
 -1&amp;-1&amp;3&amp;-1\\
 -1&amp;-1&amp;-1&amp;3\\
 \end{array}\!\right)$
 
-o12 : <pre style="display:inline">
+o12 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{4}$
-i13 : maxCones(T)
+i13 : maxCones(T)
 
-o13 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{1,\,2\right\},\,\left\{1,\,3\right\},\,\left\{2,\,3\right\}\right\}$
+o13 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{1,\,2\right\},\,\left\{1,\,3\right\},\,\left\{2,\,3\right\}\right\}$
 
-o13 : <pre style="display:inline">
+o13 : <pre style="display:inline">
 List</pre>
-i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
+i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
 
-o14 : <pre style="display:inline">
+o14 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
-i15 : T= tropicalVariety(I,Prime=>false);
-i16 : rays(T)
+i15 : T= tropicalVariety(I,Prime=>false);
+i16 : rays(T)
 
-o16 = $\left(\!\begin{array}{cccccccc}
+o16 = $\left(\!\begin{array}{cccccccc}
 1&amp;3&amp;1&amp;-1&amp;1&amp;-1&amp;-1&amp;-1\\
 1&amp;-1&amp;1&amp;3&amp;-1&amp;1&amp;-1&amp;-1\\
 1&amp;-1&amp;-1&amp;-1&amp;1&amp;1&amp;3&amp;-1\\
 -3&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;3\\
 \end{array}\!\right)$
 
-o16 : <pre style="display:inline">
+o16 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{8}$
-i17 : maxCones(T)
+i17 : maxCones(T)
 
-o17 = $\left\{\left\{0\right\},\,\left\{1,\,2\right\},\,\left\{1,\,4\right\},\,\left\{1,\,7\right\},\,\left\{2,\,3\right\},\,\left\{4,\,6\right\},\,\left\{3,\,5\right\},\,\left\{3,\,7\right\},\,\left\{5,\,6\right\},\,\left\{6,\,7\right\}\right\}$
+o17 = $\left\{\left\{0\right\},\,\left\{1,\,2\right\},\,\left\{1,\,4\right\},\,\left\{1,\,7\right\},\,\left\{2,\,3\right\},\,\left\{4,\,6\right\},\,\left\{3,\,5\right\},\,\left\{3,\,7\right\},\,\left\{5,\,6\right\},\,\left\{6,\,7\right\}\right\}$
 
-o17 : <pre style="display:inline">
+o17 : <pre style="display:inline">
 List</pre>
-i18 : multiplicities(T)
+i18 : multiplicities(T)
 
-o18 = $\left\{1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1\right\}$
+o18 = $\left\{1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1\right\}$
 
-o18 : <pre style="display:inline">
+o18 : <pre style="display:inline">
 List</pre>
-i19 : linealitySpace T
+i19 : linealitySpace T
 
-o19 = $\left(\!\begin{array}{c}
+o19 = $\left(\!\begin{array}{c}
 1\\
 1\\
 1\\
 1\\
 \end{array}\!\right)$
 
-o19 : <pre style="display:inline">
+o19 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
-i20 : QQ[x,y,z,w];
-i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
+i20 : QQ[x,y,z,w];
+i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
 
-o21 : <pre style="display:inline">
+o21 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
-i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
-i23 : rays(T)
+i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
+i23 : rays(T)
 
-o23 = $\left(\!\begin{array}{cccccc}
+o23 = $\left(\!\begin{array}{cccccc}
 -4&amp;4&amp;0&amp;0&amp;4&amp;4\\
 -4&amp;0&amp;4&amp;0&amp;8&amp;0\\
 -4&amp;0&amp;0&amp;4&amp;0&amp;8\\
 -3&amp;1&amp;1&amp;1&amp;3&amp;3\\
 \end{array}\!\right)$
 
-o23 : <pre style="display:inline">
+o23 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
-i24 : maxCones(T)
+i24 : maxCones(T)
 
-o24 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{0,\,4\right\},\,\left\{0,\,5\right\},\,\left\{2,\,3\right\},\,\left\{1,\,4\right\},\,\left\{1,\,5\right\},\,\left\{2,\,4\right\},\,\left\{3,\,5\right\},\,\left\{4,\,5\right\}\right\}$
+o24 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{0,\,4\right\},\,\left\{0,\,5\right\},\,\left\{2,\,3\right\},\,\left\{1,\,4\right\},\,\left\{1,\,5\right\},\,\left\{2,\,4\right\},\,\left\{3,\,5\right\},\,\left\{4,\,5\right\}\right\}$
 
-o24 : <pre style="display:inline">
+o24 : <pre style="display:inline">
 List</pre>
-i25 : linealitySpace T
+i25 : linealitySpace T
 
-o25 = $\left(\!\begin{array}{c}
+o25 = $\left(\!\begin{array}{c}
 0\\
 0\\
 0\\
 1\\
 \end{array}\!\right)$
 
-o25 : <pre style="display:inline">
+o25 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
-i26 : multiplicities(T)
+i26 : multiplicities(T)
 
-o26 = $\left\{\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\}\right\}$
+o26 = $\left\{\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\}\right\}$
 
-o26 : <pre style="display:inline">
+o26 : <pre style="display:inline">
 List</pre>
-i27 : 
+i27 : 

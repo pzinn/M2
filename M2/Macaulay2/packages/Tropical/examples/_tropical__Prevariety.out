@@ -1,47 +1,47 @@
 -- -*- M2-comint -*- hash: 1364290900
-i1 : QQ[x_1,x_2,x_3,x_4]
+i1 : QQ[x_1,x_2,x_3,x_4]
 
-o1 = ${\mathbb Q}\mathopen{}\left[x_{1}\,{.}{.}\, x_{4}\right]$
+o1 = ${\mathbb Q}\mathopen{}\left[x_{1}\,{.}{.}\, x_{4}\right]$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : L={x_1+x_2+x_3+x_4,x_1*x_2+x_2*x_3+x_3*x_4+x_4*x_1,x_1*x_2*x_3+x_2*x_3*x_4+x_3*x_4*x_1+x_4*x_1*x_2,x_1*x_2*x_3*x_4-1}
+i2 : L={x_1+x_2+x_3+x_4,x_1*x_2+x_2*x_3+x_3*x_4+x_4*x_1,x_1*x_2*x_3+x_2*x_3*x_4+x_3*x_4*x_1+x_4*x_1*x_2,x_1*x_2*x_3*x_4-1}
 
-o2 = $\left\{x_{1}+x_{2}+x_{3}+x_{4},\,x_{1}x_{2}+x_{2}x_{3}+x_{1}x_{4}+x_{3}x_{4},\,x_{1}x_{2}x_{3}+x_{1}x_{2}x_{4}+x_{1}x_{3}x_{4}+x_{2}x_{3}x_{4},\,x_{1}x_{2}x_{3}x_{4}-1\right\}$
+o2 = $\left\{x_{1}+x_{2}+x_{3}+x_{4},\,x_{1}x_{2}+x_{2}x_{3}+x_{1}x_{4}+x_{3}x_{4},\,x_{1}x_{2}x_{3}+x_{1}x_{2}x_{4}+x_{1}x_{3}x_{4}+x_{2}x_{3}x_{4},\,x_{1}x_{2}x_{3}x_{4}-1\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : tropicalPrevariety L
+i3 : tropicalPrevariety L
 
-o3 = $<pre style="display:inline">
+o3 = $<pre style="display:inline">
 Fan</pre>\left\{\ldots 1\ldots\right\}$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 Fan</pre>
-i4 : QQ[x_0,x_1]
+i4 : QQ[x_0,x_1]
 
-o4 = ${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
+o4 = ${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 PolynomialRing</pre>
-i5 : tropicalPrevariety({x_0+x_1+1}, {{1,0}})
+i5 : tropicalPrevariety({x_0+x_1+1}, {{1,0}})
 
-o5 = $<pre style="display:inline">
+o5 = $<pre style="display:inline">
 Fan</pre>\left\{\ldots 1\ldots\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 Fan</pre>
-i6 : QQ[x_0,x_1]
+i6 : QQ[x_0,x_1]
 
-o6 = ${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
+o6 = ${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
 
-o6 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 PolynomialRing</pre>
-i7 : tropicalPrevariety({x_0+x_1+1,x_0+x_1},Strategy => "gfan")
+i7 : tropicalPrevariety({x_0+x_1+1,x_0+x_1},Strategy => "gfan")
 
-o7 = $<pre style="display:inline">
+o7 = $<pre style="display:inline">
 Fan</pre>\left\{\ldots 1\ldots\right\}$
 
-o7 : <pre style="display:inline">
+o7 : <pre style="display:inline">
 Fan</pre>
-i8 : 
+i8 : 

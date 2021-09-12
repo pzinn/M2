@@ -1,11 +1,11 @@
 -- -*- M2-comint -*- hash: 1920086956
-i1 : Pblm = {
+i1 : Pblm = {
     ({2,1}, random(RR^6,RR^6)),
     ({2,1}, random(RR^6,RR^6)),
     ({2,1}, random(RR^6,RR^6))
     }
 
-o1 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
+o1 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}&amp;{.89189}&amp;{.0741835}&amp;{.741046}&amp;{.830833}&amp;{.191734}\\
 {.673395}&amp;{.231053}&amp;{.808694}&amp;{.108386}&amp;{.538554}&amp;{.403215}\\
 {.29398}&amp;{.461944}&amp;{.362835}&amp;{.348931}&amp;{.873665}&amp;{.615911}\\
@@ -28,11 +28,11 @@ o1 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.732358}&amp;{.0595849}&amp;{.831802}&amp;{.53632}&amp;{.942865}&amp;{.522285}\\
 \end{array}\!\right)\right)\right\}$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 List</pre>
-i2 : S = solveSchubertProblem(Pblm, 3,6)
+i2 : S = solveSchubertProblem(Pblm, 3,6)
 
-o2 = $\left\{\left(\!\begin{array}{ccc}
+o2 = $\left\{\left(\!\begin{array}{ccc}
 {.362674}-{6.53343}\cdot 10^{-18}\,\mathbf{i}&amp;{5.87881}-{3.14374}\cdot 10^{-14}\,\mathbf{i}&amp;{.067722}+{7.62376}\cdot 10^{-17}\,\mathbf{i}\\
 -{.168148}-{4.92833}\cdot 10^{-18}\,\mathbf{i}&amp;{10.2268}-{5.75793}\cdot 10^{-14}\,\mathbf{i}&amp;{.359604}+{1.00555}\cdot 10^{-16}\,\mathbf{i}\\
 {.287667}-{2.15153}\cdot 10^{-18}\,\mathbf{i}&amp;{5.41301}-{2.92605}\cdot 10^{-14}\,\mathbf{i}&amp;{.178413}+{8.93305}\cdot 10^{-17}\,\mathbf{i}\\
@@ -48,11 +48,11 @@ o2 = $\left\{\left(\!\begin{array}{ccc}
 {.141356}+{3.18264}\cdot 10^{-16}\,\mathbf{i}&amp;{.394186}+{5.71773}\cdot 10^{-16}\,\mathbf{i}&amp;-{.0692081}-{1.35788}\cdot 10^{-16}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : solutionsToAffineCoords S
+i3 : solutionsToAffineCoords S
 
-o3 = $\left\{\left(\!\begin{array}{ccc}
+o3 = $\left\{\left(\!\begin{array}{ccc}
 {1.17594}&amp;-{.247384}&amp;-{1.04186}\\
 -{2.59821}&amp;{1.69933}&amp;{5.94898}\\
 -{.743029}&amp;{.890962}&amp;{1.94183}\\
@@ -68,6 +68,6 @@ o3 = $\left\{\left(\!\begin{array}{ccc}
 {0}&amp;{0}&amp;1\\
 \end{array}\!\right)\right\}$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
-i4 : 
+i4 : 

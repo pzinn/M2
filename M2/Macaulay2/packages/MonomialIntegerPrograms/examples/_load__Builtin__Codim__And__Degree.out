@@ -5,19 +5,19 @@ To change this, load package using CustomPath option.</pre>
 <pre style="display:inline">
 Current value of ScipPrintLevel is 0.
 To set a custom default value, load package using CustomScipPrintLevel option.</pre>
-i1 : R = QQ[a,b,c];
-i2 : ScipPrintLevel = 1;
-i3 : codim(monomialIdeal(a^2, b*a, c*b))
+i1 : R = QQ[a,b,c];
+i2 : ScipPrintLevel = 1;
+i3 : codim(monomialIdeal(a^2, b*a, c*b))
 
-o3 = $2$
-i4 : degree(monomialIdeal(a^2, b*a, c*b))
+o3 = $2$
+i4 : degree(monomialIdeal(a^2, b*a, c*b))
 
-o4 = $3$
-i5 : loadBuiltinCodimAndDegree();
-i6 : codim(monomialIdeal(a^2, b*a, c*b))
+o4 = $3$
+i5 : loadBuiltinCodimAndDegree();
+i6 : codim(monomialIdeal(a^2, b*a, c*b))
 
-o6 = $2$
-i7 : degree(monomialIdeal(a^2, b*a, c*b))
+o6 = $2$
+i7 : degree(monomialIdeal(a^2, b*a, c*b))
 
-o7 = $3$
-i8 : 
+o7 = $3$
+i8 : 

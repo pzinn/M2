@@ -5,32 +5,32 @@ To change this, load package using CustomPath option.</pre>
 <pre style="display:inline">
 Current value of ScipPrintLevel is 0.
 To set a custom default value, load package using CustomScipPrintLevel option.</pre>
-i1 : R = QQ[x,y,z,w,v];
-i2 : I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
+i1 : R = QQ[x,y,z,w,v];
+i2 : I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 MonomialIdeal</pre><pre style="display:inline">
  of </pre>$R$
-i3 : ScipPrintLevel = 0;
-i4 : L1 = topMinimalPrimesIP I
+i3 : ScipPrintLevel = 0;
+i4 : L1 = topMinimalPrimesIP I
 
-o4 = $\left\{\,\right\}$
+o4 = $\left\{\,\right\}$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
-i5 : L2 = topMinimalPrimesIP(I, IgnorePrimes=>L1)
+i5 : L2 = topMinimalPrimesIP(I, IgnorePrimes=>L1)
 
-o5 = $\left\{\,\right\}$
+o5 = $\left\{\,\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : minimalPrimes I
+i6 : minimalPrimes I
 
-o6 = $\left\{<pre style="display:inline">
+o6 = $\left\{<pre style="display:inline">
 monomialIdeal</pre>{}\left(y,\,z,\,w\right),\,<pre style="display:inline">
 monomialIdeal</pre>{}\left(y,\,z,\,v\right),\,<pre style="display:inline">
 monomialIdeal</pre>{}\left(x,\,y,\,w,\,v\right)\right\}$
 
-o6 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 List</pre>
-i7 : 
+i7 : 

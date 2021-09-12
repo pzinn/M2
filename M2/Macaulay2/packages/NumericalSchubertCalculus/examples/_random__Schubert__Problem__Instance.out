@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 213120892
-i1 : randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
+i1 : randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
 
-o1 = $\left\{\left(\left\{1\right\},\,\left(\!\begin{array}{cccc}
+o1 = $\left\{\left(\left\{1\right\},\,\left(\!\begin{array}{cccc}
 {.781262}-{.624203}\,\mathbf{i}&amp;-{.462954}-{.886382}\,\mathbf{i}&amp;-{.272832}+{.962062}\,\mathbf{i}&amp;-{.670948}-{.741504}\,\mathbf{i}\\
 {.9868}+{.161945}\,\mathbf{i}&amp;-{.219207}-{.975678}\,\mathbf{i}&amp;{.778029}-{.628229}\,\mathbf{i}&amp;{.118767}+{.992922}\,\mathbf{i}\\
 -{.971549}+{.236839}\,\mathbf{i}&amp;{.157598}-{.987503}\,\mathbf{i}&amp;{.841103}-{.540875}\,\mathbf{i}&amp;-{.396553}+{.918012}\,\mathbf{i}\\
@@ -23,11 +23,11 @@ o1 = $\left\{\left(\left\{1\right\},\,\left(\!\begin{array}{cccc}
 -{.939129}+{.343564}\,\mathbf{i}&amp;-{.616052}-{.787706}\,\mathbf{i}&amp;{.339065}+{.940763}\,\mathbf{i}&amp;-{.99319}-{.116506}\,\mathbf{i}\\
 \end{array}\!\right)\right)\right\}$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 List</pre>
-i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
+i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
 
-o2 = $\left\{\left(\left\{2,\,4\right\},\,\left(\!\begin{array}{cccc}
+o2 = $\left\{\left(\left\{2,\,4\right\},\,\left(\!\begin{array}{cccc}
 {.996754}-{.0805092}\,\mathbf{i}&amp;-{.909393}-{.415938}\,\mathbf{i}&amp;{.398424}+{.917201}\,\mathbf{i}&amp;-{.688353}+{.725376}\,\mathbf{i}\\
 -{.531694}+{.846937}\,\mathbf{i}&amp;{.92457}+{.381011}\,\mathbf{i}&amp;-{.976915}+{.213627}\,\mathbf{i}&amp;-{.81898}+{.573823}\,\mathbf{i}\\
 {.51095}+{.859611}\,\mathbf{i}&amp;-{.227376}-{.973807}\,\mathbf{i}&amp;{.842765}-{.538281}\,\mathbf{i}&amp;-{.915156}-{.403101}\,\mathbf{i}\\
@@ -49,6 +49,6 @@ o2 = $\left\{\left(\left\{2,\,4\right\},\,\left(\!\begin{array}{cccc}
 -{.129853}+{.991533}\,\mathbf{i}&amp;{.889567}+{.456804}\,\mathbf{i}&amp;-{.872433}-{.488734}\,\mathbf{i}&amp;-{.636591}-{.771201}\,\mathbf{i}\\
 \end{array}\!\right)\right)\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : 
+i3 : 

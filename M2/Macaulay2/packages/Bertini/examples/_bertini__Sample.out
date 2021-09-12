@@ -1,34 +1,34 @@
 -- -*- M2-comint -*- hash: -1057685552
-i1 : R = CC[x,y,z]
+i1 : R = CC[x,y,z]
 
-o1 = $R$
+o1 = $R$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
+i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : NV = bertiniPosDimSolve(F)
+i3 : NV = bertiniPosDimSolve(F)
 
-o3 = $<pre style="display:inline">
+o3 = $<pre style="display:inline">
 NV</pre>$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 NumericalVariety</pre>
-i4 : W = NV#1_0 --z-axis
+i4 : W = NV#1_0 --z-axis
 
-o4 = $<pre style="display:inline">
+o4 = $<pre style="display:inline">
 W</pre>$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 WitnessSet</pre>
-i5 : bertiniSample(4, W)
+i5 : bertiniSample(4, W)
 
-o5 = $\left\{\left\{{6.0276}\cdot 10^{-322}-{1.43279}\cdot 10^{-322}\,\mathbf{i},\,{0},\,-{.291715}-{.239109}\,\mathbf{i}\right\},\,\left\{{0},\,{0},\,-{.423735}-{.24548}\,\mathbf{i}\right\},\,\left\{{0},\,{0},\,-{.377065}-{.287879}\,\mathbf{i}\right\},\,\left\{{0},\,{0},\,-{.349358}-{.151996}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{{3.45846}\cdot 10^{-323}+{1.92686}\cdot 10^{-322}\,\mathbf{i},\,{5.07108}\cdot 10^{-20}-{6.32593}\cdot 10^{-20}\,\mathbf{i},\,-{.113211}+{.995893}\,\mathbf{i}\right\},\,\left\{{0},\,-{1.00045}\cdot 10^{-19}-{1.96599}\cdot 10^{-20}\,\mathbf{i},\,{1.42099}-{.151659}\,\mathbf{i}\right\},\,\left\{{0},\,-{6.14674}\cdot 10^{-21}+{9.96332}\cdot 10^{-21}\,\mathbf{i},\,-{.0230223}+{.125149}\,\mathbf{i}\right\},\,\left\{{5.15995}\cdot 10^{-269}-{2.4333}\cdot 10^{-268}\,\mathbf{i},\,{6.20256}\cdot 10^{-19}+{4.56518}\cdot 10^{-19}\,\mathbf{i},\,{.979776}-{.335489}\,\mathbf{i}\right\}\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : 
+i6 : 

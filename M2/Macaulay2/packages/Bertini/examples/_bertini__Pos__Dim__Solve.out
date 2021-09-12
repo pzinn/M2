@@ -1,58 +1,58 @@
 -- -*- M2-comint -*- hash: 704393788
-i1 : R = QQ[x,y,z]
+i1 : R = QQ[x,y,z]
 
-o1 = $R$
+o1 = $R$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : S = bertiniPosDimSolve F
+i3 : S = bertiniPosDimSolve F
 
-o3 = $<pre style="display:inline">
+o3 = $<pre style="display:inline">
 S</pre>$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 NumericalVariety</pre>
-i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = $\left\{\begin{aligned}&amp;\left\{-{2.05251}\cdot 10^{-66}+{3.0058}\cdot 10^{-65}\,\mathbf{i},\,{3.02471}\cdot 10^{-65}-{2.54306}\cdot 10^{-67}\,\mathbf{i},\,{.000934661}-{.00163173}\,\mathbf{i}\right\}\end{aligned}\right\}$
+o4 = $\left\{\begin{aligned}&amp;\left\{-{7.4862}\cdot 10^{-65}-{1.61991}\cdot 10^{-64}\,\mathbf{i},\,{1.75311}\cdot 10^{-64}-{4.12843}\cdot 10^{-65}\,\mathbf{i},\,-{.0110012}+{.0942382}\,\mathbf{i}\right\}\end{aligned}\right\}$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 VerticalList</pre>
-i5 : S#1 --first specify dimension
+i5 : S#1 --first specify dimension
 
-o5 = $\left\{<pre style="display:inline">
+o5 = $\left\{<pre style="display:inline">
 (dim=1,deg=1)</pre>\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : peek oo_0 --then list position
+i6 : peek oo_0 --then list position
 
-o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-WitnessSet{cache => CacheTable{...3...}                                                                              }<br/>           Points => {{-2.05251e-66+3.0058e-65*ii, 3.02471e-65-2.5431e-67*ii, .000934661-.00163173*ii}}<br/>           Slice => |  .63191 - .504765*ii  .426722 - .334834*ii  - .904129 - .361744*ii  .00143532 - .00113719*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
-i7 : PD=primaryDecomposition( ideal F)
+o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
+WitnessSet{cache => CacheTable{...3...}                                                                            }<br/>           Points => {{-7.4862e-65-1.61991e-64*ii, 1.75311e-64-4.12843e-65*ii, -.0110012+.0942382*ii}}<br/>           Slice => |  .0305909 - 2.05653*ii  1.0411 + 1.66742*ii  2.72751 - .853622*ii  - .0504377 - .266427*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
+i7 : PD=primaryDecomposition( ideal F)
 
-o7 = $\left\{<pre style="display:inline">
+o7 = $\left\{<pre style="display:inline">
 ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\,<pre style="display:inline">
 ideal</pre>{}\left(y,\,x\right)\right\}$
 
-o7 : <pre style="display:inline">
+o7 : <pre style="display:inline">
 List</pre>
-i8 : dim PD_0
+i8 : dim PD_0
 
-o8 = $2$
-i9 : degree PD_0
+o8 = $2$
+i9 : degree PD_0
 
-o9 = $2$
-i10 : dim PD_1
+o9 = $2$
+i10 : dim PD_1
 
-o10 = $1$
-i11 : degree PD_1
+o10 = $1$
+i11 : degree PD_1
 
-o11 = $1$
-i12 : 
+o11 = $1$
+i12 : 

@@ -1,29 +1,29 @@
 -- -*- M2-comint -*- hash: 1464112564
-i1 : R = CC[x,y];
-i2 : F = {x^2-2,y^2-2};
-i3 : sols = bertiniZeroDimSolve (F)
+i1 : R = CC[x,y];
+i2 : F = {x^2-2,y^2-2};
+i3 : sols = bertiniZeroDimSolve (F)
 
-o3 = $\left\{\left\{{1.41421}-{4.44089}\cdot 10^{-16}\,\mathbf{i},\,{1.41421}-{4.44089}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}-{2.88658}\cdot 10^{-15}\,\mathbf{i},\,{1.41421}+{2.88658}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{-{1.41421},\,-{1.41421}\right\}\right\}$
+o3 = $\left\{\left\{{1.41421},\,{1.41421}\right\},\,\left\{{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421},\,{1.41421}\right\},\,\left\{-{1.41421}+{6.93889}\cdot 10^{-18}\,\mathbf{i},\,-{1.41421}+{6.93889}\cdot 10^{-18}\,\mathbf{i}\right\}\right\}$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
-i4 : S = bertiniRefineSols (100, F, sols)
+i4 : S = bertiniRefineSols (100, F, sols)
 
-o4 = $\left\{\left\{-{1.41421},\,-{1.41421}\right\},\,\left\{-{1.41421}-{2.88658}\cdot 10^{-15}\,\mathbf{i},\,{1.41421}+{2.88658}\cdot 10^{-15}\,\mathbf{i}\right\},\,\left\{{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{1.41421}-{4.44089}\cdot 10^{-16}\,\mathbf{i},\,{1.41421}-{4.44089}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{-{1.41421}+{6.93889}\cdot 10^{-18}\,\mathbf{i},\,-{1.41421}+{6.93889}\cdot 10^{-18}\,\mathbf{i}\right\},\,\left\{-{1.41421},\,{1.41421}\right\},\,\left\{{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{1.41421},\,{1.41421}\right\}\right\}$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
-i5 : coords = coordinates S_0
+i5 : coords = coordinates S_0
 
-o5 = $\left\{-{1.41421},\,-{1.41421}\right\}$
+o5 = $\left\{-{1.41421}+{6.93889}\cdot 10^{-18}\,\mathbf{i},\,-{1.41421}+{6.93889}\cdot 10^{-18}\,\mathbf{i}\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : coords_0
+i6 : coords_0
 
-o6 = $-{1.41421}$
+o6 = $-{1.41421}+{6.93889}\cdot 10^{-18}\,\mathbf{i}$
 
-o6 : ${\mathbb C}$<pre style="display:inline">
+o6 : ${\mathbb C}$<pre style="display:inline">
  (of precision </pre>$333$<pre style="display:inline">
 )</pre>
-i7 : 
+i7 : 

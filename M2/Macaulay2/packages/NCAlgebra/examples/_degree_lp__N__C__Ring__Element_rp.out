@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: 1832118703
-i1 : A = QQ{x,y,z,w}
+i1 : A = QQ{x,y,z,w}
 
-o1 = $<pre style="display:inline">
+o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : f = x^2+y^2+z^3
+i2 : f = x^2+y^2+z^3
 
-o2 = $<pre style="display:inline">
+o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -20,27 +20,27 @@ A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\,z,\,z\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
 
-o2 : $<pre style="display:inline">
+o2 : $<pre style="display:inline">
 A</pre>$
-i3 : degree f
+i3 : degree f
 
-o3 = $3$
-i4 : isHomogeneous f
+o3 = $3$
+i4 : isHomogeneous f
 
-o4 = <pre style="display:inline">
+o4 = <pre style="display:inline">
 false</pre>
-i5 : setWeights(A,{3,3,2,1})
+i5 : setWeights(A,{3,3,2,1})
 
-o5 = $<pre style="display:inline">
+o5 = $<pre style="display:inline">
 A</pre>$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i6 : degree f
+i6 : degree f
 
-o6 = $6$
-i7 : isHomogeneous f
+o6 = $6$
+i7 : isHomogeneous f
 
-o7 = <pre style="display:inline">
+o7 = <pre style="display:inline">
 true</pre>
-i8 : 
+i8 : 

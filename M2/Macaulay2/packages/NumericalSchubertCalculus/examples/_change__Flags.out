@@ -1,11 +1,11 @@
 -- -*- M2-comint -*- hash: -895766969
-i1 : k=3; n=6;
-i3 : l1={2,1};
-i4 : l2={2,1};
-i5 : l3={2,1};
-i6 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
+i1 : k=3; n=6;
+i3 : l1={2,1};
+i4 : l2={2,1};
+i5 : l3={2,1};
+i6 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
-o6 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
+o6 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
 {0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
 {0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
@@ -28,16 +28,16 @@ o6 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.909047}+{.314897}\,\mathbf{i}&amp;{.246268}+{.153346}\,\mathbf{i}&amp;{.223028}+{.388829}\,\mathbf{i}&amp;{.169813}+{.965004}\,\mathbf{i}&amp;{.237252}+{.116721}\,\mathbf{i}&amp;{.465736}+{.40273}\,\mathbf{i}\\
 \end{array}\!\right)\right)\right\}$
 
-o6 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 List</pre>
-i7 : G = randomSchubertProblemInstance({l1,l2,l3},k,n);
-i8 : S = solveSchubertProblem(F,k,n);
-i9 : FlagsF = F/last;
-i10 : FlagsG = G/last;
-i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 2.22208 seconds
+i7 : G = randomSchubertProblemInstance({l1,l2,l3},k,n);
+i8 : S = solveSchubertProblem(F,k,n);
+i9 : FlagsF = F/last;
+i10 : FlagsG = G/last;
+i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
+     -- used 1.98954 seconds
 
-o11 = $\left\{\left(\!\begin{array}{ccc}
+o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
 -{.25181}-{.0448108}\,\mathbf{i}&amp;-{.107521}-{.190275}\,\mathbf{i}&amp;-{.0896067}-{.483543}\,\mathbf{i}\\
 {.219256}+{.214331}\,\mathbf{i}&amp;{.0873511}+{.372915}\,\mathbf{i}&amp;-{.213803}+{.410917}\,\mathbf{i}\\
@@ -53,13 +53,13 @@ o11 = $\left\{\left(\!\begin{array}{ccc}
 {.0284784}+{.374339}\,\mathbf{i}&amp;-{.588673}+{.906394}\,\mathbf{i}&amp;-{.233277}+{.814607}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o11 : <pre style="display:inline">
+o11 : <pre style="display:inline">
 List</pre>
-i12 : assert all(S', s-> checkIncidenceSolution(s,G))
-i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.62888 seconds
+i12 : assert all(S', s-> checkIncidenceSolution(s,G))
+i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
+     -- used 1.84906 seconds
 
-o13 = $\left\{\left(\!\begin{array}{ccc}
+o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
 -{.229738}+{.0833434}\,\mathbf{i}&amp;-{.445398}+{.0639826}\,\mathbf{i}&amp;{.150646}-{.436884}\,\mathbf{i}\\
 {.279834}-{.0761677}\,\mathbf{i}&amp;{.402182}-{.016251}\,\mathbf{i}&amp;-{.178732}+{.299631}\,\mathbf{i}\\
@@ -75,7 +75,7 @@ o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.236198}+{.0362704}\,\mathbf{i}&amp;-{.341298}-{.374585}\,\mathbf{i}&amp;{.878579}-{.176735}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o13 : <pre style="display:inline">
+o13 : <pre style="display:inline">
 List</pre>
-i14 : assert all(S', s-> checkIncidenceSolution(s,G))
-i15 : 
+i14 : assert all(S', s-> checkIncidenceSolution(s,G))
+i15 : 

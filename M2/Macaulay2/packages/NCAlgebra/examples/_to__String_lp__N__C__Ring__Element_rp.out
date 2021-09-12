@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: 1090370319
-i1 : A = QQ{x,y,z,w}
+i1 : A = QQ{x,y,z,w}
 
-o1 = $<pre style="display:inline">
+o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : f = x^2+y^2+z^3
+i2 : f = x^2+y^2+z^3
 
-o2 = $<pre style="display:inline">
+o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -20,10 +20,10 @@ A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\,z,\,z\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
 
-o2 : $<pre style="display:inline">
+o2 : $<pre style="display:inline">
 A</pre>$
-i3 : toString f
+i3 : toString f
 
-o3 = <pre style="display:inline">
+o3 = <pre style="display:inline">
 z^3+y^2+x^2</pre>
-i4 : 
+i4 : 

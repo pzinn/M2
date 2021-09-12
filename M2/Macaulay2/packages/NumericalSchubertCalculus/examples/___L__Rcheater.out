@@ -1,11 +1,11 @@
 -- -*- M2-comint -*- hash: -1537369413
-i1 : R := ZZ;
-i2 : n := 6;
-i3 : m := matrix{{3, 2, 4, 6}};
+i1 : R := ZZ;
+i2 : n := 6;
+i3 : m := matrix{{3, 2, 4, 6}};
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>${\mathbb Z}^{1}\,\longleftarrow \,{\mathbb Z}^{4}$
-i4 : t := LRtriple(n,m);
-i5 : w := wrapTriplet(t);
-i6 : 
+i4 : t := LRtriple(n,m);
+i5 : w := wrapTriplet(t);
+i6 : 

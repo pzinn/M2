@@ -1,19 +1,19 @@
 -- -*- M2-comint -*- hash: -150991264
-i1 : l = {2,1};
-i2 : k = 2;
-i3 : n = 4;
-i4 : partition2bracket(l,k,n)
+i1 : l = {2,1};
+i2 : k = 2;
+i3 : n = 4;
+i4 : partition2bracket(l,k,n)
 
-o4 = $\left\{1,\,3\right\}$
+o4 = $\left\{1,\,3\right\}$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
-i5 : k = 3;
-i6 : n = 6;
-i7 : partition2bracket(l,k,n)
+i5 : k = 3;
+i6 : n = 6;
+i7 : partition2bracket(l,k,n)
 
-o7 = $\left\{2,\,4,\,6\right\}$
+o7 = $\left\{2,\,4,\,6\right\}$
 
-o7 : <pre style="display:inline">
+o7 : <pre style="display:inline">
 List</pre>
-i8 : 
+i8 : 

@@ -1,36 +1,36 @@
 -- -*- M2-comint -*- hash: -599996858
-i1 : QQ[x,y,z]
+i1 : QQ[x,y,z]
 
-o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
+o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : V = tropicalVariety(ideal(x+y+z))
+i2 : V = tropicalVariety(ideal(x+y+z))
 
-o2 = $<pre style="display:inline">
+o2 = $<pre style="display:inline">
 V</pre>$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 TropicalCycle</pre>
-i3 : isBalanced V
+i3 : isBalanced V
 
-o3 = <pre style="display:inline">
+o3 = <pre style="display:inline">
 true</pre>
-i4 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
+i4 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
 
-o4 = $<pre style="display:inline">
+o4 = $<pre style="display:inline">
 F</pre>$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 Fan</pre>
-i5 : mult = {1,2,-3,1}
+i5 : mult = {1,2,-3,1}
 
-o5 = $\left\{1,\,2,\,-3,\,1\right\}$
+o5 = $\left\{1,\,2,\,-3,\,1\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : isBalanced (tropicalCycle(F, mult))
+i6 : isBalanced (tropicalCycle(F, mult))
 
-o6 = <pre style="display:inline">
+o6 = <pre style="display:inline">
 false</pre>
-i7 : 
+i7 : 

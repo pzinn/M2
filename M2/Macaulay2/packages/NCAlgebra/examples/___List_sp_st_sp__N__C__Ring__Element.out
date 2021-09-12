@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: 498804920
-i1 : A = QQ{x,y}
+i1 : A = QQ{x,y}
 
-o1 = $<pre style="display:inline">
+o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : f = x^2+y^2
+i2 : f = x^2+y^2
 
-o2 = $<pre style="display:inline">
+o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -18,11 +18,11 @@ A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\,y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
 
-o2 : $<pre style="display:inline">
+o2 : $<pre style="display:inline">
 A</pre>$
-i3 : bas = flatten entries basis(3,A)
+i3 : bas = flatten entries basis(3,A)
 
-o3 = $\left\{<pre style="display:inline">
+o3 = $\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -72,11 +72,11 @@ HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\,y,\,y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\}$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
-i4 : bas*f
+i4 : bas*f
 
-o4 = $\left\{<pre style="display:inline">
+o4 = $\left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -142,6 +142,6 @@ A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\,y,\,y,\,y,\,y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\}$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
-i5 : 
+i5 : 
