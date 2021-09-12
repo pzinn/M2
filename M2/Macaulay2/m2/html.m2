@@ -181,7 +181,8 @@ html GroebnerBasis :=
 html Package :=
 html Boolean :=
 html Function :=
-html Type := html @@ toString
+html Dictionary := html @@ toString
+html Type := x -> if x.?texMath then "$"|x.texMath|"$" else html toString x
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
