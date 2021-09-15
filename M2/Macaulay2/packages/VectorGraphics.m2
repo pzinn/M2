@@ -768,6 +768,13 @@ plot = true >> o -> (P,r) -> (
     )
 )
 
+-- existing types that get a new output
+horiz := p -> gList prepend(Line{(0,0),(p#0,0)},apply(#p,i->Line{(0,-1-i),(p#i,-1-i)}))
+vert := p -> gList prepend(Line{(0,0),(0,-p#0)},apply(#p,i->Line{(i+1,0),(i+1,-p#i)}))
+html Partition := p -> if #p===0 then "&varnothing;" else html gList(
+    vert conjugate p,horiz p,SizeX=>2*p#0,SizeY=>2*#p,"stroke-width"=>0.05)
+-- TODO: graphs
+
 beginDocumentation()
 multidoc ///
  Node
