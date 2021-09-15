@@ -26,7 +26,7 @@ toExternalString Hypertext := s -> concatenate(toString class s, toExternalStrin
 
 new Hypertext from VisibleList := (M,x) -> x
 new Hypertext from Thing  := (M,x) -> {x}
-new Hypertext from Net    := (M,x) -> {toString x}
+--new Hypertext from Net    := (M,x) -> {toString x}
 
 -----------------------------------------------------------------------------
 -- URL type declaration and constructor
