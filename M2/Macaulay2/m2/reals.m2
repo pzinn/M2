@@ -392,12 +392,13 @@ texMath CC := x -> texMath expression x
 texMath RR := x -> (
     if not isANumber x then texMath toString x else
     if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
-    else "{" | format(
+    else replace(///\{1\}\\cdot ///,"",
+	"{" | format(
 	printingPrecision,
 	printingAccuracy,
 	printingLeadLimit,
 	printingTrailLimit,
-	"}\\cdot 10^{", x ) | "}")
+	"}\\cdot 10^{", x ) | "}"))
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
