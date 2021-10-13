@@ -98,8 +98,8 @@ GraphicsType List := (T,opts) -> (
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,-1,persp},{0,0,0,persp}} -- output is {x,y,p-z,p}
-    -- note in particular that distance : p = p-z : p = z' : w'
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,-1/persp,1},{0,0,0,1}} -- output is {x,y,1-z/p,1}
+    -- note in particular that distance = 1-z/p = z' : w'
 )
 
 viewPort = g -> (
@@ -122,7 +122,7 @@ distance = g -> (
 distance1 := method()
 distance1 GraphicsObject := x -> 0_RR
 
-scale := x -> x_3/x_2
+scale := x -> 1/x_2
 project2d := x -> (scale x)*x^{0,1}
 project2d' := x -> (scale x)*vector {x_0,-x_1} -- annoying sign
 
@@ -464,7 +464,7 @@ new SVG from GraphicsObject := (S,g) -> (
     axes:=null; axeslabels:=null; defsList:={};
     if g.?Axes and g.Axes =!= false then (
 	arr := arrow();
-	-- determine intersection of viewport with axes
+	-- determine intersection of viewport with axes TODO RECHECK
 	xmin := (r#0_0-p_(0,3))/p_(0,0);
 	xmax := (r#1_0-p_(0,3))/p_(0,0);
 	if xmax < xmin then ( temp:=xmin; xmin=xmax; xmax=temp; );
@@ -657,7 +657,7 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
 		    light = light - c*w;
 		    opts = opts | {
 			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
-			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0*light0_3/light_2), "y" => toString(-light_1*light0_3/light_2), "z" => toString(4*gg.Radius/light_2) } },
+			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_2), "y" => toString(-light_1/light_2), "z" => toString(4*gg.Radius/light_2) } },
 			feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 			    "operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }

@@ -103,31 +103,19 @@ function gfxCoords(el) { // TODO use more
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) return [el.gfxdata.center];
     else return [];
 }
-    
-
-
-function gfxTranslateRecurse(el,v) { // used internally
-    var l = gfxCoords(el);
-    for (var j=0; j<l.length; j++)
-	l[j].add(v);
-    for (var i=0; i<el.children.length; i++)
-	gfxTranslateRecurse(el.children[i], el.children[i].gfxdata.matrix ?  el.children[i].gfxdata.matrix.inverse().vectmultiply(v) : v);
-}
 
 function gfxTranslate(x,y) {
     var l = gfxCoords(dragTarget1);
-    if (l.length==0) return; // can this happen? TODO TEST
+    if (l.length==0) return; // can this happen?
     var mat = dragTarget1.gfxdata.cmatrix; // should already exist
     var u = mat.vectmultiply(l[0]);
-    mat = mat.inverse();
-    var v = mat.vectmultiply(new Vector([x*u[2]/u[3],-y*u[2]/u[3],0,0]));
-    var el = dragTarget1;
-    while (el && el != dragTarget) {
-	if (el.gfxdata.matrix) v = el.gfxdata.matrix.vectmultiply(v);
-	el=el.parentElement;
-    }
     if (!el) return; // shouldn't happen
-    gfxTranslateRecurse(el,v);
+    var mat = new Matrix(dragTarget.gfxdata.cmatrix);
+    var mati = mat.inverse();
+    mat.leftmultiply(new Matrix([[1,0,0,u[2]*x],[0,1,0,-u[2]*y],[0,0,1,0],[0,0,0,1]]));
+    mat.leftmultiply(mati);
+    if (dragTarget.gfxdata.matrix) mat.leftmultiply(dragTarget.gfxdata.matrix);
+    dragTarget.gfxdata.matrix=mat;
 }
 
 function gfxMouseMove(event) {
@@ -142,7 +130,7 @@ function gfxMouseMove(event) {
 	y=event.movementY*this.viewBox.baseVal.height/this.height.baseVal.value;
 	gfxTranslate(x,y);
 	gfxRecompute(dragTarget); // or this? rethink
-    } else if (this.classList.contains("M2SvgClickable")) {
+    } else if (this.classList.contains("M2SvgDraggable")) {
 	var x=event.movementX/this.width.baseVal.value;
 	var y=event.movementY/this.height.baseVal.value;
 
@@ -212,7 +200,7 @@ function gfxRecompute(el) {
 	    if (el.gfxdata.coords[j] instanceof Float32Array) {
 		var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.coords[j]);
 		if (u[2]/u[3]<=0) flag=true; else {
-		    var v=[u[0]*u[3]/u[2],-u[1]*u[3]/u[2]];
+		    var v=[u[0]/u[2],-u[1]/u[2]];
 		    coords.push(u);
 		    s+=v[0]+" "+v[1]+" ";
 		    distance+=u[2]/u[3];
@@ -262,8 +250,8 @@ function gfxRecompute(el) {
 			    for (var i=0; i<3; i++) light[i]-=c*w[i];
 			    if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
 				lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-				lightel2.setAttribute("x",light[0]*light0[3]/light[2]);
-				lightel2.setAttribute("y",-light[1]*light0[3]/light[2]);
+				lightel2.setAttribute("x",light[0]/light[2]);
+				lightel2.setAttribute("y",-light[1]/light[2]);
 				lightel2.setAttribute("z",4*origin.gfxdata.r/light[2]);
 			    }
 			}
@@ -274,13 +262,13 @@ function gfxRecompute(el) {
     else if (el.tagName=="line") {
 	var u1=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point1);
 	var u2=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point2);
-	var sc1 = u1[3]/u1[2];
-	var sc2 = u2[3]/u2[2];
-	if ((sc1<=0)||(sc2<=0)) el.style.display="none"; else {
+	var dist1 = u1[2]/u1[3];
+	var dist2 = u2[2]/u2[3];
+	if ((dist1<=0)||(dist2<=0)) el.style.display="none"; else {
 	    el.style.display="";
-	    var v1=[u1[0]*sc1,-u1[1]*sc1];
-	    var v2=[u2[0]*sc2,-u2[1]*sc2];
-	    el.gfxdata.distance=0.5*(u1[2]/u1[3]+u2[2]/u2[3]);
+	    var v1=[u1[0]/u1[2],-u1[1]/u1[2]];
+	    var v2=[u2[0]/u2[2],-u2[1]/u2[2]];
+	    el.gfxdata.distance=0.5*(dist1+dist2);
 	    el.setAttribute("x1",v1[0]);
 	    el.setAttribute("y1",v1[1]);
 	    el.setAttribute("x2",v2[0]);
@@ -292,9 +280,8 @@ function gfxRecompute(el) {
 	var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.point);
 	el.gfxdata.distance=u[2]/u[3];
 	if (el.gfxdata.distance<=0) el.style.display="none"; else {
-	    var sc = u[3]/u[2];
 	    el.style.display="";
-	    var v=[u[0]*sc,-u[1]*sc];
+	    var v=[u[0]/u[2],-u[1]/u[2]];
 	    el.setAttribute("x",v[0]);
 	    el.setAttribute("y",v[1]);
 	    // rescale font size
@@ -306,17 +293,16 @@ function gfxRecompute(el) {
 	el.gfxdata.pcenter = u; // in case someone needs it ... (light)
 	el.gfxdata.distance=u[2]/u[3];
 	if (el.gfxdata.distance<=0) el.style.display="none"; else {
-	    var sc=u[3]/u[2];
 	    el.style.display="";
-	    var v=[u[0]*sc,-u[1]*sc];
+	    var v=[u[0]/u[2],-u[1]/u[2]];
 	    el.setAttribute("cx",v[0]);
 	    el.setAttribute("cy",v[1]);
 	    // also, rescale radius
 	    if (el.tagName=="circle")
-		el.setAttribute("r", el.gfxdata.r*sc);
+		el.setAttribute("r", el.gfxdata.r/u[2]);
 	    else {
-		el.setAttribute("rx", el.gfxdata.rx*sc);
-		el.setAttribute("ry", el.gfxdata.ry*sc);
+		el.setAttribute("rx", el.gfxdata.rx/u[2]);
+		el.setAttribute("ry", el.gfxdata.ry/u[2]);
 	    }
 	}
     }
