@@ -19,7 +19,7 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "gList", "viewPort", "is3d", "distance", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
     "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "SizeX", "SizeY", "ViewPort",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
-    "Blur", "Static", "PathList", "Axes", "Margin", "Mesh",
+    "Blur", "Static", "PathList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG", "SVGElement"
     }
 
@@ -363,6 +363,9 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     args := deepSplice apply(select(keys full,key->svgLookup#?key), key -> svgLookup#key(full#key,g.cache.CurrentMatrix));
     if is3d g then args = args | deepSplice apply(select(keys full,key -> svg3dLookup#?key), key -> svg3dLookup#key full#key);
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
+    if g.?Draggable then args = args | {
+	"onmousedown" => "gfxMouseDownDrag.call(this,event)",
+	"class" => "M2SvgDraggable" };
     g.cache.SVGElement = style((class g).SVGElement args,full)
     )
 
@@ -512,7 +515,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	};
     if is3d g then (
 	ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
-	classTag = classTag | " M2SvgClickable";
+	classTag = classTag | " M2SvgDraggable";
 	);
     ss = append(ss,"class" => classTag);
     if axes =!= null then ss = append(ss, axes);
