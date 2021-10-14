@@ -98,8 +98,9 @@ GraphicsType List := (T,opts) -> (
 
 perspective = g -> (
     persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,-1/persp,1},{0,0,0,1}} -- output is {x,y,1-z/p,1}
-    -- note in particular that distance = 1-z/p = z' : w'
+    if instance(persp,Matrix) then persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
+    -- note in particular that distance = z-p *cannot* be extracted from this;
+    -- however, z/(1-z/p) is essentially inverse distance which is good enough for sorting purposes
 )
 
 viewPort = g -> (
@@ -122,7 +123,7 @@ distance = g -> (
 distance1 := method()
 distance1 GraphicsObject := x -> 0_RR
 
-scale := x -> 1/x_2
+scale := x -> 1/x_3
 project2d := x -> (scale x)*x^{0,1}
 project2d' := x -> (scale x)*vector {x_0,-x_1} -- annoying sign
 
@@ -173,7 +174,7 @@ viewPort1 Circle := g -> (
     )
 distance1 Circle := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    y_2/y_3
+    -y_2/y_3
     )
 
 Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
@@ -190,7 +191,7 @@ viewPort1 Ellipse := g -> (
     )
 distance1 Ellipse := g -> (
     y := g.cache.CurrentMatrix * g.Center;
-    y_2/y_3
+    -y_2/y_3
     )
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
@@ -223,7 +224,7 @@ viewPort1 Line := g -> (
 distance1 Line := g -> (
     p1 := g.cache.CurrentMatrix * g.Point1;
     p2 := g.cache.CurrentMatrix * g.Point1;
-    0.5*(p1_2/p1_3+p2_2/p2_3)
+    -0.5*(p1_2/p1_3+p2_2/p2_3)
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -290,6 +291,7 @@ jsString String := x -> "'" | x |"'"
 jsString Matrix := x -> "matrix(" | jsString entries x | ")"
 jsString Vector := x -> "vector(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
+jsString MutableList := x -> jsString toList x
 --jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 
@@ -338,17 +340,17 @@ svgLookup := hashTable { -- should be more systematic
     }
 
 svg3dLookup := hashTable { -- should be more systematic
-    symbol Center => x -> "data-center" => jsString x,
-    symbol Radius => x -> "data-r" => jsString x,
-    symbol RadiusX => x -> "data-rx" => jsString x,
-    symbol RadiusY => x -> "data-ry" => jsString x,
-    symbol PathList => x -> "data-coords" => jsString x,
-    symbol Points => x -> "data-coords" => jsString x,
-    symbol Point => x -> "data-point" => jsString x,
-    symbol Point1 => x -> "data-point1" => jsString x,
-    symbol Point2 => x -> "data-point2" => jsString x,
-    symbol OneSided => x -> "data-onesided" => jsString x,
-    symbol FontSize => x -> "data-fontsize" => jsString x,
+    symbol Center => ("data-coords",0),
+    symbol Radius => "data-r",
+    symbol RadiusX => "data-rx",
+    symbol RadiusY => "data-ry",
+    symbol PathList => "data-coords",
+    symbol Points => "data-coords",
+    symbol Point => ("data-coords",0),
+    symbol Point1 => ("data-coords",0),
+    symbol Point2 => ("data-coords",1),
+    symbol OneSided => "data-onesided",
+    symbol FontSize => "data-fontsize"
     }
 
 -- produces SVG element hypertext
@@ -361,7 +363,18 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     filter(g,l);
     full := new OptionTable from merge(g,g.cache,last);
     args := deepSplice apply(select(keys full,key->svgLookup#?key), key -> svgLookup#key(full#key,g.cache.CurrentMatrix));
-    if is3d g then args = args | deepSplice apply(select(keys full,key -> svg3dLookup#?key), key -> svg3dLookup#key full#key);
+--    if is3d g then args = args | deepSplice apply(select(keys full,key -> svg3dLookup#?key), key -> svg3dLookup#key full#key);
+    if is3d g then (
+	svg3dData := new MutableHashTable;
+	scan(keys full, key -> if svg3dLookup#?key then (
+		i := svg3dLookup#key;
+		if instance(i,String) then svg3dData#i=full#key else (
+		    if not svg3dData#?(i#0) then svg3dData#(i#0)=new MutableList;
+		     svg3dData#(i#0)#(i#1)=full#key;
+		     )
+		));
+	args = args | apply(pairs svg3dData,(k,v) -> k => jsString v);
+	);
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
     if g.?Draggable then args = args | {
 	"onmousedown" => "gfxMouseDownDrag.call(this,event)",
@@ -404,7 +417,7 @@ short GraphicsObject := g -> (
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
-    sum(s,x->(xx:=g.cache.CurrentMatrix*x;xx_2/xx_3)) / #s
+    -sum(s,x->(xx:=g.cache.CurrentMatrix*x;xx_2/xx_3)) / #s
     )
 distance1 GraphicsList := g -> (
     if #(g.Contents) == 0 then 0_RR else sum(g.Contents, distance) / #(g.Contents)
@@ -412,7 +425,7 @@ distance1 GraphicsList := g -> (
 GraphicsObject ? GraphicsObject := (x,y) -> (distance y) ? (distance x)
 distance1 GraphicsText := g -> (
     y := g.cache.CurrentMatrix*g.Point;
-    y_2/y_3
+    -y_2/y_3
     )
 
 graphicsIdCount := 0;
