@@ -194,7 +194,7 @@ function gfxRecompute(el) {
     // at the end of the day "cmatrix" is the *ordered* product over ancestors of matrices "matrix" (plus the leftmost perspective matrix "pmatrix"
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
-    el.gfxdata.coords3d=[]; // store just in case
+    el.gfxdata.coords3d=[];
     if (el.gfxdata.coords) {
 	var flag=false;
 	var distance=0;

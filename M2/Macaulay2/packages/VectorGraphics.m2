@@ -36,7 +36,7 @@ protect GraphicsId
 debug Core
 
 -- for now data-* need entering manually
-htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize"}
+htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize","data-names"}
 svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 
 GraphicsObject = new Type of HashTable -- ancestor type
@@ -89,6 +89,17 @@ gParse Vector := x -> (
      )
 gParse GraphicsObject := identity
 
+graphicsIdCount := 0;
+graphicsId := () -> (
+    graphicsIdCount=graphicsIdCount+1;
+    "Graphics_" | toString currentTime() | "_" | toString graphicsIdCount
+    )
+
+gVector = new WrapperType of Vector -- types are capitalized. also, should it be a GraphicsObject? 
+new gVector from List := (T,x) -> new T from new BasicList from {matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}), graphicsId() }
+new gVector from Sequence := (T,x) -> new T from toList x
+gParse gVector := identity -- what about the 3d flag?
+
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
@@ -124,8 +135,8 @@ distance = g -> (
 distance1 := method()
 distance1 GraphicsObject := x -> 0_RR
 
-project2d := x -> (1/x_3)*x^{0,1} -- retire
-project2d' := x -> (1/x_3)*vector {x_0,-x_1} -- annoying sign
+project2d := x -> (1/x_3)*x^{0,1} -- used for e.g. ViewPort
+project2d' := x -> (1/x_3)*vector {x_0,-x_1} -- annoying sign for actual svg coords
 
 updateGraphicsCache := g -> (
     g.cache.ViewPort = viewPort1 g; -- update the range
@@ -294,7 +305,7 @@ jsString Matrix := x -> "matrix(" | jsString entries x | ")"
 jsString Vector := x -> "vector(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString MutableList := x -> jsString toList x
---jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
+jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 
 updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,perspective matrix)
@@ -302,10 +313,13 @@ updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,perspective matrix)
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
 
+
+names := new MutableHashTable;
 svgLookup := hashTable { -- should be more systematic
     symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
     symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
     symbol Center => (x,m) -> (
+	if instance(x,gVector) then names#0=x#1; -- TODO thred-safely
 	x = project2d' (m*x);
 	"cx" => toString x_0,
 	"cy" => toString x_1
@@ -316,16 +330,19 @@ svgLookup := hashTable { -- should be more systematic
     symbol PathList => (x,m) -> "d" => demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d'(m*y),toString) else y)),
     symbol Points => (x,m) -> "points" => demark(" ", flatten apply(x, y -> apply(entries project2d'(m*y),toString))),
     symbol Point => (x,m) -> (
+	if instance(x,gVector) then names#0=x#1; -- TODO thred-safely
 	x = project2d' (m*x);
 	"x" => toString x_0,
 	"y" => toString x_1
 	),
     symbol Point1 => (x,m) -> (
+	if instance(x,gVector) then names#0=x#1; -- TODO thred-safely
 	x = project2d' (m*x);
 	"x1" => toString x_0,
-	"y1" => toString x_1
+	"y1" => toString x_1,
 	),
     symbol Point2 => (x,m) -> (
+	if instance(x,gVector) then names#1=x#1; -- TODO thred-safely
 	x = project2d' (m*x);
 	"x2" => toString x_0,
 	"y2" => toString x_1
@@ -364,8 +381,10 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     updateGraphicsCache g;
     filter(g,l);
     full := new OptionTable from merge(g,g.cache,last);
+    names = new MutableHashTable;
     args := deepSplice apply(select(keys full,key->svgLookup#?key), key -> svgLookup#key(full#key,g.cache.CurrentMatrix));
 --    if is3d g then args = args | deepSplice apply(select(keys full,key -> svg3dLookup#?key), key -> svg3dLookup#key full#key);
+    if #names > 0 then args = append(args,"data-names"=>jsString names);
     if is3d g then (
 	svg3dData := new MutableHashTable;
 	scan(keys full, key -> if svg3dLookup#?key then (
@@ -380,9 +399,7 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
 	args = args | apply(pairs svg3dData,(k,v) -> k => jsString v);
 	);
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
-    if g.?Draggable and g.Draggable then args = args | {
---	"onmousedown" => "gfxMouseDownDrag(event)",
-	"class" => "M2SvgDraggable" };
+    if g.?Draggable and g.Draggable then args = append(args, "class" => "M2SvgDraggable"); -- TODO what if there are other classes?
     g.cache.SVGElement = style((class g).SVGElement args,full)
     )
 
@@ -430,12 +447,6 @@ GraphicsObject ? GraphicsObject := (x,y) -> (distance y) ? (distance x)
 distance1 GraphicsText := g -> (
     y := g.cache.CurrentMatrix*g.Point;
     -y_2/y_3
-    )
-
-graphicsIdCount := 0;
-graphicsId := () -> (
-    graphicsIdCount=graphicsIdCount+1;
-    "Graphics_" | toString currentTime() | "_" | toString graphicsIdCount
     )
 
 -- defs
