@@ -123,9 +123,8 @@ distance = g -> (
 distance1 := method()
 distance1 GraphicsObject := x -> 0_RR
 
-scale := x -> 1/x_3
-project2d := x -> (scale x)*x^{0,1}
-project2d' := x -> (scale x)*vector {x_0,-x_1} -- annoying sign
+project2d := x -> (1/x_3)*x^{0,1} -- retire
+project2d' := x -> (1/x_3)*vector {x_0,-x_1} -- annoying sign
 
 updateGraphicsCache := g -> (
     g.cache.ViewPort = viewPort1 g; -- update the range
@@ -133,16 +132,16 @@ updateGraphicsCache := g -> (
     if g.?OneSided and g.OneSided then determineSide g;
     -- bit of a hack: 2d objects Circle, Ellipse get scaled in a 3d context
     if instance(g,Circle) then (
-	sc := scale(g.cache.CurrentMatrix*g.Center);
+	sc := (g.Center)_3/(g.cache.CurrentMatrix*g.Center)_3;
 	g.cache.ScaledRadius=max(0,g.Radius*sc);
 	) else if instance(g,Ellipse) then (
-	sc = scale(g.cache.CurrentMatrix*g.Center);
+	sc = (g.Center)_3/(g.cache.CurrentMatrix*g.Center)_3;
 	g.cache.ScaledRadiusX=max(0,g.RadiusX*sc);
 	g.cache.ScaledRadiusY=max(0,g.RadiusY*sc);
-	) else if instance(g,GraphicsText) then ( -- same for GraphicsText
+	) else if instance(g,GraphicsText) or instance(g,GraphicsHtml) then ( -- same for GraphicsText
 	-- choose font size
 	f := if g.?FontSize then g.FontSize else 14.;
-	sc = scale(g.cache.CurrentMatrix*g.Point);
+	sc = (g.Point)_3/(g.cache.CurrentMatrix*g.Point)_3;
 	f = max(0,f*sc);
 	g.cache#"font-size"= toString f|"px";
 	if instance(g,GraphicsHtml) then ( -- hack
@@ -167,7 +166,8 @@ Circle = new GraphicsType of GraphicsObject from ( "circle",
     )
 viewPort1 Circle := g -> (
     p := g.cache.CurrentMatrix * g.Center;
-    r:=g.Radius*(scale p);
+    sc := (g.Center)_3/p_3;
+    r:=g.Radius*sc; -- lame
     p=project2d p;
     r = vector {r,r};
     { p - r, p + r }
@@ -183,8 +183,8 @@ Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
     )
 viewPort1 Ellipse := g -> (
     p := g.cache.CurrentMatrix * g.Center;
-    sc := scale p;
-    rx:=g.RadiusX*sc; ry:=g.RadiusY*sc;
+    sc := (g.Center)_3/p_3;
+    rx:=g.RadiusX*sc; ry:=g.RadiusY*sc; -- lame
     p=project2d p;
     r := vector {rx,ry};
     { p - r, p + r }
@@ -201,7 +201,8 @@ GraphicsText = new GraphicsType of GraphicsObject from ( "text",
 viewPort1 GraphicsText := g -> (
     f := if g.?FontSize then g.FontSize else 14.;
     p := g.cache.CurrentMatrix * g.Point;
-    f=f*scale p;
+    sc := (g.Point)_3/p_3;
+    f=f*sc;
     p=project2d p;
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
     pp := p + vector {
@@ -376,8 +377,8 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
 	args = args | apply(pairs svg3dData,(k,v) -> k => jsString v);
 	);
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
-    if g.?Draggable then args = args | {
-	"onmousedown" => "gfxMouseDownDrag.call(this,event)",
+    if g.?Draggable and g.Draggable then args = args | {
+--	"onmousedown" => "gfxMouseDownDrag(event)",
 	"class" => "M2SvgDraggable" };
     g.cache.SVGElement = style((class g).SVGElement args,full)
     )
@@ -526,8 +527,8 @@ new SVG from GraphicsObject := (S,g) -> (
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
 	};
+    ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TEMP?
     if is3d g then (
-	ss = append(ss, "onmousedown" => "gfxMouseDown.call(this,event)");
 	classTag = classTag | " M2SvgDraggable";
 	);
     ss = append(ss,"class" => classTag);
@@ -543,7 +544,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	GraphicsList.SVGElement {
 	    "transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
 	    "class" => "gfxauto",
-	    "onclick" => "gfxToggleRotation.call(this,event)",
+	    "onclick" => "gfxToggleRotation(event)",
 	    Circle.SVGElement { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
 	    Polygon.SVGElement { "class" => "gfxautoplay", "points" => "0.3,0.25 0.8,0.5 0.3,0.75", "style" => "stroke:none; fill:black" },
 	    Line.SVGElement { "class" => "gfxautostop", "x1" => "0.3", "y1" => "0.25", "x2" => "0.3", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },

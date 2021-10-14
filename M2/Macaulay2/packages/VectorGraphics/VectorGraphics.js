@@ -105,7 +105,7 @@ function gfxTranslate(x,y) { // TODO: add z
     var r = l[i];
     if (i>=l.length) return; // can this happen?
     var mat = dragTarget1.gfxdata.cmatrix; // should already exist
-    var u = mat.vectmultiply(r);    
+    var u = mat.vectmultiply(r);
     var mati = mat.inverse();
     var t = mati.vectmultiply(new Vector([x,-y,0,0]));
     var gam = -t[3]; // often but not always zero
@@ -122,7 +122,7 @@ function gfxTranslate(x,y) { // TODO: add z
 	}
         el=el.parentElement;
     }
-    if (!el) return; // shouldn't happen    
+    if (!el) return; // shouldn't happen
     if (dragTarget.gfxdata.matrix) mat.leftmultiply(dragTarget.gfxdata.matrix);
     dragTarget.gfxdata.matrix=mat;
 }
@@ -201,42 +201,41 @@ function gfxRecompute(el) {
     // at the end of the day "cmatrix" is the *ordered* product over ancestors of matrices "matrix" (plus the leftmost perspective matrix "pmatrix"
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
-    var coords=[];
-    var coords4d=[];
-    var distance=0;
-    var flag=false;
+    el.gfxdata.coords3d=[]; // store just in case
     if (el.gfxdata.coords) {
-	for (var j=0; j<el.gfxdata.coords.length; j++) if (el.gfxdata.coords[j] instanceof Float32Array) {
-	    var u=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.coords[j]);
-	    if (u[3]<=0) flag=true; else {
-		coords4d.push(u);
+	var flag=false;
+	var distance=0;
+	el.gfxdata.coords3d = el.gfxdata.coords.map ( c => { if (c instanceof Float32Array) {
+	    var u=el.gfxdata.cmatrix.vectmultiply(c);
+	    var scalei = u[3]/c[3]; // makes certain assumptions on form of cmatrix
+	    if (scalei<=0) flag=true; else { // behind viewer
+		el.gfxdata.scale=1/scalei; // only needs to be done once, really
 		var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3]];
-		coords.push(v);
-		distance+=v[2];
+		distance+=v[2]; return v;
 	    }
-	    el.gfxdata.distance=distance/coords.length;
-	} else coords.push(el.gfxdata.coords[j]); // not great TODO better
+	} else return c; } );
+	if (flag) {
+	    el.style.display="none";
+	    return;
+	}
+	el.gfxdata.distance=distance/el.gfxdata.coords.length;
     }
-    if (flag) {
-	el.style.display="none";
-	return;
-    } else el.style.display="";
-    
+    el.style.display="";
     if ((el.tagName=="polyline")||(el.tagName=="polygon")||(el.tagName=="path")) {
 	// parse path
 	var s = "";
-	for (var j=0; j<coords.length; j++)
-	    if (Array.isArray(coords[j]))
-		s+=coords[j][0]+" "+coords[j][1]+" ";
+	for (var j=0; j<el.gfxdata.coords3d.length; j++)
+	    if (Array.isArray(el.gfxdata.coords3d[j]))
+		s+=el.gfxdata.coords3d[j][0]+" "+el.gfxdata.coords3d[j][1]+" ";
 	else
-	    s+=coords[j]; // eww
+	    s+=el.gfxdata.coords3d[j]; // eww
 	    // rewrite "d" or "points"
 	    if (el.tagName=="path") el.setAttribute("d",s); else el.setAttribute("points",s);
-	    if (coords.length>2) {
+	    if (el.gfxdata.coords3d.length>2) {
 		var u=[],v=[];
-		for (var i=0; i<3; i++) { // TODO RECHECK probably use coords4d instead
-		    u.push(coords[1][i]/coords[1][3]-coords[0][i]/coords[0][3]);
-		    v.push(coords[2][i]/coords[2][3]-coords[0][i]/coords[0][3]);
+		for (var i=0; i<3; i++) { // TODO RECHECK probably use 4d coords instead
+		    u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i]);
+		    v.push(el.gfxdata.coords3d[2][i]-el.gfxdata.coords3d[0][i]);
 		}
 		var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
 		// visibility
@@ -247,7 +246,7 @@ function gfxRecompute(el) {
 		else
 		    w=[-w[0],-w[1],-w[2]];
 		el.style.visibility="visible";
-		// lighting TODO RECHECK
+		// lighting REDO
 		var lightname = el.getAttribute("filter");
 		if (lightname) {
 		    lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
@@ -259,46 +258,43 @@ function gfxRecompute(el) {
 			    // move the center of the light to its mirror image in the plane of the polygon
 			    //var origin=document.getElementById(lightel2.gfxdata.origin);
 			    var origin=lightel2.gfxdata.origin; // eval acts as getElementById
-			    if (!origin.gfxdata.coords4d) gfxRecompute(origin); // hopefully won't create infinite loops
-			    var light0 = new Float32Array(origin.gfxdata.coords4d[0]); // phew
-			    var light=[];
-			    for (var i=0; i<3; i++)
-				light.push(light0[i]/light0[3]);
-			    var sp = w[0]*(light[0]-coords[0][0]/coords[0][3])+w[1]*(light[1]-coords[0][1]/coords[0][3])+w[2]*(light[2]-coords[0][2]/coords[0][3]);
+			    if (!origin.gfxdata.coords3d) gfxRecompute(origin); // hopefully won't create infinite loops
+			    var light = origin.gfxdata.coords3d[0]; // phew
+			    var sp = w[0]*(light[0]-el.gfxdata.coords3d[0][0])+w[1]*(light[1]-el.gfxdata.coords3d[0][1])+w[2]*(light[2]-el.gfxdata.coords3d[0][2]);
 			    var c = 2*sp/w2;
 			    for (var i=0; i<3; i++) light[i]-=c*w[i];
 			    if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
 				lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-				lightel2.setAttribute("x",light[0]/light[2]);
-				lightel2.setAttribute("y",-light[1]/light[2]);
-				lightel2.setAttribute("z",4*origin.gfxdata.r/light[2]);
+				lightel2.setAttribute("x",light[0]);
+				lightel2.setAttribute("y",-light[1]);
+				lightel2.setAttribute("z",4*origin.gfxdata.r); // REDO
 			    }
 			}
 		}
 	    }
 	}
     else if (el.tagName=="line") {
-	    el.setAttribute("x1",coords[0][0]);
-	    el.setAttribute("y1",coords[0][1]);
-	    el.setAttribute("x2",coords[1][0]);
-	    el.setAttribute("y2",coords[1][1]);
+	    el.setAttribute("x1",el.gfxdata.coords3d[0][0]);
+	    el.setAttribute("y1",el.gfxdata.coords3d[0][1]);
+	    el.setAttribute("x2",el.gfxdata.coords3d[1][0]);
+	    el.setAttribute("y2",el.gfxdata.coords3d[1][1]);
     }
     else if ((el.tagName=="text")||(el.tagName=="foreignObject")) {
 	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=14;
-	el.setAttribute("x",coords[0][0]);
-	el.setAttribute("y",coords[0][1]);
+	el.setAttribute("x",el.gfxdata.coords3d[0][0]);
+	el.setAttribute("y",el.gfxdata.coords3d[0][1]);
 	// rescale font size
-	el.style.fontSize = el.gfxdata.fontsize/coords4d[0][3]+"px"; // chrome doesn't mind absence of units but firefox does
+	el.style.fontSize = el.gfxdata.fontsize*el.gfxdata.scale+"px"; // chrome doesn't mind absence of units but firefox does
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
-	    el.setAttribute("cx",coords[0][0]);
-	    el.setAttribute("cy",coords[0][1]);
+	    el.setAttribute("cx",el.gfxdata.coords3d[0][0]);
+	    el.setAttribute("cy",el.gfxdata.coords3d[0][1]);
 	    // also, rescale radius
 	    if (el.tagName=="circle")
-		el.setAttribute("r", el.gfxdata.r/coords4d[0][3]);
+		el.setAttribute("r", el.gfxdata.r*el.gfxdata.scale);
 	    else {
-		el.setAttribute("rx", el.gfxdata.rx/coords4d[0][3]);
-		el.setAttribute("ry", el.gfxdata.ry/coords4d[0][3]);
+		el.setAttribute("rx", el.gfxdata.rx*el.gfxdata.scale);
+		el.setAttribute("ry", el.gfxdata.ry*el.gfxdata.scale);
 	    }
     }
     else if ((el.tagName=="svg")||(el.tagName=="g")) {
