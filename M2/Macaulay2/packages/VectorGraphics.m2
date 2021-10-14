@@ -44,6 +44,7 @@ GraphicsObject = new Type of HashTable -- ancestor type
 new GraphicsObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Graphics object should have a cache
 new GraphicsObject := T -> new T from {};
 new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
+GraphicsObject ++ HashTable :=
 GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,
     (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
     ) -- cf similar method for OptionTable
@@ -69,9 +70,9 @@ GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opt
 
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
-gParseFlag := false;
+gParseHash := new MutableHashTable; -- TODO thread-safely
 gParse := method(Dispatch=>Thing)
-gParse Sequence := x -> gParse vector(toList x)
+gParse Sequence := x -> gParse vector toList x
 gParse VisibleList := x -> apply(x,gParse)
 gParse HashTable := x -> applyValues(x,gParse)
 gParse CacheTable := identity
@@ -84,16 +85,16 @@ gParse Matrix := x -> (
 gParse Vector := x -> (
     if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
     if rank class x === 2 then x || vector {0,1.} else (
-	 gParseFlag=true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
+     gParseHash.Is3d = true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
      )
 gParse GraphicsObject := identity
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
-    gParseFlag = false;
+    gParseHash = new MutableHashTable;
     temp := gParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
-    new T from (if gParseFlag then append(temp,symbol Is3d => true) else temp)
+    (new T from temp) ++ gParseHash
 )
 
 perspective = g -> (
