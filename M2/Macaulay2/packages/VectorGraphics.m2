@@ -369,7 +369,9 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
 	svg3dData := new MutableHashTable;
 	scan(keys full, key -> if svg3dLookup#?key then (
 		i := svg3dLookup#key;
-		if instance(i,String) then svg3dData#i=full#key else (
+		if instance(i,String) then (
+		    svg3dData#i = if key === symbol PathList then select(full#key,x->instance(x,Vector)) else full#key; -- annoying special case
+		    ) else (
 		    if not svg3dData#?(i#0) then svg3dData#(i#0)=new MutableList;
 		     svg3dData#(i#0)#(i#1)=full#key;
 		     )

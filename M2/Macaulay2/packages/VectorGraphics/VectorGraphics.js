@@ -67,9 +67,9 @@ window.gfxMouseDown = function (event) {
     if (!el.onmouseup) gfxInitMouse(el); // weak
     mouseDown=true;
     el1=event.target; // determine if we're dragging
-    while(el1 && !el1.classList.contains("M2SvgDraggable"))
+    while(el1 && el1.tagName!="svg" && !el1.classList.contains("M2SvgDraggable"))
  	el1=el1.parentElement;
-    dragTarget = el1==el ? null : event.target;
+    dragTarget = !el1 || el1.tagName=="svg" ? null : event.target;
 
     event.preventDefault();
     event.stopPropagation();
@@ -106,7 +106,7 @@ function gfxTranslate(x,y) { // TODO: add z. but better distinguish 2d vs 3d
     for (i=0; i<3; i++) t[i]=cf*(gam*r[i]/r[3]+t[i]);
     var mat = new Matrix([[1,0,0,t[0]],[0,1,0,t[1]],[0,0,1,t[2]],[0,0,0,1]]);
     var el = dragTarget;
-    while (el && !el.classList.contains("M2SvgDraggable")) { // capitalization issues?
+    while (el && !el.classList.contains("M2SvgDraggable")) {
 	if (el.gfxdata.matrix) { // painful: conjugate the translate matrix by rotation of that element
 	    var mat1 = el.gfxdata.matrix.inverse();
 	    mat1.leftmultiply(mat);
@@ -216,56 +216,68 @@ function gfxRecompute(el) {
     el.style.display="";
     if ((el.tagName=="polyline")||(el.tagName=="polygon")||(el.tagName=="path")) {
 	// parse path
-	var s = "";
-	for (var j=0; j<el.gfxdata.coords3d.length; j++)
-	    if (Array.isArray(el.gfxdata.coords3d[j]))
+	if (el.tagName=="path") { // annoying
+	    var path = el.getAttribute("d").split(" "); // for lack of better
+	    var j=0;
+	    var s = "";
+	    for (var i=0; i<path.length; i++)
+		if (path[i] != "") {
+		    if ( path[i] >= "A" && path[i] <= "Z" ) s+=path[i]+" "; else
+		    {
+			s+=el.gfxdata.coords3d[j][0]+" "+el.gfxdata.coords3d[j][1]+" ";
+			j++;
+			i++;
+		    }
+		}
+	    el.setAttribute("d",s);
+	} else {
+	    var s = "";
+	    for (var j=0; j<el.gfxdata.coords3d.length; j++)
 		s+=el.gfxdata.coords3d[j][0]+" "+el.gfxdata.coords3d[j][1]+" ";
-	else
-	    s+=el.gfxdata.coords3d[j]; // eww
-	    // rewrite "d" or "points"
-	    if (el.tagName=="path") el.setAttribute("d",s); else el.setAttribute("points",s);
-	    if (el.gfxdata.coords3d.length>2) {
-		var u=[],v=[];
-		for (var i=0; i<3; i++) { // TODO RECHECK probably use 4d coords instead
-		    u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i]);
-		    v.push(el.gfxdata.coords3d[2][i]-el.gfxdata.coords3d[0][i]);
-		}
-		var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
-		// visibility
-		if (w[2]<0) {
-		    if (el.gfxdata.onesided)
-			el.style.visibility="hidden"; return;
-		}
-		else
-		    w=[-w[0],-w[1],-w[2]];
-		el.style.visibility="visible";
-		// lighting REDO
-		var lightname = el.getAttribute("filter");
-		if (lightname) {
-		    lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
-		    var lightel=document.getElementById(lightname);
-		    var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
-		    for (var j=0; j<lightel.children.length; j++)
-			if (lightel.children[j].tagName == "feSpecularLighting") {
-			    var lightel2=lightel.children[j].firstElementChild; // eww
-			    // move the center of the light to its mirror image in the plane of the polygon
-			    //var origin=document.getElementById(lightel2.gfxdata.origin);
-			    var origin=lightel2.gfxdata.origin; // eval acts as getElementById
-			    if (!origin.gfxdata.coords3d) gfxRecompute(origin); // hopefully won't create infinite loops
-			    var light = origin.gfxdata.coords3d[0]; // phew
-			    var sp = w[0]*(light[0]-el.gfxdata.coords3d[0][0])+w[1]*(light[1]-el.gfxdata.coords3d[0][1])+w[2]*(light[2]-el.gfxdata.coords3d[0][2]);
-			    var c = 2*sp/w2;
-			    for (var i=0; i<3; i++) light[i]-=c*w[i];
-			    if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
-				lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-				lightel2.setAttribute("x",light[0]);
-				lightel2.setAttribute("y",-light[1]);
-				lightel2.setAttribute("z",4*origin.gfxdata.r); // REDO
-			    }
+	    el.setAttribute("points",s);
+	}
+	if (el.gfxdata.coords3d.length>2) {
+	    var u=[],v=[];
+	    for (var i=0; i<3; i++) { // TODO RECHECK probably use 4d coords instead
+		u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i]);
+		v.push(el.gfxdata.coords3d[2][i]-el.gfxdata.coords3d[0][i]);
+	    }
+	    var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
+	    // visibility
+	    if (w[2]<0) {
+		if (el.gfxdata.onesided)
+		    el.style.visibility="hidden"; return;
+	    }
+	    else
+		w=[-w[0],-w[1],-w[2]];
+	    el.style.visibility="visible";
+	    // lighting REDO
+	    var lightname = el.getAttribute("filter");
+	    if (lightname) {
+		lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
+		var lightel=document.getElementById(lightname);
+		var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
+		for (var j=0; j<lightel.children.length; j++)
+		    if (lightel.children[j].tagName == "feSpecularLighting") {
+			var lightel2=lightel.children[j].firstElementChild; // eww
+			// move the center of the light to its mirror image in the plane of the polygon
+			//var origin=document.getElementById(lightel2.gfxdata.origin);
+			var origin=lightel2.gfxdata.origin; // eval acts as getElementById
+			if (!origin.gfxdata.coords3d) gfxRecompute(origin); // hopefully won't create infinite loops
+			var light = origin.gfxdata.coords3d[0]; // phew
+			var sp = w[0]*(light[0]-el.gfxdata.coords3d[0][0])+w[1]*(light[1]-el.gfxdata.coords3d[0][1])+w[2]*(light[2]-el.gfxdata.coords3d[0][2]);
+			var c = 2*sp/w2;
+			for (var i=0; i<3; i++) light[i]-=c*w[i];
+			if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
+			    lightel.children[j].setAttribute("lighting-color",origin.style.fill);
+			    lightel2.setAttribute("x",light[0]);
+			    lightel2.setAttribute("y",-light[1]);
+			    lightel2.setAttribute("z",4*origin.gfxdata.r); // REDO
 			}
-		}
+		    }
 	    }
 	}
+    }
     else if (el.tagName=="line") {
 	    el.setAttribute("x1",el.gfxdata.coords3d[0][0]);
 	    el.setAttribute("y1",el.gfxdata.coords3d[0][1]);
@@ -328,11 +340,11 @@ function checkData(el) {
 	for (var i=0; i<pts.length; i++)
 	    el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
     }
-    else if (el.tagName=="path") {
-	var path = el.getAttribute("d").split(" "); // for lack of better
+    else if (el.tagName=="path") { // annoying special case
+	var path = el.getAttribute("d").split(" "); // for lack of better	
 	for (var i=0; i<path.length; i++)
-	    if ( path[i] >= "A" && path[i] <= "Z" ) el.gfxdata.coords.push(path[i]);
-	else {
+	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
+	{
 	    el.gfxdata.coords.push(mat.vectmultiply(vector([+path[i],-path[i+1],0,1])));
 	    i++;
 	}
