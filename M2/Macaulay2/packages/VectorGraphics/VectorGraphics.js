@@ -27,25 +27,26 @@ window.gfxToggleRotation = function(event) {
     //    this.blur();
     //    var svgel=document.getElementById(svgid);
     //    if (!svgel) return;
-    var svgel = this.parentElement; // weak but works
+    var el = event.currentTarget;
+    var svgel = el.parentElement; // weak but works
     if (!svgel.gfxdata) gfxInitData(svgel);
-    if (!this.ondblclick) this.ondblclick= function(event) { event.stopPropagation(); }; // weak
+    if (!el.ondblclick) el.ondblclick= function(event) { event.stopPropagation(); }; // weak
     
     // the perspective matrix should *always* exist
 
     if (!svgel.gfxdata.cmatrix) svgel.gfxdata.cmatrix = new Matrix(svgel.gfxdata.pmatrix);
-    if (this.classList.contains("active")) {
-	clearInterval(this.intervalId);
-	this.classList.remove("active");
+    if (el.classList.contains("active")) {
+	clearInterval(el.intervalId);
+	el.classList.remove("active");
     }
     else
     {
-	this.classList.add("active");
-	this.intervalId=setInterval(() => {
+	el.classList.add("active");
+	el.intervalId=setInterval(() => {
 	    if ((!svgel)||(!document.body.contains(svgel))) {
 		svgel=null; // for garbage collecting
-		this.classList.remove("active");
-		clearInterval(this.intervalId);
+		el.classList.remove("active");
+		clearInterval(el.intervalId);
 	    } else {
 		gfxAutoRotate(svgel);
 		gfxRecompute(svgel);
@@ -58,30 +59,22 @@ window.gfxToggleRotation = function(event) {
 var mouseDown=false;
 
 var dragTarget=null; // what's being dragged
-var dragTarget1=null; // the particular piece one clicked
 
 // mouse handling
 window.gfxMouseDown = function (event) {
-    if (!this.gfxdata) gfxInitData(this);
-    if (!this.onmouseup) gfxInitMouse(this); // weak
+    var el = event.currentTarget;
+    if (!el.gfxdata) gfxInitData(el);
+    if (!el.onmouseup) gfxInitMouse(el); // weak
     mouseDown=true;
+    el1=event.target; // determine if we're dragging
+    while(el1 && !el1.classList.contains("M2SvgDraggable"))
+ 	el1=el1.parentElement;
+    dragTarget = el1==el ? null : event.target;
+
     event.preventDefault();
     event.stopPropagation();
 }
 
-window.gfxMouseDownDrag = function (event) {
-    el = this;
-    while(el && el.tagName!="svg") // capitalization issues?
-	el=el.parentElement;
-    if (!el) return;
-    dragTarget=this; // dragTarget=event.currentTarget;
-    dragTarget1=event.target;
-    if (!el.gfxdata) gfxInitData(el);
-    if (!el.onmouseup) gfxInitMouse(el); // weak
-    mouseDown=true;
-    event.preventDefault();
-    event.stopPropagation();
-}
 
 // TODO merge next two
 function gfxMouseUp(event) {
@@ -97,14 +90,14 @@ function gfxMouseLeave(event) {
 }
 
 
-function gfxTranslate(x,y) { // TODO: add z
+function gfxTranslate(x,y) { // TODO: add z. but better distinguish 2d vs 3d
     // check if initialized??? TODO
-    var l = dragTarget1.gfxdata.coords;
+    var l = dragTarget.gfxdata.coords;
     var i=0;
     while (i<l.length && ! (l[i] instanceof Float32Array)) i++;
     var r = l[i];
     if (i>=l.length) return; // can this happen?
-    var mat = dragTarget1.gfxdata.cmatrix; // should already exist
+    var mat = dragTarget.gfxdata.cmatrix; // should already exist
     var u = mat.vectmultiply(r);
     var mati = mat.inverse();
     var t = mati.vectmultiply(new Vector([x,-y,0,0]));
@@ -112,8 +105,8 @@ function gfxTranslate(x,y) { // TODO: add z
     var cf = u[3]/(gam*u[3]+r[3]);
     for (i=0; i<3; i++) t[i]=cf*(gam*r[i]/r[3]+t[i]);
     var mat = new Matrix([[1,0,0,t[0]],[0,1,0,t[1]],[0,0,1,t[2]],[0,0,0,1]]);
-    var el = dragTarget1;
-    while (el && el != dragTarget) {
+    var el = dragTarget;
+    while (el && !el.classList.contains("M2SvgDraggable")) { // capitalization issues?
 	if (el.gfxdata.matrix) { // painful: conjugate the translate matrix by rotation of that element
 	    var mat1 = el.gfxdata.matrix.inverse();
 	    mat1.leftmultiply(mat);
@@ -123,8 +116,9 @@ function gfxTranslate(x,y) { // TODO: add z
         el=el.parentElement;
     }
     if (!el) return; // shouldn't happen
-    if (dragTarget.gfxdata.matrix) mat.leftmultiply(dragTarget.gfxdata.matrix);
-    dragTarget.gfxdata.matrix=mat;
+    if (el.gfxdata.matrix) mat.leftmultiply(el.gfxdata.matrix);
+    el.gfxdata.matrix=mat;
+    gfxRecompute(el);
 }
 
 function gfxMouseMove(event) {
@@ -138,7 +132,6 @@ function gfxMouseMove(event) {
 	x=event.movementX*this.viewBox.baseVal.width/this.width.baseVal.value;
 	y=event.movementY*this.viewBox.baseVal.height/this.height.baseVal.value;
 	gfxTranslate(x,y);
-	gfxRecompute(dragTarget); // or this? rethink
     } else if (this.classList.contains("M2SvgDraggable")) {
 	var x=event.movementX/this.width.baseVal.value;
 	var y=event.movementY/this.height.baseVal.value;

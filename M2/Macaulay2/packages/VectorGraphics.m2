@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.93",
+        Version => "0.95",
         Date => "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
@@ -527,7 +527,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
 	};
-    ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TEMP?
+    ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TEMP? what if page doesn't have VG.js?
     if is3d g then (
 	classTag = classTag | " M2SvgDraggable";
 	);
