@@ -10,7 +10,7 @@ function gfxInitData(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if (el.classList.contains("gfxauto")) return;
     if (!el.gfxdata) {
-	el.gfxdata={};
+	el.gfxdata={}; el.gfxdata.gcoords3d={};
 	for (var v in el.dataset)
 	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
 	// just in case, start the computation of matrices... (see gfxRecompute() for details)
@@ -118,7 +118,7 @@ function gfxTranslate(x,y) { // TODO: add z. but better distinguish 2d vs 3d
     if (!el) return; // shouldn't happen
     if (el.gfxdata.matrix) mat.leftmultiply(el.gfxdata.matrix);
     el.gfxdata.matrix=mat;
-    gfxRecompute(el);
+    gfxRecomputeCoords(el,true);
 }
 
 function gfxMouseMove(event) {
@@ -132,6 +132,7 @@ function gfxMouseMove(event) {
 	x=event.movementX*this.viewBox.baseVal.width/this.width.baseVal.value;
 	y=event.movementY*this.viewBox.baseVal.height/this.height.baseVal.value;
 	gfxTranslate(x,y);
+	gfxRecompute(this);
     } else if (this.classList.contains("M2SvgDraggable")) {
 	var x=event.movementX/this.width.baseVal.value;
 	var y=event.movementY/this.height.baseVal.value;
@@ -182,6 +183,27 @@ function gfxRotate(el,mat) {
     if (!el.gfxdata.matrix) el.gfxdata.matrix = new Matrix(mat); else el.gfxdata.matrix.leftmultiply(mat);
 }
 
+function gfxRecomputeCoords(el,ignore) { // ignore = ignore previously computed gcoords3d
+    if (!el.gfxdata.coords || el.gfxdata.coords.length == 0) return;
+    var flag=false;
+    var distance=0;
+    el.gfxdata.coords3d = el.gfxdata.coords.map ( (c,i) => {
+	var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
+	if (j && !ignore && el.ownerSVGElement.gfxdata.gcoords3d[j]) {
+	    return el.ownerSVGElement.gfxdata.gcoords3d[j];
+	} else {
+	    var u=el.gfxdata.cmatrix.vectmultiply(c);
+	    var scalei = u[3]/c[3];	// makes certain assumptions on form of cmatrix
+	    if (scalei<=0) flag=true; else { // behind viewer	    
+		var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first 3 are actual 3d coordinates
+		if (j) el.ownerSVGElement.gfxdata.gcoords3d[j] = v;
+		distance+=v[2];
+		return v;
+	    }}});
+    el.gfxdata.distance=distance/el.gfxdata.coords.length;
+    el.style.display=flag?"none":"";
+}
+
 function gfxRecompute(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return; // gadgets and non svg aren't affected by transformations
     var mat;
@@ -194,26 +216,8 @@ function gfxRecompute(el) {
     // at the end of the day "cmatrix" is the *ordered* product over ancestors of matrices "matrix" (plus the leftmost perspective matrix "pmatrix"
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
-    el.gfxdata.coords3d=[];
-    if (el.gfxdata.coords) {
-	var flag=false;
-	var distance=0;
-	el.gfxdata.coords3d = el.gfxdata.coords.map ( c => { if (c instanceof Float32Array) {
-	    var u=el.gfxdata.cmatrix.vectmultiply(c);
-	    var scalei = u[3]/c[3]; // makes certain assumptions on form of cmatrix
-	    if (scalei<=0) flag=true; else { // behind viewer
-		el.gfxdata.scale=1/scalei; // only needs to be done once, really
-		var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3]];
-		distance+=v[2]; return v;
-	    }
-	} else return c; } );
-	if (flag) {
-	    el.style.display="none";
-	    return;
-	}
-	el.gfxdata.distance=distance/el.gfxdata.coords.length;
-    }
-    el.style.display="";
+    gfxRecomputeCoords(el,false);
+    
     if ((el.tagName=="polyline")||(el.tagName=="polygon")||(el.tagName=="path")) {
 	// parse path
 	if (el.tagName=="path") { // annoying
@@ -289,17 +293,17 @@ function gfxRecompute(el) {
 	el.setAttribute("x",el.gfxdata.coords3d[0][0]);
 	el.setAttribute("y",el.gfxdata.coords3d[0][1]);
 	// rescale font size
-	el.style.fontSize = el.gfxdata.fontsize*el.gfxdata.scale+"px"; // chrome doesn't mind absence of units but firefox does
+	el.style.fontSize = el.gfxdata.fontsize*el.gfxdata.coords3d[0][3]+"px"; // chrome doesn't mind absence of units but firefox does
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
 	    el.setAttribute("cx",el.gfxdata.coords3d[0][0]);
 	    el.setAttribute("cy",el.gfxdata.coords3d[0][1]);
 	    // also, rescale radius
 	    if (el.tagName=="circle")
-		el.setAttribute("r", el.gfxdata.r*el.gfxdata.scale);
+		el.setAttribute("r", el.gfxdata.r*el.gfxdata.coords3d[0][3]);
 	    else {
-		el.setAttribute("rx", el.gfxdata.rx*el.gfxdata.scale);
-		el.setAttribute("ry", el.gfxdata.ry*el.gfxdata.scale);
+		el.setAttribute("rx", el.gfxdata.rx*el.gfxdata.coords3d[0][3]);
+		el.setAttribute("ry", el.gfxdata.ry*el.gfxdata.coords3d[0][3]);
 	    }
     }
     else if ((el.tagName=="svg")||(el.tagName=="g")) {
@@ -333,15 +337,16 @@ function gfxReorder(el) {
 function checkData(el) {
     if (el.gfxdata.coords) return;
     var mat = el.gfxdata.cmatrix.inverse();
-    el.gfxdata.coords = [];
 
     if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
 	var pts = el.points;
+	el.gfxdata.coords = [];
 	for (var i=0; i<pts.length; i++)
 	    el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
     }
     else if (el.tagName=="path") { // annoying special case
 	var path = el.getAttribute("d").split(" "); // for lack of better	
+	el.gfxdata.coords = [];
 	for (var i=0; i<path.length; i++)
 	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
 	{
@@ -350,23 +355,23 @@ function checkData(el) {
 	}
     }
     else if (el.tagName=="line") {
-	el.gfxdata.coords.push(mat.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,0,1])),
-			       mat.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,0,1])));
+	el.gfxdata.coords=[mat.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,0,1])),
+			   mat.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,0,1]))];
     }
     else if (el.tagName=="text") {
-	el.gfxdata.coords.push(mat.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,0,1]))); // weird
+	el.gfxdata.coords=[mat.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,0,1]))]; // weird
 	el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="foreignObject") {
-	el.gfxdata.coords.push(mat.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,0,1])));
+	el.gfxdata.coords=[mat.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,0,1]))];
 	el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="circle") {
-	el.gfxdata.coords.push(mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1])));
+	el.gfxdata.coords=[mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
 	el.gfxdata.r=el.r.baseVal.value;
     }
     else if (el.tagName=="ellipse") {
-	el.gfxdata.coords.push(mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1])));
+	el.gfxdata.coords=[mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
 	el.gfxdata.rx=el.rx.baseVal.value;
 	el.gfxdata.ry=el.ry.baseVal.value;
     }

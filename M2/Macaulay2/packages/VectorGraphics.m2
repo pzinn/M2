@@ -95,10 +95,16 @@ graphicsId := () -> (
     "Graphics_" | toString currentTime() | "_" | toString graphicsIdCount
     )
 
+gVectorCounter := 0;
 gVector = new WrapperType of Vector -- types are capitalized. also, should it be a GraphicsObject? 
-new gVector from List := (T,x) -> new T from new BasicList from {matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}), graphicsId() }
+new gVector from List := (T,x) -> (
+    gVectorCounter=gVectorCounter+1;
+    new T from new BasicList from {
+    matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}), 
+    gVectorCounter
+    })
 new gVector from Sequence := (T,x) -> new T from toList x
-gParse gVector := identity -- what about the 3d flag?
+gParse gVector := identity -- what about the 3d flag? TODO
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
@@ -300,7 +306,6 @@ xx := transpose {x,toList(0..#x-1)};
 -- for javascript stuff
 jsString := method(Dispatch=>Thing)
 jsString Thing := toString
---jsString String := x -> "'" | x |"'"
 jsString Matrix := x -> "matrix(" | jsString entries x | ")"
 jsString Vector := x -> "vector(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
@@ -319,11 +324,11 @@ ac := (h,k,i,x) -> (
     h#k#i=x;
     )
 
-svgLookup := hashTable { -- should be more systematic
+svgLookup := hashTable {
     symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = x;),
     symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = x;),
     symbol Center => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x);
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"cx" = x_0;
@@ -348,21 +353,21 @@ svgLookup := hashTable { -- should be more systematic
 	-- TODO names
 	),
     symbol Point => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x);
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x" = x_0;
 	g.cache.Options#"y" = x_1;
 	),
     symbol Point1 => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x);
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x1" = x_0;
 	g.cache.Options#"y1" = x_1;
 	),
     symbol Point2 => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",1,x);
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",1,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",1,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x2" = x_0;
