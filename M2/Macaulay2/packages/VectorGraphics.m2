@@ -561,7 +561,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	sizex := rr_0*min(0.5,1.5/g.cache.SizeX); sizey := rr_1*min(0.5,1.5/g.cache.SizeY); -- can't be larger than half the pic; default = 1.5em
 	ss = append(ss,
 	GraphicsList.SVGElement {
-	    "transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
+	    "transform" => "translate("|toString(r#0_0)|" "|toString(-r#1_1)|") scale("|toString sizex|" "|toString sizey|")",
 	    "class" => "gfxauto",
 	    "onclick" => "gfxToggleRotation(event)",
 	    Circle.SVGElement { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
