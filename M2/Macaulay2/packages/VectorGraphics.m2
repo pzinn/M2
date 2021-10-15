@@ -2,7 +2,7 @@
 newPackage(
         "VectorGraphics",
         Version => "0.95",
-        Date => "May 18, 2018",
+        Date => "October 15, 2021", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -300,7 +300,7 @@ xx := transpose {x,toList(0..#x-1)};
 -- for javascript stuff
 jsString := method(Dispatch=>Thing)
 jsString Thing := toString
-jsString String := x -> "'" | x |"'"
+--jsString String := x -> "'" | x |"'"
 jsString Matrix := x -> "matrix(" | jsString entries x | ")"
 jsString Vector := x -> "vector(" | jsString entries x | ")"
 jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
@@ -314,62 +314,74 @@ updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,perspective matrix)
     )
 
 
-names := new MutableHashTable;
+ac := (h,k,i,x) -> (
+    if not h#?k then h#k=new MutableList;
+    h#k#i=x;
+    )
+
 svgLookup := hashTable { -- should be more systematic
-    symbol TransformMatrix => (x,m) -> "data-matrix" => jsString x,
-    symbol AnimMatrix => (x,m) -> "data-dmatrix" => jsString x,
-    symbol Center => (x,m) -> (
-	if instance(x,gVector) then names#0=x#1; -- TODO thred-safely
-	x = project2d' (m*x);
-	"cx" => toString x_0,
-	"cy" => toString x_1
+    symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = x;),
+    symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = x;),
+    symbol Center => (g,x) -> (
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x);
+	if is3d g then ac(g.cache.Options,"data-coords",0,x);
+	x = project2d' (g.cache.CurrentMatrix*x);
+	g.cache.Options#"cx" = x_0;
+	g.cache.Options#"cy" = x_1;
 	),
-    symbol ScaledRadius => (x,m) ->  "r" => toString x,
-    symbol ScaledRadiusX => (x,m) ->  "rx" => toString x,
-    symbol ScaledRadiusY => (x,m) ->  "ry" => toString x,
-    symbol PathList => (x,m) -> "d" => demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d'(m*y),toString) else y)),
-    symbol Points => (x,m) -> "points" => demark(" ", flatten apply(x, y -> apply(entries project2d'(m*y),toString))),
-    symbol Point => (x,m) -> (
-	if instance(x,gVector) then names#0=x#1; -- TODO thred-safely
-	x = project2d' (m*x);
-	"x" => toString x_0,
-	"y" => toString x_1
+    symbol Radius => (g,x) -> (if is3d g then g.cache.Options#"data-r"=x;),
+    symbol RadiusX => (g,x) -> (if is3d g then g.cache.Options#"data-rx"=x;),
+    symbol RadiusY => (g,x) -> (if is3d g then g.cache.Options#"data-ry"=x;),
+    symbol OneSided => (g,x) -> (if is3d g then g.cache#"data-onesided"=x;),
+    symbol FontSize => (g,x) -> (if is3d g then g.cache#"data-fontsize"=x;),
+    symbol ScaledRadius => (g,x) ->  (g.cache.Options#"r" = x;), -- TODO get radius of Scaled* stuff
+    symbol ScaledRadiusX => (g,x) ->  (g.cache.Options#"rx" = x;),
+    symbol ScaledRadiusY => (g,x) ->  (g.cache.Options#"ry" = x;),
+    symbol PathList => (g,x) -> (
+	g.cache.Options#"d" = demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d'(g.cache.CurrentMatrix*y),toString) else y));
+	if is3d g then g.cache.Options#"data-coords"=select(x,x->instance(x,Vector));
+	-- TODO names
 	),
-    symbol Point1 => (x,m) -> (
-	if instance(x,gVector) then names#0=x#1; -- TODO thred-safely
-	x = project2d' (m*x);
-	"x1" => toString x_0,
-	"y1" => toString x_1,
+    symbol Points => (g,x) -> (
+	g.cache.Options#"points" = demark(" ", flatten apply(x, y -> apply(entries project2d'(g.cache.CurrentMatrix*y),toString)));
+	if is3d g then g.cache.Options#"data-coords"=x;
+	-- TODO names
 	),
-    symbol Point2 => (x,m) -> (
-	if instance(x,gVector) then names#1=x#1; -- TODO thred-safely
-	x = project2d' (m*x);
-	"x2" => toString x_0,
-	"y2" => toString x_1
+    symbol Point => (g,x) -> (
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x);
+	if is3d g then ac(g.cache.Options,"data-coords",0,x);
+	x = project2d' (g.cache.CurrentMatrix*x);
+	g.cache.Options#"x" = x_0;
+	g.cache.Options#"y" = x_1;
 	),
-    symbol Static => (x,m) -> if x then "data-pmatrix" => jsString m,
-    symbol GraphicsId => (x,m) -> "id" => x,
-    symbol Filter => (x,m) -> "filter" => toString x,
-    symbol Contents => (x,m) -> (
-	x = toSequence stableSort x;
-	apply(x, y -> y.cache.SVGElement)
+    symbol Point1 => (g,x) -> (
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x);
+	if is3d g then ac(g.cache.Options,"data-coords",0,x);
+	x = project2d' (g.cache.CurrentMatrix*x);
+	g.cache.Options#"x1" = x_0;
+	g.cache.Options#"y1" = x_1;
 	),
-    symbol TextContent => (x,m) -> x,
-    symbol HtmlContent => (x,m) -> x
+    symbol Point2 => (g,x) -> (
+	if instance(x,gVector) then ac(g.cache.Options,"data-names",1,x);
+	if is3d g then ac(g.cache.Options,"data-coords",1,x);
+	x = project2d' (g.cache.CurrentMatrix*x);
+	g.cache.Options#"x2" = x_0;
+	g.cache.Options#"y2" = x_1;
+	),
+    symbol Static => (g,x) -> (if x then g.cache.Options#"data-pmatrix" = g.cache.CurrentMatrix;),
+    symbol GraphicsId => (g,x) -> (g.cache.Options#"id" = x;),
+    symbol Filter => (g,x) -> (g.cache.Options#"filter" = x;),
+    symbol Contents => (g,x) -> (
+	x = stableSort x;
+	g.cache.Contents = apply(x, y -> y.cache.SVGElement);
+	),
+    symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
+    symbol HtmlContent => (g,x) -> (g.cache.Contents = {x};),
+    symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = "M2SvgDraggable";) -- TODO what if there are other classes?
     }
 
 svg3dLookup := hashTable { -- should be more systematic
     symbol Center => ("data-coords",0),
-    symbol Radius => "data-r",
-    symbol RadiusX => "data-rx",
-    symbol RadiusY => "data-ry",
-    symbol PathList => "data-coords",
-    symbol Points => "data-coords",
-    symbol Point => ("data-coords",0),
-    symbol Point1 => ("data-coords",0),
-    symbol Point2 => ("data-coords",1),
-    symbol OneSided => "data-onesided",
-    symbol FontSize => "data-fontsize"
     }
 
 -- produces SVG element hypertext
@@ -381,26 +393,14 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     updateGraphicsCache g;
     filter(g,l);
     full := new OptionTable from merge(g,g.cache,last);
-    names = new MutableHashTable;
-    args := deepSplice apply(select(keys full,key->svgLookup#?key), key -> svgLookup#key(full#key,g.cache.CurrentMatrix));
---    if is3d g then args = args | deepSplice apply(select(keys full,key -> svg3dLookup#?key), key -> svg3dLookup#key full#key);
-    if #names > 0 then args = append(args,"data-names"=>jsString names);
-    if is3d g then (
-	svg3dData := new MutableHashTable;
-	scan(keys full, key -> if svg3dLookup#?key then (
-		i := svg3dLookup#key;
-		if instance(i,String) then (
-		    svg3dData#i = if key === symbol PathList then select(full#key,x->instance(x,Vector)) else full#key; -- annoying special case
-		    ) else (
-		    if not svg3dData#?(i#0) then svg3dData#(i#0)=new MutableList;
-		     svg3dData#(i#0)#(i#1)=full#key;
-		     )
-		));
-	args = args | apply(pairs svg3dData,(k,v) -> k => jsString v);
-	);
+    g.cache.Options = new MutableHashTable;
+    g.cache.Contents={};
+    scan(keys full, key -> if svgLookup#?key then svgLookup#key(g,full#key));
+    args := g.cache.Contents | apply(pairs g.cache.Options,(k,v) -> k => jsString v);
+    remove(g.cache,Contents);
+    remove(g.cache,Options);
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
-    if g.?Draggable and g.Draggable then args = append(args, "class" => "M2SvgDraggable"); -- TODO what if there are other classes?
-    g.cache.SVGElement = style((class g).SVGElement args,full)
+    g.cache.SVGElement = style((class g).SVGElement args,full) -- bit of a trick: non-string options ignored by style
     )
 
 svg (GraphicsObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
