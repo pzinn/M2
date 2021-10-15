@@ -49,7 +49,7 @@ window.gfxToggleRotation = function(event) {
 		clearInterval(el.intervalId);
 	    } else {
 		gfxAutoRotate(svgel);
-		gfxRecompute(svgel);
+		gfxRedo(svgel);
 	    }
 	},50);
     }
@@ -118,7 +118,6 @@ function gfxTranslate(x,y) { // TODO: add z. but better distinguish 2d vs 3d
     if (!el) return; // shouldn't happen
     if (el.gfxdata.matrix) mat.leftmultiply(el.gfxdata.matrix);
     el.gfxdata.matrix=mat;
-    gfxRecomputeCoords(el,true);
 }
 
 function gfxMouseMove(event) {
@@ -132,7 +131,7 @@ function gfxMouseMove(event) {
 	x=event.movementX*this.viewBox.baseVal.width/this.width.baseVal.value;
 	y=event.movementY*this.viewBox.baseVal.height/this.height.baseVal.value;
 	gfxTranslate(x,y);
-	gfxRecompute(this);
+	gfxRedo(this);
     } else if (this.classList.contains("M2SvgDraggable")) {
 	var x=event.movementX/this.width.baseVal.value;
 	var y=event.movementY/this.height.baseVal.value;
@@ -143,8 +142,7 @@ function gfxMouseMove(event) {
 	var mat=new Matrix([[1-x*x+y*y,2*x*y,2*x,0],[2*x*y,1+x*x-y*y,-2*y,0],[-2*x,2*y,1-x*x-y*y,0],[0,0,0,1+x*x+y*y]]);
 	mat.leftmultiply(1/(1+x*x+y*y));
 	gfxRotate(this,mat);
-
-	gfxRecompute(this);
+	gfxRedo(this);
     }
     event.preventDefault();
     event.stopPropagation();
@@ -153,7 +151,6 @@ function gfxMouseMove(event) {
 function gfxMouseClick(event) {
     event.stopPropagation();
 }
-
 
 function gfxAutoRotate(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return;
@@ -183,25 +180,10 @@ function gfxRotate(el,mat) {
     if (!el.gfxdata.matrix) el.gfxdata.matrix = new Matrix(mat); else el.gfxdata.matrix.leftmultiply(mat);
 }
 
-function gfxRecomputeCoords(el,ignore) { // ignore = ignore previously computed gcoords3d
-    if (!el.gfxdata.coords || el.gfxdata.coords.length == 0) return;
-    var flag=false;
-    var distance=0;
-    el.gfxdata.coords3d = el.gfxdata.coords.map ( (c,i) => {
-	var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	if (j && !ignore && el.ownerSVGElement.gfxdata.gcoords3d[j]) {
-	    return el.ownerSVGElement.gfxdata.gcoords3d[j];
-	} else {
-	    var u=el.gfxdata.cmatrix.vectmultiply(c);
-	    var scalei = u[3]/c[3];	// makes certain assumptions on form of cmatrix
-	    if (scalei<=0) flag=true; else { // behind viewer	    
-		var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first 3 are actual 3d coordinates
-		if (j) el.ownerSVGElement.gfxdata.gcoords3d[j] = v;
-		distance+=v[2];
-		return v;
-	    }}});
-    el.gfxdata.distance=distance/el.gfxdata.coords.length;
-    el.style.display=flag?"none":"";
+function isActive(el) { // tricky concept: draggable or autorotated
+    while(el.tagName!="svg" && !el.classList.contains("M2SvgDraggable") && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
+	el=el.parentElement;
+    return el.tagName!="svg";
 }
 
 function gfxRecompute(el) {
@@ -216,8 +198,51 @@ function gfxRecompute(el) {
     // at the end of the day "cmatrix" is the *ordered* product over ancestors of matrices "matrix" (plus the leftmost perspective matrix "pmatrix"
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
-    gfxRecomputeCoords(el,false);
-    
+    if ((el.tagName=="svg")||(el.tagName=="g")) {
+	// must call inductively children's
+	for (var i=0; i<el.children.length; i++) gfxRecompute(el.children[i]);
+	return;
+    }
+    if (!el.gfxdata.coords || el.gfxdata.coords.length == 0) {
+        el.gfxdata.distance=0; // bit of a hack -- for filters...
+	return;
+    }
+    el.gfxdata.coords3d = el.gfxdata.coords.map ( (c,i) => {
+	var u=el.gfxdata.cmatrix.vectmultiply(c);
+	if (u[3]==0) { u[3]=-.0001*c[3]; } // to avoid division by zero
+	var scalei = u[3]/c[3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix	
+	var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first 3 are actual 3d coordinates; see above for fourth
+	var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
+	if (j && isActive(el))
+	    el.ownerSVGElement.gfxdata.gcoords3d[j] = v;
+	return v;
+    });
+}
+
+function gfxRedo(el) {
+    el.gfxdata.gcoords3d={};
+    gfxRecompute(el);
+    gfxRedraw(el);
+}
+
+function gfxRedraw(el) {
+    if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return; // gadgets and non svg aren't affected by transformations
+    // update passive coords, compute distance
+    if (el.gfxdata.coords3d && el.gfxdata.coords3d.length>0) {
+	var distance=0;
+	var flag=false;
+	for (var i=0; i<el.gfxdata.coords3d.length; i++)
+	{
+	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
+	    if (j && el.ownerSVGElement.gfxdata.gcoords3d[j])
+		el.gfxdata.coords3d[i]=el.ownerSVGElement.gfxdata.gcoords3d[j];
+	    distance+=el.gfxdata.coords3d[i][2];
+	    if (el.gfxdata.coords3d[i][3]<=0) flag=true; // behind screen
+	}
+	el.gfxdata.distance=distance/el.gfxdata.coords3d.length;
+	el.style.display=flag?"none":"";
+    }
+	    
     if ((el.tagName=="polyline")||(el.tagName=="polygon")||(el.tagName=="path")) {
 	// parse path
 	if (el.tagName=="path") { // annoying
@@ -308,7 +333,7 @@ function gfxRecompute(el) {
     }
     else if ((el.tagName=="svg")||(el.tagName=="g")) {
 	// must call inductively children's
-	for (var i=0; i<el.children.length; i++) gfxRecompute(el.children[i]);
+	for (var i=0; i<el.children.length; i++) gfxRedraw(el.children[i]);
 	gfxReorder(el);
 	// recompute distance as average of distances of children
 	el.gfxdata.distance=0; var cnt = 0;
@@ -319,7 +344,6 @@ function gfxRecompute(el) {
 	    }
 	if (cnt>0) el.gfxdata.distance/=cnt;
     }
-    else el.gfxdata.distance=0; // bit of a hack -- for filters...
 }
 
 function gfxReorder(el) {

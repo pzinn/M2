@@ -20,7 +20,8 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "SizeX", "SizeY", "ViewPort",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
     "Blur", "Static", "PathList", "Axes", "Margin", "Mesh", "Draggable",
-    "SVG", "SVGElement"
+    "SVG", "SVGElement",
+    "GraphicsVector", "gVector"
     }
 
 protect Filter
@@ -96,15 +97,15 @@ graphicsId := () -> (
     )
 
 gVectorCounter := 0;
-gVector = new WrapperType of Vector -- types are capitalized. also, should it be a GraphicsObject? 
-new gVector from List := (T,x) -> (
+GraphicsVector = new Type of Vector -- should it be a GraphicsObject? 
+gVector = x -> (
+    if instance(x,Vector) then x = entries x else if not instance(x,VisibleList) then error "wrong type";
     gVectorCounter=gVectorCounter+1;
-    new T from new BasicList from {
+    new GraphicsVector from {
     matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}), 
     gVectorCounter
     })
-new gVector from Sequence := (T,x) -> new T from toList x
-gParse gVector := identity -- what about the 3d flag? TODO
+gParse GraphicsVector := identity -- what about the 3d flag? TODO
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
@@ -328,7 +329,7 @@ svgLookup := hashTable {
     symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = x;),
     symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = x;),
     symbol Center => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x#1);
+	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",0,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"cx" = x_0;
@@ -353,21 +354,21 @@ svgLookup := hashTable {
 	-- TODO names
 	),
     symbol Point => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x#1);
+	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",0,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x" = x_0;
 	g.cache.Options#"y" = x_1;
 	),
     symbol Point1 => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",0,x#1);
+	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",0,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x1" = x_0;
 	g.cache.Options#"y1" = x_1;
 	),
     symbol Point2 => (g,x) -> (
-	if instance(x,gVector) then ac(g.cache.Options,"data-names",1,x#1);
+	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",1,x#1);
 	if is3d g then ac(g.cache.Options,"data-coords",1,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x2" = x_0;
