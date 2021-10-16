@@ -115,8 +115,10 @@ GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     gParseHash = new MutableHashTable;
-    temp := gParse(opts0 | apply(#opts, i -> if i < #opts0 and class opts#i =!= Option then opts0#i#0 => opts#i else opts#i));
-    (new T from temp) ++ gParseHash
+    (opts1,opts2):=override(,toSequence gParse opts);
+    opts2 = sequence opts2; -- argh! the override bug https://github.com/Macaulay2/M2/issues/1548
+    opts0 = apply(#opts0, i -> if i < #opts2 then opts0#i#0 => opts2#i else gParse opts0#i);
+    (new T from gParseHash)++opts0++opts1
 )
 
 perspective = g -> (
@@ -924,8 +926,9 @@ multidoc ///
    Text
     An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called PathList.
    Example
-    Path{PathList => {"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},
-	"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+    v1=gVector(0,0); v2=gVector(0,1); v3=gVector(2,1); v4=gVector(1,2);
+    o=new OptionTable from {Radius=>0.1,"fill"=>"black",Draggable=>true};
+    gList(Circle{v1,o},Circle{v2,o},Circle{v3,o},Circle{v4,o},Path{{"M",v1,"C",v2,v3,v4}})
  Node
   Key
    Polygon
