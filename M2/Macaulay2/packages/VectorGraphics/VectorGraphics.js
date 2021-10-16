@@ -10,11 +10,12 @@ function gfxInitData(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if (el.classList.contains("gfxauto")) return;
     if (!el.gfxdata) {
-	el.gfxdata={}; el.gfxdata.gcoords3d={};
+	el.gfxdata={}; el.gfxdata.gcoords={};
 	for (var v in el.dataset)
 	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
 	// just in case, start the computation of matrices... (see gfxRecompute() for details)
-	var mat = el.gfxdata.pmatrix? el.gfxdata.pmatrix : el.parentElement.gfxdata.cmatrix;
+	if (el.gfxdata.pmatrix) el.gfxdata.pmatrixinv = el.gfxdata.pmatrix.inverse(); // almost never used
+	var mat = el.gfxdata.pmatrix ? el.gfxdata.pmatrix : el.parentElement.gfxdata.cmatrix;
 	if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 	checkData(el);
 	for (var i=0; i<el.children.length; i++)
@@ -28,12 +29,11 @@ window.gfxToggleRotation = function(event) {
     //    var svgel=document.getElementById(svgid);
     //    if (!svgel) return;
     var el = event.currentTarget;
-    var svgel = el.parentElement; // weak but works
+    var svgel = el.ownerSVGElement; // var svgel = el.parentElement; // weak but works
     if (!svgel.gfxdata) gfxInitData(svgel);
     if (!el.ondblclick) el.ondblclick= function(event) { event.stopPropagation(); }; // weak
     
     // the perspective matrix should *always* exist
-
     if (!svgel.gfxdata.cmatrix) svgel.gfxdata.cmatrix = new Matrix(svgel.gfxdata.pmatrix);
     if (el.classList.contains("active")) {
 	clearInterval(el.intervalId);
@@ -204,23 +204,19 @@ function gfxRecompute(el) {
 	return;
     }
     if (!el.gfxdata.coords || el.gfxdata.coords.length == 0) {
-        el.gfxdata.distance=0; // bit of a hack -- for filters...
 	return;
     }
-    el.gfxdata.coords3d = el.gfxdata.coords.map ( (c,i) => {
+    el.gfxdata.coords1 = el.gfxdata.coords.map ( (c,i) => {
 	var u=el.gfxdata.cmatrix.vectmultiply(c);
-	if (u[3]==0) { u[3]=-.0001*c[3]; } // to avoid division by zero
-	var scalei = u[3]/c[3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix	
-	var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first three are actual 3d coordinates; see above for fourth
 	var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
 	if (j && isActive(el))
-	    el.ownerSVGElement.gfxdata.gcoords3d[j] = v;
-	return v;
+	    el.ownerSVGElement.gfxdata.gcoords[j] = u;
+	return u;
     });
 }
 
 function gfxRedo(el) {
-    el.gfxdata.gcoords3d={};
+    el.gfxdata.gcoords={};
     gfxRecompute(el);
     gfxRedraw(el);
 }
@@ -228,21 +224,27 @@ function gfxRedo(el) {
 function gfxRedraw(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return; // gadgets and non svg aren't affected by transformations
     // update passive coords, compute distance
-    if (el.gfxdata.coords3d && el.gfxdata.coords3d.length>0) {
+    if (el.gfxdata.coords1 && el.gfxdata.coords1.length>0) {
 	var distance=0;
 	var flag=false;
-	for (var i=0; i<el.gfxdata.coords3d.length; i++)
-	{
+	el.gfxdata.coords3d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	    if (j && el.ownerSVGElement.gfxdata.gcoords3d[j])
-		el.gfxdata.coords3d[i]=el.ownerSVGElement.gfxdata.gcoords3d[j];
-	    distance+=el.gfxdata.coords3d[i][2];
-	    if (el.gfxdata.coords3d[i][3]<=0) flag=true; // behind screen
-	}
+	    if (j && el.ownerSVGElement.gfxdata.gcoords[j])
+		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
+	    if (u[3]==0) { u[3]=-.0001*el.gfxdata.coords[i][3]; } // to avoid division by zero
+	    var scalei = u[3]/el.gfxdata.coords[i][3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
+	    var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first three are actual 3d coordinates; see above for fourth
+	    distance+=v[2];
+	    if (v[3]<=0) flag=true; // behind screen
+	    return v;
+	});
 	el.gfxdata.distance=distance/el.gfxdata.coords3d.length;
-	el.style.display=flag?"none":"";
+	if (flag) {
+	    el.style.display="none";
+	    return;
+	}
     }
-	    
+    el.style.display="";
     if ((el.tagName=="polyline")||(el.tagName=="polygon")||(el.tagName=="path")) {
 	// parse path
 	if (el.tagName=="path") { // annoying
@@ -268,25 +270,34 @@ function gfxRedraw(el) {
 	if (el.gfxdata.coords3d.length>2) {
 	    var sc = el.gfxdata.coords3d[0][3];
 	    var u=[],v=[];
-	    for (var i=0; i<3; i++) {
+	    for (var i=0; i<2; i++) {
 		u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i])
 		v.push(el.gfxdata.coords3d[2][i]-el.gfxdata.coords3d[0][i]);
 	    }
-	    var w=[v[1]*u[2]-u[1]*v[2],v[2]*u[0]-u[2]*v[0],v[0]*u[1]-u[0]*v[1]];
+	    var w=v[0]*u[1]-u[0]*v[1];
 	    // visibility
-	    if (w[2]<0) {
-		if (el.gfxdata.onesided) {
+	    if (w<0 && el.gfxdata.onesided) {
 		    el.style.visibility="hidden";
 		    return;
-		}
-		w=[-w[0],-w[1],-w[2]];
 	    }
 	    el.style.visibility="visible";
-	    // lighting REDO
+	    // lighting TODO optimize (right now it recomputes a lot of stuff in particular pmat^{-1} is lame)
 	    var lightname = el.getAttribute("filter");
 	    if (lightname) {
 		lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
 		var lightel=document.getElementById(lightname);
+		var mat = el.ownerSVGElement.gfxdata.pmatrixinv;
+		var r=[];
+		for (i=0; i<3; i++) {
+		    var v=mat.vectmultiply(el.gfxdata.coords1[i]);
+		    r.push([v[0]/v[3],v[1]/v[3],v[2]/v[3]]);
+		}
+		var u=[]; var v=[];
+		for (i=0; i<3; i++) {
+		    u.push(r[1][i]-r[0][i]);
+		    v.push(r[2][i]-r[0][i]);
+		}
+		var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
 		var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
 		for (var j=0; j<lightel.children.length; j++)
 		    if (lightel.children[j].tagName == "feSpecularLighting") {
@@ -294,15 +305,17 @@ function gfxRedraw(el) {
 			// move the center of the light to its mirror image in the plane of the polygon
 			//var origin=document.getElementById(lightel2.gfxdata.origin);
 			var origin=lightel2.gfxdata.origin; // eval acts as getElementById
-			var light = origin.gfxdata.coords3d[0]; // phew
-			var sp = (w[0]*(light[0]-el.gfxdata.coords3d[0][0])+w[1]*(light[1]-el.gfxdata.coords3d[0][1])+w[2]*(light[2]-el.gfxdata.coords3d[0][2]))/sc;
+			var light = mat.vectmultiply(origin.gfxdata.coords1[0]); // phew
+			light = [light[0]/light[3],light[1]/light[3],light[2]/light[3]];
+			var sp = w[0]*(light[0]-r[0][0])+w[1]*(light[1]-r[0][1])+w[2]*(light[2]-r[0][2]);
 			var c = 2*sp/w2;
 			for (var i=0; i<3; i++) light[i]-=c*w[i];
+			light = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(new Vector ([light[0],light[1],light[2],1]));
 			if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
 			    lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-			    lightel2.setAttribute("x",light[0]*sc);
-			    lightel2.setAttribute("y",-light[1]*sc);
-			    lightel2.setAttribute("z",4*origin.gfxdata.r); // REDO
+			    lightel2.setAttribute("x",light[0]/light[3]);
+			    lightel2.setAttribute("y",-light[1]/light[3]);
+			    lightel2.setAttribute("z",4*origin.gfxdata.r/light[3]);
 			}
 		    }
 	    }
@@ -345,6 +358,7 @@ function gfxRedraw(el) {
 	    }
 	if (cnt>0) el.gfxdata.distance/=cnt;
     }
+    else el.gfxdata.distance=0; // bit of a hack -- for filters...
 }
 
 function gfxReorder(el) {

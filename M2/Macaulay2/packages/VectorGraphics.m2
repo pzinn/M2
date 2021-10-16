@@ -29,6 +29,7 @@ protect Distance
 protect Is3d
 protect Anim
 protect CurrentMatrix
+protect PerspectiveMatrix
 protect ScaledRadius
 protect ScaledRadiusX
 protect ScaledRadiusY
@@ -105,7 +106,10 @@ gVector = x -> (
     matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}), 
     gVectorCounter
     })
-gParse GraphicsVector := identity -- what about the 3d flag? TODO
+gParse GraphicsVector := x -> (
+    if x_2 != 0 then gParseHash.Is3d = true; -- weird: not same rule as gParse Vector
+    x
+    )
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
@@ -315,6 +319,7 @@ jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 
 updateTransformMatrix := (g,m,p) -> ( -- (object,matrix,perspective matrix)
+    g.cache.PerspectiveMatrix = p; -- almost never needed
     g.cache.CurrentMatrix = if g.?Static and g.Static then p else m; -- if static reset to perspective matrix
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
@@ -345,13 +350,14 @@ svgLookup := hashTable {
     symbol ScaledRadiusY => (g,x) ->  (g.cache.Options#"ry" = x;),
     symbol PathList => (g,x) -> (
 	g.cache.Options#"d" = demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d'(g.cache.CurrentMatrix*y),toString) else y));
-	if is3d g then g.cache.Options#"data-coords"=select(x,x->instance(x,Vector));
-	-- TODO names
+	x = select(x,y->instance(y,Vector));
+	if is3d g then g.cache.Options#"data-coords"=x;
+	scan(#x, i -> if instance(x#i,GraphicsVector) then ac(g.cache.Options,"data-names",i,x#i#1));
 	),
     symbol Points => (g,x) -> (
 	g.cache.Options#"points" = demark(" ", flatten apply(x, y -> apply(entries project2d'(g.cache.CurrentMatrix*y),toString)));
 	if is3d g then g.cache.Options#"data-coords"=x;
-	-- TODO names
+	scan(#x, i -> if instance(x#i,GraphicsVector) then ac(g.cache.Options,"data-names",i,x#i#1));
 	),
     symbol Point => (g,x) -> (
 	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",0,x#1);
@@ -677,20 +683,21 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
     	-- find first 3 coords
 	if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
     	if #coords>=3 then (
-	    coords=apply(take(coords,3),x->(xx:=g.cache.CurrentMatrix*x;(1/xx_3)*xx^{0,1,2}));
+	    coords=apply(3,i->(xx:=g.cache.PerspectiveMatrix^(-1)*g.cache.CurrentMatrix*coords#i;(1/xx_3)*xx^{0,1,2}));
 	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
-	    if w_2>0 then w=-w;
+	    if w_2<0 then w=-w; -- can't be right TODO
 	    scan(l, gg -> (
 	    	    -- compute reflected coords
-		    light0 := gg.cache.CurrentMatrix*gg.Center;
+		    light0 := gg.cache.PerspectiveMatrix^(-1)*gg.cache.CurrentMatrix*gg.Center;
 		    light := (1/light0_3)*light0^{0,1,2};
 		    lightrel := light-coords#0;
 	    	    sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
 	    	    c := 2*sp/w2;
 		    light = light - c*w;
+		    light = g.cache.PerspectiveMatrix*(light || vector {1});
 		    opts = opts | {
 			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
-			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_2), "y" => toString(-light_1/light_2), "z" => toString(4*gg.Radius/light_2) } },
+			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
 			feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 			    "operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
@@ -1271,12 +1278,13 @@ bartop=Path{{"M",(80,55,98),"L",(80,55,102),"L",(220,55,102),"L",(220,55,98),"Z"
 thread=Path{{"M",(80,55,100),"L",(80,80,100),"Z"},"stroke"=>"#111","stroke-width"=>0.5,"stroke-opacity"=>0.8};
 gList{barside1,triangle1,triangle2,edge1,edge2,bartop,thread}
 
--- tetrahedron
-v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+-- draggable tetrahedron
+v={gVector(74.5571, 52.0137, -41.6631),gVector(27.2634, -29.9211, 91.4409),gVector(-81.3041, 57.8325, 6.71156),gVector(-20.5165, -79.9251, -56.4894)};
 c={"red","green","blue","yellow"};
 vv={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
 triangles=apply(4,i->Path{{"M",vv#i#0,"L",vv#i#1,"L",vv#i#2,"Z"},"fill"=>c#i,OneSided=>true});
-gList(triangles,Light{(100,0,0),Radius=>10},ViewPort=>{(-100,-150),(150,150)},SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
+gList(apply(v,x->Circle{x,5,"fill"=>"black",Draggable=>true}),triangles,Light{(100,0,0),Radius=>10,Draggable=>true},ViewPort=>{(-100,-150),(150,150)},SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
+
 
 -- dodecahedron
 vertices={vector{-137.638,0.,26.2866},vector{137.638,0.,-26.2866},vector{-42.5325,-130.902,26.2866},vector{-42.5325,130.902,26.2866},vector{111.352,-80.9017,26.2866},vector{111.352,80.9017,26.2866},vector{-26.2866,-80.9017,111.352},vector{-26.2866,80.9017,111.352},vector{-68.8191,-50.,-111.352},vector{-68.8191,50.,-111.352},vector{68.8191,-50.,111.352},vector{68.8191,50.,111.352},vector{85.0651,0.,-111.352},vector{-111.352,-80.9017,-26.2866},vector{-111.352,80.9017,-26.2866},vector{-85.0651,0.,111.352},vector{26.2866,-80.9017,-111.352},vector{26.2866,80.9017,-111.352},vector{42.5325,-130.902,-26.2866},vector{42.5325,130.902,-26.2866}};
