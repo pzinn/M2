@@ -338,8 +338,8 @@ svgLookup := hashTable {
     symbol Radius => (g,x) -> (if is3d g then g.cache.Options#"data-r"=x;),
     symbol RadiusX => (g,x) -> (if is3d g then g.cache.Options#"data-rx"=x;),
     symbol RadiusY => (g,x) -> (if is3d g then g.cache.Options#"data-ry"=x;),
-    symbol OneSided => (g,x) -> (if is3d g then g.cache#"data-onesided"=x;),
-    symbol FontSize => (g,x) -> (if is3d g then g.cache#"data-fontsize"=x;),
+    symbol OneSided => (g,x) -> (if is3d g then g.cache.Options#"data-onesided"=x;),
+    symbol FontSize => (g,x) -> (if is3d g then g.cache.Options#"data-fontsize"=x;),
     symbol ScaledRadius => (g,x) ->  (g.cache.Options#"r" = x;), -- TODO get radius of Scaled* stuff
     symbol ScaledRadiusX => (g,x) ->  (g.cache.Options#"rx" = x;),
     symbol ScaledRadiusY => (g,x) ->  (g.cache.Options#"ry" = x;),
@@ -474,7 +474,6 @@ new SVG from GraphicsObject := (S,g) -> (
     main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
     if main === null then return {};
     if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
---    if r === null or r#0 == r#1 then (g.cache.SizeX=g.cache.SizeY=0.; return {}); -- nothing to draw
     if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.SizeX=g.cache.SizeY=0.; ) else (
 	r = apply(r,numeric);
 	rr = r#1 - r#0;
@@ -498,12 +497,12 @@ new SVG from GraphicsObject := (S,g) -> (
     axes:=null; axeslabels:=null; defsList:={};
     if g.?Axes and g.Axes =!= false then (
 	arr := arrow();
-	-- determine intersection of viewport with axes TODO RECHECK
-	xmin := (r#0_0-p_(0,3))/p_(0,0);
-	xmax := (r#1_0-p_(0,3))/p_(0,0);
+	-- determine intersection of viewport with axes TODO more symmetrically
+	xmin := (p_(3,3)*r#0_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#0_0);
+	xmax := (p_(3,3)*r#1_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#1_0);
 	if xmax < xmin then ( temp:=xmin; xmin=xmax; xmax=temp; );
-	ymin := (r#0_1-p_(1,3))/p_(1,1);
-	ymax := (r#1_1-p_(1,3))/p_(1,1);
+	ymin := (p_(3,3)*r#0_1-p_(1,3))/(p_(1,1)-p_(3,1)*r#0_1);
+	ymax := (p_(3,3)*r#1_1-p_(1,3))/(p_(1,1)-p_(3,1)*r#1_1);
 	if ymax < ymin then ( temp2:=ymin; ymin=ymax; ymax=temp2; );
 	if is3d g then (
 	    zmax := 0.25*(xmax-xmin+ymax-ymin);
@@ -616,7 +615,7 @@ determineSide GraphicsPoly := g -> (
 
 -- lighting
 Light = new GraphicsType of Circle from ( "circle",
-    { symbol Center => vector {0,0,0,1.}, symbol Radius => 10, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "opacity" => "0", "fill" => "#FFFFFF", "stroke" => "none" },
+    { symbol Center => vector {0,0,0,1.}, symbol Radius => 0, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "fill" => "#FFFFFF", "stroke" => "none" },
     { "r", "cx", "cy" } -- atm these are not inherited
     )
 -- in case it's drawn, it's a circle
@@ -885,14 +884,14 @@ multidoc ///
    Text
     A source of light for a 3d SVG picture.
     This corresponds to the SVG "specular" lighting, use the property Specular. The location is given by Center.
-    By default a Light is invisible (it has opacity 0) and is unaffected by matrix transformations outside it (Static true).
+    By default a Light is invisible (it has radius 0) and is unaffected by matrix transformations outside it (Static true).
    Example
-    Light{Radius=>10,"opacity"=>"1","fill"=>"yellow"}
+    Light{Radius=>10,"fill"=>"yellow"}
     v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
-	Light{(110,0,0),Radius=>10,"opacity"=>"1"},ViewPort=>{(-110,-100),(110,100)},
+	Light{(110,0,0),Radius=>10},ViewPort=>{(-110,-100),(110,100)},
 	SizeY=>30,TransformMatrix=>rotation(-1.5,(4,1,0)))
   Caveat
    Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.

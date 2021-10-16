@@ -211,7 +211,7 @@ function gfxRecompute(el) {
 	var u=el.gfxdata.cmatrix.vectmultiply(c);
 	if (u[3]==0) { u[3]=-.0001*c[3]; } // to avoid division by zero
 	var scalei = u[3]/c[3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix	
-	var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first 3 are actual 3d coordinates; see above for fourth
+	var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first three are actual 3d coordinates; see above for fourth
 	var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
 	if (j && isActive(el))
 	    el.ownerSVGElement.gfxdata.gcoords3d[j] = v;
@@ -266,19 +266,21 @@ function gfxRedraw(el) {
 	    el.setAttribute("points",s);
 	}
 	if (el.gfxdata.coords3d.length>2) {
+	    var sc = el.gfxdata.coords3d[0][3];
 	    var u=[],v=[];
-	    for (var i=0; i<3; i++) { // TODO RECHECK probably use 4d coords instead
-		u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i]);
+	    for (var i=0; i<3; i++) {
+		u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i])
 		v.push(el.gfxdata.coords3d[2][i]-el.gfxdata.coords3d[0][i]);
 	    }
-	    var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
+	    var w=[v[1]*u[2]-u[1]*v[2],v[2]*u[0]-u[2]*v[0],v[0]*u[1]-u[0]*v[1]];
 	    // visibility
 	    if (w[2]<0) {
-		if (el.gfxdata.onesided)
-		    el.style.visibility="hidden"; return;
-	    }
-	    else
+		if (el.gfxdata.onesided) {
+		    el.style.visibility="hidden";
+		    return;
+		}
 		w=[-w[0],-w[1],-w[2]];
+	    }
 	    el.style.visibility="visible";
 	    // lighting REDO
 	    var lightname = el.getAttribute("filter");
@@ -292,15 +294,14 @@ function gfxRedraw(el) {
 			// move the center of the light to its mirror image in the plane of the polygon
 			//var origin=document.getElementById(lightel2.gfxdata.origin);
 			var origin=lightel2.gfxdata.origin; // eval acts as getElementById
-			if (!origin.gfxdata.coords3d) gfxRecompute(origin); // hopefully won't create infinite loops
 			var light = origin.gfxdata.coords3d[0]; // phew
-			var sp = w[0]*(light[0]-el.gfxdata.coords3d[0][0])+w[1]*(light[1]-el.gfxdata.coords3d[0][1])+w[2]*(light[2]-el.gfxdata.coords3d[0][2]);
+			var sp = (w[0]*(light[0]-el.gfxdata.coords3d[0][0])+w[1]*(light[1]-el.gfxdata.coords3d[0][1])+w[2]*(light[2]-el.gfxdata.coords3d[0][2]))/sc;
 			var c = 2*sp/w2;
 			for (var i=0; i<3; i++) light[i]-=c*w[i];
 			if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
 			    lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-			    lightel2.setAttribute("x",light[0]);
-			    lightel2.setAttribute("y",-light[1]);
+			    lightel2.setAttribute("x",light[0]*sc);
+			    lightel2.setAttribute("y",-light[1]*sc);
 			    lightel2.setAttribute("z",4*origin.gfxdata.r); // REDO
 			}
 		    }
