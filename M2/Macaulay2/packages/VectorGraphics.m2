@@ -98,12 +98,12 @@ graphicsId := () -> (
     )
 
 gVectorCounter := 0;
-GraphicsVector = new Type of Vector -- should it be a GraphicsObject? 
+GraphicsVector = new Type of Vector -- should it be a GraphicsObject?
 gVector = x -> (
     if instance(x,Vector) then x = entries x else if not instance(x,VisibleList) then error "wrong type";
     gVectorCounter=gVectorCounter+1;
     new GraphicsVector from {
-    matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}), 
+    matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}),
     gVectorCounter
     })
 gParse GraphicsVector := x -> (

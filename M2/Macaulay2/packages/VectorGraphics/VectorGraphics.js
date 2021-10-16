@@ -67,8 +67,7 @@ window.gfxMouseDown = function (event) {
     if (!el.onmouseup) gfxInitMouse(el); // weak
     mouseDown=true;
     el1=event.target; // determine if we're dragging
-    while(el1 && el1.tagName!="svg" && !el1.classList.contains("M2SvgDraggable"))
- 	el1=el1.parentElement;
+    while (el1 && el1.tagName!="svg" && !el1.classList.contains("M2SvgDraggable")) el1=el1.parentElement;
     dragTarget = !el1 || el1.tagName=="svg" ? null : event.target;
 
     event.preventDefault();
@@ -84,7 +83,7 @@ function gfxMouseUp(event) {
 }
 
 function gfxMouseLeave(event) {
-    mouseDown=false;dragTarget=null;
+    mouseDown=false; dragTarget=null;
     event.preventDefault();
     event.stopPropagation();
 }
@@ -181,7 +180,7 @@ function gfxRotate(el,mat) {
 }
 
 function isActive(el) { // tricky concept: draggable or autorotated
-    while(el.tagName!="svg" && !el.classList.contains("M2SvgDraggable") && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
+    while(el.tagName!="svg" && el != dragTarget && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
 	el=el.parentElement;
     return el.tagName!="svg";
 }
@@ -229,8 +228,10 @@ function gfxRedraw(el) {
 	var flag=false;
 	el.gfxdata.coords3d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	    if (j && el.ownerSVGElement.gfxdata.gcoords[j])
+	    if (j && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
 		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
+		el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
+	    }
 	    if (u[3]==0) { u[3]=-.0001*el.gfxdata.coords[i][3]; } // to avoid division by zero
 	    var scalei = u[3]/el.gfxdata.coords[i][3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
 	    var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first three are actual 3d coordinates; see above for fourth
@@ -384,7 +385,7 @@ function checkData(el) {
 	    el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
     }
     else if (el.tagName=="path") { // annoying special case
-	var path = el.getAttribute("d").split(" "); // for lack of better	
+	var path = el.getAttribute("d").split(" "); // for lack of better
 	el.gfxdata.coords = [];
 	for (var i=0; i<path.length; i++)
 	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
