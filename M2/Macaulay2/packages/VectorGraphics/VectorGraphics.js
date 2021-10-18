@@ -1,26 +1,14 @@
 function gfxInitMouse(el) {
-    el.onmousedown = gfxMouseDown;
-    el.onmouseleave = gfxMouseLeave;
+    el.onmousedown = gfxMouseDown1;
+    el.onmouseleave = gfxMouseUp;
     el.onmouseup = gfxMouseUp;
-    el.onmousemove = gfxMouseMove;
     el.onclick = gfxMouseClick;
+    el.oncontextmenu = gfxMouseClick;
 }
 
 function gfxInitData(el) {
-    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
-    if (el.classList.contains("gfxauto")) return;
-    if (!el.gfxdata) {
-	el.gfxdata={}; el.gfxdata.gcoords={};
-	for (var v in el.dataset)
-	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
-	// just in case, start the computation of matrices... (see gfxRecompute() for details)
-	if (el.gfxdata.pmatrix) el.gfxdata.pmatrixinv = el.gfxdata.pmatrix.inverse(); // almost never used
-	var mat = el.gfxdata.pmatrix ? el.gfxdata.pmatrix : el.parentElement.gfxdata.cmatrix;
-	if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
-	checkData(el);
-	for (var i=0; i<el.children.length; i++)
-	    gfxInitData(el.children[i]);
-    }
+    gfxCheckData(el);
+    gfxRedo(el);
 }
 
 // auto-rotation button
@@ -64,39 +52,32 @@ var dragTarget=null; // what's being dragged
 window.gfxMouseDown = function (event) {
     var el = event.currentTarget;
     if (!el.gfxdata) gfxInitData(el);
-    if (!el.onmouseup) gfxInitMouse(el); // weak
-    mouseDown=true;
-    el1=event.target; // determine if we're dragging
-    while(el1 && el1.tagName!="svg" && !el1.classList.contains("M2SvgDraggable"))
- 	el1=el1.parentElement;
-    dragTarget = !el1 || el1.tagName=="svg" ? null : event.target;
+    gfxInitMouse(el);
+    gfxMouseDown1.call(el,event);
+}
 
+function gfxMouseDown1(event) {
+    var el=event.target; // determine if we're dragging
+    while (el && el.tagName!="svg" && !el.classList.contains("M2SvgDraggable")) el=el.parentElement;
+    //    dragTarget = !el || !el.classList.contains("M2SvgDraggable") ? null : event.target;
+    dragTarget = el && el.classList.contains("M2SvgDraggable") ? el : null;
+    this.onmousemove = gfxMouseMove;
     event.preventDefault();
     event.stopPropagation();
 }
 
 
-// TODO merge next two
 function gfxMouseUp(event) {
-    mouseDown=false; dragTarget=null;
-    event.preventDefault();
-    event.stopPropagation();
-}
-
-function gfxMouseLeave(event) {
-    mouseDown=false;dragTarget=null;
+    this.onmousemove = null;
+    dragTarget=null;
     event.preventDefault();
     event.stopPropagation();
 }
 
 
-function gfxTranslate(x,y) { // TODO: add z. but better distinguish 2d vs 3d
+function gfxTranslateDrag(x,y) { // TODO: add z. but better distinguish 2d vs 3d
     // check if initialized??? TODO
-    var l = dragTarget.gfxdata.coords;
-    var i=0;
-    while (i<l.length && ! (l[i] instanceof Float32Array)) i++;
-    var r = l[i];
-    if (i>=l.length) return; // can this happen?
+    var r=dragTarget.gfxdata.ctr; // should always exist TODO check
     var mat = dragTarget.gfxdata.cmatrix; // should already exist
     var u = mat.vectmultiply(r);
     var mati = mat.inverse();
@@ -105,34 +86,40 @@ function gfxTranslate(x,y) { // TODO: add z. but better distinguish 2d vs 3d
     var cf = u[3]/(gam*u[3]+r[3]);
     for (i=0; i<3; i++) t[i]=cf*(gam*r[i]/r[3]+t[i]);
     var mat = new Matrix([[1,0,0,t[0]],[0,1,0,t[1]],[0,0,1,t[2]],[0,0,0,1]]);
-    var el = dragTarget;
-    while (el && !el.classList.contains("M2SvgDraggable")) {
-	if (el.gfxdata.matrix) { // painful: conjugate the translate matrix by rotation of that element
-	    var mat1 = el.gfxdata.matrix.inverse();
-	    mat1.leftmultiply(mat);
-	    mat1.leftmultiply(el.gfxdata.matrix);
-	    mat=mat1;
-	}
-        el=el.parentElement;
-    }
-    if (!el) return; // shouldn't happen
-    if (el.gfxdata.matrix) mat.leftmultiply(el.gfxdata.matrix);
-    el.gfxdata.matrix=mat;
+    // TODO merge with gfxRotateDrag?
+    if (dragTarget.gfxdata.matrix) mat.leftmultiply(dragTarget.gfxdata.matrix);
+    dragTarget.gfxdata.matrix=mat;
+}
+
+function gfxRotateDrag(rot0) {
+    // TODO optimize?
+    var rot=new Matrix(dragTarget.gfxdata.cmatrix);
+    rot[3]=rot[7]=rot[11]=rot[12]=rot[13]=rot[14]=0; rot[15]=1; // sub 3x3
+    var rot1 = rot.inverse();
+    rot.leftmultiply(rot0);
+    rot.leftmultiply(rot1);
+    var ctr = dragTarget.gfxdata.ctr;
+    var transl = new Matrix([[1,0,0,ctr[0]/ctr[3]],[0,1,0,ctr[1]/ctr[3]],[0,0,1,ctr[2]/ctr[3]],[0,0,0,1]]);
+    var mat = new Matrix([[1,0,0,-ctr[0]/ctr[3]],[0,1,0,-ctr[1]/ctr[3]],[0,0,1,-ctr[2]/ctr[3]],[0,0,0,1]]);
+    mat.leftmultiply(rot);
+    mat.leftmultiply(transl);
+//    if (!dragTarget.gfxdata.matrix) dragTarget.gfxdata.matrix = new Matrix(mat); else dragTarget.gfxdata.matrix.leftmultiply(mat);
+    if (dragTarget.gfxdata.matrix) mat.leftmultiply(dragTarget.gfxdata.matrix);
+    dragTarget.gfxdata.matrix=mat;
 }
 
 function gfxMouseMove(event) {
-    if (!mouseDown) return;
-
-    if (dragTarget) {
+    if (!dragTarget) return;
+    if (event.buttons & 1) {
 	/*
 	var x=event.offsetX*this.viewBox.baseVal.width/this.width.baseVal.value+this.viewBox.baseVal.x;
 	var y=event.offsetY*this.viewBox.baseVal.height/this.height.baseVal.value+this.viewBox.baseVal.y;
 	*/
 	x=event.movementX*this.viewBox.baseVal.width/this.width.baseVal.value;
 	y=event.movementY*this.viewBox.baseVal.height/this.height.baseVal.value;
-	gfxTranslate(x,y);
+	gfxTranslateDrag(x,y);
 	gfxRedo(this);
-    } else if (this.classList.contains("M2SvgDraggable")) {
+    } else if (event.buttons & 2) {
 	var x=event.movementX/this.width.baseVal.value;
 	var y=event.movementY/this.height.baseVal.value;
 
@@ -141,7 +128,7 @@ function gfxMouseMove(event) {
 
 	var mat=new Matrix([[1-x*x+y*y,2*x*y,2*x,0],[2*x*y,1+x*x-y*y,-2*y,0],[-2*x,2*y,1-x*x-y*y,0],[0,0,0,1+x*x+y*y]]);
 	mat.leftmultiply(1/(1+x*x+y*y));
-	gfxRotate(this,mat);
+	gfxRotateDrag(mat);
 	gfxRedo(this);
     }
     event.preventDefault();
@@ -149,6 +136,7 @@ function gfxMouseMove(event) {
 }
 
 function gfxMouseClick(event) {
+    event.preventDefault();
     event.stopPropagation();
 }
 
@@ -181,7 +169,7 @@ function gfxRotate(el,mat) {
 }
 
 function isActive(el) { // tricky concept: draggable or autorotated
-    while(el.tagName!="svg" && !el.classList.contains("M2SvgDraggable") && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
+    while(el.tagName!="svg" && el != dragTarget && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
 	el=el.parentElement;
     return el.tagName!="svg";
 }
@@ -223,22 +211,29 @@ function gfxRedo(el) {
 
 function gfxRedraw(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return; // gadgets and non svg aren't affected by transformations
-    // update passive coords, compute distance
+    // update passive coords, project
     if (el.gfxdata.coords1 && el.gfxdata.coords1.length>0) {
-	var distance=0;
 	var flag=false;
 	el.gfxdata.coords3d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	    if (j && el.ownerSVGElement.gfxdata.gcoords[j])
+	    if (j && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
 		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
+		el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
+	    }
 	    if (u[3]==0) { u[3]=-.0001*el.gfxdata.coords[i][3]; } // to avoid division by zero
-	    var scalei = u[3]/el.gfxdata.coords[i][3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
-	    var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first three are actual 3d coordinates; see above for fourth
-	    distance+=v[2];
+	    var scale = el.gfxdata.coords[i][3]/u[3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
+	    var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],scale]; // only first three are actual 3d coordinates; see above for fourth
 	    if (v[3]<=0) flag=true; // behind screen
 	    return v;
 	});
-	el.gfxdata.distance=distance/el.gfxdata.coords3d.length;
+	// compute center
+	var ctr=new Vector;
+	el.gfxdata.coords.forEach(u => ctr.add(u)); // should we normalize u first?
+	el.gfxdata.ctr=ctr.multiply(1/ctr[3]);
+	// distance
+	var u=el.gfxdata.cmatrix.vectmultiply(ctr);
+	el.gfxdata.distance=-u[2]/u[3]; // this is the only z coord we really need
+	// behind screen?
 	if (flag) {
 	    el.style.display="none";
 	    return;
@@ -355,16 +350,27 @@ function gfxRedraw(el) {
 	// must call inductively children's
 	for (var i=0; i<el.children.length; i++) gfxRedraw(el.children[i]);
 	gfxReorder(el);
-	// recompute distance as average of distances of children
-	el.gfxdata.distance=0; var cnt = 0;
+	// recompute ctr as average of ctrs of children
+	var ctr=new Vector;
+	var cnt = 0;
 	for (var i=0; i<el.children.length; i++)
-	    if (el.children[i].gfxdata) {
-		el.gfxdata.distance+=el.children[i].gfxdata.distance;
+	    if (el.children[i].gfxdata && el.children[i].gfxdata.ctr[3]!=0) {
+		if (el.children[i].matrix) ctr.add(el.children[i].matrix.vectmultiply(el.children[i].gfxdata.ctr)); else ctr.add(el.children[i].gfxdata.ctr); // waste of calculation?
 		cnt++;
 	    }
-	if (cnt>0) el.gfxdata.distance/=cnt;
+	if (cnt>0) {
+	    el.gfxdata.ctr=ctr.multiply(1/cnt);
+	    var u=el.gfxdata.cmatrix.vectmultiply(ctr);
+	    el.gfxdata.distance=-u[2]/u[3]; // this is the only z coord we really need
+	} else {
+	    el.gfxdata.ctr=new Vector([0,0,0,0]);
+	    el.gfxdata.distance=0;
+	}
     }
-    else el.gfxdata.distance=0; // bit of a hack -- for filters...
+    else {
+	el.gfxdata.ctr=new Vector([0,0,0,0]); // bit of a hack -- for filters...
+	el.gfxdata.distance=0;
+    }
 }
 
 function gfxReorder(el) {
@@ -379,7 +385,17 @@ function gfxReorder(el) {
     }
 }
 
-function checkData(el) {
+function gfxCheckData(el) {
+    if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
+    if (el.classList.contains("gfxauto")) return;
+    el.gfxdata={};
+    for (var v in el.dataset)
+	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
+    if (el.gfxdata.pmatrix) el.gfxdata.pmatrixinv = el.gfxdata.pmatrix.inverse(); // almost never used
+    // start the computation of matrices... (see gfxRecompute() for details)
+    var mat = el.gfxdata.pmatrix ? el.gfxdata.pmatrix : el.parentElement.gfxdata.cmatrix;
+    if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
+
     if (el.gfxdata.coords) return;
     var mat = el.gfxdata.cmatrix.inverse();
 
@@ -390,7 +406,7 @@ function checkData(el) {
 	    el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
     }
     else if (el.tagName=="path") { // annoying special case
-	var path = el.getAttribute("d").split(" "); // for lack of better	
+	var path = el.getAttribute("d").split(" "); // for lack of better
 	el.gfxdata.coords = [];
 	for (var i=0; i<path.length; i++)
 	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
@@ -420,6 +436,10 @@ function checkData(el) {
 	el.gfxdata.rx=el.rx.baseVal.value;
 	el.gfxdata.ry=el.ry.baseVal.value;
     }
+    else if ((el.tagName=="svg")||(el.tagName=="g")) {
+	for (var i=0; i<el.children.length; i++)
+	    gfxCheckData(el.children[i]);
+    }
 }
 
 // a simple square matrix type
@@ -440,6 +460,13 @@ class Vector extends Float32Array {
 	    for (var i=0; i<dim; i++)
 		this[i]+=v[i];
 	}
+	return this;
+    }
+    multiply(x) // scalar
+    {
+	for (i=0; i<dim; i++)
+	    this[i]*=x;
+	return this;
     }
 }
 
@@ -513,6 +540,7 @@ class Matrix extends Float32Array {
 		for (var i=0; i<dim*dim; i++)
 		    this[i]+=mat[i];
 	    }
+	return this;
     }
 
     // left multiply by a matrix or scalar
@@ -532,6 +560,7 @@ class Matrix extends Float32Array {
 			for (var k=0; k<dim; k++)
 			    this[i+dim*k]+=mat[i+dim*j]*temp[j+dim*k];
 	    }
+	return this;
     }
 
     vectmultiply(vec)
