@@ -687,7 +687,7 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
     	if #coords>=3 then (
 	    coords=apply(3,i->(xx:=g.cache.PerspectiveMatrix^(-1)*g.cache.CurrentMatrix*coords#i;(1/xx_3)*xx^{0,1,2}));
 	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
-	    if w_2<0 then w=-w; -- can't be right TODO
+	    if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
 	    scan(l, gg -> (
 	    	    -- compute reflected coords
 		    light0 := gg.cache.PerspectiveMatrix^(-1)*gg.cache.CurrentMatrix*gg.Center;

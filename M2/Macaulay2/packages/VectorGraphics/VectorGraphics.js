@@ -67,7 +67,8 @@ window.gfxMouseDown = function (event) {
     if (!el.onmouseup) gfxInitMouse(el); // weak
     mouseDown=true;
     el1=event.target; // determine if we're dragging
-    while (el1 && el1.tagName!="svg" && !el1.classList.contains("M2SvgDraggable")) el1=el1.parentElement;
+    while(el1 && el1.tagName!="svg" && !el1.classList.contains("M2SvgDraggable"))
+ 	el1=el1.parentElement;
     dragTarget = !el1 || el1.tagName=="svg" ? null : event.target;
 
     event.preventDefault();
@@ -83,7 +84,7 @@ function gfxMouseUp(event) {
 }
 
 function gfxMouseLeave(event) {
-    mouseDown=false; dragTarget=null;
+    mouseDown=false;dragTarget=null;
     event.preventDefault();
     event.stopPropagation();
 }
@@ -180,7 +181,7 @@ function gfxRotate(el,mat) {
 }
 
 function isActive(el) { // tricky concept: draggable or autorotated
-    while(el.tagName!="svg" && el != dragTarget && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
+    while(el.tagName!="svg" && !el.classList.contains("M2SvgDraggable") && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
 	el=el.parentElement;
     return el.tagName!="svg";
 }
@@ -228,10 +229,8 @@ function gfxRedraw(el) {
 	var flag=false;
 	el.gfxdata.coords3d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	    if (j && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
+	    if (j && el.ownerSVGElement.gfxdata.gcoords[j])
 		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
-		el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
-	    }
 	    if (u[3]==0) { u[3]=-.0001*el.gfxdata.coords[i][3]; } // to avoid division by zero
 	    var scalei = u[3]/el.gfxdata.coords[i][3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
 	    var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],1/scalei]; // only first three are actual 3d coordinates; see above for fourth
@@ -269,7 +268,6 @@ function gfxRedraw(el) {
 	    el.setAttribute("points",s);
 	}
 	if (el.gfxdata.coords3d.length>2) {
-	    var sc = el.gfxdata.coords3d[0][3];
 	    var u=[],v=[];
 	    for (var i=0; i<2; i++) {
 		u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i])
@@ -277,9 +275,13 @@ function gfxRedraw(el) {
 	    }
 	    var w=v[0]*u[1]-u[0]*v[1];
 	    // visibility
-	    if (w<0 && el.gfxdata.onesided) {
+	    var flipflag=false;
+	    if (w<0) {
+		if (el.gfxdata.onesided) {
 		    el.style.visibility="hidden";
 		    return;
+		}
+		else flipflag=true;
 	    }
 	    el.style.visibility="visible";
 	    // lighting TODO optimize (right now it recomputes a lot of stuff in particular pmat^{-1} is lame)
@@ -299,6 +301,7 @@ function gfxRedraw(el) {
 		    v.push(r[2][i]-r[0][i]);
 		}
 		var w=[u[1]*v[2]-v[1]*u[2],u[2]*v[0]-v[2]*u[0],u[0]*v[1]-v[0]*u[1]];
+		if (flipflag) { w=[-w[0],-w[1],-w[2]]; }
 		var w2=w[0]*w[0]+w[1]*w[1]+w[2]*w[2];
 		for (var j=0; j<lightel.children.length; j++)
 		    if (lightel.children[j].tagName == "feSpecularLighting") {
@@ -306,17 +309,19 @@ function gfxRedraw(el) {
 			// move the center of the light to its mirror image in the plane of the polygon
 			//var origin=document.getElementById(lightel2.gfxdata.origin);
 			var origin=lightel2.gfxdata.origin; // eval acts as getElementById
-			var light = mat.vectmultiply(origin.gfxdata.coords1[0]); // phew
+			var light = mat.vectmultiply(origin.gfxdata.coords1[0]); // phew TODO what if it's a named passive coord?
 			light = [light[0]/light[3],light[1]/light[3],light[2]/light[3]];
 			var sp = w[0]*(light[0]-r[0][0])+w[1]*(light[1]-r[0][1])+w[2]*(light[2]-r[0][2]);
 			var c = 2*sp/w2;
-			for (var i=0; i<3; i++) light[i]-=c*w[i];
-			light = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(new Vector ([light[0],light[1],light[2],1]));
-			if (sp<0) lightel.children[j].setAttribute("lighting-color","#000000"); else {
-			    lightel.children[j].setAttribute("lighting-color",origin.style.fill);
-			    lightel2.setAttribute("x",light[0]/light[3]);
-			    lightel2.setAttribute("y",-light[1]/light[3]);
-			    lightel2.setAttribute("z",4*origin.gfxdata.r/light[3]);
+			var lightrefl = light.map( (x,i) => x-c*w[i] );
+			lightrefl = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(new Vector ([lightrefl[0],lightrefl[1],lightrefl[2],1]));
+			if (sp<0)
+			    lightel.children[j].setAttribute("lighting-color","#000000");
+			else {
+			    lightel.children[j].setAttribute("lighting-color",origin.style.fill); // TODO should make it proportional to sp/||?
+			    lightel2.setAttribute("x",lightrefl[0]/lightrefl[3]);
+			    lightel2.setAttribute("y",-lightrefl[1]/lightrefl[3]);
+			    lightel2.setAttribute("z",4*origin.gfxdata.r/lightrefl[3]);
 			}
 		    }
 	    }
@@ -385,7 +390,7 @@ function checkData(el) {
 	    el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
     }
     else if (el.tagName=="path") { // annoying special case
-	var path = el.getAttribute("d").split(" "); // for lack of better
+	var path = el.getAttribute("d").split(" "); // for lack of better	
 	el.gfxdata.coords = [];
 	for (var i=0; i<path.length; i++)
 	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
