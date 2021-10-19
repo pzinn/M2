@@ -623,13 +623,13 @@ determineSide GraphicsPoly := g -> (
 
 -- lighting
 Light = new GraphicsType of Circle from ( "circle",
-    { symbol Center => vector {0,0,0,1.}, symbol Radius => 0, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "fill" => "#FFFFFF", "stroke" => "none" },
+    { symbol Center => vector {0,0,0,1.}, symbol Radius => 10, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "opacity" => 0, "fill" => "#FFFFFF", "stroke" => "none" },
     { "r", "cx", "cy" } -- atm these are not inherited
     )
 -- in case it's drawn, it's a circle
 
 -- viewPort1 ignores lights if invisible
-viewPort1 Light := g -> if g.Radius === 0 then null else (lookup(viewPort1,Circle)) g
+viewPort1 Light := g -> if g#"opacity" == 0 then null else (lookup(viewPort1,Circle)) g
 
 setupLights = (g,m,p) -> (
     remove(g.cache,Filter); -- clean up filters from past
@@ -665,7 +665,7 @@ feComposite := new MarkUpType of Hypertext
 addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
 feComposite.qname="feComposite"
 
-filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly) and g#?"fill") then (
+filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly)) then (
     tag := graphicsId();
     i:=0;
     opts := { "id" => tag };
@@ -681,7 +681,7 @@ filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,Graphic
 	    i=i+1;
 	)
     );
-    if is3d g and instance(g,GraphicsPoly) and g#?"fill" then (
+    if is3d g and instance(g,GraphicsPoly) then (
     	-- find first 3 coords
 	if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
     	if #coords>=3 then (
@@ -893,9 +893,9 @@ multidoc ///
    Text
     A source of light for a 3d SVG picture.
     This corresponds to the SVG "specular" lighting, use the property Specular. The location is given by Center.
-    By default a Light is invisible (it has radius 0) and is unaffected by matrix transformations outside it (Static true).
+    By default a Light is invisible (it has opacity 0) and is unaffected by matrix transformations outside it (Static true).
    Example
-    Light{Radius=>10,"fill"=>"yellow"}
+    Light{"fill"=>"yellow","opacity"=>1}
     v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
@@ -1334,7 +1334,7 @@ subdivide = (v,f) -> (
 sph=apply(f3,f->Polygon{apply(f,j->v3#j),"stroke"=>"white","stroke-width"=>0.01,"fill"=>"gray"});
 gList(sph, apply(cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"fill"=>c,Specular=>10,AnimMatrix=>rotation(0.02,(rnd(),rnd(),rnd()))}),ViewPort=>{(-200,-200),(200,200)},SizeY=>30)
 
--- simple plot
+-- explicit plot
 R=RR[x,y]; P=0.1*(x^2-y^2);
 gList(plot(P,{{-10,10},{-10,10}},Mesh=>15,"stroke-width"=>0.05,"fill"=>"gray"),Light{(200,0,-500),Specular=>10,"fill"=>"rgb(180,0,100)"},Light{(-200,100,-500),Specular=>10,"fill"=>"rgb(0,180,100)"},SizeY=>40,Axes=>false)
 

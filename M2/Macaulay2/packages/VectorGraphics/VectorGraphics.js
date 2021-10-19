@@ -374,7 +374,7 @@ function gfxRedraw(el) {
 	var ctr=new Vector;
 	var cnt = 0;
 	for (var i=0; i<el.children.length; i++)
-	    if (el.children[i].gfxdata && el.children[i].gfxdata.ctr[3]!=0) {
+	    if (el.children[i].gfxdata && el.children[i].gfxdata.ctr[3]!=0 && el.children[i].style.opacity!="0") { // the  opacity condition is hacky -- for lights
 		if (el.children[i].gfxdata.matrix) ctr.add(el.children[i].gfxdata.matrix.vectmultiply(el.children[i].gfxdata.ctr)); else ctr.add(el.children[i].gfxdata.ctr); // waste of calculation?
 		cnt++;
 	    }
