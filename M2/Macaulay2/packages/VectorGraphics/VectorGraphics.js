@@ -62,6 +62,7 @@ function gfxMouseDown1(event) {
     //    dragTarget = !el || !el.classList.contains("M2SvgDraggable") ? null : event.target;
     dragTarget = el && el.classList.contains("M2SvgDraggable") ? el : null;
     this.onmousemove = gfxMouseMove;
+    this.onwheel = gfxMouseWheel;
     event.preventDefault();
     event.stopPropagation();
 }
@@ -69,18 +70,19 @@ function gfxMouseDown1(event) {
 
 function gfxMouseUp(event) {
     this.onmousemove = null;
+    this.onwheel = null;
     dragTarget=null;
     event.preventDefault();
     event.stopPropagation();
 }
 
 
-function gfxTranslateDrag(x,y) { // TODO: add z. but better distinguish 2d vs 3d
+function gfxTranslateDrag(x,y,z) { // TODO 3d vs 2d?
     var r=dragTarget.gfxdata.ctr; // should already exist
     var mat = dragTarget.gfxdata.cmatrix; // should already exist
     var u = mat.vectmultiply(r);
     var mati = mat.inverse();
-    var t = mati.vectmultiply(new Vector([x,-y,0,0]));
+    var t = mati.vectmultiply(new Vector([x,-y,-z,0]));
     var gam = -t[3]; // often but not always zero
     var cf = u[3]/(gam*u[3]+r[3]);
     for (i=0; i<3; i++) t[i]=cf*(gam*r[i]/r[3]+t[i]);
@@ -109,16 +111,16 @@ function gfxRotateDrag(rot0) {
 
 function gfxMouseMove(event) {
     if (!dragTarget) return;
-    if (event.buttons & 1) {
+    if (event.buttons & 1 && !event.shiftKey) {
 	/*
 	var x=event.offsetX*this.viewBox.baseVal.width/this.width.baseVal.value+this.viewBox.baseVal.x;
 	var y=event.offsetY*this.viewBox.baseVal.height/this.height.baseVal.value+this.viewBox.baseVal.y;
 	*/
 	x=event.movementX*this.viewBox.baseVal.width/this.width.baseVal.value;
 	y=event.movementY*this.viewBox.baseVal.height/this.height.baseVal.value;
-	gfxTranslateDrag(x,y);
+	gfxTranslateDrag(x,y,0);
 	gfxRedo(this);
-    } else if (event.buttons & 2) {
+    } else if ((event.buttons & 2 && !event.shiftKey)||(event.buttons & 1 && event.shiftKey)) {
 	var x=event.movementX/this.width.baseVal.value;
 	var y=event.movementY/this.height.baseVal.value;
 
@@ -134,7 +136,28 @@ function gfxMouseMove(event) {
     event.stopPropagation();
 }
 
+function gfxMouseWheel(event) {
+    if (!dragTarget) return;
+    if (event.buttons & 1 && !event.shiftKey) {
+	/*
+	var x=event.offsetX*this.viewBox.baseVal.width/this.width.baseVal.value+this.viewBox.baseVal.x;
+	var y=event.offsetY*this.viewBox.baseVal.height/this.height.baseVal.value+this.viewBox.baseVal.y;
+	*/
+	gfxTranslateDrag(0,0,-event.deltaY); // unit???
+	gfxRedo(this);
+    } else if ((event.buttons & 2 && !event.shiftKey)||(event.buttons & 1 && event.shiftKey)) {
+	var z = event.deltaY*0.001; // unit???
+
+	var mat=new Matrix([[(1-z*z)/(1+z*z),2*z/(1+z*z),0,0],[-2*z/(1+z*z),(1-z*z)/(1+z*z),0,0],[0,0,1,0],[0,0,0,1]]);
+	gfxRotateDrag(mat);
+	gfxRedo(this);
+    }
+    event.preventDefault();
+    event.stopPropagation();
+}
+
 function gfxMouseClick(event) {
+    if (event.buttons & 2 && event.shiftKey) return; // normal behavior of right-click if shift
     event.preventDefault();
     event.stopPropagation();
 }
@@ -352,7 +375,7 @@ function gfxRedraw(el) {
 	var cnt = 0;
 	for (var i=0; i<el.children.length; i++)
 	    if (el.children[i].gfxdata && el.children[i].gfxdata.ctr[3]!=0) {
-		if (el.children[i].matrix) ctr.add(el.children[i].matrix.vectmultiply(el.children[i].gfxdata.ctr)); else ctr.add(el.children[i].gfxdata.ctr); // waste of calculation?
+		if (el.children[i].gfxdata.matrix) ctr.add(el.children[i].gfxdata.matrix.vectmultiply(el.children[i].gfxdata.ctr)); else ctr.add(el.children[i].gfxdata.ctr); // waste of calculation?
 		cnt++;
 	    }
 	if (cnt>0) {
