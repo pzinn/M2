@@ -76,8 +76,7 @@ function gfxMouseUp(event) {
 
 
 function gfxTranslateDrag(x,y) { // TODO: add z. but better distinguish 2d vs 3d
-    // check if initialized??? TODO
-    var r=dragTarget.gfxdata.ctr; // should always exist TODO check
+    var r=dragTarget.gfxdata.ctr; // should already exist
     var mat = dragTarget.gfxdata.cmatrix; // should already exist
     var u = mat.vectmultiply(r);
     var mati = mat.inverse();
@@ -214,17 +213,14 @@ function gfxRedraw(el) {
     // update passive coords, project
     if (el.gfxdata.coords1 && el.gfxdata.coords1.length>0) {
 	var flag=false;
-	el.gfxdata.coords3d = el.gfxdata.coords1.map( (u,i) => {
+	el.gfxdata.coords2d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
 	    if (j && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
 		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
 		el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
 	    }
-	    if (u[3]==0) { u[3]=-.0001*el.gfxdata.coords[i][3]; } // to avoid division by zero
-	    var scale = el.gfxdata.coords[i][3]/u[3];	// dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
-	    var v=[u[0]/u[3],-u[1]/u[3],-u[2]/u[3],scale]; // only first three are actual 3d coordinates; see above for fourth
-	    if (v[3]<=0) flag=true; // behind screen
-	    return v;
+	    if (u[3]/el.gfxdata.coords[i][3] <= 0 ) { if (u[3]==0) u[3]=.00001; flag=true; } // to avoid division by zero
+	    return [u[0]/u[3],-u[1]/u[3]];
 	});
 	// compute center
 	var ctr=new Vector;
@@ -233,6 +229,7 @@ function gfxRedraw(el) {
 	// distance
 	var u=el.gfxdata.cmatrix.vectmultiply(ctr);
 	el.gfxdata.distance=-u[2]/u[3]; // this is the only z coord we really need
+	el.gfxdata.scale = 1/u[3]; // dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
 	// behind screen?
 	if (flag) {
 	    el.style.display="none";
@@ -250,7 +247,7 @@ function gfxRedraw(el) {
 		if (path[i] != "") {
 		    if ( path[i] >= "A" && path[i] <= "Z" ) s+=path[i]+" "; else
 		    {
-			s+=el.gfxdata.coords3d[j][0]+" "+el.gfxdata.coords3d[j][1]+" ";
+			s+=el.gfxdata.coords2d[j][0]+" "+el.gfxdata.coords2d[j][1]+" ";
 			j++;
 			i++;
 		    }
@@ -258,15 +255,15 @@ function gfxRedraw(el) {
 	    el.setAttribute("d",s);
 	} else {
 	    var s = "";
-	    for (var j=0; j<el.gfxdata.coords3d.length; j++)
-		s+=el.gfxdata.coords3d[j][0]+" "+el.gfxdata.coords3d[j][1]+" ";
+	    for (var j=0; j<el.gfxdata.coords2d.length; j++)
+		s+=el.gfxdata.coords2d[j][0]+" "+el.gfxdata.coords2d[j][1]+" ";
 	    el.setAttribute("points",s);
 	}
-	if (el.gfxdata.coords3d.length>2) {
+	if (el.gfxdata.coords2d.length>2) {
 	    var u=[],v=[];
 	    for (var i=0; i<2; i++) {
-		u.push(el.gfxdata.coords3d[1][i]-el.gfxdata.coords3d[0][i])
-		v.push(el.gfxdata.coords3d[2][i]-el.gfxdata.coords3d[0][i]);
+		u.push(el.gfxdata.coords2d[1][i]-el.gfxdata.coords2d[0][i])
+		v.push(el.gfxdata.coords2d[2][i]-el.gfxdata.coords2d[0][i]);
 	    }
 	    var w=v[0]*u[1]-u[0]*v[1];
 	    // visibility
@@ -323,27 +320,27 @@ function gfxRedraw(el) {
 	}
     }
     else if (el.tagName=="line") {
-	    el.setAttribute("x1",el.gfxdata.coords3d[0][0]);
-	    el.setAttribute("y1",el.gfxdata.coords3d[0][1]);
-	    el.setAttribute("x2",el.gfxdata.coords3d[1][0]);
-	    el.setAttribute("y2",el.gfxdata.coords3d[1][1]);
+	    el.setAttribute("x1",el.gfxdata.coords2d[0][0]);
+	    el.setAttribute("y1",el.gfxdata.coords2d[0][1]);
+	    el.setAttribute("x2",el.gfxdata.coords2d[1][0]);
+	    el.setAttribute("y2",el.gfxdata.coords2d[1][1]);
     }
     else if ((el.tagName=="text")||(el.tagName=="foreignObject")) {
 	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=14;
-	el.setAttribute("x",el.gfxdata.coords3d[0][0]);
-	el.setAttribute("y",el.gfxdata.coords3d[0][1]);
+	el.setAttribute("x",el.gfxdata.coords2d[0][0]);
+	el.setAttribute("y",el.gfxdata.coords2d[0][1]);
 	// rescale font size
-	el.style.fontSize = el.gfxdata.fontsize*el.gfxdata.coords3d[0][3]+"px"; // chrome doesn't mind absence of units but firefox does
+	el.style.fontSize = el.gfxdata.fontsize*el.gfxdata.scale+"px"; // chrome doesn't mind absence of units but firefox does
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
-	    el.setAttribute("cx",el.gfxdata.coords3d[0][0]);
-	    el.setAttribute("cy",el.gfxdata.coords3d[0][1]);
+	    el.setAttribute("cx",el.gfxdata.coords2d[0][0]);
+	    el.setAttribute("cy",el.gfxdata.coords2d[0][1]);
 	    // also, rescale radius
 	    if (el.tagName=="circle")
-		el.setAttribute("r", el.gfxdata.r*el.gfxdata.coords3d[0][3]);
+		el.setAttribute("r", el.gfxdata.r*el.gfxdata.scale);
 	    else {
-		el.setAttribute("rx", el.gfxdata.rx*el.gfxdata.coords3d[0][3]);
-		el.setAttribute("ry", el.gfxdata.ry*el.gfxdata.coords3d[0][3]);
+		el.setAttribute("rx", el.gfxdata.rx*el.gfxdata.scale);
+		el.setAttribute("ry", el.gfxdata.ry*el.gfxdata.scale);
 	    }
     }
     else if ((el.tagName=="svg")||(el.tagName=="g")) {
@@ -388,6 +385,7 @@ function gfxReorder(el) {
 function gfxCheckData(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if (el.classList.contains("gfxauto")) return;
+    // TODO should probably eliminate other things e.g. <title>
     el.gfxdata={};
     for (var v in el.dataset)
 	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
@@ -436,10 +434,8 @@ function gfxCheckData(el) {
 	el.gfxdata.rx=el.rx.baseVal.value;
 	el.gfxdata.ry=el.ry.baseVal.value;
     }
-    else if ((el.tagName=="svg")||(el.tagName=="g")) {
-	for (var i=0; i<el.children.length; i++)
-	    gfxCheckData(el.children[i]);
-    }
+    for (var i=0; i<el.children.length; i++)
+	gfxCheckData(el.children[i]);
 }
 
 // a simple square matrix type
