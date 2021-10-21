@@ -27,7 +27,7 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
 protect Filter
 protect Distance
 protect Is3d
-protect Anim
+protect Animated
 protect CurrentMatrix
 protect PerspectiveMatrix
 protect ScaledRadius
@@ -84,32 +84,23 @@ gParse Matrix := x -> (
     if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
     if rank source x == 2 then x++1++1 else if rank source x == 3 then x++1 else x
     )
-gParse Vector := x -> (
-    if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
-    if rank class x === 2 then x || vector {0,1.} else (
-     gParseHash.Is3d = true; if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x)
+gParse Vector := x -> (  -- the weird syntax is due to GraphicsVector, see below
+    d := rank target x#0;
+    if d < 2 or d > 4 then error "wrong coordinates";
+    if d === 2 then return prepend(x#0 || matrix {{0.},{1.}},drop(x,1));
+     gParseHash.Is3d = true;
+     if d === 3 then prepend(x#0 || matrix {{1.}},drop(x,1)) else x
      )
 gParse GraphicsObject := identity
 
-graphicsIdCount := 0;
-graphicsId := () -> (
-    graphicsIdCount=graphicsIdCount+1;
-    "Graphics_" | toString currentTime() | "_" | toString graphicsIdCount
-    )
-
 gVectorCounter := 0;
 GraphicsVector = new Type of Vector -- should it be a GraphicsObject?
-gVector = x -> (
-    if instance(x,Vector) then x = entries x else if not instance(x,VisibleList) then error "wrong type";
+gVector = x -> new GraphicsVector from x
+new GraphicsVector from Vector := (T,v) -> (
     gVectorCounter=gVectorCounter+1;
-    new GraphicsVector from {
-    matrix apply(4,i->if x#?i then {x#i} else if i==3 then {1.} else {0.}),
-    gVectorCounter
-    })
-gParse GraphicsVector := x -> (
-    if x_2 != 0 then gParseHash.Is3d = true; -- weird: not same rule as gParse Vector
-    x
+    append(v,gVectorCounter)
     )
+new GraphicsVector from List := (T,x) -> new T from vector x
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
@@ -174,6 +165,12 @@ updateGraphicsCache := g -> (
 	    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
 	    );
 	);
+    )
+
+graphicsIdCount := 0;
+graphicsId := () -> (
+    graphicsIdCount=graphicsIdCount+1;
+    "Graphics_" | toString currentTime() | "_" | toString graphicsIdCount
     )
 
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
@@ -268,7 +265,7 @@ viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw 
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
 -- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
 gList = x -> (
-    x=flatten toList sequence x;
+    x=flatten toList sequence x; -- really? why not splice?
     x1 := select(x, y -> instance(y,GraphicsObject));
     x2 := select(x, y -> instance(y,Option));
     if any(x1,is3d) then x2 = append(x2, Is3d => true);
@@ -294,11 +291,11 @@ viewPort1 GraphicsHtml := g -> (
     )
 
 --
-anim := method()
-anim GraphicsObject := x -> x.?AnimMatrix
-anim GraphicsList := x -> (
-    if not x.cache.?Anim then x.cache.Anim = x.?AnimMatrix or any(x.Contents,anim);
-    x.cache.Anim
+animated := method()
+animated GraphicsObject := x -> x.?AnimMatrix
+animated GraphicsList := x -> (
+    if not x.cache.?Animated then x.cache.Animated = x.?AnimMatrix or any(x.Contents,animated);
+    x.cache.Animated
     )
 
 SVG = new MarkUpType of Hypertext
@@ -558,7 +555,7 @@ new SVG from GraphicsObject := (S,g) -> (
     defsList = unique ( defsList | scanDefs g );
     if #defsList>0 then ss=append(ss,svgDefs defsList);
     -- then autorotate button
-    if anim g then (
+    if animated g then (
 	sizex := rr_0*min(0.5,1.5/g.cache.SizeX); sizey := rr_1*min(0.5,1.5/g.cache.SizeY); -- can't be larger than half the pic; default = 1.5em
 	ss = append(ss,
 	GraphicsList.SVGElement {
