@@ -1,8 +1,15 @@
 /* svg stuff (used by VectorGraphics.m2) */
 
-.M2Svg {
+svg.M2Svg {
     position: relative;
     display: inline;
+    stroke-linejoin:round;
+    stroke:black;
+    stroke-opacity:1;
+    fill:none;
+    fill-opacity:1;
+    vertical-align:middle;
+    stroke-width:1%;
 }
 
 .M2SvgDraggable {

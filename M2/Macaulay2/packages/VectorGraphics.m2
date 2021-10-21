@@ -520,7 +520,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	    Line { Point1 => vector {xmin,0,0,1}, Point2 => vector {xmax,0,0,1}, "marker-end" => arr },
 	    Line { Point1 => vector {0,ymin,0,1}, Point2 => vector {0,ymax,0,1}, "marker-end" => arr },
 	    if is3d g then Line { Point1 => vector{0,0,zmin,1}, Point2 => vector {0,0,zmax,1}, "marker-end" => arr },
-	    "stroke"=>"black", "stroke-width"=>0.01*min(rr_0,rr_1)
+	    "stroke"=>"black", "stroke-width"=>"0.5%"
 	    );
 	axeslabels = gList(
 	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
@@ -542,14 +542,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	"preserveAspectRatio" => "none",
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
-	    "height:",toString g.cache.SizeY,"em;",
-	    if not g#?"stroke-linejoin" then "stroke-linejoin:round;",
-	    if not g#?"stroke" then "stroke:black;",
-	    if not g#?"stroke-opacity" then "stroke-opacity:1;",
-	    if not g#?"fill" then "fill:none;",
-	    if not g#?"fill-opacity" then "fill-opacity:1;",
-	    if not g#?"vertical-align" then "vertical-align:middle;",
-	    if not g#?"stroke-width" then "stroke-width:1%;", -- define a default stroke-width
+	    "height:",toString g.cache.SizeY,"em;"
 	),
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
@@ -629,7 +622,7 @@ Light = new GraphicsType of Circle from ( "circle",
 -- in case it's drawn, it's a circle
 
 -- viewPort1 ignores lights if invisible
-viewPort1 Light := g -> if g#"opacity" == 0 then null else (lookup(viewPort1,Circle)) g
+viewPort1 Light := g -> if toString g#"opacity" == "0" then null else (lookup(viewPort1,Circle)) g -- that opacity test sucks
 
 setupLights = (g,m,p) -> (
     remove(g.cache,Filter); -- clean up filters from past
