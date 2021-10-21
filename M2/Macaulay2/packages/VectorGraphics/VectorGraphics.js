@@ -21,8 +21,7 @@ window.gfxToggleRotation = function(event) {
     if (!svgel.gfxdata) gfxInitData(svgel);
     if (!el.ondblclick) el.ondblclick= function(event) { event.stopPropagation(); }; // weak
     
-    // the perspective matrix should *always* exist
-    if (!svgel.gfxdata.cmatrix) svgel.gfxdata.cmatrix = new Matrix(svgel.gfxdata.pmatrix);
+    if (!svgel.gfxdata.cmatrix) svgel.gfxdata.cmatrix = new Matrix(1);
     if (el.classList.contains("active")) {
 	clearInterval(el.intervalId);
 	el.classList.remove("active");
@@ -79,9 +78,9 @@ function gfxMouseUp(event) {
 
 function gfxTranslateDrag(x,y,z) { // TODO 3d vs 2d?
     var r=dragTarget.gfxdata.ctr; // should already exist
-    var mat = dragTarget.gfxdata.cmatrix; // should already exist
-    var u = mat.vectmultiply(r);
-    var mati = mat.inverse();
+    var svgel = dragTarget.ownerSVGElement ?  dragTarget.ownerSVGElement : dragTarget;
+    var u = svgel.gfxdata.pmatrix.vectmultiply(r);
+    var mati = dragTarget.gfxdata.cmatrix.inverse();
     var t = mati.vectmultiply(new Vector([x,-y,-z,0]));
     var gam = -t[3]; // often but not always zero
     var cf = u[3]/(gam*u[3]+r[3]);
@@ -94,17 +93,17 @@ function gfxTranslateDrag(x,y,z) { // TODO 3d vs 2d?
 
 function gfxRotateDrag(rot0) {
     // TODO optimize?
-    var rot=new Matrix(dragTarget.gfxdata.cmatrix);
+    var svgel = dragTarget.ownerSVGElement ?  dragTarget.ownerSVGElement : dragTarget;
+    var rot=new Matrix(dragTarget.gfxdata.cmatrix).leftmultiply(svgel.gfxdata.pmatrix);
     rot[3]=rot[7]=rot[11]=rot[12]=rot[13]=rot[14]=0; rot[15]=1; // sub 3x3
     var rot1 = rot.inverse();
     rot.leftmultiply(rot0);
     rot.leftmultiply(rot1);
-    var ctr = dragTarget.gfxdata.ctr;
+    var ctr = dragTarget.gfxdata.cmatrix.inverse().vectmultiply(dragTarget.gfxdata.ctr); 
     var transl = new Matrix([[1,0,0,ctr[0]/ctr[3]],[0,1,0,ctr[1]/ctr[3]],[0,0,1,ctr[2]/ctr[3]],[0,0,0,1]]);
     var mat = new Matrix([[1,0,0,-ctr[0]/ctr[3]],[0,1,0,-ctr[1]/ctr[3]],[0,0,1,-ctr[2]/ctr[3]],[0,0,0,1]]);
     mat.leftmultiply(rot);
     mat.leftmultiply(transl);
-//    if (!dragTarget.gfxdata.matrix) dragTarget.gfxdata.matrix = new Matrix(mat); else dragTarget.gfxdata.matrix.leftmultiply(mat);
     if (dragTarget.gfxdata.matrix) mat.leftmultiply(dragTarget.gfxdata.matrix);
     dragTarget.gfxdata.matrix=mat;
 }
@@ -147,7 +146,6 @@ function gfxMouseWheel(event) {
 	gfxRedo(this);
     } else if ((event.buttons & 2 && !event.shiftKey)||(event.buttons & 1 && event.shiftKey)) {
 	var z = event.deltaY*0.001; // unit???
-
 	var mat=new Matrix([[(1-z*z)/(1+z*z),2*z/(1+z*z),0,0],[-2*z/(1+z*z),(1-z*z)/(1+z*z),0,0],[0,0,1,0],[0,0,0,1]]);
 	gfxRotateDrag(mat);
 	gfxRedo(this);
@@ -198,8 +196,8 @@ function isActive(el) { // tricky concept: draggable or autorotated
 
 function gfxRecompute(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return; // gadgets and non svg aren't affected by transformations
-    var mat;
-    if (el.gfxdata.pmatrix) mat = el.gfxdata.pmatrix; else { // if not unmoving, get the ancestors' cmatrix
+    var mat; // TODO redo next line
+    if (el.gfxdata.pmatrix) mat = new Matrix(1); else { // if not unmoving, get the ancestors' cmatrix
 	var el1=el.parentElement;
 	if (!el1.gfxdata.cmatrix) return; // shouldn't happen
 	mat = el1.gfxdata.cmatrix;
@@ -236,23 +234,24 @@ function gfxRedraw(el) {
     // update passive coords, project
     if (el.gfxdata.coords1 && el.gfxdata.coords1.length>0) {
 	var flag=false;
+	var ctr=new Vector;
 	el.gfxdata.coords2d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
 	    if (j && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
 		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
 		el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
 	    }
-	    if (u[3]/el.gfxdata.coords[i][3] <= 0 ) { if (u[3]==0) u[3]=.00001; flag=true; } // to avoid division by zero
-	    return [u[0]/u[3],-u[1]/u[3]];
+	    ctr.add(u); // should we normalize u first?
+	    var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(u);
+	    if (v[3]/el.gfxdata.coords[i][3] <= 0 ) { if (v[3]==0) v[3]=.00001; flag=true; } // to avoid division by zero
+	    return [v[0]/v[3],-v[1]/v[3]];
 	});
-	// compute center
-	var ctr=new Vector;
-	el.gfxdata.coords.forEach(u => ctr.add(u)); // should we normalize u first?
+	// center
 	el.gfxdata.ctr=ctr.multiply(1/ctr[3]);
 	// distance
-	var u=el.gfxdata.cmatrix.vectmultiply(ctr);
-	el.gfxdata.distance=-u[2]/u[3]; // this is the only z coord we really need
-	el.gfxdata.scale = 1/u[3]; // dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
+	var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(ctr);
+	el.gfxdata.distance=-v[2]/v[3]; // this is the only z coord we really need
+	el.gfxdata.scale = 1/v[3]; // dirty trick for semi-3d objects (circles, ellipses, text); makes certain assumptions on form of cmatrix TODO retire
 	// behind screen?
 	if (flag) {
 	    el.style.display="none";
@@ -299,15 +298,14 @@ function gfxRedraw(el) {
 		else flipflag=true;
 	    }
 	    el.style.visibility="visible";
-	    // lighting TODO optimize (right now it recomputes a lot of stuff in particular pmat^{-1} is lame)
+	    // lighting TODO optimize (right now it recomputes a lot of stuff)
 	    var lightname = el.getAttribute("filter");
 	    if (lightname) {
 		lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
 		var lightel=document.getElementById(lightname);
-		var mat = el.ownerSVGElement.gfxdata.pmatrixinv;
 		var r=[];
 		for (i=0; i<3; i++) {
-		    var v=mat.vectmultiply(el.gfxdata.coords1[i]);
+		    var v=el.gfxdata.coords1[i];
 		    r.push([v[0]/v[3],v[1]/v[3],v[2]/v[3]]);
 		}
 		var u=[]; var v=[];
@@ -324,7 +322,7 @@ function gfxRedraw(el) {
 			// move the center of the light to its mirror image in the plane of the polygon
 			//var origin=document.getElementById(lightel2.gfxdata.origin);
 			var origin=lightel2.gfxdata.origin; // eval acts as getElementById
-			var light = mat.vectmultiply(origin.gfxdata.coords1[0]); // phew TODO what if it's a named passive coord?
+			var light = origin.gfxdata.coords1[0]; // phew TODO what if it's a named passive coord?
 			light = [light[0]/light[3],light[1]/light[3],light[2]/light[3]];
 			var sp = w[0]*(light[0]-r[0][0])+w[1]*(light[1]-r[0][1])+w[2]*(light[2]-r[0][2]);
 			var c = 2*sp/w2;
@@ -375,13 +373,14 @@ function gfxRedraw(el) {
 	var cnt = 0;
 	for (var i=0; i<el.children.length; i++)
 	    if (el.children[i].gfxdata && el.children[i].gfxdata.ctr[3]!=0 && el.children[i].style.opacity!="0") { // the  opacity condition is hacky -- for lights
-		if (el.children[i].gfxdata.matrix) ctr.add(el.children[i].gfxdata.matrix.vectmultiply(el.children[i].gfxdata.ctr)); else ctr.add(el.children[i].gfxdata.ctr); // waste of calculation?
+		ctr.add(el.children[i].gfxdata.ctr);
 		cnt++;
 	    }
 	if (cnt>0) {
 	    el.gfxdata.ctr=ctr.multiply(1/cnt);
-	    var u=el.gfxdata.cmatrix.vectmultiply(ctr);
-	    el.gfxdata.distance=-u[2]/u[3]; // this is the only z coord we really need
+	    var svgel = el.ownerSVGElement ?  el.ownerSVGElement : el;
+	    var v=svgel.gfxdata.pmatrix.vectmultiply(ctr);
+	    el.gfxdata.distance=-v[2]/v[3]; // this is the only z coord we really need
 	} else {
 	    el.gfxdata.ctr=new Vector([0,0,0,0]);
 	    el.gfxdata.distance=0;
@@ -411,8 +410,7 @@ function gfxCheckData(el) {
     // TODO should probably eliminate other things e.g. <title>
     el.gfxdata={};
     for (var v in el.dataset)
-	    el.gfxdata[v]=eval("("+el.dataset[v]+")");
-    if (el.gfxdata.pmatrix) el.gfxdata.pmatrixinv = el.gfxdata.pmatrix.inverse(); // almost never used
+	el.gfxdata[v]=eval("("+el.dataset[v]+")");
     // start the computation of matrices... (see gfxRecompute() for details)
     var mat = el.gfxdata.pmatrix ? el.gfxdata.pmatrix : el.parentElement.gfxdata.cmatrix;
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
