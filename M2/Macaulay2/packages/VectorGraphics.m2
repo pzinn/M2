@@ -501,7 +501,7 @@ new SVG from GraphicsObject := (S,g) -> (
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
     if g.?Axes and g.Axes =!= false then (
-	arr := arrow();
+	arr := arrow(); -- TODO size
 	-- determine intersection of viewport with axes TODO more symmetrically
 	xmin := (p_(3,3)*r#0_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#0_0);
 	xmax := (p_(3,3)*r#1_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#1_0);
@@ -732,13 +732,27 @@ radialGradient = true >> o -> stop -> (
 	)
     )
 
-GraphicsArrow = new OptionTable from gParse { symbol Points => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", Is3d => false }
+--GraphicsArrow = new OptionTable from gParse { symbol Points => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", Is3d => false }
 svgMarker := new MarkUpType of HypertextInternalLink
-addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth" => "3", "markerHeight" => "4", "refX" => "0", "refY" => "2"})
+--addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth" => "3", "markerHeight" => "4", "refX" => "0", "refY" => "2", "markerUnits" => "userSpaceOnUse"})
+addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth", "markerHeight", "refX", "refY", "markerUnits" => "userSpaceOnUse"})
 svgMarker.qname="marker"
 
 m := matrix {{1,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,1}}*perspective 1;
 
+arrow = true >> o -> x -> (
+    if x === () then x = 10. else x = numeric x;
+    tag := graphicsId();
+    svgMarker {
+	"id" => tag,
+	"markerWidth" => 1.5*x,
+	"markerHeight" => 2*x,
+	"refY" => x,
+	svg(Polygon { symbol Points => { vector {0,0}, vector {0,2*x}, vector {1.5*x,x} }, "fill" => "black", "stroke" => "none", Is3d => false }
+	    ++ gParse o,m,m)  -- eww
+	}
+    )
+-*
 arrow = true >> o -> x -> (
     tag := graphicsId();
     svgMarker {
@@ -746,6 +760,16 @@ arrow = true >> o -> x -> (
 	svg(new Polygon from (GraphicsArrow ++ gParse o),m,m)  -- eww
 	}
     )
+
+arrow = true >> o -> x -> (
+    tag := graphicsId();
+    style(
+    svgMarker {
+	"id" => tag,
+	svg(new Polygon from GraphicsArrow,m,m)  -- eww
+	},o)
+    )
+*-  
 
 -* TODO recreate at some point
 gfxLabel = true >> o -> label -> (
@@ -1193,8 +1217,9 @@ multidoc ///
   Description
    Text
     Must be used as styling options "marker-start", "marker-mid" or "marker-end", to add an arrow to a path.
+    Argument is size of arrow.
    Example
-    Polyline{Points=>{(0,0),(50,50),(0,100),(50,150)},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>arrow("fill"=>"orange"),Margin=>0.3}
+    Polyline{Points=>{(0,0),(50,50),(0,100),(50,150)},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>arrow(10,"fill"=>"orange"),Margin=>0.3}
  Node
   Key
    GraphicsHtml
