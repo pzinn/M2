@@ -101,6 +101,11 @@ new GraphicsVector from Vector := (T,v) -> (
     append(v,gVectorCounter)
     )
 new GraphicsVector from List := (T,x) -> new T from vector x
+Number * GraphicsVector := (x,v) -> new GraphicsVector from (x*v#0, if class v#1 === HashTable then applyValues(v#1,y->x*y) else hashTable{v#1=>x})
+GraphicsVector + GraphicsVector := (v,w) -> (
+    h1 := if class v#1 === HashTable then v#1 else hashTable{v#1=>1};
+    h2 := if class w#1 === HashTable then w#1 else hashTable{w#1=>1};
+    new GraphicsVector from (v#0+w#0, merge(h1,h2,plus)))
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
@@ -265,7 +270,7 @@ viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw 
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
 -- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
 gList = x -> (
-    x=flatten toList sequence x; -- really? why not splice?
+    x=flatten toList sequence x; -- really? why not splice? because coords can be sequences?
     x1 := select(x, y -> instance(y,GraphicsObject));
     x2 := select(x, y -> instance(y,Option));
     if any(x1,is3d) then x2 = append(x2, Is3d => true);

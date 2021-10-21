@@ -217,7 +217,7 @@ function gfxRecompute(el) {
     el.gfxdata.coords1 = el.gfxdata.coords.map ( (c,i) => {
 	var u=el.gfxdata.cmatrix.vectmultiply(c);
 	var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	if (j && isActive(el))
+	if (j && (!el.ownerSVGElement.gfxdata.gcoords[j] || isActive(el)))
 	    el.ownerSVGElement.gfxdata.gcoords[j] = u;
 	return u;
     });
@@ -237,9 +237,25 @@ function gfxRedraw(el) {
 	var ctr=new Vector;
 	el.gfxdata.coords2d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	    if (j && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
+	    if (j) {
+		if (typeof j === 'number' && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
 		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
 		el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
+		} else if (typeof j === 'object') {
+		    var uu=new Vector;
+		    var flag=true;
+		    for (const jj in j) {
+			if (el.ownerSVGElement.gfxdata.gcoords[jj]) {
+			    var v = new Vector(el.ownerSVGElement.gfxdata.gcoords[jj]);
+			    v.multiply(j[jj]);
+			    uu.add(v);
+			} else flag=false;
+		    }
+		    if (flag) {
+			u = el.gfxdata.coords1[i]=uu;
+			el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
+		    }
+		}
 	    }
 	    ctr.add(u); // should we normalize u first?
 	    var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(u);
@@ -465,7 +481,7 @@ var matrix_identity=new Array(dim); for (var i=0; i<dim; i++) { matrix_identity[
 
 class Vector extends Float32Array {
     constructor(v) {
-	if ((v instanceof Array)&&(v.length===dim))
+	if ((v instanceof Array || v instanceof Float32Array)&&(v.length===dim))
 	    super(v);
 	else
 	    super(dim);
