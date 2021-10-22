@@ -21,9 +21,10 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
     "Blur", "Static", "PathList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG", "SVGElement",
-    "GraphicsVector", "gVector"
+    "gNode", "GraphicsNode"
     }
 
+protect NodeName
 protect Filter
 protect Distance
 protect Is3d
@@ -34,11 +35,12 @@ protect ScaledRadius
 protect ScaledRadiusX
 protect ScaledRadiusY
 protect GraphicsId
+protect Node -- TODO retire
 
 debug Core
 
 -- for now data-* need entering manually
-htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize","data-names"}
+htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize","data-names","data-name","data-static"}
 svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 
 GraphicsObject = new Type of HashTable -- ancestor type
@@ -64,7 +66,7 @@ GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opt
 -- * SizeY / SizeX for picture sizes
 -- * ViewPort for manual range of viewing window
 -- * Perspective for 3d: can be a number or a whole 4d matrix (ideally, there'd be a function to translate...)
---   the matrix should be such that after transformation, the coordinates are (x,y,z,z/p) where the viewer is at (0,0,0) and the screen at z=-p
+--   the matrix should be such that after transformation, the coordinates are (x,y,z,1-z/p) where the viewer is at (0,0,0) and the screen at z=-p
 -- * Margin (leave blank around picture)
 -- * Axes (draw axes)
 
@@ -84,28 +86,14 @@ gParse Matrix := x -> (
     if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
     if rank source x == 2 then x++1++1 else if rank source x == 3 then x++1 else x
     )
-gParse Vector := x -> (  -- the weird syntax is due to GraphicsVector, see below
-    d := rank target x#0;
-    if d < 2 or d > 4 then error "wrong coordinates";
-    if d === 2 then return prepend(x#0 || matrix {{0.},{1.}},drop(x,1));
-     gParseHash.Is3d = true;
-     if d === 3 then prepend(x#0 || matrix {{1.}},drop(x,1)) else x
-     )
-gParse GraphicsObject := identity
-
-gVectorCounter := 0;
-GraphicsVector = new Type of Vector -- should it be a GraphicsObject?
-gVector = x -> new GraphicsVector from x
-new GraphicsVector from Vector := (T,v) -> (
-    gVectorCounter=gVectorCounter+1;
-    append(v,gVectorCounter)
+gParse Vector := x -> (
+    if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
+    if rank class x === 2 then x || vector {0,1.} else (
+	gParseHash.Is3d = true;
+	if rank class x === 3 then x || vector {1.} else if rank class x === 4 then x
+	)
     )
-new GraphicsVector from List := (T,x) -> new T from vector x
-Number * GraphicsVector := (x,v) -> new GraphicsVector from (x*v#0, if class v#1 === HashTable then applyValues(v#1,y->x*y) else hashTable{v#1=>x})
-GraphicsVector + GraphicsVector := (v,w) -> (
-    h1 := if class v#1 === HashTable then v#1 else hashTable{v#1=>1};
-    h2 := if class w#1 === HashTable then w#1 else hashTable{w#1=>1};
-    new GraphicsVector from (v#0+w#0, merge(h1,h2,plus)))
+gParse GraphicsObject := identity
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
@@ -271,7 +259,7 @@ GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents 
 -- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
 gList = x -> (
     x=flatten toList sequence x; -- really? why not splice? because coords can be sequences?
-    x1 := select(x, y -> instance(y,GraphicsObject));
+    x1 := select(x, y -> instance(y,GraphicsObject)); -- use override? or just option for function?
     x2 := select(x, y -> instance(y,Option));
     if any(x1,is3d) then x2 = append(x2, Is3d => true);
     GraphicsList append(x2,symbol Contents => x1)
@@ -285,6 +273,38 @@ viewPort1 GraphicsList := x -> (
 	{vector (min\mn), vector(max\mx)}
     )
 )
+-- lists with preferred coordinate
+GraphicsNode = new GraphicsType of GraphicsList from ( "g", { symbol Node => vector {0.,0.}, symbol Contents => {} } )
+-- TODO what if user build directly with GraphicsNode { .. } ?
+gNodeName := 0;
+gNode = x -> (
+    ctr := x#0;
+    x = drop(x,1);
+    x=flatten toList sequence x; -- really? why not splice? because coords can be sequences?
+    x1 := select(x, y -> instance(y,GraphicsObject)); -- use override? or just option for function?
+    x2 := select(x, y -> instance(y,Option));
+    if any(x1,is3d) then x2 = append(x2, Is3d => true);
+    gNodeName = gNodeName + 1;
+    GraphicsNode (x2 | {symbol Contents => x1, symbol Node => ctr, symbol NodeName => gNodeName}) ++ {TransformMatrix=>translation ctr}
+    )
+Matrix * GraphicsNode := (m,x) -> m*x.Node -- semi-hack for now TODO should treat separately because saved coord should be post-matrix
+Number * GraphicsNode := (x,v) -> new GraphicsNode from {
+    symbol Node => x*v.Node,
+    symbol NodeName => if class v.NodeName === HashTable then applyValues(v.NodeName,y->x*y) else hashTable{v.NodeName=>x}
+    }
+GraphicsNode + GraphicsNode := (v,w) -> (
+    h1 := if class v.NodeName === HashTable then v.NodeName else hashTable{v.NodeName=>1};
+    h2 := if class w.NodeName === HashTable then w.NodeName else hashTable{w.NodeName=>1};
+    new GraphicsNode from {
+	symbol Node => v.Node + w.Node,
+	symbol NodeName => merge(h1,h2,plus)
+	}
+    )
+gParse GraphicsNode := x -> (
+    if is3d x then gParseHash.Is3d = true;
+    x
+    )
+
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { Point => vector {0.,0.}, symbol HtmlContent => null },
@@ -338,7 +358,10 @@ svgLookup := hashTable {
     symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = x;),
     symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = x;),
     symbol Center => (g,x) -> (
-	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",0,x#1);
+	if instance(x,GraphicsNode) then (
+	    ac(g.cache.Options,"data-names",0,x.NodeName);
+	    x=x.Node;
+	    );
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"cx" = x_0;
@@ -353,38 +376,51 @@ svgLookup := hashTable {
     symbol ScaledRadiusX => (g,x) ->  (g.cache.Options#"rx" = x;),
     symbol ScaledRadiusY => (g,x) ->  (g.cache.Options#"ry" = x;),
     symbol PathList => (g,x) -> (
+	x = apply(#x, i -> if instance(x#i,GraphicsNode) then (
+		ac(g.cache.Options,"data-names",i,x#i.NodeName);
+		x#i.Node) else x#i);
 	g.cache.Options#"d" = demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d'(g.cache.CurrentMatrix*y),toString) else y));
 	x = select(x,y->instance(y,Vector));
 	if is3d g then g.cache.Options#"data-coords"=x;
-	scan(#x, i -> if instance(x#i,GraphicsVector) then ac(g.cache.Options,"data-names",i,x#i#1));
 	),
     symbol Points => (g,x) -> (
+	x = apply(#x, i -> if instance(x#i,GraphicsNode) then (
+		ac(g.cache.Options,"data-names",i,x#i.NodeName);
+		x#i.Node) else x#i);
 	g.cache.Options#"points" = demark(" ", flatten apply(x, y -> apply(entries project2d'(g.cache.CurrentMatrix*y),toString)));
 	if is3d g then g.cache.Options#"data-coords"=x;
-	scan(#x, i -> if instance(x#i,GraphicsVector) then ac(g.cache.Options,"data-names",i,x#i#1));
 	),
     symbol Point => (g,x) -> (
-	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",0,x#1);
+	if instance(x,GraphicsNode) then (
+	    ac(g.cache.Options,"data-names",0,x.NodeName);
+	    x=x.Node;
+	    );
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x" = x_0;
 	g.cache.Options#"y" = x_1;
 	),
     symbol Point1 => (g,x) -> (
-	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",0,x#1);
+	if instance(x,GraphicsNode) then (
+	    ac(g.cache.Options,"data-names",0,x.NodeName);
+	    x=x.Node;
+	    );
 	if is3d g then ac(g.cache.Options,"data-coords",0,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x1" = x_0;
 	g.cache.Options#"y1" = x_1;
 	),
     symbol Point2 => (g,x) -> (
-	if instance(x,GraphicsVector) then ac(g.cache.Options,"data-names",1,x#1);
+	if instance(x,GraphicsNode) then (
+	    ac(g.cache.Options,"data-names",1,x.NodeName);
+	    x=x.Node;
+	    );
 	if is3d g then ac(g.cache.Options,"data-coords",1,x);
 	x = project2d' (g.cache.CurrentMatrix*x);
 	g.cache.Options#"x2" = x_0;
 	g.cache.Options#"y2" = x_1;
 	),
-    symbol Static => (g,x) -> (if x then g.cache.Options#"data-pmatrix" = g.cache.CurrentMatrix;),
+    symbol Static => (g,x) -> (if x then g.cache.Options#"data-static" = "true";),
     symbol GraphicsId => (g,x) -> (g.cache.Options#"id" = x;),
     symbol Filter => (g,x) -> (g.cache.Options#"filter" = x;),
     symbol Contents => (g,x) -> (
@@ -393,6 +429,7 @@ svgLookup := hashTable {
 	),
     symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
     symbol HtmlContent => (g,x) -> (g.cache.Contents = {x};),
+    symbol NodeName => (g,x) -> (g.cache.Options#"data-name" = x;),
     symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = "M2SvgDraggable";) -- TODO what if there are other classes?
     }
 

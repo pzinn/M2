@@ -188,25 +188,22 @@ function gfxRotate(el,mat) {
     if (!el.gfxdata.matrix) el.gfxdata.matrix = new Matrix(mat); else el.gfxdata.matrix.leftmultiply(mat);
 }
 
-function isActive(el) { // tricky concept: draggable or autorotated
-    while(el.tagName!="svg" && el != dragTarget && !el.gfxdata.dmatrix) // TODO should only be tested if autorotate turned on
-	el=el.parentElement;
-    return el.tagName!="svg";
-}
-
 function gfxRecompute(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg"||el.classList.contains("gfxauto")) return; // gadgets and non svg aren't affected by transformations
-    var mat; // TODO redo next line
-    if (el.gfxdata.pmatrix) mat = new Matrix(1); else { // if not unmoving, get the ancestors' cmatrix
+    var mat;
+    if (el.tagName =="svg" || el.gfxdata.static) mat = new Matrix(1); else { // if not unmoving, get the ancestors' cmatrix
 	var el1=el.parentElement;
 	if (!el1.gfxdata.cmatrix) return; // shouldn't happen
 	mat = el1.gfxdata.cmatrix;
     }
     // cmatrix is the compound rotation matrix (just an optimization to avoid repeated multiplications)
-    // at the end of the day "cmatrix" is the *ordered* product over ancestors of matrices "matrix" (plus the leftmost perspective matrix "pmatrix"
+    // at the end of the day "cmatrix" is the *ordered* product over ancestors of matrices "matrix"
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
     if ((el.tagName=="svg")||(el.tagName=="g")) {
+	if (el.gfxdata.name) { // record center coordinate
+	    el.ownerSVGElement.gfxdata.gcoords[el.gfxdata.name] = el.gfxdata.cmatrix.vectmultiply([0,0,0,1]);
+	}
 	// must call inductively children's
 	for (var i=0; i<el.children.length; i++) gfxRecompute(el.children[i]);
 	return;
@@ -214,13 +211,9 @@ function gfxRecompute(el) {
     if (!el.gfxdata.coords || el.gfxdata.coords.length == 0) {
 	return;
     }
-    el.gfxdata.coords1 = el.gfxdata.coords.map ( (c,i) => {
-	var u=el.gfxdata.cmatrix.vectmultiply(c);
-	var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	if (j && (!el.ownerSVGElement.gfxdata.gcoords[j] || isActive(el)))
-	    el.ownerSVGElement.gfxdata.gcoords[j] = u;
-	return u;
-    });
+    el.gfxdata.coords1 = el.gfxdata.coords.map (
+	(c,i) => el.gfxdata.names && el.gfxdata.names[i] ? null : el.gfxdata.cmatrix.vectmultiply(c) // don't bother computing named ones
+    );
 }
 
 function gfxRedo(el) {
@@ -238,12 +231,14 @@ function gfxRedraw(el) {
 	el.gfxdata.coords2d = el.gfxdata.coords1.map( (u,i) => {
 	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
 	    if (j) {
-		if (typeof j === 'number' && el.ownerSVGElement.gfxdata.gcoords[j] && u != el.ownerSVGElement.gfxdata.gcoords[j]) {
-		u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
-		el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
+		var flag=true;
+		if (typeof j === 'number') {
+		    if (el.ownerSVGElement.gfxdata.gcoords[j]) {
+			u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
+			el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u); // do we still need this?
+		    } else flag=false;
 		} else if (typeof j === 'object') {
 		    var uu=new Vector;
-		    var flag=true;
 		    for (const jj in j) {
 			if (el.ownerSVGElement.gfxdata.gcoords[jj]) {
 			    var v = new Vector(el.ownerSVGElement.gfxdata.gcoords[jj]);
@@ -256,6 +251,8 @@ function gfxRedraw(el) {
 			el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
 		    }
 		}
+		if (!flag) // failed to find named coord: just compute usual way
+		    u = el.gfxdata.coords1[i]=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.coords[i]);
 	    }
 	    ctr.add(u); // should we normalize u first?
 	    var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(u);
