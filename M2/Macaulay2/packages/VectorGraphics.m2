@@ -8,7 +8,7 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
-        DebuggingMode => false,
+        DebuggingMode => true,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text"},
 	PackageExports => {"Text"}
@@ -16,7 +16,7 @@ newPackage(
 
 export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
-    "gList", "viewPort", "is3d", "distance", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
+    "gList", "viewPort", "is3d", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
     "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "Size", "ViewPort",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
     "Blur", "Static", "PathList", "Axes", "Margin", "Mesh", "Draggable",
@@ -36,6 +36,7 @@ protect ScaledRadiusX
 protect ScaledRadiusY
 protect GraphicsId
 protect Node -- TODO retire
+protect Scale
 
 debug Core
 
@@ -45,11 +46,10 @@ svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 
 GraphicsObject = new Type of HashTable -- ancestor type
 
-new GraphicsObject from List := (T,l) -> hashTable append(l,symbol cache => new CacheTable); -- every Graphics object should have a cache
 new GraphicsObject := T -> new T from {};
-new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable};
-GraphicsObject ++ HashTable :=
-GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,
+new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable, symbol style => new MutableHashTable};
+GraphicsObject ++ HashTable := (opts1, opts2) -> merge(opts1,new class opts1 from opts2,first) -- TEMP for arrow TODO better
+GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from append(opts2,symbol cache => new CacheTable),
     (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
     ) -- cf similar method for OptionTable
 
@@ -74,7 +74,7 @@ GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opt
 
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
-gParseHash := new MutableHashTable; -- TODO thread-safely
+local gParseHash; -- TODO thread-safely
 gParse := method(Dispatch=>Thing)
 gParse Sequence := x -> gParse vector toList x
 gParse VisibleList := x -> apply(x,gParse)
@@ -98,11 +98,14 @@ gParse GraphicsObject := identity
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
-    gParseHash = new MutableHashTable;
-    (opts1,opts2):=override(,toSequence gParse opts);
-    opts2 = sequence opts2; -- argh! the override bug https://github.com/Macaulay2/M2/issues/1548
-    opts0 = apply(#opts0, i -> if i < #opts2 then opts0#i#0 => opts2#i else gParse opts0#i);
-    (new T from gParseHash)++opts0++opts1
+    gParseHash = new CacheTable;
+    (opts2,opts1):=override(,toSequence gParse opts);
+    opts1 = sequence opts1; -- argh! the override bug https://github.com/Macaulay2/M2/issues/1548
+    if #opts1 > #opts0 then error "too many arguments";
+    sty := new MutableHashTable from applyPairs(opts2,(k,v) -> if class k === String then (k,v));
+    opts3 := new MutableHashTable from applyPairs(opts2,(k,v) -> if class k =!= String then (k,v));
+    new T from merge(hashTable (gParse opts0 | apply(#opts1, i -> opts0#i#0 => opts1#i)
+	| { symbol style =>  sty, symbol cache => gParseHash}),opts3,last)
 )
 
 perspective = g -> (
@@ -113,22 +116,18 @@ perspective = g -> (
 )
 
 viewPort = g -> (
-    if not g.cache.?ViewPort then svg g; -- need to be rendered
+    svg g; -- need to be rendered
     g.cache.ViewPort
     )
 viewPort1 := method() -- returns [xmin,ymin],[xmax,ymax]
 viewPort1 GraphicsObject := x -> null
 
--- Is3d=false has two effects:
+-- Is3d=false has two effects: TODO rewrite
 -- * the data-* stuff is lightened (can be recreated from the normal parameters)
 -- * the event listeners for 3d rotating the object with the mouse are deactivated
 -- * lighting is deactivated
-is3d = x -> if x.?Is3d then x.Is3d else false;
+is3d = x -> if x.cache.?Is3d then x.cache.Is3d else false; -- TODO fix obviously
 
-distance = g -> (
-    if not g.cache.?Distance then svg g; -- need to be rendered
-    g.cache.Distance
-    )
 distance1 := method()
 distance1 GraphicsObject := x -> 0_RR
 
@@ -139,25 +138,12 @@ updateGraphicsCache := g -> (
     g.cache.ViewPort = viewPort1 g; -- update the range
     g.cache.Distance = distance1 g; -- update the distance
     if g.?OneSided and g.OneSided then determineSide g;
-    -- bit of a hack: 2d objects Circle, Ellipse get scaled in a 3d context
-    if instance(g,Circle) then (
-	sc := (g.Center)_3/(g.cache.CurrentMatrix*g.Center)_3;
-	g.cache.ScaledRadius=max(0,g.Radius*sc);
-	) else if instance(g,Ellipse) then (
-	sc = (g.Center)_3/(g.cache.CurrentMatrix*g.Center)_3;
-	g.cache.ScaledRadiusX=max(0,g.RadiusX*sc);
-	g.cache.ScaledRadiusY=max(0,g.RadiusY*sc);
-	) else if instance(g,GraphicsText) or instance(g,GraphicsHtml) then ( -- same for GraphicsText
-	-- choose font size
-	f := if g.?FontSize then g.FontSize else 14.;
-	sc = (g.Point)_3/(g.cache.CurrentMatrix*g.Point)_3;
-	f = max(0,f*sc);
-	g.cache#"font-size"= toString f|"px";
-	if instance(g,GraphicsHtml) then ( -- hack
-	    g.cache#"overflow"="visible"; -- makes width/height irrelevant
-	    g.cache#"width"=g.cache#"height"="100%"; -- but still needed otherwise webkit won't render
-	    );
-	);
+    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+    if instance(g,Circle) or instance(g,Ellipse) or instance(g,GraphicsText) or instance(g,GraphicsHtml) then (
+	r := if g.?Center then g.Center else g.Point;
+	if instance(r,GraphicsNode) then r=r.Node;
+	g.cache.Scale = r_3/(g.cache.CurrentMatrix*r)_3;
+	)
     )
 
 graphicsIdCount := 0;
@@ -174,18 +160,16 @@ new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g.SVGElement.qname = x#0;
     g)
 
-
 Circle = new GraphicsType of GraphicsObject from ( "circle",
     { symbol Center => vector {0.,0.}, symbol Radius => 50. },
     { "r", "cx", "cy" }
     )
 viewPort1 Circle := g -> (
-    p := g.cache.CurrentMatrix * g.Center;
-    sc := (g.Center)_3/p_3;
-    r:=g.Radius*sc; -- lame
-    p=project2d p;
-    r = vector {r,r};
-    { p - r, p + r }
+    p1 := g.cache.CurrentMatrix * (g.Center-vector {g.Radius,g.Radius,0,0}); -- lame
+    p2 := g.cache.CurrentMatrix * (g.Center+vector {g.Radius,g.Radius,0,0}); -- lame
+    p1=project2d p1;
+    p2=project2d p2;
+    { p1, p2 }
     )
 distance1 Circle := g -> (
     y := g.cache.CurrentMatrix * g.Center;
@@ -197,12 +181,11 @@ Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
     { "rx", "ry", "cx", "cy" }
     )
 viewPort1 Ellipse := g -> (
-    p := g.cache.CurrentMatrix * g.Center;
-    sc := (g.Center)_3/p_3;
-    rx:=g.RadiusX*sc; ry:=g.RadiusY*sc; -- lame
-    p=project2d p;
-    r := vector {rx,ry};
-    { p - r, p + r }
+    p1 := g.cache.CurrentMatrix * (g.Center-vector {g.RadiusX,g.RadiusY,0,0}); -- lame
+    p2 := g.cache.CurrentMatrix * (g.Center+vector {g.RadiusX,g.RadiusY,0,0}); -- lame
+    p1=project2d p1;
+    p2=project2d p2;
+    { p1, p2 }
     )
 distance1 Ellipse := g -> (
     y := g.cache.CurrentMatrix * g.Center;
@@ -210,13 +193,14 @@ distance1 Ellipse := g -> (
     )
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
-    { Point => vector {0.,0.}, symbol TextContent => "" },
+    { Point => vector {0.,0.}, symbol TextContent => "", symbol FontSize => 14. },
     { "x", "y" }
     )
 viewPort1 GraphicsText := g -> (
-    f := if g.?FontSize then g.FontSize else 14.;
-    p := g.cache.CurrentMatrix * g.Point;
-    sc := (g.Point)_3/p_3;
+    f := g.FontSize;
+    x := g.Point; if instance(x,GraphicsNode) then x=x.Node;
+    p := g.cache.CurrentMatrix * x;
+    sc := x_3/p_3; -- hacky but less lame than Circle/Ellipse
     f=f*sc;
     p=project2d p;
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
@@ -250,6 +234,7 @@ Polygon = new GraphicsType of GraphicsPoly from ( "polygon", { symbol Points => 
 Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PathList => {} }, { "d" } )
 viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw this
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
+    if #s == 0 then return null;
     s = transpose apply(s, x -> entries project2d (g.cache.CurrentMatrix*x));
     {vector(min\s), vector(max\s)}
     )
@@ -287,19 +272,29 @@ gNode = x -> (
     gNodeName = gNodeName + 1;
     GraphicsNode (x2 | {symbol Contents => x1, symbol Node => ctr, symbol NodeName => gNodeName}) ++ {TransformMatrix=>translation ctr}
     )
-Matrix * GraphicsNode := (m,x) -> m*x.Node -- semi-hack for now TODO should treat separately because saved coord should be post-matrix
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
     symbol Node => x*v.Node,
-    symbol NodeName => if class v.NodeName === HashTable then applyValues(v.NodeName,y->x*y) else hashTable{v.NodeName=>x}
+    symbol NodeName => if class v.NodeName === HashTable then applyValues(v.NodeName,y->x*y) else hashTable{v.NodeName=>x},
+    symbol cache => new CacheTable
     }
+- GraphicsNode := v -> (-1)*v
 GraphicsNode + GraphicsNode := (v,w) -> (
     h1 := if class v.NodeName === HashTable then v.NodeName else hashTable{v.NodeName=>1};
     h2 := if class w.NodeName === HashTable then w.NodeName else hashTable{w.NodeName=>1};
     new GraphicsNode from {
 	symbol Node => v.Node + w.Node,
-	symbol NodeName => merge(h1,h2,plus)
+	symbol NodeName => merge(h1,h2,plus),
+	symbol cache => new CacheTable
 	}
     )
+GraphicsNode - GraphicsNode := (v,w) -> v+(-1)*w
+ -- next few are semi-hacks for now TODO should treat separately because saved coord should be post-matrix
+Matrix * GraphicsNode := (m,x) -> m*x.Node
+GraphicsNode + Vector := (v,w) -> v.Node+w
+Vector + GraphicsNode := (v,w) -> v+w.Node
+GraphicsNode - Vector := (v,w) -> v.Node-w
+Vector - GraphicsNode := (w,v) -> v-w.Node
+
 gParse GraphicsNode := x -> (
     if is3d x then gParseHash.Is3d = true;
     x
@@ -307,7 +302,7 @@ gParse GraphicsNode := x -> (
 
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
-    { Point => vector {0.,0.}, symbol HtmlContent => null },
+    { Point => vector {0.,0.}, symbol HtmlContent => null, symbol FontSize => 14. },
     { "x", "y" }
     )
 viewPort1 GraphicsHtml := g -> (
@@ -367,14 +362,24 @@ svgLookup := hashTable {
 	g.cache.Options#"cx" = x_0;
 	g.cache.Options#"cy" = x_1;
 	),
-    symbol Radius => (g,x) -> (if is3d g then g.cache.Options#"data-r"=x;),
-    symbol RadiusX => (g,x) -> (if is3d g then g.cache.Options#"data-rx"=x;),
-    symbol RadiusY => (g,x) -> (if is3d g then g.cache.Options#"data-ry"=x;),
+    symbol Radius => (g,x) -> (
+	g.cache.Options#"r" = x * g.cache.Scale; -- hack
+	if is3d g then g.cache.Options#"data-r"=x;
+	),
+    symbol RadiusX => (g,x) -> (
+	g.cache.Options#"rx" = x * g.cache.Scale; -- hack
+	if is3d g then g.cache.Options#"data-rx"=x;
+	),
+    symbol RadiusY => (g,x) -> (
+	g.cache.Options#"ry" = x * g.cache.Scale; -- hack
+	if is3d g then g.cache.Options#"data-ry"=x;
+	),
     symbol OneSided => (g,x) -> (if is3d g then g.cache.Options#"data-onesided"=x;),
-    symbol FontSize => (g,x) -> (if is3d g then g.cache.Options#"data-fontsize"=x;),
-    symbol ScaledRadius => (g,x) ->  (g.cache.Options#"r" = x;), -- TODO get radius of Scaled* stuff
-    symbol ScaledRadiusX => (g,x) ->  (g.cache.Options#"rx" = x;),
-    symbol ScaledRadiusY => (g,x) ->  (g.cache.Options#"ry" = x;),
+    symbol FontSize => (g,x) -> (
+	f:=max(0,x*g.cache.Scale);
+	g.style#"font-size" = toString f|"px";
+	if is3d g then g.cache.Options#"data-fontsize"=x;
+	),
     symbol PathList => (g,x) -> (
 	x = apply(#x, i -> if instance(x#i,GraphicsNode) then (
 		ac(g.cache.Options,"data-names",i,x#i.NodeName);
@@ -422,7 +427,6 @@ svgLookup := hashTable {
 	),
     symbol Static => (g,x) -> (if x then g.cache.Options#"data-static" = "true";),
     symbol GraphicsId => (g,x) -> (g.cache.Options#"id" = x;),
-    symbol Filter => (g,x) -> (g.cache.Options#"filter" = x;),
     symbol Contents => (g,x) -> (
 	x = stableSort x;
 	g.cache.Contents = apply(x, y -> y.cache.SVGElement);
@@ -430,30 +434,23 @@ svgLookup := hashTable {
     symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
     symbol HtmlContent => (g,x) -> (g.cache.Contents = {x};),
     symbol NodeName => (g,x) -> (g.cache.Options#"data-name" = x;),
-    symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = "M2SvgDraggable";) -- TODO what if there are other classes?
-    }
-
-svg3dLookup := hashTable { -- should be more systematic
-    symbol Center => ("data-coords",0),
+    symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";)
     }
 
 -- produces SVG element hypertext
 svg = method()
 svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current matrix,perspective matrix,lights)
     if not (class g).?SVGElement then return;
-    updateTransformMatrix(g,m,p);
+    updateTransformMatrix(g,m,p); -- it's already been done but annoying issue of objects that appear several times
     if g.?Contents then scan(g.Contents, x -> svg(x,g.cache.CurrentMatrix,p,l));
     updateGraphicsCache g;
-    filter(g,l);
-    full := new OptionTable from merge(g,g.cache,last);
     g.cache.Options = new MutableHashTable;
     g.cache.Contents={};
-    scan(keys full, key -> if svgLookup#?key then svgLookup#key(g,full#key));
-    args := g.cache.Contents | apply(pairs g.cache.Options,(k,v) -> k => jsString v);
-    remove(g.cache,Contents);
-    remove(g.cache,Options);
+    filter(g,l);
+    scan(keys g, key -> if svgLookup#?key then svgLookup#key(g,g#key)); -- TODO remove if
+    args := append(g.cache.Contents, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
-    g.cache.SVGElement = style((class g).SVGElement args,full) -- bit of a trick: non-string options ignored by style
+    g.cache.SVGElement = style((class g).SVGElement args,new OptionTable from g.style)
     )
 
 svg (GraphicsObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
@@ -482,12 +479,12 @@ short GraphicsObject := g -> (
 
 distance1 GraphicsPoly := g -> (
     if instance(g,Path) then s := select(g.PathList, x -> instance(x,Vector)) else s = g.Points;
-    -sum(s,x->(xx:=g.cache.CurrentMatrix*x;xx_2/xx_3)) / #s
+    if #s == 0 then 0_RR else -sum(s,x->(xx:=g.cache.CurrentMatrix*x;xx_2/xx_3)) / #s
     )
 distance1 GraphicsList := g -> (
-    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, distance) / #(g.Contents)
+    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, x->x.cache.Distance) / #(g.Contents)
     )
-GraphicsObject ? GraphicsObject := (x,y) -> (distance y) ? (distance x)
+GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
 distance1 GraphicsText := g -> (
     y := g.cache.CurrentMatrix*g.Point;
     -y_2/y_3
@@ -499,7 +496,7 @@ svgDefs.qname="defs"
 addAttribute(svgDefs,svgAttr)
 
 scanDefs := g -> (
-    lst := select(values g | values g.cache, y->instance(y,HypertextInternalLink));
+    lst := g.cache.Filter;
     if g.?Contents then lst = lst | flatten apply(g.Contents,scanDefs);
     lst
     )
@@ -508,7 +505,7 @@ scanDefs := g -> (
 -- full SVG with the headers
 new SVG from GraphicsObject := (S,g) -> (
     p := perspective g;
-    lights := if is3d g then setupLights(g,p,p) else {};
+    lights := setupLights(g,p,p); -- TODO make more general -> nodes
     main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
     if main === null then return {};
     if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
@@ -542,21 +539,21 @@ new SVG from GraphicsObject := (S,g) -> (
 	    zmax := 0.25*(xmax-xmin+ymax-ymin);
 	    zmin := -zmax;
 	    );
-	axes = gList(
+	axes0 := gList(
 	    Line { Point1 => vector {xmin,0,0,1}, Point2 => vector {xmax,0,0,1}, "marker-end" => arr },
 	    Line { Point1 => vector {0,ymin,0,1}, Point2 => vector {0,ymax,0,1}, "marker-end" => arr },
 	    if is3d g then Line { Point1 => vector{0,0,zmin,1}, Point2 => vector {0,0,zmax,1}, "marker-end" => arr },
 	    "stroke"=>"black", "stroke-width"=>"0.5%"
 	    );
-	axeslabels = gList(
+	axeslabels0 := gList(
 	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
 	    GraphicsHtml { Point => vector {xmax*1.06,0,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
 	    GraphicsHtml { Point => vector {0,ymax*1.06,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
 	    if is3d g then GraphicsHtml { Point => vector {0,0,zmax*1.06,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
 	    );
-	defsList = scanDefs axes | scanDefs axeslabels;
-	axes=svg(axes,p,p);
-	axeslabels=svg(axeslabels,p,p);
+	axes=svg(axes0,p,p);
+	axeslabels=svg(axeslabels0,p,p);
+	defsList = scanDefs axes0 | scanDefs axeslabels0;
 	);
 	-- put some extra blank space around picture
 	margin := if g.?Margin then g.Margin else 0.1;
@@ -637,7 +634,7 @@ determineSide GraphicsPoly := g -> (
     coords=apply(take(coords,3),x->g.cache.CurrentMatrix*x);
     coords = apply(coords, x -> (1/x_3)*x^{0,1});
     coords = {coords#1-coords#0,coords#2-coords#0};
-    g.cache#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
+    g.style#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
     )
 
 -- lighting
@@ -650,13 +647,12 @@ Light = new GraphicsType of Circle from ( "circle",
 -- viewPort1 ignores lights if invisible
 viewPort1 Light := g -> if toString g#"opacity" == "0" then null else (lookup(viewPort1,Circle)) g -- that opacity test sucks
 
-setupLights = (g,m,p) -> (
-    remove(g.cache,Filter); -- clean up filters from past
-    if instance(g,Light) then (
+setupLights = (g,m,p) -> ( -- TODO turn this into recompute step
+    g.cache.Filter={}; -- clean up filters from past
     updateTransformMatrix(g,m,p);
+    if instance(g,Light) then (
     g.cache.GraphicsId = graphicsId();
     { g } ) else if g.?Contents then (
-    updateTransformMatrix(g,m,p);
     flatten apply(g.Contents, x -> setupLights(x,g.cache.CurrentMatrix,p))
     ) else {}
 ) -- yeah, could make a method...
@@ -684,53 +680,57 @@ feComposite := new MarkUpType of Hypertext
 addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
 feComposite.qname="feComposite"
 
-filter = (g,l) -> if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly)) then (
-    tag := graphicsId();
-    i:=0;
-    opts := { "id" => tag };
-    if g.?Blur then (
-	b := g.Blur;
-	opts = opts | { "x" => toString(-100*b)|"%", "y" => toString(-100*b)|"%", "width" => toString(100*(1+2*b))|"%", "height" => toString(100*(1+2*b))|"%" };
-	rng := g.cache.ViewPort; if rng =!= null then (
-    	    drng:=rng#1-rng#0;
-    	    r := b*min(drng_0,drng_1);
-	    g.cache.ViewPort={rng#0-vector{r,r},rng#1+vector{r,r}}; -- a bit of a hack
-	    opts = append(opts, feGaussianBlur { "in" => "SourceGraphic",
-		    "result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
-	    i=i+1;
-	)
-    );
-    if is3d g and instance(g,GraphicsPoly) then (
-    	-- find first 3 coords
-	if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
-    	if #coords>=3 then (
-	    coords=apply(3,i->(xx:=g.cache.PerspectiveMatrix^(-1)*g.cache.CurrentMatrix*coords#i;(1/xx_3)*xx^{0,1,2}));
-	    u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
-	    if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
-	    scan(l, gg -> (
-	    	    -- compute reflected coords
-		    light0 := gg.cache.PerspectiveMatrix^(-1)*gg.cache.CurrentMatrix*gg.Center;
-		    light := (1/light0_3)*light0^{0,1,2};
-		    lightrel := light-coords#0;
-	    	    sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
-	    	    c := 2*sp/w2;
-		    light = light - c*w;
-		    light = g.cache.PerspectiveMatrix*(light || vector {1});
-		    opts = opts | {
-			feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
-			    fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
-			feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
-			feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
-			    "operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
-			};
-	    	    i=i+1;
-	    	    ));
+filter = (g,l) -> (
+    -- unrelated: pick up other filters from options (e.g., "fill"=>somegradient)
+    g.cache.Filter = (if g.cache.?Filter then g.cache.Filter else {}) -- in rare cases (e.g., axes) that Filter doesn't exist
+    | select(values g.style, y->instance(y,HypertextInternalLink));
+    -- now main part
+    if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly)) then (
+    	tag := graphicsId();
+    	i:=0;
+    	opts := { "id" => tag };
+    	if g.?Blur then (
+	    b := g.Blur;
+	    opts = opts | { "x" => toString(-100*b)|"%", "y" => toString(-100*b)|"%", "width" => toString(100*(1+2*b))|"%", "height" => toString(100*(1+2*b))|"%" };
+	    rng := g.cache.ViewPort; if rng =!= null then (
+    	    	drng:=rng#1-rng#0;
+    	    	r := b*min(drng_0,drng_1);
+	    	g.cache.ViewPort={rng#0-vector{r,r},rng#1+vector{r,r}}; -- a bit of a hack
+	    	opts = append(opts, feGaussianBlur { "in" => "SourceGraphic",
+		    	"result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
+	    	i=i+1;
+		)
+    	    );
+    	if is3d g and instance(g,GraphicsPoly) then (
+    	    -- find first 3 coords
+	    if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
+    	    if #coords>=3 then (
+	    	coords=apply(3,i->(xx:=g.cache.PerspectiveMatrix^(-1)*g.cache.CurrentMatrix*coords#i;(1/xx_3)*xx^{0,1,2}));
+	    	u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
+	    	if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
+	    	scan(l, gg -> (
+	    	    	-- compute reflected coords
+		    	light0 := gg.cache.PerspectiveMatrix^(-1)*gg.cache.CurrentMatrix*gg.Center;
+		    	light := (1/light0_3)*light0^{0,1,2};
+		    	lightrel := light-coords#0;
+	    	    	sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
+	    	    	c := 2*sp/w2;
+		    	light = light - c*w;
+		    	light = g.cache.PerspectiveMatrix*(light || vector {1});
+		    	opts = opts | {
+			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
+			    	fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
+			    feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
+			    feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
+			    	"operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
+			    };
+	    	    	i=i+1;
+	    	    	));
+	    	);
 	    );
-	);
-    if (g.cache.?Filter) then ( -- can happen if object used several times in a list
-	g.cache#(g.cache.Filter)=g.cache.Filter;
-	);
-    g.cache.Filter=svgFilter opts;
+    	g.cache.Options#"filter"=svgFilter opts;
+    	g.cache.Filter=append(g.cache.Filter,g.cache.Options#"filter");
+	)
     )
 
 svgLinearGradient := new MarkUpType of HypertextInternalLink
@@ -833,11 +833,9 @@ plot = true >> o -> (P,r) -> (
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
 		y := if numgens R === 1 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
-	new GraphicsList from (
-	    (new OptionTable from { "fill"=>"none", Axes=>gens R, Is3d=>false,
-		symbol Contents => apply(val, v -> Path { flag:=true; PathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))})
-		}) ++ gParse o
-	    )
+	GraphicsList { "fill"=>"none", Axes=>gens R, Is3d=>false,
+	    symbol Contents => apply(val, v -> Path { flag:=true; PathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))}),
+	    o }
 	) else (
 	if (o.?Mesh) then n = o.Mesh else n = 10;
 	val = table(n+1,n+1,(i,j)->(
@@ -846,13 +844,11 @@ plot = true >> o -> (P,r) -> (
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
 		z := if numgens R === 2 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
-	new GraphicsList from (
-	    (new OptionTable from { Axes=>gens R, Is3d=>true,
-		symbol Contents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
-			if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
-			Polygon { Points => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ) -- technically this is wrong -- the quad isn't flat, we should make triangles
-		 }) ++ gParse o
-	)
+	GraphicsList { Axes=>gens R, Is3d=>true,
+	    symbol Contents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
+		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
+		    Polygon { Points => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ), -- technically this is wrong -- the quad isn't flat, we should make triangles
+	o }
     )
 )
 
@@ -1045,15 +1041,6 @@ multidoc ///
   Description
    Text
     Returns a boolean according to whether the @ TO {VectorGraphics} @ object is 2d (false) or 3d (true).
- Node
-  Key
-   distance
-  Headline
-   Distance to the viewer
-  Description
-   Text
-    Returns the distance (perpendicularly to the screen) to the viewer of a @ TO {VectorGraphics} @ 3d object,
-    normalized so the screen is at distance $1$.
  Node
   Key
    rotation
