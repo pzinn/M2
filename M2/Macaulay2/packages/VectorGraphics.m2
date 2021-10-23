@@ -17,7 +17,7 @@ newPackage(
 export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
     "gList", "viewPort", "is3d", "distance", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
-    "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "SizeX", "SizeY", "ViewPort",
+    "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "Size", "ViewPort",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
     "Blur", "Static", "PathList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG", "SVGElement",
@@ -63,7 +63,7 @@ GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,new class opts1 from opt
 --   useful for lights
 -- * Blur (amount of blurriness relative to the size of the object)
 -- GLOBAL options (only work if in outermost object)
--- * SizeY / SizeX for picture sizes
+-- * Size for picture size
 -- * ViewPort for manual range of viewing window
 -- * Perspective for 3d: can be a number or a whole 4d matrix (ideally, there'd be a function to translate...)
 --   the matrix should be such that after transformation, the coordinates are (x,y,z,1-z/p) where the viewer is at (0,0,0) and the screen at z=-p
@@ -471,22 +471,13 @@ globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
 net GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
 expression GraphicsObject := hold
+
+
+shortSize := 3.8
 short GraphicsObject := g -> (
-    if g.?SizeX then (
-	if g.?SizeY then (
-	    if g.SizeX<3.2 and g.SizeY<2 then return hold g;
-	    f := min(3.2/g.SizeX,2/g.SizeY);
-	    hold(g++{SizeX=>f*g.SizeX,SizeY=>f*g.SizeY})
-	    )
-	else (
-	    if g.SizeX<3.2 then hold g else hold(g++{SizeX=>3.2})
-	    )
-	) else (
-	if g.?SizeY then (
-	    if g.SizeY<2 then hold g else hold(g++{SizeY=>2})
-	    )
-	else hold(g++{SizeY=>2})
-	)
+    if not g.?Size then return hold(g++{Size=>shortSize});
+    s := if instance(g.Size,Vector) then sqrt(g.Size_0^2+g.Size_1^2) else g.Size;
+    if s<shortSize then hold g else hold(g++{Size=>shortSize})
     )
 
 distance1 GraphicsPoly := g -> (
@@ -521,7 +512,7 @@ new SVG from GraphicsObject := (S,g) -> (
     main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
     if main === null then return {};
     if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
-    if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.SizeX=g.cache.SizeY=0.; ) else (
+    if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.Size=vector{0.,0.}; ) else (
 	r = apply(r,numeric);
 	rr = r#1 - r#0;
 	if rr_0 == 0 then (
@@ -532,13 +523,9 @@ new SVG from GraphicsObject := (S,g) -> (
 	    rr = vector { rr_0, rr_0 * 10/16 };
 	    r = { vector { r#0_0, r#0_1 - 0.5*rr_1 }, vector {  r#1_0, r#1_1 + 0.5*rr_1 } };
 	    );
-	if g.?SizeX then g.cache.SizeX = numeric g.SizeX;
-	if g.?SizeY then g.cache.SizeY = numeric g.SizeY;
-	if not (g.?SizeX or g.?SizeY) then -- by default, make it fit inside 16 x 10
-	if rr_0 > 1.6*rr_1 then g.cache.SizeX = 16. else g.cache.SizeY = 10.;
-	-- at this stage one of the two is set
-	if not g.cache.?SizeY then g.cache.SizeY = g.cache.SizeX * rr_1/rr_0;
-	if not g.cache.?SizeX then g.cache.SizeX = g.cache.SizeY * rr_0/rr_1;
+	g.cache.Size = if not g.?Size then g.cache.Size = 20/sqrt(rr_0^2+rr_1^2)*rr
+	else if instance(g.Size,Vector) then g.Size
+	else g.Size/sqrt(rr_0^2+rr_1^2)*rr;
 	);
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
@@ -580,8 +567,8 @@ new SVG from GraphicsObject := (S,g) -> (
     ss := {
 	"preserveAspectRatio" => "none",
 --	"id" => tag,
-	"style" => concatenate("width:",toString g.cache.SizeX,"em;",
-	    "height:",toString g.cache.SizeY,"em;"
+	"style" => concatenate("width:",toString g.cache.Size_0,"em;",
+	    "height:",toString g.cache.Size_1,"em;"
 	),
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
@@ -598,7 +585,7 @@ new SVG from GraphicsObject := (S,g) -> (
     if #defsList>0 then ss=append(ss,svgDefs defsList);
     -- then autorotate button
     if animated g then (
-	sizex := rr_0*min(0.5,1.5/g.cache.SizeX); sizey := rr_1*min(0.5,1.5/g.cache.SizeY); -- can't be larger than half the pic; default = 1.5em
+	sizex := rr_0*min(0.5,1.5/g.cache.Size_0); sizey := rr_1*min(0.5,1.5/g.cache.Size_1); -- can't be larger than half the pic; default = 1.5em
 	ss = append(ss,
 	GraphicsList.SVGElement {
 	    "transform" => "translate("|toString(r#0_0)|" "|toString(-r#1_1)|") scale("|toString sizex|" "|toString sizey|")",
@@ -873,7 +860,7 @@ plot = true >> o -> (P,r) -> (
 horiz := p -> gList prepend(Line{(0,0),(p#0,0)},apply(#p,i->Line{(0,-1-i),(p#i,-1-i)}))
 vert := p -> gList prepend(Line{(0,0),(0,-p#0)},apply(#p,i->Line{(i+1,0),(i+1,-p#i)}))
 html Partition := p -> if #p===0 then "&varnothing;" else html gList(
-    vert conjugate p,horiz p,SizeX=>2*p#0,SizeY=>2*#p,"stroke-width"=>0.05)
+    vert conjugate p,horiz p,Size=>(2*p#0,2*#p),"stroke-width"=>0.05)
 -- TODO: graphs
 
 beginDocumentation()
@@ -957,7 +944,7 @@ multidoc ///
     c={"red","green","blue","yellow"};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
 	Light{(110,0,0),Radius=>10},ViewPort=>{(-110,-100),(110,100)},
-	SizeY=>30,TransformMatrix=>rotation(-1.5,(4,1,0)))
+	Size=>40,TransformMatrix=>rotation(-1.5,(4,1,0)))
   Caveat
    Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
  Node
@@ -1038,7 +1025,7 @@ multidoc ///
     b=gList(Line{(-30, 100, 20), (9, -100, 8)},
 	Line{(-78, -73, -100), (-64, 84, 100)},
 	"stroke"=>"red")
-    gList(a,b,SizeX=>20)
+    gList(a,b,Size=>30)
  Node
   Key
    viewPort
@@ -1117,13 +1104,14 @@ multidoc ///
     See also @ TO{viewPort} @ and @ TO{Margin} @.
  Node
   Key
-   SizeX
+   Size
   Headline
-   Set the width
+   Set the size of a picture
   Description
    Text
-    An option to fix the width of the @ TO {VectorGraphics} @ object in line width units.
+    An option to fix the size of the @ TO {VectorGraphics} @ object in line width units.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
+    Can be either a vector { width, height } or a number (diagonal).
  Node
   Key
    Perspective
@@ -1137,15 +1125,6 @@ multidoc ///
     and $p$ is the distance from the observer to the screen.
     One can instead provide a real number $p$, which is equivalent to placing the screen
     centered at $z=0$ and the viewer at $(0,0,p)$.
-    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
- Node
-  Key
-   SizeY
-  Headline
-   Set the height
-  Description
-   Text
-    An option to fix the height of the @ TO {VectorGraphics} @ object in line width units.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
  Node
   Key
@@ -1233,7 +1212,7 @@ multidoc ///
    Example
     R=RR[x,y];
     P=y^2-(x+1)*(x-1)*(x-2);
-    plot(P,{-2,3},"stroke-width"=>0.05,SizeY=>25,"stroke"=>"red")
+    plot(P,{-2,3},"stroke-width"=>0.05,Size=>40,"stroke"=>"red")
  Node
   Key
    Axes
@@ -1294,9 +1273,9 @@ end--
 
 -- ex of use
 gr=linearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
-gList(Ellipse{(0,0),90,30,"stroke"=>"none","fill"=>gr,Blur=>0.3},GraphicsText{(-65,-7),"Macaulay2",FontSize=>25,"stroke"=>"black","fill"=>"white"},SizeY=>12)
+gList(Ellipse{(0,0),90,30,"stroke"=>"none","fill"=>gr,Blur=>0.3},GraphicsText{(-65,-7),"Macaulay2",FontSize=>25,"stroke"=>"black","fill"=>"white"},Size=>20)
 
-a=Circle{"fill"=>"yellow","stroke"=>"green",SizeX=>1,SizeY=>1}
+a=Circle{"fill"=>"yellow","stroke"=>"green",Size=>(1,1)}
 b=Line{(10,10),(20,50),"stroke"=>"black"}
 c=Circle{(50,50),50,"fill"=>"blue","fill-opacity"=>0.25}
 d=Ellipse{(60,60),40,30, "fill"=>"blue", "stroke"=>"grey"}
@@ -1305,7 +1284,7 @@ f=Polygon{{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
 gList (f,a,b,c,d,e)
 -- or
 rgb={"red","green","blue"};
-scan(rgb, x -> (value x <- Circle{"fill"=>x,"stroke"=>"black",SizeX=>0.8,SizeY=>0.8,Margin=>0}))
+scan(rgb, x -> (value x <- Circle{"fill"=>x,"stroke"=>"black",Size=>(0.8,0.8),Margin=>0}))
 value\rgb
 R=QQ[x_red,x_green,x_blue]
 describe R
@@ -1316,10 +1295,10 @@ factor oo
 z=Polygon{{(0,0),(0,50),(50,50),(50,0)},"fill"=>"white"}
 b1=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 b2=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-b=gList(z,b1,b2,SizeX=>2,SizeY=>2,Margin=>0)
+b=gList(z,b1,b2,Size=>(2,2),Margin=>0)
 a1=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
 a2=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-a=gList(z,a1,a2,SizeX=>2,SizeY=>2,Margin=>0)
+a=gList(z,a1,a2,Size=>(2,2),Margin=>0)
 --ab=a|b
 --ba=b|a
 --ab||ba||ba
@@ -1410,7 +1389,7 @@ c=gList(Polygon{{(-100,100,100),(-100,-100,100),(-100,-100,-100),(-100,100,-100)
 		  Polygon{{(100,100,-100),(100,-100,-100),(-100,-100,-100),(-100,100,-100)}},
 		  Polygon{{(100,100,100),(100,-100,100),(-100,-100,100),(-100,100,100)}},
 		  "stroke"=>"black","fill"=>"grey", "opacity"=>"0.25")
-gList(a,b,c,SizeX=>20)
+gList(a,b,c,Size=>30)
 
 --
 n=10;

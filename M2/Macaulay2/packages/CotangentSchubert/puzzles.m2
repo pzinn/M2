@@ -69,7 +69,7 @@ new List from Puzzle := (T,p) -> apply(p.Size,i->apply(p.Size-i,j->apply(3,k->p#
 net Puzzle := p -> netList(applyTable(new List from p, a -> netList({{,a#0},{a#1,a#2}},HorizontalSpace=>1,Boxes=>false)),HorizontalSpace=>2,VerticalSpace=>1,Boxes=>false)
 
 vgTextOpts := s -> { "dominant-baseline" => "middle",  "text-anchor" => "middle", FontSize => 1.7/(4.+#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
-vgOpts := k -> { SizeX => k*5, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
+vgOpts := k -> { Size => k*7, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
 html Puzzle := p -> html vg p
 
