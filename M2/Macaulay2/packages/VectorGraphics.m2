@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.95",
-        Date => "October 15, 2021", -- "May 18, 2018",
+        Version => "0.96",
+        Date => "October 25, 2021", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -16,10 +16,10 @@ newPackage(
 
 export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
-    "gList", "viewPort", "is3d", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
+    "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
     "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "Point", "Size", "ViewPort",
-    "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Points", "Radius",
-    "Blur", "Static", "PathList", "Axes", "Margin", "Mesh", "Draggable",
+    "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
+    "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG", "SVGElement",
     "gNode", "GraphicsNode"
     }
@@ -34,7 +34,6 @@ protect PerspectiveMatrix
 protect ScaledRadius
 protect ScaledRadiusX
 protect ScaledRadiusY
-protect GraphicsId
 protect Node -- TODO retire
 protect Scale
 
@@ -76,7 +75,8 @@ GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initia
 
 -- parsing of coordinates / matrices
 gParse := method(Dispatch=>Thing)
-gParse Sequence := x -> gParse vector toList x
+-- gParse Sequence := x -> gParse vector toList x -- retired due to https://github.com/Macaulay2/M2/issues/1548
+gParse Array := x -> gParse vector toList x -- replaced with this
 gParse Matrix := x -> (
     if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
     if rank source x == 2 then x++1++1 else if rank source x == 3 then x++1 else x
@@ -87,18 +87,19 @@ gParse Vector := x -> (
     else if rank class x === 3 then x || vector {1.}
     else if rank class x === 4 then x
     )
-gParse List := x -> apply(x,gParse)
+gParse List := l -> apply(l,gParse)
+gParse Option := o -> o#0 => gParse o#1
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
-    (opts2,opts1):=override(,toSequence opts);
-    opts1 = sequence opts1; -- argh! the override bug https://github.com/Macaulay2/M2/issues/1548
+    (opts2,opts1):=override(,toSequence (opts0|opts));
+    opts1 = sequence opts1;
     if #opts1 > #opts0 then error "too many arguments";
     sty := new MutableHashTable from applyPairs(opts2,(k,v) -> if class k === String then (k,v));
     opts3 := new MutableHashTable from applyPairs(opts2,(k,v) -> if class k =!= String then (k,v));
-    new T from merge(hashTable (opts0 | apply(#opts1, i -> opts0#i#0 => opts1#i)
-	| { symbol style =>  sty, symbol cache => new CacheTable}),opts3,last)
+    new T from merge(hashTable (apply(#opts1, i -> opts0#i#0 => opts1#i)
+	| { symbol style =>  sty, symbol cache => new CacheTable}),opts3,first)
 )
 
 perspective = g -> (
@@ -119,7 +120,6 @@ viewPort1 GraphicsObject := x -> null
 -- * the data-* stuff is lightened (can be recreated from the normal parameters)
 -- * the event listeners for 3d rotating the object with the mouse are deactivated
 -- * lighting is deactivated
-is3d = x -> true; -- TODO fix obviously
 
 distance1 := method()
 distance1 GraphicsObject := x -> 0_RR
@@ -221,11 +221,11 @@ distance1 Line := g -> (
 
 GraphicsPoly = new Type of GraphicsObject;
 
-Polyline = new GraphicsType of GraphicsPoly from ( "polyline", { symbol Points => {} }, { "points" } )
-Polygon = new GraphicsType of GraphicsPoly from ( "polygon", { symbol Points => {} }, { "points" } )
-Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PathList => {} }, { "d" } )
+Polyline = new GraphicsType of GraphicsPoly from ( "polyline", { symbol PointList => {} }, { "points" } )
+Polygon = new GraphicsType of GraphicsPoly from ( "polygon", { symbol PointList => {} }, { "points" } )
+Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PointList => {} }, { "d" } )
 viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw this
-    if instance(g,Path) then s := select(g.PathList, x -> not instance(x,String)) else s = g.Points;
+    s := select(g.PointList, x -> not instance(x,String));
     if #s == 0 then return null;
     s = transpose apply(s, x -> entries project2d (g.cache.CurrentMatrix*gParse x));
     {vector(min\s), vector(max\s)}
@@ -233,13 +233,12 @@ viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw 
 
 -- to make lists of them
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
--- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }, plus updates Is3d correctly
-gList = x -> (
-    x=flatten toList sequence x; -- really? why not splice? because coords can be sequences?
-    x1 := select(x, y -> instance(y,GraphicsObject)); -- use override? or just option for function?
-    x2 := select(x, y -> instance(y,Option));
-    GraphicsList append(x2,symbol Contents => x1)
-    )
+-- slightly simpler syntax: gList (a,b,c, opt=>xxx) rather than GraphicsList { {a,b,c}, opt=>xxx }
+gList = true >> opts -> x -> (
+    cnt := nonnull toList deepSplice if instance(x,List) then toSequence x else sequence x;
+    if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
+    GraphicsList { symbol Contents => cnt, opts }
+)
 viewPort1 GraphicsList := x -> (
     s := nonnull apply(x.Contents, y->y.cache.ViewPort);
     if #s===0 then null else (
@@ -253,19 +252,22 @@ viewPort1 GraphicsList := x -> (
 GraphicsNode = new GraphicsType of GraphicsList from ( "g", { symbol Node => vector {0.,0.}, symbol Contents => {} } )
 -- TODO what if user build directly with GraphicsNode { .. } ?
 gNodeName := 0;
-gNode = x -> (
+gNode = x -> ( -- TODO rewrite as gList
+    b := is3d x#0;
     ctr := gParse x#0;
     x = drop(x,1);
-    x=flatten toList sequence x; -- really? why not splice? because coords can be sequences?
+    x=flatten toList sequence x; -- really? why not splice? because coords can be sequences? TODO change
     x1 := select(x, y -> instance(y,GraphicsObject)); -- use override? or just option for function?
     x2 := select(x, y -> instance(y,Option));
     gNodeName = gNodeName + 1;
-    GraphicsNode (x2 | {symbol Contents => x1, symbol Node => ctr, symbol NodeName => gNodeName}) ++ {TransformMatrix=>translation ctr}
+    g := GraphicsNode (x2 | {symbol Contents => x1, symbol Node => ctr, symbol NodeName => gNodeName}) ++ {TransformMatrix=>translation ctr};
+    g.cache.Is3d = b;
+    g
     )
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
     symbol Node => x*v.Node,
     symbol NodeName => if class v.NodeName === HashTable then applyValues(v.NodeName,y->x*y) else hashTable{v.NodeName=>x},
-    symbol cache => new CacheTable
+    symbol cache => new CacheTable -- TODO Is3d
     }
 - GraphicsNode := v -> (-1)*v
 GraphicsNode + GraphicsNode := (v,w) -> (
@@ -274,7 +276,7 @@ GraphicsNode + GraphicsNode := (v,w) -> (
     new GraphicsNode from {
 	symbol Node => v.Node + w.Node,
 	symbol NodeName => merge(h1,h2,plus),
-	symbol cache => new CacheTable
+	symbol cache => new CacheTable -- TODO Is3d
 	}
     )
 GraphicsNode - GraphicsNode := (v,w) -> v+(-1)*w
@@ -294,6 +296,17 @@ viewPort1 GraphicsHtml := g -> (
     p := project2d (g.cache.CurrentMatrix * gParse g.Point);
     { p, p } -- TODO properly
     )
+
+-- lighting
+Light = new GraphicsType of Circle from ( "circle",
+    { symbol Center => vector {0,0,0,1.}, symbol Radius => 10, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "opacity" => 0, "fill" => "#FFFFFF", "stroke" => "none" },
+    { "r", "cx", "cy" } -- atm these are not inherited
+    )
+-- in case it's drawn, it's a circle
+
+-- viewPort1 ignores lights if invisible
+viewPort1 Light := g -> if toString g.style#"opacity" == "0" then null else (lookup(viewPort1,Circle)) g -- that opacity test sucks
+
 
 --
 animated := method()
@@ -328,10 +341,33 @@ updateTransformMatrix := (g,m,p) -> ( -- (object,matrix of parent,perspective ma
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*gParse g.TransformMatrix;
     )
 
-
 ac := (h,k,i,x) -> (
     if not h#?k then h#k=new MutableList;
     h#k#i=x;
+    )
+
+is3d = method()
+is3d Vector := v -> rank class v > 2
+is3d Matrix := m -> rank source m > 2 -- TODO not good enough: 2d rotation/translation are always made in 3d...
+is3d Array := a -> #a > 2
+is3d List := l -> any(l,is3d)
+is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
+is3d GraphicsObject := is3d'
+is3d Ellipse :=
+is3d Circle := g -> is3d' g or is3d g.Center
+is3d GraphicsHtml :=
+is3d GraphicsText := g -> is3d' g or is3d g.Point
+is3d Light := g -> true
+is3d Line := g -> is3d' g or is3d g.Point1 or is3d g.Point2
+is3d GraphicsPoly := g -> is3d' g or any(g.PointList,is3d)
+is3d Thing := x -> false
+--is3d GraphicsNode :=
+is3d GraphicsList := l -> (
+    -- the interesting one: recurse up and down
+    if is3d' l or any(l.Contents,is3d) then (
+	scan(l.Contents, g->g.cache.Is3d=true);
+	true
+	) else false
     )
 
 svgLookup := hashTable {
@@ -363,20 +399,14 @@ svgLookup := hashTable {
 	g.style#"font-size" = toString f|"px";
 	if is3d g then g.cache.Options#"data-fontsize"=x;
 	),
-    symbol PathList => (g,x) -> (
-	x = apply(#x, i -> (
-		if instance(x#i,GraphicsNode) then ac(g.cache.Options,"data-names",i,x#i.NodeName);
-		gParse x#i));
-	g.cache.Options#"d" = demark(" ", flatten apply(x, y -> if instance(y,Vector) then apply(entries project2d'(g.cache.CurrentMatrix*y),toString) else y));
-	x = select(x,y->instance(y,Vector));
-	if is3d g then g.cache.Options#"data-coords"=x;
-	),
-    symbol Points => (g,x) -> (
-	x = apply(#x, i -> (
-		if instance(x#i,GraphicsNode) then ac(g.cache.Options,"data-names",i,x#i.NodeName);
-		gParse x#i));
-	g.cache.Options#"points" = demark(" ", flatten apply(x, y -> apply(entries project2d'(g.cache.CurrentMatrix*y),toString)));
-	if is3d g then g.cache.Options#"data-coords"=x;
+    symbol PointList => (g,x) -> (
+	x1 := select(x,y->not instance(y,String));
+	x1 = apply(#x1, i -> (
+		if instance(x1#i,GraphicsNode) then ac(g.cache.Options,"data-names",i,x1#i.NodeName);
+		gParse x1#i));
+	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d'(g.cache.CurrentMatrix*gParse y),toString) else y));
+	if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
+	if is3d g then g.cache.Options#"data-coords"=x1;
 	),
     symbol Point => (g,x) -> (
 	if instance(x,GraphicsNode) then ac(g.cache.Options,"data-names",0,x.NodeName);
@@ -403,7 +433,6 @@ svgLookup := hashTable {
 	g.cache.Options#"y2" = x_1;
 	),
     symbol Static => (g,x) -> (if x then g.cache.Options#"data-static" = "true";),
-    symbol GraphicsId => (g,x) -> (g.cache.Options#"id" = x;),
     symbol Contents => (g,x) -> (
 	x = stableSort x;
 	g.cache.Contents = apply(x, y -> y.cache.SVGElement);
@@ -421,10 +450,10 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
     updateTransformMatrix(g,m,p); -- it's already been done but annoying issue of objects that appear several times
     if g.?Contents then scan(g.Contents, x -> svg(x,g.cache.CurrentMatrix,p,l));
     updateGraphicsCache g;
-    g.cache.Options = new MutableHashTable;
+    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better
     g.cache.Contents={};
     filter(g,l);
-    scan(keys g, key -> if svgLookup#?key then svgLookup#key(g,g#key)); -- TODO remove if
+    scan(keys g, key -> if svgLookup#?key then svgLookup#key(g,g#key)); -- TODO remove if ?
     args := append(g.cache.Contents, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
     g.cache.SVGElement = style((class g).SVGElement args,new OptionTable from g.style)
@@ -455,7 +484,7 @@ short GraphicsObject := g -> (
     )
 
 distance1 GraphicsPoly := g -> (
-    if instance(g,Path) then s := select(g.PathList, x -> not instance(x,String)) else s = g.Points;
+    s := select(g.PointList, x -> not instance(x,String));
     if #s == 0 then 0_RR else -sum(s,x->(xx:=g.cache.CurrentMatrix*gParse x;xx_2/xx_3)) / #s
     )
 distance1 GraphicsList := g -> (
@@ -504,7 +533,7 @@ new SVG from GraphicsObject := (S,g) -> (
     -- axes
     axes:=null; axeslabels:=null; defsList:={};
     if g.?Axes and g.Axes =!= false then (
-	arr := arrow(); -- TODO size
+	arr := arrow(.1); -- TODO size
 	-- determine intersection of viewport with axes TODO more symmetrically
 	xmin := (p_(3,3)*r#0_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#0_0);
 	xmax := (p_(3,3)*r#1_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#1_0);
@@ -606,29 +635,19 @@ determineSide = method()
 determineSide GraphicsObject := x -> ()
 determineSide GraphicsPoly := g -> (
     -- find first 3 coords
-    if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
+    coords := select(g.PointList, x -> not instance(x,String));
     if #coords<3 then ( remove(g.cache,Filter); return; );
-    coords=apply(take(coords,3),x->g.cache.CurrentMatrix*x);
+    coords=apply(take(coords,3),x->g.cache.CurrentMatrix*gParse x);
     coords = apply(coords, x -> (1/x_3)*x^{0,1});
     coords = {coords#1-coords#0,coords#2-coords#0};
     g.style#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
     )
 
--- lighting
-Light = new GraphicsType of Circle from ( "circle",
-    { symbol Center => vector {0,0,0,1.}, symbol Radius => 10, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "opacity" => 0, "fill" => "#FFFFFF", "stroke" => "none" },
-    { "r", "cx", "cy" } -- atm these are not inherited
-    )
--- in case it's drawn, it's a circle
-
--- viewPort1 ignores lights if invisible
-viewPort1 Light := g -> if toString g#"opacity" == "0" then null else (lookup(viewPort1,Circle)) g -- that opacity test sucks
-
 setupLights = (g,m,p) -> ( -- TODO turn this into recompute step
     g.cache.Filter={}; -- clean up filters from past
     updateTransformMatrix(g,m,p);
     if instance(g,Light) then (
-    g.cache.GraphicsId = graphicsId();
+    g.cache.Options = new MutableHashTable from {"id" => graphicsId()}; -- TODO better
     { g } ) else if g.?Contents then (
     flatten apply(g.Contents, x -> setupLights(x,g.cache.CurrentMatrix,p))
     ) else {}
@@ -680,14 +699,14 @@ filter = (g,l) -> (
     	    );
     	if is3d g and instance(g,GraphicsPoly) then (
     	    -- find first 3 coords
-	    if instance(g,Path) then coords := select(g.PathList, x -> instance(x,Vector)) else coords = g.Points;
+	    coords := select(g.PointList, x -> not instance(x,String));
     	    if #coords>=3 then (
-	    	coords=apply(3,i->(xx:=g.cache.PerspectiveMatrix^(-1)*g.cache.CurrentMatrix*coords#i;(1/xx_3)*xx^{0,1,2}));
+	    	coords=apply(3,i->(xx:=g.cache.PerspectiveMatrix^(-1)*g.cache.CurrentMatrix*gParse coords#i;(1/xx_3)*xx^{0,1,2}));
 	    	u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
 	    	if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
 	    	scan(l, gg -> (
 	    	    	-- compute reflected coords
-		    	light0 := gg.cache.PerspectiveMatrix^(-1)*gg.cache.CurrentMatrix*gg.Center;
+		    	light0 := gg.cache.PerspectiveMatrix^(-1)*gg.cache.CurrentMatrix*gParse gg.Center;
 		    	light := (1/light0_3)*light0^{0,1,2};
 		    	lightrel := light-coords#0;
 	    	    	sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
@@ -695,8 +714,8 @@ filter = (g,l) -> (
 		    	light = light - c*w;
 		    	light = g.cache.PerspectiveMatrix*(light || vector {1});
 		    	opts = opts | {
-			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg#"fill",
-			    	fePointLight { "data-origin" => gg.cache.GraphicsId, "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
+			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg.style#"fill",
+			    	fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
 			    feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			    feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 			    	"operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
@@ -738,9 +757,7 @@ radialGradient = true >> o -> stop -> (
 	)
     )
 
---GraphicsArrow = new OptionTable from gParse { symbol Points => { vector {0,0}, vector {0,4}, vector {3,2} }, "fill" => "black", "stroke" => "none", Is3d => false }
 svgMarker := new MarkUpType of HypertextInternalLink
---addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth" => "3", "markerHeight" => "4", "refX" => "0", "refY" => "2", "markerUnits" => "userSpaceOnUse"})
 addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth", "markerHeight", "refX", "refY", "markerUnits" => "userSpaceOnUse"})
 svgMarker.qname="marker"
 
@@ -754,28 +771,10 @@ arrow = true >> o -> x -> (
 	"markerWidth" => 1.5*x,
 	"markerHeight" => 2*x,
 	"refY" => x,
-	svg(Polygon { symbol Points => { vector {0,0}, vector {0,2*x}, vector {1.5*x,x} }, "fill" => "black", "stroke" => "none", Is3d => false }
-	    ++ gParse o,m,m)  -- eww
+	svg(Polygon { symbol PointList => { vector {0,0}, vector {0,2*x}, vector {1.5*x,x} },
+		"fill" => "black", "stroke" => "none", o },m,m)  -- eww
 	}
     )
--*
-arrow = true >> o -> x -> (
-    tag := graphicsId();
-    svgMarker {
-	"id" => tag,
-	svg(new Polygon from (GraphicsArrow ++ gParse o),m,m)  -- eww
-	}
-    )
-
-arrow = true >> o -> x -> (
-    tag := graphicsId();
-    style(
-    svgMarker {
-	"id" => tag,
-	svg(new Polygon from GraphicsArrow,m,m)  -- eww
-	},o)
-    )
-*-  
 
 -* TODO recreate at some point
 gfxLabel = true >> o -> label -> (
@@ -810,8 +809,8 @@ plot = true >> o -> (P,r) -> (
 		f := map(R2,R, matrix { if numgens R === 1 then { x } else { x, R2_0 } });
 		y := if numgens R === 1 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(y, yy -> if abs imaginaryPart yy < 1e-6 then vector { x, realPart yy })));
-	GraphicsList { "fill"=>"none", Axes=>gens R, Is3d=>false,
-	    symbol Contents => apply(val, v -> Path { flag:=true; PathList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))}),
+	GraphicsList { "fill"=>"none", Axes=>gens R,
+	    symbol Contents => apply(val, v -> Path { flag:=true; PointList => flatten apply(v, w -> if w === null then (flag=true; {}) else first({ if flag then "M" else "L", w },flag=false))}),
 	    o }
 	) else (
 	if (o.?Mesh) then n = o.Mesh else n = 10;
@@ -821,10 +820,10 @@ plot = true >> o -> (P,r) -> (
 		f := map(R2,R, matrix { if numgens R === 2 then { x,y } else { x, y, R2_0 } });
 		z := if numgens R === 2 then { f P } else sort apply(sS { f P }, p -> first p#Crd); -- there are subtle issues with sorting solutions depending on real/complex...
 		apply(z, zz -> if abs imaginaryPart zz < 1e-6 then vector { x, y, realPart zz })));
-	GraphicsList { Axes=>gens R, Is3d=>true,
+	GraphicsList { Axes=>gens R,
 	    symbol Contents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
 		    if val#i#j#k === null or val#(i+1)#j#k === null or val#i#(j+1)#k === null or val#(i+1)#(j+1)#k === null then continue;
-		    Polygon { Points => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ), -- technically this is wrong -- the quad isn't flat, we should make triangles
+		    Polygon { PointList => { val#i#j#k, val#(i+1)#j#k, val#(i+1)#(j+1)#k, val#i#(j+1)#k } } ) ), -- technically this is wrong -- the quad isn't flat, we should make triangles
 	o }
     )
 )
@@ -833,7 +832,7 @@ plot = true >> o -> (P,r) -> (
 horiz := p -> gList prepend(Line{(0,0),(p#0,0)},apply(#p,i->Line{(0,-1-i),(p#i,-1-i)}))
 vert := p -> gList prepend(Line{(0,0),(0,-p#0)},apply(#p,i->Line{(i+1,0),(i+1,-p#i)}))
 html Partition := p -> if #p===0 then "&varnothing;" else html gList(
-    vert conjugate p,horiz p,Size=>(2*p#0,2*#p),"stroke-width"=>0.05)
+    vert conjugate p,horiz p,Size=>vector{2*p#0,2*#p},"stroke-width"=>0.05)
 -- TODO: graphs
 
 beginDocumentation()
@@ -888,7 +887,7 @@ multidoc ///
     In 3d, gives a decent approximation of a sphere.
    Example
     Circle{Center=>vector {10,10},Radius=>50,"fill"=>"green","stroke"=>"none"}
-    Circle{(10,10),10} -- equivalent syntax for coordinates
+    Circle{[10,10],50} -- equivalent syntax for coordinates
  Node
   Key
    Line
@@ -899,7 +898,7 @@ multidoc ///
     A simple SVG line. The two compulsory options are Point1 and Point2, which are vectors (or sequences) describing the two endpoints.
    Example
     Line{Point1=>vector{0,0},Point2=>vector{2,1},"stroke"=>"green"}
-    Line{(0,0),(2,1),"stroke-width"=>0.1} -- simplified syntax
+    Line{[0,0],[2,1],"stroke-width"=>0.1} -- simplified syntax
  Node
   Key
    Light
@@ -912,12 +911,12 @@ multidoc ///
     By default a Light is invisible (it has opacity 0) and is unaffected by matrix transformations outside it (Static true).
    Example
     Light{"fill"=>"yellow","opacity"=>1}
-    v={(74.5571, 52.0137, -41.6631),(27.2634, -29.9211, 91.4409),(-81.3041, 57.8325, 6.71156),(-20.5165, -79.9251, -56.4894)};
+    v={[74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     c={"red","green","blue","yellow"};
-    tetra=gList(apply(4,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
-	Light{(110,0,0),Radius=>10},ViewPort=>{(-110,-100),(110,100)},
-	Size=>40,TransformMatrix=>rotation(-1.5,(4,1,0)))
+    tetra=gList(apply(0..3,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
+	Light{[110,0,0],Radius=>10,"opacity"=>"1"},ViewPort=>{vector{-110,-100},vector{110,100}},
+	Size=>40,TransformMatrix=>rotation(-1.5,[4,1,0]))
   Caveat
    Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
  Node
@@ -930,7 +929,7 @@ multidoc ///
     An SVG ellipse. The three compulsory options are Center (coordinates of the center) and RadiusX, RadiusY (radii).
    Example
     Ellipse{Center=>vector{10,10},RadiusX=>50,RadiusY=>20,"stroke"=>"none","fill"=>"red"}
-    Ellipse{(10,10),50,20,"stroke"=>"blue"} -- equivalent syntax
+    Ellipse{[10,10],50,20,"stroke"=>"blue"} -- equivalent syntax
   Caveat
    Does not really make sense in a 3d context.
  Node
@@ -940,11 +939,11 @@ multidoc ///
    An SVG path
   Description
    Text
-    An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called PathList.
+    An SVG path. It follows the syntax of SVG paths, except successive commands must be grouped together in a list called PointList.
    Example
-    v1=gVector(0,0); v2=gVector(0,1); v3=gVector(2,1); v4=gVector(1,2);
-    o=new OptionTable from {Radius=>0.1,"fill"=>"black",Draggable=>true};
-    gList(Circle{v1,o},Circle{v2,o},Circle{v3,o},Circle{v4,o},Path{{"M",v1,"C",v2,v3,v4}})
+    c=Circle{Radius=>0.1,"fill"=>"black"};
+    v1=gNode([0,0],c,Draggable=>true); v2=gNode([0,1],c,Draggable=>true); v3=gNode([2,1],c,Draggable=>true); v4=gNode([1,2],c,Draggable=>true);
+    gList(Path{{"M",v1,"C",v2,v3,v4}},v1,v2,v3,v4)
  Node
   Key
    Polygon
@@ -952,9 +951,9 @@ multidoc ///
    An SVG polygon
   Description
    Text
-    An SVG polygon. The coordinates must form a list called Points. (the difference with Polyline is that the last coordinate is reconnected to the first)
+    An SVG polygon. The coordinates must form a list called PointList. (the difference with Polyline is that the last coordinate is reconnected to the first)
    Example
-    Polygon{Points=>{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
+    Polygon{PointList=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
  Node
   Key
    Polyline
@@ -962,9 +961,9 @@ multidoc ///
    An SVG sequence of lines
   Description
    Text
-    An SVG sequence of lines. The coordinates must form a list called Points. (the difference with Polygon is that the last coordinate is not reconnected to the first)
+    An SVG sequence of lines. The coordinates must form a list called PointList. (the difference with Polygon is that the last coordinate is not reconnected to the first)
    Example
-    Polyline{Points=>{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
+    Polyline{PointList=>{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white"}
  Node
   Key
    GraphicsText
@@ -978,7 +977,7 @@ multidoc ///
     Font size should be specified with FontSize.
    Example
     GraphicsText{TextContent=>"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
-    gList(GraphicsText{(0,0),"P",FontSize=>14},GraphicsText{(7,0),"AUL",FontSize=>10})
+    gList(GraphicsText{[0,0],"P",FontSize=>14},GraphicsText{[7,0],"AUL",FontSize=>10})
   Caveat
    Currently, cannot be rotated. (coming soon)
  Node
@@ -991,12 +990,12 @@ multidoc ///
     gList(a,b,...,c, options) results in a new @ TO{GraphicsList} @ object containing a,b,...,c
     and the given options.
    Example
-    a=gList(Line{(-100, 15, 78), (-9, 100, 4)},
-	Line{(-96, -49, -100), (46, -100, 52)},
-	Line{(-100, -42, -51), (59, 100, 76)},
-	Line{(-100, 66, 54), (83, -100, -27)})
-    b=gList(Line{(-30, 100, 20), (9, -100, 8)},
-	Line{(-78, -73, -100), (-64, 84, 100)},
+    a=gList(Line{[-100, 15, 78], [-9, 100, 4]},
+	Line{[-96, -49, -100], [46, -100, 52]},
+	Line{[-100, -42, -51], [59, 100, 76]},
+	Line{[-100, 66, 54], [83, -100, -27]})
+    b=gList(Line{[-30, 100, 20], [9, -100, 8]},
+	Line{[-78, -73, -100], [-64, 84, 100]},
 	"stroke"=>"red")
     gList(a,b,Size=>30)
  Node
@@ -1010,14 +1009,6 @@ multidoc ///
     See also @ TO{ViewPort} @.
   Caveat
     At the moment viewPort does not take into account the width of "stroke"s.
- Node
-  Key
-   is3d
-  Headline
-   Whether a VectorGraphics object is 3d
-  Description
-   Text
-    Returns a boolean according to whether the @ TO {VectorGraphics} @ object is 2d (false) or 3d (true).
  Node
   Key
    rotation
@@ -1103,9 +1094,9 @@ multidoc ///
     The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
     In order for the animation to work, {\tt VectorGraphics.css} and {\tt VectorGraphics.js} must be included in the web page.
    Example
-    (anim1=rotation(0.1,(0,0,1),(0,0,0)); anim2=rotation(-0.1,(0,0,1),(0,0,0)); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 });
-    gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim1},Circle{(1,0),0.1},Circle{(0,0),1})
-    gList(Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red",AnimMatrix=>anim3},Circle{(1,0),0.1},Circle{(0,0),1})
+    (anim1=rotation(0.1,[0,0,1],[0,0]); anim2=rotation(-0.1,[0,0,1],[0,0]);); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 };
+    gList(Polygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",AnimMatrix=>anim1},Circle{[1,0],0.1},Circle{[0,0],1})
+    gList(Polygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",AnimMatrix=>anim3},Circle{[1,0],0.1},Circle{[0,0],1})
  Node
   Key
    TransformMatrix
@@ -1116,7 +1107,7 @@ multidoc ///
     An option to rotate the coordinates of the @ TO {VectorGraphics} @ 3d object.
     Must be a 4x4 matrix (projective coordinates).
    Example
-    a=Polygon{{(-1,0),(1,0.1),(1,-0.1)},"fill"=>"red"}
+    a=Polygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red"}
     gList(a,a++{TransformMatrix=>rotation(2*pi/3)})
  Node
   Key
@@ -1148,7 +1139,7 @@ multidoc ///
     The argument is a list of pairs of offsets and styles.
     Optional arguments (e.g., "x1", "y1", "x2", "y2") are used to determine the orientation of the gradient.
    Example
-    Ellipse{(60,60),40,30, "fill"=>linearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+    Ellipse{[60,60],40,30, "fill"=>linearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
  Node
   Key
    radialGradient
@@ -1160,7 +1151,7 @@ multidoc ///
     The argument is a list of pairs of offsets and styles.
     Optional arguments (e.g., "cx", "cy", "r", "fx", "fy") are used to position the gradient.
    Example
-    Ellipse{(60,60),40,30, "fill"=>radialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
+    Ellipse{[60,60],40,30, "fill"=>radialGradient{("0%","stop-color:red"),("100%","stop-color:yellow")}}
  Node
   Key
    plot
@@ -1204,7 +1195,7 @@ multidoc ///
     Must be used as styling options "marker-start", "marker-mid" or "marker-end", to add an arrow to a path.
     Argument is size of arrow.
    Example
-    Polyline{Points=>{(0,0),(50,50),(0,100),(50,150)},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>arrow(10,"fill"=>"orange"),Margin=>0.3}
+    Polyline{PointList=>{[0,0],[50,50],[0,100],[50,150]},"stroke"=>"yellow","stroke-width"=>5,"marker-end"=>arrow(10,"fill"=>"orange"),Margin=>0.3}
  Node
   Key
    GraphicsHtml
@@ -1226,8 +1217,8 @@ multidoc ///
   Headline
    A particular type of type used by VectorGraphics, similar to SelfInitializingType.
 ///
-undocumented { -- there's an annoying conflict with NAG for Point, Points
-    Contents, TextContent, HtmlContent, SVGElement, Point, Points, Specular, Radius, Point1, Point2, PathList, Mesh, FontSize, RadiusX, RadiusY,
+undocumented {
+    Contents, TextContent, HtmlContent, SVGElement, Point, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
     (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
@@ -1237,18 +1228,18 @@ end--
 
 -- ex of use
 gr=linearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};
-gList(Ellipse{(0,0),90,30,"stroke"=>"none","fill"=>gr,Blur=>0.3},GraphicsText{(-65,-7),"Macaulay2",FontSize=>25,"stroke"=>"black","fill"=>"white"},Size=>20)
+gList(Ellipse{[0,0],90,30,"stroke"=>"none","fill"=>gr,Blur=>0.3},GraphicsText{[-65,-7],"Macaulay2",FontSize=>25,"stroke"=>"black","fill"=>"white"},Size=>20)
 
-a=Circle{"fill"=>"yellow","stroke"=>"green",Size=>(1,1)}
-b=Line{(10,10),(20,50),"stroke"=>"black"}
-c=Circle{(50,50),50,"fill"=>"blue","fill-opacity"=>0.25}
-d=Ellipse{(60,60),40,30, "fill"=>"blue", "stroke"=>"grey"}
-e=Polyline{{(0,0),(100,100),(100,50)},"fill"=>"pink","stroke"=>"green"}
-f=Polygon{{(0,10),(100,10),(90,90),(0,80)},"stroke"=>"red","fill"=>"white"}
-gList (f,a,b,c,d,e)
+a=Circle{"fill"=>"yellow","stroke"=>"green",Size=>vector{1,1}}
+b=Line{[10,10],[20,50],"stroke"=>"black"}
+c=Circle{[50,50],50,"fill"=>"blue","fill-opacity"=>0.25}
+d=Ellipse{[60,60],40,30, "fill"=>"blue", "stroke"=>"grey"}
+e=Polyline{{[0,0],[100,100],[100,50]},"fill"=>"pink","stroke"=>"green"}
+f=Polygon{{[0,10],[100,10],[90,90],[0,80]},"stroke"=>"red","fill"=>"white",Draggable=>true}
+gList (f,a,b,c,d,e,Draggable=>true)
 -- or
 rgb={"red","green","blue"};
-scan(rgb, x -> (value x <- Circle{"fill"=>x,"stroke"=>"black",Size=>(0.8,0.8),Margin=>0}))
+scan(rgb, x -> (value x <- Circle{"fill"=>x,"stroke"=>"black",Size=>vector{0.8,0.8},Margin=>0}))
 value\rgb
 R=QQ[x_red,x_green,x_blue]
 describe R
@@ -1256,20 +1247,16 @@ x_red^2-x_green^2
 factor oo
 
 -- or
-z=Polygon{{(0,0),(0,50),(50,50),(50,0)},"fill"=>"white"}
-b1=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
-b2=Path{{"M", (0, 25), "Q", (25, 25), (25, 0), "M", (50, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-b=gList(z,b1,b2,Size=>(2,2),Margin=>0)
-a1=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
-a2=Path{{"M", (50, 25), "Q", (25, 25), (25, 0), "M", (0, 25), "Q", (25, 25), (25, 50)},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
-a=gList(z,a1,a2,Size=>(2,2),Margin=>0)
---ab=a|b
---ba=b|a
---ab||ba||ba
+z=Polygon{{[0,0],[0,50],[50,50],[50,0]},"fill"=>"white"}
+b1=Path{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+b2=Path{{"M", [0, 25], "Q", [25, 25], [25, 0], "M", [50, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
+b=gList(z,b1,b2,Size=>vector{2,2},Margin=>0)
+a1=Path{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"black","fill"=>"transparent","stroke-width"=>5}
+a2=Path{{"M", [50, 25], "Q", [25, 25], [25, 0], "M", [0, 25], "Q", [25, 25], [25, 50]},"stroke"=>"red","fill"=>"transparent","stroke-width"=>4}
+a=gList(z,a1,a2,Size=>vector{2,2},Margin=>0)
 tile = (I,i,j)->(if m_(i+1,j+1)%I == 0 then if c_(i+1,j+1)%I==0 then () else a else b);
 tiledRow = (I,i)->new RowExpression from apply(n,j->tile(I,i,j));
 loopConfig = I->new ColumnExpression from apply(k,i->tiledRow(I,i)); -- no such a thing as ColumnExpression. there should
-
 
 -- or
 barside1=Path{{"M",(80,60,100),"L",(80,55,100),"L",(220,55,100),"L",(220,60,100),"Z"},"fill"=>"#222","stroke-width"=>0}; -- stroke-width shouldn't be necessary
@@ -1282,12 +1269,13 @@ thread=Path{{"M",(80,55,100),"L",(80,80,100),"Z"},"stroke"=>"#111","stroke-width
 gList{barside1,triangle1,triangle2,edge1,edge2,bartop,thread}
 
 -- draggable tetrahedron
-v={gVector(74.5571, 52.0137, -41.6631),gVector(27.2634, -29.9211, 91.4409),gVector(-81.3041, 57.8325, 6.71156),gVector(-20.5165, -79.9251, -56.4894)};
+circ = Circle{Radius=>5,"fill"=>"black"};
+v=apply(([74.5571, 52.0137, -41.6631],[27.2634, -29.9211, 91.4409],[-81.3041, 57.8325, 6.71156],[-20.5165, -79.9251, -56.4894]),
+    v1 -> gNode(v1,circ,Draggable=>true));
 c={"red","green","blue","yellow"};
 vv={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
-triangles=apply(4,i->Path{{"M",vv#i#0,"L",vv#i#1,"L",vv#i#2,"Z"},"fill"=>c#i,OneSided=>true});
-gList(apply(v,x->Circle{x,5,"fill"=>"black",Draggable=>true}),triangles,Light{(100,0,0),Radius=>10,Draggable=>true},ViewPort=>{(-100,-150),(150,150)},SizeY=>30,TransformMatrix=>rotation(-1.5,(0,1,0)))
-
+triangles=apply(0..3,i->Path{{"M",vv#i#0,"L",vv#i#1,"L",vv#i#2,"Z"},"fill"=>c#i,OneSided=>true});
+gList(triangles,v,Light{[100,0,0],"opacity"=>"1",Radius=>10,Draggable=>true},ViewPort=>{vector{-100,-150},vector{150,150}},Size=>50,TransformMatrix=>rotation(-1.5,[0,1,0]))
 
 -- dodecahedron
 vertices={vector{-137.638,0.,26.2866},vector{137.638,0.,-26.2866},vector{-42.5325,-130.902,26.2866},vector{-42.5325,130.902,26.2866},vector{111.352,-80.9017,26.2866},vector{111.352,80.9017,26.2866},vector{-26.2866,-80.9017,111.352},vector{-26.2866,80.9017,111.352},vector{-68.8191,-50.,-111.352},vector{-68.8191,50.,-111.352},vector{68.8191,-50.,111.352},vector{68.8191,50.,111.352},vector{85.0651,0.,-111.352},vector{-111.352,-80.9017,-26.2866},vector{-111.352,80.9017,-26.2866},vector{-85.0651,0.,111.352},vector{26.2866,-80.9017,-111.352},vector{26.2866,80.9017,-111.352},vector{42.5325,-130.902,-26.2866},vector{42.5325,130.902,-26.2866}};
@@ -1299,22 +1287,21 @@ label=apply(#vertices,i->GraphicsText{vertices#i,toString i});
 dodecasplit=apply(faces,centers,(f,c)->Polygon{apply(f,j->vertices#j),
 	AnimMatrix=>apply(steps,j->rotation(2*pi/5/steps*4*min(j/steps,1-j/steps),c,c)*translation(0.075*sin(2*pi*j/steps)*c)),
 	"fill"=>concatenate("rgb(",toString(134+round(1.2*c_0)),",",toString(134+round(1.2*c_1)),",",toString(134+round(1.2*c_2)),")")});
-d=gList(dodecasplit,"fill-opacity"=>0.65,AnimMatrix=>rotation(0.02,(1,2,3)));
-d1=gList(d,TransformMatrix=>translation(200,0,0)); -- using alternate syntax of Sequence instead of Vector
-d2=gList(d,TransformMatrix=>translation(-200,0,0));
+d=gList(dodecasplit,"fill-opacity"=>0.65,AnimMatrix=>rotation(0.02,[1,2,3]));
+d1=gList(d,TransformMatrix=>translation[200,0,0]); -- using alternate syntax of Array instead of Vector
+d2=gList(d,TransformMatrix=>translation[-200,0,0]);
 gList(d1,d2,ViewPort=>{vector{-400,-400},vector{400,400}},SizeY=>25,"stroke-width"=>2)
 
 p=random splice{0..11};
-
 
 -- icosahedron
 vertices={vector{0.,0.,-95.1057},vector{0.,0.,95.1057},vector{-85.0651,0.,-42.5325},vector{85.0651,0.,42.5325},vector{68.8191,-50.,-42.5325},vector{68.8191,50.,-42.5325},vector{-68.8191,-50.,42.5325},vector{-68.8191,50.,42.5325},vector{-26.2866,-80.9017,-42.5325},vector{-26.2866,80.9017,-42.5325},vector{26.2866,-80.9017,42.5325},vector{26.2866,80.9017,42.5325}};
 faces={{1,11,7},{1,7,6},{1,6,10},{1,10,3},{1,3,11},{4,8,0},{5,4,0},{9,5,0},{2,9,0},{8,2,0},{11,9,7},{7,2,6},{6,8,10},{10,4,3},{3,5,11},{4,10,8},{5,3,4},{9,11,5},{2,7,9},{8,6,2}};
 icosa=apply(faces,f->Polygon{apply(f,j->vertices#j),"fill"=>"gray","stroke"=>"none"});
-i=gList(icosa,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
+i=gList(toSequence icosa,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
 
 rnd = () -> random(-1.,1.); cols={"red","green","blue","yellow","magenta","cyan"};
-gList(i, apply(cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"opacity"=>1,"fill"=>c,Specular=>20,AnimMatrix=>rotation(0.02,(rnd(),rnd(),rnd()))}),ViewPort=>{(-200,-200),(200,200)},SizeY=>30)
+gList(i, apply(toSequence cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"opacity"=>1,"fill"=>c,Specular=>20,AnimMatrix=>rotation(0.02,[rnd(),rnd(),rnd()])}),ViewPort=>{vector{-200,-200},vector{200,200}},Size=>40)
 
 subdivide = (v,f) -> (
     u := v#0;
@@ -1332,11 +1319,11 @@ subdivide = (v,f) -> (
 (v2,f2)=subdivide(vertices,faces);
 (v3,f3)=subdivide(v2,f2);
 sph=apply(f3,f->Polygon{apply(f,j->v3#j),"stroke"=>"white","stroke-width"=>0.01,"fill"=>"gray"});
-gList(sph, apply(cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"fill"=>c,Specular=>10,AnimMatrix=>rotation(0.02,(rnd(),rnd(),rnd()))}),ViewPort=>{(-200,-200),(200,200)},SizeY=>30)
+gList(sph, apply(toSequence cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"fill"=>c,Specular=>10,AnimMatrix=>rotation(0.02,[rnd(),rnd(),rnd()])}),ViewPort=>{vector{-200,-200},vector{200,200}},Size=>40)
 
 -- explicit plot
 R=RR[x,y]; P=0.1*(x^2-y^2);
-gList(plot(P,{{-10,10},{-10,10}},Mesh=>15,"stroke-width"=>0.05,"fill"=>"gray"),Light{(200,0,-500),Specular=>10,"fill"=>"rgb(180,0,100)"},Light{(-200,100,-500),Specular=>10,"fill"=>"rgb(0,180,100)"},SizeY=>40,Axes=>false)
+gList(plot(P,{{-10,10},{-10,10}},Mesh=>15,"stroke-width"=>0.05,"fill"=>"gray"),Light{[200,0,-500],Specular=>10,"fill"=>"rgb(180,0,100)"},Light{[-200,100,-500],Specular=>10,"fill"=>"rgb(0,180,100)"},Size=>50,Axes=>false)
 
 -- implicit plot
 R=RR[x,y];
@@ -1344,14 +1331,14 @@ P=y^2-(x+1)*(x-1)*(x-2);
 plot(P,{-2,3},"stroke-width"=>0.05,SizeY=>25,"stroke"=>"red")
 
 -- Schubert calculus
-a=gList(Line{(-100, 15, 78), (-9, 100, 4)},Line{(-96, -49, -100), (46, -100, 52)},Line{(-100, -42, -51), (59, 100, 76)},Line{(-100, 66, 54), (83, -100, -27)})
-b=gList(Line{(-30, 100, 20), (9, -100, 8)},Line{(-78, -73, -100), (-64, 84, 100)},"stroke"=>"red")
-c=gList(Polygon{{(-100,100,100),(-100,-100,100),(-100,-100,-100),(-100,100,-100)}},
-		  Polygon{{(100,100,100),(100,-100,100),(100,-100,-100),(100,100,-100)}},
-		  Polygon{{(100,-100,100),(-100,-100,100),(-100,-100,-100),(100,-100,-100)}},
-		  Polygon{{(100,100,100),(-100,100,100),(-100,100,-100),(100,100,-100)}},
-		  Polygon{{(100,100,-100),(100,-100,-100),(-100,-100,-100),(-100,100,-100)}},
-		  Polygon{{(100,100,100),(100,-100,100),(-100,-100,100),(-100,100,100)}},
+a=gList(Line{[-100, 15, 78], [-9, 100, 4]},Line{[-96, -49, -100], [46, -100, 52]},Line{[-100, -42, -51], [59, 100, 76]},Line{[-100, 66, 54], [83, -100, -27]})
+b=gList(Line{[-30, 100, 20], [9, -100, 8]},Line{[-78, -73, -100], [-64, 84, 100]},"stroke"=>"red")
+c=gList(Polygon{{[-100,100,100],[-100,-100,100],[-100,-100,-100],[-100,100,-100]}},
+		  Polygon{{[100,100,100],[100,-100,100],[100,-100,-100],[100,100,-100]}},
+		  Polygon{{[100,-100,100],[-100,-100,100],[-100,-100,-100],[100,-100,-100]}},
+		  Polygon{{[100,100,100],[-100,100,100],[-100,100,-100],[100,100,-100]}},
+		  Polygon{{[100,100,-100],[100,-100,-100],[-100,-100,-100],[-100,100,-100]}},
+		  Polygon{{[100,100,100],[100,-100,100],[-100,-100,100],[-100,100,100]}},
 		  "stroke"=>"black","fill"=>"grey", "opacity"=>"0.25")
 gList(a,b,c,Size=>30)
 
@@ -1373,10 +1360,10 @@ far=-10000;
 screen=1000;
 stars=apply(n,i->(
 z=speed*(random(far,screen)//speed);
-Circle{(random(-200,200),random(-200,200),z),10,"fill"=>"yellow","stroke"=>"none",Blur=>0.3, -- TODO: make blurriness dynamically depend on size
-AnimMatrix=>{((screen-z)//speed)=>translation (0,0,speed),translation (0,0,far-screen),((-far+z)//speed)=>translation (0,0,speed)}}
+Circle{[random(-200,200),random(-200,200),z],10,"fill"=>"yellow","stroke"=>"none",Blur=>0.3, -- TODO: make blurriness dynamically depend on size
+AnimMatrix=>{((screen-z)//speed)=>translation [0,0,speed],translation [0,0,far-screen],((-far+z)//speed)=>translation [0,0,speed]}}
 ));
-gList(stars,ViewPort=>{(-100,-100),(100,100)})
+gList(stars,ViewPort=>{vector{-100,-100},vector{100,100}})
 style(SVG oo,"background"=>"black")
 
 -- removed (might be added back if correctly implemented in 3d)
