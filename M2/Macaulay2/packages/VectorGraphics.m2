@@ -34,6 +34,7 @@ protect PerspectiveMatrix
 protect Node -- TODO retire
 protect Scale
 protect svgElement
+protect lights
 
 debug Core
 
@@ -338,7 +339,6 @@ jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 
 updateTransformMatrix := (g,m,p) -> ( -- (object,matrix of parent,perspective matrix)
-    g.cache.PerspectiveMatrix = p; -- almost never needed
     g.cache.CurrentMatrix = if g.?Static and g.Static then p else m; -- if static reset to perspective matrix
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*gParse g.TransformMatrix;
     )
@@ -457,28 +457,25 @@ svgLookup := hashTable {
 
 -- produces SVG element hypertext
 svg = method()
-svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current matrix,perspective matrix,lights)
+svg (GraphicsObject,Matrix,CacheTable) := (g,m,c) -> ( -- (object,current matrix,cache of owner)
     s := try svgElement class g else return; -- what is the else for?
-    updateTransformMatrix(g,m,p); -- it's already been done but annoying issue of objects that appear several times
-    if g.?Contents then scan(g.Contents, x -> svg(x,g.cache.CurrentMatrix,p,l));
+    updateTransformMatrix(g,m,c.PerspectiveMatrix); -- it's already been done but annoying issue of objects that appear several times
+    if g.?Contents then scan(g.Contents, x -> svg(x,g.cache.CurrentMatrix,c));
     updateGraphicsCache g;
     if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better
     g.cache.Contents={};
-    filter(g,l);
+    filter(g,c);
     scan(keys g, key -> if svgLookup#?key then svgLookup#key(g,g#key)); -- TODO remove if ?
     args := append(g.cache.Contents, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
     g.cache.svgElement = style(s args,new OptionTable from g.style)
     )
 
-svg (GraphicsObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
-
-svg (GraphicsObject,List) := (g,l) -> (
-    p := perspective try g.Perspective else ();
-    svg(g,p,p,l)
-)
-
-svg GraphicsObject := g -> svg(g,{}) -- mostly used for debugging
+svg GraphicsObject := g -> ( -- used for axes, arrows, or for debugging
+    g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
+    g.cache.lights = {};
+    svg(g,g.cache.PerspectiveMatrix,g.cache)
+    )
 
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
@@ -523,10 +520,11 @@ new SVG from GraphicsObject := (S,g) -> (
     ss := {};
     if g.?Perspective then (
     	p := perspective g.Perspective;
-	ss = append(ss,"data-pmatrix" => jsString p);
+	ss = append(ss,"data-pmatrix" => jsString g.cache.PerspectiveMatrix);
 	) else p = perspective();
-    lights := setupLights(g,p,p); -- TODO make more general -> nodes
-    main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
+    g.cache.PerspectiveMatrix = p;
+    g.cache.lights = setupLights(g,p,p); -- TODO make more general -> nodes
+    main := svg(g,p,g.cache); -- run this first because it will compute the ranges too
     if main === null then return {};
     if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
     if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.Size=vector{0.,0.}; ) else (
@@ -563,16 +561,18 @@ new SVG from GraphicsObject := (S,g) -> (
 	    Line { Point1 => vector {xmin,0,0,1}, Point2 => vector {xmax,0,0,1}, "marker-end" => arr },
 	    Line { Point1 => vector {0,ymin,0,1}, Point2 => vector {0,ymax,0,1}, "marker-end" => arr },
 	    if is3d g then Line { Point1 => vector{0,0,zmin,1}, Point2 => vector {0,0,zmax,1}, "marker-end" => arr },
+	    Perspective => p,
 	    "stroke"=>"black", "stroke-width"=>"0.5%"
 	    );
 	axeslabels0 := gList(
 	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
 	    GraphicsHtml { RefPoint => vector {xmax*1.06,0,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
 	    GraphicsHtml { RefPoint => vector {0,ymax*1.06,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { RefPoint => vector {0,0,zmax*1.06,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)}
+	    if is3d g then GraphicsHtml { RefPoint => vector {0,0,zmax*1.06,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
+	    Perspective => p,
 	    );
-	axes=svg(axes0,p,p);
-	axeslabels=svg(axeslabels0,p,p);
+	axes=svg axes0;
+	axeslabels=svg axeslabels0;
 	defsList = scanDefs axes0 | scanDefs axeslabels0;
 	);
 	-- put some extra blank space around picture
@@ -660,7 +660,7 @@ setupLights = (g,m,p) -> ( -- TODO turn this into recompute step
     g.cache.Filter={}; -- clean up filters from past
     updateTransformMatrix(g,m,p);
     if instance(g,Light) then (
-    g.cache.Options = new MutableHashTable from {"id" => graphicsId()}; -- TODO better
+    g.cache.Options = new MutableHashTable from {"id" => graphicsId()};
     { g } ) else if g.?Contents then (
     flatten apply(g.Contents, x -> setupLights(x,g.cache.CurrentMatrix,p))
     ) else {}
@@ -689,7 +689,9 @@ feComposite := new MarkUpType of Hypertext
 addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
 feComposite.qname="feComposite"
 
-filter = (g,l) -> (
+filter = (g,c) -> (
+    l := c.lights;
+    p := c.PerspectiveMatrix;
     -- unrelated: pick up other filters from options (e.g., "fill"=>somegradient)
     g.cache.Filter = (if g.cache.?Filter then g.cache.Filter else {}) -- in rare cases (e.g., axes) that Filter doesn't exist
     | select(values g.style, y->instance(y,HypertextInternalLink));
@@ -714,18 +716,18 @@ filter = (g,l) -> (
     	    -- find first 3 coords
 	    coords := select(g.PointList, x -> not instance(x,String));
     	    if #coords>=3 then (
-	    	coords=apply(3,i->(xx:=g.cache.PerspectiveMatrix^(-1)*g.cache.CurrentMatrix*gParse coords#i;(1/xx_3)*xx^{0,1,2}));
+	    	coords=apply(3,i->(xx:=p^(-1)*g.cache.CurrentMatrix*gParse coords#i;(1/xx_3)*xx^{0,1,2}));
 	    	u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
 	    	if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
 	    	scan(l, gg -> (
 	    	    	-- compute reflected coords
-		    	light0 := gg.cache.PerspectiveMatrix^(-1)*gg.cache.CurrentMatrix*gParse gg.Center;
+		    	light0 := p^(-1)*gg.cache.CurrentMatrix*gParse gg.Center;
 		    	light := (1/light0_3)*light0^{0,1,2};
 		    	lightrel := light-coords#0;
 	    	    	sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
 	    	    	c := 2*sp/w2;
 		    	light = light - c*w;
-		    	light = g.cache.PerspectiveMatrix*(light || vector {1});
+		    	light = p*(light || vector {1});
 		    	opts = opts | {
 			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg.style#"fill",
 			    	fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
@@ -774,9 +776,6 @@ svgMarker := new MarkUpType of HypertextInternalLink
 addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth", "markerHeight", "refX", "refY", "markerUnits" => "userSpaceOnUse"})
 svgMarker.qname="marker"
 
-m := matrix {{1,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,1}}*perspective();
-
-
 arrow = true >> o -> x -> (
     if x === () then x = 10. else x = numeric x;
     tag := graphicsId();
@@ -786,7 +785,8 @@ arrow = true >> o -> x -> (
 	"markerHeight" => 2*x,
 	"refY" => x,
 	svg(Polygon { symbol PointList => { vector {0,0}, vector {0,2*x}, vector {1.5*x,x} },
-		"fill" => "black", "stroke" => "none", o },m,m)  -- eww
+		Perspective => matrix {{1,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,1}}*perspective(), -- eww
+		"fill" => "black", "stroke" => "none", o })
 	}
     )
 
@@ -932,7 +932,17 @@ multidoc ///
 	Light{[110,0,0],Radius=>10,"opacity"=>"1"},ViewPort=>{vector{-110,-100},vector{110,100}},
 	Size=>40,TransformMatrix=>rotation(-1.5,[4,1,0]))
   Caveat
-   Do not use the same Light object multiple times in a given @ TO {GraphicsList} @.
+   Do not use the same Light object multiple times within the same @ TO {GraphicsObject} @.
+ Node
+  Key
+   GraphicsNode
+  Headline
+   xxx
+  Description
+   Text
+    [only use with gNode]
+  Caveat
+   Do not use the same GraphicsNode object multiple times within the same @ TO {GraphicsObject} @.
  Node
   Key
    Ellipse
