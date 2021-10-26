@@ -1,7 +1,5 @@
 function gfxInitMouse(el) {
     el.onmousedown = gfxMouseDown1;
-    el.onmouseleave = gfxMouseUp;
-    el.onmouseup = gfxMouseUp;
     el.onclick = gfxMouseClick;
     el.oncontextmenu = gfxMouseClick;
 }
@@ -59,17 +57,24 @@ function gfxMouseDown1(event) {
     var el=event.target; // determine if we're dragging
     while (el && el.tagName!="svg" && !el.classList.contains("M2SvgDraggable")) el=el.parentElement;
     //    dragTarget = !el || !el.classList.contains("M2SvgDraggable") ? null : event.target;
-    dragTarget = el && el.classList.contains("M2SvgDraggable") ? el : null;
+    if (!el || !el.classList.contains("M2SvgDraggable")) return;
+    dragTarget = el;
+    el.classList.add("active");
     this.onmousemove = gfxMouseMove;
     this.onwheel = gfxMouseWheel;
+    this.onmouseleave = gfxMouseUp;
+    this.onmouseup = gfxMouseUp;
     event.preventDefault();
     event.stopPropagation();
 }
 
 
 function gfxMouseUp(event) {
+    if (dragTarget) dragTarget.classList.remove("active"); // should always be true
     this.onmousemove = null;
     this.onwheel = null;
+    this.onmouseleave = null;
+    this.onmouseup = null;
     dragTarget=null;
     event.preventDefault();
     event.stopPropagation();
@@ -109,7 +114,7 @@ function gfxRotateDrag(rot0) {
 }
 
 function gfxMouseMove(event) {
-    if (!dragTarget) return;
+    if (!dragTarget) return; // shouldn't happen
     if (event.buttons & 1 && !event.shiftKey) {
 	/*
 	var x=event.offsetX*this.viewBox.baseVal.width/this.width.baseVal.value+this.viewBox.baseVal.x;
@@ -136,7 +141,7 @@ function gfxMouseMove(event) {
 }
 
 function gfxMouseWheel(event) {
-    if (!dragTarget) return;
+    if (!dragTarget) return; // shouldn't happen
     if (event.buttons & 1 && !event.shiftKey) {
 	/*
 	var x=event.offsetX*this.viewBox.baseVal.width/this.width.baseVal.value+this.viewBox.baseVal.x;

@@ -314,10 +314,12 @@ viewPort1 Light := g -> if toString g.style#"opacity" == "0" then null else (loo
 --
 animated := method()
 animated GraphicsObject := x -> x.?AnimMatrix
-animated GraphicsList := x -> (
-    if not x.cache.?Animated then x.cache.Animated = x.?AnimMatrix or any(x.Contents,animated);
-    x.cache.Animated
-    )
+animated GraphicsList := x -> x.?AnimMatrix or any(x.Contents,animated)
+
+draggable := method()
+draggable GraphicsObject := x -> x.?Draggable and x.Draggable
+draggable GraphicsList := x -> x.?Draggable or any(x.Contents,draggable)
+
 
 SVG = new MarkUpType of Hypertext
 addAttribute(SVG,svgAttr|{"height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"})
@@ -355,9 +357,9 @@ ac := (h,k,i,x) -> (
 -- * lighting is deactivated
 is3d = method()
 is3d Vector := v -> rank class v > 2
+is3d Array := a -> #a > 2
 is3d Matrix := m -> rank source m > 2 and (rank source m === 3 or (m^{2,3} == matrix {{0,0,1,0},{0,0,0,1}} and m_2 == vector {0,0,1,0}))
 -- a bit messy: a 2d translation / rotation looks like {{c,-s,0,x},{s,c,0,y},{0,0,1,0},{0,0,1,0}}
-is3d Array := a -> #a > 2
 is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
 is3d GraphicsObject := is3d'
@@ -589,7 +591,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	"data-pmatrix" => jsString p
 	};
-    ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TEMP? what if page doesn't have VG.js?
+    if is3d g or draggable g then ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TODO more customized: might want 2d background drag etc
     if is3d g then (
 	classTag = classTag | " M2SvgDraggable";
 	);
