@@ -422,7 +422,7 @@ function gfxReorder(el) {
     }
 }
 
-function gfxCheckData(el) {
+function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if (el.classList.contains("gfxauto")) return;
     // TODO should probably eliminate other things e.g. <title>
@@ -430,17 +430,25 @@ function gfxCheckData(el) {
     for (var v in el.dataset)
 	el.gfxdata[v]=eval("("+el.dataset[v]+")");
     // start the computation of matrices... (see gfxRecompute() for details)
-    var mat = el.gfxdata.pmatrix ? el.gfxdata.pmatrix : el.parentElement.gfxdata.cmatrix;
-    if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
+    if (el.tagName=="svg") {
+	if (!el.gfxdata.pmatrix) el.gfxdata.pmatrix=matrix([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,-1/1000,1]]);
+	mat = el.gfxdata.pmatrix;
+    } else if (el.gfxdata.static) mat = el.ownerSVGElement.gfxdata.pmatrix;
+
+    if (el.gfxdata.matrix) {
+	var mat2 = new Matrix(el.gfxdata.matrix);
+	mat2.leftmultiply(mat);
+	mat=mat2;
+    }
 
     if (el.gfxdata.coords) return;
-    var mat = el.gfxdata.cmatrix.inverse();
+    var mati = mat.inverse();
 
     if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
 	var pts = el.points;
 	el.gfxdata.coords = [];
 	for (var i=0; i<pts.length; i++)
-	    el.gfxdata.coords.push(mat.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
+	    el.gfxdata.coords.push(mati.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
     }
     else if (el.tagName=="path") { // annoying special case
 	var path = el.getAttribute("d").split(" "); // for lack of better
@@ -448,33 +456,33 @@ function gfxCheckData(el) {
 	for (var i=0; i<path.length; i++)
 	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
 	{
-	    el.gfxdata.coords.push(mat.vectmultiply(vector([+path[i],-path[i+1],0,1])));
+	    el.gfxdata.coords.push(mati.vectmultiply(vector([+path[i],-path[i+1],0,1])));
 	    i++;
 	}
     }
     else if (el.tagName=="line") {
-	el.gfxdata.coords=[mat.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,0,1])),
-			   mat.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,0,1]))];
+	el.gfxdata.coords=[mati.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,0,1])),
+			   mati.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,0,1]))];
     }
     else if (el.tagName=="text") {
-	el.gfxdata.coords=[mat.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,0,1]))]; // weird
+	el.gfxdata.coords=[mati.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,0,1]))]; // weird
 	el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="foreignObject") {
-	el.gfxdata.coords=[mat.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,0,1]))];
+	el.gfxdata.coords=[mati.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,0,1]))];
 	el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="circle") {
-	el.gfxdata.coords=[mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
+	el.gfxdata.coords=[mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
 	el.gfxdata.r=el.r.baseVal.value;
     }
     else if (el.tagName=="ellipse") {
-	el.gfxdata.coords=[mat.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
+	el.gfxdata.coords=[mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
 	el.gfxdata.rx=el.rx.baseVal.value;
 	el.gfxdata.ry=el.ry.baseVal.value;
     }
     for (var i=0; i<el.children.length; i++)
-	gfxCheckData(el.children[i]);
+	gfxCheckData(el.children[i],mat);
 }
 
 // a simple square matrix type

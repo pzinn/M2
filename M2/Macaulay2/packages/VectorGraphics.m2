@@ -31,9 +31,6 @@ protect Is3d
 protect Animated
 protect CurrentMatrix
 protect PerspectiveMatrix
-protect ScaledRadius
-protect ScaledRadiusX
-protect ScaledRadiusY
 protect Node -- TODO retire
 protect Scale
 protect svgElement
@@ -63,8 +60,6 @@ gParse Option := o -> o#0 => gParse o#1
 
 GraphicsObject = new Type of HashTable -- ancestor type
 
-new GraphicsObject := T -> new T from {};
-new GraphicsObject from OptionTable := (T,o) -> o ++ {symbol cache => new CacheTable, symbol style => new MutableHashTable};
 GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,
     new class opts1 from if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable),
     (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then gParse y*gParse x else y -- for TransformMatrix and AnimMatrix
@@ -103,11 +98,13 @@ GraphicsType List := (T,opts) -> (
 	| { symbol style =>  sty, symbol cache => new CacheTable}),opts3,first)
 )
 
-perspective = g -> (
-    persp := if g.?Perspective then g.Perspective else 1000.; -- some arbitrary number
-    if instance(persp,Matrix) then gParse persp else matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
+perspective = persp -> (
+    if instance(persp,Matrix) then gParse persp else (
+	if persp === () then persp = 1000;
+	matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
     -- note in particular that distance = z-p *cannot* be extracted from this;
     -- however, z/(1-z/p) is essentially inverse distance which is good enough for sorting purposes
+    )
 )
 
 viewPort = g -> (
@@ -331,7 +328,7 @@ xx := transpose {x,toList(0..#x-1)};
 )
 
 -- for javascript stuff
-jsString := method(Dispatch=>Thing)
+jsString = method(Dispatch=>Thing)
 jsString Thing := toString
 jsString Matrix := x -> "matrix(" | jsString entries x | ")"
 jsString Vector := x -> "vector(" | jsString entries x | ")"
@@ -477,13 +474,11 @@ svg (GraphicsObject,Matrix,Matrix,List) := (g,m,p,l) -> ( -- (object,current mat
 svg (GraphicsObject,Matrix,Matrix) := (g,m,p) -> svg(g,m,p,{})
 
 svg (GraphicsObject,List) := (g,l) -> (
-    p := perspective g;
+    p := perspective try g.Perspective else ();
     svg(g,p,p,l)
 )
 
-svg GraphicsObject := g -> svg(g,{})
-
---htmlWithTex GraphicsObject := html
+svg GraphicsObject := g -> svg(g,{}) -- mostly used for debugging
 
 globalAssignment GraphicsObject
 toString GraphicsObject := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
@@ -525,7 +520,11 @@ scanDefs := g -> (
 
 -- full SVG with the headers
 new SVG from GraphicsObject := (S,g) -> (
-    p := perspective g;
+    ss := {};
+    if g.?Perspective then (
+    	p := perspective g.Perspective;
+	ss = append(ss,"data-pmatrix" => jsString p);
+	) else p = perspective();
     lights := setupLights(g,p,p); -- TODO make more general -> nodes
     main := svg(g,p,p,lights); -- run this first because it will compute the ranges too
     if main === null then return {};
@@ -582,14 +581,13 @@ new SVG from GraphicsObject := (S,g) -> (
     --
 --    tag := graphicsId();
     classTag := "M2Svg";
-    ss := {
+    ss = ss | {
 	"preserveAspectRatio" => "none",
 --	"id" => tag,
 	"style" => concatenate("width:",toString g.cache.Size_0,"em;",
 	    "height:",toString g.cache.Size_1,"em;"
-	),
+	    ),
 	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
-	"data-pmatrix" => jsString p
 	};
     if is3d g or draggable g then ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TODO more customized: might want 2d background drag etc
     if is3d g then (
@@ -776,7 +774,8 @@ svgMarker := new MarkUpType of HypertextInternalLink
 addAttribute(svgMarker,svgAttr|{ "orient" => "auto", "markerWidth", "markerHeight", "refX", "refY", "markerUnits" => "userSpaceOnUse"})
 svgMarker.qname="marker"
 
-m := matrix {{1,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,1}}*perspective 1;
+m := matrix {{1,0,0,0},{0,-1,0,0},{0,0,1,0},{0,0,0,1}}*perspective();
+
 
 arrow = true >> o -> x -> (
     if x === () then x = 10. else x = numeric x;
@@ -1235,8 +1234,8 @@ multidoc ///
 undocumented {
     Contents, TextContent, HtmlContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
-    (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject),
-    (NewFromMethod,GraphicsObject,List), (NewFromMethod,GraphicsObject,OptionTable), (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
+    (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject), (short,GraphicsObject),
+    (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
 }
 
 end--
