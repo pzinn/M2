@@ -293,7 +293,7 @@ gParse GraphicsNode := v -> v.Node -- TODO should treat separately because saved
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { RefPoint => vector {0.,0.}, symbol HtmlContent => null, symbol FontSize => 14. },
-    { "x", "y" }
+    { "x", "y", "xmlns" => "http://www.w3.org/1999/xhtml" }
     )
 viewPort1 GraphicsHtml := g -> (
     p := project2d (g.cache.CurrentMatrix * gParse g.RefPoint);
@@ -406,6 +406,11 @@ svgLookup := hashTable {
 	f:=max(0,x*g.cache.Scale);
 	g.style#"font-size" = toString f|"px";
 	if is3d g then g.cache.Options#"data-fontsize"=x;
+	if instance(g,GraphicsHtml) then ( -- a bit hacky because foreignObject is so buggy
+	    g.style#"overflow"="visible"; -- makes width/height irrelevant
+	    g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
+	    g.style#"height"="100%";
+	    )
 	),
     symbol PointList => (g,x) -> (
 	x1 := select(x,y->not instance(y,String));
@@ -446,7 +451,7 @@ svgLookup := hashTable {
 	g.cache.Contents = apply(x, y -> y.cache.svgElement);
 	),
     symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
-    symbol HtmlContent => (g,x) -> (g.cache.Contents = {x};),
+    symbol HtmlContent => (g,x) -> (g.cache.Contents = if instance(x,VisibleList) then toList x else {x};),
     symbol NodeName => (g,x) -> (g.cache.Options#"data-name" = x;),
     symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";)
     }
@@ -1267,13 +1272,13 @@ tiledRow = (I,i)->new RowExpression from apply(n,j->tile(I,i,j));
 loopConfig = I->new ColumnExpression from apply(k,i->tiledRow(I,i)); -- no such a thing as ColumnExpression. there should
 
 -- or
-barside1=Path{{"M",(80,60,100),"L",(80,55,100),"L",(220,55,100),"L",(220,60,100),"Z"},"fill"=>"#222","stroke-width"=>0}; -- stroke-width shouldn't be necessary
-triangle1=Path{{"M",(-50,160,2),"L",(0,80,2),"L",(50,160,2),"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
-triangle2=Path{{"M",(30,160,98),"L",(80,80,98),"L",(130,160,98),"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
-edge1=Path{{"M",(30,160,98),"L",(30,160,102),"L",(80,80,102),"L",(80,80,98),"Z"},"fill"=>"#4080e0","stroke-width"=>1};
-edge2=Path{{"M",(130,160,98),"L",(130,160,102),"L",(80,80,102),"L",(80,80,98),"Z"},"fill"=>"#4080e0","stroke-width"=>1};
-bartop=Path{{"M",(80,55,98),"L",(80,55,102),"L",(220,55,102),"L",(220,55,98),"Z"},"fill"=>"#aaa","stroke-width"=>0}; -- stroke-width shouldn't be necessary
-thread=Path{{"M",(80,55,100),"L",(80,80,100),"Z"},"stroke"=>"#111","stroke-width"=>0.5,"stroke-opacity"=>0.8};
+barside1=Path{{"M",[80,60,100],"L",[80,55,100],"L",[220,55,100],"L",[220,60,100],"Z"},"fill"=>"#222","stroke-width"=>0}; -- stroke-width shouldn't be necessary
+triangle1=Path{{"M",[-50,160,2],"L",[0,80,2],"L",[50,160,2],"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
+triangle2=Path{{"M",[30,160,98],"L",[80,80,98],"L",[130,160,98],"Z"},"fill"=>"#2040d0","stroke"=>"#80c0ff","stroke-width"=>1,"stroke-miterlimit"=>0};
+edge1=Path{{"M",[30,160,98],"L",[30,160,102],"L",[80,80,102],"L",[80,80,98],"Z"},"fill"=>"#4080e0","stroke-width"=>1};
+edge2=Path{{"M",[130,160,98],"L",[130,160,102],"L",[80,80,102],"L",[80,80,98],"Z"},"fill"=>"#4080e0","stroke-width"=>1};
+bartop=Path{{"M",[80,55,98],"L",[80,55,102],"L",[220,55,102],"L",[220,55,98],"Z"},"fill"=>"#aaa","stroke-width"=>0}; -- stroke-width shouldn't be necessary
+thread=Path{{"M",[80,55,100],"L",[80,80,100],"Z"},"stroke"=>"#111","stroke-width"=>0.5,"stroke-opacity"=>0.8};
 gList{barside1,triangle1,triangle2,edge1,edge2,bartop,thread}
 
 -- draggable tetrahedron

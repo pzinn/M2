@@ -396,12 +396,12 @@ function gfxRedraw(el) {
 	    el.gfxdata.distance=-v[2]/v[3]; // this is the only z coord we really need
 	} else {
 	    el.gfxdata.ctr=new Vector([0,0,0,0]);
-	    el.gfxdata.distance=0;
+	    el.gfxdata.distance=-1e6;
 	}
     }
     else {
 	el.gfxdata.ctr=new Vector([0,0,0,0]); // bit of a hack -- for filters...
-	el.gfxdata.distance=0;
+	el.gfxdata.distance=-1e6;
     }
 }
 
