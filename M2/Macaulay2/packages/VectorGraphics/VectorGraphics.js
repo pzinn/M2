@@ -15,7 +15,7 @@ window.gfxToggleRotation = function(event) {
     //    var svgel=document.getElementById(svgid);
     //    if (!svgel) return;
     var el = event.currentTarget;
-    var svgel = el.ownerSVGElement; // var svgel = el.parentElement; // weak but works
+    var svgel = el.ownerSVGElement;
     if (!svgel.gfxdata) gfxInitData(svgel);
     if (!el.ondblclick) el.ondblclick= function(event) { event.stopPropagation(); }; // weak
     
@@ -206,7 +206,7 @@ function gfxRecompute(el) {
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
     if ((el.tagName=="svg")||(el.tagName=="g")) {
-	if (el.gfxdata.name) { // record center coordinate
+	if (el.gfxdata.name !== undefined) { // record center coordinate
 	    el.ownerSVGElement.gfxdata.gcoords[el.gfxdata.name] = el.gfxdata.cmatrix.vectmultiply([0,0,0,1]);
 	}
 	// must call inductively children's
@@ -217,7 +217,7 @@ function gfxRecompute(el) {
 	return;
     }
     el.gfxdata.coords1 = el.gfxdata.coords.map (
-	(c,i) => el.gfxdata.names && el.gfxdata.names[i] ? null : el.gfxdata.cmatrix.vectmultiply(c) // don't bother computing named ones
+	c => c instanceof Vector ? el.gfxdata.cmatrix.vectmultiply(c) : c // don't bother computing named ones
     );
 }
 
@@ -234,30 +234,23 @@ function gfxRedraw(el) {
 	var flag=false;
 	var ctr=new Vector;
 	el.gfxdata.coords2d = el.gfxdata.coords1.map( (u,i) => {
-	    var j = el.gfxdata.names ? el.gfxdata.names[i] : null;
-	    if (j) {
-		var flag=true;
-		if (typeof j === 'number') {
-		    if (el.ownerSVGElement.gfxdata.gcoords[j]) {
-			u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[j];
-			el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u); // do we still need this?
-		    } else flag=false;
-		} else if (typeof j === 'object') {
+	    if (!(u instanceof Vector)) {
+		if (typeof u === 'number') {
+		    if (el.ownerSVGElement.gfxdata.gcoords[u])
+			u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[u];
+		    else alert("BUG"); // TEMP TODO handle
+		} else if (! u instanceof Vector) { // TODO rewrite
 		    var uu=new Vector;
 		    for (const jj in j) {
 			if (el.ownerSVGElement.gfxdata.gcoords[jj]) {
 			    var v = new Vector(el.ownerSVGElement.gfxdata.gcoords[jj]);
 			    v.multiply(j[jj]);
 			    uu.add(v);
-			} else flag=false;
+			} else alert("");
 		    }
-		    if (flag) {
-			u = el.gfxdata.coords1[i]=uu;
-			el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
-		    }
+		    u = el.gfxdata.coords1[i]=uu;
+		    el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
 		}
-		if (!flag) // failed to find named coord: just compute usual way
-		    u = el.gfxdata.coords1[i]=el.gfxdata.cmatrix.vectmultiply(el.gfxdata.coords[i]);
 	    }
 	    ctr.add(u); // should we normalize u first?
 	    var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(u);
@@ -421,6 +414,10 @@ function gfxReorder(el) {
 	}
     }
 }
+function gnode(x) {
+    // TODO
+    return +x;
+}
 
 function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
@@ -441,45 +438,45 @@ function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
 	mat=mat2;
     }
 
-    if (el.gfxdata.coords) return;
+    if (!el.gfxdata.coords) el.gfxdata.coords=[];
     var mati = mat.inverse();
 
     if ((el.tagName=="polyline")||(el.tagName=="polygon")) {
 	var pts = el.points;
-	el.gfxdata.coords = [];
 	for (var i=0; i<pts.length; i++)
-	    el.gfxdata.coords.push(mati.vectmultiply(vector([pts[i].x,-pts[i].y,0,1])));
+	    if (!el.gfxdata.coords[i]) el.gfxdata.coords[i]=mati.vectmultiply(vector([pts[i].x,-pts[i].y,0,1]));
     }
     else if (el.tagName=="path") { // annoying special case
 	var path = el.getAttribute("d").split(" "); // for lack of better
-	el.gfxdata.coords = [];
+	var ii=0;
 	for (var i=0; i<path.length; i++)
 	    if (path[i] != "" && ( path[i] < "A" || path[i] > "Z" )) // ...
 	{
-	    el.gfxdata.coords.push(mati.vectmultiply(vector([+path[i],-path[i+1],0,1])));
+	    if (!el.gfxdata.coords[ii]) el.gfxdata.coords[ii]=mati.vectmultiply(vector([+path[i],-path[i+1],0,1]));
 	    i++;
+	    ii++;
 	}
     }
     else if (el.tagName=="line") {
-	el.gfxdata.coords=[mati.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,0,1])),
-			   mati.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,0,1]))];
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0] = mati.vectmultiply(vector([el.x1.baseVal.value,-el.y1.baseVal.value,0,1]));
+	if (!el.gfxdata.coords[1]) el.gfxdata.coords[1] = mati.vectmultiply(vector([el.x2.baseVal.value,-el.y2.baseVal.value,0,1]));
     }
     else if (el.tagName=="text") {
-	el.gfxdata.coords=[mati.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,0,1]))]; // weird
-	el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.x.baseVal[0].value,-el.y.baseVal[0].value,0,1])); // weird
+	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="foreignObject") {
-	el.gfxdata.coords=[mati.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,0,1]))];
-	el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.x.baseVal.value,-el.y.baseVal.value,0,1]));
+	if (!el.gfxdata.fontsize) el.gfxdata.fontsize=el.style.fontSize.substring(0,el.style.fontSize.length-2);
     }
     else if (el.tagName=="circle") {
-	el.gfxdata.coords=[mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
-	el.gfxdata.r=el.r.baseVal.value;
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]));
+	if (!el.gfxdata.r) el.gfxdata.r=el.r.baseVal.value;
     }
     else if (el.tagName=="ellipse") {
-	el.gfxdata.coords=[mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]))];
-	el.gfxdata.rx=el.rx.baseVal.value;
-	el.gfxdata.ry=el.ry.baseVal.value;
+	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]));
+	if (!el.gfxdata.rx) el.gfxdata.rx=el.rx.baseVal.value;
+	if (!el.gfxdata.ry) el.gfxdata.ry=el.ry.baseVal.value;
     }
     for (var i=0; i<el.children.length; i++)
 	gfxCheckData(el.children[i],mat);
