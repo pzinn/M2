@@ -24,14 +24,12 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "gNode", "GraphicsNode"
     }
 
-protect NodeName
 protect Filter
 protect Distance
 protect Is3d
 protect Animated
 protect CurrentMatrix
 protect PerspectiveMatrix
-protect Node -- TODO retire
 protect Scale
 protect svgElement
 protect lights
@@ -40,7 +38,7 @@ protect owner
 debug Core
 
 -- for now data-* need entering manually
-htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-center","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-point","data-point1","data-point2","data-fontsize","data-name","data-static"}
+htmlData={ "data-matrix","data-dmatrix","data-pmatrix","data-r","data-rx","data-ry","data-coords","data-onesided","data-origin","data-fontsize","data-static"}
 svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 
 -- parsing of coordinates / matrices
@@ -249,50 +247,41 @@ viewPort1 GraphicsList := x -> (
 -- lists with preferred coordinate
 GraphicsNode = new Type of GraphicsList; -- from ( "g", { symbol Node => vector {0.,0.}, symbol Contents => {} } )
 -- not GraphicsType because should only be created using gNode
-gNodeName := 0;
 gNode = true >> opts -> x -> (
     x = deepSplice x;
-    b := is3d x#0;
     ctr := x#0;
     cnt := nonnull toList drop(x,1);
     if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
-    gNodeName = gNodeName + 1;
     sty := new MutableHashTable from applyPairs(opts,(k,v) -> if class k === String then (k,v));
     (new GraphicsNode from applyPairs(opts,(k,v) -> if class k =!= String then (k,v)))
-    ++ {symbol Contents => cnt, symbol Node => ctr, symbol NodeName => gNodeName, symbol TransformMatrix => translation ctr, 
-	symbol style => sty, symbol cache => new CacheTable from {Is3d=>b}}
+    ++ {symbol Contents => cnt, symbol TransformMatrix => translation ctr,
+	symbol style => sty, symbol cache => new CacheTable}
     )
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
-    symbol Node => x*v.Node,
-    symbol NodeName => if class v.NodeName === HashTable then applyValues(v.NodeName,y->x*y) else hashTable{v.NodeName=>x},
-    symbol cache => new CacheTable from { Is3d => v.cache.Is3d },
+    symbol cache => new CacheTable from { symbol RefPoint => g -> x*gParse(v,g) },
     symbol style => new MutableHashTable,
-    symbol Contents => {}
+    symbol Contents => {} -- TODO add "id"? or something for gParse GraphicsNode see below
+    }
+Vector + GraphicsNode :=
+GraphicsNode + Vector :=
+GraphicsNode + GraphicsNode := (v,w) -> new GraphicsNode from {
+    symbol cache => new CacheTable from { symbol RefPoint => g -> gParse(v,g)+gParse(w,g) },
+    symbol style => new MutableHashTable,
+    symbol Contents => {} -- TODO add "id"? or something for gParse GraphicsNode see below
     }
 - GraphicsNode := v -> (-1)*v
-GraphicsNode + GraphicsNode := (v,w) -> (
-    h1 := if class v.NodeName === HashTable then v.NodeName else hashTable{v.NodeName=>1};
-    h2 := if class w.NodeName === HashTable then w.NodeName else hashTable{w.NodeName=>1};
-    new GraphicsNode from {
-	symbol Node => v.Node + w.Node,
-	symbol NodeName => merge(h1,h2,plus),
-    	symbol cache => new CacheTable from { Is3d => v.cache.Is3d or w.cache.Is3d },
-    	symbol style => new MutableHashTable,
-    	symbol Contents => {}
-	}
-    )
+Vector - GraphicsNode :=
+GraphicsNode - Vector :=
 GraphicsNode - GraphicsNode := (v,w) -> v+(-1)*w
- -- next few are semi-hacks for now TODO retire
-GraphicsNode + Vector := (v,w) -> v.Node+gParse w
-Vector + GraphicsNode := (v,w) -> gParse v+w.Node
-GraphicsNode - Vector := (v,w) -> v.Node-gParse w
-Vector - GraphicsNode := (w,v) -> gParse v-w.Node
---gParse GraphicsNode := v -> v.Node -- TODO TEMP retire
-gParse GraphicsNode := v -> "gnode("|toString v.NodeName|")" -- TEMP?
+
+gParse GraphicsNode := v -> if v.cache.?Options then v.cache.Options#"id" -- TODO see above
 -- what's below should replace current gParse vector/node
 gParse (Array,GraphicsObject) :=
 gParse (Vector,GraphicsObject) := (v,g) -> g.cache.CurrentMatrix*gParse v
-gParse (GraphicsNode,GraphicsObject) := (v,g) -> try v.cache.RefPoint else error "Node not present" -- TODO what about ops?
+gParse (GraphicsNode,GraphicsObject) := (v,g) -> (
+    x := try v.cache.RefPoint else error "Node not present";
+    x g
+    )
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { RefPoint => vector {0.,0.}, symbol HtmlContent => null, symbol FontSize => 14. },
@@ -445,7 +434,6 @@ svgLookup := hashTable {
 	),
     symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
     symbol HtmlContent => (g,x) -> (g.cache.Contents = if instance(x,VisibleList) then toList x else {x};),
-    symbol NodeName => (g,x) -> (g.cache.Options#"data-name" = x;),
     symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";)
     }
 
@@ -458,7 +446,10 @@ precompute = (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     	g.cache.Options = new MutableHashTable from {"id" => graphicsId()};
     	c.lights = append(c.lights,g);
     	)
-    else if instance(g,GraphicsNode) then g.cache.RefPoint = g.cache.CurrentMatrix_3;
+    else if instance(g,GraphicsNode) then (
+    	g.cache.Options = new MutableHashTable from {"id" => graphicsId()};
+	g.cache.RefPoint = gg -> g.cache.CurrentMatrix_3;
+	);
     if g.?Contents then scan(g.Contents, x -> precompute(x,g.cache.CurrentMatrix,c));
     )
 

@@ -206,9 +206,6 @@ function gfxRecompute(el) {
     if (!el.gfxdata.matrix) el.gfxdata.cmatrix = mat; else { el.gfxdata.cmatrix = new Matrix(el.gfxdata.matrix); el.gfxdata.cmatrix.leftmultiply(mat); }
 
     if ((el.tagName=="svg")||(el.tagName=="g")) {
-	if (el.gfxdata.name !== undefined) { // record center coordinate
-	    el.ownerSVGElement.gfxdata.gcoords[el.gfxdata.name] = el.gfxdata.cmatrix.vectmultiply([0,0,0,1]);
-	}
 	// must call inductively children's
 	for (var i=0; i<el.children.length; i++) gfxRecompute(el.children[i]);
 	return;
@@ -222,7 +219,6 @@ function gfxRecompute(el) {
 }
 
 function gfxRedo(el) {
-    el.gfxdata.gcoords={};
     gfxRecompute(el);
     gfxRedraw(el);
 }
@@ -235,10 +231,8 @@ function gfxRedraw(el) {
 	var ctr=new Vector;
 	el.gfxdata.coords2d = el.gfxdata.coords1.map( (u,i) => {
 	    if (!(u instanceof Vector)) {
-		if (typeof u === 'number') {
-		    if (el.ownerSVGElement.gfxdata.gcoords[u])
-			u = el.gfxdata.coords1[i]=el.ownerSVGElement.gfxdata.gcoords[u];
-		    else alert("BUG"); // TEMP TODO handle
+		if (typeof u === 'object') {
+		    u = el.gfxdata.coords1[i]=u.gfxdata.cmatrix.vectmultiply([0,0,0,1]); // TODO optimize
 		} else if (! u instanceof Vector) { // TODO rewrite
 		    var uu=new Vector;
 		    for (const jj in j) {
