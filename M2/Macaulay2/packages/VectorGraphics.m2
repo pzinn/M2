@@ -21,7 +21,7 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
-    "gNode", "GraphicsNode"
+    "gNode", "GraphicsNode", "place"
     }
 
 protect Filter
@@ -278,23 +278,20 @@ Vector - GraphicsNode :=
 GraphicsNode - Vector :=
 GraphicsNode - GraphicsNode := (v,w) -> v+(-1)*w
 
-pos = method()  -- TEMP name
-
-pos (Vector,GraphicsNode,Number,Number) :=
-pos (GraphicsNode,Vector,Number,Number) :=
-pos (GraphicsNode,GraphicsNode,Number,Number) := (v,w,a,b) -> new GraphicsNode from {
-    symbol cache => new CacheTable from { symbol RefPointFunc => g -> (
-	    vv:=gParse(v,g);
-	    ww:=gParse(w,g);
-	    perp := vector();
-	    )
-	    },
+place = method()
+place (Vector,GraphicsNode,Number,Number) :=
+place (GraphicsNode,Vector,Number,Number) :=
+place (GraphicsNode,GraphicsNode,Number,Number) := (v,w,a,b) -> new GraphicsNode from {
+    symbol cache => new CacheTable from { symbol RefPointFunc => g -> place(gParse(v,g),gParse(w,g),a,b) },
     symbol style => new MutableHashTable,
     symbol Contents => {},
-    symbol js => () -> "gPos("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
+    symbol js => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
     }
-    
-    
+place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
+    u := w - v;
+    perp := vector { u_1, -u_0, u_2, u_3 };
+    v + a*u + b*perp
+    )
 
 gParse GraphicsNode := identity
 

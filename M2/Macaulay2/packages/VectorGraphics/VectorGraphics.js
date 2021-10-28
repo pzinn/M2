@@ -396,24 +396,33 @@ function gfxReorder(el) {
 }
 
 function gNode(nd) {
-    return function(c) {
+    return function(cmat) {
 	return nd.gfxdata.cmatrix.vectmultiply([0,0,0,1]); // TODO optimize;
     }
 }
 
 function gTimes(x,nd) {
-    return function(c) {
-	return nd(c).multiply(x);
+    return function(cmat) {
+	return nd(cmat).multiply(x);
     }
 }
 
-function gPlus(nd1,nd2) { // TODO mixed case with vectors
-    return function(c) {
-	var v = nd1 instanceof Vector ? c.vectmultiply(nd1) : new Vector(nd1(c));
-	v.add( nd2 instanceof Vector ? c.vectmultiply(nd2) : nd2(c));
+function gPlus(nd1,nd2) {
+    return function(cmat) {
+	var v = nd1 instanceof Vector ? cmat.vectmultiply(nd1) : new Vector(nd1(cmat));
+	v.add( nd2 instanceof Vector ? cmat.vectmultiply(nd2) : nd2(cmat));
 	return v;
     }
 }
+
+function gPlace(nd1,nd2,a,b) {
+    return function(cmat) {
+	var v = nd1 instanceof Vector ? cmat.vectmultiply(nd1) : new Vector(nd1(cmat));
+	var w = nd2 instanceof Vector ? cmat.vectmultiply(nd2) : new Vector(nd2(cmat));
+	return new Vector([(1-a)*v[0]+a*w[0]+b*(w[1]-v[1]),(1-a)*v[1]+a*w[1]-b*(w[0]-v[0]),(1-a)*v[2]+a*w[2],(1-a)*v[3]+a*w[3]])
+    }
+}
+
 
 function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
