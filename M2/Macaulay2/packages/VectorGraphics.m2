@@ -254,12 +254,15 @@ gNode = true >> opts -> x -> (
     cnt := nonnull toList drop(x,1);
     if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
     sty := new MutableHashTable from applyPairs(opts,(k,v) -> if class k === String then (k,v));
+    c := new CacheTable;
     (new GraphicsNode from applyPairs(opts,(k,v) -> if class k =!= String then (k,v)))
     ++ {symbol Contents => cnt, symbol TransformMatrix => translation ctr,
-	symbol style => sty, symbol cache => new CacheTable}
+	symbol RefPointFunc => g -> c.CurrentMatrix_3,
+	symbol style => sty, symbol cache => c}
     )
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
-    symbol cache => new CacheTable from { symbol RefPointFunc => g -> x*gParse(v,g) },
+    symbol RefPointFunc => g -> x*gParse(v,g),
+    symbol cache => new CacheTable,
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gTimes("|jsString x|","|jsString v|")"
@@ -267,7 +270,8 @@ Number * GraphicsNode := (x,v) -> new GraphicsNode from {
 Vector + GraphicsNode :=
 GraphicsNode + Vector :=
 GraphicsNode + GraphicsNode := (v,w) -> new GraphicsNode from {
-    symbol cache => new CacheTable from { symbol RefPointFunc => g -> gParse(v,g)+gParse(w,g) },
+    symbol RefPointFunc => g -> gParse(v,g)+gParse(w,g),
+    symbol cache => new CacheTable,
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gPlus("|jsString v|","|jsString w|")"
@@ -282,26 +286,38 @@ place = method()
 place (Vector,GraphicsNode,Number,Number) :=
 place (GraphicsNode,Vector,Number,Number) :=
 place (GraphicsNode,GraphicsNode,Number,Number) := (v,w,a,b) -> new GraphicsNode from {
-    symbol cache => new CacheTable from { symbol RefPointFunc => g -> place(gParse(v,g),gParse(w,g),a,b) },
+    symbol RefPointFunc => g -> place(gParse(v,g),gParse(w,g),a,b),
+    symbol cache => new CacheTable,
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
     }
 place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
     u := w - v;
-    perp := vector { u_1, -u_0, u_2, u_3 };
+    perp := vector { u_1, -u_0, 0, 0 };
     v + a*u + b*perp
     )
+intersection(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
+    cf := (i,j,k,l) -> v1_i*v2_j*w1_k*w2_l;
+    v:=vector{-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)};
+    (1/v_3)*sub(v,RR)
+    )
+l={Vector,GraphicsNode}; l=l**l; l=l**l; l=drop(toSequence\flatten\l,1);
+scan(l, t ->
+intersection t := true >> o -> (v1,v2,w1,w2) -> new GraphicsNode from {
+    symbol RefPointFunc => g -> intersection(gParse(v1,g),gParse(v2,g),gParse(w1,g),gParse(w2,g)),
+    symbol cache => new CacheTable,
+    symbol style => new MutableHashTable,
+    symbol Contents => {},
+    symbol js => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
+    })
 
 gParse GraphicsNode := identity
 
 -- what's below should replace current gParse vector/node (or at least be a distinct function)
 gParse (Array,GraphicsObject) :=
 gParse (Vector,GraphicsObject) := (v,g) -> g.cache.CurrentMatrix*gParse v
-gParse (GraphicsNode,GraphicsObject) := (v,g) -> (
-    x := try v.cache.RefPointFunc else error "Node not present";
-    x g
-    )
+gParse (GraphicsNode,GraphicsObject) := (v,g) -> v.RefPointFunc g
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { symbol RefPoint => vector {0.,0.}, symbol HtmlContent => null, symbol FontSize => 14. },
@@ -480,7 +496,6 @@ precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     	)
     else if instance(g,GraphicsNode) then (
     	g.cache.Options = new MutableHashTable from {"id" => graphicsId()};
-	g.cache.RefPointFunc = gg -> g.cache.CurrentMatrix_3;
 	);
     if g.?Contents then scan(g.Contents, x -> precompute(x,g.cache.CurrentMatrix,c));
     )
