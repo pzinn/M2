@@ -30,7 +30,6 @@ protect Is3d
 protect Animated
 protect CurrentMatrix
 protect PerspectiveMatrix
-protect Scale
 protect svgElement
 protect lights
 protect owner
@@ -119,8 +118,21 @@ viewPort1 GraphicsObject := x -> null
 distance = method()
 distance GraphicsObject := x -> 0_RR
 
-project2d := x -> (1/x_3)*x^{0,1} -- used for e.g. ViewPort
-project2d' := x -> (1/x_3)*vector {x_0,-x_1} -- annoying sign for actual svg coords
+-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+scale := (x,g) -> x_3/(g.cache.owner.PerspectiveMatrix*x)_3
+
+project3d := (x,g) -> (
+    y := g.cache.owner.PerspectiveMatrix*x;
+    (1/y_3)*y^{0,1,2} -- used for e.g. ViewPort and distance
+    )
+project2d := (x,g) -> (
+    y := project3d(x,g);
+    vector {y_0,y_1}
+)
+project2d' := (x,g) -> (
+    y := project3d(x,g);
+    vector {y_0,-y_1} -- annoying sign for actual svg coords
+)
 
 graphicsIdCount := 0;
 graphicsId := () -> (
@@ -139,37 +151,36 @@ new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     svgElement g := g' -> s;
     g)
 
-Circle = new GraphicsType of GraphicsObject from ( "circle",
-    { symbol Center => vector {0.,0.}, symbol Radius => 50. },
-    { "r", "cx", "cy" }
-    )
-viewPort1 Circle := g -> (
-    p := gParse(g.Center,g);
-    r:=g.Radius*g.cache.Scale;
-    p=project2d p;
-    r = vector {r,r};
-    { p - r, p + r }
-    )
-distance Circle := g -> (
-    y := gParse(g.Center,g);
-    -y_2/y_3
-    )
-
 Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
     { symbol Center => vector {0.,0.}, symbol RadiusX => 50., symbol RadiusY => 50. },
     { "rx", "ry", "cx", "cy" }
     )
 viewPort1 Ellipse := g -> (
     p := gParse(g.Center,g);
-    rx:=g.RadiusX*g.cache.Scale;
-    ry:=g.RadiusY*g.cache.Scale;
+    sc := scale(p,g);
+    p=project2d(p,g);
+    rx:=g.RadiusX*sc;
+    ry:=g.RadiusY*sc;
     r := vector {rx,ry};
     { p-r, p+r }
     )
 distance Ellipse := g -> (
-    y := gParse(g.Center,g);
-    -y_2/y_3
+    -(project3d(gParse(g.Center,g),g))_2
     )
+
+Circle = new GraphicsType of Ellipse from ( "circle",
+    { symbol Center => vector {0.,0.}, symbol Radius => 50. },
+    { "r", "cx", "cy" }
+    )
+viewPort1 Circle := g -> (
+    p := gParse(g.Center,g);
+    sc := scale(p,g);
+    p=project2d(p,g);
+    r:=g.Radius*sc;
+    r = vector {r,r};
+    { p - r, p + r }
+    )
+
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
     { symbol RefPoint => vector {0.,0.}, symbol TextContent => "", symbol FontSize => 14. },
@@ -178,9 +189,9 @@ GraphicsText = new GraphicsType of GraphicsObject from ( "text",
 viewPort1 GraphicsText := g -> (
     f := g.FontSize;
     p := gParse(g.RefPoint,g);
-    sc := g.cache.Scale;
+    sc := scale(p,g);
+    p=project2d(p,g);
     f=f*sc;
-    p=project2d p;
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
     pp := p + vector {
 	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
@@ -194,15 +205,15 @@ Line = new GraphicsType of GraphicsObject from ( "line",
     { "x1", "y1", "x2", "y2" }
     )
 viewPort1 Line := g -> (
-    p1 := project2d gParse (g.Point1,g);
-    p2 := project2d gParse (g.Point2,g);
+    p1 := project2d(gParse (g.Point1,g),g);
+    p2 := project2d(gParse (g.Point2,g),g);
     p := transpose{entries p1,entries p2};
     { vector(min\p), vector(max\p) }
     )
 distance Line := g -> (
-    p1 := gParse (g.Point1,g);
-    p2 := gParse (g.Point2,g);
-    -0.5*(p1_2/p1_3+p2_2/p2_3)
+    d1 := (project3d(gParse (g.Point1,g),g))_2;
+    d2 := (project3d(gParse (g.Point2,g),g))_2;
+    -0.5*(d1+d2)
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -213,7 +224,7 @@ Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PointList => {} 
 viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw this
     s := select(g.PointList, x -> not instance(x,String));
     if #s == 0 then return null;
-    s = transpose apply(s, x -> entries project2d gParse(x,g));
+    s = transpose apply(s, x -> entries project2d(gParse(x,g),g));
     {vector(min\s), vector(max\s)}
     )
 
@@ -261,19 +272,38 @@ GraphicsNode + GraphicsNode := (v,w) -> new GraphicsNode from {
     symbol Contents => {},
     symbol js => () -> "gPlus("|jsString v|","|jsString w|")"
     }
--- TODO add arrays too
+-- TODO add arrays too? depending on gParse rewrite
 - GraphicsNode := v -> (-1)*v
 Vector - GraphicsNode :=
 GraphicsNode - Vector :=
 GraphicsNode - GraphicsNode := (v,w) -> v+(-1)*w
 
+pos = method()  -- TEMP name
+
+pos (Vector,GraphicsNode,Number,Number) :=
+pos (GraphicsNode,Vector,Number,Number) :=
+pos (GraphicsNode,GraphicsNode,Number,Number) := (v,w,a,b) -> new GraphicsNode from {
+    symbol cache => new CacheTable from { symbol RefPointFunc => g -> (
+	    vv:=gParse(v,g);
+	    ww:=gParse(w,g);
+	    perp := vector();
+	    )
+	    },
+    symbol style => new MutableHashTable,
+    symbol Contents => {},
+    symbol js => () -> "gPos("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
+    }
+    
+    
+
 gParse GraphicsNode := identity
--- what's below should replace current gParse vector/node
+
+-- what's below should replace current gParse vector/node (or at least be a distinct function)
 gParse (Array,GraphicsObject) :=
-gParse (Vector,GraphicsObject) := (v,g) -> g.cache.owner.PerspectiveMatrix*g.cache.CurrentMatrix*gParse v
+gParse (Vector,GraphicsObject) := (v,g) -> g.cache.CurrentMatrix*gParse v
 gParse (GraphicsNode,GraphicsObject) := (v,g) -> (
     x := try v.cache.RefPointFunc else error "Node not present";
-    g.cache.owner.PerspectiveMatrix*(x g)
+    x g
     )
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
@@ -281,7 +311,7 @@ GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { "x", "y", "xmlns" => "http://www.w3.org/1999/xhtml" }
     )
 viewPort1 GraphicsHtml := g -> (
-    p := project2d gParse (g.RefPoint,g);
+    p := project2d(gParse (g.RefPoint,g),g);
     { p, p } -- TODO properly
     )
 
@@ -344,7 +374,7 @@ ac := (h,k,i,x) -> (
 is3d = method()
 is3d Vector := v -> rank class v > 2
 is3d Array := a -> #a > 2
-is3d Matrix := m -> rank source m > 2 and (rank source m === 3 or (m^{2,3} == matrix {{0,0,1,0},{0,0,0,1}} and m_2 == vector {0,0,1,0}))
+is3d Matrix := m -> rank source m > 2 and (rank source m === 3 or m^{2,3} != matrix {{0,0,1.,0},{0,0,0,1.}} or m_2 != vector {0,0,1.,0})
 -- a bit messy: a 2d translation / rotation looks like {{c,-s,0,x},{s,c,0,y},{0,0,1,0},{0,0,1,0}}
 is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
@@ -371,20 +401,29 @@ svgLookup := hashTable {
     symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = gParse x;),
     symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = gParse x;),
     symbol Radius => (g,x) -> (
-	g.cache.Options#"r" = x * g.cache.Scale; -- hack
+	r := gParse(g.Center,g);
+	sc := scale(r,g);
+	g.cache.Options#"r" = x * sc;
 	if is3d g then g.cache.Options#"data-r"=x;
 	),
     symbol RadiusX => (g,x) -> (
-	g.cache.Options#"rx" = x * g.cache.Scale; -- hack
+	r := gParse(g.Center,g);
+	sc := scale(r,g);
+	g.cache.Options#"rx" = x * sc;
 	if is3d g then g.cache.Options#"data-rx"=x;
 	),
     symbol RadiusY => (g,x) -> (
-	g.cache.Options#"ry" = x * g.cache.Scale; -- hack
+	r := gParse(g.Center,g);
+	sc := scale(r,g);
+	g.cache.Options#"ry" = x * sc;
 	if is3d g then g.cache.Options#"data-ry"=x;
 	),
     symbol OneSided => (g,x) -> (g.cache.Options#"data-onesided"=x;),
     symbol FontSize => (g,x) -> (
-	f:=max(0,x*g.cache.Scale);
+    	-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+	r := gParse(g.RefPoint,g);
+	sc := scale(r,g);
+	f:=max(0,x*sc);
 	g.style#"font-size" = toString f|"px";
 	if is3d g then g.cache.Options#"data-fontsize"=x;
 	if instance(g,GraphicsHtml) then ( -- a bit hacky because foreignObject is so buggy
@@ -396,30 +435,30 @@ svgLookup := hashTable {
     symbol PointList => (g,x) -> (
 	x1 := select(x,y->not instance(y,String));
 	if is3d g or any(x1,y->instance(y,GraphicsNode)) then g.cache.Options#"data-coords"=apply(x1,gParse); -- be more subtle? select?
-	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d' gParse(y,g),toString) else y));
+	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d'(gParse(y,g),g),toString) else y));
 	if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
 	),
     symbol Center => (g,x) -> (
 	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,gParse x);
-	x = project2d' gParse(x,g);
+	x = project2d'(gParse(x,g),g);
 	g.cache.Options#"cx" = x_0;
 	g.cache.Options#"cy" = x_1;
 	),
     symbol RefPoint => (g,x) -> (
 	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,gParse x);
-	x = project2d' gParse(x,g);
+	x = project2d'(gParse(x,g),g);
 	g.cache.Options#"x" = x_0;
 	g.cache.Options#"y" = x_1;
 	),
     symbol Point1 => (g,x) -> (
 	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,gParse x);
-	x = project2d' gParse(x,g);
+	x = project2d'(gParse(x,g),g);
 	g.cache.Options#"x1" = x_0;
 	g.cache.Options#"y1" = x_1;
 	),
     symbol Point2 => (g,x) -> (
 	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",1,gParse x);
-	x = project2d' gParse(x,g);
+	x = project2d'(gParse(x,g),g);
 	g.cache.Options#"x2" = x_0;
 	g.cache.Options#"y2" = x_1;
 	),
@@ -456,11 +495,6 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
 	);
     if g.?OneSided and g.OneSided then determineSide g;
-    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
-    if instance(g,Circle) or instance(g,Ellipse) or instance(g,GraphicsText) or instance(g,GraphicsHtml) then (
-	r := gParse(if g.?Center then g.Center else g.RefPoint,g); -- the includes perspective matrix so we divide by it next time... TODO better
-	g.cache.Scale = r_3/(g.cache.owner.PerspectiveMatrix^(-1)*r)_3;-- (g.cache.owner.PerspectiveMatrix*r)_3/r_3;
-	);
     g.cache.ViewPort = viewPort1 g; -- update the range
     g.cache.Distance = distance g; -- update the distance
     if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better
@@ -500,7 +534,7 @@ short GraphicsObject := g -> (
 
 distance GraphicsPoly := g -> (
     s := select(g.PointList, x -> not instance(x,String));
-    if #s == 0 then 0_RR else -sum(s,x->(xx:=gParse(x,g);xx_2/xx_3)) / #s
+    if #s == 0 then 0_RR else -sum(s,x->(project3d(gParse(x,g),g))_2) / #s
     )
 distance GraphicsList := g -> (
     if #(g.Contents) == 0 then 0_RR else sum(g.Contents, x->x.cache.Distance) / #(g.Contents)
@@ -1089,9 +1123,6 @@ multidoc ///
   Description
    Text
     A 4x4 matrix that is applied to 3d coordinates for perspective.
-    After this transformation, the coordinates must be up to normalization $(x,y,z,p)$
-    where $(x,y,z>0)$ are coordinates in the reference frame where the observer is at the origin looking in the $z$ direction,
-    and $p$ is the distance from the observer to the screen.
     One can instead provide a real number $p$, which is equivalent to placing the screen
     centered at $z=0$ and the viewer at $(0,0,p)$.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
