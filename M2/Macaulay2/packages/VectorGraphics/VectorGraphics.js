@@ -403,7 +403,7 @@ function gNode(nd) {
 
 function gTimes(x,nd) {
     return function(c) {
-	return nd(c).leftmultiply(x);
+	return nd(c).multiply(x);
     }
 }
 
@@ -547,7 +547,7 @@ class Matrix extends Float32Array {
     // display
     print()
     { 
-	a="{"; 
+	var a="{";
 	for (var i=0; i<dim; i++)
 	    {
 		a+="{";

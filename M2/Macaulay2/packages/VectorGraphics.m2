@@ -35,6 +35,7 @@ protect svgElement
 protect lights
 protect owner
 protect js
+protect RefPointFunc
 
 debug Core
 
@@ -143,11 +144,11 @@ Circle = new GraphicsType of GraphicsObject from ( "circle",
     { "r", "cx", "cy" }
     )
 viewPort1 Circle := g -> (
-    p1 := g.cache.CurrentMatrix * (gParse g.Center-vector {g.Radius,g.Radius,0,0}); -- lame -- TODO nodes???
-    p2 := g.cache.CurrentMatrix * (gParse g.Center+vector {g.Radius,g.Radius,0,0}); -- lame
-    p1=project2d p1;
-    p2=project2d p2;
-    { p1, p2 }
+    p := gParse(g.Center,g);
+    r:=g.Radius*g.cache.Scale;
+    p=project2d p;
+    r = vector {r,r};
+    { p - r, p + r }
     )
 distance Circle := g -> (
     y := gParse(g.Center,g);
@@ -159,11 +160,11 @@ Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
     { "rx", "ry", "cx", "cy" }
     )
 viewPort1 Ellipse := g -> (
-    p1 := g.cache.CurrentMatrix * (gParse g.Center-vector {g.RadiusX,g.RadiusY,0,0}); -- lame -- TODO nodes???
-    p2 := g.cache.CurrentMatrix * (gParse g.Center+vector {g.RadiusX,g.RadiusY,0,0}); -- lame
-    p1=project2d p1;
-    p2=project2d p2;
-    { p1, p2 }
+    p := gParse(g.Center,g);
+    rx:=g.RadiusX*g.cache.Scale;
+    ry:=g.RadiusY*g.cache.Scale;
+    r := vector {rx,ry};
+    { p-r, p+r }
     )
 distance Ellipse := g -> (
     y := gParse(g.Center,g);
@@ -171,14 +172,13 @@ distance Ellipse := g -> (
     )
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
-    { RefPoint => vector {0.,0.}, symbol TextContent => "", symbol FontSize => 14. },
+    { symbol RefPoint => vector {0.,0.}, symbol TextContent => "", symbol FontSize => 14. },
     { "x", "y" }
     )
 viewPort1 GraphicsText := g -> (
     f := g.FontSize;
-    x := gParse g.RefPoint; -- TODO nodes???
-    p := g.cache.CurrentMatrix * x;
-    sc := x_3/p_3; -- hacky but less lame than Circle/Ellipse
+    p := gParse(g.RefPoint,g);
+    sc := g.cache.Scale;
     f=f*sc;
     p=project2d p;
     r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
@@ -248,7 +248,7 @@ gNode = true >> opts -> x -> (
 	symbol style => sty, symbol cache => new CacheTable}
     )
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
-    symbol cache => new CacheTable from { symbol RefPoint => g -> x*gParse(v,g) },
+    symbol cache => new CacheTable from { symbol RefPointFunc => g -> x*gParse(v,g) },
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gTimes("|jsString x|","|jsString v|")"
@@ -256,7 +256,7 @@ Number * GraphicsNode := (x,v) -> new GraphicsNode from {
 Vector + GraphicsNode :=
 GraphicsNode + Vector :=
 GraphicsNode + GraphicsNode := (v,w) -> new GraphicsNode from {
-    symbol cache => new CacheTable from { symbol RefPoint => g -> gParse(v,g)+gParse(w,g) },
+    symbol cache => new CacheTable from { symbol RefPointFunc => g -> gParse(v,g)+gParse(w,g) },
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gPlus("|jsString v|","|jsString w|")"
@@ -270,14 +270,14 @@ GraphicsNode - GraphicsNode := (v,w) -> v+(-1)*w
 gParse GraphicsNode := identity
 -- what's below should replace current gParse vector/node
 gParse (Array,GraphicsObject) :=
-gParse (Vector,GraphicsObject) := (v,g) -> g.cache.CurrentMatrix*gParse v
+gParse (Vector,GraphicsObject) := (v,g) -> g.cache.owner.PerspectiveMatrix*g.cache.CurrentMatrix*gParse v
 gParse (GraphicsNode,GraphicsObject) := (v,g) -> (
-    x := try v.cache.RefPoint else error "Node not present";
-    x g
+    x := try v.cache.RefPointFunc else error "Node not present";
+    g.cache.owner.PerspectiveMatrix*(x g)
     )
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
-    { RefPoint => vector {0.,0.}, symbol HtmlContent => null, symbol FontSize => 14. },
+    { symbol RefPoint => vector {0.,0.}, symbol HtmlContent => null, symbol FontSize => 14. },
     { "x", "y", "xmlns" => "http://www.w3.org/1999/xhtml" }
     )
 viewPort1 GraphicsHtml := g -> (
@@ -326,8 +326,9 @@ jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 jsString GraphicsNode := x -> if x.?js then x.js() else "gNode("|x.cache.Options#"id"|")"
 
-updateTransformMatrix := (g,m,p) -> ( -- (object,matrix of parent,perspective matrix)
-    g.cache.CurrentMatrix = if g.?Static and g.Static then p else m; -- if static reset to perspective matrix
+one := map(RR^4,RR^4,1)
+updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
+    g.cache.CurrentMatrix = if g.?Static and g.Static then one else m; -- if static reset to perspective matrix
     if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*gParse g.TransformMatrix;
     )
 
@@ -436,37 +437,40 @@ svgLookup := hashTable {
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     g.cache.Filter={}; -- clean up filters from past
     g.cache.owner=c; -- owner cache
-    updateTransformMatrix(g,m,c.PerspectiveMatrix);
+    updateTransformMatrix(g,m);
     if instance(g,Light) then (
     	g.cache.Options = new MutableHashTable from {"id" => graphicsId()};
     	c.lights = append(c.lights,g);
     	)
     else if instance(g,GraphicsNode) then (
     	g.cache.Options = new MutableHashTable from {"id" => graphicsId()};
-	g.cache.RefPoint = gg -> g.cache.CurrentMatrix_3;
+	g.cache.RefPointFunc = gg -> g.cache.CurrentMatrix_3;
 	);
     if g.?Contents then scan(g.Contents, x -> precompute(x,g.cache.CurrentMatrix,c));
     )
 
-updateGraphicsCache := (g,m) -> (
-    updateTransformMatrix(g,m,g.cache.owner.PerspectiveMatrix); -- it's already been done but annoying issue of objects that appear several times
-    if g.?Contents then scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
-    g.cache.ViewPort = viewPort1 g; -- update the range
-    g.cache.Distance = distance g; -- update the distance
+updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
+    updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
+    if g.?Contents then (
+	is3d g; -- TODO better to force 3d state of children to be determined
+	scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
+	);
     if g.?OneSided and g.OneSided then determineSide g;
     -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
     if instance(g,Circle) or instance(g,Ellipse) or instance(g,GraphicsText) or instance(g,GraphicsHtml) then (
-	r := gParse if g.?Center then g.Center else g.RefPoint;
-	g.cache.Scale = r_3/(g.cache.CurrentMatrix*r)_3; -- TODO nodes???
-	)
+	r := gParse(if g.?Center then g.Center else g.RefPoint,g); -- the includes perspective matrix so we divide by it next time... TODO better
+	g.cache.Scale = r_3/(g.cache.owner.PerspectiveMatrix^(-1)*r)_3;-- (g.cache.owner.PerspectiveMatrix*r)_3/r_3;
+	);
+    g.cache.ViewPort = viewPort1 g; -- update the range
+    g.cache.Distance = distance g; -- update the distance
+    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better
+    filter g;
     )
 
-svg1 = (g,m) -> ( -- 2nd phase (object,current matrix)
+svg1 = (g,m) -> ( -- 3rd phase (object,current matrix)
     s := try svgElement class g else return; -- what is the else for?
-    updateTransformMatrix(g,m,g.cache.owner.PerspectiveMatrix); -- it's already been done but annoying issue of objects that appear several times
-    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better
+    updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
     g.cache.Contents={};
-    filter g;
     scan(keys g, key -> if svgLookup#?key then svgLookup#key(g,g#key));
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
@@ -477,9 +481,9 @@ svg1 = (g,m) -> ( -- 2nd phase (object,current matrix)
 svg = g -> (
     g.cache.lights={};
     g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
-    precompute(g,g.cache.PerspectiveMatrix,g.cache);
-    updateGraphicsCache(g,g.cache.PerspectiveMatrix);
-    svg1(g,g.cache.PerspectiveMatrix)
+    precompute(g,one,g.cache);
+    updateGraphicsCache(g,one);
+    svg1(g,one)
     )
 
 globalAssignment GraphicsObject
@@ -565,9 +569,9 @@ new SVG from GraphicsObject := (S,g) -> (
 	    );
 	axeslabels0 := gList(
 	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
-	    GraphicsHtml { RefPoint => vector {xmax*1.06,0,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsHtml { RefPoint => vector {0,ymax*1.06,0,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { RefPoint => vector {0,0,zmax*1.06,1}, HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { symbol RefPoint => vector {xmax*1.06,0,0,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { symbol RefPoint => vector {0,ymax*1.06,0,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsHtml { symbol RefPoint => vector {0,0,zmax*1.06,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
 	    Perspective => p,
 	    );
 	axes=svg axes0;
@@ -706,12 +710,12 @@ filter = g -> (
     	    -- find first 3 coords
 	    coords := select(g.PointList, x -> not instance(x,String));
     	    if #coords>=3 then (
-	    	coords=apply(3,i->(xx:=p^(-1)*gParse(coords#i,g);(1/xx_3)*xx^{0,1,2}));
+	    	coords=apply(3,i->(xx:=gParse(coords#i,g);(1/xx_3)*xx^{0,1,2}));
 	    	u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
 	    	if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
 	    	scan(l, gg -> (
 	    	    	-- compute reflected coords
-		    	light0 := p^(-1)*gParse(gg.Center,gg);
+		    	light0 := gParse(gg.Center,gg);
 		    	light := (1/light0_3)*light0^{0,1,2};
 		    	lightrel := light-coords#0;
 	    	    	sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
@@ -745,21 +749,17 @@ addAttribute(svgStop,svgAttr|{"offset"} )
 svgStop.qname="stop"
 linearGradient = true >> o -> stop -> (
     tag := graphicsId();
-    svgLinearGradient prepend(
+    svgLinearGradient ({
 	"id" => tag,
-	apply(pairs o, (key,val) -> key => val) -- lame but what to do
-	|
-	apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style })
-	)
+    	o }
+    | apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style }))
     )
 radialGradient = true >> o -> stop -> (
     tag := graphicsId();
-    svgRadialGradient prepend(
+    svgRadialGradient ({
 	"id" => tag,
-	apply(pairs o, (key,val) -> key => val) -- lame but what to do
-	|
-	apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style })
-	)
+    	o }
+	| apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style }))
     )
 
 svgMarker := new MarkUpType of HypertextInternalLink
@@ -932,7 +932,7 @@ multidoc ///
    Text
     [only use with gNode]
   Caveat
-   Do not use the same GraphicsNode object multiple times within the same @ TO {GraphicsObject} @.
+   Required GraphicsNode objects should appear exactly once within a given @ TO {GraphicsObject} @.
  Node
   Key
    Ellipse
