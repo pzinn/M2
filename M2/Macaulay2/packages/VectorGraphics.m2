@@ -120,17 +120,6 @@ distance GraphicsObject := x -> 0_RR
 project2d := x -> (1/x_3)*x^{0,1} -- used for e.g. ViewPort
 project2d' := x -> (1/x_3)*vector {x_0,-x_1} -- annoying sign for actual svg coords
 
-updateGraphicsCache := g -> (
-    g.cache.ViewPort = viewPort1 g; -- update the range
-    g.cache.Distance = distance g; -- update the distance
-    if g.?OneSided and g.OneSided then determineSide g;
-    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
-    if instance(g,Circle) or instance(g,Ellipse) or instance(g,GraphicsText) or instance(g,GraphicsHtml) then (
-	r := gParse if g.?Center then g.Center else g.RefPoint;
-	g.cache.Scale = r_3/(g.cache.CurrentMatrix*r)_3; -- TODO nodes???
-	)
-    )
-
 graphicsIdCount := 0;
 graphicsId := () -> (
     graphicsIdCount=graphicsIdCount+1;
@@ -430,14 +419,14 @@ svgLookup := hashTable {
     symbol Static => (g,x) -> (if x then g.cache.Options#"data-static" = "true";),
     symbol Contents => (g,x) -> (
 	x = stableSort x;
-	g.cache.Contents = apply(x, y -> y.cache.svgElement);
+	g.cache.Contents = apply(x, y -> svg1(y,g.cache.CurrentMatrix));
 	),
     symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
     symbol HtmlContent => (g,x) -> (g.cache.Contents = if instance(x,VisibleList) then toList x else {x};),
     symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";)
     }
 
--- produces SVG element hypertext
+-- produces SVG element hypertext TODO make all these fns local
 precompute = (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     g.cache.Filter={}; -- clean up filters from past
     g.cache.owner=c; -- owner cache
@@ -453,11 +442,22 @@ precompute = (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     if g.?Contents then scan(g.Contents, x -> precompute(x,g.cache.CurrentMatrix,c));
     )
 
+updateGraphicsCache = (g,m) -> (
+    updateTransformMatrix(g,m,g.cache.owner.PerspectiveMatrix); -- it's already been done but annoying issue of objects that appear several times
+    if g.?Contents then scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
+    g.cache.ViewPort = viewPort1 g; -- update the range
+    g.cache.Distance = distance g; -- update the distance
+    if g.?OneSided and g.OneSided then determineSide g;
+    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+    if instance(g,Circle) or instance(g,Ellipse) or instance(g,GraphicsText) or instance(g,GraphicsHtml) then (
+	r := gParse if g.?Center then g.Center else g.RefPoint;
+	g.cache.Scale = r_3/(g.cache.CurrentMatrix*r)_3; -- TODO nodes???
+	)
+    )
+
 svg1 = (g,m) -> ( -- 2nd phase (object,current matrix)
     s := try svgElement class g else return; -- what is the else for?
-    updateTransformMatrix(g,m,g.cache.owner.PerspectiveMatrix); -- it's already been done but annoying issue of objects that appear several times (in separate lists, otherwise fails anyway)
-    if g.?Contents then scan(g.Contents, x -> svg1(x,g.cache.CurrentMatrix));
-    updateGraphicsCache g;
+    updateTransformMatrix(g,m,g.cache.owner.PerspectiveMatrix); -- it's already been done but annoying issue of objects that appear several times
     if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better
     g.cache.Contents={};
     filter g;
@@ -465,13 +465,14 @@ svg1 = (g,m) -> ( -- 2nd phase (object,current matrix)
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
-    g.cache.svgElement = style(s args,new OptionTable from g.style)
+    style(s args,new OptionTable from g.style)
     )
 
 svg = g -> (
     g.cache.lights={};
     g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
     precompute(g,g.cache.PerspectiveMatrix,g.cache);
+    updateGraphicsCache(g,g.cache.PerspectiveMatrix);
     svg1(g,g.cache.PerspectiveMatrix)
     )
 
@@ -855,12 +856,6 @@ multidoc ///
     In @ TO {Standard} @ mode, the graphical objects are not directly visible; to export them to SVG
     in order to embed them into a web page, use @ TO {html} @. In @ TO {WebApp} @ mode, the graphical objects
     are shown as output.
-  Caveat
-   Do not use the same @ TO {GraphicsObject} @ multiple times within the same picture.
-   If you need to make several copies of a given object, you can use ++:
-   Example
-    circ=Circle{Radius=>1}
-    gList apply(10,i->circ++{TransformMatrix=>translation[i,0]})
  Node
   Key
    GraphicsObject
@@ -920,6 +915,8 @@ multidoc ///
     tetra=gList(apply(0..3,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
 	Light{[110,0,0],Radius=>10,"opacity"=>"1"},ViewPort=>{vector{-110,-100},vector{110,100}},
 	Size=>40,TransformMatrix=>rotation(-1.5,[4,1,0]))
+  Caveat
+   Do not use the same Light object multiple times within the same @ TO {GraphicsObject} @.
  Node
   Key
    GraphicsNode
@@ -928,6 +925,8 @@ multidoc ///
   Description
    Text
     [only use with gNode]
+  Caveat
+   Do not use the same GraphicsNode object multiple times within the same @ TO {GraphicsObject} @.
  Node
   Key
    Ellipse
