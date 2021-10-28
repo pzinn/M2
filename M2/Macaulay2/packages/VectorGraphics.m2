@@ -34,6 +34,7 @@ protect Scale
 protect svgElement
 protect lights
 protect owner
+protect js
 
 debug Core
 
@@ -249,21 +250,24 @@ gNode = true >> opts -> x -> (
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
     symbol cache => new CacheTable from { symbol RefPoint => g -> x*gParse(v,g) },
     symbol style => new MutableHashTable,
-    symbol Contents => {} -- TODO add "id"? or something for gParse GraphicsNode see below
+    symbol Contents => {},
+    symbol js => () -> "gTimes("|jsString x|","|jsString v|")"
     }
 Vector + GraphicsNode :=
 GraphicsNode + Vector :=
 GraphicsNode + GraphicsNode := (v,w) -> new GraphicsNode from {
     symbol cache => new CacheTable from { symbol RefPoint => g -> gParse(v,g)+gParse(w,g) },
     symbol style => new MutableHashTable,
-    symbol Contents => {} -- TODO add "id"? or something for gParse GraphicsNode see below
+    symbol Contents => {},
+    symbol js => () -> "gPlus("|jsString v|","|jsString w|")"
     }
+-- TODO add arrays too
 - GraphicsNode := v -> (-1)*v
 Vector - GraphicsNode :=
 GraphicsNode - Vector :=
 GraphicsNode - GraphicsNode := (v,w) -> v+(-1)*w
 
-gParse GraphicsNode := v -> if v.cache.?Options then v.cache.Options#"id" -- TODO see above
+gParse GraphicsNode := identity
 -- what's below should replace current gParse vector/node
 gParse (Array,GraphicsObject) :=
 gParse (Vector,GraphicsObject) := (v,g) -> g.cache.CurrentMatrix*gParse v
@@ -320,6 +324,7 @@ jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
+jsString GraphicsNode := x -> if x.?js then x.js() else "gNode("|x.cache.Options#"id"|")"
 
 updateTransformMatrix := (g,m,p) -> ( -- (object,matrix of parent,perspective matrix)
     g.cache.CurrentMatrix = if g.?Static and g.Static then p else m; -- if static reset to perspective matrix
@@ -360,6 +365,7 @@ is3d GraphicsList := l -> (
 	) else false
     )
 
+local svg1;
 svgLookup := hashTable {
     symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = gParse x;),
     symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = gParse x;),
@@ -388,7 +394,7 @@ svgLookup := hashTable {
 	),
     symbol PointList => (g,x) -> (
 	x1 := select(x,y->not instance(y,String));
-	if is3d g or any(x1,y->instance(y,GraphicsNode)) then g.cache.Options#"data-coords"=apply(x1,gParse); -- TODO be more subtle? select?
+	if is3d g or any(x1,y->instance(y,GraphicsNode)) then g.cache.Options#"data-coords"=apply(x1,gParse); -- be more subtle? select?
 	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d' gParse(y,g),toString) else y));
 	if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
 	),
@@ -426,8 +432,8 @@ svgLookup := hashTable {
     symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";)
     }
 
--- produces SVG element hypertext TODO make all these fns local
-precompute = (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
+-- produces SVG element hypertext
+precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     g.cache.Filter={}; -- clean up filters from past
     g.cache.owner=c; -- owner cache
     updateTransformMatrix(g,m,c.PerspectiveMatrix);
@@ -442,7 +448,7 @@ precompute = (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     if g.?Contents then scan(g.Contents, x -> precompute(x,g.cache.CurrentMatrix,c));
     )
 
-updateGraphicsCache = (g,m) -> (
+updateGraphicsCache := (g,m) -> (
     updateTransformMatrix(g,m,g.cache.owner.PerspectiveMatrix); -- it's already been done but annoying issue of objects that appear several times
     if g.?Contents then scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
     g.cache.ViewPort = viewPort1 g; -- update the range
@@ -517,7 +523,7 @@ new SVG from GraphicsObject := (S,g) -> (
     main := svg g; -- run this first because it will compute the ranges too
         if main === null then return {};
     ss := {};
-    if g.?Perspective then ss = append(ss,"data-pmatrix" => jsString g.cache.PerspectiveMatrix);    
+    if g.?Perspective then ss = append(ss,"data-pmatrix" => jsString g.cache.PerspectiveMatrix);
     if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
     if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.Size=vector{0.,0.}; ) else (
 	r = apply(r,numeric);

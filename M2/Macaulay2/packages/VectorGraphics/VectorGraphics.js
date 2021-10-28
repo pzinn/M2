@@ -230,22 +230,8 @@ function gfxRedraw(el) {
 	var flag=false;
 	var ctr=new Vector;
 	el.gfxdata.coords2d = el.gfxdata.coords1.map( (u,i) => {
-	    if (!(u instanceof Vector)) {
-		if (typeof u === 'object') {
-		    u = el.gfxdata.coords1[i]=u.gfxdata.cmatrix.vectmultiply([0,0,0,1]); // TODO optimize
-		} else if (! u instanceof Vector) { // TODO rewrite
-		    var uu=new Vector;
-		    for (const jj in j) {
-			if (el.ownerSVGElement.gfxdata.gcoords[jj]) {
-			    var v = new Vector(el.ownerSVGElement.gfxdata.gcoords[jj]);
-			    v.multiply(j[jj]);
-			    uu.add(v);
-			} else alert("");
-		    }
-		    u = el.gfxdata.coords1[i]=uu;
-		    el.gfxdata.coords[i]=el.gfxdata.cmatrix.inverse().vectmultiply(u);
-		}
-	    }
+	    if (!(u instanceof Vector))
+		u = el.gfxdata.coords1[i]=u(el.gfxdata.cmatrix);
 	    ctr.add(u); // should we normalize u first?
 	    var v = el.ownerSVGElement.gfxdata.pmatrix.vectmultiply(u);
 	    if (v[3]/el.gfxdata.coords[i][3] <= 0 ) { if (v[3]==0) v[3]=.00001; flag=true; } // to avoid division by zero
@@ -408,9 +394,25 @@ function gfxReorder(el) {
 	}
     }
 }
-function gnode(x) {
-    // TODO
-    return +x;
+
+function gNode(nd) {
+    return function(c) {
+	return nd.gfxdata.cmatrix.vectmultiply([0,0,0,1]); // TODO optimize;
+    }
+}
+
+function gTimes(x,nd) {
+    return function(c) {
+	return nd(c).leftmultiply(x);
+    }
+}
+
+function gPlus(nd1,nd2) { // TODO mixed case with vectors
+    return function(c) {
+	var v = nd1 instanceof Vector ? c.vectmultiply(nd1) : new Vector(nd1(c));
+	v.add( nd2 instanceof Vector ? c.vectmultiply(nd2) : nd2(c));
+	return v;
+    }
 }
 
 function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
