@@ -345,15 +345,21 @@ function gfxRedraw(el) {
 	el.style.fontSize = el.gfxdata.fontsize*el.gfxdata.scale+"px"; // chrome doesn't mind absence of units but firefox does
     }
     else if ((el.tagName=="circle")||(el.tagName=="ellipse")) {
-	    el.setAttribute("cx",el.gfxdata.coords2d[0][0]);
-	    el.setAttribute("cy",el.gfxdata.coords2d[0][1]);
-	    // also, rescale radius
-	    if (el.tagName=="circle")
-		el.setAttribute("r", el.gfxdata.r*el.gfxdata.scale);
-	    else {
-		el.setAttribute("rx", el.gfxdata.rx*el.gfxdata.scale);
-		el.setAttribute("ry", el.gfxdata.ry*el.gfxdata.scale);
+	el.setAttribute("cx",el.gfxdata.coords2d[0][0]);
+	el.setAttribute("cy",el.gfxdata.coords2d[0][1]);
+	// also, rescale radius
+	if (el.tagName=="circle") {
+	    if (el.gfxdata.coords2d[1]) {
+		var x = el.gfxdata.coords2d[0][0]-el.gfxdata.coords2d[1][0];
+		var y = el.gfxdata.coords2d[0][1]-el.gfxdata.coords2d[1][1];
+		el.setAttribute("r", Math.sqrt(x*x+y*y));
 	    }
+	    else
+		el.setAttribute("r", el.gfxdata.r*el.gfxdata.scale);
+	} else {
+	    el.setAttribute("rx", el.gfxdata.rx*el.gfxdata.scale);
+	    el.setAttribute("ry", el.gfxdata.ry*el.gfxdata.scale);
+	}
     }
     else if ((el.tagName=="svg")||(el.tagName=="g")) {
 	// must call inductively children's
@@ -491,7 +497,7 @@ function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
     }
     else if (el.tagName=="circle") {
 	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]));
-	if (!el.gfxdata.r) el.gfxdata.r=el.r.baseVal.value;
+	if (!el.gfxdata.coords[1] && !el.gfxdata.r) el.gfxdata.r=el.r.baseVal.value; // default is, radius is static. coords[1] would be a dynamic one
     }
     else if (el.tagName=="ellipse") {
 	if (!el.gfxdata.coords[0]) el.gfxdata.coords[0]=mati.vectmultiply(vector([el.cx.baseVal.value,-el.cy.baseVal.value,0,1]));

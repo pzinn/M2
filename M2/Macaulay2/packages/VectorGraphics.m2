@@ -174,9 +174,15 @@ Circle = new GraphicsType of Ellipse from ( "circle",
     )
 viewPort1 Circle := g -> (
     p := gParse(g.Center,g);
-    sc := scale(p,g);
-    p=project2d(p,g);
-    r:=g.Radius*sc;
+    if instance(g.Radius,Number) then (
+    	sc := scale(p,g);
+    	r:=g.Radius*sc;
+    	p=project2d(p,g);
+	) else (
+    	p=project2d(p,g);
+	pp:=project2d(gParse(g.Radius,g),g)-p;
+	r=sqrt(pp_0^2+pp_1^2);
+	);
     r = vector {r,r};
     { p - r, p + r }
     )
@@ -393,7 +399,7 @@ is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
 is3d GraphicsObject := is3d'
 is3d Ellipse :=
-is3d Circle := g -> is3d' g or is3d g.Center
+is3d Circle := g -> is3d' g or is3d g.Center or is3d g.Radius
 is3d GraphicsHtml :=
 is3d GraphicsText := g -> is3d' g or is3d g.RefPoint
 is3d Light := g -> true
@@ -414,10 +420,20 @@ svgLookup := hashTable {
     symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = gParse x;),
     symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = gParse x;),
     symbol Radius => (g,x) -> (
-	r := gParse(g.Center,g);
-	sc := scale(r,g);
-	g.cache.Options#"r" = x * sc;
-	if is3d g then g.cache.Options#"data-r"=x;
+	if instance(x,Number) then (
+	    if is3d g then (
+		p := gParse(g.Center,g);
+	    	sc := scale(p,g);
+	    	r := x * sc;
+		g.cache.Options#"data-r"=x;
+		) else r = x;
+	    ) else (
+	    p  =project2d(gParse(g.Center,g),g);
+	    pp:=project2d(gParse(x,g),g)-p;
+	    r=sqrt(pp_0^2+pp_1^2);
+	    if is3d g or instance(x,GraphicsNode) then ac(g.cache.Options,"data-coords",1,gParse x);
+	    );
+	g.cache.Options#"r" = r;
 	),
     symbol RadiusX => (g,x) -> (
 	r := gParse(g.Center,g);
