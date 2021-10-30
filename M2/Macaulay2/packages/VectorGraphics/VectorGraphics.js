@@ -411,6 +411,10 @@ function gParse(nd,cmat) {
     return nd instanceof Vector ? cmat.vectmultiply(nd) : new Vector(nd(cmat));
 }
 
+function normalize(v) {
+    return v.multiply(1/v[3]);
+}
+
 function gTimes(x,nd) {
     return function(cmat) {
 	return gParse(nd,cmat).multiply(x);
@@ -427,20 +431,20 @@ function gPlus(nd1,nd2) {
 
 function gPlace(nd1,nd2,a,b) {
     return function(cmat) {
-	var v = gParse(nd1,cmat);
-	var w = gParse(nd2,cmat);
-	return new Vector([(1-a)*v[0]+a*w[0]+b*(w[1]-v[1]),(1-a)*v[1]+a*w[1]-b*(w[0]-v[0]),(1-a)*v[2]+a*w[2],(1-a)*v[3]+a*w[3]])
+	var v = normalize(gParse(nd1,cmat));
+	var w = normalize(gParse(nd2,cmat));
+	return new Vector([(1-a)*v[0]+a*w[0]+b*(w[1]-v[1]),(1-a)*v[1]+a*w[1]-b*(w[0]-v[0]),(1-a)*v[2]+a*w[2],1]);
     }
 }
 
 function gInter(nd1,nd2,nd3,nd4) {
     return function(cmat) {
-	var v1 = gParse(nd1,cmat);
-	var v2 = gParse(nd2,cmat);
-	var w1 = gParse(nd3,cmat);
-	var w2 = gParse(nd4,cmat);
+	var v1 = normalize(gParse(nd1,cmat));
+	var v2 = normalize(gParse(nd2,cmat));
+	var w1 = normalize(gParse(nd3,cmat));
+	var w2 = normalize(gParse(nd4,cmat));
 	cf = (i,j,k,l) => v1[i]*v2[j]*w1[k]*w2[l];
-	return new Vector([-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)]);
+	return normalize(new Vector([-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)]));
     }
 }
 	

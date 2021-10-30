@@ -48,22 +48,24 @@ gParse := method()
 gParse Array := x -> gParse vector toList x -- replaced with this
 gParse Matrix := x -> (
     if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
-    if rank source x == 2 then x++1++1 else if rank source x == 3 then x++1 else x
+    if rank source x == 2 then x++1.++1. else if rank source x == 3 then x++1. else sub(x,RR)
     )
 gParse Vector := x -> (
     if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
     if rank class x === 2 then x || vector {0,1.}
     else if rank class x === 3 then x || vector {1.}
-    else if rank class x === 4 then x
+    else if rank class x === 4 then sub(x,RR)
     )
 gParse List := l -> apply(l,gParse)
 gParse Option := o -> o#0 => gParse o#1
+gParse OptionTable := h -> applyValues(h,gParse)
+gParse Thing := identity
 
 GraphicsObject = new Type of HashTable -- ancestor type
 
 GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,
-    new class opts1 from if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable),
-    (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then gParse y*gParse x else y -- for TransformMatrix and AnimMatrix
+    new class opts1 from gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable),
+    (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
     ) -- cf similar method for OptionTable
 
 -- a bunch of options are scattered throughout the code:
@@ -83,12 +85,11 @@ GraphicsObject ++ List := (opts1, opts2) -> merge(opts1,
 -- * Margin (leave blank around picture)
 -- * Axes (draw axes)
 
--- 3d: turns on lights, axes are diff
-
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
 GraphicsType List := (T,opts) -> (
     opts0 := T.Options;
+    opts = gParse opts;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     (opts2,opts1):=override(,toSequence (opts0|opts));
     opts1 = sequence opts1;
@@ -100,7 +101,7 @@ GraphicsType List := (T,opts) -> (
 )
 
 perspective = persp -> (
-    if instance(persp,Matrix) then gParse persp else (
+    if instance(persp,Matrix) then persp else (
 	if persp === () then persp = 1000;
 	matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
     -- note in particular that distance = z-p *cannot* be extracted from this;
@@ -152,11 +153,11 @@ new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g)
 
 Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
-    { symbol Center => vector {0.,0.}, symbol RadiusX => 50., symbol RadiusY => 50. },
+    { symbol Center => vector {0.,0.,0.,1.}, symbol RadiusX => 50., symbol RadiusY => 50. },
     { "rx", "ry", "cx", "cy" }
     )
 viewPort1 Ellipse := g -> (
-    p := gParse(g.Center,g);
+    p := compute(g.Center,g);
     sc := scale(p,g);
     p=project2d(p,g);
     rx:=g.RadiusX*sc;
@@ -165,22 +166,22 @@ viewPort1 Ellipse := g -> (
     { p-r, p+r }
     )
 distance Ellipse := g -> (
-    -(project3d(gParse(g.Center,g),g))_2
+    -(project3d(compute(g.Center,g),g))_2
     )
 
 Circle = new GraphicsType of Ellipse from ( "circle",
-    { symbol Center => vector {0.,0.}, symbol Radius => 50. },
+    { symbol Center => vector {0.,0.,0.,1.}, symbol Radius => 50. },
     { "r", "cx", "cy" }
     )
 viewPort1 Circle := g -> (
-    p := gParse(g.Center,g);
+    p := compute(g.Center,g);
     if instance(g.Radius,Number) then (
     	sc := scale(p,g);
     	r:=g.Radius*sc;
     	p=project2d(p,g);
 	) else (
     	p=project2d(p,g);
-	pp:=project2d(gParse(g.Radius,g),g)-p;
+	pp:=project2d(compute(g.Radius,g),g)-p;
 	r=sqrt(pp_0^2+pp_1^2);
 	);
     r = vector {r,r};
@@ -189,12 +190,12 @@ viewPort1 Circle := g -> (
 
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
-    { symbol RefPoint => vector {0.,0.}, symbol TextContent => "", symbol FontSize => 14. },
+    { symbol RefPoint => vector {0.,0.,0.,1.}, symbol TextContent => "", symbol FontSize => 14. },
     { "x", "y" }
     )
 viewPort1 GraphicsText := g -> (
     f := g.FontSize;
-    p := gParse(g.RefPoint,g);
+    p := compute(g.RefPoint,g);
     sc := scale(p,g);
     p=project2d(p,g);
     f=f*sc;
@@ -207,18 +208,18 @@ viewPort1 GraphicsText := g -> (
     )
 
 Line = new GraphicsType of GraphicsObject from ( "line",
-    { Point1 => vector {0.,0.}, Point2 => vector {50.,50.}},
+    { Point1 => vector {0.,0.,0.,1.}, Point2 => vector {50.,50.,0.,1.}},
     { "x1", "y1", "x2", "y2" }
     )
 viewPort1 Line := g -> (
-    p1 := project2d(gParse (g.Point1,g),g);
-    p2 := project2d(gParse (g.Point2,g),g);
+    p1 := project2d(compute (g.Point1,g),g);
+    p2 := project2d(compute (g.Point2,g),g);
     p := transpose{entries p1,entries p2};
     { vector(min\p), vector(max\p) }
     )
 distance Line := g -> (
-    d1 := (project3d(gParse (g.Point1,g),g))_2;
-    d2 := (project3d(gParse (g.Point2,g),g))_2;
+    d1 := (project3d(compute (g.Point1,g),g))_2;
+    d2 := (project3d(compute (g.Point2,g),g))_2;
     -0.5*(d1+d2)
     )
 
@@ -230,7 +231,7 @@ Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PointList => {} 
 viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw this
     s := select(g.PointList, x -> not instance(x,String));
     if #s == 0 then return null;
-    s = transpose apply(s, x -> entries project2d(gParse(x,g),g));
+    s = transpose apply(s, x -> entries project2d(compute(x,g),g));
     {vector(min\s), vector(max\s)}
     )
 
@@ -267,7 +268,7 @@ gNode = true >> opts -> x -> (
 	symbol style => sty, symbol cache => c}
     )
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
-    symbol RefPointFunc => g -> x*gParse(v,g),
+    symbol RefPointFunc => g -> x*compute(v,g),
     symbol cache => new CacheTable,
     symbol style => new MutableHashTable,
     symbol Contents => {},
@@ -276,13 +277,14 @@ Number * GraphicsNode := (x,v) -> new GraphicsNode from {
 Vector + GraphicsNode :=
 GraphicsNode + Vector :=
 GraphicsNode + GraphicsNode := (v,w) -> new GraphicsNode from {
-    symbol RefPointFunc => g -> gParse(v,g)+gParse(w,g),
+    symbol RefPointFunc => g -> compute(v,g)+compute(w,g),
     symbol cache => new CacheTable,
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gPlus("|jsString v|","|jsString w|")"
     }
--- TODO add arrays too? depending on gParse rewrite
+-- add arrays too? in which case might give up on making place, intersection etc methods? but can't
+-- TODO in any case all Vectors must be gParsed first
 - GraphicsNode := v -> (-1)*v
 Vector - GraphicsNode :=
 GraphicsNode - Vector :=
@@ -292,18 +294,20 @@ place = method()
 place (Vector,GraphicsNode,Number,Number) :=
 place (GraphicsNode,Vector,Number,Number) :=
 place (GraphicsNode,GraphicsNode,Number,Number) := (v,w,a,b) -> new GraphicsNode from {
-    symbol RefPointFunc => g -> place(gParse(v,g),gParse(w,g),a,b),
+    symbol RefPointFunc => g -> place(compute(v,g),compute(w,g),a,b),
     symbol cache => new CacheTable,
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
     }
 place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
+    v=(1/v_3)*v; w=(1/w_3)*w;
     u := w - v;
     perp := vector { u_1, -u_0, 0, 0 };
     v + a*u + b*perp
     )
 intersection(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
+    v1=(1/v1_3)*v1; v2=(1/v2_3)*v2; w1=(1/w1_3)*w1; w2=(1/w2_3)*w2;
     cf := (i,j,k,l) -> v1_i*v2_j*w1_k*w2_l;
     v:=vector{-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)};
     (1/v_3)*sub(v,RR)
@@ -311,32 +315,31 @@ intersection(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- 
 l={Vector,GraphicsNode}; l=l**l; l=l**l; l=drop(toSequence\flatten\l,1);
 scan(l, t ->
 intersection t := true >> o -> (v1,v2,w1,w2) -> new GraphicsNode from {
-    symbol RefPointFunc => g -> intersection(gParse(v1,g),gParse(v2,g),gParse(w1,g),gParse(w2,g)),
+    symbol RefPointFunc => g -> intersection(compute(v1,g),compute(v2,g),compute(w1,g),compute(w2,g)),
     symbol cache => new CacheTable,
     symbol style => new MutableHashTable,
     symbol Contents => {},
     symbol js => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
     })
 
-gParse GraphicsNode := identity
-
 -- what's below should replace current gParse vector/node (or at least be a distinct function)
-gParse (Array,GraphicsObject) :=
-gParse (Vector,GraphicsObject) := (v,g) -> g.cache.CurrentMatrix*gParse v
-gParse (GraphicsNode,GraphicsObject) := (v,g) -> v.RefPointFunc g
+compute = method()
+compute (Array,GraphicsObject) :=
+compute (Vector,GraphicsObject) := (v,g) -> g.cache.CurrentMatrix*v
+compute (GraphicsNode,GraphicsObject) := (v,g) -> v.RefPointFunc g
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
-    { symbol RefPoint => vector {0.,0.}, symbol HtmlContent => null, symbol FontSize => 14. },
+    { symbol RefPoint => vector {0.,0.,0.,1.}, symbol HtmlContent => null, symbol FontSize => 14. },
     { "x", "y", "xmlns" => "http://www.w3.org/1999/xhtml" }
     )
 viewPort1 GraphicsHtml := g -> (
-    p := project2d(gParse (g.RefPoint,g),g);
+    p := project2d(compute (g.RefPoint,g),g);
     { p, p } -- TODO properly
     )
 
 -- lighting
 Light = new GraphicsType of Circle from ( "circle",
-    { symbol Center => vector {0,0,0,1.}, symbol Radius => 10, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "opacity" => 0, "fill" => "#FFFFFF", "stroke" => "none" },
+    { symbol Center => vector {0.,0.,0.,1.}, symbol Radius => 10, symbol Specular => 64, symbol Blur => 0.3, symbol Static => true, "opacity" => 0, "fill" => "#FFFFFF", "stroke" => "none" },
     { "r", "cx", "cy" } -- atm these are not inherited
     )
 -- in case it's drawn, it's a circle
@@ -378,7 +381,7 @@ jsString GraphicsNode := x -> if x.?js then x.js() else "gNode("|x.cache.Options
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
     g.cache.CurrentMatrix = if g.?Static and g.Static then one else m; -- if static reset to perspective matrix
-    if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*gParse g.TransformMatrix;
+    if g.?TransformMatrix then g.cache.CurrentMatrix = g.cache.CurrentMatrix*g.TransformMatrix;
     )
 
 ac := (h,k,i,x) -> (
@@ -388,12 +391,12 @@ ac := (h,k,i,x) -> (
 
 -- is3d=false has three effects:
 -- * the data-* stuff is lightened (can be recreated from the normal parameters)
--- * the event listeners for 3d rotating the object with the mouse are deactivated
+-- * the event listeners for 3d moving/rotating with the mouse are deactivated
 -- * lighting is deactivated
+-- * axes are 2d instead of 3d
 is3d = method()
-is3d Vector := v -> rank class v > 2
-is3d Array := a -> #a > 2
-is3d Matrix := m -> rank source m > 2 and (rank source m === 3 or m^{2,3} != matrix {{0,0,1.,0},{0,0,0,1.}} or m_2 != vector {0,0,1.,0})
+is3d Vector := v -> v_2 != 0
+is3d Matrix := m -> m^{2,3} != matrix {{0,0,1.,0},{0,0,0,1.}} or m_2 != vector {0,0,1.,0}
 -- a bit messy: a 2d translation / rotation looks like {{c,-s,0,x},{s,c,0,y},{0,0,1,0},{0,0,1,0}}
 is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
@@ -406,7 +409,6 @@ is3d Light := g -> true
 is3d Line := g -> is3d' g or is3d g.Point1 or is3d g.Point2
 is3d GraphicsPoly := g -> is3d' g or any(g.PointList,is3d)
 is3d Thing := x -> false
---is3d GraphicsNode :=
 is3d GraphicsList := l -> (
     -- the interesting one: recurse up and down
     if is3d' l or any(l.Contents,is3d) then (
@@ -417,32 +419,32 @@ is3d GraphicsList := l -> (
 
 local svg1;
 svgLookup := hashTable {
-    symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = gParse x;),
-    symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = gParse x;),
+    symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = x;),
+    symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = x;),
     symbol Radius => (g,x) -> (
 	if instance(x,Number) then (
 	    if is3d g then (
-		p := gParse(g.Center,g);
+		p := compute(g.Center,g);
 	    	sc := scale(p,g);
 	    	r := x * sc;
 		g.cache.Options#"data-r"=x;
 		) else r = x;
 	    ) else (
-	    p  =project2d(gParse(g.Center,g),g);
-	    pp:=project2d(gParse(x,g),g)-p;
+	    p  =project2d(compute(g.Center,g),g);
+	    pp:=project2d(compute(x,g),g)-p;
 	    r=sqrt(pp_0^2+pp_1^2);
-	    if is3d g or instance(x,GraphicsNode) then ac(g.cache.Options,"data-coords",1,gParse x);
+	    if is3d g or instance(x,GraphicsNode) then ac(g.cache.Options,"data-coords",1,x);
 	    );
 	g.cache.Options#"r" = r;
 	),
     symbol RadiusX => (g,x) -> (
-	r := gParse(g.Center,g);
+	r := compute(g.Center,g);
 	sc := scale(r,g);
 	g.cache.Options#"rx" = x * sc;
 	if is3d g then g.cache.Options#"data-rx"=x;
 	),
     symbol RadiusY => (g,x) -> (
-	r := gParse(g.Center,g);
+	r := compute(g.Center,g);
 	sc := scale(r,g);
 	g.cache.Options#"ry" = x * sc;
 	if is3d g then g.cache.Options#"data-ry"=x;
@@ -450,7 +452,7 @@ svgLookup := hashTable {
     symbol OneSided => (g,x) -> (g.cache.Options#"data-onesided"=x;),
     symbol FontSize => (g,x) -> (
     	-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
-	r := gParse(g.RefPoint,g);
+	r := compute(g.RefPoint,g);
 	sc := scale(r,g);
 	f:=max(0,x*sc);
 	g.style#"font-size" = toString f|"px";
@@ -463,31 +465,31 @@ svgLookup := hashTable {
 	),
     symbol PointList => (g,x) -> (
 	x1 := select(x,y->not instance(y,String));
-	if is3d g or any(x1,y->instance(y,GraphicsNode)) then g.cache.Options#"data-coords"=apply(x1,gParse); -- be more subtle? select?
-	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d'(gParse(y,g),g),toString) else y));
+	if is3d g or any(x1,y->instance(y,GraphicsNode)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
+	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d'(compute(y,g),g),toString) else y));
 	if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
 	),
     symbol Center => (g,x) -> (
-	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,gParse x);
-	x = project2d'(gParse(x,g),g);
+	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,x);
+	x = project2d'(compute(x,g),g);
 	g.cache.Options#"cx" = x_0;
 	g.cache.Options#"cy" = x_1;
 	),
     symbol RefPoint => (g,x) -> (
-	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,gParse x);
-	x = project2d'(gParse(x,g),g);
+	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,x);
+	x = project2d'(compute(x,g),g);
 	g.cache.Options#"x" = x_0;
 	g.cache.Options#"y" = x_1;
 	),
     symbol Point1 => (g,x) -> (
-	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,gParse x);
-	x = project2d'(gParse(x,g),g);
+	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",0,x);
+	x = project2d'(compute(x,g),g);
 	g.cache.Options#"x1" = x_0;
 	g.cache.Options#"y1" = x_1;
 	),
     symbol Point2 => (g,x) -> (
-	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",1,gParse x);
-	x = project2d'(gParse(x,g),g);
+	if instance(x,GraphicsNode) or is3d g then ac(g.cache.Options,"data-coords",1,x);
+	x = project2d'(compute(x,g),g);
 	g.cache.Options#"x2" = x_0;
 	g.cache.Options#"y2" = x_1;
 	),
@@ -562,14 +564,14 @@ short GraphicsObject := g -> (
 
 distance GraphicsPoly := g -> (
     s := select(g.PointList, x -> not instance(x,String));
-    if #s == 0 then 0_RR else -sum(s,x->(project3d(gParse(x,g),g))_2) / #s
+    if #s == 0 then 0_RR else -sum(s,x->(project3d(compute(x,g),g))_2) / #s
     )
 distance GraphicsList := g -> (
     if #(g.Contents) == 0 then 0_RR else sum(g.Contents, x->x.cache.Distance) / #(g.Contents)
     )
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
 distance GraphicsText := g -> (
-    y := gParse(g.RefPoint,g);
+    y := compute(g.RefPoint,g);
     -y_2/y_3
     )
 
@@ -715,7 +717,7 @@ determineSide GraphicsPoly := g -> (
     -- find first 3 coords
     coords := select(g.PointList, x -> not instance(x,String));
     if #coords<3 then ( remove(g.cache,Filter); return; );
-    coords=apply(take(coords,3),x->gParse(x,g));
+    coords=apply(take(coords,3),x->compute(x,g));
     coords = apply(coords, x -> (1/x_3)*x^{0,1});
     coords = {coords#1-coords#0,coords#2-coords#0};
     g.style#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
@@ -772,12 +774,12 @@ filter = g -> (
     	    -- find first 3 coords
 	    coords := select(g.PointList, x -> not instance(x,String));
     	    if #coords>=3 then (
-	    	coords=apply(3,i->(xx:=gParse(coords#i,g);(1/xx_3)*xx^{0,1,2}));
+	    	coords=apply(3,i->(xx:=compute(coords#i,g);(1/xx_3)*xx^{0,1,2}));
 	    	u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
 	    	if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
 	    	scan(l, gg -> (
 	    	    	-- compute reflected coords
-		    	light0 := gParse(gg.Center,gg);
+		    	light0 := compute(gg.Center,gg);
 		    	light := (1/light0_3)*light0^{0,1,2};
 		    	lightrel := light-coords#0;
 	    	    	sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
