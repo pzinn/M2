@@ -265,6 +265,7 @@ gNode = true >> opts -> x -> (
     (new GraphicsNode from applyPairs(opts,(k,v) -> if class k =!= String then (k,v)))
     ++ {symbol Contents => cnt, symbol TransformMatrix => translation ctr,
 	symbol RefPointFunc => g -> c.CurrentMatrix_3,
+	symbol js => () -> "gNode("|c.Options#"id"|")",
 	symbol style => sty, symbol cache => c}
     )
 Number * GraphicsNode := (x,v) -> new GraphicsNode from {
@@ -376,7 +377,7 @@ jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
-jsString GraphicsNode := x -> if x.?js then x.js() else "gNode("|x.cache.Options#"id"|")"
+jsString GraphicsNode := x -> x.js()
 
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
