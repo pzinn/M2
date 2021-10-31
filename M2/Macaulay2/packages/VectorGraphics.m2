@@ -21,7 +21,7 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
-    "gNode", "GraphicsNode", "place"
+    "gNode", "GraphicsNode", "place", "bisector", "projection"
     }
 
 protect Filter
@@ -31,9 +31,8 @@ protect Animated
 protect CurrentMatrix
 protect PerspectiveMatrix
 protect svgElement
-protect lights
-protect owner
-protect jsFunc
+protect Owner
+protect JsFunc
 protect RefPointFunc
 
 debug Core
@@ -67,7 +66,7 @@ GraphicsObject = new Type of GraphicsAncestor
 gParse GraphicsObject := g -> ( -- GraphicsObject used as coordinate
     new GraphicsCoordinate from {
 	symbol RefPointFunc => cmat -> g.cache.CurrentMatrix_3, -- closure
-	symbol jsFunc => () -> "gNode("|g.cache.Options#"id"|")",
+	symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
     }
 )
 gParse GraphicsCoordinate := identity
@@ -130,10 +129,10 @@ distance = method()
 distance GraphicsObject := x -> 0_RR
 
 -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
-scale := (x,g) -> x_3/(g.cache.owner.PerspectiveMatrix*x)_3
+scale := (x,g) -> x_3/(g.cache.Owner.PerspectiveMatrix*x)_3
 
 project3d := (x,g) -> (
-    y := g.cache.owner.PerspectiveMatrix*x;
+    y := g.cache.Owner.PerspectiveMatrix*x;
     (1/y_3)*y^{0,1,2} -- used for e.g. ViewPort and distance
     )
 project2d := (x,g) -> (
@@ -274,7 +273,7 @@ gNode = true >> opts -> x -> (
     )
 Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> x*compute(v,cmat),
-    symbol jsFunc => () -> "gTimes("|jsString x|","|jsString v|")"
+    symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")"
     }
 Array + GraphicsAncestor :=
 GraphicsAncestor + Array :=
@@ -285,10 +284,10 @@ GraphicsAncestor + GraphicsAncestor := (v,w) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> compute(v,cmat)+compute(w,cmat),
-    symbol jsFunc => () -> "gPlus("|jsString v|","|jsString w|")"
+    symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")"
     })
 -- add arrays too? in which case might give up on making place, intersection etc methods? but can't
--- TODO in any case all Vectors must be gParsed first
+-- TODO remove arrays............
 - GraphicsAncestor := v -> (-1)*v
 Vector - GraphicsAncestor :=
 GraphicsAncestor - Vector :=
@@ -304,15 +303,21 @@ place (GraphicsAncestor,GraphicsAncestor,Number,Number) := (v,w,a,b) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> place(compute(v,cmat),compute(w,cmat),a,b),
-    symbol jsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
+    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
     })
 place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
+    v = gParse v;
+    w = gParse w;
     v=(1/v_3)*v; w=(1/w_3)*w;
     u := w - v;
     perp := vector { u_1, -u_0, 0, 0 };
     v + a*u + b*perp
     )
 intersection(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
+    v1 = gParse v1;
+    v2 = gParse v2;
+    w1 = gParse w1;
+    w2 = gParse w2;
     v1=(1/v1_3)*v1; v2=(1/v2_3)*v2; w1=(1/w1_3)*w1; w2=(1/w2_3)*w2;
     cf := (i,j,k,l) -> v1_i*v2_j*w1_k*w2_l;
     v:=vector{-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)};
@@ -330,17 +335,52 @@ intersection t := true >> o -> (v1,v2,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> intersection(compute(v1,cmat),compute(v2,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol jsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
+    symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
     }))
 
 bisector = method()
 bisector(Vector,Vector,Vector) := (v,w1,w2) -> (
-    -- TODO
+    v = gParse v;
+    w1 = gParse w1;
+    w2 = gParse w2;
+    v=(1/v_3)*v; w1=(1/w1_3)*w1; w2=(1/w2_3)*w2;
+    v1:=w1-v; v2:=w2-v;
+    r1:=sqrt(v1_0^2+v1_1^2+v1_2^2); r2:=sqrt(v2_0^2+v2_1^2+v2_2^2);
+    a:=r1/(r1+r2);
+    (1-a)*w1+a*w2
     )
 scan(l3, t ->
 bisector t := (v,w1,w2) -> (
-    -- TODO
+    v = gParse v;
+    w1 = gParse w1;
+    w2 = gParse w2;
+    new GraphicsCoordinate from {
+    symbol RefPointFunc => cmat -> bisector(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
+    symbol JsFunc => () -> "gBisect("|jsString v|","|jsString w1|","|jsString w2|")"
+    })
+)
+
+projection = method()
+projection(Vector,Vector,Vector) := (v,w1,w2) -> (
+    v = gParse v;
+    w1 = gParse w1;
+    w2 = gParse w2;
+    v=(1/v_3)*v; w1=(1/w1_3)*w1; w2=(1/w2_3)*w2;
+    v1:=w1-v; v2:=w2-v;
+    rs1:=v1_0^2+v1_1^2+v1_2^2; rs2:=v2_0^2+v2_1^2+v2_2^2;
+    sp:=v1_0*v2_0+v1_1*v2_1+v1_2*v2_2;
+    a:=(rs1-sp)/(rs1+rs2-2*sp);
+    (1-a)*w1+a*w2
     )
+scan(l3, t ->
+projection t := (v,w1,w2) -> (
+    v = gParse v;
+    w1 = gParse w1;
+    w2 = gParse w2;
+    new GraphicsCoordinate from {
+    symbol RefPointFunc => cmat -> projection(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
+    symbol JsFunc => () -> "gProject("|jsString v|","|jsString w1|","|jsString w2|")"
+    })
 )
 
 compute = method()
@@ -395,7 +435,7 @@ jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
-jsString GraphicsCoordinate := x -> x.jsFunc()
+jsString GraphicsCoordinate := x -> x.JsFunc()
 
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
@@ -526,12 +566,11 @@ svgLookup := hashTable {
 -- produces SVG element hypertext
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     g.cache.Filter={}; -- clean up filters from past
-    g.cache.owner=c; -- owner cache
+    g.cache.Owner=c; -- owner cache
     remove(g.cache,Is3d);
     updateTransformMatrix(g,m);
     g.cache.Options = new MutableHashTable from {"id" => graphicsId()}; -- overkill? TODO rethink. maybe when parsed, gets a placeholder id, see below
-    if instance(g,Light) then
-    	c.lights = append(c.lights,g);    	
+    if instance(g,Light) then c.Light = append(c.Light,g);
     if g.?Contents then scan(g.Contents, x -> precompute(x,g.cache.CurrentMatrix,c));
     )
 
@@ -560,7 +599,7 @@ svg1 = (g,m) -> ( -- 3rd phase (object,current matrix)
     )
 
 svg = g -> (
-    g.cache.lights={};
+    g.cache.Light={};
     g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
     precompute(g,one,g.cache);
     updateGraphicsCache(g,one);
@@ -764,8 +803,8 @@ addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3",
 feComposite.qname="feComposite"
 
 filter = g -> (
-    c := g.cache.owner;
-    l := c.lights;
+    c := g.cache.Owner;
+    l := c.Light;
     p := c.PerspectiveMatrix;
     -- unrelated: pick up other filters from options (e.g., "fill"=>somegradient)
     g.cache.Filter = (if g.cache.?Filter then g.cache.Filter else {}) -- in rare cases (e.g., axes) that Filter doesn't exist

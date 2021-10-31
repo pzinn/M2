@@ -447,7 +447,32 @@ function gInter(nd1,nd2,nd3,nd4) {
 	return normalize(new Vector([-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)]));
     }
 }
-	
+
+function gBisect(nd1,nd2,nd3) {
+    return function(cmat) {
+	var v = normalize(gParse(nd1,cmat));
+	var w1 = normalize(gParse(nd2,cmat));
+	var w2 = normalize(gParse(nd3,cmat));
+	var r1 = Math.sqrt((w1[0]-v[0])*(w1[0]-v[0])+(w1[1]-v[1])*(w1[1]-v[1])+(w1[2]-v[2])*(w1[2]-v[2]));
+	var r2 = Math.sqrt((w2[0]-v[0])*(w2[0]-v[0])+(w2[1]-v[1])*(w2[1]-v[1])+(w2[2]-v[2])*(w2[2]-v[2]));
+	var a = r1/(r1+r2);
+	return new Vector([(1-a)*w1[0]+a*w2[0],(1-a)*w1[1]+a*w2[1],(1-a)*w1[2]+a*w2[2],1]);
+    }
+}
+
+function gProject(nd1,nd2,nd3) {
+    return function(cmat) {
+	var v = normalize(gParse(nd1,cmat));
+	var w1 = normalize(gParse(nd2,cmat));
+	var w2 = normalize(gParse(nd3,cmat));
+	var rs1 = (w1[0]-v[0])*(w1[0]-v[0])+(w1[1]-v[1])*(w1[1]-v[1])+(w1[2]-v[2])*(w1[2]-v[2]);
+	var rs2 = (w2[0]-v[0])*(w2[0]-v[0])+(w2[1]-v[1])*(w2[1]-v[1])+(w2[2]-v[2])*(w2[2]-v[2]);
+	var sp = (w1[0]-v[0])*(w2[0]-v[0])+(w1[1]-v[1])*(w2[1]-v[1])+(w1[2]-v[2])*(w2[2]-v[2]);
+	var a = (rs1-sp)/(rs1+rs2-2*sp);
+	return new Vector([(1-a)*w1[0]+a*w2[0],(1-a)*w1[1]+a*w2[1],(1-a)*w1[2]+a*w2[2],1]);
+    }
+}
+
 
 function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
