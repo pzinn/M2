@@ -33,7 +33,7 @@ protect PerspectiveMatrix
 protect svgElement
 protect lights
 protect owner
-protect js
+protect jsFunc
 protect RefPointFunc
 
 debug Core
@@ -67,7 +67,7 @@ GraphicsObject = new Type of GraphicsAncestor
 gParse GraphicsObject := g -> ( -- GraphicsObject used as coordinate
     new GraphicsCoordinate from {
 	symbol RefPointFunc => cmat -> g.cache.CurrentMatrix_3, -- closure
-	symbol js => () -> "gNode("|g.cache.Options#"id"|")",
+	symbol jsFunc => () -> "gNode("|g.cache.Options#"id"|")",
     }
 )
 gParse GraphicsCoordinate := identity
@@ -274,7 +274,7 @@ gNode = true >> opts -> x -> (
     )
 Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> x*compute(v,cmat),
-    symbol js => () -> "gTimes("|jsString x|","|jsString v|")"
+    symbol jsFunc => () -> "gTimes("|jsString x|","|jsString v|")"
     }
 Array + GraphicsAncestor :=
 GraphicsAncestor + Array :=
@@ -285,7 +285,7 @@ GraphicsAncestor + GraphicsAncestor := (v,w) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> compute(v,cmat)+compute(w,cmat),
-    symbol js => () -> "gPlus("|jsString v|","|jsString w|")"
+    symbol jsFunc => () -> "gPlus("|jsString v|","|jsString w|")"
     })
 -- add arrays too? in which case might give up on making place, intersection etc methods? but can't
 -- TODO in any case all Vectors must be gParsed first
@@ -304,7 +304,7 @@ place (GraphicsAncestor,GraphicsAncestor,Number,Number) := (v,w,a,b) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> place(compute(v,cmat),compute(w,cmat),a,b),
-    symbol js => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
+    symbol jsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
     })
 place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
     v=(1/v_3)*v; w=(1/w_3)*w;
@@ -330,7 +330,7 @@ intersection t := true >> o -> (v1,v2,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> intersection(compute(v1,cmat),compute(v2,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol js => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
+    symbol jsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
     }))
 
 bisector = method()
@@ -395,7 +395,7 @@ jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
-jsString GraphicsCoordinate := x -> x.js()
+jsString GraphicsCoordinate := x -> x.jsFunc()
 
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
@@ -527,6 +527,7 @@ svgLookup := hashTable {
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     g.cache.Filter={}; -- clean up filters from past
     g.cache.owner=c; -- owner cache
+    remove(g.cache,Is3d);
     updateTransformMatrix(g,m);
     g.cache.Options = new MutableHashTable from {"id" => graphicsId()}; -- overkill? TODO rethink. maybe when parsed, gets a placeholder id, see below
     if instance(g,Light) then
@@ -968,10 +969,12 @@ multidoc ///
   Description
    Text
     An SVG circle. The two compulsory options are Center (coordinates of the center) and Radius (radius).
+    Instead of the radius, one can specify any point of the circle.
     In 3d, gives a decent approximation of a sphere.
    Example
-    Circle{Center=>vector {10,10},Radius=>50,"fill"=>"green","stroke"=>"none"}
-    Circle{[10,10],50} -- equivalent syntax for coordinates
+    Circle{Center=>vector {10,10},Radius=>1,"fill"=>"green","stroke"=>"none"}
+    Circle{[10,10],1} -- equivalent syntax for coordinates
+    gList(oo,Circle{[0,0],[10,10]})
  Node
   Key
    Line
@@ -1007,12 +1010,15 @@ multidoc ///
   Key
    GraphicsCoordinate
   Headline
-   xxx
+   A type for coordinates
   Description
    Text
-    [only use with gNode]
-  Caveat
-   (object occurring multiple times?)
+    A type that is used to describe (possibly dynamic) coordinates. Internally all coordinates are in $\RR^4$ (projective coordinates).
+    Any GraphicsObject can be turned into a GraphicsCoordinate corresponding to the reference point $(0,0,0,1)$ in its local coordinate system.
+    It can then be manipulated using various operations such as addition, multiplication by scalar, etc
+   Example
+    a=gNode([0,0],Circle{Radius=>1}); b=gNode([1,1],Circle{Radius=>1}); mid=a+b
+    gList(a,b,Circle{mid,Radius=>1-1/sqrt 2})
  Node
   Key
    Ellipse
@@ -1307,9 +1313,23 @@ multidoc ///
    GraphicsType
   Headline
    A particular type of type used by VectorGraphics, similar to SelfInitializingType.
+ Node
+  Key
+   Draggable
+  Headline
+   An option to make a GraphicsObject draggable
+  Description
+   Text
+    If this option is turned on, the object can be dragged with the mouse (left button for translation, right button for rotation).
+    It this object is reused as coordinate for other objects, they will be updated accordingly. Compare the following two examples:
+   Example
+    circ = Circle{Radius=>0.1,"fill"=>"red"}; a = gNode([-1,0],circ,Draggable=>true); b = gNode([1,0.5],circ,Draggable=>true);  c = gNode([1,-0.5],circ,Draggable=>true);
+    gList(Polygon{{[-1,0],[1,0.5],[1,-0.5]}},a,b,c)
+    gList(Polygon{{a,b,c}},a,b,c)
 ///
 undocumented {
     Contents, TextContent, HtmlContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
+    GraphicsAncestor,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject), (short,GraphicsObject),
     (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
