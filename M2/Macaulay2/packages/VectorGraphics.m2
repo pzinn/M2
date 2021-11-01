@@ -10,7 +10,7 @@ newPackage(
 	Keywords => {"Graphics"},
         DebuggingMode => true,
 	AuxiliaryFiles => true,
-	PackageImports => {"Text"},
+	PackageImports => {"Text","Graphs"},
 	PackageExports => {"Text"}
         )
 
@@ -21,7 +21,8 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
-    "gNode", "GraphicsNode", "place", "bisector", "projection"
+    "gNode", "place", "bisector", "projection",
+    "showGraph"
     }
 
 protect Filter
@@ -56,7 +57,7 @@ gParse Vector := x -> (
     else if rank class x === 4 then sub(x,RR)
     )
 gParse List := l -> apply(l,gParse)
-gParse Option := o -> if o#0 === symbol Contents then o else o#0 => gParse o#1 -- TODO rethink
+gParse Option := o -> if o#0 === symbol Contents then o else o#0 => gParse o#1
 gParse OptionTable := h -> applyValues(h,gParse)
 gParse Thing := identity
 
@@ -125,7 +126,7 @@ viewPort = g -> (
 viewPort1 := method() -- returns [xmin,ymin],[xmax,ymax]
 viewPort1 GraphicsObject := x -> null
 
-distance = method()
+--distance = method() -- already defined by Graphs TODO clarify this mess
 distance GraphicsObject := x -> 0_RR
 
 -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
@@ -147,14 +148,14 @@ project2d' := (x,g) -> (
 graphicsIdCount := 0;
 graphicsId := () -> (
     graphicsIdCount=graphicsIdCount+1;
-    "Graphics_" | toString currentTime() | "_" | toString graphicsIdCount
+    "Graphics_" | toString processID() | "_" | toString graphicsIdCount
     )
 
 svgElement := method(Dispatch=>Type) -- to each GraphicsType is assigned a svg MarkupType
 
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new Type;
-    g.Options=x#1; -- TODO: should it be an actual table? then have to suppress the BS syntax
+    g.Options=x#1;
     s := new MarkUpType of Hypertext;
     addAttribute(s,svgAttr | if #x>=3 then x#2 else {});
     s.qname = x#0;
@@ -262,21 +263,19 @@ viewPort1 GraphicsList := x -> (
     )
 )
 -- lists with preferred coordinate
---GraphicsNode = new Type of GraphicsList; -- from ( "g", { symbol Node => vector {0.,0.}, symbol Contents => {} } )
--- not GraphicsType because should only be created using gNode
 gNode = true >> opts -> x -> (
     x = deepSplice x;
     ctr := x#0;
     cnt := nonnull toList drop(x,1);
     if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
-    (GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
+    (if #cnt === 1 then if #opts === 0 then cnt#0 else new class cnt#0 from merge(cnt#0,opts,last) else GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
     )
 Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> x*compute(v,cmat),
     symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")"
     }
-Array + GraphicsAncestor :=
-GraphicsAncestor + Array :=
+--Array + GraphicsAncestor := -- too messy to include Arrays in complex coordinate operations
+--GraphicsAncestor + Array :=
 Vector + GraphicsAncestor :=
 GraphicsAncestor + Vector :=
 GraphicsAncestor + GraphicsAncestor := (v,w) -> (
@@ -286,16 +285,14 @@ GraphicsAncestor + GraphicsAncestor := (v,w) -> (
     symbol RefPointFunc => cmat -> compute(v,cmat)+compute(w,cmat),
     symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")"
     })
--- add arrays too? in which case might give up on making place, intersection etc methods? but can't
--- TODO remove arrays............
 - GraphicsAncestor := v -> (-1)*v
 Vector - GraphicsAncestor :=
 GraphicsAncestor - Vector :=
 GraphicsAncestor - GraphicsAncestor := (v,w) -> v+(-1)*w
 
 place = method()
-place (Array,GraphicsAncestor,Number,Number) :=
-place (GraphicsAncestor,Array,Number,Number) :=
+--place (Array,GraphicsAncestor,Number,Number) :=
+--place (GraphicsAncestor,Array,Number,Number) :=
 place (Vector,GraphicsAncestor,Number,Number) :=
 place (GraphicsAncestor,Vector,Number,Number) :=
 place (GraphicsAncestor,GraphicsAncestor,Number,Number) := (v,w,a,b) -> (
@@ -323,9 +320,11 @@ intersection(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- 
     v:=vector{-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)};
     (1/v_3)*sub(v,RR)
     )
-l:={Vector,Array,GraphicsAncestor}; l2:=l**l; l3:=flatten\(l**l2); l4:=flatten\(l**l3);
-l3=select(toSequence\l3,x->member(GraphicsAncestor,x))
-l4=select(toSequence\l4,x->member(GraphicsAncestor,x))
+--l:={Vector,Array,GraphicsAncestor};
+l:={Vector,GraphicsAncestor};
+l2:=l**l; l3:=splice\(l**l2); l4:=splice\(l**l3);
+l3=select(l3,x->member(GraphicsAncestor,x))
+l4=select(l4,x->member(GraphicsAncestor,x))
 
 scan(l4, t ->
 intersection t := true >> o -> (v1,v2,w1,w2) -> (
@@ -384,8 +383,8 @@ projection t := (v,w1,w2) -> (
 )
 
 compute = method()
-compute (Vector,Matrix) := (v,cmat) -> cmat*v
-compute (GraphicsCoordinate,Matrix) := (v,cmat) -> v.RefPointFunc cmat
+compute (Vector,Matrix) := (v,cmat) -> cmat*v -- normal coordinates are affected by local transformation
+compute (GraphicsCoordinate,Matrix) := (v,cmat) -> v.RefPointFunc cmat -- graphics coordinates aren't (they're "nodes")
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { symbol RefPoint => vector {0.,0.,0.,1.}, symbol HtmlContent => null, symbol FontSize => 14. },
@@ -668,7 +667,7 @@ new SVG from GraphicsObject := (S,g) -> (
     axes:=null; axeslabels:=null; defsList:={};
     if g.?Axes and g.Axes =!= false then (
 	p := g.cache.PerspectiveMatrix;
-	arr := arrow(.1); -- TODO size
+	arr := arrow(.02*min(rr_0,rr_1));
 	-- determine intersection of viewport with axes TODO more symmetrically
 	xmin := (p_(3,3)*r#0_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#0_0);
 	xmax := (p_(3,3)*r#1_0-p_(0,3))/(p_(0,0)-p_(3,0)*r#1_0);
@@ -953,11 +952,54 @@ plot = true >> o -> (P,r) -> (
 )
 
 -- existing types that get a new output
+-- partitions
 horiz := p -> gList prepend(Line{[0,0],[p#0,0]},apply(#p,i->Line{[0,-1-i],[p#i,-1-i]}))
 vert := p -> gList prepend(Line{[0,0],[0,-p#0]},apply(#p,i->Line{[i+1,0],[i+1,-p#i]}))
 html Partition := p -> if #p===0 then "&varnothing;" else html gList(
     vert conjugate p,horiz p,Size=>vector{2*p#0,2*#p},"stroke-width"=>0.05)
--- TODO: graphs
+
+-- graphs
+sc:=100; -- should be large because of foreignObject
+-- TODO overall size
+showGraph = G -> if G.cache#?"graphics" then G.cache#"graphics" else (
+    fn := temporaryFileName();
+    writeDotFile(fn | ".dot", G);
+    cmd := "dot -Tplain " | fn | ".dot -o " | fn | ".txt";  -- https://www.graphviz.org/docs/outputs/plain/
+    --        << cmd << endl;
+    run cmd;
+    s := apply(lines get (fn | ".txt"),l->separate(" ",l));
+    V := new MutableList; VV := new MutableList;
+    Vlab := vertexSet G;
+    local wid; local hgt;
+    scan(s,l->if first l === "node" then (
+	    ind := value l#1;
+	    w := sc*value l#4;
+	    h := sc*value l#5;
+	    lab := Vlab#ind; -- much more reliable than value l#6
+	    V#ind = gNode(vector{sc*value l#2,sc*value l#3}, Draggable=>true,
+		if instance(lab,GraphicsObject) then lab else (
+		    Ellipse{RadiusX=>0.5*w,RadiusY=>0.5*h,"fill"=>"white"},
+		    -- GraphicsText({(0,0),toString lab}|vgTextOpts h)
+		    GraphicsHtml{HtmlContent => DIV{lab,"style"=>"width:fit-content;width:-moz-fit-content;transform:translate(-50%,-50%)"},FontSize=>.25*sc}
+		    ));
+	    )
+	else if first l === "graph" then (
+	    wid = value l#2;
+	    hgt = value l#3;
+	    )
+	);
+    A := adjacencyMatrix G; -- TODO revert once more to parsing s
+    a := arrow(.05*sc);
+    G.cache#"graphics" = gList (
+	flatten table(#V,#V,(i,j) -> if A_(i,j) == 1 then if i<j and A_(j,i) == 1 then Line{V#i,V#j}
+	    else if A_(j,i) == 0 then Polyline{{V#i,V#i+V#j,V#j},"marker-mid" => a}
+	    ) |
+	toList V,
+	Size => vector{8*wid,8*hgt},
+	"stroke-width"=>0.01*sc
+	)
+    );
+html Digraph := html @@ showGraph;
 
 beginDocumentation()
 multidoc ///
@@ -982,16 +1024,24 @@ multidoc ///
     In @ TO {Standard} @ mode, the graphical objects are not directly visible; to export them to SVG
     in order to embed them into a web page, use @ TO {html} @. In @ TO {WebApp} @ mode, the graphical objects
     are shown as output.
+    There are two auxiliary files. VectorGraphics.css is a set of styling options that is is not required,
+    but its default options can be useful for consistency of style. VectorGraphics.js is needed for all
+    dynamical effects (rotating and dragging in 3d, animations).
  Node
   Key
-   GraphicsObject
+   GraphicsAncestor
   Headline
    The ancestor class of all VectorGraphics objects
  Node
   Key
+   GraphicsObject
+  Headline
+   The ancestor class of all VectorGraphics graphical objects
+ Node
+  Key
    GraphicsPoly
   Headline
-   The ancestor class of complex VectorGraphics objects
+   The ancestor class of complex VectorGraphics graphical objects
  Node
   Key
    GraphicsList
@@ -1123,7 +1173,7 @@ multidoc ///
   Key
    gList
   Headline
-    Group together VectorGraphics objects
+   Group together VectorGraphics objects
   Description
    Text
     gList(a,b,...,c, options) results in a new @ TO{GraphicsList} @ object containing a,b,...,c
@@ -1365,16 +1415,103 @@ multidoc ///
     circ = Circle{Radius=>0.1,"fill"=>"red"}; a = gNode([-1,0],circ,Draggable=>true); b = gNode([1,0.5],circ,Draggable=>true);  c = gNode([1,-0.5],circ,Draggable=>true);
     gList(Polygon{{[-1,0],[1,0.5],[1,-0.5]}},a,b,c)
     gList(Polygon{{a,b,c}},a,b,c)
+ Node
+  Key
+   gNode
+  Headline
+   VectorGraphics object(s) with a preferred reference origin
+  Description
+   Text
+    gNode(coord,obj) is a shortcut for obj ++ { TransformMatrix => translation coord }, where obj is some GraphicsObject and coord the coordinates of the new reference origin.
+    gNode(coord,a,b,c) is a shortcut for gList(a,b,c) ++ { TransformMatrix => translation coord }.
+   Example
+    a=gNode([-1,-1],Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"})
+    b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black",Draggable=>true})
+    gList(Line{a,b},a,b)
+ Node
+  Key
+   place
+   (place,Vector,Vector,Number,Number)
+  Headline
+   Position a point relative to two other points
+  Usage
+   place ( p1, p2, a, b )
+  Description
+   Text
+    Gives a point situated at position a along the line (p1,p2) in units where they are at distance 1, and at position b orthogonally to it.
+    Only makes sense in 2d.
+   Example
+    circ=Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"};
+    (p1,p2)=apply(([-1,-1],[1,1]),coord -> gNode(coord,circ,Draggable=>true))
+    gList(Polygon{{p1,place(p1,p2,0.7,0.3),p2,place(p1,p2,0.7,-0.3)}},p1,p2)
+ Node
+  Key
+   bisector
+   (bisector,Vector,Vector,Vector)
+  Usage
+   bisector ( p, p1, p2 )
+  Headline
+   Angle bisector of two lines
+  Description
+   Text
+    Returns the location of the intersection of the angle bisectors of (p,p1) and (p,p2) with the line (p1,p2).
+   Example
+    circ=Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"};
+    (a,b,c)=apply(([-1,-1],[2,0],[0,2]),coord -> gNode(coord,circ,Draggable=>true))
+    p=bisector(a,b,c); q=bisector(b,c,a); r=bisector(c,a,b); o=intersection(p,a,q,b);
+    gList(Line{a,b},Line{a,c},Line{b,c},Line{p,a},Line{q,b},Line{r,c},Circle{o,projection(o,a,b)},a,b,c)
+ Node
+  Key
+   intersection
+   (intersection,Vector,Vector,Vector,Vector)
+  Usage
+   intersection ( p1, p2, q1, q2 )
+  Headline
+   Intersection of two lines
+  Description
+   Text
+    Returns the location of the intersection of the two lines (p1,p2) and (q1,q2)
+   Example
+    circ=Circle{Radius=>0.05,"fill"=>"red","stroke"=>"black"};
+    (a,b,c,d)=apply(1..4,i -> gNode([random RR,random RR],circ,Draggable=>true))
+    gList(Line{a,b},Line{c,d},Circle{intersection(a,b,c,d),Radius=>0.1,"fill"=>"green"})
+  Caveat
+   In 3d, the behavior is undetermined if the lines do not intersect.
+ Node
+  Key
+   projection
+   (projection,Vector,Vector,Vector)
+  Usage
+   projection ( p, p1, p2 )
+  Headline
+   Orthogonal projection on a line
+  Description
+   Text
+    Gives the orthogonal projection of p on the line defined by p1, p2.
+   Example
+    circ=Circle{Radius=>10,"fill"=>"red","stroke"=>"black",Draggable=>true,TransformMatrix => translation [100,100]};
+    gList(Line{circ,projection(circ,vector{0,0},vector{0,1}),"stroke"=>"red"},Line{circ,projection(circ,vector{0,0},vector{1,0}),"stroke"=>"red"},circ,Axes=>true,Margin=>0.15)
+ Node
+  Key
+   showGraph
+  Headline
+   Improved drawing of graphs
+  Description
+   Text
+    Returns a GraphicsObject that describes the input graph. Automatically used by the html output.
+   Example
+    needsPackage "Graphs";
+    R=QQ[x,y]; b=flatten entries basis(0,3,R)
+    digraph select(b**b,a->a#1 % a#0 == 0 and first degree a#1 == first degree a#0 +1)
 ///
 undocumented {
     Contents, TextContent, HtmlContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
-    GraphicsAncestor,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
-    (expression, GraphicsObject), (html,GraphicsObject), (net,GraphicsObject), (toString,GraphicsObject), (short,GraphicsObject),
+    (expression, GraphicsAncestor), (html,GraphicsObject), (net,GraphicsAncestor), (toString,GraphicsAncestor), (short,GraphicsObject),
     (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
 }
 
-end--
+end
 
 -- ex of use
 gr=linearGradient{("0%","stop-color:red"),("100%","stop-color:yellow")};

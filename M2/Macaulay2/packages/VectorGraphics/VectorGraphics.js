@@ -4,7 +4,9 @@ function gfxInitMouse(el) {
     el.oncontextmenu = gfxMouseClick;
 }
 
+var currentEl; // only used for checking data in case of multiple id's. TODO make thread-safe
 function gfxInitData(el) {
+    currentEl=el;
     gfxCheckData(el);
     gfxRedo(el);
 }
@@ -89,7 +91,7 @@ function gfxTranslateDrag(x,y,z) { // TODO 3d vs 2d?
     var t = mati.vectmultiply(new Vector([x,-y,-z,0]));
     var gam = -t[3]; // often but not always zero
     var cf = u[3]/(gam*u[3]+r[3]);
-    for (i=0; i<3; i++) t[i]=cf*(gam*r[i]/r[3]+t[i]);
+    for (var i=0; i<3; i++) t[i]=cf*(gam*r[i]/r[3]+t[i]);
     var mat = new Matrix([[1,0,0,t[0]],[0,1,0,t[1]],[0,0,1,t[2]],[0,0,0,1]]);
     // TODO merge with gfxRotateDrag?
     if (dragTarget.gfxdata.matrix) mat.leftmultiply(dragTarget.gfxdata.matrix);
@@ -295,12 +297,12 @@ function gfxRedraw(el) {
 		lightname=lightname.substring(5,lightname.length-1); // eww. what is correct way??
 		var lightel=document.getElementById(lightname);
 		var r=[];
-		for (i=0; i<3; i++) {
+		for (var i=0; i<3; i++) {
 		    var v=el.gfxdata.coords1[i];
 		    r.push([v[0]/v[3],v[1]/v[3],v[2]/v[3]]);
 		}
 		var u=[]; var v=[];
-		for (i=0; i<3; i++) {
+		for (var i=0; i<3; i++) {
 		    u.push(r[1][i]-r[0][i]);
 		    v.push(r[2][i]-r[0][i]);
 		}
@@ -393,17 +395,22 @@ function gfxReorder(el) {
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if ((el.tagName=="svg")||(el.tagName=="g")) {
 	// order children according to distance
-	for (i=1; i<el.children.length; i++) if (el.children[i].gfxdata) {
+	for (var i=1; i<el.children.length; i++) if (el.children[i].gfxdata) {
 	    var child = el.children[i];
-	    j=i; while ((j>0)&&(child.gfxdata.distance>el.children[j-1].gfxdata.distance)) j--;
+	    var j=i; while ((j>0)&&(child.gfxdata.distance>el.children[j-1].gfxdata.distance)) j--;
 	    if (j<i) el.insertBefore(child,el.children[j]);
 	}
     }
 }
 
 function gNode(nd) {
+    if (nd instanceof HTMLCollection) { // we're in trouble -- id used multiple times
+	i=0;
+	while (i<nd.length && !currentEl.contains(nd[i])) i++;
+	if (i<nd.length) nd=nd[i]; else return; // shouldn't happen
+    }
     return function(cmat) {
-	return nd.gfxdata.cmatrix.vectmultiply([0,0,0,1]); // TODO optimize;
+	return nd.gfxdata.cmatrix.vectmultiply([0,0,0,1]); // TODO optimize
     }
 }
 
@@ -473,7 +480,6 @@ function gProject(nd1,nd2,nd3) {
     }
 }
 
-
 function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
     if (el.namespaceURI!="http://www.w3.org/2000/svg") return;
     if (el.classList.contains("gfxauto")) return;
@@ -539,7 +545,15 @@ function gfxCheckData(el,mat) { // mat is the future pmatrix*cmatrix
 
 // a simple square matrix type
 var dim=4;
-var matrix_identity=new Array(dim); for (var i=0; i<dim; i++) { matrix_identity[i]=new Array(dim); for (var j=0; j<dim; j++) if (i==j) matrix_identity[i][j]=1.; else matrix_identity[i][j]=0.; }
+var matrix_identity=function() {
+    var m = new Array(dim);
+    for (var i=0; i<dim; i++) {
+	m[i]=new Array(dim);
+	for (var j=0; j<dim; j++)
+	    if (i==j) m[i][j]=1.; else m[i][j]=0.;
+    }
+    return m;
+}();
 
 class Vector extends Float32Array {
     constructor(v) {
@@ -559,7 +573,7 @@ class Vector extends Float32Array {
     }
     multiply(x) // scalar
     {
-	for (i=0; i<dim; i++)
+	for (var i=0; i<dim; i++)
 	    this[i]*=x;
 	return this;
     }
@@ -568,8 +582,8 @@ class Vector extends Float32Array {
 function doubleArrayToFloat32Array(mat,fl) // used internally
 {
     var i,j;
-    for (i=0; i<dim; i++)
-	for (j=0; j<dim; j++)
+    for (var i=0; i<dim; i++)
+	for (var j=0; j<dim; j++)
 	    fl[i+dim*j]=mat[i][j]; // note the transposition to conform to openGL's silly convention
     return fl;
 }
