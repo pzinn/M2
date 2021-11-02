@@ -1012,23 +1012,23 @@ multidoc ///
    A package to produce SVG graphics
   Description
    Text
-    {\bf VectorGraphics} is a package to produce SVG 2d and 3d graphics.
+    @BOLD "VectorGraphics"@ is a package to produce SVG 2d and 3d graphics.
     All usable types are descendents of the type GraphicsObject, and are self-initializing.
     Coordinates can be entered as vectors in $\mathbb{R}^2$, $\mathbb{R}^3$ or $\mathbb{R}^4$
     ($\mathbb{R}^4$ is projective coordinates); alternatively, one can enter them as sequences.
     With the default perspective matrix,
     the x axis points to the right, the y axis points up, and the z axis points towards the viewer.
     All types are option tables, i.e., their arguments are options. There are two types of options:
-    VectorGraphics options, that are symbols (e.g., {\tt Radius} for circles);
+    VectorGraphics options, that are symbols (e.g., @TT "Radius"@ for circles);
     and styling options, which are CSS style options,
-    and which are {\bf strings} (e.g., {\tt "fill"} for fill color).
-    {\bf VectorGraphics} does not use units (coordinates are dimensionless).
+    and which are @BOLD "strings"@ (e.g., @TT "\"fill\""@ for fill color).
+    @BOLD "VectorGraphics"@ does not use units (coordinates are dimensionless).
     In @ TO {Standard} @ mode, the graphical objects are not directly visible; to export them to SVG
     in order to embed them into a web page, use @ TO {html} @. In @ TO {WebApp} @ mode, the graphical objects
     are shown as output.
-    There are two auxiliary files. VectorGraphics.css is a set of styling options that is is not required,
-    but its default options can be useful for consistency of style. VectorGraphics.js is needed for all
-    dynamical effects (rotating and dragging in 3d, animations).
+    There are two auxiliary files. VectorGraphics.css is a set of styling options that is not required,
+    but its default options can be useful for consistency of style. For all
+    dynamical effects (rotating and dragging in 3d, animations), both VectorGraphics.js and VectorGraphics.css are needed.
  Node
   Key
    GraphicsAncestor
@@ -1051,7 +1051,7 @@ multidoc ///
    A list of VectorGraphics objects
   Description
    Text
-    A class that represents a list of @ TO {VectorGraphics} @ objects, displayed together. See also @ TO{gList} @.
+    A class that represents a list of @ TO {VectorGraphics} @ objects, displayed together. The preferred way to create a @BOLD "GraphicsList"@ is via @ TO{gList} @.
  Node
   Key
    Circle
@@ -1178,7 +1178,7 @@ multidoc ///
    Group together VectorGraphics objects
   Description
    Text
-    gList(a,b,...,c, options) results in a new @ TO{GraphicsList} @ object containing a,b,...,c
+    @TT "gList(a,b,...,c, options)"@ results in a new @ TO{GraphicsList} @ object containing @TT "a,b,...,c"@
     and the given options.
    Example
     a=gList(Line{[-100, 15, 78], [-9, 100, 4]},
@@ -1196,7 +1196,7 @@ multidoc ///
     ViewPort of view port
   Description
    Text
-    viewPort gives the range of view port occupied by a @ TO {VectorGraphics} @ object, as computed by the package.
+    viewPort gives the range of view port occupied by a @ TO {GraphicsObject} @, as computed by the package.
     See also @ TO{ViewPort} @.
   Caveat
     At the moment viewPort does not take into account the width of "stroke"s.
@@ -1245,7 +1245,7 @@ multidoc ///
    Fix the view port
   Description
    Text
-    An option to fix manually the view port range of a @ TO {VectorGraphics} @ object.
+    An option to fix manually the view port range of a @ TO {GraphicsObject} @.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
     See also @ TO{viewPort} @ and @ TO{Margin} @.
  Node
@@ -1255,8 +1255,8 @@ multidoc ///
    Set the size of a picture
   Description
    Text
-    An option to fix the size of the @ TO {VectorGraphics} @ object in line width units.
-    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
+    An option to fix the size of the @ TO {GraphicsObject} @ in line width units.
+    Only has an effect if in the outermost @ TO {GraphicsObject} @.
     Can be either a vector { width, height } or a number (diagonal).
  Node
   Key
@@ -1268,7 +1268,7 @@ multidoc ///
     A 4x4 matrix that is applied to 3d coordinates for perspective.
     One can instead provide a real number $p$, which is equivalent to placing the screen
     centered at $z=0$ and the viewer at $(0,0,p)$.
-    Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
+    Only has an effect if in the outermost @ TO {GraphicsObject} @.
  Node
   Key
    AnimMatrix
@@ -1276,11 +1276,11 @@ multidoc ///
    Create a rotation animation matrix
   Description
    Text
-    An option to create a rotation animation for the @ TO {VectorGraphics} @ 3d object.
+    An option to create a rotation animation for the @ TO {GraphicsObject} @.
     The value can be a single 4x4 matrix, or a list which is cycled.
-    The syntax {\tt n => ...} can be used to repeat a sequence n times (where {\tt 0} means infinity).
-    The animation automatically loops (use {\tt 0 => \{ \}} to stop!)
-    In order for the animation to work, {\tt VectorGraphics.css} and {\tt VectorGraphics.js} must be included in the web page.
+    The syntax @TT "n => ..."@ can be used to repeat a sequence n times (where @TT "0"@} means infinity).
+    The animation automatically loops (use @TT "0 => { }"@ to stop!)
+    In order for the animation to work, @ TT "VectorGraphics.css"@ and @TT "VectorGraphics.js"@ must be included in the web page.
    Example
     (anim1=rotation(0.1,[0,0,1],[0,0]); anim2=rotation(-0.1,[0,0,1],[0,0]);); anim3 = { 5 => {5 => anim1, 5 => anim2}, 10 => anim1 };
     gList(Polygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red",AnimMatrix=>anim1},Circle{[1,0],0.1},Circle{[0,0],1})
@@ -1292,7 +1292,7 @@ multidoc ///
    Create a rotation matrix
   Description
    Text
-    An option to rotate the coordinates of the @ TO {VectorGraphics} @ 3d object.
+    An option to rotate the coordinates of the @ TO {GraphicsObject} @.
     Must be a 4x4 matrix (projective coordinates).
    Example
     a=Polygon{{[-1,0],[1,0.1],[1,-0.1]},"fill"=>"red"}
@@ -1315,7 +1315,7 @@ multidoc ///
    An option to make a VectorGraphics object unmoving
   Description
    Text
-    The @ TO {VectorGraphics} @ 3d object is unaffected by matrix transformations of its ancestors.
+    The @ TO {GraphicsObject} @ is unaffected by matrix transformations of its ancestors.
  Node
   Key
    linearGradient
@@ -1393,7 +1393,7 @@ multidoc ///
    Text
     Some arbitrary HTML content, specified by the option HtmlContent (a @ TO{Hypertext} @ object or other content to render in HTML).
   Caveat
-   Due to a limitation of <foreignObject>, coordinates are rounded to the nearest integer. So use large enough coordinate systems.
+   Due to a limitation of @TT "<foreignObject>"@, coordinates are rounded to the nearest integer. So use large enough coordinate systems.
  Node
   Key
    SVG
@@ -1411,7 +1411,7 @@ multidoc ///
    An option to make a GraphicsObject draggable
   Description
    Text
-    If this option is turned on, the object can be dragged with the mouse (left button for translation, right button for rotation).
+    If this option is turned on, the @ TO {GraphicsObject} @ can be dragged with the mouse (left button for translation, right button for rotation).
     It this object is reused as coordinate for other objects, they will be updated accordingly. Compare the following two examples:
    Example
     circ = Circle{Radius=>0.1,"fill"=>"red"}; a = gNode([-1,0],circ,Draggable=>true); b = gNode([1,0.5],circ,Draggable=>true);  c = gNode([1,-0.5],circ,Draggable=>true);
@@ -1424,8 +1424,8 @@ multidoc ///
    VectorGraphics object(s) with a preferred reference origin
   Description
    Text
-    gNode(coord,obj) is a shortcut for obj ++ { TransformMatrix => translation coord }, where obj is some GraphicsObject and coord the coordinates of the new reference origin.
-    gNode(coord,a,b,c) is a shortcut for gList(a,b,c) ++ { TransformMatrix => translation coord }.
+    @TT "gNode(coord,obj)"@ is a shortcut for @TT "obj ++ { TransformMatrix => translation coord }"@, where @TT "obj"@ is some @ TO {GraphicsObject} @ and @TT "coord"@ the coordinates of the new reference origin.
+    @TT "gNode(coord,a,b,c)"@ is a shortcut for @TT "gList(a,b,c) ++ { TransformMatrix => translation coord }"@.
    Example
     a=gNode([-1,-1],Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"})
     b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black",Draggable=>true})
@@ -1500,7 +1500,7 @@ multidoc ///
    Improved drawing of graphs
   Description
    Text
-    Returns a GraphicsObject that describes the input graph. Automatically used by the html output.
+    Returns a @ TO {GraphicsObject} @ that describes the input graph. Requires the package @ TO {Graphs}@. Automatically used by the html output.
    Example
     needsPackage "Graphs";
     R=QQ[x,y]; b=flatten entries basis(0,3,R)
