@@ -35,7 +35,7 @@ List</pre>
 i9 : FlagsF = F/last;
 i10 : FlagsG = G/last;
 i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 1.98954 seconds
+     -- used 1.89101 seconds
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -57,7 +57,7 @@ List</pre>
 List</pre>
 i12 : assert all(S', s-> checkIncidenceSolution(s,G))
 i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.84906 seconds
+     -- used 1.2605 seconds
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\

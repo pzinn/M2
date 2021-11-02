@@ -21,7 +21,7 @@ export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
-    "gNode", "place", "bisector", "projection",
+    "gNode", "place", "bisector", "projection", "crossing",
     "showGraph"
     }
 
@@ -310,7 +310,9 @@ place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
     perp := vector { u_1, -u_0, 0, 0 };
     v + a*u + b*perp
     )
-intersection(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
+
+crossing = method()
+crossing(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
     v1 = gParse v1;
     v2 = gParse v2;
     w1 = gParse w1;
@@ -327,13 +329,13 @@ l3=select(l3,x->member(GraphicsAncestor,x))
 l4=select(l4,x->member(GraphicsAncestor,x))
 
 scan(l4, t ->
-intersection t := true >> o -> (v1,v2,w1,w2) -> (
+crossing t := true >> o -> (v1,v2,w1,w2) -> (
     v1 = gParse v1;
     v2 = gParse v2;
     w1 = gParse w1;
     w2 = gParse w2;
     new GraphicsCoordinate from {
-    symbol RefPointFunc => cmat -> intersection(compute(v1,cmat),compute(v2,cmat),compute(w1,cmat),compute(w2,cmat)),
+    symbol RefPointFunc => cmat -> crossing(compute(v1,cmat),compute(v2,cmat),compute(w1,cmat),compute(w2,cmat)),
     symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
     }))
 
@@ -1458,23 +1460,23 @@ multidoc ///
    Example
     circ=Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"};
     (a,b,c)=apply(([-1,-1],[2,0],[0,2]),coord -> gNode(coord,circ,Draggable=>true))
-    p=bisector(a,b,c); q=bisector(b,c,a); r=bisector(c,a,b); o=intersection(p,a,q,b);
+    p=bisector(a,b,c); q=bisector(b,c,a); r=bisector(c,a,b); o=crossing(p,a,q,b);
     gList(Line{a,b},Line{a,c},Line{b,c},Line{p,a},Line{q,b},Line{r,c},Circle{o,projection(o,a,b)},a,b,c)
  Node
   Key
-   intersection
-   (intersection,Vector,Vector,Vector,Vector)
+   crossing
+   (crossing,Vector,Vector,Vector,Vector)
   Usage
-   intersection ( p1, p2, q1, q2 )
+   crossing ( p1, p2, q1, q2 )
   Headline
    Intersection of two lines
   Description
    Text
     Returns the location of the intersection of the two lines (p1,p2) and (q1,q2)
    Example
-    circ=Circle{Radius=>0.05,"fill"=>"red","stroke"=>"black"};
+    circ=Circle{Radius=>0.05,"fill"=>"green","stroke"=>"black","stroke-width"=>0.01,Size=>2};
     (a,b,c,d)=apply(1..4,i -> gNode([random RR,random RR],circ,Draggable=>true))
-    gList(Line{a,b},Line{c,d},Circle{intersection(a,b,c,d),Radius=>0.1,"fill"=>"green"})
+    gList(Line{a,b},Line{c,d},Circle{crossing(a,b,c,d),Radius=>0.05,"fill"=>"blue"},a,b,c,d)
   Caveat
    In 3d, the behavior is undetermined if the lines do not intersect.
  Node

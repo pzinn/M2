@@ -6,14 +6,14 @@
 i5 : S1= { sol1, sol2  };--solutions to H when t=1
 i6 : S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}+{5.82867}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\left\{{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}+{4.51028}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>
 i7 : peek S0_0
 
 o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{AccuracyEst => 5.27329e-13        }<br/>      AccuracyEstInternal => 9.15551e-14<br/>      ConditionNumber => 1.55715<br/>      Coordinates => {1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 1.14439e-16<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 2.3054e-17<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 0<br/></pre>
+Point{AccuracyEst => 1.20944e-11        }<br/>      AccuracyEstInternal => 9.08763e-12<br/>      ConditionNumber => 28.0709<br/>      Coordinates => {1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 9.36807e-15<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 8.81807e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 1<br/></pre>
 i8 : R=CC[x,y,t,a]; -- include the path variable in the ring
 i9 : f1=(x^2-y^2);
 i10 : f2=(2*x^2-3*x*y+5*y^2);
@@ -38,7 +38,7 @@ Point</pre>
 List</pre>
 i15 : S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
 
-o15 = $\left\{\left\{1,\,{.3}-{.556776}\,\mathbf{i}\right\},\,\left\{1,\,{.3}+{.556776}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{1,\,{.3}+{.556776}\,\mathbf{i}\right\},\,\left\{1,\,{.3}-{.556776}\,\mathbf{i}\right\}\right\}$
 
 o15 : <pre style="display:inline">
 List</pre>
