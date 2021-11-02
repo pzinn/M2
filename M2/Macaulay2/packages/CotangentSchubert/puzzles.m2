@@ -76,7 +76,7 @@ html Puzzle := p -> html vg p
 cols:={"red","green","blue","yellow","magenta","cyan"};
 strk:=0.07;
 
-vg = p -> gList (
+vg = p -> gList toSequence (
     n:=p.Size;
     flatten apply(n, i -> flatten apply(n-i, j -> (
                 a := p#(i,j,0);
@@ -87,14 +87,19 @@ vg = p -> gList (
                         r := regex(kk,a);
                         if r === null then return a; -- shouldn't happen
                         r=#a-1-r#0#0*2; cf:=0.08/#a;
-                        if dir == 0 then (x,y+cf*r)
-                        else if dir === 1 then (x+cf*r,y)
-                        else (x+cf*r,y-cf*r)
+                        if dir == 0 then [x,y+cf*r]
+                        else if dir === 1 then [x+cf*r,y]
+                        else [x+cf*r,y-cf*r]
                         );
                     if p#(i,j,2) != "" then (
                         c := p#(i,j,2);
-                        Polygon splice {{(i+1,j),(i,j),(i,j+1)},if p#?(i,j,upTriStyle) then p#(i,j,upTriStyle)},
-                        if (i+j<n-1) then Polygon splice {{(i+1,j),(i,j+1),(i+1,j+1)},if p#?(i,j,downTriStyle) then p#(i,j,downTriStyle)},
+			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#?(i,j,upTriStyle));
+                        Polygon opts,
+                        if (i+j<n-1) then (
+			    opts = {{[i+1,j],[i,j+1],[i+1,j+1]}};
+			    if p#?(i,j,downTriStyle) then opts=append(opts,p#(i,j,downTriStyle));
+			    Polygon opts
+			    ),
                         if p#Paths then (
                             if i+j<n-1 then (
                                 aa := p#(i+1,j,0);
@@ -105,18 +110,18 @@ vg = p -> gList (
                                     
                                     (
                                         if match(kk,a) and match(kk,b) and match(kk,c) then (
-                                            Line{adj(0,a,i,j+.5),(i+.333,j+.333),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(1,b,i+.5,j),(i+.333,j+.333),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(2,c,i+.5,j+.5),(i+.333,j+.333),"stroke"=>cols#k,"stroke-width"=>strk}
+                                            Line{adj(0,a,i,j+.5),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(1,b,i+.5,j),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(2,c,i+.5,j+.5),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk}
                                             )
                                         else if match(kk,a) and match(kk,b) then Line{adj(0,a,i,j+.5),adj(1,b,i+.5,j),"stroke"=>cols#k,"stroke-width"=>strk}
                                         else if match(kk,a) and match(kk,c) then Line{adj(0,a,i,j+.5),adj(2,c,i+.5,j+.5),"stroke"=>cols#k,"stroke-width"=>strk}
                                         else if match(kk,c) and match(kk,b) then Line{adj(2,c,i+.5,j+.5),adj(1,b,i+.5,j),"stroke"=>cols#k,"stroke-width"=>strk},
                                         if i+j<n-1 then
                                         if match(kk,aa) and match(kk,bb) and match(kk,c) then (
-                                            Line{adj(0,aa,i+1,j+.5),(i+.666,j+.666),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(1,bb,i+.5,j+1),(i+.666,j+.666),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(2,c,i+.5,j+.5),(i+.666,j+.666),"stroke"=>cols#k,"stroke-width"=>strk}
+                                            Line{adj(0,aa,i+1,j+.5),[i+.666,j+.666],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(1,bb,i+.5,j+1),[i+.666,j+.666],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(2,c,i+.5,j+.5),[i+.666,j+.666],"stroke"=>cols#k,"stroke-width"=>strk}
                                             )
                                         else if match(kk,aa) and match(kk,bb) then Line{adj(0,aa,i+1,j+.5),adj(1,bb,i+.5,j+1),"stroke"=>cols#k,"stroke-width"=>strk}
                                         else if match(kk,aa) and match(kk,c) then Line{adj(0,aa,i+1,j+.5),adj(2,c,i+.5,j+.5),"stroke"=>cols#k,"stroke-width"=>strk}
@@ -126,12 +131,14 @@ vg = p -> gList (
                                 )
                             ),
                         if p#Labels then (
-                            GraphicsText ({(i,j+.5),a} | vgTextOpts a),
-                            GraphicsText ({(i+.5,j),b} | vgTextOpts b),
-                            GraphicsText ({(i+.5,j+.5),c} | vgTextOpts c)
+                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            GraphicsText ({[i+.5,j],b} | vgTextOpts b),
+                            GraphicsText ({[i+.5,j+.5],c} | vgTextOpts c)
                             )
                         ) else (
-                        Polygon splice {{(i+1,j),(i,j),(i,j+1),(i+1,j+1)},if p#?(i,j,rhombusStyle) then p#(i,j,rhombusStyle)},
+			opts := {{[i+1,j],[i,j],[i,j+1],[i+1,j+1]}};
+			if p#?(i,j,rhombusStyle) then opts=append(opts,p#(i,j,rhombusStyle));
+                        Polygon opts,
                         if p#Paths then (
                             aa = p#(i+1,j,0);
                             bb = p#(i,j+1,1);
@@ -145,8 +152,8 @@ vg = p -> gList (
                                         )
                                     ))),
                         if p#Labels then (
-                            GraphicsText ({(i,j+.5),a} | vgTextOpts a),
-                            GraphicsText ({(i+.5,j),b} | vgTextOpts b)
+                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            GraphicsText ({[i+.5,j],b} | vgTextOpts b)
                             )
                         )
                     }
