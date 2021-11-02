@@ -133,7 +133,7 @@ viewPort1 GraphicsObject := x -> null
 --distance = method() -- already defined by Graphs TODO clarify this mess
 distance GraphicsObject := x -> 0_RR
 
--- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context TODO retire
 scale := (x,g) -> x_3/(g.cache.Owner.PerspectiveMatrix*x)_3
 
 project3d := (x,g) -> (
@@ -144,6 +144,10 @@ project2d := (x,g) -> (
     y := project3d(x,g);
     vector {y_0,y_1}
 )
+project3d' := (x,g) -> (
+    y := g.cache.Owner.PerspectiveMatrix*x;
+    (1/y_3)*vector {y_0,-y_1,y_2} -- TODO absorb sign in perspective matrix
+    )
 project2d' := (x,g) -> (
     y := project3d(x,g);
     vector {y_0,-y_1} -- annoying sign for actual svg coords
@@ -180,7 +184,6 @@ viewPort1 Ellipse := g -> (
     { p-r, p+r }
     )
 distance Ellipse := g -> (
-    -(project3d(compute(g.Center,g.cache.CurrentMatrix),g))_2
     )
 
 Circle = new GraphicsType of Ellipse from ( "circle",
@@ -232,9 +235,6 @@ viewPort1 Line := g -> (
     { vector(min\p), vector(max\p) }
     )
 distance Line := g -> (
-    d1 := (project3d(compute (g.Point1,g.cache.CurrentMatrix),g))_2;
-    d2 := (project3d(compute (g.Point2,g.cache.CurrentMatrix),g))_2;
-    -0.5*(d1+d2)
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -482,90 +482,149 @@ is3d GraphicsList := l -> (
     )
 is3d GraphicsCoordinate := x -> (x.RefPointFunc(map(RR^4,RR^4,1)))_2 != 0 -- TEMP? TODO better
 
-local svg1;
-svgLookup := hashTable {
-    symbol TransformMatrix => (g,x) -> (g.cache.Options#"data-matrix" = x;),
-    symbol AnimMatrix => (g,x) -> (g.cache.Options#"data-dmatrix" = x;),
-    symbol Radius => (g,x) -> (
-	if instance(x,Number) then (
+coord = (g,name,ind,labx,laby) -> (
+    x := g#name;
+    if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",ind,x);
+    x=compute(x,g.cache.CurrentMatrix);
+    x' := project3d'(x,g);
+    g.cache.Options#labx = x'_0;
+    g.cache.Options#laby = x'_1;
+    (x,x')
+)
+
+svg1 = method()
+svg1 Ellipse := g -> (
+    (x,x'):=coord(g,symbol Center,0,"cx","cy");
+    -- then radius: circle vs ellipse
+    if instance(g,Circle) then (
+	r := g.Radius;
+	if instance(r,Number) then (
 	    if is3d g then (
-		p := compute(g.Center,g.cache.CurrentMatrix);
-	    	sc := scale(p,g);
-	    	r := x * sc;
-		g.cache.Options#"data-r"=x;
-		) else r = x;
+		g.cache.Options#"data-r"=r;
+		-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+		scale := x_3/(g.cache.Owner.PerspectiveMatrix*x)_3;
+		r = r * scale;
+		);
 	    ) else (
-	    p  =project2d(compute(g.Center,g.cache.CurrentMatrix),g);
-	    pp:=project2d(compute(x,g.cache.CurrentMatrix),g)-p;
-	    r=sqrt(pp_0^2+pp_1^2);
-	    if is3d g or instance(x,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,x);
+	    if is3d g or instance(r,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,r);
+	    y:=project3d'(compute(r,g.cache.CurrentMatrix),g)-x';
+	    r=sqrt(y_0^2+y_1^2);
 	    );
 	g.cache.Options#"r" = r;
-	),
+	r = vector {r,r};
+	) else (
+	rx := g.RadiusX;
+	ry := g.RadiusY;
+	if is3d g then (
+	    g.cache.Options#"data-rx"=rx;
+	    g.cache.Options#"data-ry"=ry;
+	    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+	    scale = x_3/(g.cache.Owner.PerspectiveMatrix*x)_3;
+	    rx = rx * scale;
+	    ry = ry * scale;
+	    );
+	g.cache.Options#"rx" = rx;
+	g.cache.Options#"ry" = ry;
+	r = vector {rx,ry};
+	);
+    if is3d g then (
+	-- distance
+	g.cache.Distance=-x'_2;
+	);
+    -- viewport
+    x'=x'^{0,1};
+    g.cache.ViewPort = { x' - r, x' + r };
+    );
+svg1 Line := g -> (
+    (p1,p1'):=coord(g,symbol Point1,0,"x1","y1");
+    (p2,p2'):=coord(g,symbol Point2,1,"x2","y2");
+    -- viewport
+    p := {{p1'_0,p2'_0},{p1'_1,p2'_1}};
+    g.cache.ViewPort={ vector(min\p), vector(max\p) };
+    if is3d g then (
+	-- distance
+	g.cache.Distance=-0.5*(p1'_2+p2'_2)
+	)
+    );
+svg1 GraphicsPoly := g -> (
+    x := g.PointList;
+    x1 := select(x,y->not instance(y,String));
+    if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
+    x1 = apply(x1,y->project3d'(compute(y,g.cache.CurrentMatrix),g));
+    i:=-1;
+    s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{toString x1#i_0,toString x1#i_1}) else y));
+    if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
+    -- viewport
+    g.cache.ViewPort= if #x1 === 0 then null else (
+	s = transpose apply(x1,y->{y_0,y_1});
+	{vector(min\s), vector(max\s)}
+	);
+    if is3d g then (
+	-- distance
+	g.cache.Distance = if #x1 === 0 then 0_RR else -sum(x1,y->y_2) / #x1
+	)
+    );
+svg1 GraphicsText := g -> (
+    (x,x'):=coord(g,symbol RefPoint,0,"x","y");
+    g.cache.Contents = if instance(g,GraphicsHtml) then (
+	c := g.HtmlContent; -- can we rename this Contents for uniformity?
+	if instance(c,VisibleList) then toList c else {c}
+	) else {g.TextContent};
+    -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
+    scale := if is3d g then x_3/(g.cache.Owner.PerspectiveMatrix*x)_3 else 1;
+    -- font size
+    if g.?FontSize then (
+	f:=max(0,g.FontSize*scale);
+	g.style#"font-size" = toString f|"px";
+	if is3d g then g.cache.Options#"data-fontsize"=g.FontSize;
+	);
+    -- view port
+    if is3d g then (
+	-- distance
+	g.cache.Distance=-x'_2;
+	);
+    x'=x'^{0,1};
+    g.cache.ViewPort = { x', x' }; -- TEMP
+    );
+svg1 GraphicsList := g -> (
+    x:=g.Contents;
+    g.cache.Contents = if is3d g then (
+	scan(x, y -> y.cache.svgElement = svg2(y,g.cache.CurrentMatrix));
+	-- distance
+	g.cache.Distance = if #(g.Contents) === 0 then 0_RR else sum(x, y->y.cache.Distance) / #x;
+	-- sorting
+	x=stableSort x;
+	apply(x,y->y.cache.svgElement)
+	) else apply(x, y -> svg2(y,g.cache.CurrentMatrix));
+    -- view port
+    s := nonnull apply(x, y->y.cache.ViewPort);
+    g.cache.ViewPort = if #s === 0 then null else (
+	s = transpose s;
+	mn := transpose (entries \ s#0);
+	mx := transpose (entries \ s#1);
+	{vector (min\mn), vector(max\mx)}
+	);
+    );
+
+svgLookup := hashTable {
     symbol RadiusX => (g,x) -> (
-	r := compute(g.Center,g.cache.CurrentMatrix);
-	sc := scale(r,g);
-	g.cache.Options#"rx" = x * sc;
-	if is3d g then g.cache.Options#"data-rx"=x;
+	if is3d g then (
+	    p := compute(g.Center,g.cache.CurrentMatrix);
+	    sc := scale(p,g);
+	    r := x *sc;
+	    g.cache.Options#"data-rx"=x;
+	    ) else r = x;
+	g.cache.Options#"rx" = r;
 	),
     symbol RadiusY => (g,x) -> (
-	r := compute(g.Center,g.cache.CurrentMatrix);
-	sc := scale(r,g);
-	g.cache.Options#"ry" = x * sc;
-	if is3d g then g.cache.Options#"data-ry"=x;
+	if is3d g then (
+	    p := compute(g.Center,g.cache.CurrentMatrix);
+	    sc := scale(p,g);
+	    r := x *sc;
+	    g.cache.Options#"data-ry"=x;
+	    ) else r = x;
+	g.cache.Options#"ry" = r;
 	),
-    symbol OneSided => (g,x) -> (g.cache.Options#"data-onesided"=x;),
-    symbol FontSize => (g,x) -> (
-    	-- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
-	r := compute(g.RefPoint,g.cache.CurrentMatrix);
-	sc := scale(r,g);
-	f:=max(0,x*sc);
-	g.style#"font-size" = toString f|"px";
-	if is3d g then g.cache.Options#"data-fontsize"=x;
-	if instance(g,GraphicsHtml) then ( -- a bit hacky because foreignObject is so buggy
-	    g.style#"overflow"="visible"; -- makes width/height irrelevant
-	    g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
-	    g.style#"height"="100%";
-	    )
-	),
-    symbol PointList => (g,x) -> (
-	x1 := select(x,y->not instance(y,String));
-	if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
-	s := demark(" ", flatten apply(x, y -> if not instance(y,String) then apply(entries project2d'(compute(y,g.cache.CurrentMatrix),g),toString) else y));
-	if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
-	),
-    symbol Center => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",0,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"cx" = x_0;
-	g.cache.Options#"cy" = x_1;
-	),
-    symbol RefPoint => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",0,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"x" = x_0;
-	g.cache.Options#"y" = x_1;
-	),
-    symbol Point1 => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",0,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"x1" = x_0;
-	g.cache.Options#"y1" = x_1;
-	),
-    symbol Point2 => (g,x) -> (
-	if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",1,x);
-	x = project2d'(compute(x,g.cache.CurrentMatrix),g);
-	g.cache.Options#"x2" = x_0;
-	g.cache.Options#"y2" = x_1;
-	),
-    symbol Static => (g,x) -> (if x then g.cache.Options#"data-static" = "true";),
-    symbol Contents => (g,x) -> (
-	x = stableSort x;
-	g.cache.Contents = apply(x, y -> svg1(y,g.cache.CurrentMatrix));
-	),
-    symbol TextContent => (g,x) -> (g.cache.Contents = {x};),
-    symbol HtmlContent => (g,x) -> (g.cache.Contents = if instance(x,VisibleList) then toList x else {x};),
-    symbol Draggable => (g,x) -> (if x then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";)
     }
 
 -- produces SVG element hypertext
@@ -585,18 +644,28 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	is3d g; -- TODO better to force 3d state of children to be determined
 	scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
 	);
-    if g.?OneSided and g.OneSided then determineSide g;
-    g.cache.ViewPort = viewPort1 g; -- update the range
-    g.cache.Distance = distance g; -- update the distance
+    if is3d g then (
+	if g.?OneSided and g.OneSided then determineSide g;
+--    	g.cache.Distance = distance g; -- update the distance TODO bundle with svg1
+	);
 --    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better see above
-    filter g;
+    if g.?TransformMatrix then g.cache.Options#"data-matrix" = g.TransformMatrix;
+    if g.?AnimMatrix then g.cache.Options#"data-dmatrix" = g.AnimMatrix;
+    if g.?Static and g.Static then g.cache.Options#"data-static" = "true";
+    if g.?Draggable and g.Draggable then g.cache.Options#"class" = (if g.cache.Options#?"class" then g.cache.Options#"class" | " " else "") | "M2SvgDraggable";
+    if instance(g,GraphicsHtml) then ( -- a bit hacky because foreignObject is so buggy
+	g.style#"overflow"="visible"; -- makes width/height irrelevant
+	g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
+	g.style#"height"="100%";
+	)
     )
 
-svg1 = (g,m) -> ( -- 3rd phase (object,current matrix)
+svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     s := try svgElement class g else return; -- what is the else for?
     updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
     g.cache.Contents={};
-    scan(keys g, key -> if svgLookup#?key then svgLookup#key(g,g#key));
+    svg1 g;
+    filter g;
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
@@ -608,7 +677,7 @@ svg = g -> (
     g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
     precompute(g,one,g.cache);
     updateGraphicsCache(g,one);
-    svg1(g,one)
+    svg2(g,one)
     )
 
 globalAssignment GraphicsAncestor
@@ -715,7 +784,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	"style" => concatenate("width:",toString g.cache.Size_0,"em;",
 	    "height:",toString g.cache.Size_1,"em;"
 	    ),
-	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1}),
+	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
 	};
     if is3d g or draggable g then ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TODO more customized: might want 2d background drag etc
     if is3d g then (

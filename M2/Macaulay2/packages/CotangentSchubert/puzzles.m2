@@ -136,7 +136,7 @@ vg = p -> gList toSequence (
                             GraphicsText ({[i+.5,j+.5],c} | vgTextOpts c)
                             )
                         ) else (
-			opts := {{[i+1,j],[i,j],[i,j+1],[i+1,j+1]}};
+			opts = {{[i+1,j],[i,j],[i,j+1],[i+1,j+1]}};
 			if p#?(i,j,rhombusStyle) then opts=append(opts,p#(i,j,rhombusStyle));
                         Polygon opts,
                         if p#Paths then (
