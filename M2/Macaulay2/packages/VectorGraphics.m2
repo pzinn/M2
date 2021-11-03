@@ -146,7 +146,7 @@ svgElement := method(Dispatch=>Type) -- to each GraphicsType is assigned a svg M
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new Type;
     g.Options=x#1;
-    s := new MarkUpType of Hypertext;
+    s := new MarkUpType of if x#0=="g" then HypertextContainer else HypertextParagraph;
     addAttribute(s,svgAttr | if #x>=3 then x#2 else {});
     s.qname = x#0;
     svgElement g := g' -> s;
@@ -335,7 +335,7 @@ draggable GraphicsObject := x -> x.?Draggable and x.Draggable
 draggable GraphicsList := x -> x.?Draggable or any(x.Contents,draggable)
 
 
-SVG = new MarkUpType of Hypertext
+SVG = new MarkUpType of HypertextContainer
 addAttribute(SVG,svgAttr|{"height","preserveAspectRatio","viewBox","width","x","xmlns"=>"http://www.w3.org/2000/svg","y","zoomAndPan"})
 
 --
@@ -525,7 +525,6 @@ svg1 GraphicsList := g -> (
 
 -- produces SVG element hypertext
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
-    g.cache.Filter={}; -- clean up filters from past
     g.cache.Owner=c; -- owner cache
     remove(g.cache,Is3d);
     updateTransformMatrix(g,m);
@@ -569,6 +568,7 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
 
 svg = g -> (
     g.cache.Light={};
+    g.cache.Filter={};
     g.cache.PerspectiveMatrix = perspective if g.?Perspective then g.Perspective else ();
     precompute(g,one,g.cache);
     updateGraphicsCache(g,one);
@@ -590,15 +590,9 @@ short GraphicsObject := g -> (
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
 
 -- defs
-svgDefs = new MarkUpType of Hypertext
+svgDefs = new MarkUpType of HypertextContainer
 svgDefs.qname="defs"
 addAttribute(svgDefs,svgAttr)
-
-scanDefs := g -> (
-    lst := g.cache.Filter;
-    if g.?Contents then lst = lst | flatten apply(g.Contents,scanDefs);
-    lst
-    )
 
 -- full SVG with the headers
 new SVG from GraphicsObject := (S,g) -> (
@@ -654,7 +648,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	    );
 	axes=svg axes0;
 	axeslabels=svg axeslabels0;
-	defsList = scanDefs axes0 | scanDefs axeslabels0;
+	defsList = axes0.cache.Filter | axeslabels0.cache.Filter;
 	);
 	-- put some extra blank space around picture
 	margin := if g.?Margin then g.Margin else 0.1;
@@ -678,7 +672,7 @@ new SVG from GraphicsObject := (S,g) -> (
     if axes =!= null then ss = append(ss, axes);
     if axeslabels =!= null then ss = append(ss, axeslabels);
     ss = append(ss,main);
-    defsList = unique ( defsList | scanDefs g );
+    defsList = unique ( defsList | g.cache.Filter );
     if #defsList>0 then ss=append(ss,svgDefs defsList);
     -- then autorotate button
     if animated g then (
@@ -737,7 +731,7 @@ determineSide GraphicsPoly := g -> (
     g.style#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
     )
 
-HypertextInternalLink = new Type of Hypertext -- could be useful elsewhere
+HypertextInternalLink = new Type of HypertextContainer -- could be useful elsewhere
 toString HypertextInternalLink := net HypertextInternalLink := x -> (
     -- ideally we'd use "override" to get the tag, but...
     tag := (select(x, y -> instance(y,Option) and y#0==="id"))#0#1;
@@ -747,16 +741,16 @@ toString HypertextInternalLink := net HypertextInternalLink := x -> (
 svgFilter := new MarkUpType of HypertextInternalLink
 addAttribute(svgFilter,svgAttr | {"x","y","width","height"})
 svgFilter.qname="filter"
-feGaussianBlur := new MarkUpType of Hypertext
+feGaussianBlur := new MarkUpType of HypertextParagraph
 addAttribute(feGaussianBlur,svgAttr|{"in","result","stdDeviation"})
 feGaussianBlur.qname="feGaussianBlur";
-feSpecularLighting := new MarkUpType of Hypertext
+feSpecularLighting := new MarkUpType of HypertextParagraph
 addAttribute(feSpecularLighting,svgAttr| {"result","specularExponent","lighting-color"})
 feSpecularLighting.qname="feSpecularLighting"
-fePointLight := new MarkUpType of Hypertext
+fePointLight := new MarkUpType of HypertextParagraph
 addAttribute(fePointLight,svgAttr|{"x","y","z"})
 fePointLight.qname="fePointLight"
-feComposite := new MarkUpType of Hypertext
+feComposite := new MarkUpType of HypertextParagraph
 addAttribute(feComposite,svgAttr|{"in","in2","operator","result","k1","k2","k3","k4"})
 feComposite.qname="feComposite"
 
@@ -765,8 +759,7 @@ filter = g -> (
     l := c.Light;
     p := c.PerspectiveMatrix;
     -- unrelated: pick up other filters from options (e.g., "fill"=>somegradient)
-    g.cache.Filter = (if g.cache.?Filter then g.cache.Filter else {}) -- in rare cases (e.g., axes) that Filter doesn't exist
-    | select(values g.style, y->instance(y,HypertextInternalLink));
+    c.Filter = c.Filter | select(values g.style, y->instance(y,HypertextInternalLink));
     -- now main part
     if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly)) then (
     	tag := graphicsId();
@@ -812,7 +805,7 @@ filter = g -> (
 	    	);
 	    );
     	g.cache.Options#"filter"=svgFilter opts;
-    	g.cache.Filter=append(g.cache.Filter,g.cache.Options#"filter");
+    	c.Filter=append(c.Filter,g.cache.Options#"filter");
 	)
     )
 
