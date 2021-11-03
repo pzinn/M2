@@ -8,7 +8,7 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
-        DebuggingMode => true,
+        DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text","Graphs"},
 	PackageExports => {"Text"}
@@ -17,7 +17,7 @@ newPackage(
 export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
     "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
-    "Contents", "TextContent", "HtmlContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort",
+    "Contents", "TextContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
@@ -117,7 +117,7 @@ GraphicsType List := (T,opts) -> (
 perspective = persp -> (
     if instance(persp,Matrix) then persp else (
 	if persp === () then persp = 1000;
-	matrix {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
+	matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
     -- note in particular that distance = z-p *cannot* be extracted from this;
     -- however, z/(1-z/p) is essentially inverse distance which is good enough for sorting purposes
     )
@@ -132,7 +132,7 @@ viewPort = g -> (
 
 project3d := (x,g) -> (
     y := g.cache.Owner.PerspectiveMatrix*x;
-    (1/y_3)*vector {y_0,-y_1,y_2} -- TODO absorb sign in perspective matrix
+    (1/y_3)*y
     )
 
 graphicsIdCount := 0;
@@ -190,7 +190,7 @@ gNode = true >> opts -> x -> (
     x = deepSplice x;
     ctr := x#0;
     cnt := nonnull toList drop(x,1);
-    if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
+    if any(cnt,y->not instance(y,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
     (if #cnt === 1 then if #opts === 0 then cnt#0 else new class cnt#0 from merge(cnt#0,opts,last) else GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
     )
 Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
@@ -312,7 +312,7 @@ compute (Vector,Matrix) := (v,cmat) -> cmat*v -- normal coordinates are affected
 compute (GraphicsCoordinate,Matrix) := (v,cmat) -> v.RefPointFunc cmat -- graphics coordinates aren't (they're "nodes")
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
-    { symbol RefPoint => vector {0.,0.,0.,1.}, symbol HtmlContent => null, symbol FontSize => 14. },
+    { symbol RefPoint => vector {0.,0.,0.,1.}, symbol TextContent => null, symbol FontSize => 14. },
     { "x", "y", "xmlns" => "http://www.w3.org/1999/xhtml" }
     )
 
@@ -377,18 +377,17 @@ is3d Matrix := m -> m^{2,3} != matrix {{0,0,1.,0},{0,0,0,1.}} or m_2 != vector {
 -- a bit messy: a 2d translation / rotation looks like {{c,-s,0,x},{s,c,0,y},{0,0,1,0},{0,0,1,0}}
 is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
-is3d GraphicsObject := is3d'
-is3d Ellipse := g -> is3d' g or is3d g.Center
-is3d Circle := g -> is3d' g or is3d g.Center or is3d g.Radius
-is3d GraphicsHtml :=
-is3d GraphicsText := g -> is3d' g or is3d g.RefPoint
-is3d Light := g -> true
-is3d Line := g -> is3d' g or is3d g.Point1 or is3d g.Point2
-is3d GraphicsPoly := g -> is3d' g or any(g.PointList,is3d)
+is3d GraphicsObject := g -> g.cache.Is3d = is3d'
+is3d Ellipse := g -> g.cache.Is3d = is3d' g or is3d g.Center
+is3d Circle := g -> g.cache.Is3d = is3d' g or is3d g.Center or is3d g.Radius
+is3d GraphicsText := g -> g.cache.Is3d = is3d' g or is3d g.RefPoint
+is3d Light := g -> g.cache.Is3d = true
+is3d Line := g -> g.cache.Is3d = is3d' g or is3d g.Point1 or is3d g.Point2
+is3d GraphicsPoly := g -> g.cache.Is3d = is3d' g or any(g.PointList,is3d)
 is3d Thing := x -> false
 is3d GraphicsList := l -> (
     -- the interesting one: recurse up and down
-    if is3d' l or any(l.Contents,is3d) then (
+    l.cache.Is3d = if is3d' l or any(l.Contents,is3d) then (
 	scan(l.Contents, g->g.cache.Is3d=true);
 	true
 	) else false
@@ -442,12 +441,12 @@ svg1 Ellipse := g -> (
 	);
     if is3d g then (
 	-- distance
-	g.cache.Distance=-x'_2;
+	g.cache.Distance=x'_2;
 	);
     -- viewport
-    if not instance(g,Light) or toString g.style#"opacity" != "0" then ( -- ViewPort ignores lights if invisible TODO better
+    g.cache.ViewPort = if instance(g,Light) and toString g.style#"opacity" === "0" then null else ( -- ViewPort ignores lights if invisible TODO better
 	x'=x'^{0,1};
-	g.cache.ViewPort = { x' - r, x' + r };
+	{ x' - r, x' + r }
 	);
     );
 svg1 Line := g -> (
@@ -458,7 +457,7 @@ svg1 Line := g -> (
     g.cache.ViewPort={ vector(min\p), vector(max\p) };
     if is3d g then (
 	-- distance
-	g.cache.Distance=-0.5*(p1'_2+p2'_2)
+	g.cache.Distance=0.5*(p1'_2+p2'_2)
 	)
     );
 svg1 GraphicsPoly := g -> (
@@ -476,15 +475,13 @@ svg1 GraphicsPoly := g -> (
 	);
     if is3d g then (
 	-- distance
-	g.cache.Distance = if #x1 === 0 then 0_RR else -sum(x1,y->y_2) / #x1
+	g.cache.Distance = if #x1 === 0 then 0_RR else sum(x1,y->y_2) / #x1
 	)
     );
 svg1 GraphicsText := g -> (
     (x,x'):=coord(g,symbol RefPoint,0,"x","y");
-    g.cache.Contents = if instance(g,GraphicsHtml) then (
-	c := g.HtmlContent; -- can we rename this Contents for uniformity? TODO
-	if instance(c,VisibleList) then toList c else {c}
-	) else {g.TextContent};
+    c := g.TextContent;
+    g.cache.Contents = if instance(c,VisibleList) then toList c else {c};
     -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
     scale := if is3d g then x_3/(g.cache.Owner.PerspectiveMatrix*x)_3 else 1;
     -- font size
@@ -493,7 +490,7 @@ svg1 GraphicsText := g -> (
     if is3d g then g.cache.Options#"data-fontsize"=g.FontSize;
     if is3d g then (
 	-- distance
-	g.cache.Distance=-x'_2;
+	g.cache.Distance=x'_2;
 	);
     -- view port
     x'=x'^{0,1};
@@ -650,9 +647,9 @@ new SVG from GraphicsObject := (S,g) -> (
 	    );
 	axeslabels0 := gList(
 	    -- we use GraphicsHtml here despite limitations of ForeignObject. could use GraphicsText instead
-	    GraphicsHtml { symbol RefPoint => vector {xmax*1.06,0,0,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
-	    GraphicsHtml { symbol RefPoint => vector {0,ymax*1.06,0,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
-	    if is3d g then GraphicsHtml { symbol RefPoint => vector {0,0,zmax*1.06,1}, symbol HtmlContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { symbol RefPoint => vector {xmax*1.06,0,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>0 then g.Axes#0 else local x, FontSize => 0.08*min(rr_0,rr_1)},
+	    GraphicsHtml { symbol RefPoint => vector {0,ymax*1.06,0,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>1 then g.Axes#1 else local y, FontSize => 0.08*min(rr_0,rr_1)},
+	    if is3d g then GraphicsHtml { symbol RefPoint => vector {0,0,zmax*1.06,1}, symbol TextContent => if instance(g.Axes,List) and #g.Axes>2 then g.Axes#2 else local z, FontSize => 0.08*min(rr_0,rr_1)},
 	    Perspective => p,
 	    );
 	axes=svg axes0;
@@ -779,7 +776,7 @@ filter = g -> (
 	    b := g.Blur;
 	    opts = opts | { "x" => toString(-100*b)|"%", "y" => toString(-100*b)|"%", "width" => toString(100*(1+2*b))|"%", "height" => toString(100*(1+2*b))|"%" };
 	    rng := g.cache.ViewPort; if rng =!= null then (
-    	    	drng:=rng#1-rng#0;
+		drng:=rng#1-rng#0;
     	    	r := b*min(drng_0,drng_1);
 	    	g.cache.ViewPort={rng#0-vector{r,r},rng#1+vector{r,r}}; -- a bit of a hack
 	    	opts = append(opts, feGaussianBlur { "in" => "SourceGraphic",
@@ -805,7 +802,7 @@ filter = g -> (
 		    	light = p*(light || vector {1});
 		    	opts = opts | {
 			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg.style#"fill",
-			    	fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
+				fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
 			    feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			    feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 			    	"operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
@@ -942,7 +939,7 @@ showGraph = G -> if G.cache#?"graphics" then G.cache#"graphics" else (
 		if instance(lab,GraphicsObject) then lab else (
 		    Ellipse{RadiusX=>0.5*w,RadiusY=>0.5*h,"fill"=>"white"},
 		    -- GraphicsText({(0,0),toString lab}|vgTextOpts h)
-		    GraphicsHtml{HtmlContent => DIV{lab,"style"=>"width:fit-content;width:-moz-fit-content;transform:translate(-50%,-50%)"},FontSize=>.25*sc}
+		    GraphicsHtml{TextContent => DIV{lab,"style"=>"width:fit-content;width:-moz-fit-content;transform:translate(-50%,-50%)"},FontSize=>.25*sc}
 		    ));
 	    )
 	else if first l === "graph" then (
@@ -1123,9 +1120,9 @@ multidoc ///
   Description
    Text
     Some SVG text. The location of the start of the text is given by the option RefPoint.
-    The text itself is the option TextContent (a string).
+    The text itself is the option @TT "TextContent"@ (a string or list of strings).
     The text can be "stroke"d or "fill"ed.
-    Font size should be specified with FontSize.
+    Font size should be specified with @TT "FontSize"@.
    Example
     GraphicsText{TextContent=>"Test","stroke"=>"red","fill"=>"none","stroke-width"=>0.5}
     gList(GraphicsText{[0,0],"P",FontSize=>14},GraphicsText{[7,0],"AUL",FontSize=>10})
@@ -1351,7 +1348,7 @@ multidoc ///
    Html content inside a VectorGraphics object
   Description
    Text
-    Some arbitrary HTML content, specified by the option HtmlContent (a @ TO{Hypertext} @ object or other content to render in HTML).
+    Some arbitrary HTML content, specified by the option @TT "TextContent"@ (a @ TO{Hypertext} @ object or other content to render in HTML).
   Caveat
    Due to a limitation of @TT "<foreignObject>"@, coordinates are rounded to the nearest integer. So use large enough coordinate systems.
  Node
@@ -1393,6 +1390,10 @@ multidoc ///
     a=gNode([-1,-1],Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"})
     b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black",Draggable=>true})
     gList(Line{a,b},a,b)
+   Text
+    Dragging acts recursively:
+   Example
+    l=null; scan(5,i->l=gNode([100,0],l,Circle{"fill"=>"red"},Draggable=>true)); l++{Margin=>1}
  Node
   Key
    place
@@ -1470,7 +1471,7 @@ multidoc ///
     digraph select(b**b,a->a#1 % a#0 == 0 and first degree a#1 == first degree a#0 +1)
 ///
 undocumented {
-    Contents, TextContent, HtmlContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
+    Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsAncestor), (html,GraphicsObject), (net,GraphicsAncestor), (toString,GraphicsAncestor), (short,GraphicsObject),
     (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
@@ -1548,9 +1549,9 @@ p=random splice{0..11};
 
 -- icosahedron
 vertices={vector{0.,0.,-95.1057},vector{0.,0.,95.1057},vector{-85.0651,0.,-42.5325},vector{85.0651,0.,42.5325},vector{68.8191,-50.,-42.5325},vector{68.8191,50.,-42.5325},vector{-68.8191,-50.,42.5325},vector{-68.8191,50.,42.5325},vector{-26.2866,-80.9017,-42.5325},vector{-26.2866,80.9017,-42.5325},vector{26.2866,-80.9017,42.5325},vector{26.2866,80.9017,42.5325}};
-faces={{1,11,7},{1,7,6},{1,6,10},{1,10,3},{1,3,11},{4,8,0},{5,4,0},{9,5,0},{2,9,0},{8,2,0},{11,9,7},{7,2,6},{6,8,10},{10,4,3},{3,5,11},{4,10,8},{5,3,4},{9,11,5},{2,7,9},{8,6,2}};
+faces=({1,11,7},{1,7,6},{1,6,10},{1,10,3},{1,3,11},{4,8,0},{5,4,0},{9,5,0},{2,9,0},{8,2,0},{11,9,7},{7,2,6},{6,8,10},{10,4,3},{3,5,11},{4,10,8},{5,3,4},{9,11,5},{2,7,9},{8,6,2});
 icosa=apply(faces,f->Polygon{apply(f,j->vertices#j),"fill"=>"gray","stroke"=>"none"});
-i=gList(toSequence icosa,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
+i=gList(icosa,Draggable=>true,TransformMatrix=>matrix{{0.7,0,0,0},{0,0.7,0,0},{0,0,0.7,0},{0,0,0,1}})
 
 rnd = () -> random(-1.,1.); cols={"red","green","blue","yellow","magenta","cyan"};
 gList(i, apply(toSequence cols, c -> Light{100*vector{1.5+rnd(),rnd(),rnd()},Radius=>10,"opacity"=>1,"fill"=>c,Specular=>20,AnimMatrix=>rotation(0.02,[rnd(),rnd(),rnd()])}),ViewPort=>{vector{-200,-200},vector{200,200}},Size=>40)
