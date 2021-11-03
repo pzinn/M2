@@ -125,33 +125,15 @@ perspective = persp -> (
 
 viewPort = g -> (
     svg g; -- need to be rendered
-    g.cache.ViewPort
+    v := g.cache.ViewPort;
+    {vector{v#0_0,-v#1_1},vector{v#1_0,-v#0_1}} -- annoying sign
     )
-viewPort1 := method() -- returns [xmin,ymin],[xmax,ymax]
-viewPort1 GraphicsObject := x -> null
 
---distance = method() -- already defined by Graphs TODO clarify this mess
-distance GraphicsObject := x -> 0_RR
-
--- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context TODO retire
-scale := (x,g) -> x_3/(g.cache.Owner.PerspectiveMatrix*x)_3
 
 project3d := (x,g) -> (
     y := g.cache.Owner.PerspectiveMatrix*x;
-    (1/y_3)*y^{0,1,2} -- used for e.g. ViewPort and distance
-    )
-project2d := (x,g) -> (
-    y := project3d(x,g);
-    vector {y_0,y_1}
-)
-project3d' := (x,g) -> (
-    y := g.cache.Owner.PerspectiveMatrix*x;
     (1/y_3)*vector {y_0,-y_1,y_2} -- TODO absorb sign in perspective matrix
     )
-project2d' := (x,g) -> (
-    y := project3d(x,g);
-    vector {y_0,-y_1} -- annoying sign for actual svg coords
-)
 
 graphicsIdCount := 0;
 graphicsId := () -> (
@@ -174,67 +156,19 @@ Ellipse = new GraphicsType of GraphicsObject from ( "ellipse",
     { symbol Center => vector {0.,0.,0.,1.}, symbol RadiusX => 50., symbol RadiusY => 50. },
     { "rx", "ry", "cx", "cy" }
     )
-viewPort1 Ellipse := g -> (
-    p := compute(g.Center,g.cache.CurrentMatrix);
-    sc := scale(p,g);
-    p=project2d(p,g);
-    rx:=g.RadiusX*sc;
-    ry:=g.RadiusY*sc;
-    r := vector {rx,ry};
-    { p-r, p+r }
-    )
-distance Ellipse := g -> (
-    )
 
 Circle = new GraphicsType of Ellipse from ( "circle",
     { symbol Center => vector {0.,0.,0.,1.}, symbol Radius => 50. },
     { "r", "cx", "cy" }
     )
-viewPort1 Circle := g -> (
-    p := compute(g.Center,g.cache.CurrentMatrix);
-    if instance(g.Radius,Number) then (
-    	sc := scale(p,g);
-    	r:=g.Radius*sc;
-    	p=project2d(p,g);
-	) else (
-    	p=project2d(p,g);
-	pp:=project2d(compute(g.Radius,g.cache.CurrentMatrix),g)-p;
-	r=sqrt(pp_0^2+pp_1^2);
-	);
-    r = vector {r,r};
-    { p - r, p + r }
-    )
-
 
 GraphicsText = new GraphicsType of GraphicsObject from ( "text",
     { symbol RefPoint => vector {0.,0.,0.,1.}, symbol TextContent => "", symbol FontSize => 14. },
     { "x", "y" }
     )
-viewPort1 GraphicsText := g -> (
-    f := g.FontSize;
-    p := compute(g.RefPoint,g.cache.CurrentMatrix);
-    sc := scale(p,g);
-    p=project2d(p,g);
-    f=f*sc;
-    r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
-    pp := p + vector {
-	if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
-	};
-    {pp,pp+r}
-    )
-
 Line = new GraphicsType of GraphicsObject from ( "line",
     { Point1 => vector {0.,0.,0.,1.}, Point2 => vector {50.,50.,0.,1.}},
     { "x1", "y1", "x2", "y2" }
-    )
-viewPort1 Line := g -> (
-    p1 := project2d(compute (g.Point1,g.cache.CurrentMatrix),g);
-    p2 := project2d(compute (g.Point2,g.cache.CurrentMatrix),g);
-    p := transpose{entries p1,entries p2};
-    { vector(min\p), vector(max\p) }
-    )
-distance Line := g -> (
     )
 
 GraphicsPoly = new Type of GraphicsObject;
@@ -242,12 +176,6 @@ GraphicsPoly = new Type of GraphicsObject;
 Polyline = new GraphicsType of GraphicsPoly from ( "polyline", { symbol PointList => {} }, { "points" } )
 Polygon = new GraphicsType of GraphicsPoly from ( "polygon", { symbol PointList => {} }, { "points" } )
 Path = new GraphicsType of GraphicsPoly from ( "path", { symbol PointList => {} }, { "d" } )
-viewPort1 GraphicsPoly := g -> ( -- relative coordinates *not* supported, screw this
-    s := select(g.PointList, x -> not instance(x,String));
-    if #s == 0 then return null;
-    s = transpose apply(s, x -> entries project2d(compute(x,g.cache.CurrentMatrix),g));
-    {vector(min\s), vector(max\s)}
-    )
 
 -- to make lists of them
 GraphicsList = new GraphicsType of GraphicsObject from ( "g", { symbol Contents => {} } )
@@ -256,15 +184,6 @@ gList = true >> opts -> x -> (
     cnt := nonnull toList deepSplice if instance(x,List) then toSequence x else sequence x;
     if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
     GraphicsList { symbol Contents => cnt, opts }
-)
-viewPort1 GraphicsList := x -> (
-    s := nonnull apply(x.Contents, y->y.cache.ViewPort);
-    if #s===0 then null else (
-	s = transpose s;
-	mn := transpose (entries \ s#0);
-	mx := transpose (entries \ s#1);
-	{vector (min\mn), vector(max\mx)}
-    )
 )
 -- lists with preferred coordinate
 gNode = true >> opts -> x -> (
@@ -396,10 +315,6 @@ GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { symbol RefPoint => vector {0.,0.,0.,1.}, symbol HtmlContent => null, symbol FontSize => 14. },
     { "x", "y", "xmlns" => "http://www.w3.org/1999/xhtml" }
     )
-viewPort1 GraphicsHtml := g -> (
-    p := project2d(compute (g.RefPoint,g.cache.CurrentMatrix),g);
-    { p, p } -- TODO properly
-    )
 
 -- lighting
 Light = new GraphicsType of Circle from ( "circle",
@@ -408,8 +323,6 @@ Light = new GraphicsType of Circle from ( "circle",
     )
 -- in case it's drawn, it's a circle
 
--- viewPort1 ignores lights if invisible
-viewPort1 Light := g -> if toString g.style#"opacity" == "0" then null else (lookup(viewPort1,Circle)) g -- that opacity test sucks
 
 
 --
@@ -486,7 +399,7 @@ coord = (g,name,ind,labx,laby) -> (
     x := g#name;
     if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",ind,x);
     x=compute(x,g.cache.CurrentMatrix);
-    x' := project3d'(x,g);
+    x' := project3d(x,g);
     g.cache.Options#labx = x'_0;
     g.cache.Options#laby = x'_1;
     (x,x')
@@ -507,7 +420,7 @@ svg1 Ellipse := g -> (
 		);
 	    ) else (
 	    if is3d g or instance(r,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,r);
-	    y:=project3d'(compute(r,g.cache.CurrentMatrix),g)-x';
+	    y:=project3d(compute(r,g.cache.CurrentMatrix),g)-x';
 	    r=sqrt(y_0^2+y_1^2);
 	    );
 	g.cache.Options#"r" = r;
@@ -532,8 +445,10 @@ svg1 Ellipse := g -> (
 	g.cache.Distance=-x'_2;
 	);
     -- viewport
-    x'=x'^{0,1};
-    g.cache.ViewPort = { x' - r, x' + r };
+    if not instance(g,Light) or toString g.style#"opacity" != "0" then ( -- ViewPort ignores lights if invisible TODO better
+	x'=x'^{0,1};
+	g.cache.ViewPort = { x' - r, x' + r };
+	);
     );
 svg1 Line := g -> (
     (p1,p1'):=coord(g,symbol Point1,0,"x1","y1");
@@ -550,7 +465,7 @@ svg1 GraphicsPoly := g -> (
     x := g.PointList;
     x1 := select(x,y->not instance(y,String));
     if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
-    x1 = apply(x1,y->project3d'(compute(y,g.cache.CurrentMatrix),g));
+    x1 = apply(x1,y->project3d(compute(y,g.cache.CurrentMatrix),g));
     i:=-1;
     s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{toString x1#i_0,toString x1#i_1}) else y));
     if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
@@ -567,25 +482,30 @@ svg1 GraphicsPoly := g -> (
 svg1 GraphicsText := g -> (
     (x,x'):=coord(g,symbol RefPoint,0,"x","y");
     g.cache.Contents = if instance(g,GraphicsHtml) then (
-	c := g.HtmlContent; -- can we rename this Contents for uniformity?
+	c := g.HtmlContent; -- can we rename this Contents for uniformity? TODO
 	if instance(c,VisibleList) then toList c else {c}
 	) else {g.TextContent};
     -- bit of a hack: 2d objects Circle, Ellipse, etc get scaled in a 3d context
     scale := if is3d g then x_3/(g.cache.Owner.PerspectiveMatrix*x)_3 else 1;
     -- font size
-    if g.?FontSize then (
-	f:=max(0,g.FontSize*scale);
-	g.style#"font-size" = toString f|"px";
-	if is3d g then g.cache.Options#"data-fontsize"=g.FontSize;
-	);
-    -- view port
+    f:=max(0,g.FontSize*scale);
+    g.style#"font-size" = toString f|"px";
+    if is3d g then g.cache.Options#"data-fontsize"=g.FontSize;
     if is3d g then (
 	-- distance
 	g.cache.Distance=-x'_2;
 	);
+    -- view port
     x'=x'^{0,1};
-    g.cache.ViewPort = { x', x' }; -- TEMP
-    );
+    g.cache.ViewPort = if instance(g,GraphicsHtml) then { x', x' } else ( -- TEMP
+	r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
+	x' = x' + vector {
+	    if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
+	    if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	    };
+	{x',x'+r}
+	);
+    )
 svg1 GraphicsList := g -> (
     x:=g.Contents;
     g.cache.Contents = if is3d g then (
@@ -606,27 +526,6 @@ svg1 GraphicsList := g -> (
 	);
     );
 
-svgLookup := hashTable {
-    symbol RadiusX => (g,x) -> (
-	if is3d g then (
-	    p := compute(g.Center,g.cache.CurrentMatrix);
-	    sc := scale(p,g);
-	    r := x *sc;
-	    g.cache.Options#"data-rx"=x;
-	    ) else r = x;
-	g.cache.Options#"rx" = r;
-	),
-    symbol RadiusY => (g,x) -> (
-	if is3d g then (
-	    p := compute(g.Center,g.cache.CurrentMatrix);
-	    sc := scale(p,g);
-	    r := x *sc;
-	    g.cache.Options#"data-ry"=x;
-	    ) else r = x;
-	g.cache.Options#"ry" = r;
-	),
-    }
-
 -- produces SVG element hypertext
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     g.cache.Filter={}; -- clean up filters from past
@@ -646,7 +545,6 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	);
     if is3d g then (
 	if g.?OneSided and g.OneSided then determineSide g;
---    	g.cache.Distance = distance g; -- update the distance TODO bundle with svg1
 	);
 --    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better see above
     if g.?TransformMatrix then g.cache.Options#"data-matrix" = g.TransformMatrix;
@@ -692,18 +590,7 @@ short GraphicsObject := g -> (
     if s<shortSize then hold g else hold(g++{Size=>shortSize})
     )
 
-distance GraphicsPoly := g -> (
-    s := select(g.PointList, x -> not instance(x,String));
-    if #s == 0 then 0_RR else -sum(s,x->(project3d(compute(x,g.cache.CurrentMatrix),g))_2) / #s
-    )
-distance GraphicsList := g -> (
-    if #(g.Contents) == 0 then 0_RR else sum(g.Contents, x->x.cache.Distance) / #(g.Contents)
-    )
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
-distance GraphicsText := g -> (
-    y := compute(g.RefPoint,g.cache.CurrentMatrix);
-    -y_2/y_3
-    )
 
 -- defs
 svgDefs = new MarkUpType of Hypertext
