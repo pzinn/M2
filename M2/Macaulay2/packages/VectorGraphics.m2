@@ -131,7 +131,9 @@ viewPort = g -> (
 
 
 project3d := (x,g) -> (
+    if x_3<0 then x=-x; -- shouldn't happen
     y := g.cache.Owner.PerspectiveMatrix*x;
+    if y_3<0 then ( g.style#"visibility"="hidden"; return vector{0.,0.,0.,0.}; );
     (1/y_3)*y
     )
 
@@ -539,9 +541,8 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	is3d g; -- TODO better to force 3d state of children to be determined
 	scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
 	);
-    if is3d g then (
-	if g.?OneSided and g.OneSided then determineSide g;
-	);
+    remove(g.style,"visibility"); -- reset visibility status
+    if g.?OneSided and g.OneSided then determineSide g;
 --    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better see above
     if g.?TransformMatrix then g.cache.Options#"data-matrix" = g.TransformMatrix;
     if g.?AnimMatrix then g.cache.Options#"data-dmatrix" = g.AnimMatrix;
@@ -551,7 +552,7 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	g.style#"overflow"="visible"; -- makes width/height irrelevant
 	g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
 	g.style#"height"="100%";
-	)
+	);
     )
 
 svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
@@ -725,10 +726,9 @@ determineSide GraphicsPoly := g -> (
     -- find first 3 coords
     coords := select(g.PointList, x -> not instance(x,String));
     if #coords<3 then ( remove(g.cache,Filter); return; );
-    coords=apply(take(coords,3),x->compute(x,g.cache.CurrentMatrix));
-    coords = apply(coords, x -> (1/x_3)*x^{0,1});
+    coords=apply(take(coords,3),x->project3d(compute(x,g.cache.CurrentMatrix),g));
     coords = {coords#1-coords#0,coords#2-coords#0};
-    g.style#"visibility" = if coords#0_0*coords#1_1-coords#0_1*coords#1_0 < 0 then "hidden" else "visible";
+    if coords#0_0*coords#1_1-coords#0_1*coords#1_0 > 0 then g.style#"visibility" =  "hidden";
     )
 
 HypertextInternalLink = new Type of HypertextContainer -- could be useful elsewhere
