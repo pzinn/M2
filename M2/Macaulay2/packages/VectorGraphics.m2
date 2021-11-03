@@ -138,7 +138,7 @@ project3d := (x,g) -> (
 graphicsIdCount := 0;
 graphicsId := () -> (
     graphicsIdCount=graphicsIdCount+1;
-    "Graphics_" | toString processID() | "_" | toString graphicsIdCount
+    "gfx_" | toString processID() | "_" | toString graphicsIdCount
     )
 
 svgElement := method(Dispatch=>Type) -- to each GraphicsType is assigned a svg MarkupType
