@@ -552,6 +552,7 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	g.style#"overflow"="visible"; -- makes width/height irrelevant
 	g.style#"width"="100%"; -- -- but still needed otherwise webkit won't render
 	g.style#"height"="100%";
+	g.style#"pointer-events"="none"; -- since it takes the whole space, need to kill click event
 	);
     )
 
