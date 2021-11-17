@@ -110,7 +110,7 @@ texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L==0 t
 texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
 texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
 texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
-texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\,", "\\}")
+texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\:", "\\}")
 texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\{", L, ",\\,", "\\}"))
 texMathMutable := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots", "\\right\\}")
 texMath MutableList  := texMathMutable
@@ -121,6 +121,11 @@ texMath HashTable := H -> if H.?texMath then H.texMath else (
     else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
 
 texMath Function := f -> texMath toString f
+
+texMath ZZ := n -> (
+    s := simpleToString n;
+    demark("\\,",pack(3,characters (pad(3*(1+(#s-1)//3),s))))
+    )
 
 --     \rm     Roman
 --     \sf     sans-serif
