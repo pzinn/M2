@@ -22,7 +22,7 @@ myget = memoize(x -> first(
 	))
 
 puzzleOpts := opts ++ {Steps => null, Kinv => false, Labels => true, Paths => false};
-export {"Steps", "Kinv", "Size", "Labels", "Paths"}; -- move to main file
+export {"Steps", "Kinv", "Length", "Labels", "Paths"}; -- move to main file
 -- lots of global variables, not thread-safe!
 protect Separation;
 upTriangles=downTriangles=rhombi={};
@@ -64,7 +64,7 @@ tiles := o -> (
         )
     )
 
-new List from Puzzle := (T,p) -> apply(p.Size,i->apply(p.Size-i,j->apply(3,k->p#(i,j,k))));
+new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k->p#(i,j,k))));
 
 net Puzzle := p -> netList(applyTable(new List from p, a -> netList({{,a#0},{a#1,a#2}},HorizontalSpace=>1,Boxes=>false)),HorizontalSpace=>2,VerticalSpace=>1,Boxes=>false)
 
@@ -77,7 +77,7 @@ cols:={"red","green","blue","yellow","magenta","cyan"};
 strk:=0.07;
 
 vg = p -> gList toSequence (
-    n:=p.Size;
+    n:=p.Length;
     flatten apply(n, i -> flatten apply(n-i, j -> (
                 a := p#(i,j,0);
                 b := p#(i,j,1);
@@ -174,7 +174,7 @@ initPuzzle = true >> o -> args -> (
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
     separated := any(join args, s -> s===" ");
-    new Puzzle from pairs o | { Size=>n,
+    new Puzzle from pairs o | { Length=>n,
 	if separated then Separation => 1 + max flatten apply(args#1,ascii) - 48,
         if o.Steps === null then Steps => max flatten apply(join args,ascii) - 48
         } | flatten flatten apply(n, i ->
@@ -190,7 +190,7 @@ initPuzzle = true >> o -> args -> (
 puzzle = puzzleOpts >> o -> args -> (
     if not instance(args,Puzzle) and (not instance(args,Sequence) or #args<2 or #args>3) then error "wrong number of arguments";
     puz0 := if instance(args,Sequence) then initPuzzle(args,o) else args ++ pairs o;
-    n := puz0.Size;
+    n := puz0.Length;
     d := puz0.Steps;
     if d<0 then error "Please specify Steps or at least one digit";
     tiles puz0;

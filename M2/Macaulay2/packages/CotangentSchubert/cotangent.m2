@@ -192,7 +192,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
         );
     if curCotOpts#Presentation === Borel then (
 	y := getSymbol "y";
-	BB0 := FF(monoid[y_1..y_n,DegreeRank=>if curCotOpts.Kth then 0 else 1]); -- in terms of Chern roots
+	BB0 := FF(monoid[y_1..y_n,if not curCotOpts.Kth then MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>if curCotOpts.Kth then 0 else 1]); -- in terms of Chern roots
 	J := ideal apply(1..n,k->elem(k,gens BB0)
             -if curCotOpts.Equivariant then elem(k,drop(gens FF,1)) else if curCotOpts.Kth then binomial(n,k) else 0);
 	BB := BB0/J; lastSetup=BB;
@@ -200,10 +200,12 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
 	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
 	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
-	R1 := FF monoid new Array from append(v\inds, Degrees=>splice apply(d+1,i->1..dimdiffs#i));
+	args := append(v\inds, Degrees=>splice apply(d+1,i->1..dimdiffs#i));
+--	if not curCotOpts.Kth then args = append(args, MonomialOrder=>{Weights=>{#inds:1},RevLex});
+	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	chernClass (ZZ,ZZ,AA) := (j,i,AA) -> v (j,i);
+	chernClass (ZZ,ZZ,AA) := (j,i,AA) -> AA_(dims#i+j-1);
 	chernClass (ZZ,ZZ,BB) := (j,i,BB) -> e (j,i);
 	promoteFromMap(AA,BB,f*map(R1,AA));
 	-- reverse transformation
@@ -292,7 +294,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    nzpf = 0;
 	    pfsign = 1;
 	    ) else (
-	    -- should be product of det line bundles ^ dims of flags i.e.: product(1..d,i->chernClass_(dimdiffs#i,i)^(dims#i));
+	    -- should be product of det line bundles ^ dims of flags i.e.: product(1..d,i->chernClass(dimdiffs#i,i)^(dims#i));
 	    degs := flatten last degrees basis AA;
 	    nzpf = position(degs, d -> d == max degs);
 	    pfsign = (-1)^(sum(1..d,i->dims#i*dimdiffs#i));
@@ -359,7 +361,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	lastSetup = D;
 	(D,FF,I)
     ) else error "Unknown presentation"
-    )
+)
 
 -- the methods below are defined for appropriate rings by setup
 -- the defs below are just placeholders (try to promote to latest) or apply-type
