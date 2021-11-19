@@ -10,7 +10,7 @@ fug = matrix { { 1,0,0 },
 fugacityH = p -> ( -- equivariant H
     states3:=makeStates 3;
     ind := x -> position(states3,y->y===x);
-    n:=p.Size;
+    n:=p.Length;
     defineFH n;
     product(n-1, i -> product(n-1-i, j -> (
                 X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0);
@@ -28,7 +28,7 @@ q:=FK_0_0; zbar:=FK_-1_1;
 --
 fugacityK = p -> (
     d:=p.Steps;
-    n:=p.Size;
+    n:=p.Length;
     if p#?Separation then (
 	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
 			else if a>=p#Separation and b<p#Separation then -q^(-1) else -q; -- probably wrong needs more checks
@@ -81,7 +81,7 @@ fugacity = true >> o -> p -> (
     )
 
 bottom = p -> (
-    L := apply(p.Size,i->p#(p.Size-1-i,i,2));
+    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
     new AryString from apply(L, x -> if #x === 1 then value x else x)
     )
 
