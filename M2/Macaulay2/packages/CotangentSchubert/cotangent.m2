@@ -94,6 +94,8 @@ new DiagonalAlgebra from Module := (X,M) -> (
     D - Number := D - RingElement := (v,x) -> v - new D from x;
     Number - D := RingElement - D := (x,v) -> - v + new D from x;
     D == Vector := Vector == D := (x,y) -> x#0 == y#0;
+    D == Number := (x,n) -> x == new D from n;
+    Number == DD := (n,x) -> x == new D from n;
     D)
 ring DiagonalAlgebra := D -> ring D.Module;
 rank DiagonalAlgebra := D -> rank D.Module;
@@ -192,7 +194,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
         );
     if curCotOpts#Presentation === Borel then (
 	y := getSymbol "y";
-	BB0 := FF(monoid[y_1..y_n,if not curCotOpts.Kth then MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>if curCotOpts.Kth then 0 else 1]); -- in terms of Chern roots
+	BB0 := FF(monoid(splice[y_1..y_n, if curCotOpts.Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
 	J := ideal apply(1..n,k->elem(k,gens BB0)
             -if curCotOpts.Equivariant then elem(k,drop(gens FF,1)) else if curCotOpts.Kth then binomial(n,k) else 0);
 	BB := BB0/J; lastSetup=BB;
@@ -202,7 +204,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
 	degs := splice apply(d+1,i->1..dimdiffs#i);
 	args := append(v\inds, Degrees=>degs);
-	if not curCotOpts.Kth then args = append(args, MonomialOrder=>{Weights=>degs,RevLex});
+	wgts := apply(splice apply(d+1,i->reverse(dims#i..dims#(i+1)-1)),i->Weights=>apply(#inds,j->if j==i then -1 else 0));
+	if not curCotOpts.Kth then args = append(args, MonomialOrder=>prepend(Weights=>degs,wgts)); -- a sort of GRevLex but with different ordering of variables
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
@@ -233,16 +236,16 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		V:=BB^(d+1);
 		W:=V^**n;
 		Z:=map(BB^1,W,{{rank W-1:0,1}});
-		scan(n,i->(
+		scan(reverse(0..dims#d-1),i->( -- not 0..n-1: slight optimization: don't do trivial rows
 			T:=map(V^**(n+1),V^**(n+1),1);
 			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (FF_0,
-					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_(n-1-i))
+					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i)
 				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
 			--print i;
-			Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
+			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
 			--print Z;
 			));
-		scan(n,i->scan(n,j-> Z = Z*(Rcden(FF_0,
+		scan(dims#d,i->scan(n,j-> Z = Z*(Rcden(FF_0,
 				if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i))^(-1)));
 		inds := ind \ I;
 		Z_inds
@@ -261,13 +264,13 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		V:=BB^(d+1);
 		W:=V^**n;
 		Z:=map(BB^1,W,{{rank W-1:0,1}});
-		scan(n,i->(
+		scan(reverse(0..dims#d-1),i->( -- not 0..n-1: slight optimization: don't do trivial rows
 			T:=map(V^**(n+1),V^**(n+1),1);
 			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcz (FF_0,
-					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_(n-1-i))
+					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i)
 				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
 			--print i;
-			Z=Z*submatrix(T,{(rank W)*ω_(n-1-i)..(rank W)*(ω_(n-1-i)+1)-1},apply(rank W,i->i*(d+1)+d));
+			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
 			--print Z;
 			));
 		inds := ind \ I;
@@ -290,19 +293,15 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	-- pushforwards
 	-- find element whose pushforward is nonzero
 	local nzpf; -- index of nonzero pushforward basis element
-	local pfsign;
 	if curCotOpts.Kth then (
 	    nzpf = 0;
-	    pfsign = 1;
 	    ) else (
-	    -- with normal ordering: product of det line bundles ^ dims of flags product(1..d,i->chernClass(dimdiffs#i,i)^(dims#i));
-	    -- with reverse ordering: ??? -> sign?
-	    degs := flatten last degrees basis AA;
-	    nzpf = position(degs, d -> d == max degs);
-	    pfsign = (-1)^(sum(1..d,i->dims#i*dimdiffs#i));
+	    -- with normal ordering: product of det line bundles ^ dims of flags product(1..d,i->chernClass(dimdiffs#i,i)^(dims#i))
+	    -- with reverse ordering: product(1..d,i->chernClass(dimdiffs#i,i)^(codims#i)) where codim#i = last dims - dims#i
+	    nzpf = maxPosition flatten last degrees basis AA; -- we locate it by max degree
 	    );
 	pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
-	pushforwardToPoint AA := a -> pfsign*(basisCoeffs a)_(nzpf,0);
+	pushforwardToPoint AA := a -> (basisCoeffs a)_(nzpf,0);
 	pushforwardToPointFromCotangent BB := b -> pushforwardToPoint (zeroSectionInv BB * b);
 	pushforwardToPointFromCotangent AA := a -> pushforwardToPoint (zeroSectionInv AA * a);
 	--
