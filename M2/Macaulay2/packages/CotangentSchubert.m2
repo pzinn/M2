@@ -24,6 +24,47 @@ load "CotangentSchubert/puzzles.m2";
 
 beginDocumentation()
 multidoc ///
+ Node
+  Key
+   CotangentSchubert
+  Headline
+   A package for contangent Schubert calculus
+  Description
+   Text
+    @BOLD "CotangentSchubert"@ is a package for calculations in cotangent Schubert calculus.
+    Spectifically, it allows to compute Chern and Segre motivic classes (as well as their limits in ordinary
+    Schubert calculus, namely Schubert classes), and to independently compute the expansion of their products
+    using puzzles.
+ Node
+  Key
+   setupCotangent
+  Headline
+   Set up cotangent Schubert calculus rings
+ Node
+  Key
+   segreClasses
+  Headline
+   Compute Segre motivic classes
+ Node
+  Key
+   schubertClasses
+  Headline
+   Compute Schubert classes
+ Node
+  Key
+   puzzle
+  Headline
+   Compute puzzles with given boundaries
+ Node
+  Key
+   pushforwardToPoint
+  Headline
+   Push forward classes to a point
+ Node
+  Key
+   pushforwardToPointFromCotangent
+  Headline
+   Push forward classes to a point from the cotangent bundle
 ///
 end
 

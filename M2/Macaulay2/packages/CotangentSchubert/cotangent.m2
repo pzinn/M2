@@ -1,4 +1,4 @@
-export {"setupCotangent", "chernClass",
+export {"setupCotangent", "tautClass",
     "segreClasses","segreClass",
     "schubertClasses","schubertClass",
     "restrict", "fullToPartial", "basisCoeffs",
@@ -130,9 +130,9 @@ addLastSetup(schubertClasses);
 schubertClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(schubertClass);
 
--- rename tautClass to avoid confusion with motivic classes?
-chernClass = method(Dispatch=>{Thing,Thing,Type});
-addLastSetup2(chernClass);
+-- "Chern classes" -- renamed tautClass to avoid confusion with motivic classes
+tautClass = method(Dispatch=>{Thing,Thing,Type});
+addLastSetup2(tautClass);
 
 -- for internal use
 weights = method(Dispatch=>{Type})
@@ -209,8 +209,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	chernClass (ZZ,ZZ,AA) := (j,i,AA) -> AA_(dims#i+j-1);
-	chernClass (ZZ,ZZ,BB) := (j,i,BB) -> e (j,i);
+	tautClass (ZZ,ZZ,AA) := (j,i,AA) -> AA_(dims#i+j-1);
+	tautClass (ZZ,ZZ,BB) := (j,i,BB) -> e (j,i);
 	promoteFromMap(AA,BB,f*map(R1,AA));
 	-- reverse transformation
 	fullToPartial FF :=
@@ -296,8 +296,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	if curCotOpts.Kth then (
 	    nzpf = 0;
 	    ) else (
-	    -- with normal ordering: product of det line bundles ^ dims of flags product(1..d,i->chernClass(dimdiffs#i,i)^(dims#i))
-	    -- with reverse ordering: product(1..d,i->chernClass(dimdiffs#i,i)^(codims#i)) where codim#i = last dims - dims#i
+	    -- with normal ordering: product of det line bundles ^ dims of flags product(1..d,i->tautClass(dimdiffs#i,i)^(dims#i))
+	    -- with reverse ordering: product(1..d,i->tautClass(dimdiffs#i,i)^(codims#i)) where codim#i = last dims - dims#i
 	    nzpf = maxPosition flatten last degrees basis AA; -- we locate it by max degree
 	    );
 	pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
@@ -354,8 +354,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) }));
 	    );
-	-- Chern classes
-	chernClass (ZZ,ZZ,D) := (j,i,AA) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
+	-- Chern classes of tautological bundles
+	tautClass (ZZ,ZZ,D) := (j,i,AA) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
 	-- pushforward to point
 	pushforwardToPoint D  := m -> ((weights D)*m)_0;
 	pushforwardToPointFromCotangent D  := m -> ((cotweights D)*m)_0;
