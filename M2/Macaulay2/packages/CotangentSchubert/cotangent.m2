@@ -49,9 +49,9 @@ FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really
 FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
 promoteFromMap(FK_0,FK_-1);
 
-ℏ := getSymbol "ℏ"; xbar := getSymbol "xbar";
-FH_-1 = frac(factor(ZZ (monoid[ℏ,xbar]))); -- same as FH_1, really but diff variable name
-FH_0 = frac(factor(ZZ (monoid[ℏ])));
+h := getSymbol "h"; xbar := getSymbol "xbar";
+FH_-1 = frac(factor(ZZ (monoid[h,xbar]))); -- same as FH_1, really but diff variable name
+FH_0 = frac(factor(ZZ (monoid[h])));
 promoteFromMap(FH_0,FH_-1);
 
 defineFK = n -> (
@@ -65,8 +65,8 @@ defineFK = n -> (
 
 defineFH = n -> (
     if not FH#?n then (
-        x := getSymbol "x"; -- ℏ := getSymbol "ℏ";
-        FH_n = frac(factor(ZZ (monoid[ℏ,x_1..x_n])));
+        x := getSymbol "x"; -- h := getSymbol "h";
+        FH_n = frac(factor(ZZ (monoid[h,x_1..x_n])));
         promoteFromMap(FH_0,FH_n);
         );
     FH_n
@@ -175,16 +175,16 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	Rcz := (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2*z1^(-1)}))Rcz0;
 	) else (
 	FF = if curCotOpts#Equivariant then defineFH n else FH_0;
-	V1=FH_-1^(d+1); ℏ:=FH_-1_0; xbar:=FH_-1_1;
+	V1=FH_-1^(d+1); h:=FH_-1_0; xbar:=FH_-1_1;
 	Rcnum0=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
-		if i==j then (i*(d+2),i*(d+2))=>ℏ-xbar
+		if i==j then (i*(d+2),i*(d+2))=>h-xbar
 		else ((i*(d+1)+j,j*(d+1)+i)=>xbar,
-                    (i*(d+1)+j,i*(d+1)+j)=>ℏ)));
+                    (i*(d+1)+j,i*(d+1)+j)=>h)));
 	Rcz0=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
 		if i==j then (i*(d+2),i*(d+2))=>1
 		else ((i*(d+1)+j,j*(d+1)+i)=>if i<j then xbar else 0,
                     (i*(d+1)+j,i*(d+1)+j)=>1)));
-	Rcden0=ℏ-xbar;
+	Rcden0=h-xbar;
 	Rc0 = 1/Rcden0 * Rcnum0;
 	-- TODO rewrite next 4 statements better. also do we need hh???
 	Rc = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rc0;

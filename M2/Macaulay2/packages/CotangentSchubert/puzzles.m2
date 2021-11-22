@@ -170,7 +170,10 @@ Puzzle == Puzzle := (p,q) -> (new List from p) == (new List from q)
 
 initPuzzle = true >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
-    args = apply(args, a -> apply(if instance(a,String) then characters a else apply(a,toString),c->replace("_"," ",c)));
+    args = apply(args, a -> apply(if instance(a,String) then characters a
+	    else if instance(a,VisibleList) then apply(a,toString) else error "wrong arguments",
+	    c->replace("_"," ",c)
+	    ));
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
     separated := any(join args, s -> s===" ");
