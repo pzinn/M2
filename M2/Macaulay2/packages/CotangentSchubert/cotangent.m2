@@ -1,13 +1,21 @@
-export {"setupCotangent", "tautClass",
-    "segreClasses","segreClass",
+export {
+    "setupCotangent", "tautClass",
+    "segreClasses","segreClass","segreClasses'","segreClass'",
     "schubertClasses","schubertClass",
     "restrict", "fullToPartial", "basisCoeffs",
     "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection",
-    "Presentation", "Borel", "EquivLoc"};
+    "Presentation", "Borel", "EquivLoc",
+    "inversion"
+    };
 
 cotOpts := opts ++ { Presentation => EquivLoc }
 
 debug Core -- to use basering, generatorSymbols, frame
+
+-- inversion number of a string
+inversion = method()
+inversion VisibleList := p -> sum(#p-1,i->sum(i+1..#p-1,j->if p_i>p_j then 1 else 0))
+inversion String := inversion @@ toList
 
 -- a simple function that seems like it should already exist
 basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
@@ -123,6 +131,12 @@ addLastSetup(segreClasses);
 
 segreClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(segreClass);
+
+segreClasses' = method(Dispatch=>{Type})
+addLastSetup(segreClasses');
+
+segreClass' = method(Dispatch=>{Thing,Type})
+addLastSetup1(segreClass');
 
 schubertClasses = method(Dispatch=>{Type})
 addLastSetup(schubertClasses);
@@ -251,6 +265,12 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		Z_inds
 		));
 	segreClasses AA := (cacheValue segreClasses) (AA -> fullToPartial segreClasses BB);
+	segreClasses' AA :=
+	segreClasses' BB := (cacheValue segreClasses') (X -> (
+	    s := first entries segreClasses X;
+	    q := if curCotOpts#Kth then FK_0_0 else -1;
+    	    matrix { apply(#s, i -> q^(inversion I#i)*s#i) }
+	    ));
 	segreClass (List,AA) :=
 	segreClass (List,BB) :=
 	segreClass (String,AA) :=
@@ -258,6 +278,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    i=new AryString from i;
 	    (segreClasses X)_(0,position(I,j->j==i))
 	    );
+	segreClass' (List,AA) :=
+	segreClass' (List,BB) :=
+	segreClass' (String,AA) :=
+	segreClass' (String,BB) := (i,X) -> (if curCotOpts#Kth then FK_0_0 else -1)^(inversion i)*segreClass(i,X);
 	-- Schubert classes
 	schubertClasses BB := (cacheValue schubertClasses) ( BB -> (
 		-- monodromy matrix
@@ -329,6 +353,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
 	    );
+	segreClass' (List,D) :=
+	segreClass' (String,D) := (i,D) -> (if curCotOpts#Kth then FK_0_0 else -1)^(inversion i)*segreClass(i,D);
 	schubertClass (List,D) :=
 	schubertClass (String,D) := (i,D) -> (
 	    i=new AryString from i;
@@ -338,6 +364,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	segreClasses D := (cacheValue segreClasses) ( D -> (
 		inds := ind \ I;
 		map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
+		));
+	segreClasses' D := (cacheValue segreClasses') ( D -> (
+		q := if curCotOpts#Kth then FK_0_0 else -1;
+    	    	segreClasses D * diagonalMatrix apply(I,i->q^(inversion i))
 		));
 	schubertClasses D := (cacheValue schubertClasses) ( D -> (
 		inds := ind \ I;
