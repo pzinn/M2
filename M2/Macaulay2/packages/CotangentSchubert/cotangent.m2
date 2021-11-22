@@ -216,10 +216,13 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
 	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
 	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
-	degs := splice apply(d+1,i->1..dimdiffs#i);
-	args := append(v\inds, Degrees=>degs);
-	wgts := apply(splice apply(d+1,i->reverse(dims#i..dims#(i+1)-1)),i->Weights=>apply(#inds,j->if j==i then -1 else 0));
-	if not curCotOpts.Kth then args = append(args, MonomialOrder=>prepend(Weights=>degs,wgts)); -- a sort of GRevLex but with different ordering of variables
+	args := v\inds;
+	if curCotOpts.Kth then args = append(args,DegreeRank=>0) else (
+	    degs := splice apply(d+1,i->1..dimdiffs#i);
+	    args = append(args, Degrees=>degs);
+	    wgts := apply(splice apply(d+1,i->reverse(dims#i..dims#(i+1)-1)),i->Weights=>apply(#inds,j->if j==i then -1 else 0));
+	    args = append(args, MonomialOrder=>prepend(Weights=>degs,wgts)); -- a sort of GRevLex but with different ordering of variables
+	    );
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
