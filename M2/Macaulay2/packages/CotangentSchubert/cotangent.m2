@@ -3,7 +3,7 @@ export {
     "segreClasses","segreClass","segreClasses'","segreClass'",
     "schubertClasses","schubertClass",
     "restrict", "fullToPartial", "basisCoeffs",
-    "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection",
+    "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection",
     "Presentation", "Borel", "EquivLoc",
     "inversion"
     };
@@ -122,6 +122,9 @@ addLastSetup2 = f -> f (Thing,Thing) := (x,y) -> f(x,y,lastSetup);
 
 zeroSection = method(Dispatch=>{Type}) -- note the {}
 addLastSetup(zeroSection);
+
+dualZeroSection = method(Dispatch=>{Type}) -- note the {}
+addLastSetup(dualZeroSection);
 
 zeroSectionInv = method(Dispatch=>{Type})
 addLastSetup(zeroSectionInv);
@@ -242,11 +245,15 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    sub(b,AA)
 	    );
 	zeroSection BB := (cacheValue zeroSection) (if curCotOpts.Kth then
-	BB -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
-	else BB -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1)));
+	    BB -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
+	    else BB -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1)));
 	zeroSection AA := (cacheValue zeroSection) (AA -> fullToPartial zeroSection BB);
 	zeroSectionInv BB := (cacheValue zeroSectionInv) (BB -> (zeroSection BB)^(-1));
 	zeroSectionInv AA := (cacheValue zeroSectionInv) (AA -> (zeroSection AA)^(-1));
+	dualZeroSection BB := (cacheValue dualZeroSection) (if curCotOpts.Kth then
+	    BB -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
+	    else BB -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1)));
+	dualZeroSection AA := (cacheValue dualZeroSection) (AA -> fullToPartial dualZeroSection BB);
 	-- segre Classes
 	segreClasses BB := (cacheValue segreClasses) ( BB -> (
 		-- monodromy matrix
@@ -380,11 +387,13 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
 	    zeroSection D := (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
 	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))));
+	    dualZeroSection D := (cacheValue dualZeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^-2*FF_(j+1)^-1*FF_(k+1) else 1))));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) }));
 	    ) else (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) }));
 	    zeroSection D := (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1))));
 	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
+	    dualZeroSection D := (cacheValue dualZeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then -FF_0+FF_(j+1)-FF_(k+1) else 1))));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) }));
 	    );
 	-- Chern classes of tautological bundles
