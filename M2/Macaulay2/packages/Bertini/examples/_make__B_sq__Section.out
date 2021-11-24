@@ -29,7 +29,7 @@ B'Section</pre>\left\{\ldots 2\ldots\right\}$
 B'Section</pre>
 i5 : sReal#B'NumberCoefficients
 
-o5 = $\left\{{.0741835},\,{.808694},\,{.362835}\right\}$
+o5 = $\left\{{.0741835},\:{.808694},\:{.362835}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
@@ -49,7 +49,7 @@ B'Section</pre>\left\{\ldots 2\ldots\right\}$
 B'Section</pre>
 i8 : sRational#B'NumberCoefficients
 
-o8 = $\left\{\frac{7}{10},\,\frac{1}{2},\,\frac{7}{10}\right\}$
+o8 = $\left\{\frac{  7}{ 10},\:\frac{  1}{  2},\:\frac{  7}{ 10}\right\}$
 
 o8 : <pre style="display:inline">
 List</pre>
@@ -62,13 +62,13 @@ B'Section</pre>\left\{\ldots 2\ldots\right\}$
 B'Section</pre>
 i10 : X={x,y,z}
 
-o10 = $\left\{x,\,y,\,z\right\}$
+o10 = $\left\{x,\:y,\:z\right\}$
 
 o10 : <pre style="display:inline">
 List</pre>
 i11 : P={1,2,3}
 
-o11 = $\left\{1,\,2,\,3\right\}$
+o11 = $\left\{  1,\:  2,\:  3\right\}$
 
 o11 : <pre style="display:inline">
 List</pre>

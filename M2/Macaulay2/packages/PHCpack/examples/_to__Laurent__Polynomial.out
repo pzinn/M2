@@ -4,7 +4,7 @@
 i3 : describe ring ideal sys
 
 o3 = $<pre style="display:inline">
-frac</pre>\left({\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,\textit{Degrees}\ \Rightarrow \ \left\{3:1\right\},\,\textit{Heft}\ \Rightarrow \ \left\{1\right\},\,\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&amp;\textit{MonomialSize}\ \Rightarrow \ 32\\&amp;\textit{GRevLex}\ \Rightarrow \ \left\{3:1\right\}\\&amp;\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\,\textit{DegreeRank}\ \Rightarrow \ 1\right]\right)$
+frac</pre>\left({\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,\textit{Degrees}\ \Rightarrow \ \left\{  3:  1\right\},\,\textit{Heft}\ \Rightarrow \ \left\{  1\right\},\,\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&amp;\textit{MonomialSize}\ \Rightarrow \  32\\&amp;\textit{GRevLex}\ \Rightarrow \ \left\{  3:  1\right\}\\&amp;\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\,\textit{DegreeRank}\ \Rightarrow \   1\right]\right)$
 i4 : convertedSys = toLaurentPolynomial(sys,w);
 i5 : printWidth = 300;
 i6 : toString convertedSys
@@ -13,19 +13,19 @@ frac</pre>\left({\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,\textit{Degrees}\ \
 {y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}</pre>
 i7 : ring ideal convertedSys
 
-o7 = ${\mathbb Q}{}\left\{x\,{.}{.}\, z,\,w_{0}\right\}$
+o7 = ${\mathbb Q}{}\left\{x\,{.}{.}\, z,\:w_{  0}\right\}$
 
 o7 : <pre style="display:inline">
 PolynomialRing</pre>
 i8 : describe oo
 
-o8 = ${\mathbb Q}{}\left\{x\,{.}{.}\, z,\,w_{0},\,\textit{Degrees}\ \Rightarrow \ \left\{4:1\right\},\,\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&amp;\textit{Weights}\ \Rightarrow \ \left\{4:-1\right\}\\&amp;\textit{MonomialSize}\ \Rightarrow \ 32\\&amp;\textit{GroupRevLex}\ \Rightarrow \ 4\\&amp;\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\,\textit{DegreeRank}\ \Rightarrow \ 1,\,\textit{Inverses}\ \Rightarrow \ <pre style="display:inline">
-true</pre>,\,\textit{Global}\ \Rightarrow \ <pre style="display:inline">
+o8 = ${\mathbb Q}{}\left\{x\,{.}{.}\, z,\:w_{  0},\:\textit{Degrees}\ \Rightarrow \ \left\{  4:  1\right\},\:\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&amp;\textit{Weights}\ \Rightarrow \ \left\{  4:-  1\right\}\\&amp;\textit{MonomialSize}\ \Rightarrow \  32\\&amp;\textit{GroupRevLex}\ \Rightarrow \   4\\&amp;\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\:\textit{DegreeRank}\ \Rightarrow \   1,\:\textit{Inverses}\ \Rightarrow \ <pre style="display:inline">
+true</pre>,\:\textit{Global}\ \Rightarrow \ <pre style="display:inline">
 false</pre>\right\}$
 i9 : P = QQ[x,y,z];
 i10 : f = (x*y + z^2*y) / y
 
-o10 = $z^{2}+x$
+o10 = $z^{  2}+x$
 
 o10 : $<pre style="display:inline">
 frac</pre>\ P$
@@ -35,7 +35,7 @@ frac</pre>\ P$
 true</pre>
 i12 : lift(f,P)
 
-o12 = $z^{2}+x$
+o12 = $z^{  2}+x$
 
 o12 : $P$
 i13 : 

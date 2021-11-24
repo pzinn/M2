@@ -2,7 +2,7 @@
 i1 : writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters");
 i2 : importParameterFile(storeBM2Files)
 
-o2 = $\left\{1,\,{2}\right\}$
+o2 = $\left\{  1,\:{2}\right\}$
 
 o2 : <pre style="display:inline">
 List</pre>

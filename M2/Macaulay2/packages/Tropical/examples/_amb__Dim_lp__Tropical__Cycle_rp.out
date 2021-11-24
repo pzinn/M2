@@ -8,5 +8,5 @@ PolynomialRing</pre>
 i2 : T=tropicalVariety(ideal(x+y+z));
 i3 : ambDim T
 
-o3 = $3$
+o3 = $  3$
 i4 : 

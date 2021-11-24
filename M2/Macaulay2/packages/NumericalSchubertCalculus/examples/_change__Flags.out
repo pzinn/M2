@@ -5,21 +5,21 @@
 i5 : l3={2,1};
 i6 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
-o6 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
-1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
+o6 = $\left\{\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
+  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1\\
+\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}+{.673395}\,\mathbf{i}&amp;{.0741835}+{.808694}\,\mathbf{i}&amp;{.830833}+{.538554}\,\mathbf{i}&amp;{.557119}+{.873708}\,\mathbf{i}&amp;{.0647412}+{.877846}\,\mathbf{i}&amp;{.444183}+{.644366}\,\mathbf{i}\\
 {.29398}+{.632944}\,\mathbf{i}&amp;{.362835}+{.706096}\,\mathbf{i}&amp;{.873665}+{.415912}\,\mathbf{i}&amp;{.7037}+{.681869}\,\mathbf{i}&amp;{.0340514}+{.507989}\,\mathbf{i}&amp;{.194945}+{.518585}\,\mathbf{i}\\
 {.0258884}+{.714827}\,\mathbf{i}&amp;{.127435}+{.254482}\,\mathbf{i}&amp;{.606588}+{.848005}\,\mathbf{i}&amp;{.276259}+{.605659}\,\mathbf{i}&amp;{.150294}+{.656391}\,\mathbf{i}&amp;{.987173}+{.568273}\,\mathbf{i}\\
@@ -35,7 +35,7 @@ List</pre>
 i9 : FlagsF = F/last;
 i10 : FlagsG = G/last;
 i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 1.89101 seconds
+     -- used 2.55378 seconds
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -44,7 +44,7 @@ List</pre>
 {.24818}-{.0567624}\,\mathbf{i}&amp;{.138074}+{.069527}\,\mathbf{i}&amp;-{.446051}+{.0426311}\,\mathbf{i}\\
 -{.122857}+{.030327}\,\mathbf{i}&amp;-{.0079778}-{.488031}\,\mathbf{i}&amp;{.214077}+{.374278}\,\mathbf{i}\\
 -{.402855}+{.0597291}\,\mathbf{i}&amp;-{.43662}-{.200568}\,\mathbf{i}&amp;-{.254234}+{.748617}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 -{.00839714}-{.407126}\,\mathbf{i}&amp;{.205329}-{.387394}\,\mathbf{i}&amp;{.424542}-{.396438}\,\mathbf{i}\\
 {.192354}-{.0445916}\,\mathbf{i}&amp;{.719274}+{.437354}\,\mathbf{i}&amp;{.49019}+{.0178286}\,\mathbf{i}\\
 -{.396883}+{.032256}\,\mathbf{i}&amp;-{.296361}-{.56774}\,\mathbf{i}&amp;-{.362153}+{.372505}\,\mathbf{i}\\
@@ -57,7 +57,7 @@ List</pre>
 List</pre>
 i12 : assert all(S', s-> checkIncidenceSolution(s,G))
 i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.2605 seconds
+     -- used 1.85104 seconds
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
@@ -66,7 +66,7 @@ List</pre>
 -{.119002}+{.197573}\,\mathbf{i}&amp;-{.108802}+{.642985}\,\mathbf{i}&amp;-{.820159}-{.281606}\,\mathbf{i}\\
 -{.134096}+{.0372165}\,\mathbf{i}&amp;-{.127528}-{.0349071}\,\mathbf{i}&amp;{.204901}-{.0516554}\,\mathbf{i}\\
 {.499185}+{.465779}\,\mathbf{i}&amp;{1.13857}+{.442385}\,\mathbf{i}&amp;-{.50217}+{1.18715}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.132399}-{.579396}\,\mathbf{i}&amp;{.78366}-{.359334}\,\mathbf{i}&amp;-{.647254}+{1.41489}\,\mathbf{i}\\
 -{.0614253}+{.257063}\,\mathbf{i}&amp;-{.356136}+{.210321}\,\mathbf{i}&amp;{.116836}-{.599086}\,\mathbf{i}\\
 {.127487}-{.876713}\,\mathbf{i}&amp;{.739985}-{1.32758}\,\mathbf{i}&amp;{.872113}+{1.6876}\,\mathbf{i}\\

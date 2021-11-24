@@ -5,17 +5,17 @@
 o4 = ${1.73205080756888}$
 
 o4 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
+ (of precision </pre>$ 53$<pre style="display:inline">
 )</pre>
 i5 : newRoots = refineSolutions(S,ourRoots,64)
 
-o5 = $\left\{\left\{{.57735},\,{1.73205}\right\},\,\left\{-{.57735}-{8.22655}\cdot 10^{-143}\,\mathbf{i},\,-{1.73205}-{5}\cdot 10^{-141}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{{.57735},\:{1.73205}\right\},\:\left\{-{.57735}-{8.22655}\cdot 10^{-143}\,\mathbf{i},\:-{1.73205}-{5}\cdot 10^{-141}\,\mathbf{i}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
 i6 : newRoots#0 -- recall that solutions are of type Point
 
-o6 = $\left\{{.57735},\,{1.73205}\right\}$
+o6 = $\left\{{.57735},\:{1.73205}\right\}$
 
 o6 : <pre style="display:inline">
 Point</pre>

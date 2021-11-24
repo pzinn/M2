@@ -5,7 +5,7 @@
 
 o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{2}\,\longleftarrow \,{\mathbb Z}^{4}$
+ </pre>${\mathbb Z}^{  2}\,\longleftarrow \,{\mathbb Z}^{  4}$
 i4 : LRrule(n,M)
 
 o4 = <pre style="display:inline">

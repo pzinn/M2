@@ -106,7 +106,7 @@ function gfxRotateDrag(rot0) {
     var rot1 = rot.inverse();
     rot.leftmultiply(rot0);
     rot.leftmultiply(rot1);
-    var ctr = dragTarget.gfxdata.cmatrix.inverse().vectmultiply(dragTarget.gfxdata.ctr); 
+    var ctr = dragTarget.gfxdata.cmatrix.inverse().vectmultiply(dragTarget.gfxdata.ctr);
     var transl = new Matrix([[1,0,0,ctr[0]/ctr[3]],[0,1,0,ctr[1]/ctr[3]],[0,0,1,ctr[2]/ctr[3]],[0,0,0,1]]);
     var mat = new Matrix([[1,0,0,-ctr[0]/ctr[3]],[0,1,0,-ctr[1]/ctr[3]],[0,0,1,-ctr[2]/ctr[3]],[0,0,0,1]]);
     mat.leftmultiply(rot);

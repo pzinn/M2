@@ -16,7 +16,7 @@ false</pre>
 
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{3}\,\longleftarrow \,0$
+ </pre>${\mathbb Z}^{  3}\,\longleftarrow \,0$
 i6 : maxCones T
 
 o6 = $\left\{\left\{\,\right\}\right\}$
@@ -25,7 +25,7 @@ Matrix</pre><pre style="display:inline">
 List</pre>
 i7 : multiplicities T
 
-o7 = $\left\{2\right\}$
+o7 = $\left\{  2\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>

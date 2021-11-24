@@ -8,7 +8,7 @@ PolynomialRing</pre>
 i2 : V = tropicalVariety(ideal(x+y+z));
 i3 : multiplicities V
 
-o3 = $\left\{1,\,1,\,1\right\}$
+o3 = $\left\{  1,\:  1,\:  1\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>

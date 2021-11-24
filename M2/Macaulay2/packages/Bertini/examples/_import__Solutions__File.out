@@ -11,19 +11,19 @@ PolynomialRing</pre>
 i3 : runBertini(storeBM2Files)
 i4 : importSolutionsFile(storeBM2Files)
 
-o4 = $\left\{\left\{1,\,1\right\},\,\left\{1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{1,\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-{1},\,{1}-{7.77156}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{  1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:  1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{  1,\:-{.5}+{.866025}\,\mathbf{i}\right\},\:\left\{  1,\:-{.5}-{.866025}\,\mathbf{i}\right\},\:\left\{-  1,\:  1\right\},\:\left\{-  1,\:-{.5}+{.866025}\,\mathbf{i}\right\},\:\left\{-{1},\:-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>
 i5 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
 
-o5 = $\left\{\left\{1,\,1\right\},\,\left\{-{1},\,{1}-{7.77156}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{  1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:  1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{-  1,\:  1\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
 i6 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)
 
-o6 = $\left\{\left\{1,\,1\right\},\,\left\{1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{1,\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-{1},\,{1}-{7.77156}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1,\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\left\{  1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:  1-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{  1,\:-{.5}+{.866025}\,\mathbf{i}\right\},\:\left\{  1,\:-{.5}-{.866025}\,\mathbf{i}\right\},\:\left\{-  1,\:  1\right\},\:\left\{-  1,\:-{.5}+{.866025}\,\mathbf{i}\right\},\:\left\{-{1},\:-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>

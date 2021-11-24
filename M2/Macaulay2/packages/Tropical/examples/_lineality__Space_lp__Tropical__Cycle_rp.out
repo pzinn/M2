@@ -9,12 +9,12 @@ Ideal</pre><pre style="display:inline">
 i4 : L=linealitySpace T
 
 o4 = $\left(\!\begin{array}{cc}
-1&amp;0\\
-1&amp;0\\
-0&amp;1\\
+  1&amp;  0\\
+  1&amp;  0\\
+  0&amp;  1\\
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{3}\,\longleftarrow \,{\mathbb Z}^{2}$
+ </pre>${\mathbb Z}^{  3}\,\longleftarrow \,{\mathbb Z}^{  2}$
 i5 : 

@@ -13,7 +13,7 @@ Ideal</pre><pre style="display:inline">
 i3 : T=tropicalVariety I;
 i4 : maxCones T
 
-o4 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,5\right\},\,\left\{1,\,3\right\},\,\left\{2,\,3\right\},\,\left\{1,\,4\right\},\,\left\{2,\,4\right\},\,\left\{3,\,5\right\},\,\left\{4,\,5\right\}\right\}$
+o4 = $\left\{\left\{  0,\:  1\right\},\:\left\{  0,\:  2\right\},\:\left\{  0,\:  5\right\},\:\left\{  1,\:  3\right\},\:\left\{  2,\:  3\right\},\:\left\{  1,\:  4\right\},\:\left\{  2,\:  4\right\},\:\left\{  3,\:  5\right\},\:\left\{  4,\:  5\right\}\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>

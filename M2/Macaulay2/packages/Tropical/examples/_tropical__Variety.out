@@ -9,16 +9,16 @@ Ideal</pre><pre style="display:inline">
 i4 : rays(T)
 
 o4 = $\left(\!\begin{array}{ccc}
-1&amp;-1&amp;0\\
-0&amp;-1&amp;1\\
+  1&amp;-  1&amp;  0\\
+  0&amp;-  1&amp;  1\\
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{2}\,\longleftarrow \,{\mathbb Z}^{3}$
+ </pre>${\mathbb Z}^{  2}\,\longleftarrow \,{\mathbb Z}^{  3}$
 i5 : maxCones(T)
 
-o5 = $\left\{\left\{1\right\},\,\left\{0\right\},\,\left\{2\right\}\right\}$
+o5 = $\left\{\left\{  1\right\},\:\left\{  0\right\},\:\left\{  2\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
@@ -28,16 +28,16 @@ List</pre>
 
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{2}\,\longleftarrow \,0$
+ </pre>${\mathbb Z}^{  2}\,\longleftarrow \,0$
 i7 : Polyhedra$fVector fan T
 
-o7 = $\left\{1,\,3\right\}$
+o7 = $\left\{  1,\:  3\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>
 i8 : multiplicities(T)
 
-o8 = $\left\{1,\,1,\,1\right\}$
+o8 = $\left\{  1,\:  1,\:  1\right\}$
 
 o8 : <pre style="display:inline">
 List</pre>
@@ -60,18 +60,18 @@ TropicalCycle</pre>
 i12 : rays(T)
 
 o12 = $\left(\!\begin{array}{cccc}
-3&amp;-1&amp;-1&amp;-1\\
--1&amp;3&amp;-1&amp;-1\\
--1&amp;-1&amp;3&amp;-1\\
--1&amp;-1&amp;-1&amp;3\\
+  3&amp;-  1&amp;-  1&amp;-  1\\
+-  1&amp;  3&amp;-  1&amp;-  1\\
+-  1&amp;-  1&amp;  3&amp;-  1\\
+-  1&amp;-  1&amp;-  1&amp;  3\\
 \end{array}\!\right)$
 
 o12 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{4}$
+ </pre>${\mathbb Z}^{  4}\,\longleftarrow \,{\mathbb Z}^{  4}$
 i13 : maxCones(T)
 
-o13 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{1,\,2\right\},\,\left\{1,\,3\right\},\,\left\{2,\,3\right\}\right\}$
+o13 = $\left\{\left\{  0,\:  1\right\},\:\left\{  0,\:  2\right\},\:\left\{  0,\:  3\right\},\:\left\{  1,\:  2\right\},\:\left\{  1,\:  3\right\},\:\left\{  2,\:  3\right\}\right\}$
 
 o13 : <pre style="display:inline">
 List</pre>
@@ -84,39 +84,39 @@ Ideal</pre><pre style="display:inline">
 i16 : rays(T)
 
 o16 = $\left(\!\begin{array}{cccccccc}
-1&amp;3&amp;1&amp;-1&amp;1&amp;-1&amp;-1&amp;-1\\
-1&amp;-1&amp;1&amp;3&amp;-1&amp;1&amp;-1&amp;-1\\
-1&amp;-1&amp;-1&amp;-1&amp;1&amp;1&amp;3&amp;-1\\
--3&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;3\\
+  1&amp;  3&amp;  1&amp;-  1&amp;  1&amp;-  1&amp;-  1&amp;-  1\\
+  1&amp;-  1&amp;  1&amp;  3&amp;-  1&amp;  1&amp;-  1&amp;-  1\\
+  1&amp;-  1&amp;-  1&amp;-  1&amp;  1&amp;  1&amp;  3&amp;-  1\\
+-  3&amp;-  1&amp;-  1&amp;-  1&amp;-  1&amp;-  1&amp;-  1&amp;  3\\
 \end{array}\!\right)$
 
 o16 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{8}$
+ </pre>${\mathbb Z}^{  4}\,\longleftarrow \,{\mathbb Z}^{  8}$
 i17 : maxCones(T)
 
-o17 = $\left\{\left\{0\right\},\,\left\{1,\,2\right\},\,\left\{1,\,4\right\},\,\left\{1,\,7\right\},\,\left\{2,\,3\right\},\,\left\{4,\,6\right\},\,\left\{3,\,5\right\},\,\left\{3,\,7\right\},\,\left\{5,\,6\right\},\,\left\{6,\,7\right\}\right\}$
+o17 = $\left\{\left\{  0\right\},\:\left\{  1,\:  2\right\},\:\left\{  1,\:  4\right\},\:\left\{  1,\:  7\right\},\:\left\{  2,\:  3\right\},\:\left\{  4,\:  6\right\},\:\left\{  3,\:  5\right\},\:\left\{  3,\:  7\right\},\:\left\{  5,\:  6\right\},\:\left\{  6,\:  7\right\}\right\}$
 
 o17 : <pre style="display:inline">
 List</pre>
 i18 : multiplicities(T)
 
-o18 = $\left\{1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1\right\}$
+o18 = $\left\{  1,\:  1,\:  1,\:  1,\:  1,\:  1,\:  1,\:  1,\:  1,\:  1\right\}$
 
 o18 : <pre style="display:inline">
 List</pre>
 i19 : linealitySpace T
 
 o19 = $\left(\!\begin{array}{c}
-1\\
-1\\
-1\\
-1\\
+  1\\
+  1\\
+  1\\
+  1\\
 \end{array}\!\right)$
 
 o19 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
+ </pre>${\mathbb Z}^{  4}\,\longleftarrow \,{\mathbb Z}^{  1}$
 i20 : QQ[x,y,z,w];
 i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
 
@@ -127,36 +127,36 @@ Ideal</pre><pre style="display:inline">
 i23 : rays(T)
 
 o23 = $\left(\!\begin{array}{cccccc}
--4&amp;4&amp;0&amp;0&amp;4&amp;4\\
--4&amp;0&amp;4&amp;0&amp;8&amp;0\\
--4&amp;0&amp;0&amp;4&amp;0&amp;8\\
--3&amp;1&amp;1&amp;1&amp;3&amp;3\\
+-  4&amp;  4&amp;  0&amp;  0&amp;  4&amp;  4\\
+-  4&amp;  0&amp;  4&amp;  0&amp;  8&amp;  0\\
+-  4&amp;  0&amp;  0&amp;  4&amp;  0&amp;  8\\
+-  3&amp;  1&amp;  1&amp;  1&amp;  3&amp;  3\\
 \end{array}\!\right)$
 
 o23 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
+ </pre>${\mathbb Z}^{  4}\,\longleftarrow \,{\mathbb Z}^{  6}$
 i24 : maxCones(T)
 
-o24 = $\left\{\left\{0,\,1\right\},\,\left\{0,\,2\right\},\,\left\{0,\,3\right\},\,\left\{0,\,4\right\},\,\left\{0,\,5\right\},\,\left\{2,\,3\right\},\,\left\{1,\,4\right\},\,\left\{1,\,5\right\},\,\left\{2,\,4\right\},\,\left\{3,\,5\right\},\,\left\{4,\,5\right\}\right\}$
+o24 = $\left\{\left\{  0,\:  1\right\},\:\left\{  0,\:  2\right\},\:\left\{  0,\:  3\right\},\:\left\{  0,\:  4\right\},\:\left\{  0,\:  5\right\},\:\left\{  2,\:  3\right\},\:\left\{  1,\:  4\right\},\:\left\{  1,\:  5\right\},\:\left\{  2,\:  4\right\},\:\left\{  3,\:  5\right\},\:\left\{  4,\:  5\right\}\right\}$
 
 o24 : <pre style="display:inline">
 List</pre>
 i25 : linealitySpace T
 
 o25 = $\left(\!\begin{array}{c}
-0\\
-0\\
-0\\
-1\\
+  0\\
+  0\\
+  0\\
+  1\\
 \end{array}\!\right)$
 
 o25 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
+ </pre>${\mathbb Z}^{  4}\,\longleftarrow \,{\mathbb Z}^{  1}$
 i26 : multiplicities(T)
 
-o26 = $\left\{\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\},\,\left\{\,\right\}\right\}$
+o26 = $\left\{\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\}\right\}$
 
 o26 : <pre style="display:inline">
 List</pre>

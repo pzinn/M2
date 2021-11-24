@@ -20,8 +20,8 @@ true</pre>
 i9 : PD=primaryDecomposition(ideal(system))
 
 o9 = $\left\{<pre style="display:inline">
-ideal</pre>{}\left(\textit{x13},\,\textit{x23},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}\right),\,<pre style="display:inline">
-ideal</pre>{}\left(\textit{x12},\,\textit{x22},\,\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}\right),\,<pre style="display:inline">
+ideal</pre>{}\left(\textit{x13},\,\textit{x23},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}\right),\:<pre style="display:inline">
+ideal</pre>{}\left(\textit{x12},\,\textit{x22},\,\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}\right),\:<pre style="display:inline">
 ideal</pre>{}\left(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\,\textit{x21}\,\textit{x14}-\textit{x11}\,\textit{x24},\,\textit{x22}\,\textit{x14}-\textit{x12}\,\textit{x24},\,\textit{x12}\,\textit{x23}-\textit{x22}\,\textit{x13},\,\textit{x11}\,\textit{x23}-\textit{x21}\,\textit{x13},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}\right)\right\}$
 
 o9 : <pre style="display:inline">

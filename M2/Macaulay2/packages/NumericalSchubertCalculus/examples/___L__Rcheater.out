@@ -5,7 +5,7 @@
 
 o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{1}\,\longleftarrow \,{\mathbb Z}^{4}$
+ </pre>${\mathbb Z}^{  1}\,\longleftarrow \,{\mathbb Z}^{  4}$
 i4 : t := LRtriple(n,m);
 i5 : w := wrapTriplet(t);
 i6 : 

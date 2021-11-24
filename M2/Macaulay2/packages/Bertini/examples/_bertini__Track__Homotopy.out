@@ -6,7 +6,7 @@
 i5 : S1= { sol1, sol2  };--solutions to H when t=1
 i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{-{1.41421}\right\},\,\left\{{1.41421}\right\}\right\}$
+o6 = $\left\{\left\{-{1.41421}\right\},\:\left\{{1.41421}\right\}\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>
@@ -20,25 +20,25 @@ Point{ConditionNumber => 1           }<br/>      Coordinates => {-1.41421}<br/> 
 i11 : H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
 i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
 
-o12 = $\left\{1,\,1\right\}$
+o12 = $\left\{  1,\:  1\right\}$
 
 o12 : <pre style="display:inline">
 Point</pre>
 i13 : sol2=    point{{ -1,1}}
 
-o13 = $\left\{-1,\,1\right\}$
+o13 = $\left\{ -1,\:  1\right\}$
 
 o13 : <pre style="display:inline">
 Point</pre>
 i14 : S1={sol1,sol2}--solutions to H when t=1
 
-o14 = $\left\{\left\{1,\,1\right\},\,\left\{-1,\,1\right\}\right\}$
+o14 = $\left\{\left\{  1,\:  1\right\},\:\left\{ -1,\:  1\right\}\right\}$
 
 o14 : <pre style="display:inline">
 List</pre>
 i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\left\{-{1.39405}-{.245441}\,\mathbf{i},\,-{.554872}+{.702544}\,\mathbf{i}\right\},\,\left\{-{.261688}-{.783355}\,\mathbf{i},\,{.357647}-{.380708}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{-{1.24809}-{.28978}\,\mathbf{i},\:-{.213084}-{.781841}\,\mathbf{i}\right\},\:\left\{{.0144104}+{1.70994}\,\mathbf{i},\:{.95638}+{.50496}\,\mathbf{i}\right\}\right\}$
 
 o15 : <pre style="display:inline">
 List</pre>

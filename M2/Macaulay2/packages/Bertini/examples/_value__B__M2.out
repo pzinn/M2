@@ -4,35 +4,35 @@
 o1 = ${.0122}+{.00004}\,\mathbf{i}$
 
 o1 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
+ (of precision </pre>$ 53$<pre style="display:inline">
 )</pre>
 i2 : valueBM2("1.22 4e-5")
 
 o2 = ${1.22}+{.00004}\,\mathbf{i}$
 
 o2 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
+ (of precision </pre>$ 53$<pre style="display:inline">
 )</pre>
 i3 : valueBM2("1.22 4")
 
 o3 = ${1.22}+{4}\,\mathbf{i}$
 
 o3 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
+ (of precision </pre>$ 53$<pre style="display:inline">
 )</pre>
 i4 : valueBM2("1.22e+2 4 ")
 
 o4 = ${122}+{4}\,\mathbf{i}$
 
 o4 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
+ (of precision </pre>$ 53$<pre style="display:inline">
 )</pre>
 i5 : n1=valueBM2("1.11",M2Precision=>52)
 
 o5 = ${1.11}$
 
 o5 : ${\mathbb R}$<pre style="display:inline">
- (of precision </pre>$52$<pre style="display:inline">
+ (of precision </pre>$ 52$<pre style="display:inline">
 )</pre>
 i6 : n2=valueBM2("1.11",M2Precision=>300)
 

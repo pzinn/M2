@@ -25,7 +25,7 @@ F</pre>$
 Fan</pre>
 i5 : mult = {1,2,-3,1}
 
-o5 = $\left\{1,\,2,\,-3,\,1\right\}$
+o5 = $\left\{  1,\:  2,\: -3,\:  1\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

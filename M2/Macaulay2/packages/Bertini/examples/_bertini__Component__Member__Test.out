@@ -10,7 +10,7 @@ NV</pre>$
 NumericalVariety</pre>
 i4 : pts = {{0,0,0}} --z-axis
 
-o4 = $\left\{\left\{0,\,0,\,0\right\}\right\}$
+o4 = $\left\{\left\{  0,\:  0,\:  0\right\}\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>

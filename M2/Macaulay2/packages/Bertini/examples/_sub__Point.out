@@ -36,7 +36,7 @@ PolynomialRing</pre>
 o7 = ${.23}$
 
 o7 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
+ (of precision </pre>$ 53$<pre style="display:inline">
 )</pre>
 i8 : subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
         0,1},SubIntoCC=>true,M2Precision=>200)

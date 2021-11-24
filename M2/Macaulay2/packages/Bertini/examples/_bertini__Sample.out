@@ -7,7 +7,7 @@
 PolynomialRing</pre>
 i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
+o2 = $\left\{x^{  3}+x\,y^{  2}+x\,z^{  2}-x,\:x^{  2}y+y^{  3}+y\,z^{  2}-y\right\}$
 
 o2 : <pre style="display:inline">
 List</pre>
@@ -27,7 +27,7 @@ W</pre>$
 WitnessSet</pre>
 i5 : bertiniSample(4, W)
 
-o5 = $\left\{\left\{{0},\,{0},\,{.0784011}+{.527897}\,\mathbf{i}\right\},\,\left\{-{7.44833}\cdot 10^{-225}-{1.11319}\cdot 10^{-224}\,\mathbf{i},\,{2.18589}\cdot 10^{-314}-{1.46258}\cdot 10^{-314}\,\mathbf{i},\,{.0137182}-{.101729}\,\mathbf{i}\right\},\,\left\{-{9.73035}\cdot 10^{-193}+{1.20276}\cdot 10^{-193}\,\mathbf{i},\,{1.51733}\cdot 10^{-312}-{7.53298}\cdot 10^{-312}\,\mathbf{i},\,{.00436637}+{.519349}\,\mathbf{i}\right\},\,\left\{-{1.53465}\cdot 10^{-176}+{2.04296}\cdot 10^{-176}\,\mathbf{i},\,{2.74487}\cdot 10^{-314}+{2.06192}\cdot 10^{-314}\,\mathbf{i},\,-{.231619}+{.135452}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{-{8.05133}\cdot 10^{-311}-{5.90959}\cdot 10^{-311}\,\mathbf{i},\:{5.90959}\cdot 10^{-311}-{8.05133}\cdot 10^{-311}\,\mathbf{i},\:{.168323}-{.487322}\,\mathbf{i}\right\},\:\left\{{0},\:{0},\:-{.147239}-{.134736}\,\mathbf{i}\right\},\:\left\{{0},\:{0},\:-{.0872627}-{.311419}\,\mathbf{i}\right\},\:\left\{{7.26177}\cdot 10^{-262}+{9.78431}\cdot 10^{-262}\,\mathbf{i},\:-{8.67596}\cdot 10^{-263}+{2.92}\cdot 10^{-262}\,\mathbf{i},\:{.565236}+{.135755}\,\mathbf{i}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

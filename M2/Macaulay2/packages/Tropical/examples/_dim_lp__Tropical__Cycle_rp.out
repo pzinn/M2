@@ -13,5 +13,5 @@ Ideal</pre><pre style="display:inline">
 i3 : T=tropicalVariety I;
 i4 : dim T
 
-o4 = $2$
+o4 = $  2$
 i5 : 

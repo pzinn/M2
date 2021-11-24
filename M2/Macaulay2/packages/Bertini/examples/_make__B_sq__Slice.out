@@ -1,13 +1,13 @@
 -- -*- M2-comint -*- hash: -822686202
 i1 : sliceType={1,1}
 
-o1 = $\left\{1,\,1\right\}$
+o1 = $\left\{  1,\:  1\right\}$
 
 o1 : <pre style="display:inline">
 List</pre>
 i2 : variableGroups={{x0,x1},{y0,y1,y2}}
 
-o2 = $\left\{\left\{\textit{x0},\,\textit{x1}\right\},\,\left\{\textit{y0},\,\textit{y1},\,\textit{y2}\right\}\right\}$
+o2 = $\left\{\left\{\textit{x0},\:\textit{x1}\right\},\:\left\{\textit{y0},\:\textit{y1},\:\textit{y2}\right\}\right\}$
 
 o2 : <pre style="display:inline">
 List</pre>
@@ -31,8 +31,8 @@ B'Slice{B'NumberCoefficients => {{1.49144+.713846*ii, -.840113+1.1986*ii}, {.014
 i7 : aSlice#NameB'Slice
 
 o7 = $\left\{<pre style="display:inline">
-f0</pre>,\,<pre style="display:inline">
-f1</pre>,\,<pre style="display:inline">
+f0</pre>,\:<pre style="display:inline">
+f1</pre>,\:<pre style="display:inline">
 f2</pre>\right\}$
 
 o7 : <pre style="display:inline">
@@ -48,7 +48,7 @@ x0*y0+x1*y0+x2*y2</pre>
 x0*y0^2+x1*y1*y2+x2*y0*y2</pre>
 i11 : variableGroups={{x0,x1,x2},{y0,y1,y2}}
 
-o11 = $\left\{\left\{\textit{x0},\,\textit{x1},\,\textit{x2}\right\},\,\left\{\textit{y0},\,\textit{y1},\,\textit{y2}\right\}\right\}$
+o11 = $\left\{\left\{\textit{x0},\:\textit{x1},\:\textit{x2}\right\},\:\left\{\textit{y0},\:\textit{y1},\:\textit{y2}\right\}\right\}$
 
 o11 : <pre style="display:inline">
 List</pre>
@@ -79,19 +79,19 @@ B'Slice</pre>
 i16 : runBertini(storeBM2Files)
 i17 : xxDegree=#importSolutionsFile(storeBM2Files)
 
-o17 = $2$
+o17 = $  2$
 i18 : makeB'InputFile(storeBM2Files,
     HomVariableGroup=>variableGroups,
     B'Polynomials=>{f1,f2}|xySlice#ListB'Sections);
 i19 : runBertini(storeBM2Files)
 i20 : xyDegree=#importSolutionsFile(storeBM2Files)
 
-o20 = $3$
+o20 = $  3$
 i21 : makeB'InputFile(storeBM2Files,
     HomVariableGroup=>variableGroups,
     B'Polynomials=>{f1,f2}|yySlice#ListB'Sections);
 i22 : runBertini(storeBM2Files)
 i23 : yyDegree=#importSolutionsFile(storeBM2Files)
 
-o23 = $1$
+o23 = $  1$
 i24 : 

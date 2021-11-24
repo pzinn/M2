@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 647005171
 i1 : coordinatesOfTwoPnts={{1,0},{3,4}}
 
-o1 = $\left\{\left\{1,\,0\right\},\,\left\{3,\,4\right\}\right\}$
+o1 = $\left\{\left\{  1,\:  0\right\},\:\left\{  3,\:  4\right\}\right\}$
 
 o1 : <pre style="display:inline">
 List</pre>

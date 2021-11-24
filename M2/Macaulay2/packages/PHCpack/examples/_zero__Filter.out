@@ -3,44 +3,44 @@
 i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 i3 : fSols = solveSystem(f, randomSeed=>3);
 i4 : fSols/print
-$\left\{-1,\,{0}\right\}$
-$\left\{1,\,{0}\right\}$
-$\left\{-{1.59272}+{2.45455}\cdot 10^{-91}\,\mathbf{i},\,{.964857}-{1.22727}\cdot 10^{-91}\,\mathbf{i}\right\}$
-$\left\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\right\}$
-$\left\{-{.764107}-{1.96364}\cdot 10^{-90}\,\mathbf{i},\,-{.544612}+{7.85455}\cdot 10^{-90}\,\mathbf{i}\right\}$
-$\left\{{1.33076}-{.335184}\,\mathbf{i},\,-{.62414}+{.513163}\,\mathbf{i}\right\}$
-$\left\{-{.894935}-{.624334}\,\mathbf{i},\,{.143333}+{1.14868}\,\mathbf{i}\right\}$
-$\left\{{1.33076}+{.335184}\,\mathbf{i},\,-{.62414}-{.513163}\,\mathbf{i}\right\}$
-$\left\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\right\}$
-$\left\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\right\}$
+$\left\{-  1,\:{0}\right\}$
+$\left\{  1,\:{0}\right\}$
+$\left\{-{1.59272}+{2.45455}\cdot 10^{-91}\,\mathbf{i},\:{.964857}-{1.22727}\cdot 10^{-91}\,\mathbf{i}\right\}$
+$\left\{{.742585}+{.425943}\,\mathbf{i},\:{.270685}-{1.00715}\,\mathbf{i}\right\}$
+$\left\{-{.764107}-{1.96364}\cdot 10^{-90}\,\mathbf{i},\:-{.544612}+{7.85455}\cdot 10^{-90}\,\mathbf{i}\right\}$
+$\left\{{1.33076}-{.335184}\,\mathbf{i},\:-{.62414}+{.513163}\,\mathbf{i}\right\}$
+$\left\{-{.894935}-{.624334}\,\mathbf{i},\:{.143333}+{1.14868}\,\mathbf{i}\right\}$
+$\left\{{1.33076}+{.335184}\,\mathbf{i},\:-{.62414}-{.513163}\,\mathbf{i}\right\}$
+$\left\{-{.894935}+{.624334}\,\mathbf{i},\:{.143333}-{1.14868}\,\mathbf{i}\right\}$
+$\left\{{.742585}-{.425943}\,\mathbf{i},\:{.270685}+{1.00715}\,\mathbf{i}\right\}$
 
-o4 = $\left\{,\,,\,,\,,\,,\,,\,,\,,\,,\,\right\}$
+o4 = $\left\{,\:,\:,\:,\:,\:,\:,\:,\:,\:\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>
 i5 : zeroSols = zeroFilter(fSols,1,1.0e-10);
 i6 : zeroSols / print
-$\left\{-1,\,{0}\right\}$
-$\left\{1,\,{0}\right\}$
+$\left\{-  1,\:{0}\right\}$
+$\left\{  1,\:{0}\right\}$
 
-o6 = $\left\{,\,\right\}$
+o6 = $\left\{,\:\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>
 i7 : f = {x^2+y^2,y*x+x};
 i8 : fSols = solveSystem(f);
 i9 : fSols/print
-$\left\{-{2.46519}\cdot 10^{-32}+{1.07852}\cdot 10^{-32}\,\mathbf{i},\,-{2.40467}\cdot 10^{-32}+{9.05235}\cdot 10^{-34}\,\mathbf{i}\right\}$
-$\left\{-\mathbf{i},\,-1\right\}$
-$\left\{\mathbf{i},\,-1\right\}$
+$\left\{-{2.46519}\cdot 10^{-32}+{1.07852}\cdot 10^{-32}\,\mathbf{i},\:-{2.40467}\cdot 10^{-32}+{9.05235}\cdot 10^{-34}\,\mathbf{i}\right\}$
+$\left\{-\mathbf{i},\:-  1\right\}$
+$\left\{\mathbf{i},\:-  1\right\}$
 
-o9 = $\left\{,\,,\,\right\}$
+o9 = $\left\{,\:,\:\right\}$
 
 o9 : <pre style="display:inline">
 List</pre>
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 i11 : zeroSols/print
-$\left\{-{2.46519}\cdot 10^{-32}+{1.07852}\cdot 10^{-32}\,\mathbf{i},\,-{2.40467}\cdot 10^{-32}+{9.05235}\cdot 10^{-34}\,\mathbf{i}\right\}$
+$\left\{-{2.46519}\cdot 10^{-32}+{1.07852}\cdot 10^{-32}\,\mathbf{i},\:-{2.40467}\cdot 10^{-32}+{9.05235}\cdot 10^{-34}\,\mathbf{i}\right\}$
 
 o11 = $\left\{\right\}$
 

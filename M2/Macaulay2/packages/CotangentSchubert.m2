@@ -7,7 +7,7 @@ newPackage(
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Cotangent Schubert calculus",
-    Keywords => {"Schubert","motivic","CSM"},
+    Keywords => {"Intersection Theory"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
     DebuggingMode => true,
@@ -47,9 +47,24 @@ multidoc ///
    Compute Segre motivic classes
  Node
   Key
+   segreClass
+  Headline
+   Compute a Segre motivic class
+ Node
+  Key
    schubertClasses
   Headline
    Compute Schubert classes
+ Node
+  Key
+   schubertClass
+  Headline
+   Compute a Schubert class
+ Node
+  Key
+   tautClass
+  Headline
+   Compute the class of a tautological bundle
  Node
   Key
    puzzle
