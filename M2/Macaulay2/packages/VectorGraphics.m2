@@ -14,7 +14,7 @@ newPackage(
 	PackageExports => {"Text"}
         )
 
-export{"GraphicsType", "GraphicsObject", "GraphicsPoly",
+export{"GraphicsType", "GraphicsObject", "GraphicsCoordinate", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
     "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot",
     "Contents", "TextContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort",
