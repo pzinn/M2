@@ -1,6 +1,7 @@
 export {
     "setupCotangent",
-    "tautClass", "segreClass", "segreClass'", "chernClass", "schubertClass",
+    "tautClass",
+    "segreClass", "sClass", "chernClass", "schubertClass",
     "restrict", "fullToPartial", "basisCoeffs",
     "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection",
     "Presentation", "Borel", "EquivLoc",
@@ -93,6 +94,7 @@ new DiagonalAlgebra from Module := (X,M) -> (
     new D from RingElement := (D,x) -> new D from apply(rank M,i->x);
     vector D := d -> new M from d;
     matrix D := opts -> d -> diagonalMatrix entries d;
+    M * D := D * M :=
     D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
     D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power
     D + Number := D + RingElement := (v,x) -> v + new D from x;
@@ -130,8 +132,8 @@ addLastSetup(zeroSectionInv);
 segreClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(segreClass);
 
-segreClass' = method(Dispatch=>{Thing,Type})
-addLastSetup1(segreClass');
+sClass = method(Dispatch=>{Thing,Type})
+addLastSetup1(sClass);
 
 chernClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(chernClass);
@@ -139,7 +141,7 @@ addLastSetup1(chernClass);
 schubertClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(schubertClass);
 
-segreClasses' = method(Dispatch=>{Type})
+sClasses = method(Dispatch=>{Type})
 
 schubertClasses = method(Dispatch=>{Type})
 
@@ -257,7 +259,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    else BB -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1)));
 	dualZeroSection AA := (cacheValue dualZeroSection) (AA -> fullToPartial dualZeroSection BB);
 	-- segre Classes
-	segreClasses' BB := (cacheValue segreClasses') ( BB -> (
+	sClasses BB := (cacheValue sClasses) ( BB -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
 		W:=V^**n;
@@ -275,19 +277,19 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 				if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i))^(-1)));
     	    	Z
 		));
-	segreClasses' AA := (cacheValue segreClasses') (AA -> fullToPartial segreClasses' BB);
-	segreClass' (List,AA) :=
-	segreClass' (List,BB) := (L,X) -> (segreClasses' X)_(ind\L);
-	segreClass' (String,AA) :=
-	segreClass' (String,BB) :=
-	segreClass' (AryString,AA) :=
-	segreClass' (AryString,BB) := (i,X) -> (segreClasses' X)_(0,ind i);
+	sClasses AA := (cacheValue sClasses) (AA -> fullToPartial sClasses BB);
+	sClass (List,AA) :=
+	sClass (List,BB) := (L,X) -> (sClasses X)_(ind\L);
+	sClass (String,AA) :=
+	sClass (String,BB) :=
+	sClass (AryString,AA) :=
+	sClass (AryString,BB) := (i,X) -> (sClasses X)_(0,ind i);
 	segreClass (List,AA) :=
 	segreClass (List,BB) := (L,X) -> matrix { apply(L,i->segreClass(i,X)) };
 	segreClass (String,AA) :=
 	segreClass (String,BB) :=
 	segreClass (AryString,AA) :=
-	segreClass (AryString,BB) := (i,X) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*segreClass'(i,X);
+	segreClass (AryString,BB) := (i,X) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*sClass(i,X);
 
 	chernClass (List,AA) :=
 	chernClass (List,BB) :=
@@ -359,24 +361,24 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		(tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
 		), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
 	-- segre & schubert classes
-	segreClass' (List,D) := (L,D) -> ( -- should I cacheValue?
+	sClass (List,D) := (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
 		map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
 		);
-	segreClass' (String,D) :=
-	segreClass' (AryString,D) := (i,D) -> (
+	sClass (String,D) :=
+	sClass (AryString,D) := (i,D) -> (
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
 	    );
 	segreClass (String,D) :=
-	segreClass (AryString,D) := (i,D) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*segreClass'(i,D);
+	segreClass (AryString,D) := (i,D) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
 	segreClass (List,D) := (L,D) -> (
 	    q := if curCotOpts#Kth then FF_0 else -1;
-	    segreClass'(L,D) * diagonalMatrix apply(L,i->q^(inversion i))
+	    sClass(L,D) * diagonalMatrix apply(L,i->q^(inversion i))
 	    );
 	chernClass (String,D) :=
 	chernClass (AryString,D) := (i,D) -> dualZeroSection D * segreClass(i,D);
-	chernClass (List,D) := (L,D) -> diagonalMatrix entries dualZeroSection D * segreClass(L,D);
+	chernClass (List,D) := (L,D) -> matrix dualZeroSection D * segreClass(L,D);
 
 	schubertClass (List,D) := (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
