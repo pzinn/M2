@@ -1,8 +1,6 @@
 export {
-    "setupCotangent", "tautClass",
-    "segreClasses","segreClass","segreClasses'","segreClass'",
-    "chernClasses", "chernClass",
-    "schubertClasses","schubertClass",
+    "setupCotangent",
+    "tautClass", "segreClass", "segreClass'", "chernClass", "schubertClass",
     "restrict", "fullToPartial", "basisCoeffs",
     "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection",
     "Presentation", "Borel", "EquivLoc",
@@ -13,10 +11,15 @@ cotOpts := opts ++ { Presentation => EquivLoc }
 
 debug Core -- to use basering, generatorSymbols, frame
 
+-- labeling of classes
+AryString = new Type of List;
+new AryString from String := (T,s) -> apply(ascii s,i->i-48);
+texMath AryString := s -> concatenate between("\\,",apply(s,x -> if class x === String then x else texMath x))
+net AryString := toString AryString := s -> concatenate apply(s,toString)
 -- inversion number of a string
 inversion = method()
-inversion VisibleList := p -> sum(#p-1,i->sum(i+1..#p-1,j->if p_i>p_j then 1 else 0))
-inversion String := inversion @@ toList
+inversion AryString := p -> sum(#p-1,i->sum(i+1..#p-1,j->if p_i>p_j then 1 else 0))
+inversion String := s -> inversion new AryString from s
 
 -- a simple function that seems like it should already exist
 basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
@@ -45,12 +48,6 @@ promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
     S.baseRings = prepend(R,S.baseRings); -- temporary -- until promotability test improved in enginering.m2
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
-
--- labeling of classes
-AryString = new Type of List; -- could we just use sequences?
-new AryString from String := (T,s) -> apply(ascii s,i->i-48);
-texMath AryString := s -> concatenate between("\\,",apply(s,x -> if class x === String then x else texMath x))
-net AryString := toString AryString := s -> concatenate apply(s,toString)
 
 -- common rings
 q := getSymbol "q"; zbar := getSymbol "zbar";
@@ -130,29 +127,21 @@ addLastSetup(dualZeroSection);
 zeroSectionInv = method(Dispatch=>{Type})
 addLastSetup(zeroSectionInv);
 
-segreClasses = method(Dispatch=>{Type})
-addLastSetup(segreClasses);
-
 segreClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(segreClass);
-
-segreClasses' = method(Dispatch=>{Type})
-addLastSetup(segreClasses');
 
 segreClass' = method(Dispatch=>{Thing,Type})
 addLastSetup1(segreClass');
 
-chernClasses = method(Dispatch=>{Type})
-addLastSetup(chernClasses);
-
 chernClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(chernClass);
 
-schubertClasses = method(Dispatch=>{Type})
-addLastSetup(schubertClasses);
-
 schubertClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(schubertClass);
+
+segreClasses' = method(Dispatch=>{Type})
+
+schubertClasses = method(Dispatch=>{Type})
 
 -- "Chern classes" -- renamed tautClass to avoid confusion with motivic classes
 tautClass = method(Dispatch=>{Thing,Thing,Type});
@@ -175,7 +164,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
     dimdiffs := apply(d+1, i-> dims#(i+1)-dims#i);
     ω:=new AryString from splice apply(d+1, i->dimdiffs_i:i); -- list of fixed points
     I := unique permutations ω; -- unique? eww
-    ind := i -> sum(#i,j->(d+1)^j*i_(#i-1-j));
+    ind := method();
+    ind AryString := i -> sum(#i,j->(d+1)^j*i_(#i-1-j));
+    ind String := s -> ind new AryString from s;
     -- redefine default puzzle opts
     (frame puzzle)#0 = applyPairs((frame puzzle)#0,(k,v) -> (k,if curCotOpts#?k then curCotOpts#k else v)); -- TODO use Factor's new "fuse"
     -- set up base ring and R-matrices
@@ -282,35 +273,28 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 			));
 		scan(dims#d,i->scan(n,j-> Z = Z*(Rcden(FF_0,
 				if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i))^(-1)));
-		inds := ind \ I;
-		Z_inds
+    	    	Z
 		));
 	segreClasses' AA := (cacheValue segreClasses') (AA -> fullToPartial segreClasses' BB);
-	segreClasses AA :=
-	segreClasses BB := (cacheValue segreClasses) (X -> (
-	    s := first entries segreClasses' X;
-	    q := if curCotOpts#Kth then FF_0 else -1;
-    	    matrix { apply(#s, i -> q^(inversion I#i)*s#i) }
-	    ));
-	chernClasses AA :=
-	chernClasses BB := (cacheValue chernClasses) (X -> (
-	    dualZeroSection X * segreClasses X
-	    ));
 	segreClass' (List,AA) :=
-	segreClass' (List,BB) :=
+	segreClass' (List,BB) := (L,X) -> (segreClasses' X)_(ind\L);
 	segreClass' (String,AA) :=
-	segreClass' (String,BB) := (i,X) -> (
-	    i=new AryString from i;
-	    (segreClasses' X)_(0,position(I,j->j==i))
-	    );
+	segreClass' (String,BB) :=
+	segreClass' (AryString,AA) :=
+	segreClass' (AryString,BB) := (i,X) -> (segreClasses' X)_(0,ind i);
 	segreClass (List,AA) :=
-	segreClass (List,BB) :=
+	segreClass (List,BB) := (L,X) -> matrix { apply(L,i->segreClass(i,X)) };
 	segreClass (String,AA) :=
-	segreClass (String,BB) := (i,X) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*segreClass'(i,X);
+	segreClass (String,BB) :=
+	segreClass (AryString,AA) :=
+	segreClass (AryString,BB) := (i,X) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*segreClass'(i,X);
+
 	chernClass (List,AA) :=
 	chernClass (List,BB) :=
 	chernClass (String,AA) :=
-	chernClass (String,BB) := (i,X) -> dualZeroSection X * segreClass(i,X);
+	chernClass (String,BB) :=
+	chernClass (AryString,AA) :=
+	chernClass (AryString,BB) := (i,X) -> dualZeroSection X * segreClass(i,X);
 	-- Schubert classes
 	schubertClasses BB := (cacheValue schubertClasses) ( BB -> (
 		-- monodromy matrix
@@ -326,17 +310,16 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
 			--print Z;
 			));
-		inds := ind \ I;
-		Z_inds
+    	    	Z
 		));
 	schubertClasses AA := (cacheValue schubertClasses) (AA -> fullToPartial schubertClasses BB);
 	schubertClass (List,AA) :=
-	schubertClass (List,BB) :=
+	schubertClass (List,BB) := (L,X) -> (schubertClasses X)_(ind\L);
 	schubertClass (String,AA) :=
-	schubertClass (String,BB) := (i,X) -> (
-	    i=new AryString from i;
-	    (schubertClasses X)_(0,position(I,j->j==i))
-	    );
+	schubertClass (String,BB) :=
+	schubertClass (AryString,AA) :=
+	schubertClass (AryString,BB) := (i,X) -> (schubertClasses X)_(0,ind i);
+
 	-- restriction to fixed points
 	if curCotOpts#Equivariant then (
 	    restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
@@ -376,32 +359,35 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		(tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
 		), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
 	-- segre & schubert classes
-	segreClass' (List,D) :=
-	segreClass' (String,D) := (i,D) -> (
-	    i=new AryString from i;
+	segreClass' (List,D) := (L,D) -> ( -- should I cacheValue?
+		inds := ind \ L;
+		map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
+		);
+	segreClass' (String,D) :=
+	segreClass' (AryString,D) := (i,D) -> (
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
 	    );
-	segreClass (List,D) :=
-	segreClass (String,D) := (i,D) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*segreClass'(i,D);
-	schubertClass (List,D) :=
-	schubertClass (String,D) := (i,D) -> (
-	    i=new AryString from i;
+	segreClass (String,D) :=
+	segreClass (AryString,D) := (i,D) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*segreClass'(i,D);
+	segreClass (List,D) := (L,D) -> (
+	    q := if curCotOpts#Kth then FF_0 else -1;
+	    segreClass'(L,D) * diagonalMatrix apply(L,i->q^(inversion i))
+	    );
+	chernClass (String,D) :=
+	chernClass (AryString,D) := (i,D) -> dualZeroSection D * segreClass(i,D);
+	chernClass (List,D) := (L,D) -> diagonalMatrix entries dualZeroSection D * segreClass(L,D);
+
+	schubertClass (List,D) := (L,D) -> ( -- should I cacheValue?
+		inds := ind \ L;
+		map(M,M, apply(I,i->first entries (fixedPoint(false,i))_inds))
+		);
+	schubertClass (String,D) :=
+	schubertClass (AryString,D) := (i,D) -> (
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(false,ii))_(0,indi))
 	    );
-	segreClasses' D := (cacheValue segreClasses') ( D -> (
-		inds := ind \ I;
-		map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
-		));
-	segreClasses D := (cacheValue segreClasses) ( D -> (
-		q := if curCotOpts#Kth then FF_0 else -1;
-    	    	segreClasses' D * diagonalMatrix apply(I,i->q^(inversion i))
-		));
-	schubertClasses D := (cacheValue schubertClasses) ( D -> (
-		inds := ind \ I;
-		map(M,M, apply(I,i->first entries (fixedPoint(false,i))_inds))
-		));
+
 	if curCotOpts.Kth then (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
 	    zeroSection D := (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
@@ -443,7 +429,7 @@ pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint Number := pushforwardToPoint RingElement := r -> try pushforwardToPoint promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPoint Matrix := m -> (
     if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint)
-    else if (target m)#?weights then (weights target m)*m -- TODO doesn't work any more :( use lastSetup?
+    else try weights lastSetup * m
     else error "can't pushforward"
     )
 
@@ -451,7 +437,7 @@ pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G
 pushforwardToPointFromCotangent Number := pushforwardToPointFromCotangent RingElement := r -> try pushforwardToPointFromCotangent promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPointFromCotangent Matrix := m -> (
     if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent)
-    else if (target m)#?cotweights then (cotweights target m)*m
+    else try cotweights lastSetup * m
     else error "can't pushforward"
     )
 
