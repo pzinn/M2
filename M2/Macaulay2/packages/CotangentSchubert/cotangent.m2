@@ -1,7 +1,8 @@
 export {
     "setupCotangent",
     "tautClass",
-    "segreClass", "sClass", "chernClass", "schubertClass",
+    "sClass", "stableClass", "segreClass", "chernClass", "schubertClass",
+    "sClass'", "stableClass'", "segreClass'", "chernClass'",
     "restrict", "fullToPartial", "basisCoeffs",
     "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection",
     "Presentation", "Borel", "EquivLoc",
@@ -94,7 +95,7 @@ new DiagonalAlgebra from Module := (X,M) -> (
     new D from RingElement := (D,x) -> new D from apply(rank M,i->x);
     vector D := d -> new M from d;
     matrix D := opts -> d -> diagonalMatrix entries d;
-    M * D := D * M :=
+--    M * D := D * M := -- should work, D is younger; why doesn't it?
     D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
     D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power
     D + Number := D + RingElement := (v,x) -> v + new D from x;
@@ -115,10 +116,10 @@ html DiagonalAlgebra := lookup(html,Thing);
 
 -- ex: D=new DiagonalAlgebra from ZZ^3; x=new D from {1,2,3}; x^2-x+1
 
-local lastSetup;
-addLastSetup = f -> installMethod(f,() -> f lastSetup);
-addLastSetup1 = f -> f Thing := x -> f(x,lastSetup);
-addLastSetup2 = f -> f (Thing,Thing) := (x,y) -> f(x,y,lastSetup);
+lastSetup:=null;
+addLastSetup = f -> installMethod(f,() -> if lastSetup =!= null then f lastSetup else error "Set up first");
+addLastSetup1 = f -> f Thing := x -> if lastSetup =!= null then f(x,lastSetup) else error "Set up first";
+addLastSetup2 = f -> f (Thing,Thing) := (x,y) -> if lastSetup =!= null then f(x,y,lastSetup) else error "Set up first";
 
 zeroSection = method(Dispatch=>{Type}) -- note the {}
 addLastSetup(zeroSection);
@@ -135,11 +136,26 @@ addLastSetup1(segreClass);
 sClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(sClass);
 
+stableClass = method(Dispatch=>{Thing,Type})
+addLastSetup1(stableClass);
+
 chernClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(chernClass);
 
 schubertClass = method(Dispatch=>{Thing,Type})
 addLastSetup1(schubertClass);
+
+sClass' = method(Dispatch=>{Thing,Type})
+addLastSetup1(sClass');
+
+stableClass' = method(Dispatch=>{Thing,Type})
+addLastSetup1(stableClass');
+
+segreClass' = method(Dispatch=>{Thing,Type})
+addLastSetup1(segreClass');
+
+chernClass' = method(Dispatch=>{Thing,Type})
+addLastSetup1(chernClass');
 
 sClasses = method(Dispatch=>{Type})
 
@@ -174,7 +190,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
     -- set up base ring and R-matrices
     if curCotOpts.Kth then (
 	FF0 := FK_0;
-	FF := if curCotOpts#Equivariant then defineFK n else FF0;
+	FF := if curCotOpts.Equivariant then defineFK n else FF0;
 	V1:=FK_-1^(d+1); q:=FK_-1_0; zbar:=FK_-1_1;
 	Rcnum0:=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
 		if i==j then (i*(d+2),i*(d+2))=>1-q^2*zbar
@@ -193,7 +209,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	Rcz := (qq,z1,z2) -> (map(ring z2,FK_-1,{qq,z2*z1^(-1)}))Rcz0;
 	) else (
 	FF0 = FH_0;
-	FF = if curCotOpts#Equivariant then defineFH n else FF0;
+	FF = if curCotOpts.Equivariant then defineFH n else FF0;
 	V1=FH_-1^(d+1); h:=FH_-1_0; xbar:=FH_-1_1;
 	Rcnum0=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
 		if i==j then (i*(d+2),i*(d+2))=>h-xbar
@@ -211,13 +227,13 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	Rcden = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rcden0;
 	Rcz = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rcz0;
         );
-    if curCotOpts#Presentation === Borel then (
+    if curCotOpts.Presentation === Borel then (
 	y := getSymbol "y";
 	BB0 := FF(monoid(splice[y_1..y_n, if curCotOpts.Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
 	J := ideal apply(1..n,k->elem(k,gens BB0)
             -if curCotOpts.Equivariant then elem(k,drop(gens FF,1)) else if curCotOpts.Kth then binomial(n,k) else 0);
 	BB := BB0/J; lastSetup=BB;
-	if curCotOpts#Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0}));
+	if curCotOpts.Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0}));
 	-- Chern classes
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
 	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
@@ -232,7 +248,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	if curCotOpts#Equivariant then promoteFromMap(FF0,AA,map(AA,FF0,{FF_0}));
+	if curCotOpts.Equivariant then promoteFromMap(FF0,AA,map(AA,FF0,{FF_0}));
 	tautClass (ZZ,ZZ,AA) := (j,i,AA) -> AA_(dims#i+j-1);
 	tautClass (ZZ,ZZ,BB) := (j,i,BB) -> e (j,i);
 	promoteFromMap(AA,BB,f*map(R1,AA));
@@ -267,14 +283,14 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		scan(reverse(0..dims#d-1),i->( -- not 0..n-1: slight optimization: don't do trivial rows
 			T:=map(V^**(n+1),V^**(n+1),1);
 			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (FF_0,
-					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i)
+					if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Kth then 1 else 0,BB_i)
 				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
 			--print i;
 			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
 			--print Z;
 			));
 		scan(dims#d,i->scan(n,j-> Z = Z*(Rcden(FF_0,
-				if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i))^(-1)));
+				if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Kth then 1 else 0,BB_i))^(-1)));
     	    	Z
 		));
 	sClasses AA := (cacheValue sClasses) (AA -> fullToPartial sClasses BB);
@@ -289,7 +305,14 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	segreClass (String,AA) :=
 	segreClass (String,BB) :=
 	segreClass (AryString,AA) :=
-	segreClass (AryString,BB) := (i,X) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*sClass(i,X);
+	segreClass (AryString,BB) := (i,X) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,X);
+
+	stableClass (List,AA) :=
+	stableClass (List,BB) :=
+	stableClass (String,AA) :=
+	stableClass (String,BB) :=
+	stableClass (AryString,AA) :=
+	stableClass (AryString,BB) := (i,X) -> zeroSection X * sClass(i,X);
 
 	chernClass (List,AA) :=
 	chernClass (List,BB) :=
@@ -306,7 +329,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		scan(reverse(0..dims#d-1),i->( -- not 0..n-1: slight optimization: don't do trivial rows
 			T:=map(V^**(n+1),V^**(n+1),1);
 			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcz (FF_0,
-					if curCotOpts#Equivariant then FF_(j+1) else if curCotOpts#Kth then 1 else 0,BB_i)
+					if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Kth then 1 else 0,BB_i)
 				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
 			--print i;
 			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
@@ -321,9 +344,40 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	schubertClass (String,BB) :=
 	schubertClass (AryString,AA) :=
 	schubertClass (AryString,BB) := (i,X) -> (schubertClasses X)_(0,ind i);
-
+	-- duality
+	du1 := if curCotOpts.Kth then prepend(FF_0^-1,apply(numgens FF-1,i->FF_(numgens FF-1-i)^-1))
+	    else prepend(-FF_0,apply(numgens FF-1,i->-FF_(numgens FF-1-i)));
+	du2 := apply(gens BB,x->if curCotOpts.Kth then x^-1 else -x); -- what about AA? TODO
+	du := map(BB,BB,du2|du1); -- TODO AA
+	sClass' (List,AA) :=
+	sClass' (List,BB) := (L,X) -> du sClass(reverse\L,X);
+	sClass' (String,AA) :=
+	sClass' (String,BB) :=
+	sClass' (AryString,AA) :=
+	sClass' (AryString,BB) := (i,X) -> du sClass(reverse i,X);
+	-- compared to Mihalcea, missing a (-t)^-D; compared to dual of chernClass, missing q^#
+	segreClass' (List,AA) :=
+	segreClass' (List,BB) := (L,X) -> du segreClass(reverse\L,X);
+	segreClass' (String,AA) :=
+	segreClass' (String,BB) :=
+	segreClass' (AryString,AA) :=
+	segreClass' (AryString,BB) := (i,X) -> du segreClass(reverse i,X);
+	-- compared to Mihalcea, missing a (-t)^-D; compared to dual of segreClass, missing q^#
+	chernClass' (List,AA) :=
+	chernClass' (List,BB) :=
+	chernClass' (String,AA) :=
+	chernClass' (String,BB) :=
+	chernClass' (AryString,AA) :=
+	chernClass' (AryString,BB) := (i,X) -> dualZeroSection X * segreClass'(i,X);
+	stableClass' (List,AA) :=
+	stableClass' (List,BB) := (L,X) -> matrix { apply(L,i->stableClass'(i,X)) };
+	stableClass' (String,AA) :=
+	stableClass' (String,BB) :=
+	stableClass' (AryString,AA) :=
+	stableClass' (AryString,BB) := (i,X) -> (if curCotOpts.Kth then FF_0 else -1)^(2*inversion reverse i+inversion i)*chernClass'(i,X);
+	-- power of q is silly TODO better
 	-- restriction to fixed points
-	if curCotOpts#Equivariant then (
+	if curCotOpts.Equivariant then (
 	    restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
 	    restrict AA :=
 	    restrict BB := b -> vector apply(I,i->(restrictMap i) b); -- TODO where is M?
@@ -344,8 +398,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	pushforwardToPointFromCotangent AA := a -> pushforwardToPoint (zeroSectionInv AA * a);
 	--
 	(AA,BB,FF,I)
-	) else if curCotOpts#Presentation === EquivLoc then (
-	if not curCotOpts#Equivariant then error "Equivariant localization requires Equivariant option";
+	) else if curCotOpts.Presentation === EquivLoc then (
+	if not curCotOpts.Equivariant then error "Equivariant localization requires Equivariant option";
 	-- precompute Rcheck-matrices
 	V:=FF^(d+1); Rcheck := new IndexedVariableTable; Rcheckz := new IndexedVariableTable;
 	scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
@@ -371,14 +425,17 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
 	    );
 	segreClass (String,D) :=
-	segreClass (AryString,D) := (i,D) -> (if curCotOpts#Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
+	segreClass (AryString,D) := (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
 	segreClass (List,D) := (L,D) -> (
-	    q := if curCotOpts#Kth then FF_0 else -1;
+	    q := if curCotOpts.Kth then FF_0 else -1;
 	    sClass(L,D) * diagonalMatrix apply(L,i->q^(inversion i))
 	    );
 	chernClass (String,D) :=
 	chernClass (AryString,D) := (i,D) -> dualZeroSection D * segreClass(i,D);
 	chernClass (List,D) := (L,D) -> matrix dualZeroSection D * segreClass(L,D);
+	stableClass (String,D) :=
+	stableClass (AryString,D) := (i,D) -> zeroSection D * sClass(i,D);
+	stableClass (List,D) := (L,D) -> matrix zeroSection D * sClass(L,D);
 
 	schubertClass (List,D) := (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
@@ -408,6 +465,27 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	-- pushforward to point
 	pushforwardToPoint D  := m -> ((weights D)*m)_0;
 	pushforwardToPointFromCotangent D  := m -> ((cotweights D)*m)_0;
+	-- duality
+	du = map(FF,FF,if curCotOpts.Kth then prepend(FF_0^-1,apply(n,i->FF_(n-i)^-1)) else prepend(-FF_0,apply(n,i->-FF_(n-i))));
+	star := apply(I,i->(j:=reverse i; position(I,i'->i'==j)));
+	sClass' (List,D) := (L,D) -> (du sClass(reverse\L,D))^star;
+	sClass' (String,D) :=
+	sClass' (AryString,D) := (i,D) -> new D from (du sClass(reverse i,D))^star;
+	-- compared to Mihalcea, missing a (-t)^-D; compared to dual of chernClass, missing q^#
+	segreClass' (List,D) := (L,D) -> (du segreClass(reverse\L,D))^star;
+	segreClass' (String,D) :=
+	segreClass' (AryString,D) := (i,D) -> new D from (du segreClass(reverse i,D))^star;
+	-- compared to Mihalcea, missing a (-t)^-D; compared to dual of segreClass, missing q^#
+	chernClass' (String,D) :=
+	chernClass' (AryString,D) := (i,D) -> dualZeroSection D * segreClass'(i,D);
+	chernClass' (List,D) := (L,D) -> matrix dualZeroSection D * segreClass'(L,D);
+	stableClass' (String,D) :=
+	stableClass' (AryString,D) := (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(2*inversion reverse i+inversion i)*chernClass'(i,D);
+	stableClass' (List,D) := (L,D) -> (
+	    q := if curCotOpts.Kth then FF_0 else -1;
+	    chernClass'(L,D) * diagonalMatrix apply(L,i->q^(2*inversion reverse i+inversion i))
+	    );
+    	--
 	lastSetup = D;
 	(D,FF,I)
     ) else error "Unknown presentation"
