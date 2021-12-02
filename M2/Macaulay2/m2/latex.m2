@@ -6,7 +6,7 @@
 -----------------------------------------------------------------------------
 
 needs "format.m2"
-needs "html.m2"
+--needs "html.m2"
 
 newpara := "\n\\par "
 maximumCodeWidth := 60 -- see also booktex.m2, an old file that sets the same variable

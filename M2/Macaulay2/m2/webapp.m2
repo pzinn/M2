@@ -151,7 +151,7 @@ if topLevelMode === WebApp then (
     html Monoid :=
     html RingFamily :=
     html Ring :=
-    html Thing := htmlLiteral1 @@ tex; -- ugly
+    html Thing := htmlLiteral1 @@ (lookup(tex,Thing)); -- ugly
 )
 
 -- the texMath hack
