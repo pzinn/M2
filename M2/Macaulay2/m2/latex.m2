@@ -97,6 +97,8 @@ texMath Thing := x -> texMath net x -- if we're desperate (in particular, for ra
 tex     String := texLiteral
 texMath String := s -> "\\texttt{" | texLiteral s | "}"
 
+tex Net := n -> concatenate(
+    "\\begin{tabular}[t]{l}", demark("\\\\\n", apply(unstack n, tex)), "\\end{tabular}")
 texMath Net := n -> concatenate(
     "\\begin{array}{l}", demark("\\\\\n", apply(unstack n, texMath)), "\\end{array}")
 
