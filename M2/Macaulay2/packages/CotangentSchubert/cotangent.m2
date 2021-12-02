@@ -95,6 +95,8 @@ new DiagonalAlgebra from Module := (X,M) -> (
     new D from RingElement := (D,x) -> new D from apply(rank M,i->x);
     vector D := d -> new M from d;
     matrix D := opts -> d -> diagonalMatrix entries d;
+    D * Vector := (x,v) -> if class v === M then matrix x * v else error "wrong vector";
+    D * Matrix := (x,m) -> if target m === M then matrix x * m else error "wrong target";
 --    M * D := D * M := -- should work, D is younger; why doesn't it?
     D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
     D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power

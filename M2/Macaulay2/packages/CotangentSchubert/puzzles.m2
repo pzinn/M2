@@ -107,8 +107,7 @@ vg = p -> gList toSequence (
                                 );
                             apply(0..p#Steps, k -> (
                                     kk=toString k;
-                                    
-                                    (
+				    (
                                         if match(kk,a) and match(kk,b) and match(kk,c) then (
                                             Line{adj(0,a,i,j+.5),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk},
                                             Line{adj(1,b,i+.5,j),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk},
@@ -159,6 +158,100 @@ vg = p -> gList toSequence (
                     }
                 ))) | vgOpts n )
 
+tex Puzzle := texMath Puzzle := p -> concatenate(
+    n:=p.Length;
+    "\\begin{tikzpicture}[baseline=(current  bounding  box.center),x={(-0.577cm,-1cm)},y={(0.577cm,-1cm)}]",
+    apply(n, i -> apply(n-i, j -> (
+                a := p#(i,j,0);
+                b := p#(i,j,1);
+                deepSplice {
+                    local kk;
+                    adj := (dir,a,x,y) -> (
+                        r := regex(kk,a);
+                        if r === null then return a; -- shouldn't happen
+                        r=#a-1-r#0#0*2; cf:=0.08/#a;
+                        if dir == 0 then (x,y+cf*r)
+                        else if dir === 1 then (x+cf*r,y)
+                        else (x+cf*r,y-cf*r)
+                        );
+                    if p#(i,j,2) != "" then (
+                        c := p#(i,j,2);
+			opts := {(i+1,j),(i,j),(i,j+1)}; -- if p#?(i,j,upTriStyle) then opts=append(opts,p#?(i,j,upTriStyle));
+                        "\\draw[fill=white] ",
+			demark(" -- ",toString\opts),
+			" -- cycle;\n",
+                        if (i+j<n-1) then (
+			    opts = {(i+1,j),(i,j+1),(i+1,j+1)};
+			    -- if p#?(i,j,downTriStyle) then opts=append(opts,p#(i,j,downTriStyle));
+                            "\\draw[fill=white] ",
+			    demark(" -- ",toString\opts),
+			    " -- cycle;\n",
+			    ),
+                        if p#Paths then (
+                            if i+j<n-1 then (
+                                aa := p#(i+1,j,0);
+                                bb := p#(i,j+1,1);
+                                );
+                            apply(0..p#Steps, k -> (
+                                    kk=toString k;
+                                    (
+					"\\draw[ultra thick,"|cols#k|"] ",
+                                        if match(kk,a) and match(kk,b) and match(kk,c) then (
+					    toString adj(0,a,i,j+.5)|" -- "|toString (i+.333,j+.333)|" ",
+                                            toString adj(1,b,i+.5,j)|" -- "|toString (i+.333,j+.333)|" ",
+                                            toString adj(2,c,i+.5,j+.5)|" -- "|toString(i+.333,j+.333)|" "
+                                            )
+                                        else if match(kk,a) and match(kk,b) then toString adj(0,a,i,j+.5)|" -- "|toString adj(1,b,i+.5,j)
+                                        else if match(kk,a) and match(kk,c) then toString adj(0,a,i,j+.5)|" -- "|toString adj(2,c,i+.5,j+.5)
+                                        else if match(kk,c) and match(kk,b) then toString adj(2,c,i+.5,j+.5)|" -- "|toString adj(1,b,i+.5,j),
+                                        if i+j<n-1 then
+                                        if match(kk,aa) and match(kk,bb) and match(kk,c) then (
+                                            toString adj(0,aa,i+1,j+.5)|" -- "|toString (i+.666,j+.666),
+                                            toString adj(1,bb,i+.5,j+1)|" -- "|toString (i+.666,j+.666),
+                                            toString adj(2,c,i+.5,j+.5)|" -- "|toString (i+.666,j+.666)
+                                            )
+                                        else if match(kk,aa) and match(kk,bb) then toString adj(0,aa,i+1,j+.5)|" -- "|toString adj(1,bb,i+.5,j+1)
+                                        else if match(kk,aa) and match(kk,c) then toString adj(0,aa,i+1,j+.5)|" -- "|toString adj(2,c,i+.5,j+.5)
+                                        else if match(kk,c) and match(kk,bb) then toString adj(2,c,i+.5,j+.5)|" -- "|toString adj(1,bb,i+.5,j+1),
+					";\n"
+                                        )
+                                    )
+                                )
+                            ),
+                        if p#Labels then (
+			    "\\node at "|toString (i,j+.5)|" {"|toString a|"};\n",
+			    "\\node at "|toString (i+.5,j)|" {"|toString b|"};\n",
+			    "\\node at "|toString (i+.5,j+.5)|" {"|toString c|"};\n",
+                            )
+                        ) else (
+			opts = {(i+1,j),(i,j),(i,j+1),(i+1,j+1)};
+			--if p#?(i,j,rhombusStyle) then opts=append(opts,p#(i,j,rhombusStyle));
+			"\\draw[fill=white] ",
+			demark(" -- ",toString\opts),
+			" -- cycle;\n",
+                        if p#Paths then (
+                            aa = p#(i+1,j,0);
+                            bb = p#(i,j+1,1);
+                            apply(0..p#Steps, k -> (
+                                    kk=toString k;
+                                    (
+					"\\draw[ultra thick,"|cols#k|"] ",
+                                        if match(kk,a) and match(kk,aa) then toString adj(0,a,i,j+.5)|" -- "|toString adj(0,aa,i+1,j+.5)
+                                        else if match(kk,a) and match(kk,bb) then toString adj(0,a,i,j+.5)|" -- "|toString adj(1,bb,i+.5,j+1),
+                                        if match(kk,b) and match(kk,bb) then toString adj(1,b,i+.5,j)|" -- "|toString adj(1,bb,i+.5,j+1)
+                                        else if match(kk,b) and match(kk,aa) then toString adj(1,b,i+.5,j)|" -- "|toString adj(0,aa,i+1,j+.5),
+					";\n"
+                                        )
+                                    ))),
+                        if p#Labels then (
+			    "\\node at "|toString (i,j+.5)|" {"|toString a|"};\n",
+			    "\\node at "|toString (i+.5,j)|" {"|toString b|"};\n",
+                            )
+                        )
+                    }
+                ))),
+    "\\end{tikzpicture}"
+    )
 
 digit := s -> #s==1 and first ascii s >=48 and first ascii s <= 48+9;
 valid := (x,y) -> x === y or (x === "#" and digit y) or x === "*" or x === "**";

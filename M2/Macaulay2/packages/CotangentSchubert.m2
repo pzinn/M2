@@ -42,19 +42,9 @@ multidoc ///
    Set up cotangent Schubert calculus rings
  Node
   Key
-   segreClasses
-  Headline
-   Compute Segre motivic classes
- Node
-  Key
    segreClass
   Headline
    Compute a Segre motivic class
- Node
-  Key
-   schubertClasses
-  Headline
-   Compute Schubert classes
  Node
   Key
    schubertClass
