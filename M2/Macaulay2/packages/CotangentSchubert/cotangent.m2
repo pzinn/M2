@@ -6,7 +6,8 @@ export {
     "restrict", "fullToPartial", "basisCoeffs",
     "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection",
     "Presentation", "Borel", "EquivLoc",
-    "inversion"
+    "inversion",
+    "Partial"
     };
 
 cotOpts := opts ++ { Presentation => EquivLoc }
@@ -46,7 +47,7 @@ promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
     promote(Matrix,R,S) :=
     promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
     promote(Module,R,S) := (M,R1,S1) -> f M;
-    promote(List,R,S) := (L,R1,S1) -> f\L;
+--    promote(List,R,S) := (L,R1,S1) -> f\L; -- TODO put back!!!!!!!!!!
     S.baseRings = prepend(R,S.baseRings); -- temporary -- until promotability test improved in enginering.m2
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
@@ -68,7 +69,7 @@ defineFK = n -> (
         FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0])));
         promoteFromMap(FK_0,FK_n);
         );
-    FK_n
+    FK#n
     )
 
 defineFH = n -> (
@@ -77,7 +78,55 @@ defineFH = n -> (
         FH_n = frac(factor(ZZ (monoid[h,x_1..x_n])));
         promoteFromMap(FH_0,FH_n);
         );
-    FH_n
+    FH#n
+    )
+
+protect lastSetup;
+lastSetup:=null;
+
+BBs = new IndexedVariableTable;
+
+defineB = (FF,n,Kth,Equivariant) -> ( -- TODO remove FF
+    if not BBs#?(n,Kth,Equivariant) then (
+	y := getSymbol "y";
+	BB0 := FF(monoid(splice[y_1..y_n, if Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
+	J := ideal apply(1..n,k->elem(k,gens BB0)
+            -if Equivariant then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
+	BB := BB0/J;
+	BBs#(n,Kth,Equivariant) = BB;
+	-- a bunch of not quite right defs TODO improve
+	tautClass (ZZ,ZZ,BB) := o -> (j,i,BB) -> tautClass(j,i,BB.cache.lastSetup,Partial=>false);
+	zeroSection BB := o -> BB -> zeroSection(BB.cache.lastSetup,Partial=>false); -- not quite right but close enough for now
+	dualZeroSection BB := o -> BB -> dualZeroSection(BB.cache.lastSetup,Partial=>false); -- not quite right but close enough for now
+	zeroSectionInv BB := o -> BB -> zeroSectionInv(BB.cache.lastSetup,Partial=>false); -- not quite right but close enough for now
+	sClass (List,BB) :=
+	sClass (String,BB) :=
+	sClass (AryString,BB) := o -> (i,BB) -> sClass(i,BB.cache.lastSetup,Partial=>false);
+	segreClass (String,BB) :=
+	segreClass (AryString,BB) := o -> (i,BB) -> segreClass(i,BB.cache.lastSetup,Partial=>false);
+	stableClass (List,BB) :=
+	stableClass (String,BB) :=
+	stableClass (AryString,BB) := o -> (i,BB) -> stableClass(i,BB.cache.lastSetup,Partial=>false);
+	chernClass (List,BB) :=
+	chernClass (String,BB) :=
+	chernClass (AryString,BB) := o -> (i,BB) -> chernClass(i,BB.cache.lastSetup,Partial=>false);
+	schubertClass (List,BB) :=
+	schubertClass (String,BB) :=
+	schubertClass (AryString,BB) := o -> (i,BB) -> schubertClass(i,BB.cache.lastSetup,Partial=>false);
+	sClass' (List,BB) :=
+	sClass' (String,BB) :=
+	sClass' (AryString,BB) := o -> (i,BB) -> sClass'(i,BB.cache.lastSetup,Partial=>false);
+	segreClass' (List,BB) :=
+	segreClass' (String,BB) :=
+	segreClass' (AryString,BB) := o -> (i,BB) -> segreClass'(i,BB.cache.lastSetup,Partial=>false);
+	chernClass' (List,BB) :=
+	chernClass' (String,BB) :=
+	chernClass' (AryString,BB) := o -> (i,BB) -> chernClass'(i,BB.cache.lastSetup,Partial=>false);
+	stableClass' (List,BB) := o -> (L,BB) -> matrix { apply(L,i->stableClass'(i,BB.cache.lastSetup,Partial=>false)) };
+	stableClass' (String,BB) :=
+	stableClass' (AryString,BB) := o -> (i,BB) -> stableClass'(i,BB.cache.lastSetup,Partial=>false);
+	);
+    BBs#(n,Kth,Equivariant)
     )
 
 -- diagonal algebra
@@ -97,7 +146,6 @@ new DiagonalAlgebra from Module := (X,M) -> (
     matrix D := opts -> d -> diagonalMatrix entries d;
     D * Vector := (x,v) -> if class v === M then matrix x * v else error "wrong vector";
     D * Matrix := (x,m) -> if target m === M then matrix x * m else error "wrong target";
---    M * D := D * M := -- should work, D is younger; why doesn't it?
     D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
     D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power
     D + Number := D + RingElement := (v,x) -> v + new D from x;
@@ -118,60 +166,89 @@ html DiagonalAlgebra := lookup(html,Thing);
 
 -- ex: D=new DiagonalAlgebra from ZZ^3; x=new D from {1,2,3}; x^2-x+1
 
-lastSetup:=null;
-addLastSetup = f -> installMethod(f,() -> if lastSetup =!= null then f lastSetup else error "Set up first");
-addLastSetup1 = f -> f Thing := x -> if lastSetup =!= null then f(x,lastSetup) else error "Set up first";
-addLastSetup2 = f -> f (Thing,Thing) := (x,y) -> if lastSetup =!= null then f(x,y,lastSetup) else error "Set up first";
+addLastSetup = f -> installMethod(f, o -> () -> if lastSetup =!= null then f(lastSetup,Partial => o.Partial =!= null and o.Partial) else error "Set up first");
+addLastSetup1 = f -> f Thing := o -> x -> if lastSetup =!= null then f(x,lastSetup,Partial => o.Partial =!= null and o.Partial) else error "Set up first";
+addLastSetup2 = f -> f (Thing,Thing) := o -> (x,y) -> if lastSetup =!= null then f(x,y,lastSetup,Partial => o.Partial =!= null and o.Partial) else error "Set up first";
 
-zeroSection = method(Dispatch=>{Type}) -- note the {}
+zeroSection = method(Dispatch=>{Type},Options=>{Partial=>null}) -- note the {}
 addLastSetup(zeroSection);
 
-dualZeroSection = method(Dispatch=>{Type}) -- note the {}
+dualZeroSection = method(Dispatch=>{Type},Options=>{Partial=>null}) -- note the {}
 addLastSetup(dualZeroSection);
 
-zeroSectionInv = method(Dispatch=>{Type})
-addLastSetup(zeroSectionInv);
+zeroSectionInv = method(Dispatch=>{Type},Options=>{Partial=>null})
+--addLastSetup(zeroSectionInv);
 
-segreClass = method(Dispatch=>{Thing,Type})
+segreClass = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(segreClass);
 
-sClass = method(Dispatch=>{Thing,Type})
+sClass = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(sClass);
 
-stableClass = method(Dispatch=>{Thing,Type})
+stableClass = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(stableClass);
 
-chernClass = method(Dispatch=>{Thing,Type})
+chernClass = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(chernClass);
 
-schubertClass = method(Dispatch=>{Thing,Type})
+schubertClass = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(schubertClass);
 
-sClass' = method(Dispatch=>{Thing,Type})
+sClass' = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(sClass');
 
-stableClass' = method(Dispatch=>{Thing,Type})
+stableClass' = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(stableClass');
 
-segreClass' = method(Dispatch=>{Thing,Type})
+segreClass' = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(segreClass');
 
-chernClass' = method(Dispatch=>{Thing,Type})
+chernClass' = method(Dispatch=>{Thing,Type},Options=>{Partial=>null})
 addLastSetup1(chernClass');
 
-sClasses = method(Dispatch=>{Type})
+sClasses = method(Dispatch=>{Type},Options=>{Partial=>null})
 
-schubertClasses = method(Dispatch=>{Type})
+schubertClasses = method(Dispatch=>{Type},Options=>{Partial=>null})
 
 -- "Chern classes" -- renamed tautClass to avoid confusion with motivic classes
-tautClass = method(Dispatch=>{Thing,Thing,Type});
+tautClass = method(Dispatch=>{Thing,Thing,Type},Options=>{Partial=>null});
 addLastSetup2(tautClass);
 
 -- for internal use
 weights = method(Dispatch=>{Type})
-addLastSetup(weights);
 cotweights = method(Dispatch=>{Type})
-addLastSetup(cotweights);
+
+-- the methods below are defined for appropriate rings by setup
+-- the defs below are just placeholders (try to promote to latest) or apply-type
+-- restriction to fixed points
+--addLastSetup1n = f -> f Thing := x -> if lastSetup =!= null then f(x,lastSetup) else error "Set up first"; -- same as addLastSetup but no option <sigh>
+
+restrict = method(Dispatch => {Thing,Type})
+restrict Thing := x -> if (ring x).cache.?lastSetup then restrict(x,(ring x).cache.lastSetup) else restrict(x, ring x);
+restrict (Matrix,RingElement) := (m,X) -> matrix apply(flatten entries m,x->restrict(x,X)) -- only for one-row matrices
+
+-- from full flag to partial flag
+fullToPartial = method(Dispatch =>{Thing,Type})
+fullToPartial Thing := x -> if (ring x).cache.?lastSetup then fullToPartial(x,(ring x).cache.lastSetup) else fullToPartial(x, ring x);
+fullToPartial (Matrix,RingElement) := (m,X) -> matrix applyTable(entries m,x->fullToPartial(x,X))
+
+-- pushforward TODO rewrite as restrict and ftop
+pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
+pushforwardToPoint Number := pushforwardToPoint RingElement := r -> try pushforwardToPoint promote(r,lastSetup) else error "can't pushforward"; -- ?
+pushforwardToPoint Matrix := m -> (
+    if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint)
+    else try weights lastSetup * m
+    else error "can't pushforward"
+    )
+
+pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/P))
+pushforwardToPointFromCotangent Number := pushforwardToPointFromCotangent RingElement := r -> try pushforwardToPointFromCotangent promote(r,lastSetup) else error "can't pushforward"; -- ?
+pushforwardToPointFromCotangent Matrix := m -> (
+    if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent)
+    else try cotweights lastSetup * m
+    else error "can't pushforward"
+    )
+
 
 -- main function: set up everything
 setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
@@ -230,12 +307,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	Rcz = (hh,x1,x2) -> (map(ring x2,FH_-1,{hh,x2-x1}))Rcz0;
         );
     if curCotOpts.Presentation === Borel then (
+	BB := defineB(FF,n,curCotOpts.Kth,curCotOpts.Equivariant);
+	if curCotOpts.Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0})); -- TODO move elsewhere
 	y := getSymbol "y";
-	BB0 := FF(monoid(splice[y_1..y_n, if curCotOpts.Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
-	J := ideal apply(1..n,k->elem(k,gens BB0)
-            -if curCotOpts.Equivariant then elem(k,drop(gens FF,1)) else if curCotOpts.Kth then binomial(n,k) else 0);
-	BB := BB0/J; lastSetup=BB;
-	if curCotOpts.Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0}));
 	-- Chern classes
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
 	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
@@ -250,13 +324,14 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
+	lastSetup=BB.cache.lastSetup=AA;
 	if curCotOpts.Equivariant then promoteFromMap(FF0,AA,map(AA,FF0,{FF_0}));
-	tautClass (ZZ,ZZ,AA) := (j,i,AA) -> AA_(dims#i+j-1);
-	tautClass (ZZ,ZZ,BB) := (j,i,BB) -> e (j,i);
+	tautClass (ZZ,ZZ,AA) := o -> (j,i,AA) -> if o.Partial === null or o.Partial then AA_(dims#i+j-1) else e (j,i);
 	promoteFromMap(AA,BB,f*map(R1,AA));
 	-- reverse transformation
-	fullToPartial FF :=
-	fullToPartial BB := b -> (
+	fullToPartial (Number,AA) :=
+	fullToPartial (FF,AA) :=
+	fullToPartial (BB,AA) := (b,AA) -> (
 	    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
 	    AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
 	    b = sub(b,AB);
@@ -266,18 +341,24 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
 	    sub(b,AA)
 	    );
-	zeroSection BB := (cacheValue zeroSection) (if curCotOpts.Kth then
-	    BB -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
-	    else BB -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1)));
-	zeroSection AA := (cacheValue zeroSection) (AA -> fullToPartial zeroSection BB);
-	zeroSectionInv BB := (cacheValue zeroSectionInv) (BB -> (zeroSection BB)^(-1));
-	zeroSectionInv AA := (cacheValue zeroSectionInv) (AA -> (zeroSection AA)^(-1));
-	dualZeroSection BB := (cacheValue dualZeroSection) (if curCotOpts.Kth then
-	    BB -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
-	    else BB -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1)));
-	dualZeroSection AA := (cacheValue dualZeroSection) (AA -> fullToPartial dualZeroSection BB);
+	zeroSection AA := o -> (
+	    prt := o.Partial === null or o.Partial;
+	    (cacheValue (zeroSection,prt)) (if prt then AA -> fullToPartial zeroSection(AA,Partial=>false)
+	    else if curCotOpts.Kth then
+	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
+	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1))));
+	dualZeroSection AA := o -> (
+	    prt := o.Partial === null or o.Partial;
+	    (cacheValue (dualZeroSection,prt)) (if prt then AA -> fullToPartial dualZeroSection(AA,Partial=>false)
+	    else if curCotOpts.Kth then
+	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
+	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1))));
+	zeroSectionInv AA := o -> (cacheValue (zeroSectionInv,o.Partial)) (AA -> (zeroSection(AA,o))^(-1));
 	-- segre Classes
-	sClasses BB := (cacheValue sClasses) ( BB -> (
+	sClasses AA := o -> (
+	    prt := o.Partial === null or o.Partial;
+	    (cacheValue (sClasses,prt)) (if prt then AA -> fullToPartial sClasses(AA,Partial=>false)
+		else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
 		W:=V^**n;
@@ -294,36 +375,27 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		scan(dims#d,i->scan(n,j-> Z = Z*(Rcden(FF_0,
 				if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Kth then 1 else 0,BB_i))^(-1)));
     	    	Z
-		));
-	sClasses AA := (cacheValue sClasses) (AA -> fullToPartial sClasses BB);
-	sClass (List,AA) :=
-	sClass (List,BB) := (L,X) -> (sClasses X)_(ind\L);
+    		)));
+	sClass (List,AA) := o -> (L,AA) -> (sClasses(AA,o))_(ind\L);
 	sClass (String,AA) :=
-	sClass (String,BB) :=
-	sClass (AryString,AA) :=
-	sClass (AryString,BB) := (i,X) -> (sClasses X)_(0,ind i);
-	segreClass (List,AA) :=
-	segreClass (List,BB) := (L,X) -> matrix { apply(L,i->segreClass(i,X)) };
+	sClass (AryString,AA) := o -> (i,AA) -> (sClasses(AA,o))_(0,ind i);
+	segreClass (List,AA) := o -> (L,AA) -> matrix { apply(L,i->segreClass(i,AA,o)) };
+	segreClass (List,BB) := o -> (L,BB) -> matrix { apply(L,i->segreClass(i,lastSetup,Partial=>false)) };
 	segreClass (String,AA) :=
-	segreClass (String,BB) :=
-	segreClass (AryString,AA) :=
-	segreClass (AryString,BB) := (i,X) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,X);
+	segreClass (AryString,AA) := o -> (i,AA) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,AA,o);
 
 	stableClass (List,AA) :=
-	stableClass (List,BB) :=
 	stableClass (String,AA) :=
-	stableClass (String,BB) :=
-	stableClass (AryString,AA) :=
-	stableClass (AryString,BB) := (i,X) -> zeroSection X * sClass(i,X);
+	stableClass (AryString,AA) := o -> (i,AA) -> zeroSection(AA,o) * sClass(i,AA,o);
 
 	chernClass (List,AA) :=
-	chernClass (List,BB) :=
 	chernClass (String,AA) :=
-	chernClass (String,BB) :=
-	chernClass (AryString,AA) :=
-	chernClass (AryString,BB) := (i,X) -> dualZeroSection X * segreClass(i,X);
+	chernClass (AryString,AA) := o -> (i,AA) -> dualZeroSection(AA,o) * segreClass(i,AA,o);
 	-- Schubert classes
-	schubertClasses BB := (cacheValue schubertClasses) ( BB -> (
+	schubertClasses AA := o -> (
+	    prt := o.Partial === null or o.Partial;
+	    (cacheValue (schubertClasses,prt)) (if prt then AA -> fullToPartial schubertClasses(AA,Partial=>false)
+	     	else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
 		W:=V^**n;
@@ -338,51 +410,41 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 			--print Z;
 			));
     	    	Z
-		));
-	schubertClasses AA := (cacheValue schubertClasses) (AA -> fullToPartial schubertClasses BB);
-	schubertClass (List,AA) :=
-	schubertClass (List,BB) := (L,X) -> (schubertClasses X)_(ind\L);
+		)));
+	schubertClass (List,AA) := o -> (L,AA) -> (schubertClasses(AA,o))_(ind\L);
 	schubertClass (String,AA) :=
-	schubertClass (String,BB) :=
-	schubertClass (AryString,AA) :=
-	schubertClass (AryString,BB) := (i,X) -> (schubertClasses X)_(0,ind i);
+	schubertClass (AryString,AA) := o -> (i,AA) -> (schubertClasses(AA,o))_(0,ind i);
 	-- duality
 	du1 := if curCotOpts.Kth then prepend(FF_0^-1,apply(numgens FF-1,i->FF_(numgens FF-1-i)^-1))
 	    else prepend(-FF_0,apply(numgens FF-1,i->-FF_(numgens FF-1-i)));
 	du2 := apply(gens BB,x->if curCotOpts.Kth then x^-1 else -x); -- what about AA? TODO
 	du := map(BB,BB,du2|du1); -- TODO AA
 	sClass' (List,AA) :=
-	sClass' (List,BB) := (L,X) -> du sClass(reverse\L,X);
 	sClass' (String,AA) :=
-	sClass' (String,BB) :=
-	sClass' (AryString,AA) :=
-	sClass' (AryString,BB) := (i,X) -> du sClass(reverse i,X);
+	sClass' (AryString,AA) := o -> (i,AA) -> (
+	    x := du sClass(if class i === List then reverse\i else reverse i,AA,Partial=>false);
+	    if o.Partial === null or o.Partial then fullToPartial x else x
+	    );
 	-- compared to Mihalcea, missing a (-t)^-D; compared to dual of chernClass, missing q^#
-	segreClass' (List,AA) :=
-	segreClass' (List,BB) := (L,X) -> du segreClass(reverse\L,X);
+	segreClass' (List,AA) := 
 	segreClass' (String,AA) :=
-	segreClass' (String,BB) :=
-	segreClass' (AryString,AA) :=
-	segreClass' (AryString,BB) := (i,X) -> du segreClass(reverse i,X);
+	segreClass' (AryString,AA) := o -> (i,AA) -> (
+	    x := du segreClass(if class i === List then reverse\i else reverse i,AA,Partial=>false);
+	    if o.Partial === null or o.Partial then fullToPartial x else x
+	    );
 	-- compared to Mihalcea, missing a (-t)^-D; compared to dual of segreClass, missing q^#
 	chernClass' (List,AA) :=
-	chernClass' (List,BB) :=
 	chernClass' (String,AA) :=
-	chernClass' (String,BB) :=
-	chernClass' (AryString,AA) :=
-	chernClass' (AryString,BB) := (i,X) -> dualZeroSection X * segreClass'(i,X);
-	stableClass' (List,AA) :=
-	stableClass' (List,BB) := (L,X) -> matrix { apply(L,i->stableClass'(i,X)) };
+	chernClass' (AryString,AA) := o -> (i,AA) -> dualZeroSection(AA,o) * segreClass'(i,AA,o);
+	stableClass' (List,AA) := o -> (L,AA) -> matrix { apply(L,i->stableClass'(i,AA,o)) };
 	stableClass' (String,AA) :=
-	stableClass' (String,BB) :=
-	stableClass' (AryString,AA) :=
-	stableClass' (AryString,BB) := (i,X) -> (if curCotOpts.Kth then FF_0 else -1)^(2*inversion reverse i+inversion i)*chernClass'(i,X);
+	stableClass' (AryString,AA) := o -> (i,AA) -> (if curCotOpts.Kth then FF_0 else -1)^(2*inversion reverse i+inversion i)*chernClass'(i,AA,o);
 	-- power of q is silly TODO better
 	-- restriction to fixed points
 	if curCotOpts.Equivariant then (
 	    restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
-	    restrict AA :=
-	    restrict BB := b -> vector apply(I,i->(restrictMap i) b); -- TODO where is M?
+	    restrict (AA,AA) :=
+	    restrict (BB,AA) := (b,AA) -> vector apply(I,i->(restrictMap i) b); -- where is D?
 	    );
 	-- pushforwards
 	-- find element whose pushforward is nonzero
@@ -417,41 +479,41 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		(tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
 		), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
 	-- segre & schubert classes
-	sClass (List,D) := (L,D) -> ( -- should I cacheValue?
+	sClass (List,D) := o -> (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
 		map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
 		);
 	sClass (String,D) :=
-	sClass (AryString,D) := (i,D) -> (
+	sClass (AryString,D) := o -> (i,D) -> (
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
 	    );
 	segreClass (String,D) :=
-	segreClass (AryString,D) := (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
-	segreClass (List,D) := (L,D) -> (
+	segreClass (AryString,D) := o -> (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
+	segreClass (List,D) := o -> (L,D) -> (
 	    q := if curCotOpts.Kth then FF_0 else -1;
 	    sClass(L,D) * diagonalMatrix apply(L,i->q^(inversion i))
 	    );
 	chernClass (String,D) :=
-	chernClass (AryString,D) := (i,D) -> dualZeroSection D * segreClass(i,D);
-	chernClass (List,D) := (L,D) -> matrix dualZeroSection D * segreClass(L,D);
+	chernClass (AryString,D) := o -> (i,D) -> dualZeroSection D * segreClass(i,D);
+	chernClass (List,D) := o -> (L,D) -> matrix dualZeroSection D * segreClass(L,D);
 	stableClass (String,D) :=
-	stableClass (AryString,D) := (i,D) -> zeroSection D * sClass(i,D);
-	stableClass (List,D) := (L,D) -> matrix zeroSection D * sClass(L,D);
+	stableClass (AryString,D) := o -> (i,D) -> zeroSection D * sClass(i,D);
+	stableClass (List,D) := o -> (L,D) -> matrix zeroSection D * sClass(L,D);
 
-	schubertClass (List,D) := (L,D) -> ( -- should I cacheValue?
+	schubertClass (List,D) := o -> (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
 		map(M,M, apply(I,i->first entries (fixedPoint(false,i))_inds))
 		);
 	schubertClass (String,D) :=
-	schubertClass (AryString,D) := (i,D) -> (
+	schubertClass (AryString,D) := o -> (i,D) -> (
 	    indi:=ind i;
 	    new D from apply(I,ii->(fixedPoint(false,ii))_(0,indi))
 	    );
 
 	if curCotOpts.Kth then (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
-	    zeroSection D := (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
+	    zeroSection D := o -> (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
 	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))));
 	    dualZeroSection D := (cacheValue dualZeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^-2*FF_(j+1)^-1*FF_(k+1) else 1))));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) }));
@@ -492,36 +554,6 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	(D,FF,I)
     ) else error "Unknown presentation"
 )
-
--- the methods below are defined for appropriate rings by setup
--- the defs below are just placeholders (try to promote to latest) or apply-type
--- restriction to fixed points
-restrict = method(Dispatch => Thing)
-restrict Number := restrict RingElement := r -> try restrict promote(r,lastSetup) else error "Not applicable (set up first?)"; -- really?
-restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one-row matrices
-
--- from full flag to partial flag
-fullToPartial = method(Dispatch => Thing)
-fullToPartial Number := fullToPartial RingElement := r -> try fullToPartial promote(r,lastSetup) else error "Not applicable (set up first?)"; -- really?
-fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
-
-
--- pushforward
-pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
-pushforwardToPoint Number := pushforwardToPoint RingElement := r -> try pushforwardToPoint promote(r,lastSetup) else error "can't pushforward"; -- ?
-pushforwardToPoint Matrix := m -> (
-    if (ring m)#?pushforwardToPoint then matrix applyTable(entries m,pushforwardToPoint)
-    else try weights lastSetup * m
-    else error "can't pushforward"
-    )
-
-pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G/P))
-pushforwardToPointFromCotangent Number := pushforwardToPointFromCotangent RingElement := r -> try pushforwardToPointFromCotangent promote(r,lastSetup) else error "can't pushforward"; -- ?
-pushforwardToPointFromCotangent Matrix := m -> (
-    if (ring m)#?pushforwardToPointFromCotangent then matrix applyTable(entries m,pushforwardToPointFromCotangent)
-    else try cotweights lastSetup * m
-    else error "can't pushforward"
-    )
 
 end
 
