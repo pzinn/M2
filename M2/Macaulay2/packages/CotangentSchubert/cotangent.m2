@@ -18,7 +18,8 @@ debug Core -- to use basering, generatorSymbols, frame
 AryString = new Type of List;
 new AryString from String := (T,s) -> apply(ascii s,i->i-48);
 texMath AryString := s -> concatenate between("\\,",apply(s,x -> if class x === String then x else texMath x))
-net AryString := toString AryString := s -> concatenate apply(s,toString)
+net AryString := toString AryString := s -> concatenate apply(s,toString) -- what about multinumbers???
+toExternalString AryString := s -> toExternalString toString s
 -- inversion number of a string
 inversion = method()
 inversion AryString := p -> sum(#p-1,i->sum(i+1..#p-1,j->if p_i>p_j then 1 else 0))
@@ -315,10 +316,14 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
 	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
 	args := v\inds;
-	if curCotOpts.Kth then args = append(args,DegreeRank=>0) else (
+	if curCotOpts.Kth then (
+	    args = append(args,DegreeRank=>0);
+	    wgts := apply(d+1,i->Weights=>apply(d+1,j->dimdiffs#j:(if j==i then 1 else 0)));
+	    args = append(args, MonomialOrder=>wgts); -- a sort of RevLex
+	    ) else (
 	    degs := splice apply(d+1,i->1..dimdiffs#i);
 	    args = append(args, Degrees=>degs);
-	    wgts := apply(splice apply(d+1,i->reverse(dims#i..dims#(i+1)-1)),i->Weights=>apply(#inds,j->if j==i then -1 else 0));
+	    wgts = apply(splice apply(d+1,i->reverse(dims#i..dims#(i+1)-1)),i->Weights=>apply(#inds,j->if j==i then -1 else 0));
 	    args = append(args, MonomialOrder=>prepend(Weights=>degs,wgts)); -- a sort of GRevLex but with different ordering of variables
 	    );
 	R1 := FF monoid new Array from args;
@@ -525,7 +530,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) }));
 	    );
 	-- Chern classes of tautological bundles
-	tautClass (ZZ,ZZ,D) := (j,i,AA) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
+	tautClass (ZZ,ZZ,D) := o -> (j,i,AA) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
 	-- pushforward to point
 	pushforwardToPoint D  := m -> ((weights D)*m)_0;
 	pushforwardToPointFromCotangent D  := m -> ((cotweights D)*m)_0;
