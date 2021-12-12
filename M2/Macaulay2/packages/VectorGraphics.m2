@@ -695,20 +695,49 @@ new SVG from GraphicsObject := (S,g) -> (
 html GraphicsObject := g -> html SVG g;
 
 -- tex output
-tikzconv1 := x -> y -> x|"="|y
-tikzconv := hashTable { "stroke" => tikzconv1 "draw", "fill" => tikzconv1 "fill", "stroke-width" => y -> "line width="|y|"cm" };
+tikzsc := 1; -- not thread-safe
+tikzsize := 1; -- same
+tikzconv1 := x -> y -> (
+    if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
+	c := value substring(y,3);
+    	y = "{rgb,255:red,"|toString min(c#0,255)|";green,"|toString min(c#1,255)|";blue,"|toString min(c#2,255)|"}";
+	);
+    x|"="|y
+    )
+tikzlen := s -> if last s == "%" then tikzsize*0.01*value substring(s,0,#s-1) else value s
+tikzconv := hashTable {
+    "stroke" => tikzconv1 "draw", "fill" => tikzconv1 "fill",
+    "stroke-opacity" => tikzconv1 "draw opacity", "fill-opacity" => tikzconv1 "fill opacity", "stroke-linejoin" => tikzconv1 "line join",
+    "stroke-width" => y -> "line width="|toString(tikzsc*tikzlen y)|"cm",
+    "viewBox" => y -> (
+    	vb := pack(value \ separate("\\s|,",y),2);
+	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
+	"execute at begin picture={\\useasboundingbox[draw=none] ("|toString vb#0#0|","|toString vb#0#1|") rectangle ++("|toString vb#1#0|","|toString vb#1#1|");}"
+	) }
 ovr := x -> ( -- borrowed from html.m2
     T := class x;
     (op,ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
 	"unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
-    st := if op#"style" =!= null then (
-	for o in apply(separate(";",op#"style"),y->separate(":",y)) list (if #o==2 and tikzconv#?(o#0) then tikzconv#(o#0) o#1 else continue)
-	) else {};
+    if op#"style" =!= null then op = op ++ for o in apply(separate(";",op#"style"),y->separate(":",y)) list (if #o==2 then o#0 => o#1 else continue);
+    st := for o in pairs op list (if tikzconv#?(o#0) then tikzconv#(o#0) o#1 else continue);
     (op,ct,st)
     )
 tex SVG := texMath SVG := x -> concatenate(
     (op,ct,st) := ovr x;
-    st={"baseline=(current  bounding  box.center)","y={(0,-1cm)}"}|st;
+    if op#?"viewBox" and op#?"width" and op#?"height" then (
+    	-- compute scaling
+    	vb := value \ take(separate("\\s|,",op#"viewBox"),-2);
+	xsc := 0.2*value substring(op#"width",0,#(op#"width")-2) / vb#0; -- TODO parse units correctly
+	ysc := 0.2*value substring(op#"height",0,#(op#"height")-2) / vb#1;
+	tikzsc = sqrt(xsc^2+ysc^2);
+	st = st | {"x={("|toString xsc|"cm,0cm)}","y={(0cm,"|toString (-ysc)|"cm)}"};
+	) else (
+	tikzsc = 1;
+	st = append(st,"y={(0cm,-1cm)}");
+	);
+    st=append(st,"baseline=(current  bounding  box.center)");
+    st=append(st,"every path/.style={draw="|try op#"stroke" else "black"|",fill="|try op#"fill" else "none"|"}");
+    if not op#?"stroke-linejoin" then st=append(st,"line join=round");
     "\\begin{tikzpicture}[",
     demark(",",st),
     "]\n",
@@ -717,7 +746,7 @@ tex SVG := texMath SVG := x -> concatenate(
     )
 tex svgElement Circle := x -> concatenate(
     (op,ct,st) := ovr x;
-    "\\path ",
+    "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " (",
     toString op#"cx",
@@ -729,7 +758,7 @@ tex svgElement Circle := x -> concatenate(
     )
 tex svgElement Ellipse := x -> concatenate(
     (op,ct,st) := ovr x;
-    "\\path ",
+    "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " (",
     toString op#"cx",
@@ -741,29 +770,31 @@ tex svgElement Ellipse := x -> concatenate(
     toString op#"ry",
     "];\n"
     )
+tex svgElement GraphicsHtml :=
 tex svgElement GraphicsText := x -> concatenate(
     (op,ct,st) := ovr x;
-    "\\node ",
+    "\\node",
 --    if #st>0 then "["|demark(",",st)|"]", -- TODO intepret options correctly (stroke vs fill)
     " at (",
     toString op#"x",
     ",",
     toString op#"y",
     ") {",
-    ct,
+    if instance(ct,VisibleList) then tex \ toList ct else tex ct,
     "};\n"
     )
 tex svgElement GraphicsList := x -> concatenate(
     (op,ct,st) := ovr x;
+    if op#?"class" and op#"class" === "gfxauto" then return "";
     "\\begin{scope}",
-    if #st>0 then "["|demark(",",st)|"]",
+    if #st>0 then "[every path/.append style={"|demark(",",st)|"}]",
     "\n",
     apply(ct,tex),
     "\\end{scope}\n"
     )
 tex svgElement Line := x -> concatenate(
     (op,ct,st) := ovr x;
-    "\\draw ",
+    "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " (",
     toString op#"x1",
@@ -775,10 +806,18 @@ tex svgElement Line := x -> concatenate(
     toString op#"y2",
     ");\n"
     )
+tex svgElement Path := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " svg[scale=1cm] {",
+    op#"d",
+    "};\n"
+    )
 tex svgElement Polyline := x -> concatenate(
     (op,ct,st) := ovr x;
-    pts := pack(separate(" ",op#"points"),2);
-    "\\filldraw ",
+    pts := pack(separate("\\s|,",op#"points"),2);
+    "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " ",
     demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
@@ -786,13 +825,14 @@ tex svgElement Polyline := x -> concatenate(
     )
 tex svgElement Polygon := x -> concatenate(
     (op,ct,st) := ovr x;
-    pts := pack(separate(" ",op#"points"),2);
-    "\\filldraw ",
+    pts := pack(separate("\\s|,",op#"points"),2);
+    "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " ",
     demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
     " -- cycle;\n"
     )
+tex svgDefs := x -> "" -- not implemented
 
 tex GraphicsObject := texMath GraphicsObject := g -> tex SVG g;
 
