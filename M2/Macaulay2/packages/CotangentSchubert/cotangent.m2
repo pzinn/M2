@@ -503,28 +503,34 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	) else if curCotOpts.Presentation === EquivLoc then (
 	if not curCotOpts.Equivariant then error "Equivariant localization requires Equivariant option";
 	-- precompute Rcheck-matrices
-	V:=FF^(d+1); Rcheck := new IndexedVariableTable; Rcheckz := new IndexedVariableTable;
+	V:=FF^(d+1); Rcheck := new IndexedVariableTable; Rcheckz := new IndexedVariableTable; Rcheckz' := new IndexedVariableTable;
 	scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
 	scan(n-1,j->Rcheckz_j = map(V^**j,V^**j,1)**(Rcz (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
+--	scan(n-1,j->Rcheckz'_j = map(V^**j,V^**j,1)**(Rcz' (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1)); -- TODO check order equiv
+	scan(n-1,j->Rcheckz'_j = map(V^**j,V^**j,1)**(Rcz' (FF_0,FF_(n-j),FF_(n-j-1)))**map(V^**(n-2-j),V^**(n-2-j),1));
 	-- Module are immutable so can't use them. DiagonalAlgebra aren't
 	M := FF^#I;
 	D := new DiagonalAlgebra from M;
-	fixedPoint := memoize( (segre,i) -> ( -- this returns the restrictions to a given fixed point segre=true: segre; segre=false: schubert
+	fixedPoint := memoize( (Rcheck,i) -> ( -- this returns the restrictions to a given fixed point segre=true: segre; segre=false: schubert
 		-- find first descent
 		j:=position(0..n-2,k->i#k>i#(k+1));
 		tau0:=new AryString from apply(n,k->if k==j then j+1 else if k==j+1 then j else k);
 		tau:=map(FF,FF,prepend(FF_0,(drop(gens FF,1))_tau0));
-		(tau (fixedPoint(segre,i_tau0)))*(if segre then Rcheck else Rcheckz)_j
-		), { (true,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω), (false,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω) } );
+		(tau (fixedPoint(Rcheck,i_tau0)))*Rcheck_j
+		), {
+		(Rcheck,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω),
+		(Rcheckz,ω) => transpose matrix ZZ^((d+1)^n)_(ind ω),
+		(Rcheckz',ω) => transpose matrix ZZ^((d+1)^n)_(ind ω),
+		} );
 	-- segre & schubert classes
 	sClass (List,D) := o -> (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
-		map(M,M, apply(I,i->first entries (fixedPoint(true,i))_inds))
+		map(M,M, apply(I,i->first entries (fixedPoint(Rcheck,i))_inds))
 		);
 	sClass (String,D) :=
 	sClass (AryString,D) := o -> (i,D) -> (
 	    indi:=ind i;
-	    new D from apply(I,ii->(fixedPoint(true,ii))_(0,indi))
+	    new D from apply(I,ii->(fixedPoint(Rcheck,ii))_(0,indi))
 	    );
 	segreClass (String,D) :=
 	segreClass (AryString,D) := o -> (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
@@ -538,17 +544,15 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	stableClass (String,D) :=
 	stableClass (AryString,D) := o -> (i,D) -> zeroSection D * sClass(i,D);
 	stableClass (List,D) := o -> (L,D) -> matrix zeroSection D * sClass(L,D);
-
 	schubertClass (List,D) := o -> (L,D) -> ( -- should I cacheValue?
 		inds := ind \ L;
-		map(M,M, apply(I,i->first entries (fixedPoint(false,i))_inds))
+		map(M,M, apply(I,i->first entries (fixedPoint(Rcheckz,i))_inds))
 		);
 	schubertClass (String,D) :=
 	schubertClass (AryString,D) := o -> (i,D) -> (
 	    indi:=ind i;
-	    new D from apply(I,ii->(fixedPoint(false,ii))_(0,indi))
+	    new D from apply(I,ii->(fixedPoint(Rcheckz,ii))_(0,indi))
 	    );
-
 	if curCotOpts.Kth then (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
 	    zeroSection D := o -> (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
@@ -587,9 +591,20 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    q := if curCotOpts.Kth then FF_0 else -1;
 	    chernClass'(L,D) * diagonalMatrix apply(L,i->q^(2*dimvar-inversion i))
 	    );
+	schubertClass' (List,D) := o -> (L,D) -> ( -- should I cacheValue?
+		inds := ind \ reverse \ L;
+		map(M,M, apply(I,i->first entries (fixedPoint(Rcheckz',reverse i))_inds))
+		);
+	schubertClass' (String,D) :=
+	schubertClass' (AryString,D) := o -> (i,D) -> (
+	    indi:=ind reverse i;
+	    new D from apply(I,ii->(fixedPoint(Rcheckz',reverse ii))_(0,indi))
+	    );
+	-*
 	schubertClass' (String,D) :=
 	schubertClass' (AryString,D) := o -> (i,D) -> new D from ((-1)^(dimvar-inversion i)*du schubertClass(reverse i,D))^star; -- incorrect! TODO
 	schubertClass' (List,D) := o -> (L,D) -> (du schubertClass(reverse\L,D))^star * diagonalMatrix apply(L,i->(-1)^(dimvar-inversion i));
+	*-
     	--
 	symbol lastSetup <- D; -- avoid global assign
 	(D,FF,I)
