@@ -8,7 +8,7 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
-        DebuggingMode => false,
+        DebuggingMode => true,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text","Graphs"},
 	PackageExports => {"Text"}
@@ -31,7 +31,7 @@ protect Is3d
 protect Animated
 protect CurrentMatrix
 protect PerspectiveMatrix
-protect svgElement
+--protect svgElement
 protect Owner
 protect JsFunc
 protect RefPointFunc
@@ -143,7 +143,7 @@ graphicsId := () -> (
     "gfx_" | toString processID() | "_" | toString graphicsIdCount
     )
 
-svgElement := method(Dispatch=>Type) -- to each GraphicsType is assigned a svg MarkupType
+svgElement = method(Dispatch=>Type) -- to each GraphicsType is assigned a svg MarkupType
 
 new GraphicsType of GraphicsObject from VisibleList := (T,T2,x) -> (
     g:=new Type;
@@ -525,7 +525,6 @@ svg1 GraphicsList := g -> (
 	);
     );
 
--- produces SVG element hypertext
 precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     g.cache.Owner=c; -- owner cache
     remove(g.cache,Is3d);
@@ -543,7 +542,6 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	);
     remove(g.style,"visibility"); -- reset visibility status
     if g.?OneSided and g.OneSided then determineSide g;
---    if not g.cache.?Options then g.cache.Options = new MutableHashTable; -- TEMP (cause of lights), do better see above
     if g.?TransformMatrix then g.cache.Options#"data-matrix" = g.TransformMatrix;
     if g.?AnimMatrix then g.cache.Options#"data-dmatrix" = g.AnimMatrix;
     if g.?Static and g.Static then g.cache.Options#"data-static" = "true";
@@ -568,6 +566,7 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     style(s args,new OptionTable from g.style)
     )
 
+-- produces SVG element hypertext
 svg = g -> (
     g.cache.Light={};
     g.cache.Filter={};
@@ -694,6 +693,148 @@ new SVG from GraphicsObject := (S,g) -> (
     )
 
 html GraphicsObject := g -> html SVG g;
+
+-- tex output
+tikzsc := 1; -- not thread-safe
+tikzsize := 1; -- same
+tikzconv1 := x -> y -> (
+    if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
+	c := value substring(y,3);
+    	y = "{rgb,255:red,"|toString min(c#0,255)|";green,"|toString min(c#1,255)|";blue,"|toString min(c#2,255)|"}";
+	);
+    x|"="|y
+    )
+tikzlen := s -> if last s == "%" then tikzsize*0.01*value substring(s,0,#s-1) else value s
+tikzconv := hashTable {
+    "stroke" => tikzconv1 "draw", "fill" => tikzconv1 "fill",
+    "stroke-opacity" => tikzconv1 "draw opacity", "fill-opacity" => tikzconv1 "fill opacity", "stroke-linejoin" => tikzconv1 "line join",
+    "stroke-width" => y -> "line width="|toString(tikzsc*tikzlen y)|"cm",
+    "viewBox" => y -> (
+    	vb := pack(value \ separate("\\s|,",y),2);
+	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
+	"execute at begin picture={\\useasboundingbox[draw=none] ("|toString vb#0#0|","|toString vb#0#1|") rectangle ++("|toString vb#1#0|","|toString vb#1#1|");}"
+	) }
+ovr := x -> ( -- borrowed from html.m2
+    T := class x;
+    (op,ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
+	"unrecognized option name(s): ", toString select(toList x, c -> instance(c, Option)));
+    if op#"style" =!= null then op = op ++ for o in apply(separate(";",op#"style"),y->separate(":",y)) list (if #o==2 then o#0 => o#1 else continue);
+    st := for o in pairs op list (if tikzconv#?(o#0) then tikzconv#(o#0) o#1 else continue);
+    (op,ct,st)
+    )
+tex SVG := texMath SVG := x -> concatenate(
+    (op,ct,st) := ovr x;
+    if op#?"viewBox" and op#?"width" and op#?"height" then (
+    	-- compute scaling
+    	vb := value \ take(separate("\\s|,",op#"viewBox"),-2);
+	xsc := 0.2*value substring(op#"width",0,#(op#"width")-2) / vb#0; -- TODO parse units correctly
+	ysc := 0.2*value substring(op#"height",0,#(op#"height")-2) / vb#1;
+	tikzsc = sqrt(xsc^2+ysc^2);
+	st = st | {"x={("|toString xsc|"cm,0cm)}","y={(0cm,"|toString (-ysc)|"cm)}"};
+	) else (
+	tikzsc = 1;
+	st = append(st,"y={(0cm,-1cm)}");
+	);
+    st=append(st,"baseline=(current  bounding  box.center)");
+    st=append(st,"every path/.style={draw="|try op#"stroke" else "black"|",fill="|try op#"fill" else "none"|"}");
+    if not op#?"stroke-linejoin" then st=append(st,"line join=round");
+    "\\begin{tikzpicture}[",
+    demark(",",st),
+    "]\n",
+    apply(ct,tex),
+    "\\end{tikzpicture}"
+    )
+tex svgElement Circle := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " (",
+    toString op#"cx",
+    ",",
+    toString op#"cy",
+    ") circle[radius=",
+    toString op#"r",
+    "];\n"
+    )
+tex svgElement Ellipse := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " (",
+    toString op#"cx",
+    ",",
+    toString op#"cy",
+    ") circle[x radius=",
+    toString op#"rx",
+    ",y radius=",
+    toString op#"ry",
+    "];\n"
+    )
+tex svgElement GraphicsHtml :=
+tex svgElement GraphicsText := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\node",
+--    if #st>0 then "["|demark(",",st)|"]", -- TODO intepret options correctly (stroke vs fill)
+    " at (",
+    toString op#"x",
+    ",",
+    toString op#"y",
+    ") {",
+    if instance(ct,VisibleList) then tex \ toList ct else tex ct,
+    "};\n"
+    )
+tex svgElement GraphicsList := x -> concatenate(
+    (op,ct,st) := ovr x;
+    if op#?"class" and op#"class" === "gfxauto" then return "";
+    "\\begin{scope}",
+    if #st>0 then "[every path/.append style={"|demark(",",st)|"}]",
+    "\n",
+    apply(ct,tex),
+    "\\end{scope}\n"
+    )
+tex svgElement Line := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " (",
+    toString op#"x1",
+    ",",
+    toString op#"y1",
+    ") -- (",
+    toString op#"x2",
+    ",",
+    toString op#"y2",
+    ");\n"
+    )
+tex svgElement Path := x -> concatenate(
+    (op,ct,st) := ovr x;
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " svg[scale=1cm] {",
+    op#"d",
+    "};\n"
+    )
+tex svgElement Polyline := x -> concatenate(
+    (op,ct,st) := ovr x;
+    pts := pack(separate("\\s|,",op#"points"),2);
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " ",
+    demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
+    ";\n"
+    )
+tex svgElement Polygon := x -> concatenate(
+    (op,ct,st) := ovr x;
+    pts := pack(separate("\\s|,",op#"points"),2);
+    "\\path",
+    if #st>0 then "["|demark(",",st)|"]",
+    " ",
+    demark(" -- ",apply(pts,y->"("|toString y#0|","|toString y#1|")")),
+    " -- cycle;\n"
+    )
+tex svgDefs := x -> "" -- not implemented
+
+tex GraphicsObject := texMath GraphicsObject := g -> tex SVG g;
 
 -- now transformations
 -- following 2 functions can be used to produce matrices to be fed to either
