@@ -157,7 +157,7 @@ fullToPartial FH_0 := identity;
 defineFK = n -> (
     if not FK#?n then (
         z := getSymbol "z"; -- q := getSymbol "q";
-        FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0])));
+        FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
         promoteFromMap(FK_0,FK_n);
 	fullToPartial FK_n := identity;
         );
@@ -167,7 +167,7 @@ defineFK = n -> (
 defineFH = n -> (
     if not FH#?n then (
         x := getSymbol "x"; -- h := getSymbol "h";
-        FH_n = frac(factor(ZZ (monoid[h,x_1..x_n])));
+        FH_n = frac(factor(ZZ (monoid[h,x_1..x_n,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
         promoteFromMap(FH_0,FH_n);
 	fullToPartial FH_n := identity;
         );
