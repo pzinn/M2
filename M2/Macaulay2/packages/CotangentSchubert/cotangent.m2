@@ -506,8 +506,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	V:=FF^(d+1); Rcheck := new IndexedVariableTable; Rcheckz := new IndexedVariableTable; Rcheckz' := new IndexedVariableTable;
 	scan(n-1,j->Rcheck_j = map(V^**j,V^**j,1)**(Rc (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
 	scan(n-1,j->Rcheckz_j = map(V^**j,V^**j,1)**(Rcz (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1));
---	scan(n-1,j->Rcheckz'_j = map(V^**j,V^**j,1)**(Rcz' (FF_0,FF_(j+1),FF_(j+2)))**map(V^**(n-2-j),V^**(n-2-j),1)); -- TODO check order equiv
-	scan(n-1,j->Rcheckz'_j = map(V^**j,V^**j,1)**(Rcz' (FF_0,FF_(n-j),FF_(n-j-1)))**map(V^**(n-2-j),V^**(n-2-j),1));
+	scan(n-1,j->Rcheckz'_j = map(V^**j,V^**j,1)**(Rcz' (FF_0,FF_(j+2),FF_(j+1)))**map(V^**(n-2-j),V^**(n-2-j),1)); -- order of variables is fixed later
 	-- Module are immutable so can't use them. DiagonalAlgebra aren't
 	M := FF^#I;
 	D := new DiagonalAlgebra from M;
@@ -593,18 +592,13 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    );
 	schubertClass' (List,D) := o -> (L,D) -> ( -- should I cacheValue?
 		inds := ind \ reverse \ L;
-		map(M,M, apply(I,i->first entries (fixedPoint(Rcheckz',reverse i))_inds))
+		map(M,M, apply(I,i->first entries (du fixedPoint(Rcheckz',reverse i))_inds))
 		);
 	schubertClass' (String,D) :=
 	schubertClass' (AryString,D) := o -> (i,D) -> (
 	    indi:=ind reverse i;
-	    new D from apply(I,ii->(fixedPoint(Rcheckz',reverse ii))_(0,indi))
+	    new D from apply(I,ii->(du fixedPoint(Rcheckz',reverse ii))_(0,indi))
 	    );
-	-*
-	schubertClass' (String,D) :=
-	schubertClass' (AryString,D) := o -> (i,D) -> new D from ((-1)^(dimvar-inversion i)*du schubertClass(reverse i,D))^star; -- incorrect! TODO
-	schubertClass' (List,D) := o -> (L,D) -> (du schubertClass(reverse\L,D))^star * diagonalMatrix apply(L,i->(-1)^(dimvar-inversion i));
-	*-
     	--
 	symbol lastSetup <- D; -- avoid global assign
 	(D,FF,I)
