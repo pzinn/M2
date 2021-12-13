@@ -6,7 +6,7 @@
 -----------------------------------------------------------------------------
 
 needs "format.m2"
-needs "html.m2"
+--needs "html.m2"
 
 newpara := "\n\\par "
 maximumCodeWidth := 60 -- see also booktex.m2, an old file that sets the same variable
@@ -32,13 +32,13 @@ noopts := x -> select(x,e -> class e =!= Option)
 
 texLiteralTable := new MutableHashTable
 scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
-scan(characters ascii(32 .. 126), c -> texLiteralTable#c = c)
-scan(characters "\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
+scan(ascii(32 .. 126), c -> texLiteralTable#c = c)
+scan("\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
 texLiteralTable#"\n" = "\n"
 texLiteralTable#"\r" = "\r"
 texLiteralTable#"\t" = "\t"
 texLiteralTable#"`"  = "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-texLiteral = s -> concatenate apply(characters s, c -> texLiteralTable#c)
+texLiteral = s -> concatenate apply(s, c -> texLiteralTable#c)
 
 HALFLINE    := "\\vskip 4.75pt\n"
 ENDLINE     := "\\leavevmode\\hss\\endgraf\n"
@@ -47,7 +47,7 @@ ENDVERBATIM := "\\endgroup{}"
 
 texExtraLiteralTable := copy texLiteralTable
 texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(characters l, c -> texExtraLiteralTable#c)))
+texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(l, c -> texExtraLiteralTable#c)))
 
 --------------------------------------------
 -- this loop depends on the feature of hash tables that when the keys
@@ -97,6 +97,8 @@ texMath Thing := x -> texMath net x -- if we're desperate (in particular, for ra
 tex     String := texLiteral
 texMath String := s -> "\\texttt{" | texLiteral s | "}"
 
+tex Net := n -> concatenate(
+    "\\begin{tabular}[t]{l}", demark("\\\\\n", apply(unstack n, tex)), "\\end{tabular}")
 texMath Net := n -> concatenate(
     "\\begin{array}{l}", demark("\\\\\n", apply(unstack n, texMath)), "\\end{array}")
 
@@ -110,7 +112,7 @@ texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L==0 t
 texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
 texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
 texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
-texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\,", "\\}")
+texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\:", "\\}")
 texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\{", L, ",\\,", "\\}"))
 texMathMutable := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots", "\\right\\}")
 texMath MutableList  := texMathMutable
@@ -121,6 +123,11 @@ texMath HashTable := H -> if H.?texMath then H.texMath else (
     else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v))
 
 texMath Function := f -> texMath toString f
+
+texMath ZZ := n -> (
+    s := simpleToString n;
+    demark("\\,",pack(3,characters (pad(3*(1+(#s-1)//3),s))))
+    )
 
 --     \rm     Roman
 --     \sf     sans-serif

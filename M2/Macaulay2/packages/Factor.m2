@@ -9,20 +9,18 @@ newPackage(
     Keywords => {"Miscellaneous"},
     DebuggingMode => true,
     AuxiliaryFiles => false,
-    Configuration => { "DegreesRings" => false, "OldFactor" => true, "FactorLeadMonomial" => false }
+    Configuration => { "DegreesRings" => false, "OldFactor" => true }
     -- "OldFactor" => false would be nicer but for now too many compatibility problems
     )
 
-export {"FactorPolynomialRing"}
+export {"FactorPolynomialRing","FactorLeadMonomial"}
 
 OldFactor := (options Factor).Configuration#"OldFactor";
-FactorLeadMonomial := (options Factor).Configuration#"FactorLeadMonomial";
+--FactorLeadMonomial := (options Factor).Configuration#"FactorLeadMonomial";
 
 debug Core
--*
-factorOpts := new OptionTable from {Inverses=>false}; -- new options for factor
+factorOpts := new OptionTable from {FactorLeadMonomial=>false}; -- new options for factor
 (frame factor)#0 = factorOpts;
-*-
 
 commonPairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null or y === null then continue else f(x,y));
 -- commonPairs should probably be defined in d for optimization purposes
@@ -34,9 +32,11 @@ FactorPolynomialRing = new Type of PolynomialRing;
 FactorPolynomialRing.synonym = "factorized polynomial ring";
 coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings;
 factor FactorPolynomialRing := opts -> identity;
-expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
-describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
-factor FractionField := opts -> F -> frac(factor last F.baseRings)  -- simpler to do it in this order -- though needs more checking (see also below)
+--expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
+expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression last R.baseRings)_factor
+--describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
+describe FactorPolynomialRing := R -> Describe (describe last R.baseRings)_factor
+factor FractionField := opts -> F -> frac(factor(opts,last F.baseRings))  -- simpler to do it in this order -- though needs more checking (see also below)
 
 leadCoeff := x -> ( -- iterated leadCoefficient
     R := ring x;
@@ -98,7 +98,7 @@ factor PolynomialRing := opts -> R -> (
 	fe := rawFactor raw a;
         fe = toList apply append(fe,(f,e)->(
                 ff:=new R from f;
-                if (options R).Inverses and FactorLeadMonomial and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
+                if (options R).Inverses and opts.FactorLeadMonomial and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
                 if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
             );
         if liftable(fe#0#0,R.basering) then (
@@ -168,7 +168,8 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
         if s == 0 then error "division by 0";
         g:=gcd(r,s);
         if isField coefficientRing R then g=g*s#0 -- no constant in the denominator
-        else if coefficientRing R === ZZ and lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
+--        else if coefficientRing R === ZZ and lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
+        else try if lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
         new F from {r//g, s//g}
         );
     fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
@@ -185,6 +186,7 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
     if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
     if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
     if (last R.baseRings).?frac then promote((last R.baseRings).frac,F) := (x,F) -> new F from {factor numerator x,factor denominator x};
+    if not OldFactor then factor F := opts1 -> identity;
     F
     )
 
@@ -198,7 +200,7 @@ frac PolynomialRing := R -> (
     F
     )
 
-newRing FactorPolynomialRing := opts -> (R) -> factor(newRing(last R.baseRings,opts))
+newRing FactorPolynomialRing := opts -> (R) -> factor(newRing(last R.baseRings,opts)) -- TODO missing factor options
 
 FactorPolynomialRing / Ideal := QuotientRing => (F,I) -> I.cache.QuotientRing = (last F.baseRings)/((map(last F.baseRings,F))I);
 --- possibly temp: for now, we lose factoring when taking quotients
@@ -216,10 +218,13 @@ if not OldFactor then (
     Ring Array :=
     Ring List := (R,variables) -> (
     	RM := R monoid if instance(variables,List) then (variables,Local=>true) else variables;
-    	factor RM := opts -> a -> (factor RM; factor(opts,a));
+	factor RM := opts -> a -> (factor (opts,RM); factor a);
     	use RM
     	)
     )
+
+-- alternate syntax (looks prettier)
+PolynomialRing _ Function := (R,f) -> if f===factor then factor R else "syntax error"
 
 -- some functions need old factor
 -- ugly hack for now, we'll see later

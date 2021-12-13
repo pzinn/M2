@@ -1,51 +1,16 @@
 -- -*- M2-comint -*- hash: -1285962778
-<<<<<<< HEAD
-i1 : R = CC[x,y,z];
-i2 : f = { x^2 - y, x^3 - z };
-i3 : fe1 = constructEmbedding(f,1);
-i4 : toString fe1
+i1 : R = CC[x,y,z];
+i2 : f = { x^2 - y, x^3 - z };
+i3 : fe1 = constructEmbedding(f,1);
+i4 : toString fe1
 
-o4 = <pre style="display:inline">
+o4 = <pre style="display:inline">
 {x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1, (-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z+(-.911067-.412259*ii)*zz1-.883724+.468009*ii}</pre>
-i5 : R = CC[x,y,z];
-i6 : f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
-i7 : fe1 = constructEmbedding(f,1);
-i8 : toString fe1
+i5 : R = CC[x,y,z];
+i6 : f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
+i7 : fe1 = constructEmbedding(f,1);
+i8 : toString fe1
 
-o8 = <pre style="display:inline">
+o8 = <pre style="display:inline">
 {x^2-y+(-.97755+.210704*ii)*ss1+(.380139-.924929*ii)*zz1, x^3-z+(-.688326-.725402*ii)*ss1+(-.45571+.890128*ii)*zz1, x*y-z+(-.997759-.0669093*ii)*ss1+(-.930099+.36731*ii)*zz1, -y^2+x*z+(-.767756-.640743*ii)*ss1+(-.883724+.468009*ii)*zz1, (.943327-.331864*ii)*x+(.673112+.739541*ii)*y+(-.911067-.412259*ii)*z+(.547606+.836736*ii)*ss1+(-.663772-.747935*ii)*zz1-.205377-.978683*ii}</pre>
-i9 : 
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
-
-i1 : R = CC[x,y,z];
-
-i2 : f = { x^2 - y, x^3 - z };
-
-i3 : fe1 = constructEmbedding(f,1);
-
-i4 : toString fe1
-
-o4 = {x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1,
-     (-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z
-     +(-.911067-.412259*ii)*zz1-.883724+.468009*ii}
-
-i5 : R = CC[x,y,z];
-
-i6 : f = { x^2-y, x^3-z, x*y-z, x*z-y^2 };
-
-i7 : fe1 = constructEmbedding(f,1);
-
-i8 : toString fe1
-
-o8 = {x^2-y+(-.97755+.210704*ii)*ss1+(.380139-.924929*ii)*zz1,
-     x^3-z+(-.688326-.725402*ii)*ss1+(-.45571+.890128*ii)*zz1,
-     x*y-z+(-.997759-.0669093*ii)*ss1+(-.930099+.36731*ii)*zz1,
-     -y^2+x*z+(-.767756-.640743*ii)*ss1+(-.883724+.468009*ii)*zz1,
-     (.943327-.331864*ii)*x+(.673112+.739541*ii)*y+(-.911067-.412259*ii)*z
-     +(.547606+.836736*ii)*ss1+(-.663772-.747935*ii)*zz1-.205377-.978683*ii}
-
-i9 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
+i9 : 

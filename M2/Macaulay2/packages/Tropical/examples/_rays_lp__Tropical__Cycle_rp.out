@@ -1,26 +1,26 @@
 -- -*- M2-comint -*- hash: -1556992540
-i1 : QQ[x,y,z,w]
+i1 : QQ[x,y,z,w]
 
-o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
+o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : I=ideal(x^2-y*z+w^2,w^3-x*y^3+z^3);
+i2 : I=ideal(x^2-y*z+w^2,w^3-x*y^3+z^3);
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
-i3 : T=tropicalVariety I;
-i4 : rays T
+i3 : T=tropicalVariety I;
+i4 : rays T
 
-o4 = $\left(\!\begin{array}{cccccc}
--6&amp;-3&amp;0&amp;1&amp;3&amp;6\\
--5&amp;-2&amp;-1&amp;1&amp;2&amp;5\\
--7&amp;-3&amp;-1&amp;1&amp;4&amp;7\\
--6&amp;-3&amp;-1&amp;1&amp;3&amp;7\\
+o4 = $\left(\!\begin{array}{cccccc}
+-  6&amp;-  3&amp;  0&amp;  1&amp;  3&amp;  6\\
+-  5&amp;-  2&amp;-  1&amp;  1&amp;  2&amp;  5\\
+-  7&amp;-  3&amp;-  1&amp;  1&amp;  4&amp;  7\\
+-  6&amp;-  3&amp;-  1&amp;  1&amp;  3&amp;  7\\
 \end{array}\!\right)$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
-i5 : 
+ </pre>${\mathbb Z}^{  4}\,\longleftarrow \,{\mathbb Z}^{  6}$
+i5 : 

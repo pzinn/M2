@@ -1,41 +1,14 @@
 -- -*- M2-comint -*- hash: -607525885
-<<<<<<< HEAD
-i1 : R = QQ[x,y,z];
-i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
-i3 : sols = solveRationalSystem(system)
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
+i1 : R = QQ[x,y,z];
+i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
+i3 : sols = solveRationalSystem(system)
 
-o3 = $\left\{\left\{{.543689},\,{.295598}+{1.36846}\cdot 10^{-48}\,\mathbf{i},\,{.160713}\right\},\,\left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\},\,\left\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{{.543689},\:{.295598}+{1.36846}\cdot 10^{-48}\,\mathbf{i},\:{.160713}\right\},\:\left\{-{.771845}-{1.11514}\,\mathbf{i},\:-{.647799}+{1.72143}\,\mathbf{i},\:{2.41964}-{.606291}\,\mathbf{i}\right\},\:\left\{-{.771845}+{1.11514}\,\mathbf{i},\:-{.647799}-{1.72143}\,\mathbf{i},\:{2.41964}+{.606291}\,\mathbf{i}\right\}\right\}$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
-i4 : peek first sols
+i4 : peek first sols
 
-<<<<<<< HEAD
-o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
+o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 Point{ConditionNumber => 4.87567                }<br/>      Coordinates => {.543689, .295598, .160713}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
-i5 : 
-=======
-i3 : sols = solveRationalSystem(system)
-
-o3 = {{.543689, .295598, .160713}, {-.771845-1.11514*ii, -.647799+1.72143*ii,
-     ------------------------------------------------------------------------
-     2.41964-.606291*ii}, {-.771845+1.11514*ii, -.647799-1.72143*ii,
-     ------------------------------------------------------------------------
-     2.41964+.606291*ii}}
-
-o3 : List
-
-i4 : peek first sols
-
-o4 = Point{ConditionNumber => 4.87567                }
-           Coordinates => {.543689, .295598, .160713}
-           LastT => 1
-           SolutionStatus => Regular
-
-i5 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
+i5 : 

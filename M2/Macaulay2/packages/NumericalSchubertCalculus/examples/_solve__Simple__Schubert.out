@@ -1,53 +1,51 @@
--- -*- M2-comint -*- hash: 521315531
-i1 : k = 3;
-i2 : n = 6;
-i3 : SchPblm = {
+-- -*- M2-comint -*- hash: -1827806061
+i1 : k = 3;
+i2 : n = 6;
+i3 : SchPblm = {
     ({2,1}, random(CC^6,CC^6)),
     ({2,1}, random(CC^6,CC^6)),
     ({1}, random(CC^6,CC^6)),
     ({1}, random(CC^6,CC^6)),
     ({1}, random(CC^6,CC^6))
     };
-i4 : stdio << "Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags"<<endl;
-Schubert problem {2,1}^2 {1}^3 in Gr(3,6) with respect to random flags
-i5 : solveSimpleSchubert(SchPblm, k,n)
+i4 : solveSimpleSchubert(SchPblm, k,n)
 
-o5 = $\left\{\left(\!\begin{array}{ccc}
+o4 = $\left\{\left(\!\begin{array}{ccc}
 {.426402}+{.387024}\,\mathbf{i}&amp;-{.767149}+{.88679}\,\mathbf{i}&amp;-{.299645}+{.514617}\,\mathbf{i}\\
 {.350714}+{.0538475}\,\mathbf{i}&amp;-{1.21057}+{.628777}\,\mathbf{i}&amp;{.141417}+{.670654}\,\mathbf{i}\\
 -{.00144609}+{.0615438}\,\mathbf{i}&amp;-{1.36249}+{.957226}\,\mathbf{i}&amp;-{.135443}+{.402697}\,\mathbf{i}\\
 {.236976}-{.167254}\,\mathbf{i}&amp;-{.849462}+{.793055}\,\mathbf{i}&amp;-{.0797972}+{.62109}\,\mathbf{i}\\
 {.251567}+{.0963873}\,\mathbf{i}&amp;-{.584053}+{.120158}\,\mathbf{i}&amp;-{.0811626}+{.616193}\,\mathbf{i}\\
 {.16406}+{.140612}\,\mathbf{i}&amp;{.147134}+{1.02782}\,\mathbf{i}&amp;{.700057}+{.537171}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.0495704}+{.786748}\,\mathbf{i}&amp;{1.06866}+{.233544}\,\mathbf{i}&amp;-{.050555}-{.348219}\,\mathbf{i}\\
 -{.206829}-{.120362}\,\mathbf{i}&amp;{1.77239}+{.496154}\,\mathbf{i}&amp;-{.495726}-{.478418}\,\mathbf{i}\\
 -{.649096}-{.0452157}\,\mathbf{i}&amp;{1.69103}+{.597783}\,\mathbf{i}&amp;-{.0259685}-{.564318}\,\mathbf{i}\\
 -{.288447}+{.394938}\,\mathbf{i}&amp;{.928957}+{.172057}\,\mathbf{i}&amp;-{.307244}-{.389747}\,\mathbf{i}\\
 -{.458603}+{.164307}\,\mathbf{i}&amp;{1.24868}+{.022694}\,\mathbf{i}&amp;-{.109204}-{.543584}\,\mathbf{i}\\
 -{.159612}+{.837151}\,\mathbf{i}&amp;{.145965}-{.131173}\,\mathbf{i}&amp;-{.311686}-{.109522}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.786345}+{.0390369}\,\mathbf{i}&amp;{2.04868}+{.698543}\,\mathbf{i}&amp;-{.111359}-{.0502477}\,\mathbf{i}\\
 {.850935}+{.235992}\,\mathbf{i}&amp;{2.99936}+{1.61752}\,\mathbf{i}&amp;-{.249658}-{.107736}\,\mathbf{i}\\
 {.583656}+{.186089}\,\mathbf{i}&amp;{3.03503}+{1.65758}\,\mathbf{i}&amp;-{.036834}-{.234947}\,\mathbf{i}\\
 {.739055}-{.656875}\,\mathbf{i}&amp;{1.87368}+{.627178}\,\mathbf{i}&amp;-{.203199}-{.0546734}\,\mathbf{i}\\
 {.900963}+{.0645478}\,\mathbf{i}&amp;{2.00882}+{.70537}\,\mathbf{i}&amp;-{.0684508}-{.152856}\,\mathbf{i}\\
 {.488143}-{.479836}\,\mathbf{i}&amp;{.601493}-{.588086}\,\mathbf{i}&amp;{.0472758}+{.081476}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.29604}+{.607542}\,\mathbf{i}&amp;-{.426858}-{.110817}\,\mathbf{i}&amp;-{.120347}+{.0333611}\,\mathbf{i}\\
 {.0792163}+{.0318581}\,\mathbf{i}&amp;-{.264013}-{.679973}\,\mathbf{i}&amp;-{.172278}-{.0120918}\,\mathbf{i}\\
 -{.307005}+{.0794883}\,\mathbf{i}&amp;-{.488333}-{.457673}\,\mathbf{i}&amp;-{.0312588}-{.143993}\,\mathbf{i}\\
 {.0557081}+{.142424}\,\mathbf{i}&amp;-{.514797}-{.16939}\,\mathbf{i}&amp;-{.165842}+{.0348618}\,\mathbf{i}\\
 -{.0644923}+{.200208}\,\mathbf{i}&amp;-{.00925758}-{.689311}\,\mathbf{i}&amp;-{.0470698}-{.0463538}\,\mathbf{i}\\
 {.0883581}+{.490683}\,\mathbf{i}&amp;-{.344437}+{.638705}\,\mathbf{i}&amp;{.151061}+{.124719}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.416853}+{.43068}\,\mathbf{i}&amp;-{2.06356}+{1.47596}\,\mathbf{i}&amp;-{.555553}+{.0429811}\,\mathbf{i}\\
 {.304534}+{.0650379}\,\mathbf{i}&amp;-{3.3745}+{.909754}\,\mathbf{i}&amp;-{.611663}+{.448933}\,\mathbf{i}\\
 -{.0510879}+{.0812111}\,\mathbf{i}&amp;-{3.56377}+{1.40773}\,\mathbf{i}&amp;-{.494457}-{.0547096}\,\mathbf{i}\\
 {.223864}-{.106046}\,\mathbf{i}&amp;-{2.10608}+{1.35519}\,\mathbf{i}&amp;-{.600561}+{.286352}\,\mathbf{i}\\
 {.204877}+{.130855}\,\mathbf{i}&amp;-{1.91259}+{.304428}\,\mathbf{i}&amp;-{.579545}+{.13444}\,\mathbf{i}\\
 {.170645}+{.202745}\,\mathbf{i}&amp;{.219633}+{1.87171}\,\mathbf{i}&amp;-{.00171043}+{.686346}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.948004}+{.00971475}\,\mathbf{i}&amp;{.374969}+{.499562}\,\mathbf{i}&amp;-{.059199}+{.251334}\,\mathbf{i}\\
 {.954212}+{.376895}\,\mathbf{i}&amp;{.636613}+{.574365}\,\mathbf{i}&amp;{.116788}+{.149588}\,\mathbf{i}\\
 {.720595}+{.326751}\,\mathbf{i}&amp;{.530465}+{.763105}\,\mathbf{i}&amp;{.073638}+{.0777737}\,\mathbf{i}\\
@@ -56,6 +54,6 @@ o5 = $\left\{\left(\!\begin{array}{ccc}
 {.689695}-{.590038}\,\mathbf{i}&amp;{.157157}+{.310587}\,\mathbf{i}&amp;{.453721}+{.129014}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o5 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
-i6 : 
+i5 : 

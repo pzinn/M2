@@ -1,24 +1,24 @@
 -- -*- M2-comint -*- hash: -180762816
-i1 : R = CC[x,y,z];
-i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
-i3 : NV = bertiniPosDimSolve(F)
+i1 : R = CC[x,y,z];
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
+i3 : NV = bertiniPosDimSolve(F)
 
-o3 = $<pre style="display:inline">
+o3 = $<pre style="display:inline">
 NV</pre>$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 NumericalVariety</pre>
-i4 : pts = {{0,0,0}} --z-axis
+i4 : pts = {{0,0,0}} --z-axis
 
-o4 = $\left\{\left\{0,\,0,\,0\right\}\right\}$
+o4 = $\left\{\left\{  0,\:  0,\:  0\right\}\right\}$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 List</pre>
-i5 : bertiniComponentMemberTest(pts, NV)
+i5 : bertiniComponentMemberTest(pts, NV)
 
-o5 = $\left\{\left\{<pre style="display:inline">
+o5 = $\left\{\left\{<pre style="display:inline">
 (dim=1,deg=1)</pre>\right\}\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : 
+i6 : 

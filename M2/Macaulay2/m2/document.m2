@@ -183,6 +183,7 @@ makeDocumentTag' := opts -> key -> (
 
 makeDocumentTag = method(Dispatch => Thing, Options => { Package => null })
 makeDocumentTag DocumentTag := opts -> identity
+makeDocumentTag List        := opts -> L   -> apply(L, key -> makeDocumentTag(key, opts))
 makeDocumentTag Thing       := opts -> key -> (makeDocumentTag' opts) key
 makeDocumentTag String      := opts -> key -> (
     local pkg;
@@ -196,8 +197,8 @@ makeDocumentTag String      := opts -> key -> (
 -- correct its package, if it is incorrect (e.g. truncate, quotient)
 -- TODO: can this be modified to fix the tag in-place? then we would only need to
 -- fix the tag in (validate, TO), rather than also in (info, TO) and (html, TO).
-fixup DocumentTag := DocumentTag => tag -> makeDocumentTag(
-    if instance(key := tag.Key, String) then return tag else key, Package => package key)
+fixup DocumentTag := DocumentTag => tag -> (
+    if (rawdoc := fetchAnyRawDocumentation tag) =!= null then rawdoc.DocumentTag else tag)
 
 -----------------------------------------------------------------------------
 -- formatting document tags
@@ -384,11 +385,11 @@ isSecondaryTag   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?Pr
 isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"undocumented" and d#"undocumented" === true )
 hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
+-- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
 locate DocumentTag := tag -> (
-    rawdoc := fetchAnyRawDocumentation tag;
-    if rawdoc =!= null
-    then (rawdoc#"filename", rawdoc#"linenum",,,,,) -- TODO: (filename, start,startcol, stop,stopcol, pos,poscol)
-    else (currentFileName, currentLineNumber(),,,,,))
+    if (rawdoc := fetchAnyRawDocumentation tag) =!= null
+    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
+    else (currentFileName, currentLineNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function
@@ -396,7 +397,7 @@ locate DocumentTag := tag -> (
 
 emptyOptionTable := new OptionTable from {}
 getOptionDefaultValues := method(Dispatch => Thing)
-getOptionDefaultValues Symbol   := x -> if value x =!= x then getOptionDefaultValues value x else emptyOptionTable
+getOptionDefaultValues Symbol   := x -> if instance(f := value x, Function) then getOptionDefaultValues f else emptyOptionTable
 getOptionDefaultValues Thing    := x -> emptyOptionTable
 getOptionDefaultValues Function := f -> (
      o := options f;
@@ -452,7 +453,7 @@ processSignature := (tag, fn) -> item -> (
 	name := if tag === opttag then TT toString optsymb else TO2 { opttag, toString optsymb };
 	type  = if type =!= null and type =!= Nothing then ofClass type else TT "..."; -- type Nothing is treated as above
 	defval := SPAN{"default value ", reproduciblePaths replace("^-\\*Function.*?\\*-", "-*Function*-", toString opts#optsymb)};
-	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> headline opttag};
+	text = if text =!= null and #text > 0 then text else if tag =!= opttag then LATER {() -> nonnull SPAN headline opttag};
 	text = if text =!= null and #text > 0 then (", ", text);
 	-- e.g: Key => an integer, default value 42, the meaning of the universe
 	{ (name, TT " => ", type), nonnull (defval, text) })
@@ -621,7 +622,7 @@ document List := opts -> args -> (
 	    if o#?key then error("option ", toString key, " encountered twice");
 	    o#key = arg#1));
     -- Set the description
-    o.Description = select(args, arg -> not instance(arg, Option));
+    o.Description = select(nonnull args, arg -> not instance(arg, Option));
     -- Set the primary key
     key := if o.?Key then o.Key else error "missing Key";
     rest := if instance(key, List) then (
@@ -686,7 +687,7 @@ undocumented Thing := key -> if key =!= null then (
 	    "linenum"          => currentLineNumber()
 	    }))
 
--- TODO: what does this do?
+-- somehow, this is the very first method called by the Core!!
 undocumented keys undocumentedkeys
 undocumentedkeys = null
 undocumented' = x -> error "late use of function undocumented'"

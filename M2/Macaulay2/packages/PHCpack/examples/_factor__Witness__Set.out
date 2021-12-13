@@ -1,29 +1,19 @@
 -- -*- M2-comint -*- hash: 370242144
-<<<<<<< HEAD
-i1 : R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
-i3 : (w,ns) = topWitnessSet(f,1);
-i4 : w
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
+i1 : R = CC[x,y,z]; f = {(x^2-y)*(x-1), x^3 - z};
+i3 : (w,ns) = topWitnessSet(f,1);
+i4 : w
 
-o4 = $<pre style="display:inline">
+o4 = $<pre style="display:inline">
 w</pre>$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 WitnessSet</pre>
-i5 : L = factorWitnessSet(w)
+i5 : L = factorWitnessSet(w)
 found 2 irreducible factors 
 
-o5 = $<pre style="display:inline">
+o5 = $<pre style="display:inline">
 L</pre>$
 
-<<<<<<< HEAD
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 NumericalVariety</pre>
-i6 : 
-=======
-i6 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
+i6 : 

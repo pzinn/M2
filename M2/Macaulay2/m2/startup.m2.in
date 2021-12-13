@@ -193,7 +193,10 @@ if firstTime then (
           | "  FFLAS-FFPACK " | version#"fflas_ffpack version" | ", by the FFLAS group" | newline
      	  | "  MPFR " | version#"mpfr version" | ", by Free Software Foundation" | newline
 	  | "  BLAS and LAPACK 3.0" | ", by J. Dongarra et al." | newline
-          | "  MPSolve 3.1.8, by D. Bini et al."
+          | "  MPSolve 3.1.8, by D. Bini et al." | newline
+          | "  Memtailor " | version#"memtailor version" | ", by B. Roune" | newline
+          | "  Mathic " | version#"mathic version" | ", by B. Roune and M. Stillman" | newline
+          | "  MathicGB " | version#"mathicgb version" | ", by B. Roune and M. Stillman"
 	  );
 
      use = x -> x;				  -- temporary, until methods.m2
@@ -321,7 +324,8 @@ initcurrentlayout := () -> (
 	  if issuffix(Layout#2#"bin","/"|bindir) then Layout#2 else
 	  if issuffix(Layout#1#"bin","/"|bindir) then Layout#1
 	  );
-     prefixDirectory = if currentLayout =!= null then realpath substring(bindir,0,#bindir-#currentLayout#"bin");
+--     prefixDirectory = if currentLayout =!= null then realpath substring(bindir,0,#bindir-#currentLayout#"bin");
+     prefixDirectory = if currentLayout =!= null then substring(bindir,0,#bindir-#currentLayout#"bin");
      -- we use "realpath" to produce real paths, because Cygwin-style symbolic links are not understood by native Windows applications
      if notify then printerr("prefixDirectory = ", prefixDirectory);
      if readlink exe =!= null then (

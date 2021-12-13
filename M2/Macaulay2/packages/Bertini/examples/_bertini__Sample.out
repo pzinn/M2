@@ -1,34 +1,34 @@
 -- -*- M2-comint -*- hash: -1057685552
-i1 : R = CC[x,y,z]
+i1 : R = CC[x,y,z]
 
-o1 = $R$
+o1 = $R$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
+i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
+o2 = $\left\{x^{  3}+x\,y^{  2}+x\,z^{  2}-x,\:x^{  2}y+y^{  3}+y\,z^{  2}-y\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : NV = bertiniPosDimSolve(F)
+i3 : NV = bertiniPosDimSolve(F)
 
-o3 = $<pre style="display:inline">
+o3 = $<pre style="display:inline">
 NV</pre>$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 NumericalVariety</pre>
-i4 : W = NV#1_0 --z-axis
+i4 : W = NV#1_0 --z-axis
 
-o4 = $<pre style="display:inline">
+o4 = $<pre style="display:inline">
 W</pre>$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 WitnessSet</pre>
-i5 : bertiniSample(4, W)
+i5 : bertiniSample(4, W)
 
-o5 = $\left\{\left\{{1.64455}\cdot 10^{-20}-{2.95225}\cdot 10^{-20}\,\mathbf{i},\,{0},\,{.237386}-{.626621}\,\mathbf{i}\right\},\,\left\{-{3.64265}\cdot 10^{-20}+{1.38923}\cdot 10^{-20}\,\mathbf{i},\,{2.29691}\cdot 10^{-320}+{1.39574}\cdot 10^{-320}\,\mathbf{i},\,{.333468}-{.460734}\,\mathbf{i}\right\},\,\left\{{6.52084}\cdot 10^{-21}+{1.04456}\cdot 10^{-21}\,\mathbf{i},\,-{9.50582}\cdot 10^{-321}+{3.99205}\cdot 10^{-321}\,\mathbf{i},\,{.301358}-{.353473}\,\mathbf{i}\right\},\,\left\{{3.60771}\cdot 10^{-21}-{5.40502}\cdot 10^{-21}\,\mathbf{i},\,{0},\,{.329891}-{.496907}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{-{8.05133}\cdot 10^{-311}-{5.90959}\cdot 10^{-311}\,\mathbf{i},\:{5.90959}\cdot 10^{-311}-{8.05133}\cdot 10^{-311}\,\mathbf{i},\:{.168323}-{.487322}\,\mathbf{i}\right\},\:\left\{{0},\:{0},\:-{.147239}-{.134736}\,\mathbf{i}\right\},\:\left\{{0},\:{0},\:-{.0872627}-{.311419}\,\mathbf{i}\right\},\:\left\{{7.26177}\cdot 10^{-262}+{9.78431}\cdot 10^{-262}\,\mathbf{i},\:-{8.67596}\cdot 10^{-263}+{2.92}\cdot 10^{-262}\,\mathbf{i},\:{.565236}+{.135755}\,\mathbf{i}\right\}\right\}$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 List</pre>
-i6 : 
+i6 : 

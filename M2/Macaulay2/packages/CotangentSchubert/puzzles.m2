@@ -22,7 +22,7 @@ myget = memoize(x -> first(
 	))
 
 puzzleOpts := opts ++ {Steps => null, Kinv => false, Labels => true, Paths => false};
-export {"Steps", "Kinv", "Size", "Labels", "Paths"}; -- move to main file
+export {"Steps", "Kinv", "Length", "Labels", "Paths"}; -- move to main file
 -- lots of global variables, not thread-safe!
 protect Separation;
 upTriangles=downTriangles=rhombi={};
@@ -64,20 +64,18 @@ tiles := o -> (
         )
     )
 
-new List from Puzzle := (T,p) -> apply(p.Size,i->apply(p.Size-i,j->apply(3,k->p#(i,j,k))));
+new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k->p#(i,j,k))));
 
 net Puzzle := p -> netList(applyTable(new List from p, a -> netList({{,a#0},{a#1,a#2}},HorizontalSpace=>1,Boxes=>false)),HorizontalSpace=>2,VerticalSpace=>1,Boxes=>false)
 
-vgTextOpts := s -> { "dominant-baseline" => "middle",  "text-anchor" => "middle", FontSize => 1.7/(4.+#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
-vgOpts := k -> { SizeX => k*5, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
-
-html Puzzle := p -> html vg p
+vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => 1.7/(4.+#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
+vgOpts := k -> { Size => k*7, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
 cols:={"red","green","blue","yellow","magenta","cyan"};
 strk:=0.07;
 
-vg = p -> gList (
-    n:=p.Size;
+vg = p -> gList toSequence (
+    n:=p.Length;
     flatten apply(n, i -> flatten apply(n-i, j -> (
                 a := p#(i,j,0);
                 b := p#(i,j,1);
@@ -87,14 +85,19 @@ vg = p -> gList (
                         r := regex(kk,a);
                         if r === null then return a; -- shouldn't happen
                         r=#a-1-r#0#0*2; cf:=0.08/#a;
-                        if dir == 0 then (x,y+cf*r)
-                        else if dir === 1 then (x+cf*r,y)
-                        else (x+cf*r,y-cf*r)
+                        if dir == 0 then [x,y+cf*r]
+                        else if dir === 1 then [x+cf*r,y]
+                        else [x+cf*r,y-cf*r]
                         );
                     if p#(i,j,2) != "" then (
                         c := p#(i,j,2);
-                        Polygon splice {{(i+1,j),(i,j),(i,j+1)},if p#?(i,j,upTriStyle) then p#(i,j,upTriStyle)},
-                        if (i+j<n-1) then Polygon splice {{(i+1,j),(i,j+1),(i+1,j+1)},if p#?(i,j,downTriStyle) then p#(i,j,downTriStyle)},
+			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#?(i,j,upTriStyle));
+                        Polygon opts,
+                        if (i+j<n-1) then (
+			    opts = {{[i+1,j],[i,j+1],[i+1,j+1]}};
+			    if p#?(i,j,downTriStyle) then opts=append(opts,p#(i,j,downTriStyle));
+			    Polygon opts
+			    ),
                         if p#Paths then (
                             if i+j<n-1 then (
                                 aa := p#(i+1,j,0);
@@ -102,21 +105,20 @@ vg = p -> gList (
                                 );
                             apply(0..p#Steps, k -> (
                                     kk=toString k;
-                                    
-                                    (
+				    (
                                         if match(kk,a) and match(kk,b) and match(kk,c) then (
-                                            Line{adj(0,a,i,j+.5),(i+.333,j+.333),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(1,b,i+.5,j),(i+.333,j+.333),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(2,c,i+.5,j+.5),(i+.333,j+.333),"stroke"=>cols#k,"stroke-width"=>strk}
+                                            Line{adj(0,a,i,j+.5),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(1,b,i+.5,j),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(2,c,i+.5,j+.5),[i+.333,j+.333],"stroke"=>cols#k,"stroke-width"=>strk}
                                             )
                                         else if match(kk,a) and match(kk,b) then Line{adj(0,a,i,j+.5),adj(1,b,i+.5,j),"stroke"=>cols#k,"stroke-width"=>strk}
                                         else if match(kk,a) and match(kk,c) then Line{adj(0,a,i,j+.5),adj(2,c,i+.5,j+.5),"stroke"=>cols#k,"stroke-width"=>strk}
                                         else if match(kk,c) and match(kk,b) then Line{adj(2,c,i+.5,j+.5),adj(1,b,i+.5,j),"stroke"=>cols#k,"stroke-width"=>strk},
                                         if i+j<n-1 then
                                         if match(kk,aa) and match(kk,bb) and match(kk,c) then (
-                                            Line{adj(0,aa,i+1,j+.5),(i+.666,j+.666),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(1,bb,i+.5,j+1),(i+.666,j+.666),"stroke"=>cols#k,"stroke-width"=>strk},
-                                            Line{adj(2,c,i+.5,j+.5),(i+.666,j+.666),"stroke"=>cols#k,"stroke-width"=>strk}
+                                            Line{adj(0,aa,i+1,j+.5),[i+.666,j+.666],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(1,bb,i+.5,j+1),[i+.666,j+.666],"stroke"=>cols#k,"stroke-width"=>strk},
+                                            Line{adj(2,c,i+.5,j+.5),[i+.666,j+.666],"stroke"=>cols#k,"stroke-width"=>strk}
                                             )
                                         else if match(kk,aa) and match(kk,bb) then Line{adj(0,aa,i+1,j+.5),adj(1,bb,i+.5,j+1),"stroke"=>cols#k,"stroke-width"=>strk}
                                         else if match(kk,aa) and match(kk,c) then Line{adj(0,aa,i+1,j+.5),adj(2,c,i+.5,j+.5),"stroke"=>cols#k,"stroke-width"=>strk}
@@ -126,12 +128,14 @@ vg = p -> gList (
                                 )
                             ),
                         if p#Labels then (
-                            GraphicsText ({(i,j+.5),a} | vgTextOpts a),
-                            GraphicsText ({(i+.5,j),b} | vgTextOpts b),
-                            GraphicsText ({(i+.5,j+.5),c} | vgTextOpts c)
+                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            GraphicsText ({[i+.5,j],b} | vgTextOpts b),
+                            GraphicsText ({[i+.5,j+.5],c} | vgTextOpts c)
                             )
                         ) else (
-                        Polygon splice {{(i+1,j),(i,j),(i,j+1),(i+1,j+1)},if p#?(i,j,rhombusStyle) then p#(i,j,rhombusStyle)},
+			opts = {{[i+1,j],[i,j],[i,j+1],[i+1,j+1]}};
+			if p#?(i,j,rhombusStyle) then opts=append(opts,p#(i,j,rhombusStyle));
+                        Polygon opts,
                         if p#Paths then (
                             aa = p#(i+1,j,0);
                             bb = p#(i,j+1,1);
@@ -145,13 +149,15 @@ vg = p -> gList (
                                         )
                                     ))),
                         if p#Labels then (
-                            GraphicsText ({(i,j+.5),a} | vgTextOpts a),
-                            GraphicsText ({(i+.5,j),b} | vgTextOpts b)
+                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            GraphicsText ({[i+.5,j],b} | vgTextOpts b)
                             )
                         )
                     }
                 ))) | vgOpts n )
 
+html Puzzle := p -> html vg p
+tex Puzzle := texMath Puzzle := p -> tex vg p
 
 digit := s -> #s==1 and first ascii s >=48 and first ascii s <= 48+9;
 valid := (x,y) -> x === y or (x === "#" and digit y) or x === "*" or x === "**";
@@ -163,12 +169,15 @@ Puzzle == Puzzle := (p,q) -> (new List from p) == (new List from q)
 
 initPuzzle = true >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
-    args = apply(args, a -> apply(if instance(a,String) then characters a else apply(a,toString),c->replace("_"," ",c)));
+    args = apply(args, a -> apply(if instance(a,String) then characters a
+	    else if instance(a,VisibleList) then apply(a,toString) else error "wrong arguments",
+	    c->replace("_"," ",c)
+	    ));
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
     separated := any(join args, s -> s===" ");
-    new Puzzle from pairs o | { Size=>n,
-	if separated then Separation => max flatten apply(first args,ascii) - 48,
+    new Puzzle from pairs o | { Length=>n,
+	if separated then Separation => 1 + max flatten apply(args#1,ascii) - 48,
         if o.Steps === null then Steps => max flatten apply(join args,ascii) - 48
         } | flatten flatten apply(n, i ->
         apply(n-i, j -> {
@@ -183,7 +192,7 @@ initPuzzle = true >> o -> args -> (
 puzzle = puzzleOpts >> o -> args -> (
     if not instance(args,Puzzle) and (not instance(args,Sequence) or #args<2 or #args>3) then error "wrong number of arguments";
     puz0 := if instance(args,Sequence) then initPuzzle(args,o) else args ++ pairs o;
-    n := puz0.Size;
+    n := puz0.Length;
     d := puz0.Steps;
     if d<0 then error "Please specify Steps or at least one digit";
     tiles puz0;

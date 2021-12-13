@@ -7,6 +7,7 @@ needs "matrix1.m2"
 needs "modules.m2"
 needs "monideal.m2"
 needs "multilin.m2"
+needs "betti.m2"
 
 Variety = new Type of MutableHashTable
 Variety.synonym = "variety"
@@ -227,9 +228,15 @@ cohomology(ZZ,CoherentSheaf) := Module => opts -> (i,F) -> (
 	       A := ring p;
 	       n := numgens A;
 	       M := cokernel lift(presentation module F,A) ** cokernel p;
+<<<<<<< HEAD
 	       rank source basis(0, Ext^(n-1-i)(M,A^{-sum degrees A})))) -- Serre duality
 		       -- the first degree should be projective degree, and probably we want all variables to have first degree 1
 		       )
+=======
+	       rank source basis(0, Ext^(n-1-i)(M,A^{-n})))))
+cohomology(ZZ,ProjectiveVariety,CoherentSheaf) := Module => opts -> (i,X,F) -> cohomology(i,F,opts)
+
+>>>>>>> 9132b31a5e8fdafb643a4de7180e01325ae2ed67
 cohomology(ZZ,SheafOfRings) := Module => opts -> (i,O) -> HH^i O^1
 
 applyMethod = (key,x) -> (

@@ -8,6 +8,7 @@ needs "format.m2"
 needs "gb.m2" -- for for GroebnerBasis
 needs "packages.m2" -- for Package
 needs "system.m2" -- for getViewer
+needs "latex.m2"
 
 -- TODO: unify the definition of the tex macros so book/M2book.tex can use them
 KaTeX := () -> (
@@ -156,7 +157,7 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-html Thing := htmlLiteral @@ tex -- by default, we use tex (as opposed to actual html)
+html Thing := htmlLiteral @@ (lookup(tex,Thing)) -- by default, we use tex (as opposed to actual html)
 html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
@@ -181,7 +182,8 @@ html GroebnerBasis :=
 html Package :=
 html Boolean :=
 html Function :=
-html Type := html @@ toString
+html Dictionary := html @@ toString
+html Type := x -> if x.?texMath then "$"|x.texMath|"$" else html toString x
 -- except not these descendants
 html Monoid :=
 html RingFamily :=

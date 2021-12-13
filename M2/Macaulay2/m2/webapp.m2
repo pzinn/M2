@@ -7,7 +7,7 @@ needs "varieties.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,14,(17,36),(36,18)),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -15,6 +15,7 @@ webAppTags := apply((17,18,19,20,28,29,30,(17,36),(36,18)),ascii);
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
+	webAppPromptTag,      -- input prompt
 	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
@@ -51,8 +52,10 @@ htmlInside = x -> htmlInner(x,false); -- only used at top level -- no recursing 
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     webAppCellEndTag, -- close previous cell
     webAppCellTag,
+    webAppPromptTag,
     interpreterDepth:"i",
     toString lineno,
+    webAppEndTag,
     " : ",
     webAppInputTag)
 
@@ -62,18 +65,18 @@ Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
+
 Thing#{WebApp,Print} = x -> (
-    oprompt := concatenate(interpreterDepth:"o", toString lineNumber, " = ");
     y := htmlInside x; -- we compute the html now (in case it produces an error)
     if class y =!= String then error "invalid html output";
-    << endl << oprompt | webAppHtmlTag | y | webAppEndTag << endl;
+    << endl << on() | " = " | webAppHtmlTag | y | webAppEndTag << endl;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
 
 -- afterprint
 
-on := () -> concatenate(interpreterDepth:"o", toString lineNumber)
 
 htmlAfterPrint :=  x -> (
     if class x === Sequence then x = RowExpression deepSplice { x };
@@ -151,6 +154,7 @@ if topLevelMode === WebApp then (
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
+    EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> show URL concatenate("#editor:",filename,":",toString start,":",toString startcol,"-",toString stop,":",toString stopcol))x;
     -- the error hack
     oldolderror := olderror;
     olderror = args -> oldolderror apply(deepSplice sequence args, s -> replace(webAppTagsRegex," ",s));
@@ -172,7 +176,7 @@ if topLevelMode === WebApp then (
     html Monoid :=
     html RingFamily :=
     html Ring :=
-    html Thing := htmlLiteral1 @@ tex; -- ugly
+    html Thing := htmlLiteral1 @@ (lookup(tex,Thing)); -- ugly
 )
 -- obsolete -- function below used to be activated with texMath <- texMath[Color]Wrapper
 -- the debug hack -- the rawhtml is TEMP, of course. currently deactivated

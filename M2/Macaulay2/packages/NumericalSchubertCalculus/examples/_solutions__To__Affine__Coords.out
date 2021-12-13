@@ -1,25 +1,25 @@
 -- -*- M2-comint -*- hash: 1920086956
-i1 : Pblm = {
+i1 : Pblm = {
     ({2,1}, random(RR^6,RR^6)),
     ({2,1}, random(RR^6,RR^6)),
     ({2,1}, random(RR^6,RR^6))
     }
 
-o1 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
+o1 = $\left\{\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}&amp;{.89189}&amp;{.0741835}&amp;{.741046}&amp;{.830833}&amp;{.191734}\\
 {.673395}&amp;{.231053}&amp;{.808694}&amp;{.108386}&amp;{.538554}&amp;{.403215}\\
 {.29398}&amp;{.461944}&amp;{.362835}&amp;{.348931}&amp;{.873665}&amp;{.615911}\\
 {.632944}&amp;{.775187}&amp;{.706096}&amp;{.562428}&amp;{.415912}&amp;{.0147867}\\
 {.0258884}&amp;{.909047}&amp;{.127435}&amp;{.246268}&amp;{.606588}&amp;{.223028}\\
 {.714827}&amp;{.314897}&amp;{.254482}&amp;{.153346}&amp;{.848005}&amp;{.388829}\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
+\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
 {.557119}&amp;{.96518}&amp;{.0647412}&amp;{.174853}&amp;{.444183}&amp;{.184779}\\
 {.873708}&amp;{.681683}&amp;{.877846}&amp;{.626892}&amp;{.644366}&amp;{.370833}\\
 {.7037}&amp;{.914199}&amp;{.0340514}&amp;{.350611}&amp;{.194945}&amp;{.339222}\\
 {.681869}&amp;{.887381}&amp;{.507989}&amp;{.379495}&amp;{.518585}&amp;{.062212}\\
 {.276259}&amp;{.169813}&amp;{.150294}&amp;{.237252}&amp;{.987173}&amp;{.465736}\\
 {.605659}&amp;{.965004}&amp;{.656391}&amp;{.116721}&amp;{.568273}&amp;{.40273}\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
+\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
 {.164647}&amp;{.562839}&amp;{.0645275}&amp;{.501243}&amp;{.205375}&amp;{.0821679}\\
 {.713493}&amp;{.629991}&amp;{.283709}&amp;{.154289}&amp;{.276652}&amp;{.10394}\\
 {.909537}&amp;{.479826}&amp;{.977573}&amp;{.467203}&amp;{.0958269}&amp;{.280679}\\
@@ -28,18 +28,18 @@ o1 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.732358}&amp;{.0595849}&amp;{.831802}&amp;{.53632}&amp;{.942865}&amp;{.522285}\\
 \end{array}\!\right)\right)\right\}$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 List</pre>
-i2 : S = solveSchubertProblem(Pblm, 3,6)
+i2 : S = solveSchubertProblem(Pblm, 3,6)
 
-o2 = $\left\{\left(\!\begin{array}{ccc}
+o2 = $\left\{\left(\!\begin{array}{ccc}
 {.362674}-{6.53343}\cdot 10^{-18}\,\mathbf{i}&amp;{5.87881}-{3.14374}\cdot 10^{-14}\,\mathbf{i}&amp;{.067722}+{7.62376}\cdot 10^{-17}\,\mathbf{i}\\
 -{.168148}-{4.92833}\cdot 10^{-18}\,\mathbf{i}&amp;{10.2268}-{5.75793}\cdot 10^{-14}\,\mathbf{i}&amp;{.359604}+{1.00555}\cdot 10^{-16}\,\mathbf{i}\\
 {.287667}-{2.15153}\cdot 10^{-18}\,\mathbf{i}&amp;{5.41301}-{2.92605}\cdot 10^{-14}\,\mathbf{i}&amp;{.178413}+{8.93305}\cdot 10^{-17}\,\mathbf{i}\\
 {.399967}-{4.63228}\cdot 10^{-18}\,\mathbf{i}&amp;{10.4365}-{5.69746}\cdot 10^{-14}\,\mathbf{i}&amp;{.172408}+{8.65944}\cdot 10^{-17}\,\mathbf{i}\\
 {.893699}-{1.89468}\cdot 10^{-19}\,\mathbf{i}&amp;{2.90938}-{1.61539}\cdot 10^{-14}\,\mathbf{i}&amp;{.127632}+{3.075}\cdot 10^{-17}\,\mathbf{i}\\
 -{.108865}-{5.23155}\cdot 10^{-18}\,\mathbf{i}&amp;{5.44614}-{3.10902}\cdot 10^{-14}\,\mathbf{i}&amp;{.099289}+{8.0955}\cdot 10^{-17}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.675164}+{3.97464}\cdot 10^{-16}\,\mathbf{i}&amp;{.770431}+{5.78159}\cdot 10^{-16}\,\mathbf{i}&amp;-{.0909566}-{1.27875}\cdot 10^{-16}\,\mathbf{i}\\
 {.0675706}+{2.99817}\cdot 10^{-16}\,\mathbf{i}&amp;{.870501}+{1.05893}\cdot 10^{-15}\,\mathbf{i}&amp;{.150312}-{1.68663}\cdot 10^{-16}\,\mathbf{i}\\
 {.390574}+{1.30889}\cdot 10^{-16}\,\mathbf{i}&amp;{.658364}+{5.38124}\cdot 10^{-16}\,\mathbf{i}&amp;-{.00751668}-{1.49836}\cdot 10^{-16}\,\mathbf{i}\\
@@ -48,26 +48,26 @@ o2 = $\left\{\left(\!\begin{array}{ccc}
 {.141356}+{3.18264}\cdot 10^{-16}\,\mathbf{i}&amp;{.394186}+{5.71773}\cdot 10^{-16}\,\mathbf{i}&amp;-{.0692081}-{1.35788}\cdot 10^{-16}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : solutionsToAffineCoords S
+i3 : solutionsToAffineCoords S
 
-o3 = $\left\{\left(\!\begin{array}{ccc}
+o3 = $\left\{\left(\!\begin{array}{ccc}
 {1.17594}&amp;-{.247384}&amp;-{1.04186}\\
 -{2.59821}&amp;{1.69933}&amp;{5.94898}\\
 -{.743029}&amp;{.890962}&amp;{1.94183}\\
 {1}&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}\\
+{0}&amp;  1&amp;{0}\\
 {0}&amp;{0}&amp;{1}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
 -{.0717886}&amp;{.515973}&amp;{1.79675}\\
 {1.97727}&amp;-{.796664}&amp;-{3.12795}\\
 {.504284}&amp;{.067644}&amp;{.113771}\\
-1&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;1\\
+  1&amp;{0}&amp;{0}\\
+{0}&amp;  1&amp;{0}\\
+{0}&amp;{0}&amp;  1\\
 \end{array}\!\right)\right\}$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
-i4 : 
+i4 : 

@@ -345,7 +345,7 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
      local dummy;
      g := generators R;
      A := R;
-     while try (A = coefficientRing A; true) else false
+     while try (A = if instance(A,FractionField) then frac coefficientRing A else coefficientRing A; true) else false
      do g = join(g, generators A);
      h := new MutableHashTable;
      for i from 0 to #g-1 do h#(g#i) = if h#?(g#i) then (h#(g#i),i) else 1:i;
@@ -438,17 +438,8 @@ RingMap ** Matrix := Matrix => (f,m) -> (
      if source f =!= ring m then error "expected matrix over source ring";
      map(f ** target m, f ** source m, f cover m))
 
-tensor(Ring,RingMap,Module) := opts -> (S,f,M) -> (
-     if S =!= target f then error "tensor: expected ring and target of ring map to be the same";
-     f ** M)
-
-tensor(Ring,RingMap,Matrix) := opts -> (S,f,m) -> (
-     if S =!= target f then error "tensor: expected ring and target of ring map to be the same";
-     f ** m)
-
-tensor(RingMap,Module) := Module => opts -> (f,M) -> f ** M
-
-tensor(RingMap,Matrix) := Matrix => opts -> (f,m) -> f ** m
+tensor(RingMap, Module) := Module => {} >> opts -> (f, M) -> f ** M
+tensor(RingMap, Matrix) := Matrix => {} >> opts -> (f, m) -> f ** m
 
 isInjective RingMap := (f) -> kernel f == 0
 

@@ -1,80 +1,80 @@
 -- -*- M2-comint -*- hash: -291598696
-i1 : (ipt, otp) := PieriHomotopies(2,2);
-i2 : print ipt
+i1 : (ipt, otp) := PieriHomotopies(2,2);
+i2 : print ipt
 $\left\{\left(\!\begin{array}{cc}
--{.5}&amp;-{.25603}+{.133378}\,\mathbf{i}\\
-{.0593835}-{.496461}\,\mathbf{i}&amp;-{.308303}-{.0900196}\,\mathbf{i}\\
--{.398892}+{.301472}\,\mathbf{i}&amp;{.120562}+{.288158}\,\mathbf{i}\\
--{.447444}-{.223146}\,\mathbf{i}&amp;{.681702}-{.501216}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{cc}
--{.5}&amp;-{.171363}+{.400643}\,\mathbf{i}\\
--{.335505}-{.370724}\,\mathbf{i}&amp;-{.427322}+{.0472594}\,\mathbf{i}\\
--{.499135}+{.0294032}\,\mathbf{i}&amp;{.522254}-{.257521}\,\mathbf{i}\\
-{.437079}+{.242822}\,\mathbf{i}&amp;-{.154748}+{.512122}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{cc}
--{.5}&amp;-{.554154}-{.283375}\,\mathbf{i}\\
-{.460783}-{.194112}\,\mathbf{i}&amp;-{.413348}+{.0153375}\,\mathbf{i}\\
-{.403966}-{.294638}\,\mathbf{i}&amp;-{.309117}+{.404537}\,\mathbf{i}\\
-{.247536}-{.434426}\,\mathbf{i}&amp;-{.0859272}-{.418249}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{cc}
--{.5}&amp;{.228105}-{.224347}\,\mathbf{i}\\
--{.0256427}-{.499342}\,\mathbf{i}&amp;-{.575414}+{.0720997}\,\mathbf{i}\\
-{.414968}-{.27893}\,\mathbf{i}&amp;-{.255629}+{.186569}\,\mathbf{i}\\
--{.499966}+{.005844}\,\mathbf{i}&amp;-{.590789}-{.33489}\,\mathbf{i}\\
+-{.5}&amp;-{.240162}-{.126388}\,\mathbf{i}\\
+{.229121}-{.444414}\,\mathbf{i}&amp;-{.696468}-{.0518487}\,\mathbf{i}\\
+-{.290362}-{.407051}\,\mathbf{i}&amp;{.59022}-{.13901}\,\mathbf{i}\\
+{.315503}-{.387889}\,\mathbf{i}&amp;{.130868}-{.231912}\,\mathbf{i}\\
+\end{array}\!\right),\:\left(\!\begin{array}{cc}
+-{.5}&amp;-{.567371}-{.197008}\,\mathbf{i}\\
+{.49922}+{.0279098}\,\mathbf{i}&amp;-{.38932}+{.0761239}\,\mathbf{i}\\
+-{.391261}-{.311312}\,\mathbf{i}&amp;-{.442571}+{.352461}\,\mathbf{i}\\
+{.442997}-{.231849}\,\mathbf{i}&amp;-{.155468}+{.371006}\,\mathbf{i}\\
+\end{array}\!\right),\:\left(\!\begin{array}{cc}
+-{.5}&amp;{.317804}-{.256312}\,\mathbf{i}\\
+-{.425723}-{.262221}\,\mathbf{i}&amp;-{.580829}-{.0171886}\,\mathbf{i}\\
+{.0359953}+{.498703}\,\mathbf{i}&amp;-{.145829}+{.381802}\,\mathbf{i}\\
+{.370676}-{.335559}\,\mathbf{i}&amp;-{.50571}+{.269937}\,\mathbf{i}\\
+\end{array}\!\right),\:\left(\!\begin{array}{cc}
+-{.5}&amp;{.342632}-{.0438487}\,\mathbf{i}\\
+{.36802}-{.338469}\,\mathbf{i}&amp;-{.354131}+{.0880716}\,\mathbf{i}\\
+{.0748094}+{.494372}\,\mathbf{i}&amp;-{.493766}+{.162671}\,\mathbf{i}\\
+-{.354892}+{.35221}\,\mathbf{i}&amp;-{.140062}+{.676484}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
-i3 : print otp
+i3 : print otp
 $\left\{\left(\!\begin{array}{cc}
-1&amp;{0}\\
-{.733653}-{.274017}\,\mathbf{i}&amp;{1.06936}+{.789067}\,\mathbf{i}\\
-{.308423}-{1.73559}\,\mathbf{i}&amp;1\\
-{0}&amp;{.280664}+{.629845}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{cc}
-1&amp;{0}\\
-{.287603}+{.658316}\,\mathbf{i}&amp;-{.0374967}-{.2712}\,\mathbf{i}\\
--{.0851657}+{.843847}\,\mathbf{i}&amp;1\\
-{0}&amp;-{1.34694}+{.83648}\,\mathbf{i}\\
+  1&amp;{0}\\
+-{.391845}-{.617337}\,\mathbf{i}&amp;-{.0506266}-{.152931}\,\mathbf{i}\\
+{1.45719}+{1.09012}\,\mathbf{i}&amp;  1\\
+{0}&amp;{.44533}-{.314527}\,\mathbf{i}\\
+\end{array}\!\right),\:\left(\!\begin{array}{cc}
+  1&amp;{0}\\
+-{1.49493}+{1.99212}\,\mathbf{i}&amp;{.00618604}+{.510489}\,\mathbf{i}\\
+{2.10201}-{.339237}\,\mathbf{i}&amp;  1\\
+{0}&amp;{1.03835}+{.667547}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
-i4 : in0 = ipt_0
+i4 : in0 = ipt_0
 
-o4 = $\left(\!\begin{array}{cc}
--{.5}&amp;-{.25603}+{.133378}\,\mathbf{i}\\
-{.0593835}-{.496461}\,\mathbf{i}&amp;-{.308303}-{.0900196}\,\mathbf{i}\\
--{.398892}+{.301472}\,\mathbf{i}&amp;{.120562}+{.288158}\,\mathbf{i}\\
--{.447444}-{.223146}\,\mathbf{i}&amp;{.681702}-{.501216}\,\mathbf{i}\\
+o4 = $\left(\!\begin{array}{cc}
+-{.5}&amp;-{.240162}-{.126388}\,\mathbf{i}\\
+{.229121}-{.444414}\,\mathbf{i}&amp;-{.696468}-{.0518487}\,\mathbf{i}\\
+-{.290362}-{.407051}\,\mathbf{i}&amp;{.59022}-{.13901}\,\mathbf{i}\\
+{.315503}-{.387889}\,\mathbf{i}&amp;{.130868}-{.231912}\,\mathbf{i}\\
 \end{array}\!\right)$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb C}_{53}^{4}\,\longleftarrow \,{\mathbb C}_{53}^{2}$
-i5 : out0 = otp_0
+ </pre>${\mathbb C}_{ 53}^{  4}\,\longleftarrow \,{\mathbb C}_{ 53}^{  2}$
+i5 : out0 = otp_0
 
-o5 = $\left(\!\begin{array}{cc}
-1&amp;{0}\\
-{.733653}-{.274017}\,\mathbf{i}&amp;{1.06936}+{.789067}\,\mathbf{i}\\
-{.308423}-{1.73559}\,\mathbf{i}&amp;1\\
-{0}&amp;{.280664}+{.629845}\,\mathbf{i}\\
+o5 = $\left(\!\begin{array}{cc}
+  1&amp;{0}\\
+-{.391845}-{.617337}\,\mathbf{i}&amp;-{.0506266}-{.152931}\,\mathbf{i}\\
+{1.45719}+{1.09012}\,\mathbf{i}&amp;  1\\
+{0}&amp;{.44533}-{.314527}\,\mathbf{i}\\
 \end{array}\!\right)$
 
-o5 : <pre style="display:inline">
+o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb C}_{53}^{4}\,\longleftarrow \,{\mathbb C}_{53}^{2}$
-i6 : m = in0|out0
+ </pre>${\mathbb C}_{ 53}^{  4}\,\longleftarrow \,{\mathbb C}_{ 53}^{  2}$
+i6 : m = in0|out0
 
-o6 = $\left(\!\begin{array}{cccc}
--{.5}&amp;-{.25603}+{.133378}\,\mathbf{i}&amp;1&amp;{0}\\
-{.0593835}-{.496461}\,\mathbf{i}&amp;-{.308303}-{.0900196}\,\mathbf{i}&amp;{.733653}-{.274017}\,\mathbf{i}&amp;{1.06936}+{.789067}\,\mathbf{i}\\
--{.398892}+{.301472}\,\mathbf{i}&amp;{.120562}+{.288158}\,\mathbf{i}&amp;{.308423}-{1.73559}\,\mathbf{i}&amp;1\\
--{.447444}-{.223146}\,\mathbf{i}&amp;{.681702}-{.501216}\,\mathbf{i}&amp;{0}&amp;{.280664}+{.629845}\,\mathbf{i}\\
+o6 = $\left(\!\begin{array}{cccc}
+-{.5}&amp;-{.240162}-{.126388}\,\mathbf{i}&amp;  1&amp;{0}\\
+{.229121}-{.444414}\,\mathbf{i}&amp;-{.696468}-{.0518487}\,\mathbf{i}&amp;-{.391845}-{.617337}\,\mathbf{i}&amp;-{.0506266}-{.152931}\,\mathbf{i}\\
+-{.290362}-{.407051}\,\mathbf{i}&amp;{.59022}-{.13901}\,\mathbf{i}&amp;{1.45719}+{1.09012}\,\mathbf{i}&amp;  1\\
+{.315503}-{.387889}\,\mathbf{i}&amp;{.130868}-{.231912}\,\mathbf{i}&amp;{0}&amp;{.44533}-{.314527}\,\mathbf{i}\\
 \end{array}\!\right)$
 
-o6 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb C}_{53}^{4}\,\longleftarrow \,{\mathbb C}_{53}^{4}$
-i7 : det m
+ </pre>${\mathbb C}_{ 53}^{  4}\,\longleftarrow \,{\mathbb C}_{ 53}^{  4}$
+i7 : det m
 
-o7 = ${7.21977289160421}\cdot 10^{-16}+{1.55572781839227}\cdot 10^{-15}\,\mathbf{i}$
+o7 = $-{6.17556204127505}\cdot 10^{-16}+{7.32677906688966}\cdot 10^{-16}\,\mathbf{i}$
 
-o7 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
+o7 : ${\mathbb C}$<pre style="display:inline">
+ (of precision </pre>$ 53$<pre style="display:inline">
 )</pre>
-i8 : 
+i8 : 

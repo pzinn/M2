@@ -47,7 +47,7 @@ succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === 
     succ (x#2,y#1) or (
 	instance(x#1,Subscript) and instance(x#2,Subscript)
 	and instance(y#1,Subscript) and instance(y#2,Subscript) and (
-	    a := sequence x#1#1; b := sequence x#2#1; c := sequence y#1#1; d := sequence y#2#1;
+	    a := deepSplice sequence expressionValue x#1#1; b := deepSplice sequence expressionValue x#2#1; c := deepSplice sequence expressionValue y#1#1; d := deepSplice sequence expressionValue y#2#1;
 	    -- find what endpoints have in common, remove
 	    while #a>0 and #c>0 and last a === last c do ( a=drop(a,-1); c=drop(c,-1); );
 	    if #a === 0 then a=x#1#0 else a=new Subscript from {x#1#0,unsequence a};

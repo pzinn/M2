@@ -1,59 +1,45 @@
 -- -*- M2-comint -*- hash: -1663871215
-<<<<<<< HEAD
-i1 : R = CC[x,y,z]
-=======
-Hello world from process 0 out of 1 processes
--- COMPILE TIME: Feb 24 2021, 10:08:22
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
+i1 : R = CC[x,y,z]
 
-o1 = $R$
+o1 = $R$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : S = {x+y+z-1, x^2+y^2, x+y-z-3}
+i2 : S = {x+y+z-1, x^2+y^2, x+y-z-3}
 
-o2 = $\left\{x+y+z-1,\,x^{2}+y^{2},\,x+y-z-{3}\right\}$
+o2 = $\left\{x+y+z-  1,\:x^{  2}+y^{  2},\:x+y-z-{3}\right\}$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 List</pre>
-i3 : L = solveSystem(S)
+i3 : L = solveSystem(S)
 
-o3 = $\left\{\left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\},\,\left\{1+\mathbf{i},\,1-\mathbf{i},\,-1-{3.34476}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{  1-\mathbf{i},\:  1+\mathbf{i},\:-  1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\},\:\left\{  1+\mathbf{i},\:  1-\mathbf{i},\:-  1-{3.34476}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 List</pre>
-i4 : oneSoln = L_0
+i4 : oneSoln = L_0
 
-o4 = $\left\{1-\mathbf{i},\,1+\mathbf{i},\,-1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\}$
+o4 = $\left\{  1-\mathbf{i},\:  1+\mathbf{i},\:-  1-{7.10152}\cdot 10^{-18}\,\mathbf{i}\right\}$
 
-o4 : <pre style="display:inline">
+o4 : <pre style="display:inline">
 Point</pre>
-i5 : peek oneSoln
+i5 : peek oneSoln
 
-o5 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
+o5 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 Point{ConditionNumber => 6.32111     }<br/>      Coordinates => {1-ii, 1+ii, -1}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
-i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
+i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
 
-o6 = $\left\{-x^{2}+y,\,-x^{3}+z,\,x+y+z-1,\,x^{3}+x+y-1\right\}$
+o6 = $\left\{-x^{  2}+y,\:-x^{  3}+z,\:x+y+z-  1,\:x^{  3}+x+y-  1\right\}$
 
-o6 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 List</pre>
-i7 : #system > numcols vars R --overdetermined system
+i7 : #system > numcols vars R --overdetermined system
 
-o7 = <pre style="display:inline">
+o7 = <pre style="display:inline">
 true</pre>
-i8 : solns = solveSystem(system);
+i8 : solns = solveSystem(system);
 *** after parseSolutions, ring has {x, y, z} ***
-i9 : numSolns = #solns
+i9 : numSolns = #solns
 
-<<<<<<< HEAD
-o9 = $3$
-i10 : 
-=======
-i9 : numSolns = #solns
-
-o9 = 3
-
-i10 : 
-Bye world from process 0 out of 1 processes
->>>>>>> 1a07c2bac3fbbeeed904d379e80332d083ba4568
+o9 = $  3$
+i10 : 

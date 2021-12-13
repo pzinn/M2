@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: -1238512147
-i1 : A = QQ{x,y,z}
+i1 : A = QQ{x,y,z}
 
-o1 = $<pre style="display:inline">
+o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : numgens A
+i2 : numgens A
 
-o2 = $3$
-i3 : 
+o2 = $3$
+i3 : 

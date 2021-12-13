@@ -1,92 +1,92 @@
 -- -*- M2-comint -*- hash: 1325148817
-i1 : K=QQ
+i1 : K=QQ
 
-o1 = ${\mathbb Q}$
+o1 = ${\mathbb Q}$
 
-o1 : <pre style="display:inline">
+o1 : <pre style="display:inline">
 Ring</pre>
-i2 : R=K[v,u,z]
+i2 : R=K[v,u,z]
 
-o2 = $R$
+o2 = $R$
 
-o2 : <pre style="display:inline">
+o2 : <pre style="display:inline">
 PolynomialRing</pre>
-i3 : I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+i3 : I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
 
-o3 = $<pre style="display:inline">
+o3 = $<pre style="display:inline">
 ideal</pre>\left(v^{4}-2\,u^{3}z-2\,v^{2}z^{2}+3\,u^{2}z^{2}\right)$
 
-o3 : <pre style="display:inline">
+o3 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>$R$
-i4 : Rvu=K[v,u];
-i5 : QR=frac(Rvu);
-i6 : ib=matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
+i4 : Rvu=K[v,u];
+i5 : QR=frac(Rvu);
+i6 : ib=matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
 
-o6 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\textit{QR}^{1}\,\longleftarrow \,\textit{QR}^{4}$
-i7 : traceMatrix(I,ib)
+i7 : traceMatrix(I,ib)
 
-o7 = $\left(\!\begin{array}{cccc}
+o7 = $\left(\!\begin{array}{cccc}
 4&amp;0&amp;0&amp;0\\
 0&amp;4&amp;0&amp;8\,u-4\\
 0&amp;0&amp;8\,u+4&amp;0\\
 0&amp;8\,u-4&amp;0&amp;16\\
 \end{array}\!\right)$
 
-o7 : <pre style="display:inline">
+o7 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\left(<pre style="display:inline">
 frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)\right)^{4}\,\longleftarrow \,\left(<pre style="display:inline">
 frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)\right)^{4}$
-i8 : K=QQ;
-i9 : R=K[v,u,z];
-i10 : I=ideal(v^3-u^2*z)
+i8 : K=QQ;
+i9 : R=K[v,u,z];
+i10 : I=ideal(v^3-u^2*z)
 
-o10 = $<pre style="display:inline">
+o10 = $<pre style="display:inline">
 ideal</pre>\left(v^{3}-u^{2}z\right)$
 
-o10 : <pre style="display:inline">
+o10 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>$R$
-i11 : Rvu=K[v,u];
-i12 : QR=frac(Rvu);
-i13 : ib=matrix({{1,v,v^2/u}});
+i11 : Rvu=K[v,u];
+i12 : QR=frac(Rvu);
+i13 : ib=matrix({{1,v,v^2/u}});
 
-o13 : <pre style="display:inline">
+o13 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\textit{QR}^{1}\,\longleftarrow \,\textit{QR}^{3}$
-i14 : traceMatrix(I,ib)
+i14 : traceMatrix(I,ib)
 
-o14 = $\left(\!\begin{array}{ccc}
+o14 = $\left(\!\begin{array}{ccc}
 3&amp;0&amp;0\\
 0&amp;0&amp;3\,u\\
 0&amp;3\,u&amp;0\\
 \end{array}\!\right)$
 
-o14 : <pre style="display:inline">
+o14 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\left(<pre style="display:inline">
 frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)\right)^{3}\,\longleftarrow \,\left(<pre style="display:inline">
 frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)\right)^{3}$
-i15 : K=QQ;
-i16 : R=K[v,u,z];
-i17 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
+i15 : K=QQ;
+i16 : R=K[v,u,z];
+i17 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
 
-o17 : <pre style="display:inline">
+o17 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
  of </pre>$R$
-i18 : Rvu=K[v,u];
-i19 : QR=frac(Rvu);
-i20 : ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
+i18 : Rvu=K[v,u];
+i19 : QR=frac(Rvu);
+i20 : ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
 
-o20 : <pre style="display:inline">
+o20 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\textit{QR}^{1}\,\longleftarrow \,\textit{QR}^{6}$
-i21 : traceMatrix(I,ib)
+i21 : traceMatrix(I,ib)
 
-o21 = $\left(\!\begin{array}{cccccc}
+o21 = $\left(\!\begin{array}{cccccc}
 6&amp;0&amp;0&amp;0&amp;\frac{-28\,u^{2}-56\,u-28}{5}&amp;0\\
 0&amp;0&amp;0&amp;\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{3}-36\,u^{2}}{5}\\
 0&amp;0&amp;\frac{-28\,u^{4}-84\,u^{3}-84\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{4}-36\,u^{3}}{5}&amp;0\\
@@ -95,9 +95,9 @@ o21 = $\left(\!\begin{array}{cccccc}
 0&amp;\frac{-36\,u^{3}-36\,u^{2}}{5}&amp;0&amp;\frac{196\,u^{4}+980\,u^{3}+1372\,u^{2}+588\,u}{25}&amp;0&amp;\frac{420\,u^{4}+1764\,u^{3}+1260\,u^{2}-84\,u}{25}\\
 \end{array}\!\right)$
 
-o21 : <pre style="display:inline">
+o21 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
  </pre>$\left(<pre style="display:inline">
 frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)\right)^{6}\,\longleftarrow \,\left(<pre style="display:inline">
 frac</pre>\left({\mathbb Q}\mathopen{}\left[u\right]\right)\right)^{6}$
-i22 : 
+i22 : 

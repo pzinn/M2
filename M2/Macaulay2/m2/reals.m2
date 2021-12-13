@@ -13,6 +13,9 @@ globalAssignment ImmutableType
 RR.synonym = "real number"
 RRi.synonym = "real interval"
 CC.synonym = "complex number"
+RR.texMath = ///{\mathbb R}///
+RRi.texMath = ///{\square\mathbb R}///
+CC.texMath = ///{\mathbb C}///
 Number.synonym = "number"
 InexactFieldFamily.synonym = "inexact field family"
 InexactNumber.synonym = "inexact number"
@@ -42,6 +45,10 @@ InexactNumber' = new Type of Nothing'
 RR_* = RR' = new Type of InexactNumber'
 RRi_* = RRi' = new Type of InexactNumber'
 CC_* = CC' = new Type of InexactNumber'
+
+RR'.texMath = ///{\mathbb R}_*///
+RRi'.texMath = ///{\square\mathbb R}_*///
+CC'.texMath = ///{\mathbb C}_*///
 
 setAttribute(CC',PrintNet,"CC" | "*"^-1)
 setAttribute(RR',PrintNet,"RR" | "*"^-1)
@@ -276,6 +283,13 @@ numericInterval Constant := c -> if #c < 3 then interval(0,-1,Precision=>default
 numericInterval(ZZ,Constant) := (prec,c) -> if #c < 3 then interval(0,-1,Precision=>prec) else c#2 prec
 exp Constant := c -> exp numeric c
 
+constantTexMath := new HashTable from {
+    symbol pi => "\\pi",
+    symbol EulerConstant => "\\gamma",
+    symbol ii => "\\mathbf{i}"
+    }
+texMath Constant := c -> if constantTexMath#?(c#0) then constantTexMath#(c#0) else texMath toString c#0
+
 Constant + Constant := (c,d) -> numeric c + numeric d
 Constant + RingElement := 
 Constant + InexactNumber := (c,x) -> numeric(precision x,c) + x
@@ -347,7 +361,6 @@ toString ComplexField := R -> concatenate("CC_",toString R.precision)
 expression RealField := R -> new Subscript from {symbol RR, R.precision}
 expression RealIntervalField := R -> new Subscript from {symbol RRi, R.precision}
 expression ComplexField := R -> new Subscript from {symbol CC, R.precision}
-
 expression RR := x -> (
      if x < 0 
      then (
@@ -375,7 +388,17 @@ net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
 toExternalString CC := toExternalString0
---texMath CC := x -> texMath expression x
+texMath CC := x -> texMath expression x
+texMath RR := x -> (
+    if not isANumber x then texMath toString x else
+    if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
+    else replace(///\{1\}\\cdot ///,"",
+	"{" | format(
+	printingPrecision,
+	printingAccuracy,
+	printingLeadLimit,
+	printingTrailLimit,
+	"}\\cdot 10^{", x ) | "}"))
 withFullPrecision = f -> (
      prec := printingPrecision;
      acc := printingAccuracy;
@@ -402,8 +425,6 @@ InexactNumber#{Standard,AfterPrint} = x -> (
      *-
      << endl;
      )
---InexactNumber#{Standard,Print} = x ->  withFullPrecision ( () -> Thing#{Standard,Print} x )
---InexactNumber#{Standard,AfterPrint} = x -> afterPrint ( class x, " (of precision ", precision x,")" )
 
 isReal = method()
 isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true

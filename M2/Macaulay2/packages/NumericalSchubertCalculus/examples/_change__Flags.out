@@ -1,29 +1,25 @@
--- -*- M2-comint -*- hash: 550263158
-i1 : stdio<< "Schubert problem (2,1)^3 in Gr(3,6)"<<endl;
-Schubert problem (2,1)^3 in Gr(3,6)
-i2 : k=3; n=6;
-i4 : l1={2,1};
-i5 : l2={2,1};
-i6 : l3={2,1};
-i7 : stdio<<"Generate flags F: standard flag, opposite flag, and one random"<<endl;
-Generate flags F: standard flag, opposite flag, and one random
-i8 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
+-- -*- M2-comint -*- hash: -895766969
+i1 : k=3; n=6;
+i3 : l1={2,1};
+i4 : l2={2,1};
+i5 : l3={2,1};
+i6 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
-o8 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
-1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
+o6 = $\left\{\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
+  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1\\
+\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}+{.673395}\,\mathbf{i}&amp;{.0741835}+{.808694}\,\mathbf{i}&amp;{.830833}+{.538554}\,\mathbf{i}&amp;{.557119}+{.873708}\,\mathbf{i}&amp;{.0647412}+{.877846}\,\mathbf{i}&amp;{.444183}+{.644366}\,\mathbf{i}\\
 {.29398}+{.632944}\,\mathbf{i}&amp;{.362835}+{.706096}\,\mathbf{i}&amp;{.873665}+{.415912}\,\mathbf{i}&amp;{.7037}+{.681869}\,\mathbf{i}&amp;{.0340514}+{.507989}\,\mathbf{i}&amp;{.194945}+{.518585}\,\mathbf{i}\\
 {.0258884}+{.714827}\,\mathbf{i}&amp;{.127435}+{.254482}\,\mathbf{i}&amp;{.606588}+{.848005}\,\mathbf{i}&amp;{.276259}+{.605659}\,\mathbf{i}&amp;{.150294}+{.656391}\,\mathbf{i}&amp;{.987173}+{.568273}\,\mathbf{i}\\
@@ -32,63 +28,54 @@ o8 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
 {.909047}+{.314897}\,\mathbf{i}&amp;{.246268}+{.153346}\,\mathbf{i}&amp;{.223028}+{.388829}\,\mathbf{i}&amp;{.169813}+{.965004}\,\mathbf{i}&amp;{.237252}+{.116721}\,\mathbf{i}&amp;{.465736}+{.40273}\,\mathbf{i}\\
 \end{array}\!\right)\right)\right\}$
 
-o8 : <pre style="display:inline">
+o6 : <pre style="display:inline">
 List</pre>
-i9 : stdio<<"Generate a random set of flags G"<<endl;
-Generate a random set of flags G
-i10 : G = randomSchubertProblemInstance({l1,l2,l3},k,n)
+i7 : G = randomSchubertProblemInstance({l1,l2,l3},k,n);
+i8 : S = solveSchubertProblem(F,k,n);
+i9 : FlagsF = F/last;
+i10 : FlagsG = G/last;
+i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
+     -- used 2.55378 seconds
 
-o10 = $\left\{\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
-{.51095}+{.859611}\,\mathbf{i}&amp;-{.227376}-{.973807}\,\mathbf{i}&amp;{.842765}-{.538281}\,\mathbf{i}&amp;-{.915156}-{.403101}\,\mathbf{i}&amp;-{.341238}+{.939977}\,\mathbf{i}&amp;-{.110622}-{.993863}\,\mathbf{i}\\
--{.923063}-{.384649}\,\mathbf{i}&amp;-{.684587}-{.728932}\,\mathbf{i}&amp;-{.991977}+{.126418}\,\mathbf{i}&amp;{.398109}-{.917338}\,\mathbf{i}&amp;{.989783}-{.142579}\,\mathbf{i}&amp;{.930733}+{.365699}\,\mathbf{i}\\
-{.91893}+{.394421}\,\mathbf{i}&amp;-{.210222}+{.977654}\,\mathbf{i}&amp;{.990088}-{.140449}\,\mathbf{i}&amp;{.233835}+{.972276}\,\mathbf{i}&amp;-{.834955}-{.550318}\,\mathbf{i}&amp;{.491643}-{.870797}\,\mathbf{i}\\
--{.999969}-{.00781125}\,\mathbf{i}&amp;{.565772}+{.824562}\,\mathbf{i}&amp;-{.978842}+{.204616}\,\mathbf{i}&amp;{.0976385}-{.995222}\,\mathbf{i}&amp;-{.344326}+{.93885}\,\mathbf{i}&amp;-{.974074}-{.226228}\,\mathbf{i}\\
-{.276727}+{.960949}\,\mathbf{i}&amp;-{.166675}+{.986012}\,\mathbf{i}&amp;{.824149}+{.566373}\,\mathbf{i}&amp;-{.788618}-{.614883}\,\mathbf{i}&amp;{.74405}-{.668124}\,\mathbf{i}&amp;{.936252}-{.351329}\,\mathbf{i}\\
-{.869663}+{.493645}\,\mathbf{i}&amp;{.794218}+{.607632}\,\mathbf{i}&amp;-{.191573}+{.981478}\,\mathbf{i}&amp;-{.987864}+{.155324}\,\mathbf{i}&amp;{.68453}+{.728985}\,\mathbf{i}&amp;-{.990213}-{.139564}\,\mathbf{i}\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
-{.476077}+{.879404}\,\mathbf{i}&amp;-{.535925}+{.844266}\,\mathbf{i}&amp;{.415186}-{.909737}\,\mathbf{i}&amp;{.194585}-{.980886}\,\mathbf{i}&amp;{.109319}-{.994007}\,\mathbf{i}&amp;{.560285}+{.8283}\,\mathbf{i}\\
-{.990856}+{.13492}\,\mathbf{i}&amp;-{.211093}+{.977466}\,\mathbf{i}&amp;{.984107}-{.177574}\,\mathbf{i}&amp;{.0000532609}+{1}\,\mathbf{i}&amp;{.978795}+{.20484}\,\mathbf{i}&amp;{.241807}+{.970324}\,\mathbf{i}\\
--{.764815}-{.64425}\,\mathbf{i}&amp;-{.64519}-{.764022}\,\mathbf{i}&amp;{.93104}+{.364917}\,\mathbf{i}&amp;{.923802}+{.382872}\,\mathbf{i}&amp;-{.129853}+{.991533}\,\mathbf{i}&amp;{.889567}+{.456804}\,\mathbf{i}\\
--{.872433}-{.488734}\,\mathbf{i}&amp;-{.636591}-{.771201}\,\mathbf{i}&amp;{.874934}-{.484241}\,\mathbf{i}&amp;-{.928187}-{.372115}\,\mathbf{i}&amp;{.576111}-{.817371}\,\mathbf{i}&amp;{.0831894}-{.996534}\,\mathbf{i}\\
--{.989838}+{.142201}\,\mathbf{i}&amp;{.999541}+{.0302879}\,\mathbf{i}&amp;-{.975254}+{.221086}\,\mathbf{i}&amp;{.501178}+{.865344}\,\mathbf{i}&amp;{.158064}+{.987429}\,\mathbf{i}&amp;{.999659}+{.0261017}\,\mathbf{i}\\
--{.688944}+{.724814}\,\mathbf{i}&amp;-{.997188}-{.0749361}\,\mathbf{i}&amp;{.349542}-{.936921}\,\mathbf{i}&amp;-{.979473}-{.201574}\,\mathbf{i}&amp;-{.898212}-{.439562}\,\mathbf{i}&amp;-{.120953}+{.992658}\,\mathbf{i}\\
-\end{array}\!\right)\right),\,\left(\left\{2,\,1\right\},\,\left(\!\begin{array}{cccccc}
-{.827089}-{.562071}\,\mathbf{i}&amp;-{.999917}-{.0129164}\,\mathbf{i}&amp;{.766022}-{.642815}\,\mathbf{i}&amp;{.883228}+{.468944}\,\mathbf{i}&amp;-{.87188}+{.48972}\,\mathbf{i}&amp;{.646246}+{.763129}\,\mathbf{i}\\
--{.962867}-{.269978}\,\mathbf{i}&amp;{.230456}+{.973083}\,\mathbf{i}&amp;-{.633104}+{.774066}\,\mathbf{i}&amp;{.00745646}-{.999972}\,\mathbf{i}&amp;-{.0159426}+{.999873}\,\mathbf{i}&amp;{.799835}+{.600219}\,\mathbf{i}\\
--{.963229}-{.268683}\,\mathbf{i}&amp;-{.536928}-{.843628}\,\mathbf{i}&amp;-{.988351}+{.152194}\,\mathbf{i}&amp;{.781806}+{.623522}\,\mathbf{i}&amp;{.667932}+{.744222}\,\mathbf{i}&amp;-{.876997}+{.480495}\,\mathbf{i}\\
-{.760295}+{.649578}\,\mathbf{i}&amp;-{.540848}-{.841121}\,\mathbf{i}&amp;-{.590944}-{.806712}\,\mathbf{i}&amp;-{.92023}-{.391377}\,\mathbf{i}&amp;-{.96194}+{.273261}\,\mathbf{i}&amp;{.999561}+{.0296182}\,\mathbf{i}\\
-{.136209}-{.99068}\,\mathbf{i}&amp;-{.0626679}-{.998034}\,\mathbf{i}&amp;{.296021}+{.955182}\,\mathbf{i}&amp;{.154803}-{.987945}\,\mathbf{i}&amp;-{.938662}-{.344838}\,\mathbf{i}&amp;{.861477}-{.507797}\,\mathbf{i}\\
--{.36939}-{.929274}\,\mathbf{i}&amp;{.113904}+{.993492}\,\mathbf{i}&amp;{.980864}+{.194693}\,\mathbf{i}&amp;-{.764544}+{.644572}\,\mathbf{i}&amp;{.986813}+{.161867}\,\mathbf{i}&amp;{.983563}+{.180565}\,\mathbf{i}\\
-\end{array}\!\right)\right)\right\}$
-
-o10 : <pre style="display:inline">
-List</pre>
-i11 : stdio<<"We solve with respect to F"<<endl;
-We solve with respect to F
-i12 : S = solveSchubertProblem(F,k,n)
-
-o12 = $\left\{\left(\!\begin{array}{ccc}
-{1.19794}+{1.17845}\,\mathbf{i}&amp;{0}&amp;{0}\\
-1&amp;{0}&amp;{0}\\
-{0}&amp;-{.167673}-{.067078}\,\mathbf{i}&amp;{0}\\
-{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{.777616}-{.719709}\,\mathbf{i}\\
-{0}&amp;{0}&amp;1+{1.86488}\cdot 10^{-17}\,\mathbf{i}\\
-\end{array}\!\right),\,\left(\!\begin{array}{ccc}
-{.28234}+{1.41066}\,\mathbf{i}&amp;{0}&amp;{0}\\
-1&amp;{0}&amp;{0}\\
-{0}&amp;{.666069}-{.500515}\,\mathbf{i}&amp;{0}\\
-{0}&amp;{1}+{4.11625}\cdot 10^{-18}\,\mathbf{i}&amp;{0}\\
-{0}&amp;{0}&amp;-{.480231}-{.307979}\,\mathbf{i}\\
-{0}&amp;{0}&amp;{1}+{1.14677}\cdot 10^{-17}\,\mathbf{i}\\
+o11 = $\left\{\left(\!\begin{array}{ccc}
+{.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
+-{.25181}-{.0448108}\,\mathbf{i}&amp;-{.107521}-{.190275}\,\mathbf{i}&amp;-{.0896067}-{.483543}\,\mathbf{i}\\
+{.219256}+{.214331}\,\mathbf{i}&amp;{.0873511}+{.372915}\,\mathbf{i}&amp;-{.213803}+{.410917}\,\mathbf{i}\\
+{.24818}-{.0567624}\,\mathbf{i}&amp;{.138074}+{.069527}\,\mathbf{i}&amp;-{.446051}+{.0426311}\,\mathbf{i}\\
+-{.122857}+{.030327}\,\mathbf{i}&amp;-{.0079778}-{.488031}\,\mathbf{i}&amp;{.214077}+{.374278}\,\mathbf{i}\\
+-{.402855}+{.0597291}\,\mathbf{i}&amp;-{.43662}-{.200568}\,\mathbf{i}&amp;-{.254234}+{.748617}\,\mathbf{i}\\
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
+-{.00839714}-{.407126}\,\mathbf{i}&amp;{.205329}-{.387394}\,\mathbf{i}&amp;{.424542}-{.396438}\,\mathbf{i}\\
+{.192354}-{.0445916}\,\mathbf{i}&amp;{.719274}+{.437354}\,\mathbf{i}&amp;{.49019}+{.0178286}\,\mathbf{i}\\
+-{.396883}+{.032256}\,\mathbf{i}&amp;-{.296361}-{.56774}\,\mathbf{i}&amp;-{.362153}+{.372505}\,\mathbf{i}\\
+{.153499}+{.396506}\,\mathbf{i}&amp;-{.494939}+{.496139}\,\mathbf{i}&amp;-{.411614}+{.315486}\,\mathbf{i}\\
+-{.282532}+{.248918}\,\mathbf{i}&amp;-{.874085}+{.276867}\,\mathbf{i}&amp;-{.807461}+{.498361}\,\mathbf{i}\\
+{.0284784}+{.374339}\,\mathbf{i}&amp;-{.588673}+{.906394}\,\mathbf{i}&amp;-{.233277}+{.814607}\,\mathbf{i}\\
 \end{array}\!\right)\right\}$
 
-o12 : <pre style="display:inline">
+o11 : <pre style="display:inline">
 List</pre>
-i13 : FlagsF = F/last;
-i14 : FlagsG = G/last;
-i15 : stdio<< "and we transform the solutions to get solutions with respect to G"<<endl;
-and we transform the solutions to get solutions with respect to G
-i16 : stdio<< "We can also choose a different strategy"<<endl;
-We can also choose a different strategy
-i17 : 
+i12 : assert all(S', s-> checkIncidenceSolution(s,G))
+i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
+     -- used 1.85104 seconds
+
+o13 = $\left\{\left(\!\begin{array}{ccc}
+-{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
+-{.229738}+{.0833434}\,\mathbf{i}&amp;-{.445398}+{.0639826}\,\mathbf{i}&amp;{.150646}-{.436884}\,\mathbf{i}\\
+{.279834}-{.0761677}\,\mathbf{i}&amp;{.402182}-{.016251}\,\mathbf{i}&amp;-{.178732}+{.299631}\,\mathbf{i}\\
+-{.119002}+{.197573}\,\mathbf{i}&amp;-{.108802}+{.642985}\,\mathbf{i}&amp;-{.820159}-{.281606}\,\mathbf{i}\\
+-{.134096}+{.0372165}\,\mathbf{i}&amp;-{.127528}-{.0349071}\,\mathbf{i}&amp;{.204901}-{.0516554}\,\mathbf{i}\\
+{.499185}+{.465779}\,\mathbf{i}&amp;{1.13857}+{.442385}\,\mathbf{i}&amp;-{.50217}+{1.18715}\,\mathbf{i}\\
+\end{array}\!\right),\:\left(\!\begin{array}{ccc}
+{.132399}-{.579396}\,\mathbf{i}&amp;{.78366}-{.359334}\,\mathbf{i}&amp;-{.647254}+{1.41489}\,\mathbf{i}\\
+-{.0614253}+{.257063}\,\mathbf{i}&amp;-{.356136}+{.210321}\,\mathbf{i}&amp;{.116836}-{.599086}\,\mathbf{i}\\
+{.127487}-{.876713}\,\mathbf{i}&amp;{.739985}-{1.32758}\,\mathbf{i}&amp;{.872113}+{1.6876}\,\mathbf{i}\\
+-{.103026}+{.750164}\,\mathbf{i}&amp;-{.798533}+{.84669}\,\mathbf{i}&amp;-{.0252049}-{1.72596}\,\mathbf{i}\\
+-{.0428908}-{.187959}\,\mathbf{i}&amp;{.27551}-{.59017}\,\mathbf{i}&amp;{.739685}+{.785045}\,\mathbf{i}\\
+-{.236198}+{.0362704}\,\mathbf{i}&amp;-{.341298}-{.374585}\,\mathbf{i}&amp;{.878579}-{.176735}\,\mathbf{i}\\
+\end{array}\!\right)\right\}$
+
+o13 : <pre style="display:inline">
+List</pre>
+i14 : assert all(S', s-> checkIncidenceSolution(s,G))
+i15 : 

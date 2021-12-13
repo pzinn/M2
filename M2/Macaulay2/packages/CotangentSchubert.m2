@@ -2,16 +2,19 @@ newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
     Version => "0.1", 
-    Date => "22 Mar 2021",
+    Date => "1 Aug 2021", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Cotangent Schubert calculus",
-    Keywords => {"Schubert","motivic","CSM"},
-    PackageImports => {"Factor", "VectorGraphics"},
+    Keywords => {"Intersection Theory"},
+    PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
-    DebuggingMode => true
+    DebuggingMode => true,
+    Configuration => { "Factor" => false }
     )
+
+if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
 opts = new OptionTable from {Kth => false, Equivariant => true, Generic => true} -- common options
 export {"Kth", "Equivariant" };
@@ -21,6 +24,52 @@ load "CotangentSchubert/puzzles.m2";
 
 beginDocumentation()
 multidoc ///
+ Node
+  Key
+   CotangentSchubert
+  Headline
+   A package for contangent Schubert calculus
+  Description
+   Text
+    @BOLD "CotangentSchubert"@ is a package for calculations in cotangent Schubert calculus.
+    Spectifically, it allows to compute Chern and Segre motivic classes (as well as their limits in ordinary
+    Schubert calculus, namely Schubert classes), and to independently compute the expansion of their products
+    using puzzles.
+ Node
+  Key
+   setupCotangent
+  Headline
+   Set up cotangent Schubert calculus rings
+ Node
+  Key
+   segreClass
+  Headline
+   Compute a Segre motivic class
+ Node
+  Key
+   schubertClass
+  Headline
+   Compute a Schubert class
+ Node
+  Key
+   tautClass
+  Headline
+   Compute the class of a tautological bundle
+ Node
+  Key
+   puzzle
+  Headline
+   Compute puzzles with given boundaries
+ Node
+  Key
+   pushforwardToPoint
+  Headline
+   Push forward classes to a point
+ Node
+  Key
+   pushforwardToPointFromCotangent
+  Headline
+   Push forward classes to a point from the cotangent bundle
 ///
 end
 
