@@ -72,12 +72,34 @@ fugacityK = p -> (
         )
     )
 
+fugacityH0 = p -> (
+    n:=p.Length;
+    defineFH n;
+    product(n-1, i -> product(n-1-i, j -> if p#(i,j,2)=="" then FH_n_(n-i)-FH_n_(j+1) else 1))
+    )
+
+len := s -> #(replace("\\(|\\)","",s))
+sign := (a,b,c) -> if a==b and a==c then (-1)^(len a-1) else if len a == len b+len c or len b==len a+len c or len c==len a+len b then 1 else -1
+
+fugacityK0 = p -> (
+    n:=p.Length;
+    defineFK n;
+    product(n-1, i -> product(n-1-i, j -> if p#(i,j,2)=="" then 1-FK_n_(j+1)*FK_n_(n-i)^-1 else (
+		X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0); V := p#(i,j+1,1); C := p#(i,j,2);
+		(if (len X+len W>len U+len V) or (len X+len W==len U+len V and 
+			((W=="2" and X=="20" and U=="1") or (W=="2" and X=="21" and U=="10") or (W=="20" and X=="0" and U=="21") or (W=="21" and X=="21" and U=="(21)0") or (W=="20" and X=="21" and U=="(21)0")))
+		    then FK_n_(j+1)*FK_n_(n-i)^-1 else 1)
+		*sign(C,W,X)*sign(U,V,C)
+		)))
+)
+
 fugacity = true >> o -> p -> (
     if #o>0 then p = p ++ o; -- change options
-    if not p#Generic then error "Non generic fugacities not implemented yet";
     if not p#?Separation and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
     if not p#Equivariant and not p#Kth then return 1; -- ha
-    (if p#Kth then fugacityK else fugacityH) p
+    if not p#Generic and not p#Equivariant then return (-1)^(1); -- TODO inversion number -- careful with multinumber on bdry??
+    if not p#Generic and not p#?Separation and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
+    (if p#Generic then if p#Kth then fugacityK else fugacityH else if p#Kth then fugacityK0 else fugacityH0) p
     )
 
 bottom = p -> (

@@ -91,7 +91,7 @@ vg = p -> gList toSequence (
                         );
                     if p#(i,j,2) != "" then (
                         c := p#(i,j,2);
-			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#?(i,j,upTriStyle));
+			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#(i,j,upTriStyle));
                         Polygon opts,
                         if (i+j<n-1) then (
 			    opts = {{[i+1,j],[i,j+1],[i+1,j+1]}};

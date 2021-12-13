@@ -229,9 +229,9 @@ defineB = (FF,n,Kth,Equivariant) -> ( -- TODO remove FF
 
 -- diagonal algebra
 DiagonalAlgebra = new Type of Type;
+DiagonalAlgebra List := (D,l) -> new D from {map(D.Module,(ring D)^1,apply(splice l, i -> {i}))}; -- cannot be new D from List because would break existing Vector code
 new DiagonalAlgebra from Module := (X,M) -> (
     D := new DiagonalAlgebra of Vector from hashTable { global Module => M };
-    new D from List := (D,l) -> new D from vector l;
     new D from Vector := (D,v) -> (
 	if class v =!= M then try (
 	    v = promote(v,ring M);
@@ -239,13 +239,13 @@ new DiagonalAlgebra from Module := (X,M) -> (
 	    ) else error "wrong type of vector";
 	v);
     new D from Number :=
-    new D from RingElement := (D,x) -> new D from apply(rank M,i->x);
+    new D from RingElement := (D,x) -> D apply(rank M,i->x);
     vector D := d -> new M from d;
     matrix D := opts -> d -> diagonalMatrix entries d;
     D * Vector := (x,v) -> if class v === M then matrix x * v else error "wrong vector";
     D * Matrix := (x,m) -> if target m === M then matrix x * m else error "wrong target";
-    D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
-    D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power
+    D * D := (v,w) -> D apply(entries v,entries w,(x,y)->x*y); -- componentwise product
+    D ^ ZZ := (v,n) -> D apply(entries v, a -> a^n); -- componentwise power
     D + Number := D + RingElement := (v,x) -> v + new D from x;
     Number + D := RingElement + D := (x,v) -> v + new D from x;
     D - Number := D - RingElement := (v,x) -> v - new D from x;
@@ -262,7 +262,7 @@ toString DiagonalAlgebra := D -> toString expression D;
 texMath DiagonalAlgebra := D -> texMath expression D;
 html DiagonalAlgebra := lookup(html,Thing);
 
--- ex: D=new DiagonalAlgebra from ZZ^3; x=new D from {1,2,3}; x^2-x+1
+-- ex: D=new DiagonalAlgebra from ZZ^3; x=D {1,2,3}; x^2-x+1
 
 -- main function: set up everything
 setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
@@ -534,7 +534,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	sClass (String,D) :=
 	sClass (AryString,D) := o -> (i,D) -> (
 	    indi:=ind i;
-	    new D from apply(I,ii->(fixedPoint(Rcheck,ii))_(0,indi))
+	    D apply(I,ii->(fixedPoint(Rcheck,ii))_(0,indi))
 	    );
 	segreClass (String,D) :=
 	segreClass (AryString,D) := o -> (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
@@ -555,23 +555,23 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	schubertClass (String,D) :=
 	schubertClass (AryString,D) := o -> (i,D) -> (
 	    indi:=ind i;
-	    new D from apply(I,ii->(fixedPoint(Rcheckz,ii))_(0,indi))
+	    D apply(I,ii->(fixedPoint(Rcheckz,ii))_(0,indi))
 	    );
 	if curCotOpts.Kth then (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
-	    zeroSection D := o -> (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
-	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))));
-	    dualZeroSection D := (cacheValue dualZeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^-2*FF_(j+1)^-1*FF_(k+1) else 1))));
+	    zeroSection D := o -> (cacheValue zeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
+	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))));
+	    dualZeroSection D := (cacheValue dualZeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^-2*FF_(j+1)^-1*FF_(k+1) else 1))));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) }));
 	    ) else (
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1) else 1))) }));
-	    zeroSection D := (cacheValue zeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1))));
-	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
-	    dualZeroSection D := (cacheValue dualZeroSection) (D -> new D from apply(I,i->product(n,j->product(n,k->if i#j<i#k then -FF_0+FF_(j+1)-FF_(k+1) else 1))));
+	    zeroSection D := (cacheValue zeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1))));
+	    zeroSectionInv D := (cacheValue zeroSectionInv) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
+	    dualZeroSection D := (cacheValue dualZeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then -FF_0+FF_(j+1)-FF_(k+1) else 1))));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_(j+1)-FF_(k+1))^(-1)*(FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))) }));
 	    );
 	-- Chern classes of tautological bundles
-	tautClass (ZZ,ZZ,D) := o -> (j,i,AA) -> new D from apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
+	tautClass (ZZ,ZZ,D) := o -> (j,i,AA) -> D apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
 	-- pushforward to point
 	pushforwardToPoint D  := m -> ((weights D)*m)_0;
 	pushforwardToPointFromCotangent D  := m -> ((cotweights D)*m)_0;
@@ -602,7 +602,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	schubertClass' (String,D) :=
 	schubertClass' (AryString,D) := o -> (i,D) -> (
 	    indi:=ind reverse i;
-	    new D from apply(I,ii->(du fixedPoint(Rcheckz',reverse ii))_(0,indi))
+	    D apply(I,ii->(du fixedPoint(Rcheckz',reverse ii))_(0,indi))
 	    );
     	--
 	symbol lastSetup <- D; -- avoid global assign
