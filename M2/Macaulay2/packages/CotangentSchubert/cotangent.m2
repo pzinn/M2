@@ -53,122 +53,6 @@ promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 
--- common rings
-q := getSymbol "q"; zbar := getSymbol "zbar";
-FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
-FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
-promoteFromMap(FK_0,FK_-1);
-
-h := getSymbol "h"; xbar := getSymbol "xbar";
-FH_-1 = frac(factor(ZZ (monoid[h,xbar]))); -- same as FH_1, really but diff variable name
-FH_0 = frac(factor(ZZ (monoid[h])));
-promoteFromMap(FH_0,FH_-1);
-
-defineFK = n -> (
-    if not FK#?n then (
-        z := getSymbol "z"; -- q := getSymbol "q";
-        FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0])));
-        promoteFromMap(FK_0,FK_n);
-        );
-    FK#n
-    )
-
-defineFH = n -> (
-    if not FH#?n then (
-        x := getSymbol "x"; -- h := getSymbol "h";
-        FH_n = frac(factor(ZZ (monoid[h,x_1..x_n])));
-        promoteFromMap(FH_0,FH_n);
-        );
-    FH#n
-    )
-
-lastSetup=null;
-
-BBs = new IndexedVariableTable;
-
-defineB = (FF,n,Kth,Equivariant) -> ( -- TODO remove FF
-    if not BBs#?(n,Kth,Equivariant) then (
-	y := getSymbol "y";
-	BB0 := FF(monoid(splice[y_1..y_n, if Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
-	J := ideal apply(1..n,k->elem(k,gens BB0)
-            -if Equivariant then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
-	BB := BB0/J;
-	BBs#(n,Kth,Equivariant) = BB;
-	-- a bunch of not quite right defs TODO improve and/or automate
-	tautClass (ZZ,ZZ,BB) := o -> (j,i,BB) -> tautClass(j,i,BB.cache.lastSetup,Partial=>false);
-	zeroSection BB := o -> BB -> zeroSection(BB.cache.lastSetup,Partial=>false);
-	dualZeroSection BB := o -> BB -> dualZeroSection(BB.cache.lastSetup,Partial=>false);
-	zeroSectionInv BB := o -> BB -> zeroSectionInv(BB.cache.lastSetup,Partial=>false);
-	sClass (List,BB) :=
-	sClass (String,BB) :=
-	sClass (AryString,BB) := o -> (i,BB) -> sClass(i,BB.cache.lastSetup,Partial=>false);
-	segreClass (String,BB) :=
-	segreClass (AryString,BB) := o -> (i,BB) -> segreClass(i,BB.cache.lastSetup,Partial=>false);
-	stableClass (List,BB) :=
-	stableClass (String,BB) :=
-	stableClass (AryString,BB) := o -> (i,BB) -> stableClass(i,BB.cache.lastSetup,Partial=>false);
-	chernClass (List,BB) :=
-	chernClass (String,BB) :=
-	chernClass (AryString,BB) := o -> (i,BB) -> chernClass(i,BB.cache.lastSetup,Partial=>false);
-	schubertClass (List,BB) :=
-	schubertClass (String,BB) :=
-	schubertClass (AryString,BB) := o -> (i,BB) -> schubertClass(i,BB.cache.lastSetup,Partial=>false);
-	sClass' (List,BB) :=
-	sClass' (String,BB) :=
-	sClass' (AryString,BB) := o -> (i,BB) -> sClass'(i,BB.cache.lastSetup,Partial=>false);
-	segreClass' (List,BB) :=
-	segreClass' (String,BB) :=
-	segreClass' (AryString,BB) := o -> (i,BB) -> segreClass'(i,BB.cache.lastSetup,Partial=>false);
-	chernClass' (List,BB) :=
-	chernClass' (String,BB) :=
-	chernClass' (AryString,BB) := o -> (i,BB) -> chernClass'(i,BB.cache.lastSetup,Partial=>false);
-	stableClass' (List,BB) := o -> (L,BB) -> matrix { apply(L,i->stableClass'(i,BB.cache.lastSetup,Partial=>false)) };
-	stableClass' (String,BB) :=
-	stableClass' (AryString,BB) := o -> (i,BB) -> stableClass'(i,BB.cache.lastSetup,Partial=>false);
-	schubertClass' (List,BB) :=
-	schubertClass' (String,BB) :=
-	schubertClass' (AryString,BB) := o -> (i,BB) -> schubertClass'(i,BB.cache.lastSetup,Partial=>false);
-	);
-    BBs#(n,Kth,Equivariant)
-    )
-
--- diagonal algebra
-DiagonalAlgebra = new Type of Type;
-new DiagonalAlgebra from Module := (X,M) -> (
-    D := new DiagonalAlgebra of Vector from hashTable { global Module => M };
-    new D from List := (D,l) -> new D from vector l;
-    new D from Vector := (D,v) -> (
-	if class v =!= M then try (
-	    v = promote(v,ring M);
-	    assert(class v === M);
-	    ) else error "wrong type of vector";
-	v);
-    new D from Number :=
-    new D from RingElement := (D,x) -> new D from apply(rank M,i->x);
-    vector D := d -> new M from d;
-    matrix D := opts -> d -> diagonalMatrix entries d;
-    D * Vector := (x,v) -> if class v === M then matrix x * v else error "wrong vector";
-    D * Matrix := (x,m) -> if target m === M then matrix x * m else error "wrong target";
-    D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
-    D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power
-    D + Number := D + RingElement := (v,x) -> v + new D from x;
-    Number + D := RingElement + D := (x,v) -> v + new D from x;
-    D - Number := D - RingElement := (v,x) -> v - new D from x;
-    Number - D := RingElement - D := (x,v) -> - v + new D from x;
-    D == Vector := Vector == D := (x,y) -> x#0 == y#0;
-    D == Number := (x,n) -> x == new D from n;
-    Number == DD := (n,x) -> x == new D from n;
-    D)
-ring DiagonalAlgebra := D -> ring D.Module;
-rank DiagonalAlgebra := D -> rank D.Module;
-expression DiagonalAlgebra := D -> if hasAttribute(D,ReverseDictionary) then return expression getAttribute(D,ReverseDictionary) else (expression DiagonalAlgebra) D.Module;
-net DiagonalAlgebra := D -> net expression D;
-toString DiagonalAlgebra := D -> toString expression D;
-texMath DiagonalAlgebra := D -> texMath expression D;
-html DiagonalAlgebra := lookup(html,Thing);
-
--- ex: D=new DiagonalAlgebra from ZZ^3; x=new D from {1,2,3}; x^2-x+1
-
 addLastSetup = f -> installMethod(f, o -> () -> if lastSetup =!= null then f(lastSetup,Partial => o.Partial =!= null and o.Partial) else error "Set up first");
 addLastSetup1 = f -> f Thing := o -> x -> if lastSetup =!= null then f(x,lastSetup,Partial => o.Partial =!= null and o.Partial) else error "Set up first";
 addLastSetup2 = f -> f (Thing,Thing) := o -> (x,y) -> if lastSetup =!= null then f(x,y,lastSetup,Partial => o.Partial =!= null and o.Partial) else error "Set up first";
@@ -236,10 +120,11 @@ restrict (Matrix,RingElement) := (m,X) -> matrix apply(flatten entries m,x->rest
 
 -- from full flag to partial flag
 fullToPartial = method(Dispatch =>{Thing,Type})
-fullToPartial Thing := x -> if (ring x).cache.?lastSetup then fullToPartial(x,(ring x).cache.lastSetup) else fullToPartial(x, ring x);
+fullToPartial Number := identity
+fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 fullToPartial (Matrix,RingElement) := (m,X) -> matrix applyTable(entries m,x->fullToPartial(x,X))
 
--- pushforward TODO rewrite as restrict and ftop
+-- pushforward TODO clarify Matrix
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
 pushforwardToPoint Number := pushforwardToPoint RingElement := r -> try pushforwardToPoint promote(r,lastSetup) else error "can't pushforward"; -- ?
 pushforwardToPoint Matrix := m -> (
@@ -256,6 +141,128 @@ pushforwardToPointFromCotangent Matrix := m -> (
     else error "can't pushforward"
     )
 
+-- common rings
+q := getSymbol "q"; zbar := getSymbol "zbar";
+FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
+FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
+promoteFromMap(FK_0,FK_-1);
+fullToPartial FK_0 := identity;
+
+h := getSymbol "h"; xbar := getSymbol "xbar";
+FH_-1 = frac(factor(ZZ (monoid[h,xbar]))); -- same as FH_1, really but diff variable name
+FH_0 = frac(factor(ZZ (monoid[h])));
+promoteFromMap(FH_0,FH_-1);
+fullToPartial FH_0 := identity;
+
+defineFK = n -> (
+    if not FK#?n then (
+        z := getSymbol "z"; -- q := getSymbol "q";
+        FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0])));
+        promoteFromMap(FK_0,FK_n);
+	fullToPartial FK_n := identity;
+        );
+    FK#n
+    )
+
+defineFH = n -> (
+    if not FH#?n then (
+        x := getSymbol "x"; -- h := getSymbol "h";
+        FH_n = frac(factor(ZZ (monoid[h,x_1..x_n])));
+        promoteFromMap(FH_0,FH_n);
+	fullToPartial FH_n := identity;
+        );
+    FH#n
+    )
+
+lastSetup=null;
+
+BBs = new IndexedVariableTable;
+
+defineB = (FF,n,Kth,Equivariant) -> ( -- TODO remove FF
+    if not BBs#?(n,Kth,Equivariant) then (
+	y := getSymbol "y";
+	BB0 := FF(monoid(splice[y_1..y_n, if Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
+	J := ideal apply(1..n,k->elem(k,gens BB0)
+            -if Equivariant then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
+	BB := BB0/J;
+	BBs#(n,Kth,Equivariant) = BB;
+	-- a bunch of not quite right defs TODO improve and/or automate
+	tautClass (ZZ,ZZ,BB) := o -> (j,i,BB) -> tautClass(j,i,BB.cache.lastSetup,Partial=>false);
+	zeroSection BB := o -> BB -> zeroSection(BB.cache.lastSetup,Partial=>false);
+	dualZeroSection BB := o -> BB -> dualZeroSection(BB.cache.lastSetup,Partial=>false);
+	zeroSectionInv BB := o -> BB -> zeroSectionInv(BB.cache.lastSetup,Partial=>false);
+	sClass (List,BB) :=
+	sClass (String,BB) :=
+	sClass (AryString,BB) := o -> (i,BB) -> sClass(i,BB.cache.lastSetup,Partial=>false);
+	segreClass (String,BB) :=
+	segreClass (AryString,BB) := o -> (i,BB) -> segreClass(i,BB.cache.lastSetup,Partial=>false);
+	stableClass (List,BB) :=
+	stableClass (String,BB) :=
+	stableClass (AryString,BB) := o -> (i,BB) -> stableClass(i,BB.cache.lastSetup,Partial=>false);
+	chernClass (List,BB) :=
+	chernClass (String,BB) :=
+	chernClass (AryString,BB) := o -> (i,BB) -> chernClass(i,BB.cache.lastSetup,Partial=>false);
+	schubertClass (List,BB) :=
+	schubertClass (String,BB) :=
+	schubertClass (AryString,BB) := o -> (i,BB) -> schubertClass(i,BB.cache.lastSetup,Partial=>false);
+	sClass' (List,BB) :=
+	sClass' (String,BB) :=
+	sClass' (AryString,BB) := o -> (i,BB) -> sClass'(i,BB.cache.lastSetup,Partial=>false);
+	segreClass' (List,BB) :=
+	segreClass' (String,BB) :=
+	segreClass' (AryString,BB) := o -> (i,BB) -> segreClass'(i,BB.cache.lastSetup,Partial=>false);
+	chernClass' (List,BB) :=
+	chernClass' (String,BB) :=
+	chernClass' (AryString,BB) := o -> (i,BB) -> chernClass'(i,BB.cache.lastSetup,Partial=>false);
+	stableClass' (List,BB) := o -> (L,BB) -> matrix { apply(L,i->stableClass'(i,BB.cache.lastSetup,Partial=>false)) };
+	stableClass' (String,BB) :=
+	stableClass' (AryString,BB) := o -> (i,BB) -> stableClass'(i,BB.cache.lastSetup,Partial=>false);
+	schubertClass' (List,BB) :=
+	schubertClass' (String,BB) :=
+	schubertClass' (AryString,BB) := o -> (i,BB) -> schubertClass'(i,BB.cache.lastSetup,Partial=>false);
+	fullToPartial BB := x -> fullToPartial(x,BB.cache.lastSetup);
+	pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
+	pushforwardToPointFromCotangent BB := b -> pushforwardToPoint (zeroSectionInv BB * b);
+	);
+    BBs#(n,Kth,Equivariant)
+    )
+
+-- diagonal algebra
+DiagonalAlgebra = new Type of Type;
+new DiagonalAlgebra from Module := (X,M) -> (
+    D := new DiagonalAlgebra of Vector from hashTable { global Module => M };
+    new D from List := (D,l) -> new D from vector l;
+    new D from Vector := (D,v) -> (
+	if class v =!= M then try (
+	    v = promote(v,ring M);
+	    assert(class v === M);
+	    ) else error "wrong type of vector";
+	v);
+    new D from Number :=
+    new D from RingElement := (D,x) -> new D from apply(rank M,i->x);
+    vector D := d -> new M from d;
+    matrix D := opts -> d -> diagonalMatrix entries d;
+    D * Vector := (x,v) -> if class v === M then matrix x * v else error "wrong vector";
+    D * Matrix := (x,m) -> if target m === M then matrix x * m else error "wrong target";
+    D * D := (v,w) -> new D from apply(entries v,entries w,(x,y)->x*y); -- componentwise product
+    D ^ ZZ := (v,n) -> new D from apply(entries v, a -> a^n); -- componentwise power
+    D + Number := D + RingElement := (v,x) -> v + new D from x;
+    Number + D := RingElement + D := (x,v) -> v + new D from x;
+    D - Number := D - RingElement := (v,x) -> v - new D from x;
+    Number - D := RingElement - D := (x,v) -> - v + new D from x;
+    D == Vector := Vector == D := (x,y) -> x#0 == y#0;
+    D == Number := (x,n) -> x == new D from n;
+    Number == DD := (n,x) -> x == new D from n;
+    D)
+ring DiagonalAlgebra := D -> ring D.Module;
+rank DiagonalAlgebra := D -> rank D.Module;
+expression DiagonalAlgebra := D -> if hasAttribute(D,ReverseDictionary) then return expression getAttribute(D,ReverseDictionary) else (expression DiagonalAlgebra) D.Module;
+net DiagonalAlgebra := D -> net expression D;
+toString DiagonalAlgebra := D -> toString expression D;
+texMath DiagonalAlgebra := D -> texMath expression D;
+html DiagonalAlgebra := lookup(html,Thing);
+
+-- ex: D=new DiagonalAlgebra from ZZ^3; x=new D from {1,2,3}; x^2-x+1
 
 -- main function: set up everything
 setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
@@ -494,9 +501,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    -- with reverse ordering: product(1..d,i->tautClass(dimdiffs#i,i)^(codims#i)) where codim#i = last dims - dims#i
 	    nzpf = maxPosition flatten last degrees basis AA; -- we locate it by max degree
 	    );
-	pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
 	pushforwardToPoint AA := a -> (basisCoeffs a)_(nzpf,0);
-	pushforwardToPointFromCotangent BB := b -> pushforwardToPoint (zeroSectionInv BB * b);
 	pushforwardToPointFromCotangent AA := a -> pushforwardToPoint (zeroSectionInv AA * a);
 	--
 	(AA,BB,FF,I)
