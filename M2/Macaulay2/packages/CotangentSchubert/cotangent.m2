@@ -367,13 +367,13 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    );
 	zeroSection AA := o -> (
 	    prt := o.Partial === null or o.Partial;
-	    (cacheValue (zeroSection,prt)) (if prt then AA -> fullToPartial zeroSection(AA,Partial=>false)
+	    (cacheValue (zeroSection,prt)) (if prt then AA -> fullToPartial(zeroSection(AA,Partial=>false),AA)
 	    else if curCotOpts.Kth then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1))));
 	dualZeroSection AA := o -> (
 	    prt := o.Partial === null or o.Partial;
-	    (cacheValue (dualZeroSection,prt)) (if prt then AA -> fullToPartial dualZeroSection(AA,Partial=>false)
+	    (cacheValue (dualZeroSection,prt)) (if prt then AA -> fullToPartial(dualZeroSection(AA,Partial=>false),AA)
 	    else if curCotOpts.Kth then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1))));
@@ -381,7 +381,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	-- segre Classes
 	sClasses AA := o -> (
 	    prt := o.Partial === null or o.Partial;
-	    (cacheValue (sClasses,prt)) (if prt then AA -> fullToPartial sClasses(AA,Partial=>false)
+	    (cacheValue (sClasses,prt)) (if prt then AA -> fullToPartial(sClasses(AA,Partial=>false),AA)
 		else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
@@ -418,7 +418,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	-- Schubert classes
 	schubertClasses AA := o -> (
 	    prt := o.Partial === null or o.Partial;
-	    (cacheValue (schubertClasses,prt)) (if prt then AA -> fullToPartial schubertClasses(AA,Partial=>false)
+	    (cacheValue (schubertClasses,prt)) (if prt then AA -> fullToPartial(schubertClasses(AA,Partial=>false),AA)
 	     	else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
@@ -447,14 +447,14 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	sClass' (String,AA) :=
 	sClass' (AryString,AA) := o -> (i,AA) -> (
 	    x := du sClass(if class i === List then reverse\i else reverse i,AA,Partial=>false);
-	    if o.Partial === null or o.Partial then fullToPartial x else x
+	    if o.Partial === null or o.Partial then fullToPartial(x,AA) else x
 	    );
 	-- compared to Mihalcea, missing a (-t)^-dimvar; compared to dual of chernClass, missing q^#
 	segreClass' (List,AA) := 
 	segreClass' (String,AA) :=
 	segreClass' (AryString,AA) := o -> (i,AA) -> (
 	    x := du segreClass(if class i === List then reverse\i else reverse i,AA,Partial=>false);
-	    if o.Partial === null or o.Partial then fullToPartial x else x
+	    if o.Partial === null or o.Partial then fullToPartial(x,AA) else x
 	    );
 	-- compared to Mihalcea, missing a (-t)^-dimvar; compared to dual of segreClass, missing q^#
 	chernClass' (List,AA) :=
@@ -465,7 +465,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	stableClass' (AryString,AA) := o -> (i,AA) -> (if curCotOpts.Kth then FF_0 else -1)^(2*dimvar-inversion i)*chernClass'(i,AA,o);
 	schubertClasses' AA := o -> (
 	    prt := o.Partial === null or o.Partial;
-	    (cacheValue (schubertClasses',prt)) (if prt then AA -> fullToPartial schubertClasses'(AA,Partial=>false)
+	    (cacheValue (schubertClasses',prt)) (if prt then AA -> fullToPartial(schubertClasses'(AA,Partial=>false),AA)
 	     	else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
