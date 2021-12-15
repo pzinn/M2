@@ -130,16 +130,16 @@ defineFH = n -> (
 
 BBs = new IndexedVariableTable;
 
-defineB = (FF,n,Kth,Equivariant) -> ( -- TODO remove FF
-    if not BBs#?(n,Kth,Equivariant) then (
+defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
+    if not BBs#?(n,Kth,Equiv) then (
 	y := getSymbol "y";
 	BB0 := FF(monoid(splice[y_1..y_n, if Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
 	J := ideal apply(1..n,k->elem(k,gens BB0)
-            -if Equivariant then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
+            -if Equiv then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
 	BB := BB0/J;
-	BBs#(n,Kth,Equivariant) = BB;
+	BBs#(n,Kth,Equiv) = BB;
 	);
-    BBs#(n,Kth,Equivariant)
+    BBs#(n,Kth,Equiv)
     )
 
 -- diagonal algebra
@@ -197,7 +197,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
     -- redefine default puzzle opts
     (frame puzzle)#0 = applyPairs((frame puzzle)#0,(k,v) -> (k,if curCotOpts#?k then curCotOpts#k else v));
     -- set up base ring and R-matrices
-    if curCotOpts.Kth then (
+    if curCotOpts.Ktheory then (
 	FF0 := FK_0;
 	FF := if curCotOpts.Equivariant then defineFK n else FF0;
 	V1:=FK_-1^(d+1); q:=FK_-1_0; zbar:=FK_-1_1;
@@ -242,7 +242,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	Rcz = Rcz' = (x1,x2) -> (map(ring x2,FH_-1,{FF_0,x2-x1}))Rcz0;
         );
     if curCotOpts.Presentation === Borel then (
-	BB := defineB(FF,n,curCotOpts.Kth,curCotOpts.Equivariant);
+	BB := defineB(FF,n,curCotOpts.Ktheory,curCotOpts.Equivariant);
 	if curCotOpts.Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0})); -- TODO move elsewhere
 	y := getSymbol "y";
 	-- Chern classes
@@ -250,7 +250,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
 	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
 	args := v\inds;
-	if curCotOpts.Kth then (
+	if curCotOpts.Ktheory then (
 	    args = append(args,DegreeRank=>0);
 	    wgts := apply(d+1,i->Weights=>apply(d+1,j->dimdiffs#j:(if j==i then 1 else 0)));
 	    args = append(args, MonomialOrder=>wgts); -- a sort of RevLex
@@ -281,11 +281,11 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	--
 	tautClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
 	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> fullToPartial(zeroSection(AA,Partial=>false),AA)
-	    else if curCotOpts.Kth then
+	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1)));
 	dualZeroSection AA := { Partial => true} >> o -> (cacheValue (dualZeroSection,o.Partial)) (if o.Partial then AA -> fullToPartial(dualZeroSection(AA,Partial=>false),AA)
-	    else if curCotOpts.Kth then
+	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1)));
 	zeroSectionInv AA := { Partial => true } >> o -> (cacheValue (zeroSectionInv,o.Partial)) (AA -> (zeroSection(AA,o))^(-1));
@@ -299,14 +299,14 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		scan(reverse(0..dims#d-1),i->( -- not 0..n-1: slight optimization: don't do trivial rows
 			T:=map(V^**(n+1),V^**(n+1),1);
 			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcnum (
-					if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Kth then 1 else 0,BB_i)
+					if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Ktheory then 1 else 0,BB_i)
 				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
 			--print i;
 			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
 			--print Z;
 			));
 		scan(dims#d,i->scan(n,j-> Z = Z*(Rcden(
-				if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Kth then 1 else 0,BB_i))^(-1)));
+				if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Ktheory then 1 else 0,BB_i))^(-1)));
     	    	Z
     		));
 	sClass (List,AA) := {Partial=>true} >> o -> (L,AA) -> (sClasses(AA,o))_(ind\L);
@@ -314,7 +314,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	sClass (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (sClasses(AA,o))_(0,ind i);
 	segreClass (List,AA) := {Partial=>true} >> o -> (L,AA) -> matrix { apply(L,i->segreClass(i,AA,o)) };
 	segreClass (String,AA) :=
-	segreClass (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,AA,o);
+	segreClass (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (if curCotOpts.Ktheory then FF_0 else -1)^(inversion i)*sClass(i,AA,o);
 
 	stableClass (List,AA) :=
 	stableClass (String,AA) :=
@@ -333,7 +333,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		scan(reverse(0..dims#d-1),i->( -- not 0..n-1: slight optimization: don't do trivial rows
 			T:=map(V^**(n+1),V^**(n+1),1);
 			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcz (
-					if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Kth then 1 else 0,BB_i)
+					if curCotOpts.Equivariant then FF_(j+1) else if curCotOpts.Ktheory then 1 else 0,BB_i)
 				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
 			--print i;
 			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
@@ -345,9 +345,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	schubertClass (String,AA) :=
 	schubertClass (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (schubertClasses(AA,o))_(0,ind i);
 	-- duality
-	du1 := if curCotOpts.Kth then prepend(FF_0^-1,apply(numgens FF-1,i->FF_(numgens FF-1-i)^-1))
+	du1 := if curCotOpts.Ktheory then prepend(FF_0^-1,apply(numgens FF-1,i->FF_(numgens FF-1-i)^-1))
 	    else prepend(-FF_0,apply(numgens FF-1,i->-FF_(numgens FF-1-i)));
-	du2 := apply(gens BB,x->if curCotOpts.Kth then x^-1 else -x);
+	du2 := apply(gens BB,x->if curCotOpts.Ktheory then x^-1 else -x);
 	du := map(BB,BB,du2|du1);
 	sClass' (List,AA) :=
 	sClass' (String,AA) :=
@@ -368,7 +368,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	chernClass' (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> dualZeroSection(AA,o) * segreClass'(i,AA,o);
 	stableClass' (List,AA) := {Partial=>true} >> o -> (L,AA) -> matrix { apply(L,i->stableClass'(i,AA,o)) };
 	stableClass' (String,AA) :=
-	stableClass' (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (if curCotOpts.Kth then FF_0 else -1)^(2*dimvar-inversion i)*chernClass'(i,AA,o);
+	stableClass' (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (if curCotOpts.Ktheory then FF_0 else -1)^(2*dimvar-inversion i)*chernClass'(i,AA,o);
 	schubertClasses' AA := {Partial=>true} >> o -> (cacheValue (schubertClasses',o.Partial)) (if o.Partial then AA -> fullToPartial(schubertClasses'(AA,Partial=>false),AA)
 	     	else AA -> (
 		-- monodromy matrix
@@ -378,7 +378,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 		scan(reverse(0..dims#d-1),i->( -- not 0..n-1: slight optimization: don't do trivial rows
 			T:=map(V^**(n+1),V^**(n+1),1);
 			scan(n,j->T=T*(map(V^**j,V^**j,1)**(Rcz' (
-					if curCotOpts.Equivariant then FF_(n-j) else if curCotOpts.Kth then 1 else 0,BB_i) -- note reversed equiv params
+					if curCotOpts.Equivariant then FF_(n-j) else if curCotOpts.Ktheory then 1 else 0,BB_i) -- note reversed equiv params
 				    )**map(V^**(n-1-j),V^**(n-1-j),1)));
 			--print i;
 			Z=Z*submatrix(T,{(rank W)*ω_i..(rank W)*(ω_i+1)-1},apply(rank W,i->i*(d+1)+d));
@@ -399,7 +399,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	-- pushforwards
 	-- find element whose pushforward is nonzero
 	local nzpf; -- index of nonzero pushforward basis element
-	if curCotOpts.Kth then (
+	if curCotOpts.Ktheory then (
 	    nzpf = 0;
 	    ) else (
 	    -- with normal ordering: product of det line bundles ^ dims of flags product(1..d,i->tautClass(dimdiffs#i,i)^(dims#i))
@@ -498,9 +498,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    );
 	sClass Thing := {} >> o -> i -> sClass(i,D);
 	segreClass (String,D) :=
-	segreClass (AryString,D) := {} >> o -> (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(inversion i)*sClass(i,D);
+	segreClass (AryString,D) := {} >> o -> (i,D) -> (if curCotOpts.Ktheory then FF_0 else -1)^(inversion i)*sClass(i,D);
 	segreClass (List,D) := {} >> o -> (L,D) -> (
-	    q := if curCotOpts.Kth then FF_0 else -1;
+	    q := if curCotOpts.Ktheory then FF_0 else -1;
 	    sClass(L,D) * diagonalMatrix apply(L,i->q^(inversion i))
 	    );
 	segreClass Thing := {} >> o -> i -> segreClass(i,D);
@@ -522,7 +522,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    D apply(I,ii->(fixedPoint(Rcheckz,ii))_(0,indi))
 	    );
 	schubertClass Thing := {} >> o -> i -> schubertClass(i,D);
-	if curCotOpts.Kth then (
+	if curCotOpts.Ktheory then (
 	    zeroSection D := {} >> o -> (cacheValue zeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
 	    zeroSectionInv D := {} >> o -> (cacheValue zeroSectionInv) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))));
 	    dualZeroSection D := {} >> o -> (cacheValue dualZeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^-2*FF_(j+1)^-1*FF_(k+1) else 1))));
@@ -542,13 +542,13 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	tautClass (ZZ,ZZ) := {} >> o -> (j,i) -> tautClass(j,i,D);
 	-- pushforward to point
 	pushforwardToPoint D := pushforwardToPoint Vector := m -> ((weights D)*m)_0;
-	pushforwardToPoint Matrix  := m -> (weights D)*m;
+	pushforwardToPoint Matrix := m -> (weights D)*m;
 	pushforwardToPoint Number := pushforwardToPoint RingElement := r -> pushforwardToPoint promote(r,D);
 	pushforwardToPointFromCotangent D := pushforwardToPointFromCotangent Vector := m -> ((cotweights D)*m)_0;
-	pushforwardToPointFromCotangent Matrix  := m -> (cotweights D)*m;
+	pushforwardToPointFromCotangent Matrix := m -> (cotweights D)*m;
 	pushforwardToPointFromCotangent Number := pushforwardToPointFromCotangent RingElement := r -> pushforwardToPointFromCotangent promote(r,D);
 	-- duality
-	du = map(FF,FF,if curCotOpts.Kth then prepend(FF_0^-1,apply(n,i->FF_(n-i)^-1)) else prepend(-FF_0,apply(n,i->-FF_(n-i))));
+	du = map(FF,FF,if curCotOpts.Ktheory then prepend(FF_0^-1,apply(n,i->FF_(n-i)^-1)) else prepend(-FF_0,apply(n,i->-FF_(n-i))));
 	star := apply(I,i->(j:=reverse i; position(I,i'->i'==j)));
 	sClass' (List,D) := {} >> o -> (L,D) -> (du sClass(reverse\L,D))^star;
 	sClass' (String,D) :=
@@ -565,9 +565,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	chernClass' (List,D) := {} >> o -> (L,D) -> matrix dualZeroSection D * segreClass'(L,D);
 	chernClass' Thing := {} >> o -> i -> chernClass'(i,D);
 	stableClass' (String,D) :=
-	stableClass' (AryString,D) := {} >> o -> (i,D) -> (if curCotOpts.Kth then FF_0 else -1)^(2*dimvar-inversion i)*chernClass'(i,D);
+	stableClass' (AryString,D) := {} >> o -> (i,D) -> (if curCotOpts.Ktheory then FF_0 else -1)^(2*dimvar-inversion i)*chernClass'(i,D);
 	stableClass' (List,D) := {} >> o -> (L,D) -> (
-	    q := if curCotOpts.Kth then FF_0 else -1;
+	    q := if curCotOpts.Ktheory then FF_0 else -1;
 	    chernClass'(L,D) * diagonalMatrix apply(L,i->q^(2*dimvar-inversion i))
 	    );
 	stableClass' Thing := {} >> o -> i -> stableClass'(i,D);
@@ -588,15 +588,15 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 
 end
 
-(M,FF,I)=setupCotangent(1,2,Kth=>true)
+(M,FF,I)=setupCotangent(1,2,Ktheory=>true)
 segreCls=segreClasses();
 segreInv=segreCls^(-1);
 Table table(I,I,(i,j)->segreInv*(segreClass i * segreClass j))
 Table table(I,I,(i,j)->fugacityVector puzzle(i,j))
 oo==ooo
 
-(AA,BB,f,I) = setupCotangent(1,3,Kth=>true,Presentation=>Borel)
+(AA,BB,f,I) = setupCotangent(1,3,Ktheory=>true,Presentation=>Borel)
 segreCls = segreClasses();
-P=puzzle("011","101",Generic=>true,Equivariant=>true,Kth=>true)
+P=puzzle("011","101",Generic=>true,Equivariant=>true,Ktheory=>true)
 (segreCls*fugacityVector P)_0 - segreClass(0,1,1)*segreClass(1,0,1)
 

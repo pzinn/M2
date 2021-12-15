@@ -1,4 +1,4 @@
-kogan = (d,sep,Kth,Kinv,Generic,Equivariant) -> (
+kogan = (d,sep,Ktheory,Kinv,Generic,Equivariant) -> (
     if d>9 then error "this value of d not implemented"; -- arbitrary
     koganStates1 := {" "} | apply(toList(0..d), toString); -- on slanted edges
     koganStates2 := apply(toList(0..d), toString) 
@@ -9,7 +9,7 @@ kogan = (d,sep,Kth,Kinv,Generic,Equivariant) -> (
     	basicTriangles := apply(toList(0..d),i->{" ",toString i,toString i}) 
     	| apply(toList(0..d),i->{toString i," ",toString i})
     	| flatten apply(toList(0..d), j->apply(toList(0..j-1),i->{toString i,toString j,toString i | toString j}));
-	upTriangles = if Kth === false then basicTriangles else basicTriangles | toList splice table(0..sep-1,sep..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
+	upTriangles = if Ktheory === false then basicTriangles else basicTriangles | toList splice table(0..sep-1,sep..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
 	downTriangles = if Kinv === false then basicTriangles else basicTriangles | toList splice table(0..sep-1,sep..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
 	);
     (upTriangles,downTriangles,rhombi)

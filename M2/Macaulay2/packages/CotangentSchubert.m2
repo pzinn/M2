@@ -16,8 +16,8 @@ newPackage(
 
 if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
-opts = new OptionTable from {Kth => false, Equivariant => true, Generic => true} -- common options
-export {"Kth", "Equivariant" };
+opts = new OptionTable from {Ktheory => false, Equivariant => true, Generic => true} -- common options
+export {"Ktheory", "Equivariant" };
 
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
@@ -73,17 +73,17 @@ multidoc ///
 ///
 end
 
-(FF,I)=setupCotangent(1,2,Kth=>true)
+(FF,I)=setupCotangent(1,2,Ktheory=>true)
 segreCls=segreClasses()
 segreInv=segreCls^(-1);
-Table table(I,I,(i,j)->segreInv*(segreClass i @ segreClass j))
+Table table(I,I,(i,j)->segreInv*(segreClass i * segreClass j))
 L=puzzle("01","01",Generic=>true,Equivariant=>true)
-fugacityVector(L,Kth=>true)
+fugacityVector(L,Ktheory=>true)
 
-(AA,BB,f,I)=setupCotangent(2,4,Presentation=>Borel,Equivariant=>false,Kth=>true)
+(AA,BB,f,I)=setupCotangent(2,4,Presentation=>Borel,Equivariant=>false,Ktheory=>true)
 segreCls=segreClasses();
 L=puzzle("0101","0101",Generic=>true,Equivariant=>false)
-fugacityVector(L,Kth=>true)
+fugacityVector(L,Ktheory=>true)
 (segreCls*oo)_0
 segreCls_(0,1)^2
 
@@ -91,17 +91,17 @@ segreCls_(0,1)^2
 (FF,I)=setupCotangent(1,2,4)
 segreCls=segreClasses();
 i1=I#1;i2=I#2;
-a=(segreClass i1)@(segreClass i2);
+a=(segreClass i1)*(segreClass i2);
 P=puzzle(i1,i2,Generic=>true,Equivariant=>true)
 b=segreCls*(fugacityVector P);
 a==b
-Table table(I,I,(i1,i2)->(segreClass i1)@(segreClass i2)==segreClasses*(fugacityVector puzzle(i1,i2,Generic=>true,Equivariant=>true)))
+Table table(I,I,(i1,i2)->(segreClass i1)*(segreClass i2)==segreClasses*(fugacityVector puzzle(i1,i2,Generic=>true,Equivariant=>true)))
 
 -- note that for large examples, no need to compute the inverse
 (FF,I)=setupCotangent(1,2,3,4)
 segreCls=segreClasses();
 i1="3021"; i2="2130"; -- interesting because separated "3 2 " * " 1 0"
-a=(segreClass i1)@(segreClass i2);
+a=(segreClass i1)*(segreClass i2);
 P=puzzle(i1,i2,Generic=>true,Equivariant=>true)
 fugacityTally P
 b=segreCls*(fugacityVector P);
@@ -110,7 +110,7 @@ a==b
 Q=puzzle("3 2 "," 1 0",Generic=>true,Equivariant=>true,Separated=>true)
 fugacityTally Q -- not the same as P!
 b=segreCls*(fugacityVector Q);
-a=(segreClass "3021" - segreClass "3120")@(segreClass "2130" - segreClass "3120");
+a=(segreClass "3021" - segreClass "3120")*(segreClass "2130" - segreClass "3120");
 a==b
 
 i1="2103"; i2="0321"; i3="2301"; -- interesting because shows compensations

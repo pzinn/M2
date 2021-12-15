@@ -14,7 +14,7 @@ fugacityH = p -> ( -- equivariant H
     defineFH n;
     product(n-1, i -> product(n-1-i, j -> (
                 X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0);
-                if not p#?Separation then (
+                if not p.?Separation then (
                     X = ind X; W = ind W; U = ind U;
                     s := scalar_(U,X);
                     t := scalar_(W,X); -- print(i,j,X,W,U,s,t);
@@ -29,10 +29,10 @@ q:=FK_0_0; zbar:=FK_-1_1;
 fugacityK = p -> (
     d:=p.Steps;
     n:=p.Length;
-    if p#?Separation then (
+    if p.?Separation then (
 	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
-			else if a>=p#Separation and b<p#Separation then -q^(-1) else -q; -- probably wrong needs more checks
-	if p#Equivariant then (
+			else if a>=p.Separation and b<p.Separation then -q^(-1) else -q; -- probably wrong needs more checks
+	if p.Equivariant then (
 	    defineFK n;
             product(n-1, i -> product(n-1-i, j ->
 		    (
@@ -53,7 +53,7 @@ fugacityK = p -> (
 		    * (if j+i==n-1 then 1 else (tri(p#(i+1,j,0),p#(i,j+1,1)))^(-1)
             )))
 	)
-    ) else if p#Equivariant then (
+    ) else if p.Equivariant then (
         (uptrifug,downtrifug) := try (myget ("fugacity-"|toString d|".m2"))(q) else error "K-fugacities not implemented for this value of d";
         --(uptrifug,downtrifug) := myget ("fugacity-"|toString d|".m2");
         rhfug := try (myget ("fugacity-equiv-"|toString d|".m2"))(q,zbar) else error "K-fugacities not implemented for this value of d";
@@ -95,11 +95,11 @@ fugacityK0 = p -> (
 
 fugacity = true >> o -> p -> (
     if #o>0 then p = p ++ o; -- change options
-    if not p#?Separation and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
-    if not p#Equivariant and not p#Kth then return 1; -- ha
-    if not p#Generic and not p#Equivariant then return (-1)^(1); -- TODO inversion number -- careful with multinumber on bdry??
-    if not p#Generic and not p#?Separation and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
-    (if p#Generic then if p#Kth then fugacityK else fugacityH else if p#Kth then fugacityK0 else fugacityH0) p
+    if not p.?Separation and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
+    if not p.Equivariant and not p.Ktheory then return 1; -- ha
+    if not p.Generic and not p.Equivariant then return (-1)^(1); -- TODO inversion number -- careful with multinumber on bdry??
+    if not p.Generic and not p.?Separation and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
+    (if p.Generic then if p.Ktheory then fugacityK else fugacityH else if p.Ktheory then fugacityK0 else fugacityH0) p
     )
 
 bottom = p -> (
@@ -124,12 +124,12 @@ fugacityVector = true >> o -> L -> (
 end
 
 needsPackage "CotangentSchubert"
-(M,FF,I)=setupCotangent(1,2,3,Kth=>true)
+(M,FF,I)=setupCotangent(1,2,3,Ktheory=>true)
 segreCls = segreClasses();
 T=table(I,I,(i,j)->segreCls^(-1)*(segreClass i @ segreClass j));
-TT=table(I,I,(i,j)->fugacityVector puzzle(i,j,Generic=>true,Equivariant=>true,Kth=>true));
+TT=table(I,I,(i,j)->fugacityVector puzzle(i,j,Generic=>true,Equivariant=>true,Ktheory=>true));
 T==TT
 
-(M,FF,I)=setupCotangent(1,2,3,4,Kth=>true)
+(M,FF,I)=setupCotangent(1,2,3,4,Ktheory=>true)
 segreCls = segreClasses();
 segreInv = segreCls^(-1);

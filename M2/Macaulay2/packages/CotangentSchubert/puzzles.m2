@@ -5,7 +5,7 @@
 --
 -- there are various types of puzzle pieces:
 -- * Equivariant/not
--- * Kth/Kinv/Generic/not
+-- * Ktheory/Kinv/Generic/not
 -- * Separated/not
 -- though not all combinations implemented yet
 --
@@ -42,7 +42,7 @@ tiles := o -> (
     curPuzzleOpts = o;
     d := o.Steps;
     if o#?Separation then (
-        (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Kth,o.Kinv,o.Generic,o.Equivariant);
+        (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Ktheory,o.Kinv,o.Generic,o.Equivariant);
         return;
         );
     if o#Generic then (
@@ -50,7 +50,7 @@ tiles := o -> (
         rhombi = if o#Equivariant then allRhombi d else {};
         ) else (
         upTriangles = downTriangles = basicTriangles d;
-        if o#Kth then (
+        if o.Ktheory then (
             (KUp,KDown) := KTriangles d;
             upTriangles = upTriangles | apply(KUp, x -> append(x,"fill"=>"yellow"));
             downTriangles = downTriangles | apply(KDown, x -> append(x,"fill"=>"yellow"));
@@ -235,7 +235,7 @@ end
 
 puzzle({0,2,0,1},{0,1,0,2},Equivariant=>true)
 
-puzzle("103213","103213","323011",Kth=>true)
+puzzle("103213","103213","323011",Ktheory=>true)
 
 puzzle("0123","3210",Generic=>true,Equivariant=>true)
 
