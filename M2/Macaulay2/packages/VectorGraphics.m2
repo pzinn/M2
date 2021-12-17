@@ -709,6 +709,7 @@ tikzconv := hashTable {
     "stroke" => tikzconv1 "draw", "fill" => tikzconv1 "fill",
     "stroke-opacity" => tikzconv1 "draw opacity", "fill-opacity" => tikzconv1 "fill opacity", "stroke-linejoin" => tikzconv1 "line join",
     "stroke-width" => y -> "line width="|toString(tikzsc*tikzlen y)|"cm",
+    "font-size" => y -> "scale="|toString(3*tikzsc*tikzlen substring(y,0,#y-2)), -- TODO parse units correctly
     "viewBox" => y -> (
     	vb := pack(value \ separate("\\s|,",y),2);
 	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
@@ -773,8 +774,11 @@ tex svgElement Ellipse := x -> concatenate(
 tex svgElement GraphicsHtml :=
 tex svgElement GraphicsText := x -> concatenate(
     (op,ct,st) := ovr x;
+    col := null;
+     -- TODO intepret options correctly (stroke vs fill)
+    st = apply(st, s -> if substring(s,0,4) == "fill" or substring(s,0,4) == "draw" then if substring(s,5) != "none" then substring(s,5) else "" else s);
     "\\node",
---    if #st>0 then "["|demark(",",st)|"]", -- TODO intepret options correctly (stroke vs fill)
+    if #st>0 then "["|demark(",",st)|"]",
     " at (",
     toString op#"x",
     ",",

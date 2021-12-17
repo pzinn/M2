@@ -178,7 +178,7 @@ initPuzzle = true >> o -> args -> (
     separated := any(join args, s -> s===" ");
     new Puzzle from pairs o | { Length=>n,
 	if separated then Separation => 1 + max flatten apply(args#1,ascii) - 48,
-        if o.Steps === null then Steps => max flatten apply(join args,ascii) - 48
+        if o.Steps === null then Steps => max(max flatten apply(join args,ascii) - 48,1) -- d>=1
         } | flatten flatten apply(n, i ->
         apply(n-i, j -> {
                 (i,j,0) => if i==0 then args#1#j else "**",
