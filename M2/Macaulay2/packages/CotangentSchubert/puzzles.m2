@@ -68,11 +68,13 @@ new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k
 
 net Puzzle := p -> netList(applyTable(new List from p, a -> netList({{,a#0},{a#1,a#2}},HorizontalSpace=>1,Boxes=>false)),HorizontalSpace=>2,VerticalSpace=>1,Boxes=>false)
 
+puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
+
 vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => 1.7/(4.+#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
-vgOpts := k -> { Size => k*7, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
+vgOpts := k -> { Size => k*puzzleSize, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
 cols:={"red","green","blue","yellow","magenta","cyan"};
-strk:=0.07;
+strk:=0.01*puzzleSize;
 
 vg = p -> gList toSequence (
     n:=p.Length;

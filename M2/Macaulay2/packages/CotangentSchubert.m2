@@ -11,7 +11,7 @@ newPackage(
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
     DebuggingMode => true,
-    Configuration => { "Factor" => false }
+    Configuration => { "Factor" => false, "PuzzleSize" => 7 }
     )
 
 if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;

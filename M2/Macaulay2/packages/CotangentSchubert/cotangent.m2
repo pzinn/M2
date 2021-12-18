@@ -102,8 +102,8 @@ FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
 promoteFromMap(FK_0,FK_-1);
 fullToPartial FK_0 := identity;
 
-h := getSymbol "h"; xbar := getSymbol "xbar";
-FH_-1 = frac(factor(ZZ (monoid[h,xbar]))); -- same as FH_1, really but diff variable name
+h := getSymbol "h"; ybar := getSymbol "ybar";
+FH_-1 = frac(factor(ZZ (monoid[h,ybar]))); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ (monoid[h])));
 promoteFromMap(FH_0,FH_-1);
 fullToPartial FH_0 := identity;
@@ -120,8 +120,8 @@ defineFK = n -> (
 
 defineFH = n -> (
     if not FH#?n then (
-        x := getSymbol "x"; -- h := getSymbol "h";
-        FH_n = frac(factor(ZZ (monoid[h,x_1..x_n,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
+        y := getSymbol "y"; -- h := getSymbol "h";
+        FH_n = frac(factor(ZZ (monoid[h,y_1..y_n,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
         promoteFromMap(FH_0,FH_n);
 	fullToPartial FH_n := identity;
         );
@@ -132,8 +132,8 @@ BBs = new IndexedVariableTable;
 
 defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
     if not BBs#?(n,Kth,Equiv) then (
-	y := getSymbol "y";
-	BB0 := FF(monoid(splice[y_1..y_n, if Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
+	x := getSymbol "x";
+	BB0 := FF(monoid(splice[x_1..x_n, if Kth then DegreeRank=>0 else (MonomialOrder=>{Weights=>{n:1},RevLex},DegreeRank=>1)])); -- in terms of Chern roots
 	J := ideal apply(1..n,k->elem(k,gens BB0)
             -if Equiv then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
 	BB := BB0/J;
@@ -224,16 +224,16 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	) else (
 	FF0 = FH_0;
 	FF = if curCotOpts.Equivariant then defineFH n else FF0;
-	V1=FH_-1^(d+1); h:=FH_-1_0; xbar:=FH_-1_1;
+	V1=FH_-1^(d+1); h:=FH_-1_0; ybar:=FH_-1_1;
 	Rcnum0=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
-		if i==j then (i*(d+2),i*(d+2))=>h-xbar
-		else ((i*(d+1)+j,j*(d+1)+i)=>xbar,
+		if i==j then (i*(d+2),i*(d+2))=>h-ybar
+		else ((i*(d+1)+j,j*(d+1)+i)=>ybar,
                     (i*(d+1)+j,i*(d+1)+j)=>h)));
 	Rcz0=map(V1^**2,V1^**2,splice flatten table(d+1,d+1,(i,j)->
 		if i==j then (i*(d+2),i*(d+2))=>1
-		else ((i*(d+1)+j,j*(d+1)+i)=>if i<j then xbar else 0,
+		else ((i*(d+1)+j,j*(d+1)+i)=>if i<j then ybar else 0,
                     (i*(d+1)+j,i*(d+1)+j)=>1)));
-	Rcden0=h-xbar;
+	Rcden0=h-ybar;
 	Rc0 = 1/Rcden0 * Rcnum0;
 	-- TODO rewrite next 4 statements better
 	Rc = (x1,x2) -> (map(ring x2,FH_-1,{FF_0,x2-x1}))Rc0;
@@ -244,10 +244,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
     if curCotOpts.Presentation === Borel then (
 	BB := defineB(FF,n,curCotOpts.Ktheory,curCotOpts.Equivariant);
 	if curCotOpts.Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0})); -- TODO move elsewhere
-	y := getSymbol "y";
+	x := getSymbol "x";
 	-- Chern classes
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
-	v := (j,i) -> y_(j,toList(dims#i+1..dims#(i+1))); -- variable name
+	v := (j,i) -> x_(j,toList(dims#i+1..dims#(i+1))); -- variable name
 	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
 	args := v\inds;
 	if curCotOpts.Ktheory then (
