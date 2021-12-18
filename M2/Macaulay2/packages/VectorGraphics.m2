@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.97",
-        Date => "October 25, 2021", -- "May 18, 2018",
+        Version => "0.98",
+        Date => "December 19, 2021", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -695,8 +695,16 @@ new SVG from GraphicsObject := (S,g) -> (
 html GraphicsObject := g -> html SVG g;
 
 -- tex output
-tikzsc := 1; -- not thread-safe
+tikzscale := 1; -- not thread-safe
 tikzsize := 1; -- same
+svgunits = hashTable { "px" => 1., "in" => 96., "cm" => 37.795, "mm" => 3.7795, "pt" => 1.3333, "pc" => 16,
+    "em" => 14., "ex" => 7., "ch" => "7", "rem" =>14. } -- this second line is approximate
+
+svglen = s -> try value s else if last s == "%" then 0.01*value substring(s,0,#s-1) else (
+    unit := substring(s,-2);
+    num := substring(s,0,#s-2);
+    if svgunits#?unit then svgunits#unit*value num else error "unknown svg unit"
+    )
 tikzconv1 := x -> y -> (
     if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
 	c := value substring(y,3);
@@ -704,12 +712,11 @@ tikzconv1 := x -> y -> (
 	);
     x|"="|y
     )
-tikzlen := s -> if last s == "%" then tikzsize*0.01*value substring(s,0,#s-1) else value s
 tikzconv := hashTable {
     "stroke" => tikzconv1 "draw", "fill" => tikzconv1 "fill",
     "stroke-opacity" => tikzconv1 "draw opacity", "fill-opacity" => tikzconv1 "fill opacity", "stroke-linejoin" => tikzconv1 "line join",
-    "stroke-width" => y -> "line width="|toString(tikzsc*tikzlen y)|"cm",
-    "font-size" => y -> "scale="|toString(3*tikzsc*tikzlen substring(y,0,#y-2)), -- TODO parse units correctly
+    "stroke-width" => y -> "line width="|toString(tikzscale*svglen y)|"cm",
+    "font-size" => y -> "scale="|toString(3.15*tikzscale*svglen y), -- messy: cm -> scale using 96dpi and 12px fontsize
     "viewBox" => y -> (
     	vb := pack(value \ separate("\\s|,",y),2);
 	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
@@ -728,12 +735,12 @@ tex SVG := texMath SVG := x -> concatenate(
     if op#?"viewBox" and op#?"width" and op#?"height" then (
     	-- compute scaling
     	vb := value \ take(separate("\\s|,",op#"viewBox"),-2);
-	xsc := 0.2*value substring(op#"width",0,#(op#"width")-2) / vb#0; -- TODO parse units correctly
-	ysc := 0.2*value substring(op#"height",0,#(op#"height")-2) / vb#1;
-	tikzsc = sqrt(xsc^2+ysc^2);
+	xsc := svglen op#"width"/svgunits#"cm" / vb#0; -- a bit too big because based on 96dpi
+	ysc := svglen op#"height"/svgunits#"cm" / vb#1;
+	tikzscale = sqrt(0.5*(xsc^2+ysc^2));
 	st = st | {"x={("|toString xsc|"cm,0cm)}","y={(0cm,"|toString (-ysc)|"cm)}"};
 	) else (
-	tikzsc = 1;
+	tikzscale = 1;
 	st = append(st,"y={(0cm,-1cm)}");
 	);
     st=append(st,"baseline=(current  bounding  box.center)");
