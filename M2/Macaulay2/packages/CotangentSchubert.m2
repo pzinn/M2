@@ -1,8 +1,8 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.1", 
-    Date => "1 Aug 2021", -- "22 Mar 2021",
+    Version => "0.5",
+    Date => "19 Dec 2021", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -16,7 +16,7 @@ newPackage(
 
 if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
-opts = new OptionTable from {Ktheory => false, Equivariant => true, Generic => true} -- common options
+opts = new OptionTable from {Ktheory => false, Equivariant => true} -- common options
 export {"Ktheory", "Equivariant" };
 
 load "CotangentSchubert/cotangent.m2";
@@ -32,45 +32,285 @@ multidoc ///
   Description
    Text
     @BOLD "CotangentSchubert"@ is a package for calculations in cotangent Schubert calculus.
-    Spectifically, it allows to compute Chern and Segre motivic classes (as well as their limits in ordinary
+    Specifically, it allows to compute motivic Chern and Segre classes (as well as their limits in ordinary
     Schubert calculus, namely Schubert classes), and to independently compute the expansion of their products
-    using puzzles.
+    using puzzles. Puzzles and their "fugacities" are defined and computed using the results of [1,2,3].
+
+    References: @BR{}@
+    [1] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability I: invariant trilinear forms,
+    @HREF{"http://arxiv.org/abs/1706.10019","arXiv:1706.10019"}@. @BR{}@
+    [2] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability II: multiplying motivic Segre classes,
+    @HREF{"http://arxiv.org/abs/2102.00563","arXiv:2102.00563"}@. @BR{}@
+    [3] A. Knutson and P. Zinn-Justin, Schubert puzzles and integrability III: separated descents, in preparation.
  Node
   Key
    setupCotangent
   Headline
    Set up cotangent Schubert calculus rings
+  Usage
+   (A,B,FF,I) = setupCotangent(dimensions,Presentation=>Borel)
+   (D,FF,I) = setupCotangent(dimensions,Presentation=>EquivLoc)
+  Inputs
+   dimensions : Sequence
+    of integers
+   Ktheory => Boolean
+   Equivariant => Boolean
+  Description
+   Text
+    This function sets up the various rings used by @BOLD "CotangentSchubert"@. Its behaviour depends
+    on the value of the option @TT "Presentation"@.
+
+    With @TT "Presentation => Borel"@, @TT "setupCotangent"@ returns a sequence made of two rings, a field and a list:
+   Example
+    (A,B,FF,I) = setupCotangent(1,3,Presentation=>Borel)
+   Text
+    The first (resp. second) ring is the cohomology or K-theory ring of the cotangent bundle of the flag variety specifided by the sequence of dimensions
+    of flags (resp. of the corresponding full flag variety). The field is the base field (fraction field
+    of the cohomology or K-theory ring of a point). The list is a list of labels for the various classes that
+    @BOLD "CotangentSchubert"@ computes.
+    The boolean option @TT "Ktheory"@ specifies the choice of K-theory or cohomology, whereas @TT "Equivariant"@ specifies
+    whether the equivariance is w.r.t. scaling of the fiber of the cotangent bundle only, or w.r.t. scaling and Cartan
+    torus action.
+
+    With @TT "Presentation => EquivLoc"@:
+   Example
+    (D,FF,I) = setupCotangent(1,3,Presentation=>EquivLoc)
+   Text
+    the first output is a "diagonal algebra", i.e., a vector space over @TT "FF"@ with componentwise product. The last two outputs
+    are the same as above.
+ Node
+  Key
+   chernClass
+   stableClass
+   chernClass'
+   stableClass'
+  Headline
+   Compute a motivic Chern class
+  Usage
+   chernClass i
+   chernClass I
+   chernClass(i,A)
+   chernClass(I,A)
+   chernClass' i
+   stableClass i
+   stableClass' i
+  Inputs
+   i : String
+   I : List
+   A : Ring
+  Description
+   Text
+    computes a motivic Chern class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
+   Example
+    (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
+    chernClass "101"
+   Text
+    If a list of labels I is used, then a matrix of classes is returned.
+   Example
+    chernClass I
+   Text
+    @TT "stableClass"@ differs from @TT "chernClass"@ by division by the canonical class of the flag variety.
+    The primed classes are dual classes.
  Node
   Key
    segreClass
+   sClass
+   segreClass'
+   sClass'
   Headline
-   Compute a Segre motivic class
+   Compute a motivic Segre class
+  Usage
+   segreClass i
+   segreClass I
+   segreClass(i,A)
+   segreClass(I,A)
+   segreClass' i
+   sClass i
+   sClass' i
+  Inputs
+   i : String
+   I : List
+   A : Ring
+  Description
+   Text
+    computes a motivic Segre class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
+   Example
+    (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
+    segreClass "101"
+   Text
+    If a list of labels I is used, then a matrix of classes is returned.
+   Example
+    segreClass I
+   Text
+    @TT "sClass"@ differs from @TT "segreClass"@ by multiplication by a power of the equivariant parameter $q$.
+    The primed classes are dual classes.
  Node
   Key
    schubertClass
+   schubertClass'
   Headline
    Compute a Schubert class
+  Usage
+   schubertClass i
+   schubertClass I
+   schubertClass(i,A)
+   schubertClass(I,A)
+   schubertClass' i
+  Inputs
+   i : String
+   I : List
+   A : Ring
+  Description
+   Text
+    computes a Schubert class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
+    The primed classes are dual classes.
  Node
   Key
-   tautClass
+   tautoClass
   Headline
    Compute the class of a tautological bundle
- Node
-  Key
-   puzzle
-  Headline
-   Compute puzzles with given boundaries
+  Usage
+   tautoClass (i,j)
+   tautoClass (i,j,A)
+  Inputs
+   i : ZZ
+   j : ZZ
+   A : Ring
+  Description
+   Text
+    Computes the i^th Chern class of the j^th tautological bundle of the flag variety whose K-theory (or cohomology)
+    ring is given by @TT "A"@. If @TT "A"@ is not specified, then the ring that was defined last is used.
  Node
   Key
    pushforwardToPoint
-  Headline
-   Push forward classes to a point
- Node
-  Key
    pushforwardToPointFromCotangent
   Headline
-   Push forward classes to a point from the cotangent bundle
+   Push forward classes to a point
+  Usage
+   pushforwardToPoint a
+   pushforwardToPointFromCotangent a
+  Inputs
+   a : RingElement
+  Description
+   Text
+    Pushes forward a K-theory or cohomology class from either the flag variety or its cotangent bundle.
+    The ring of input @TT "a"@ must have been previously created with @TO {setupCotangent}@.
+ Node
+  Key
+   inversion
+ Node
+  Key
+   fullToPartial
+ Node
+  Key
+   restrict
+ Node
+  Key
+   zeroSection
+ Node
+  Key
+   dualZeroSection
+ Node
+  Key
+   puzzle
+   Puzzle
+  Headline
+   Compute puzzles with given boundaries
+  Usage
+   puzzle (a,b)
+   puzzle (a,b,c)
+  Inputs
+   a : String
+   b : String
+   c : String
+   Ktheory => Boolean
+   Equivariant => Boolean
+   Generic => Boolean
+   Ktheory' => Boolean
+    has an effect only if @TT "Generic => false"@
+   Labels => Boolean
+   Paths => Boolean
+   Steps => ZZ
+  Description
+   Text
+    Produces a list of puzzles with boundaries given by strings @TT "a"@ (northwest side),
+    @TT "b"@ (northeast side), @TT "c"@ (bottom side).
+    The default @TT "Generic=>true"@ produces "generic" puzzles corresponding to the multiplication of
+    motivic Segre classes @TO {sClass}@, whereas @TT "Generic=>false"@ produces "classic" puzzles
+    corresponding to the multiplication of Schubert classes @TO {schubertClass}@ (in the latter case,
+    @TT "Ktheory'=>true"@ produces puzzles for dual Schubert classes).
+    @TT "Labels"@ and @TT "Paths"@ are drawing options which only affect HTML and TeX output of puzzles.
+   Example
+    puzzle ("0101","1001",Equivariant=>false)
+ Node
+  Key
+   fugacity
+   fugacityVector
+   fugacityTally
+  Headline
+   compute the fugacity of puzzles
+  Usage
+   fugacity P
+   fugacityVector L
+   fugacityTally L
+  Inputs
+   P : Puzzle
+   L : List
+    a list of puzzles
+  Description
+   Text
+    To each puzzle is associated an element of the base field (cohomology/K-theory of a point), its so-called fugacity,
+    in such a way that the sum of fugacities of puzzles with prescribed boundaries @TT"a"@, @TT"b"@, @TT"c"@, is equal
+    to the coefficient of the expansion of the product of classes indexed by the strings @TT"a"@ and @TT"b"@ into the class
+    class indexed by the string @TT"c"@. Here the classes are motivic Segre classes @TO{sClass}@ if @TT"Generic=>true"@,
+    Schubert classes @TO{schubertClass}@ if @TT"Generic=>false"@.
+    The options @TT "Ktheory"@, @TT "Equivariant"@, @TT "Generic"@ are inherited from the @TO{puzzle}@ by default,
+    but they can be overridden.
+
+    fugacityTally processes a list of puzzles, and returns a hash table where to each string appearing at the bottom
+    of a puzzle is associated the sum of fugacities of the corresponding puzzles.
+
+    fugacityVextor similarly processes a list of puzzles, and returns the result as a vector
+    where each entry is the sum of fugacities of puzzles with a given bottom string.
+    The ordering of strings is the same as the list returned by @TO{setupCotangent}@.
+ Node
+  Key
+   bottom
+  Headline
+   The bottom string of a puzzle
+  Usage
+   bottom P
+  Inputs
+   P : Puzzle
+  Description
+   Text
+    Reads off the bottom boundary string of a puzzle.
+ Node
+  Key
+   basisCoeffs
+  Headline
+   Expand a finite-dimensional algebra element into its basis
+  Description
+   Text
+    This is a simple helper function.
+   Example
+    (A,B,FF,I)=setupCotangent(2,4,Presentation=>Borel,Ktheory=>true,Equivariant=>false)
+    basis A
+    basisCoeffs(x_(1,{1,2})^2)
 ///
+undocumented {
+    Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
+    Paths, Labels, Length, Steps, Ktheory',
+    (restrict,Matrix),(restrict,Matrix,RingElement),
+    (fullToPartial,Matrix),(fullToPartial,Matrix,RingElement),
+    (inversion,String)
+    }
 end
 
 (FF,I)=setupCotangent(1,2,Ktheory=>true)

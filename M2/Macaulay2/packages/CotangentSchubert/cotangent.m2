@@ -1,6 +1,6 @@
 export {
     "setupCotangent",
-    "tautClass",
+    "tautoClass",
     "sClass", "stableClass", "segreClass", "chernClass", "schubertClass",
     "sClass'", "stableClass'", "segreClass'", "chernClass'", "schubertClass'",
     "restrict", "fullToPartial", "basisCoeffs",
@@ -53,7 +53,7 @@ promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 
-tautClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautClass to avoid confusion with motivic classes
+tautoClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautoClass to avoid confusion with motivic classes
 zeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
 dualZeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
 zeroSectionInv = method(Dispatch=>{Type},Options=>true) -- internal use only
@@ -87,7 +87,6 @@ restrict (Matrix,RingElement) := (m,X) -> matrix apply(flatten entries m,x->rest
 
 -- from full flag to partial flag
 fullToPartial = method(Dispatch =>{Thing,Type})
-fullToPartial Number := identity
 fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 fullToPartial (Matrix,RingElement) := (m,X) -> matrix applyTable(entries m,x->fullToPartial(x,X))
 
@@ -121,7 +120,7 @@ defineFK = n -> (
 defineFH = n -> (
     if not FH#?n then (
         y := getSymbol "y"; -- h := getSymbol "h";
-        FH_n = frac(factor(ZZ (monoid[h,y_1..y_n,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
+        FH_n = frac(factor(ZZ (monoid[h,y_1..y_n,MonomialOrder=>{Weights=>{n+1:1},Weights=>{1,n:0},RevLex}])));
         promoteFromMap(FH_0,FH_n);
 	fullToPartial FH_n := identity;
         );
@@ -279,7 +278,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    sub(b,AA)
 	    );
 	--
-	tautClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
+	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
 	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> fullToPartial(zeroSection(AA,Partial=>false),AA)
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
@@ -392,9 +391,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	-- restriction to fixed points
 	if curCotOpts.Equivariant then (
 	    restrictMap := i -> map(FF,BB, apply(n,j->FF_((flatten subs i)#j+1)));
+	    restrict (Number,AA) :=
 	    restrict (AA,AA) :=
 	    restrict (BB,AA) := (b,AA) -> vector apply(I,i->(restrictMap i) b); -- where is D?
-	    restrict AA := restrict BB := b -> restrict(b,AA);
+	    restrict Number := restrict AA := restrict BB := b -> restrict(b,AA);
 	    );
 	-- pushforwards
 	-- find element whose pushforward is nonzero
@@ -402,19 +402,19 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	if curCotOpts.Ktheory then (
 	    nzpf = 0;
 	    ) else (
-	    -- with normal ordering: product of det line bundles ^ dims of flags product(1..d,i->tautClass(dimdiffs#i,i)^(dims#i))
-	    -- with reverse ordering: product(1..d,i->tautClass(dimdiffs#i,i)^(codims#i)) where codim#i = last dims - dims#i
+	    -- with normal ordering: product of det line bundles ^ dims of flags product(1..d,i->tautoClass(dimdiffs#i,i)^(dims#i))
+	    -- with reverse ordering: product(1..d,i->tautoClass(dimdiffs#i,i)^(codims#i)) where codim#i = last dims - dims#i
 	    nzpf = maxPosition flatten last degrees basis AA; -- we locate it by max degree
 	    );
 	pushforwardToPoint AA := a -> (basisCoeffs a)_(nzpf,0);
 	pushforwardToPoint Number := pushforwardToPoint RingElement := r -> pushforwardToPoint promote(r,AA);
-	pushforwardToPoint Matrix := m -> matrix applyTable(entries m,pushforwardToPoint);
+	pushforwardToPoint Matrix := m -> matrix applyTable(entries m,pushforwardToPoint); -- here, not outside
 	pushforwardToPointFromCotangent AA := a -> pushforwardToPoint (zeroSectionInv AA * a);
 	pushforwardToPointFromCotangent Number := pushforwardToPoint RingElement := r -> pushforwardToPointFromCotangent promote(r,AA);
 	pushforwardToPointFromCotangent Matrix := m -> matrix applyTable(entries m,pushforwardToPointFromCotangent);
 	--
-	tautClass (ZZ,ZZ,BB) := {Partial=>false} >> o -> (j,i,BB) -> tautClass(j,i,AA,o);
-	tautClass (ZZ,ZZ) := {Partial=>false} >> o -> (j,i) -> tautClass(j,i,AA,o);
+	tautoClass (ZZ,ZZ,BB) := {Partial=>false} >> o -> (j,i,BB) -> tautoClass(j,i,AA,o);
+	tautoClass (ZZ,ZZ) := {Partial=>false} >> o -> (j,i) -> tautoClass(j,i,AA,o);
 	zeroSection BB := {Partial=>false} >> o -> BB -> zeroSection(AA,o);
 	installMethod(zeroSection, {Partial=>false} >> o->()->zeroSection(AA,o));
 	dualZeroSection BB := {Partial=>false} >> o -> BB -> dualZeroSection(AA,o);
@@ -460,7 +460,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	schubertClass' (String,BB) :=
 	schubertClass' (AryString,BB) := {Partial=>false} >> o -> (i,BB) -> schubertClass'(i,AA,o);
 	schubertClass' Thing := {Partial=>false} >> o -> i -> schubertClass'(i,AA,o);
-	fullToPartial BB := b -> fullToPartial(b,AA);
+	fullToPartial Number := fullToPartial BB := b -> fullToPartial(b,AA);
 	pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
 	pushforwardToPointFromCotangent BB := b -> pushforwardToPoint (zeroSectionInv BB * b);
 	--
@@ -538,8 +538,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	installMethod(zeroSection,{}>>o->()->zeroSection D);
 	installMethod(dualZeroSection,{}>>o->()->dualZeroSection D);
 	-- Chern classes of tautological bundles
-	tautClass (ZZ,ZZ,D) := {} >> o -> (j,i,AA) -> D apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
-	tautClass (ZZ,ZZ) := {} >> o -> (j,i) -> tautClass(j,i,D);
+	tautoClass (ZZ,ZZ,D) := {} >> o -> (j,i,AA) -> D apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
+	tautoClass (ZZ,ZZ) := {} >> o -> (j,i) -> tautoClass(j,i,D);
 	-- pushforward to point
 	pushforwardToPoint D := pushforwardToPoint Vector := m -> ((weights D)*m)_0;
 	pushforwardToPoint Matrix := m -> (weights D)*m;

@@ -102,11 +102,6 @@ fugacity = true >> o -> p -> (
     (if p.Generic then if p.Ktheory then fugacityK else fugacityH else if p.Ktheory then fugacityK0 else fugacityH0) p
     )
 
-bottom = p -> (
-    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
-    new AryString from apply(L, x -> if #x === 1 then value x else x)
-    )
-
 --tallyFugacities = true >> o -> L -> applyKeys(hashTable apply(L,p->p=>fugacity p),bottom,plus)
 fugacityTally = true >> o -> L -> sum(L,p->new VirtualTally from {bottom p=>fugacity(p,o)})
 

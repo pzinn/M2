@@ -5,7 +5,7 @@
 --
 -- there are various types of puzzle pieces:
 -- * Equivariant/not
--- * Ktheory/Kinv/Generic/not
+-- * Ktheory/Ktheory'/Generic/not
 -- * Separated/not
 -- though not all combinations implemented yet
 --
@@ -21,8 +21,8 @@ myget = memoize(x -> first(
 	if debugLevel>0 then << x << " loaded" << endl
 	))
 
-puzzleOpts := opts ++ {Steps => null, Kinv => false, Labels => true, Paths => false};
-export {"Steps", "Kinv", "Length", "Labels", "Paths"}; -- move to main file
+puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Labels => true, Paths => false};
+export {"Steps", "Ktheory'", "Length", "Labels", "Paths"}; -- move to main file
 -- lots of global variables, not thread-safe!
 protect Separation;
 upTriangles=downTriangles=rhombi={};
@@ -42,7 +42,7 @@ tiles := o -> (
     curPuzzleOpts = o;
     d := o.Steps;
     if o#?Separation then (
-        (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Ktheory,o.Kinv,o.Generic,o.Equivariant);
+        (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Ktheory,o.Ktheory',o.Generic,o.Equivariant);
         return;
         );
     if o#Generic then (
@@ -55,7 +55,7 @@ tiles := o -> (
             upTriangles = upTriangles | apply(KUp, x -> append(x,"fill"=>"yellow"));
             downTriangles = downTriangles | apply(KDown, x -> append(x,"fill"=>"yellow"));
             );
-        if o#Kinv then (
+        if o#Ktheory' then (
             (KUp,KDown) = KTriangles d;
             upTriangles = upTriangles | apply(KDown, x -> append(x,"fill"=>"yellow"));
             downTriangles = downTriangles | apply(KUp, x -> append(x,"fill"=>"yellow"));
@@ -225,6 +225,11 @@ puzzle = puzzleOpts >> o -> args -> (
     if debugLevel>0 then << "computing puzzles" << newline;
     recurse(0,0,0, puz0);
     new List from lst
+    )
+
+bottom = p -> (
+    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
+    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
     )
 
 -- computation of (d<=3) equivariant fugacities
