@@ -232,6 +232,15 @@ bottom = p -> (
     new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
     )
 
+nwside = p -> (
+    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
+    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
+    )
+neside = p -> (
+    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
+    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
+    )
+
 -- computation of (d<=3) equivariant fugacities
 myload "fugacity.m2"
 

@@ -31,7 +31,7 @@ fugacityK = p -> (
     n:=p.Length;
     if p.?Separation then (
 	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
-			else if a>=p.Separation and b<p.Separation then -q^(-1) else -q; -- probably wrong needs more checks
+			else if a>=p.Separation and b<p.Separation then -q^(-1) else -q; -- needs more checks
 	if p.Equivariant then (
 	    defineFK n;
             product(n-1, i -> product(n-1-i, j ->
@@ -40,7 +40,7 @@ fugacityK = p -> (
 			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
 			if a==b then (if a==" " then q else 1)*(1-z)/(1-q^2*z) else if a==d then 1
 			else ((1-q^2)/(1-q^2*z)
-			    * (if a>b or a==" " or b==" " then 1 else z) -- probably wrong
+			    * (if a>b or a==" " or b==" " then 1 else z) -- needs more checks
 			    * (tri(a,b))^(-1) * tri(d,c)
 			    )
 			)
@@ -97,7 +97,7 @@ fugacity = true >> o -> p -> (
     if #o>0 then p = p ++ o; -- change options
     if not p.?Separation and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
     if not p.Equivariant and not p.Ktheory then return 1; -- ha
-    if not p.Generic and not p.Equivariant then return (-1)^(1); -- TODO inversion number -- careful with multinumber on bdry??
+    if not p.Generic and not p.Equivariant then return (-1)^(inversion nwside p+inversion neside p-inversion bottom p); -- difference of inversion numbers -- careful with multinumber on bdry
     if not p.Generic and not p.?Separation and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
     (if p.Generic then if p.Ktheory then fugacityK else fugacityH else if p.Ktheory then fugacityK0 else fugacityH0) p
     )
