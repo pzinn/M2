@@ -245,6 +245,13 @@ multidoc ///
     motivic Segre classes @TO {sClass}@, whereas @TT "Generic=>false"@ produces "classic" puzzles
     corresponding to the multiplication of Schubert classes @TO {schubertClass}@ (in the latter case,
     @TT "Ktheory'=>true"@ produces puzzles for dual Schubert classes).
+
+    The boundaries are encoded as strings of digits from "0" to "d", where d is the number of steps
+    of the flag variety; alternatively, one can use lists of integers or strings (the latter allows for
+    the possibility of having arbitrary puzzle labels on the boundary, such as "2(10)", even though
+    this will not occur in normal puzzle computations). The special symbol "#" stands for any single digit,
+    whereas "*" stands for any puzzle label.
+
     @TT "Labels"@ and @TT "Paths"@ are drawing options which only affect HTML and TeX output of puzzles.
    Example
     puzzle ("0101","1001",Equivariant=>false)
@@ -311,37 +318,54 @@ undocumented {
     (fullToPartial,Matrix),(fullToPartial,Matrix,RingElement),
     (inversion,String)
     }
+
+TEST ///
+(A,B,FF,I)=setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
+assert((schubertClass "0101")^2 == schubertClass "1001" + schubertClass "0110") -- classic Schubert calculus
+assert(pushforwardToPoint((segreClass "0101")^2*chernClass "0101")==-4) -- ex of p43 of II: chi(S_0101^3)=-4
+///
+
+TEST ///
+(D,FF,I)=setupCotangent(1,2,4,Ktheory=>true)
+segreCls=sClass I;
+i1=I#1;i2=I#2;
+a=sClass i1*sClass i2;
+P=puzzle(i1,i2) -- generic 2-step puzzles
+b=segreCls*(fugacityVector P);
+assert(a==b)
+///
+
 end
 
-(FF,I)=setupCotangent(1,2,Ktheory=>true)
-segreCls=segreClasses()
+(A,FF,I)=setupCotangent(1,2,Ktheory=>true)
+segreCls=sClass I
 segreInv=segreCls^(-1);
-Table table(I,I,(i,j)->segreInv*(segreClass i * segreClass j))
+Table table(I,I,(i,j)->segreInv*(sClass i * sClass j))
 L=puzzle("01","01",Generic=>true,Equivariant=>true)
 fugacityVector(L,Ktheory=>true)
 
-(AA,BB,f,I)=setupCotangent(2,4,Presentation=>Borel,Equivariant=>false,Ktheory=>true)
-segreCls=segreClasses();
+(AA,BB,FF,I)=setupCotangent(2,4,Presentation=>Borel,Equivariant=>false,Ktheory=>true)
+segreCls=sClass I;
 L=puzzle("0101","0101",Generic=>true,Equivariant=>false)
 fugacityVector(L,Ktheory=>true)
 (segreCls*oo)_0
 segreCls_(0,1)^2
 
 -- d=2
-(FF,I)=setupCotangent(1,2,4)
-segreCls=segreClasses();
+(A,FF,I)=setupCotangent(1,2,4)
+segreCls=sClass I;
 i1=I#1;i2=I#2;
-a=(segreClass i1)*(segreClass i2);
-P=puzzle(i1,i2,Generic=>true,Equivariant=>true)
+a=sClass i1*sClass i2;
+P=puzzle(i1,i2)
 b=segreCls*(fugacityVector P);
 a==b
-Table table(I,I,(i1,i2)->(segreClass i1)*(segreClass i2)==segreClasses*(fugacityVector puzzle(i1,i2,Generic=>true,Equivariant=>true)))
+Table table(I,I,(i1,i2)->sClass i1*sClass i2==segreCls*(fugacityVector puzzle(i1,i2)))
 
 -- note that for large examples, no need to compute the inverse
 (FF,I)=setupCotangent(1,2,3,4)
-segreCls=segreClasses();
+segreCls=sClasses();
 i1="3021"; i2="2130"; -- interesting because separated "3 2 " * " 1 0"
-a=(segreClass i1)*(segreClass i2);
+a=(sClass i1)*(sClass i2);
 P=puzzle(i1,i2,Generic=>true,Equivariant=>true)
 fugacityTally P
 b=segreCls*(fugacityVector P);
@@ -350,7 +374,7 @@ a==b
 Q=puzzle("3 2 "," 1 0",Generic=>true,Equivariant=>true,Separated=>true)
 fugacityTally Q -- not the same as P!
 b=segreCls*(fugacityVector Q);
-a=(segreClass "3021" - segreClass "3120")*(segreClass "2130" - segreClass "3120");
+a=(sClass "3021" - sClass "3120")*(sClass "2130" - sClass "3120");
 a==b
 
 i1="2103"; i2="0321"; i3="2301"; -- interesting because shows compensations
