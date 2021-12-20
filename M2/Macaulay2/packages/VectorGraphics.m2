@@ -8,7 +8,7 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
-        DebuggingMode => true,
+        DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text","Graphs"},
 	PackageExports => {"Text"}

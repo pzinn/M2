@@ -2,59 +2,59 @@
 i1 : A=random(QQ^3,QQ^3)
 
 o1 = $\left(\!\begin{array}{ccc}
-\frac{9}{2}&amp;\frac{1}{2}&amp;\frac{3}{2}\\
-\frac{1}{2}&amp;1&amp;\frac{3}{4}\\
-\frac{9}{4}&amp;\frac{3}{4}&amp;\frac{7}{4}\\
+\frac{  9}{  2}&amp;\frac{  1}{  2}&amp;\frac{  3}{  2}\\
+\frac{  1}{  2}&amp;  1&amp;\frac{  3}{  4}\\
+\frac{  9}{  4}&amp;\frac{  3}{  4}&amp;\frac{  7}{  4}\\
 \end{array}\!\right)$
 
 o1 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  3}$
 i2 : (perm,LR)=LRdecomposition(A,j->-j);
 i3 : LR
 
 o3 = $\left(\!\begin{array}{ccc}
-\frac{9}{2}&amp;\frac{1}{2}&amp;\frac{3}{2}\\
-\frac{1}{9}&amp;\frac{17}{18}&amp;\frac{7}{12}\\
-\frac{1}{2}&amp;\frac{9}{17}&amp;\frac{47}{68}\\
+\frac{  9}{  2}&amp;\frac{  1}{  2}&amp;\frac{  3}{  2}\\
+\frac{  1}{  9}&amp;\frac{ 17}{ 18}&amp;\frac{  7}{ 12}\\
+\frac{  1}{  2}&amp;\frac{  9}{ 17}&amp;\frac{ 47}{ 68}\\
 \end{array}\!\right)$
 
 o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  3}$
 i4 : P=transpose (id_(QQ^3))_perm
 
 o4 = $\left(\!\begin{array}{ccc}
-1&amp;0&amp;0\\
-0&amp;1&amp;0\\
-0&amp;0&amp;1\\
+  1&amp;  0&amp;  0\\
+  0&amp;  1&amp;  0\\
+  0&amp;  0&amp;  1\\
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  3}$
 i5 : R=extractRightUpper(LR)
 
 o5 = $\left(\!\begin{array}{ccc}
-\frac{9}{2}&amp;\frac{1}{2}&amp;\frac{3}{2}\\
-0&amp;\frac{17}{18}&amp;\frac{7}{12}\\
-0&amp;0&amp;\frac{47}{68}\\
+\frac{  9}{  2}&amp;\frac{  1}{  2}&amp;\frac{  3}{  2}\\
+  0&amp;\frac{ 17}{ 18}&amp;\frac{  7}{ 12}\\
+  0&amp;  0&amp;\frac{ 47}{ 68}\\
 \end{array}\!\right)$
 
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  3}$
 i6 : L=extractLeftLower(LR)
 
 o6 = $\left(\!\begin{array}{ccc}
-1&amp;0&amp;0\\
-\frac{1}{9}&amp;1&amp;0\\
-\frac{1}{2}&amp;\frac{9}{17}&amp;1\\
+  1&amp;  0&amp;  0\\
+\frac{  1}{  9}&amp;  1&amp;  0\\
+\frac{  1}{  2}&amp;\frac{  9}{ 17}&amp;  1\\
 \end{array}\!\right)$
 
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  3}$
 i7 : L*R==P*A
 
 o7 = <pre style="display:inline">
@@ -63,29 +63,29 @@ true</pre>
 
 o8 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  1}$
 i9 : y=forwardSubstitution(LR,P*b)
 
 o9 = $\left(\!\begin{array}{c}
-\frac{7}{9}\\
+\frac{  7}{  9}\\
 \frac{497}{810}\\
 -\frac{109}{510}\\
 \end{array}\!\right)$
 
 o9 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  1}$
 i10 : x=backwardSubstitution(LR,y)
 
 o10 = $\left(\!\begin{array}{c}
-\frac{386}{2115}\\
-\frac{1778}{2115}\\
+\frac{386}{  2\,115}\\
+\frac{  1\,778}{  2\,115}\\
 -\frac{218}{705}\\
 \end{array}\!\right)$
 
 o10 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{1}$
+ </pre>${\mathbb Q}^{  3}\,\longleftarrow \,{\mathbb Q}^{  1}$
 i11 : inverse(A)*b==x
 
 o11 = <pre style="display:inline">

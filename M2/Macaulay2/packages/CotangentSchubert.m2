@@ -10,7 +10,7 @@ newPackage(
     Keywords => {"Intersection Theory"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
-    DebuggingMode => true,
+    DebuggingMode => false,
     Configuration => { "Factor" => false, "PuzzleSize" => 7 }
     )
 

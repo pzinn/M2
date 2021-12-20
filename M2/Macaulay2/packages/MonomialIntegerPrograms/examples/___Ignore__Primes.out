@@ -1,10 +1,4 @@
 -- -*- M2-comint -*- hash: 1888889335
-<pre style="display:inline">
-Using default executable name &quot;scip&quot;.
-To change this, load package using CustomPath option.</pre>
-<pre style="display:inline">
-Current value of ScipPrintLevel is 0.
-To set a custom default value, load package using CustomScipPrintLevel option.</pre>
 i1 : R = QQ[x,y,z,w,v];
 i2 : I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
 
@@ -27,8 +21,8 @@ List</pre>
 i6 : minimalPrimes I
 
 o6 = $\left\{<pre style="display:inline">
-monomialIdeal</pre>{}\left(y,\,z,\,w\right),\,<pre style="display:inline">
-monomialIdeal</pre>{}\left(y,\,z,\,v\right),\,<pre style="display:inline">
+monomialIdeal</pre>{}\left(y,\,z,\,w\right),\:<pre style="display:inline">
+monomialIdeal</pre>{}\left(y,\,z,\,v\right),\:<pre style="display:inline">
 monomialIdeal</pre>{}\left(x,\,y,\,w,\,v\right)\right\}$
 
 o6 : <pre style="display:inline">

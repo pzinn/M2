@@ -20,7 +20,7 @@ S</pre>$
 NumericalVariety</pre>
 i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = $\left\{\begin{aligned}&amp;\left\{{4.53195}\cdot 10^{-64}-{2.39035}\cdot 10^{-64}\,\mathbf{i},\:-{4.61019}\cdot 10^{-64}-{2.24906}\cdot 10^{-64}\,\mathbf{i},\:-{.148382}-{.31702}\,\mathbf{i}\right\}\end{aligned}\right\}$
+o4 = $\left\{\begin{aligned}&amp;\left\{{2.59254}\cdot 10^{-62}+{5.1258}\cdot 10^{-63}\,\mathbf{i},\:{2.54509}\cdot 10^{-62}+{7.30041}\cdot 10^{-63}\,\mathbf{i},\:-{.0239849}+{.193766}\,\mathbf{i}\right\}\end{aligned}\right\}$
 
 o4 : <pre style="display:inline">
 VerticalList</pre>
@@ -34,7 +34,7 @@ List</pre>
 i6 : peek oo_0 --then list position
 
 o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-WitnessSet{cache => CacheTable{...3...}                                                                            }<br/>           Points => {{4.53195e-64-2.39035e-64*ii, -4.61019e-64-2.24906e-64*ii, -.148382-.31702*ii}}<br/>           Slice => |  - 1.26204 - 1.22554*ii  - .0608969 - 1.57316*ii  1.68629 - 1.87292*ii  .84397 + .25668*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
+WitnessSet{cache => CacheTable{...3...}                                                                           }<br/>           Points => {{2.59254e-62+5.1258e-63*ii, 2.54509e-62+7.30041e-63*ii, -.0239849+.193766*ii}}<br/>           Slice => |  - .887721 - .342518*ii  2.0436 - 1.25307*ii  2.21779 - 1.4131*ii  - .220618 - .463625*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
 i7 : PD=primaryDecomposition( ideal F)
 
 o7 = $\left\{<pre style="display:inline">

@@ -10,165 +10,165 @@ NCPolynomialRing</pre>
 i3 : sparseCoeffs(F)
 
 o3 = $\left(\!\begin{array}{c}
-1\\
-1\\
-1\\
-1\\
-1\\
-1\\
-1\\
-1\\
+  1\\
+  1\\
+  1\\
+  1\\
+  1\\
+  1\\
+  1\\
+  1\\
 \end{array}\!\right)$
 
 o3 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{8}\,\longleftarrow \,{\mathbb Q}^{1}$
+ </pre>${\mathbb Q}^{  8}\,\longleftarrow \,{\mathbb Q}^{  1}$
 i4 : bas = flatten entries basis(2,A);
 i5 : #bas
 
-o5 = $64$
+o5 = $ 64$
 i6 : sparseCoeffs(F,Monomials=>bas)
 
 o6 = $\left(\!\begin{array}{c}
-1\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-1\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-1\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-1\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-1\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-1\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-1\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-0\\
-1\\
+  1\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  1\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  1\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  1\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  1\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  1\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  1\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  0\\
+  1\\
 \end{array}\!\right)$
 
 o6 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{64}\,\longleftarrow \,{\mathbb Q}^{1}$
+ </pre>${\mathbb Q}^{ 64}\,\longleftarrow \,{\mathbb Q}^{  1}$
 i7 : sparseCoeffs(toList (10:F),Monomials=>bas)
 
 o7 = $\left(\!\begin{array}{cccccccccc}
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0&amp;  0\\
+  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1&amp;  1\\
 \end{array}\!\right)$
 
 o7 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>${\mathbb Q}^{64}\,\longleftarrow \,{\mathbb Q}^{10}$
+ </pre>${\mathbb Q}^{ 64}\,\longleftarrow \,{\mathbb Q}^{ 10}$
 i8 : 

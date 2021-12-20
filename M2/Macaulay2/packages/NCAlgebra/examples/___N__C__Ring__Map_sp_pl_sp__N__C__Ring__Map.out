@@ -10,22 +10,22 @@ NCPolynomialRing</pre>
 
 o2 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\,\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
-false</pre>,\,\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right),\,y\ \Rightarrow \ \left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right)\right\}\right),\,\textit{source}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{target}\ \Rightarrow \ <pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o2 : <pre style="display:inline">
@@ -34,22 +34,22 @@ NCRingMap</pre>
 
 o3 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\,\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
-false</pre>,\,\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right),\,y\ \Rightarrow \ \left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right)\right\}\right),\,\textit{source}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{target}\ \Rightarrow \ <pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o3 : <pre style="display:inline">
@@ -58,26 +58,26 @@ NCRingMap</pre>
 
 o4 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\,\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
-false</pre>,\,\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 3,\,\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 4\right\}\right)\right\}\right),\,y\ \Rightarrow \ \left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   3,\:\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   4\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 4,\,\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 3\right\}\right)\right\}\right)\right\}\right),\,\textit{source}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{target}\ \Rightarrow \ <pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   4,\:\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   3\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o4 : <pre style="display:inline">
@@ -93,26 +93,26 @@ NCMatrix</pre>
 
 o6 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\,\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
-false</pre>,\,\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 171,\,\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 172\right\}\right)\right\}\right),\,y\ \Rightarrow \ \left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 171,\:\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 172\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 172,\,\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 171\right\}\right)\right\}\right)\right\}\right),\,\textit{source}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{target}\ \Rightarrow \ <pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 172,\:\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 171\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o6 : <pre style="display:inline">

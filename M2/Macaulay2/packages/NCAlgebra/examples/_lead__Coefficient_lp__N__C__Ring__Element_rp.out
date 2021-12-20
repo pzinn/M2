@@ -10,21 +10,21 @@ NCPolynomialRing</pre>
 
 o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\,x\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\,y\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\,\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\,z,\,z\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   1,\:\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   1,\:\left(<pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:z,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}$
 
 o2 : $<pre style="display:inline">
 A</pre>$
 i3 : coeff = leadCoefficient f
 
-o3 = $1$
+o3 = $  1$
 
 o3 : ${\mathbb Q}$
 i4 : 

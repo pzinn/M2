@@ -9,12 +9,12 @@ Ideal</pre><pre style="display:inline">
 i4 : rParametrizeConic(I)
 
 o4 = $\left(\!\begin{array}{c}
-t_{0}^{2}-t_{1}^{2}\\
--t_{0}t_{1}\\
--t_{0}^{2}\\
+t_{  0}^{  2}-t_{  1}^{  2}\\
+-t_{  0}t_{  1}\\
+-t_{  0}^{  2}\\
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$\left({\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{3}\,\longleftarrow \,\left({\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{1}$
+ </pre>$\left({\mathbb Q}\mathopen{}\left[t_{  0}\,{.}{.}\, t_{  1}\right]\right)^{  3}\,\longleftarrow \,\left({\mathbb Q}\mathopen{}\left[t_{  0}\,{.}{.}\, t_{  1}\right]\right)^{  1}$
 i5 : 

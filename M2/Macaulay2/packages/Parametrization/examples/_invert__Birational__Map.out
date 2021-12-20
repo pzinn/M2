@@ -10,15 +10,15 @@ Ideal</pre><pre style="display:inline">
 
 o4 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$R^{1}\,\longleftarrow \,R^{7}$
+ </pre>$R^{  1}\,\longleftarrow \,R^{  7}$
 i5 : invertBirationalMap(I,linsys)
 
 o5 = $\left\{\left(\!\begin{array}{c}
--t_{5}t_{6}\\
--t_{4}t_{6}\\
--t_{5}^{2}+t_{4}t_{6}\\
-\end{array}\!\right),\,<pre style="display:inline">
-ideal</pre>{}\left(t_{4}t_{5}-t_{3}t_{6},\,t_{3}t_{5}-t_{2}t_{6},\,t_{1}t_{5}-t_{0}t_{6},\,t_{3}t_{4}-t_{1}t_{6},\,t_{2}t_{4}-t_{0}t_{6},\,t_{0}t_{4}-t_{6}^{2},\,t_{3}^{2}-t_{0}t_{6},\,t_{2}t_{3}-t_{0}t_{5},\,t_{1}t_{3}-t_{6}^{2},\,t_{0}t_{3}-t_{5}t_{6},\,t_{1}t_{2}-t_{5}t_{6},\,t_{0}t_{2}-t_{5}^{2},\,t_{1}^{2}-t_{4}t_{6},\,t_{0}t_{1}-t_{3}t_{6},\,t_{0}^{2}-t_{2}t_{6}\right)\right\}$
+-t_{  5}t_{  6}\\
+-t_{  4}t_{  6}\\
+-t_{  5}^{  2}+t_{  4}t_{  6}\\
+\end{array}\!\right),\:<pre style="display:inline">
+ideal</pre>{}\left(t_{  4}t_{  5}-t_{  3}t_{  6},\,t_{  3}t_{  5}-t_{  2}t_{  6},\,t_{  1}t_{  5}-t_{  0}t_{  6},\,t_{  3}t_{  4}-t_{  1}t_{  6},\,t_{  2}t_{  4}-t_{  0}t_{  6},\,t_{  0}t_{  4}-t_{  6}^{  2},\,t_{  3}^{  2}-t_{  0}t_{  6},\,t_{  2}t_{  3}-t_{  0}t_{  5},\,t_{  1}t_{  3}-t_{  6}^{  2},\,t_{  0}t_{  3}-t_{  5}t_{  6},\,t_{  1}t_{  2}-t_{  5}t_{  6},\,t_{  0}t_{  2}-t_{  5}^{  2},\,t_{  1}^{  2}-t_{  4}t_{  6},\,t_{  0}t_{  1}-t_{  3}t_{  6},\,t_{  0}^{  2}-t_{  2}t_{  6}\right)\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

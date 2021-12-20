@@ -6,7 +6,7 @@
 i2 : runBertini(storeBM2Files)
 i3 : thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{\left\{-{.114584}+{.0095176}\,\mathbf{i},\:{2.3877}\cdot 10^{-18}+{4.28519}\cdot 10^{-17}\,\mathbf{i},\:{.139549}-{.996868}\,\mathbf{i}\right\},\:\left\{-{1.41891}-{1.18122}\,\mathbf{i},\:-{1.51731}+{.88102}\,\mathbf{i},\:{.305023}-{1.11226}\,\mathbf{i}\right\},\:\left\{{1.35671}+{1.17246}\,\mathbf{i},\:{1.54076}-{1.04753}\,\mathbf{i},\:-{.0270265}-{.862174}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{-{.0793598}+{.068912}\,\mathbf{i},\:-{1.67793}\cdot 10^{-17}-{1.02134}\cdot 10^{-17}\,\mathbf{i},\:-{.821692}-{.579542}\,\mathbf{i}\right\},\:\left\{-{1.21426}+{.049238}\,\mathbf{i},\:-{.532179}+{.995538}\,\mathbf{i},\:-{.848063}-{.695221}\,\mathbf{i}\right\},\:\left\{{1.04027}+{.199461}\,\mathbf{i},\:{.623383}-{.93173}\,\mathbf{i},\:-{.806956}-{.462642}\,\mathbf{i}\right\}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
@@ -24,7 +24,7 @@ List</pre>
 List</pre>
 i5 : sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{\left\{-{.114584}+{.0095176}\,\mathbf{i},\:{2.3877}\cdot 10^{-18}+{4.28519}\cdot 10^{-17}\,\mathbf{i},\:{.139549}-{.996868}\,\mathbf{i}\right\}\right\},\:\left\{\left\{-{1.41891}-{1.18122}\,\mathbf{i},\:-{1.51731}+{.88102}\,\mathbf{i},\:{.305023}-{1.11226}\,\mathbf{i}\right\},\:\left\{{1.35671}+{1.17246}\,\mathbf{i},\:{1.54076}-{1.04753}\,\mathbf{i},\:-{.0270265}-{.862174}\,\mathbf{i}\right\}\right\}\right\}$
+o5 = $\left\{\left\{\left\{-{.0793598}+{.068912}\,\mathbf{i},\:-{1.67793}\cdot 10^{-17}-{1.02134}\cdot 10^{-17}\,\mathbf{i},\:-{.821692}-{.579542}\,\mathbf{i}\right\}\right\},\:\left\{\left\{-{1.21426}+{.049238}\,\mathbf{i},\:-{.532179}+{.995538}\,\mathbf{i},\:-{.848063}-{.695221}\,\mathbf{i}\right\},\:\left\{{1.04027}+{.199461}\,\mathbf{i},\:{.623383}-{.93173}\,\mathbf{i},\:-{.806956}-{.462642}\,\mathbf{i}\right\}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>

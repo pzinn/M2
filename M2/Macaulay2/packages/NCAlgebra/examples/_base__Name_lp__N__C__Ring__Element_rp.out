@@ -21,7 +21,7 @@ B</pre>$
 NCPolynomialRing</pre>
 i4 : baseName p_1
 
-o4 = $p_{1}$
+o4 = $p_{  1}$
 
 o4 : <pre style="display:inline">
 IndexedVariable</pre>

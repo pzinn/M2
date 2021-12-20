@@ -14,23 +14,23 @@ Ideal</pre><pre style="display:inline">
 i5 : I=mapToRNC(I0,J)
 
 o5 = $<pre style="display:inline">
-ideal</pre>{}\left(x_{4}x_{5}-x_{3}x_{6},\,x_{3}x_{5}-x_{2}x_{6},\,x_{1}x_{5}-x_{0}x_{6},\,x_{3}x_{4}-x_{1}x_{6},\,x_{2}x_{4}-x_{0}x_{6},\,x_{0}x_{4}-x_{6}^{2},\,x_{3}^{2}-x_{0}x_{6},\,x_{2}x_{3}-x_{0}x_{5},\,x_{1}x_{3}-x_{6}^{2},\,x_{0}x_{3}-x_{5}x_{6},\,x_{1}x_{2}-x_{5}x_{6},\,x_{0}x_{2}-x_{5}^{2},\,x_{1}^{2}-x_{4}x_{6},\,x_{0}x_{1}-x_{3}x_{6},\,x_{0}^{2}-x_{2}x_{6}\right)$
+ideal</pre>{}\left(x_{  4}x_{  5}-x_{  3}x_{  6},\,x_{  3}x_{  5}-x_{  2}x_{  6},\,x_{  1}x_{  5}-x_{  0}x_{  6},\,x_{  3}x_{  4}-x_{  1}x_{  6},\,x_{  2}x_{  4}-x_{  0}x_{  6},\,x_{  0}x_{  4}-x_{  6}^{  2},\,x_{  3}^{  2}-x_{  0}x_{  6},\,x_{  2}x_{  3}-x_{  0}x_{  5},\,x_{  1}x_{  3}-x_{  6}^{  2},\,x_{  0}x_{  3}-x_{  5}x_{  6},\,x_{  1}x_{  2}-x_{  5}x_{  6},\,x_{  0}x_{  2}-x_{  5}^{  2},\,x_{  1}^{  2}-x_{  4}x_{  6},\,x_{  0}x_{  1}-x_{  3}x_{  6},\,x_{  0}^{  2}-x_{  2}x_{  6}\right)$
 
 o5 : <pre style="display:inline">
 Ideal</pre><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{6}\right]$
+ of </pre>${\mathbb Q}\mathopen{}\left[x_{  0}\,{.}{.}\, x_{  6}\right]$
 i6 : rParametrizeRNC(I)
 
 o6 = $\left\{\left(\!\begin{array}{c}
-t_{0}^{2}t_{2}\\
--t_{1}t_{2}^{2}\\
-t_{0}^{3}\\
--t_{0}t_{1}t_{2}\\
-t_{2}^{3}\\
--t_{0}^{2}t_{1}\\
-t_{0}t_{2}^{2}\\
-\end{array}\!\right),\,<pre style="display:inline">
-ideal</pre>\left(t_{1}^{2}-t_{0}t_{2}\right)\right\}$
+t_{  0}^{  2}t_{  2}\\
+-t_{  1}t_{  2}^{  2}\\
+t_{  0}^{  3}\\
+-t_{  0}t_{  1}t_{  2}\\
+t_{  2}^{  3}\\
+-t_{  0}^{  2}t_{  1}\\
+t_{  0}t_{  2}^{  2}\\
+\end{array}\!\right),\:<pre style="display:inline">
+ideal</pre>\left(t_{  1}^{  2}-t_{  0}t_{  2}\right)\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>

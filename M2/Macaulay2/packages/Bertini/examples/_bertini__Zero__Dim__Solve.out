@@ -3,25 +3,25 @@
 i2 : F = {x^2-1,y^2-2};
 i3 : S = bertiniZeroDimSolve F
 
-o3 = $\left\{\left\{  1,\:{1.41421}\right\},\:\left\{  1,\:-{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-  1-{2.77556}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{-{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}+{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{{1},\:{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{  1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-  1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-  1,\:-{1.41421}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
 i4 : peek S_0
 
 o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{AccuracyEst => 2.5294e-14         }<br/>      AccuracyEstInternal => 5.92177e-15<br/>      ConditionNumber => 4.47488<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .000390625<br/>      FunctionResidual => 1.57009e-16<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 1.18619e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 1<br/></pre>
+Point{AccuracyEst => 1.46076e-11        }<br/>      AccuracyEstInternal => 4.56959e-12<br/>      ConditionNumber => 7.13221<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 3.46845e-15<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 1.3705e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 2<br/></pre>
 i5 : R = CC[x];
 i6 : F = {x^2*(x-1)};
 i7 : S = bertiniZeroDimSolve F
 
-o7 = $\left\{\left\{{1}-{1.08247}\cdot 10^{-14}\,\mathbf{i}\right\},\:\left\{-{8.50209}\cdot 10^{-15}-{2.83373}\cdot 10^{-14}\,\mathbf{i}\right\}\right\}$
+o7 = $\left\{\left\{  1\right\},\:\left\{{2.36278}\cdot 10^{-15}-{1.07846}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>
 i8 : B = bertiniZeroDimSolve(F,UseRegeneration=>1)
 
-o8 = $\left\{\left\{  1-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o8 = $\left\{\left\{  1+{8.32667}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
 o8 : <pre style="display:inline">
 List</pre>

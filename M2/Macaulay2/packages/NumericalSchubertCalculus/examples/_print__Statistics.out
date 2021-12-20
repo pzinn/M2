@@ -39,5 +39,5 @@ List</pre>
 # moves of type {2, 0, 0} = 3
 # moves of type {2, 1, 0} = 1
 # moves of type {2, 2, 0} = 12
-tracking time = .291083
+tracking time = .222589
 i7 : 

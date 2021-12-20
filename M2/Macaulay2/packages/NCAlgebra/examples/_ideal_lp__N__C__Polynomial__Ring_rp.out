@@ -10,13 +10,13 @@ NCPolynomialRing</pre>
 
 o2 = $<pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\,\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
+CacheTable</pre>\left\{\right\}\right),\:\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\,\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
+CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{\,\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 0\right\}\right)\right\}\right\},\,\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{\,\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \   0\right\}\right)\right\}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o2 : <pre style="display:inline">

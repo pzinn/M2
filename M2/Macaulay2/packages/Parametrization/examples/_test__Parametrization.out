@@ -15,14 +15,14 @@ PolynomialRing</pre>
 i5 : phi=matrix {{t_0^3*t_1^5}, {-t_0^8}, {t_0^8-t_1^8}}
 
 o5 = $\left(\!\begin{array}{c}
-t_{0}^{3}t_{1}^{5}\\
--t_{0}^{8}\\
-t_{0}^{8}-t_{1}^{8}\\
+t_{  0}^{  3}t_{  1}^{  5}\\
+-t_{  0}^{  8}\\
+t_{  0}^{  8}-t_{  1}^{  8}\\
 \end{array}\!\right)$
 
 o5 : <pre style="display:inline">
 Matrix</pre><pre style="display:inline">
- </pre>$T^{3}\,\longleftarrow \,T^{1}$
+ </pre>$T^{  3}\,\longleftarrow \,T^{  1}$
 i6 : testParametrization(I,phi)
 
 o6 = <pre style="display:inline">

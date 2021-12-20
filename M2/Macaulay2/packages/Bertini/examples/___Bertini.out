@@ -20,7 +20,7 @@ PolynomialRing</pre>
 List</pre>
 i4 : solns = bertiniZeroDimSolve(F)
 
-o4 = $\left\{\left\{  1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}\right\},\:\left\{  1-{6.93889}\cdot 10^{-18}\,\mathbf{i},\:-{1.41421}-{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{-  1,\:{1.41421}+{2.77556}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{-  1,\:-{1.41421}-{1.38778}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{{1}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}+{2.55351}\cdot 10^{-15}\,\mathbf{i}\right\},\:\left\{  1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}-{2.9976}\cdot 10^{-15}\,\mathbf{i}\right\},\:\left\{-{1}+{2.77556}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}+{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{-  1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>

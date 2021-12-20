@@ -8,5 +8,5 @@ A</pre>$
 NCPolynomialRing</pre>
 i2 : numgens A
 
-o2 = $3$
+o2 = $  3$
 i3 : 
