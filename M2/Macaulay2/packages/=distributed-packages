@@ -224,7 +224,6 @@ MultiprojectiveVarieties
 SpecialFanoFourfolds
 RationalPoints2
 SuperLinearAlgebra
-CotangentSchubert
 SubalgebraBases
 AInfinity
 LinearTruncations
@@ -240,3 +239,4 @@ ExteriorModules
 K3Surfaces
 GroebnerStrata
 QuaternaryQuartics
+CotangentSchubert
