@@ -181,14 +181,14 @@ texMathDebug = x -> concatenate(
     );
 
 htmlDebug = x -> (
-    flag := instance(x,Hypertext) and (options class x)#?"xmlns"; -- don't mess inside non HTML
+    flag := instance(x,Hypertext) and (try (options class x)#"xmlns" else null) =!= null; -- don't mess inside non HTML
     if flag then (
 	global html <- htmlBackup;
 	global texMath <- texMathInside;
 	);
     y := if instance(x,Hypertext) then
     "<span class=\"M2Debug\" data-type=\"" | toString class x | "\">" | htmlBackup x | "</span>"
-    else tex x;
+    else (lookup(tex,Thing)) x;
     if flag then (
 	global html <- htmlDebug;
 	global texMath <- texMathDebug;
