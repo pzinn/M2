@@ -126,7 +126,8 @@ texMath Function := f -> texMath toString f
 
 texMath ZZ := n -> (
     s := simpleToString n;
-    demark("\\,",pack(3,characters (pad(3*(1+(#s-1)//3),s))))
+    j := 1 - (#s-1) % 3;
+    concatenate for i in s list (if j==2 then (j=0; "\\,",i) else (j=j+1; i))
     )
 
 --     \rm     Roman
