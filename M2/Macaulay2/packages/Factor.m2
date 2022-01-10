@@ -142,7 +142,8 @@ factor PolynomialRing := opts -> R -> (
         R := source p;
         S := target p;
         local pp;
-        if R === ring x then pp = a -> promote(rawRingMapEval(raw p,raw a),S) else pp = a -> promote(rawRingMapEval(raw p,raw promote(a,R)),S);
+        if R === ring x then pp = a -> promote(rawRingMapEval(raw p,raw a),S)
+	else pp = a -> promote(rawRingMapEval(raw p,raw promote(a,R)),S);
         -- should perhaps test if promote is possible, else error "ring element not in source of ring map, and not promotable to it";
         (pp(x#0))*product(x#1,u->(pp(u#0))^(u#1))
         );
@@ -154,17 +155,39 @@ factor PolynomialRing := opts -> R -> (
     )
 
 frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
-    F := (lookup(frac,EngineRing)) R;
-    -- a bunch of things need to be redefined
-    new F from R := (A,a) -> fraction(a,1_R);
-    new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
+    R0:=last R.baseRings;
+    if not (options R).Inverses then (
+	F := (lookup(frac,EngineRing)) R;
+	value F := a -> value numerator a / value denominator a;
+	raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
+	-- a bunch of things need to be redefined
+	new F from R := (A,a) -> fraction(a,1_R);
+	new F from RawRingElement := (A,a) -> fraction(new R from rawNumerator a, new R from rawDenominator a);
+	) else (
+	-- need to work harder...
+	R1:=newRing(R0,Inverses=>false,MonomialOrder=>GRevLex);
+	f:=map(R1,R0); g:=map(R0,R1);
+	F1 := frac R1;
+	F = new FractionField from F1;
+	commonEngineRingInitializations F;
+	F.baseRings=append(F.baseRings,R);
+	value F := a -> (f value numerator a) / (f value denominator a);
+	raw F := a -> rawFraction(F.RawRing,raw f value numerator a, raw f value denominator a); -- bit messy
+	new F from R := (A,a) -> fraction(numerator a,denominator a);
+	new F from RawRingElement := (A,a) -> fraction(new R from g new R1 from rawNumerator a, new R from g new R1 from rawDenominator a);
+	);
     promote(R,F) := (x,F) -> new F from x;
+    promote(R0,F) := (x,F) -> new F from new R from x;
     lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
     numerator F := a -> a#0;
     denominator F := a -> a#1;
-    value F := a-> value numerator a / value denominator a;
-    raw F := a -> rawFraction(F.RawRing,raw numerator a, raw denominator a);
     fraction(R,R) := (r,s) -> (
+	if (options R).Inverses then (
+	    dr:=denominator r;
+	    ds:=denominator s;
+	    r=numerator r*ds;
+	    s=numerator s*dr;
+	    );
         if s == 0 then error "division by 0";
         g:=gcd(r,s);
         if isField coefficientRing R then g=g*s#0 -- no constant in the denominator
@@ -187,7 +210,7 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
     if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
     if (last R.baseRings).?frac then promote((last R.baseRings).frac,F) := (x,F) -> new F from {factor numerator x,factor denominator x};
     if not OldFactor then factor F := opts1 -> identity;
-    F
+    R.frac=F
     )
 
 frac PolynomialRing := R -> (
