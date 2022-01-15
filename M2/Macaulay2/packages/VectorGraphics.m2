@@ -499,8 +499,8 @@ svg1 GraphicsText := g -> (
     g.cache.ViewPort = if instance(g,GraphicsHtml) then { x', x' } else ( -- TEMP
 	r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
 	x' = x' + vector {
-	    if g#?"text-anchor" then (if g#"text-anchor" == "middle" then -0.5*r_0 else if g#"text-anchor" == "end" then -r_0 else 0) else 0,
-	    if g#?"dominant-baseline" then (if g#"dominant-baseline" == "middle" then -0.5*r_1 else if g#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	    if g.style#?"text-anchor" then (if g.style#"text-anchor" == "middle" then -0.5*r_0 else if g.style#"text-anchor" == "end" then -r_0 else 0) else 0,
+	    if g.style#?"dominant-baseline" then (if g.style#"dominant-baseline" == "middle" then -0.5*r_1 else if g.style#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
 	    };
 	{x',x'+r}
 	);
