@@ -7,7 +7,7 @@ needs "varieties.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,14,(17,36),(36,18)),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,14,21,(17,36),(36,18)),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -15,7 +15,8 @@ webAppTags := apply((17,18,19,20,28,29,30,14,(17,36),(36,18)),ascii);
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
-	webAppPromptTag,      -- input prompt
+	webAppPromptTag,      -- input/output prompt
+	webAppPositionTag,    -- code position (row:col)
 	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
 	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
 	)=webAppTags;
@@ -32,9 +33,30 @@ ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     toString lineno,
     webAppEndTag,
     " : ",
-    webAppInputTag)
+    webAppInputTag,
+    webAppPositionTag,
+-- for now only stdio recorded
+    if currentFileName == "stdio" then (
+--    toString currentFileName,
+--    ":",
+    toString currentLineNumber(),
+    ":",
+    toString currentColumnNumber()
+    ),
+    webAppEndTag
+)
 
-ZZ#{WebApp,InputContinuationPrompt} = lineno -> webAppInputContdTag
+ZZ#{WebApp,InputContinuationPrompt} = lineno -> concatenate(
+    webAppInputContdTag,
+    webAppPositionTag,
+-- for now only stdio recorded
+    if currentFileName == "stdio" then (
+    toString currentLineNumber(),
+    ":",
+    toString currentColumnNumber()
+    ),
+    webAppEndTag
+    )
 
 Thing#{WebApp,BeforePrint} = identity
 

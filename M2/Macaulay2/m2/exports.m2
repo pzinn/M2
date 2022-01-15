@@ -578,6 +578,7 @@ export {
 	"createTask",
 	"csc",
 	"csch",
+	"currentColumnNumber",
 	"currentDirectory",
 	"currentFileDirectory",
 	"currentFileName",
