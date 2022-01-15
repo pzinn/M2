@@ -25,6 +25,16 @@ webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
 
 -- output routines for WebApp mode
 
+recordPosition = () -> if currentFileName == "stdio" then ( -- for now only stdio recorded
+    webAppPositionTag,
+--    toString currentFileName,
+--    ":",
+    toString currentLineNumber(), -- not to be confused with lineNumber!!!
+    ":",
+    toString currentColumnNumber(),
+    webAppEndTag
+    )
+
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     webAppCellEndTag, -- close previous cell
     webAppCellTag,
@@ -34,28 +44,12 @@ ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
     webAppEndTag,
     " : ",
     webAppInputTag,
-    webAppPositionTag,
--- for now only stdio recorded
-    if currentFileName == "stdio" then (
---    toString currentFileName,
---    ":",
-    toString currentLineNumber(),
-    ":",
-    toString currentColumnNumber()
-    ),
-    webAppEndTag
+    recordPosition()
 )
 
 ZZ#{WebApp,InputContinuationPrompt} = lineno -> concatenate(
     webAppInputContdTag,
-    webAppPositionTag,
--- for now only stdio recorded
-    if currentFileName == "stdio" then (
-    toString currentLineNumber(),
-    ":",
-    toString currentColumnNumber()
-    ),
-    webAppEndTag
+    recordPosition()
     )
 
 Thing#{WebApp,BeforePrint} = identity
