@@ -1,72 +1,72 @@
 -- -*- M2-comint -*- hash: 1672066474
-i1 : R = QQ[x,y,z]; L = {1, 3, 5, 5, 4};
-i3 : bettiTablesWithHilbertFunction(L, R) --outputs unique tables matching the criteria
+i1 : 1:0R = QQ[x,y,z]; L = {1, 3, 5, 5, 4};
+i3 : 2:0bettiTablesWithHilbertFunction(L, R) --outputs unique tables matching the criteria
 
 o3 = $\left\{\,\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
-i4 : bettiTablesWithHilbertFunction(L, R, Count => true) --tallies distinct ideals giving each table
+i4 : 3:0bettiTablesWithHilbertFunction(L, R, Count => true) --tallies distinct ideals giving each table
 
 o4 = $<pre style="display:inline">
 Tally</pre>\left\{\,\right\}$
 
 o4 : <pre style="display:inline">
 Tally</pre>
-i5 : bettiTablesWithHilbertFunction(L, R, FirstBetti => 5) --only returns tables whose first total betti number is 5
+i5 : 4:0bettiTablesWithHilbertFunction(L, R, FirstBetti => 5) --only returns tables whose first total betti number is 5
 
 o5 = $\left\{\,\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
-i6 : bettiTablesWithHilbertFunction(L, R, GradedBettis => {0, 0, 2, 2, 1}) --only returns tables whose first graded betti numbers match a given sequence
+i6 : 5:0bettiTablesWithHilbertFunction(L, R, GradedBettis => {0, 0, 2, 2, 1}) --only returns tables whose first graded betti numbers match a given sequence
 
 o6 = $\left\{\,\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>
-i7 : bettiTablesWithHilbertFunction(L, R, BoundGenerators => 3)
+i7 : 6:0bettiTablesWithHilbertFunction(L, R, BoundGenerators => 3)
 
 o7 = $\left\{\,\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>
-i8 : bettiTablesWithHilbertFunction(L, R, BoundGenerators => 3, Count => true)
+i8 : 7:0bettiTablesWithHilbertFunction(L, R, BoundGenerators => 3, Count => true)
 
 o8 = $<pre style="display:inline">
 Tally</pre>\left\{\,\right\}$
 
 o8 : <pre style="display:inline">
 Tally</pre>
-i9 : S = QQ[a..f]
+i9 : 8:0S = QQ[a..f]
 
 o9 = $S$
 
 o9 : <pre style="display:inline">
 PolynomialRing</pre>
-i10 : bettiTablesWithHilbertFunction({1, 6, 19, 45, 86}, S, SquareFree => true)
+i10 : 9:0bettiTablesWithHilbertFunction({1, 6, 19, 45, 86}, S, SquareFree => true)
 
 o10 = $\left\{\,\right\}$
 
 o10 : <pre style="display:inline">
 List</pre>
-i11 : bettiTablesWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5, Count => true)
+i11 : 10:0bettiTablesWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5, Count => true)
 
 o11 = $<pre style="display:inline">
 Tally</pre>\left\{\,\right\}$
 
 o11 : <pre style="display:inline">
 Tally</pre>
-i12 : bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
+i12 : 11:0bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
 
 o12 = $\left\{\,\right\}$
 
 o12 : <pre style="display:inline">
 List</pre>
-i13 : bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
+i13 : 12:0bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
 
 o13 = $\left\{\,\right\}$
 
 o13 : <pre style="display:inline">
 List</pre>
-i14 : 
+i14 : 13:0

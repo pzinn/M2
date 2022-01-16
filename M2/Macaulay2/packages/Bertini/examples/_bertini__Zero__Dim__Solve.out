@@ -1,28 +1,28 @@
 -- -*- M2-comint -*- hash: 1488243299
-i1 : R = CC[x,y];
-i2 : F = {x^2-1,y^2-2};
-i3 : S = bertiniZeroDimSolve F
+i1 : 1:0R = CC[x,y];
+i2 : 2:0F = {x^2-1,y^2-2};
+i3 : 3:0S = bertiniZeroDimSolve F
 
-o3 = $\left\{\left\{{1},\:{1.41421}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{  1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-  1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-  1,\:-{1.41421}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{1,\:{1.41421}-{7.77156}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{1+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}+{2.77556}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-1,\:{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-1-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
-i4 : peek S_0
+i4 : 4:0peek S_0
 
 o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{AccuracyEst => 1.46076e-11        }<br/>      AccuracyEstInternal => 4.56959e-12<br/>      ConditionNumber => 7.13221<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 3.46845e-15<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 1.3705e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 2<br/></pre>
-i5 : R = CC[x];
-i6 : F = {x^2*(x-1)};
-i7 : S = bertiniZeroDimSolve F
+Point{AccuracyEst => 1.47598e-11        }<br/>      AccuracyEstInternal => 6.66975e-12<br/>      ConditionNumber => 12.2931<br/>      Coordinates => {1, 1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 4.05193e-15<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 5.42866e-16<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 2<br/></pre>
+i5 : 5:0R = CC[x];
+i6 : 6:0F = {x^2*(x-1)};
+i7 : 7:0S = bertiniZeroDimSolve F
 
-o7 = $\left\{\left\{  1\right\},\:\left\{{2.36278}\cdot 10^{-15}-{1.07846}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
+o7 = $\left\{\left\{{1}-{4.44089}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{3.01795}\cdot 10^{-15}+{6.00278}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>
-i8 : B = bertiniZeroDimSolve(F,UseRegeneration=>1)
+i8 : 8:0B = bertiniZeroDimSolve(F,UseRegeneration=>1)
 
-o8 = $\left\{\left\{  1+{8.32667}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
+o8 = $\left\{\left\{{1}+{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
 o8 : <pre style="display:inline">
 List</pre>
-i9 : 
+i9 : 9:0

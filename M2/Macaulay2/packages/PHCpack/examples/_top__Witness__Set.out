@@ -1,45 +1,45 @@
 -- -*- M2-comint -*- hash: -1010838168
-i1 : R = CC[x,y,z];
-i2 : f = { x^2 - y, x^3 - z };
-i3 : (w,ns) = topWitnessSet(f,1)
+i1 : 1:0R = CC[x,y,z];
+i2 : 2:0f = { x^2 - y, x^3 - z };
+i3 : 3:0(w,ns) = topWitnessSet(f,1)
 
 o3 = $\left(<pre style="display:inline">
 w</pre>,\,\left\{\,\right\}\right)$
 
 o3 : <pre style="display:inline">
 Sequence</pre>
-i4 : dim(w)
+i4 : 4:0dim(w)
 
-o4 = $  1$
-i5 : degree(w)
+o4 = $1$
+i5 : 5:0degree(w)
 
-o5 = $  3$
-i6 : toString equations(w)
+o5 = $3$
+i6 : 6:0toString equations(w)
 
 o6 = <pre style="display:inline">
 {x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1}</pre>
-i7 : toString slice(w)
+i7 : 7:0toString slice(w)
 
 o7 = <pre style="display:inline">
 {(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z+(-.911067-.412259*ii)*zz1-.883724+.468009*ii}</pre>
-i8 : toString points(w)
+i8 : 8:0toString points(w)
 
 o8 = <pre style="display:inline">
 VerticalList{Point{...4...}, Point{...4...}, Point{...4...}}</pre>
-i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
+i9 : 9:0R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
-o10 = $\left\{x^{  3}-{2}\,x^{  2}-x\,y+{2}\,y,\:x^{  3}y-{2}\,x^{  3}-y\,z+{2}\,z,\:x\,y\,z-{2}\,x\,y-z^{  2}+{2}\,z\right\}$
+o10 = $\left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\:x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\:x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}$
 
 o10 : <pre style="display:inline">
 List</pre>
-i11 : (w,ns) = topWitnessSet(f,1);
-i12 : dim(w)
+i11 : 10:0(w,ns) = topWitnessSet(f,1);
+i12 : 11:0dim(w)
 
-o12 = $  1$
-i13 : degree(w)
+o12 = $1$
+i13 : 12:0degree(w)
 
-o13 = $  3$
-i14 : #ns
+o13 = $3$
+i14 : 13:0#ns
 
-o14 = $ 10$
-i15 : 
+o14 = $10$
+i15 : 14:0

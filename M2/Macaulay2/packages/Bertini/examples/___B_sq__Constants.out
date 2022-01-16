@@ -1,13 +1,13 @@
 -- -*- M2-comint -*- hash: 859958423
-i1 : R=QQ[z,a,b,c]
+i1 : 1:0R=QQ[z,a,b,c]
 
 o1 = $R$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : makeB'InputFile(storeBM2Files,
-         BertiniInputConfiguration=>{MPType=>2},
-         AffVariableGroup=>{{z}},
-          B'Constants=>{a=>2,b=>3+2*ii,c=>3/2},
-           B'Polynomials=>{a*z^2+b*z+c});
-i3 : 
+i2 : 2:0makeB'InputFile(storeBM2Files,
+3:0         BertiniInputConfiguration=>{MPType=>2},
+4:0         AffVariableGroup=>{{z}},
+5:0          B'Constants=>{a=>2,b=>3+2*ii,c=>3/2},
+6:0           B'Polynomials=>{a*z^2+b*z+c});
+i3 : 7:0

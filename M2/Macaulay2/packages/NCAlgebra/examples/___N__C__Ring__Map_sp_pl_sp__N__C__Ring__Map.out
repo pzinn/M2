@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: -1111221426
-i1 : A = QQ{x,y}
+i1 : 1:0A = QQ{x,y}
 
 o1 = $<pre style="display:inline">
 A</pre>$
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : f = ncMap(A,A,{x,y})
+i2 : 2:0f = ncMap(A,A,{x,y})
 
 o2 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -18,19 +18,19 @@ CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarr
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o2 : <pre style="display:inline">
 NCRingMap</pre>
-i3 : g = ncMap(A,A,{y,x})
+i3 : 3:0g = ncMap(A,A,{y,x})
 
 o3 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -42,19 +42,19 @@ CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarr
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o3 : <pre style="display:inline">
 NCRingMap</pre>
-i4 : h = 3*f + 4*g
+i4 : 4:0h = 3*f + 4*g
 
 o4 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -66,30 +66,30 @@ CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarr
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   3,\:\left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 3,\:\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   4\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 4\right\}\right)\right\}\right),\:y\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   4,\:\left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 4,\:\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   3\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 3\right\}\right)\right\}\right)\right\}\right),\:\textit{source}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o4 : <pre style="display:inline">
 NCRingMap</pre>
-i5 : matrix h
+i5 : 5:0matrix h
 
 o5 = $<pre style="display:inline">
 NCMatrix</pre>\left\{\ldots 6\ldots\right\}$
 
 o5 : <pre style="display:inline">
 NCMatrix</pre>
-i6 : k = h^3
+i6 : 6:0k = h^3
 
 o6 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -117,11 +117,11 @@ A</pre>\right\}$
 
 o6 : <pre style="display:inline">
 NCRingMap</pre>
-i7 : matrix k
+i7 : 7:0matrix k
 
 o7 = $<pre style="display:inline">
 NCMatrix</pre>\left\{\ldots 6\ldots\right\}$
 
 o7 : <pre style="display:inline">
 NCMatrix</pre>
-i8 : 
+i8 : 8:0

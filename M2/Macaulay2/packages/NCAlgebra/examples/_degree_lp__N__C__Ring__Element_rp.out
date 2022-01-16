@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: 1832118703
-i1 : A = QQ{x,y,z,w}
+i1 : 1:0A = QQ{x,y,z,w}
 
 o1 = $<pre style="display:inline">
 A</pre>$
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : f = x^2+y^2+z^3
+i2 : 2:0f = x^2+y^2+z^3
 
 o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -14,33 +14,33 @@ CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarr
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1,\:\left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1,\:\left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:z,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}$
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
 
 o2 : $<pre style="display:inline">
 A</pre>$
-i3 : degree f
+i3 : 3:0degree f
 
-o3 = $  3$
-i4 : isHomogeneous f
+o3 = $3$
+i4 : 4:0isHomogeneous f
 
 o4 = <pre style="display:inline">
 false</pre>
-i5 : setWeights(A,{3,3,2,1})
+i5 : 5:0setWeights(A,{3,3,2,1})
 
 o5 = $<pre style="display:inline">
 A</pre>$
 
 o5 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i6 : degree f
+i6 : 6:0degree f
 
-o6 = $  6$
-i7 : isHomogeneous f
+o6 = $6$
+i7 : 7:0isHomogeneous f
 
 o7 = <pre style="display:inline">
 true</pre>
-i8 : 
+i8 : 8:0

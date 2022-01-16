@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: 408841555
-i1 : makeB'InputFile(storeBM2Files,
-  AffVariableGroup=>{x,y,z},
-  BertiniInputConfiguration=>{{TrackType,1}},
-  B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
-i2 : runBertini(storeBM2Files)
-i3 : thePoints=importMainDataFile(storeBM2Files)
+i1 : 1:0makeB'InputFile(storeBM2Files,
+2:0  AffVariableGroup=>{x,y,z},
+3:0  BertiniInputConfiguration=>{{TrackType,1}},
+4:0  B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
+i2 : 5:0runBertini(storeBM2Files)
+i3 : 6:0thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{\left\{-{.0793598}+{.068912}\,\mathbf{i},\:-{1.67793}\cdot 10^{-17}-{1.02134}\cdot 10^{-17}\,\mathbf{i},\:-{.821692}-{.579542}\,\mathbf{i}\right\},\:\left\{-{1.21426}+{.049238}\,\mathbf{i},\:-{.532179}+{.995538}\,\mathbf{i},\:-{.848063}-{.695221}\,\mathbf{i}\right\},\:\left\{{1.04027}+{.199461}\,\mathbf{i},\:{.623383}-{.93173}\,\mathbf{i},\:-{.806956}-{.462642}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{-{.111532}+{.0182776}\,\mathbf{i},\:{9.69852}\cdot 10^{-18}-{1.15126}\cdot 10^{-17}\,\mathbf{i},\:-{.0996499}+{1.00142}\,\mathbf{i}\right\},\:\left\{-{1.30864}-{.915513}\,\mathbf{i},\:{1.33514}-{.702399}\,\mathbf{i},\:-{.235723}+{1.10416}\,\mathbf{i}\right\},\:\left\{{1.22094}+{.906671}\,\mathbf{i},\:-{1.34937}+{.843554}\,\mathbf{i},\:{.0354302}+{.882674}\,\mathbf{i}\right\}\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
-i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
+i4 : 7:0witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
 <pre style="display:inline">
 1</pre>
 <pre style="display:inline">
@@ -22,10 +22,10 @@ List</pre>
 
 o4 : <pre style="display:inline">
 List</pre>
-i5 : sortMainDataComponents(thePoints)
+i5 : 8:0sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{\left\{-{.0793598}+{.068912}\,\mathbf{i},\:-{1.67793}\cdot 10^{-17}-{1.02134}\cdot 10^{-17}\,\mathbf{i},\:-{.821692}-{.579542}\,\mathbf{i}\right\}\right\},\:\left\{\left\{-{1.21426}+{.049238}\,\mathbf{i},\:-{.532179}+{.995538}\,\mathbf{i},\:-{.848063}-{.695221}\,\mathbf{i}\right\},\:\left\{{1.04027}+{.199461}\,\mathbf{i},\:{.623383}-{.93173}\,\mathbf{i},\:-{.806956}-{.462642}\,\mathbf{i}\right\}\right\}\right\}$
+o5 = $\left\{\left\{\left\{-{.111532}+{.0182776}\,\mathbf{i},\:{9.69852}\cdot 10^{-18}-{1.15126}\cdot 10^{-17}\,\mathbf{i},\:-{.0996499}+{1.00142}\,\mathbf{i}\right\}\right\},\:\left\{\left\{-{1.30864}-{.915513}\,\mathbf{i},\:{1.33514}-{.702399}\,\mathbf{i},\:-{.235723}+{1.10416}\,\mathbf{i}\right\},\:\left\{{1.22094}+{.906671}\,\mathbf{i},\:-{1.34937}+{.843554}\,\mathbf{i},\:{.0354302}+{.882674}\,\mathbf{i}\right\}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
-i6 : 
+i6 : 9:0

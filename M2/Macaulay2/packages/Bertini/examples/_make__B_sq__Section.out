@@ -1,122 +1,122 @@
 -- -*- M2-comint -*- hash: -524747189
-i1 : s=makeB'Section({x,y,z})
+i1 : 1:0s=makeB'Section({x,y,z})
 
 o1 = $<pre style="display:inline">
 B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o1 : <pre style="display:inline">
 B'Section</pre>
-i2 : class s
+i2 : 2:0class s
 
 o2 = <pre style="display:inline">
 B'Section</pre>
 
 o2 : <pre style="display:inline">
 Type</pre>
-i3 : randomRealCoefficientGenerator=()->random(RR)
+i3 : 3:0randomRealCoefficientGenerator=()->random(RR)
 
 o3 = <pre style="display:inline">
 randomRealCoefficientGenerator</pre>
 
 o3 : <pre style="display:inline">
 FunctionClosure</pre>
-i4 : sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
+i4 : 4:0sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
 
 o4 = $<pre style="display:inline">
 B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o4 : <pre style="display:inline">
 B'Section</pre>
-i5 : sReal#B'NumberCoefficients
+i5 : 5:0sReal#B'NumberCoefficients
 
 o5 = $\left\{{.0741835},\:{.808694},\:{.362835}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
-i6 : randomRationalCoefficientGenerator=()->random(QQ)
+i6 : 6:0randomRationalCoefficientGenerator=()->random(QQ)
 
 o6 = <pre style="display:inline">
 randomRationalCoefficientGenerator</pre>
 
 o6 : <pre style="display:inline">
 FunctionClosure</pre>
-i7 : sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
+i7 : 7:0sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
 
 o7 = $<pre style="display:inline">
 B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o7 : <pre style="display:inline">
 B'Section</pre>
-i8 : sRational#B'NumberCoefficients
+i8 : 8:0sRational#B'NumberCoefficients
 
-o8 = $\left\{\frac{  7}{ 10},\:\frac{  1}{  2},\:\frac{  7}{ 10}\right\}$
+o8 = $\left\{\frac{7}{10},\:\frac{1}{2},\:\frac{7}{10}\right\}$
 
 o8 : <pre style="display:inline">
 List</pre>
-i9 : affineSection=makeB'Section({x,y,z,1})
+i9 : 9:0affineSection=makeB'Section({x,y,z,1})
 
 o9 = $<pre style="display:inline">
 B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o9 : <pre style="display:inline">
 B'Section</pre>
-i10 : X={x,y,z}
+i10 : 10:0X={x,y,z}
 
 o10 = $\left\{x,\:y,\:z\right\}$
 
 o10 : <pre style="display:inline">
 List</pre>
-i11 : P={1,2,3}
+i11 : 11:0P={1,2,3}
 
-o11 = $\left\{  1,\:  2,\:  3\right\}$
+o11 = $\left\{1,\:2,\:3\right\}$
 
 o11 : <pre style="display:inline">
 List</pre>
-i12 : affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
+i12 : 12:0affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
 
 o12 = $<pre style="display:inline">
 B'Section</pre>\left\{\ldots 3\ldots\right\}$
 
 o12 : <pre style="display:inline">
 B'Section</pre>
-i13 : r= affineContainingPoint#B'SectionString
+i13 : 13:0r= affineContainingPoint#B'SectionString
 
 o13 = <pre style="display:inline">
 (1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))</pre>
-i14 : print r
+i14 : 14:0print r
 <pre style="display:inline">
 (1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))</pre>
-i15 : rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
+i15 : 15:0rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
 
 o15 = $<pre style="display:inline">
 B'Section</pre>\left\{\ldots 3\ldots\right\}$
 
 o15 : <pre style="display:inline">
 B'Section</pre>
-i16 : peek rHomogeSection
+i16 : 16:0peek rHomogeSection
 
 o16 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 B'Section{B'Homogenization => x+y+z                                                                                                         }<br/>          B'NumberCoefficients => {.534614-.175945*ii, .426704-.97539*ii, -.478803+.0416008*ii}<br/>          B'SectionString => (.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))<br/></pre>
-i17 : print rHomogeSection#B'SectionString
+i17 : 17:0print rHomogeSection#B'SectionString
 <pre style="display:inline">
 (.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))</pre>
-i18 : f="y^3-x*y+1"
+i18 : 18:0f="y^3-x*y+1"
 
 o18 = <pre style="display:inline">
 y^3-x*y+1</pre>
-i19 : s1=makeB'Section({x,y,1})
+i19 : 19:0s1=makeB'Section({x,y,1})
 
 o19 = $<pre style="display:inline">
 B'Section</pre>\left\{\ldots 2\ldots\right\}$
 
 o19 : <pre style="display:inline">
 B'Section</pre>
-i20 : makeB'InputFile(storeBM2Files,
-  AffVariableGroup=>{x,y},
-  B'Polynomials=>{f,s1});
-i21 : runBertini(storeBM2Files)
-i22 : #importSolutionsFile(storeBM2Files)==3
+i20 : 20:0makeB'InputFile(storeBM2Files,
+21:0  AffVariableGroup=>{x,y},
+22:0  B'Polynomials=>{f,s1});
+i21 : 23:0runBertini(storeBM2Files)
+i22 : 24:0#importSolutionsFile(storeBM2Files)==3
 
 o22 = <pre style="display:inline">
 true</pre>
-i23 : 
+i23 : 25:0

@@ -1,9 +1,9 @@
 -- -*- M2-comint -*- hash: 647005171
-i1 : coordinatesOfTwoPnts={{1,0},{3,4}}
+i1 : 1:0coordinatesOfTwoPnts={{1,0},{3,4}}
 
-o1 = $\left\{\left\{  1,\:  0\right\},\:\left\{  3,\:  4\right\}\right\}$
+o1 = $\left\{\left\{1,\:0\right\},\:\left\{3,\:4\right\}\right\}$
 
 o1 : <pre style="display:inline">
 List</pre>
-i2 : writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
-i3 : 
+i2 : 2:0writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
+i3 : 3:0

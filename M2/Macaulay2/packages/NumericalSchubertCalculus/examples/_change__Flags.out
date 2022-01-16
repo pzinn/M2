@@ -1,25 +1,25 @@
 -- -*- M2-comint -*- hash: -895766969
-i1 : k=3; n=6;
-i3 : l1={2,1};
-i4 : l2={2,1};
-i5 : l3={2,1};
-i6 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
+i1 : 1:0k=3; n=6;
+i3 : 2:0l1={2,1};
+i4 : 3:0l2={2,1};
+i5 : 4:0l3={2,1};
+i6 : 5:0F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
-o6 = $\left\{\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
-  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1\\
-\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-  1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-\end{array}\!\right)\right),\:\left(\left\{  2,\:  1\right\},\,\left(\!\begin{array}{cccccc}
+o6 = $\left\{\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
+1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
+\end{array}\!\right)\right),\:\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
+{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
+{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
+{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
+{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+\end{array}\!\right)\right),\:\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}+{.673395}\,\mathbf{i}&amp;{.0741835}+{.808694}\,\mathbf{i}&amp;{.830833}+{.538554}\,\mathbf{i}&amp;{.557119}+{.873708}\,\mathbf{i}&amp;{.0647412}+{.877846}\,\mathbf{i}&amp;{.444183}+{.644366}\,\mathbf{i}\\
 {.29398}+{.632944}\,\mathbf{i}&amp;{.362835}+{.706096}\,\mathbf{i}&amp;{.873665}+{.415912}\,\mathbf{i}&amp;{.7037}+{.681869}\,\mathbf{i}&amp;{.0340514}+{.507989}\,\mathbf{i}&amp;{.194945}+{.518585}\,\mathbf{i}\\
 {.0258884}+{.714827}\,\mathbf{i}&amp;{.127435}+{.254482}\,\mathbf{i}&amp;{.606588}+{.848005}\,\mathbf{i}&amp;{.276259}+{.605659}\,\mathbf{i}&amp;{.150294}+{.656391}\,\mathbf{i}&amp;{.987173}+{.568273}\,\mathbf{i}\\
@@ -30,12 +30,12 @@
 
 o6 : <pre style="display:inline">
 List</pre>
-i7 : G = randomSchubertProblemInstance({l1,l2,l3},k,n);
-i8 : S = solveSchubertProblem(F,k,n);
-i9 : FlagsF = F/last;
-i10 : FlagsG = G/last;
-i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 2.60421 seconds
+i7 : 6:0G = randomSchubertProblemInstance({l1,l2,l3},k,n);
+i8 : 7:0S = solveSchubertProblem(F,k,n);
+i9 : 8:0FlagsF = F/last;
+i10 : 9:0FlagsG = G/last;
+i11 : 10:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
+     -- used 2.84338 seconds
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -55,9 +55,9 @@ List</pre>
 
 o11 : <pre style="display:inline">
 List</pre>
-i12 : assert all(S', s-> checkIncidenceSolution(s,G))
-i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.80947 seconds
+i12 : 11:0assert all(S', s-> checkIncidenceSolution(s,G))
+i13 : 12:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
+     -- used 2.1087 seconds
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
@@ -77,5 +77,5 @@ List</pre>
 
 o13 : <pre style="display:inline">
 List</pre>
-i14 : assert all(S', s-> checkIncidenceSolution(s,G))
-i15 : 
+i14 : 13:0assert all(S', s-> checkIncidenceSolution(s,G))
+i15 : 14:0

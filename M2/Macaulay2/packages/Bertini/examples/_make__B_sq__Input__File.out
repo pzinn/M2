@@ -1,41 +1,41 @@
 -- -*- M2-comint -*- hash: 307307630
-i1 : R=QQ[x1,x2,y]
+i1 : 1:0R=QQ[x1,x2,y]
 
 o1 = $R$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : theDir = temporaryFileName();
-i3 : makeDirectory theDir
-i4 : makeB'InputFile(theDir,
-        BertiniInputConfiguration=>{MPType=>2},
-    AffVariableGroup=>{{x1,x2},{y}},
-        B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2});
-i5 : R=QQ[x1,x2,y,X]
+i2 : 2:0theDir = temporaryFileName();
+i3 : 3:0makeDirectory theDir
+i4 : 4:0makeB'InputFile(theDir,
+5:0        BertiniInputConfiguration=>{MPType=>2},
+6:0    AffVariableGroup=>{{x1,x2},{y}},
+7:0        B'Polynomials=>{y*(x1+x2+1)^2+1,x1-x2+1,y-2});
+i5 : 8:0R=QQ[x1,x2,y,X]
 
 o5 = $R$
 
 o5 : <pre style="display:inline">
 PolynomialRing</pre>
-i6 : makeB'InputFile(theDir,
-        BertiniInputConfiguration=>{MPType=>2},
-    AffVariableGroup=>{{x1,x2},{y}},
-        NamePolynomials=>{f1,f2,f3},
-        B'Functions=>{
-       {X,x1+x2+1},
-       {f1,y*X^2+1},
-       {f2,x1-x2+1},
-       {f3,y-2}});
-i7 : R=QQ[x1,x2,y,X]
+i6 : 9:0makeB'InputFile(theDir,
+10:0        BertiniInputConfiguration=>{MPType=>2},
+11:0    AffVariableGroup=>{{x1,x2},{y}},
+12:0        NamePolynomials=>{f1,f2,f3},
+13:0        B'Functions=>{
+14:0       {X,x1+x2+1},
+15:0       {f1,y*X^2+1},
+16:0       {f2,x1-x2+1},
+17:0       {f3,y-2}});
+i7 : 18:0R=QQ[x1,x2,y,X]
 
 o7 = $R$
 
 o7 : <pre style="display:inline">
 PolynomialRing</pre>
-i8 : makeB'InputFile(theDir,
-         BertiniInputConfiguration=>{MPype=>2},
-     AffVariableGroup=>{{x1,x2},{y}},
-          B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
-           B'Functions=>{
-              {X,x1+x2+1}});
-i9 : 
+i8 : 19:0makeB'InputFile(theDir,
+20:0         BertiniInputConfiguration=>{MPype=>2},
+21:0     AffVariableGroup=>{{x1,x2},{y}},
+22:0          B'Polynomials=>{y*X^2+1,x1-x2+1,y-2},
+23:0           B'Functions=>{
+24:0              {X,x1+x2+1}});
+i9 : 25:0

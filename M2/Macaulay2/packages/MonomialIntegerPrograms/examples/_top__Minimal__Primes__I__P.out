@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: 1026426973
-i1 : R = QQ[x,y,z,w,v];
-i2 : I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
+i1 : 1:0R = QQ[x,y,z,w,v];
+i2 : 2:0I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
 
 o2 : <pre style="display:inline">
 MonomialIdeal</pre><pre style="display:inline">
  of </pre>$R$
-i3 : ScipPrintLevel = 0;
-i4 : minimalPrimes(I)
+i3 : 3:0ScipPrintLevel = 0;
+i4 : 4:0minimalPrimes(I)
 
 o4 = $\left\{<pre style="display:inline">
 monomialIdeal</pre>{}\left(y,\,z,\,w\right),\:<pre style="display:inline">
@@ -15,16 +15,16 @@ monomialIdeal</pre>{}\left(x,\,y,\,w,\,v\right)\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>
-i5 : apply(oo, p -> dim p)
+i5 : 5:0apply(oo, p -> dim p)
 
-o5 = $\left\{  2,\:  2,\:  1\right\}$
+o5 = $\left\{2,\:2,\:1\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
-i6 : topMinimalPrimesIP(I)
+i6 : 6:0topMinimalPrimesIP(I)
 
 o6 = $\left\{\,\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>
-i7 : 
+i7 : 7:0

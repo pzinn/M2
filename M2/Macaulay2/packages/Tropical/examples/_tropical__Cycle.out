@@ -1,22 +1,22 @@
 -- -*- M2-comint -*- hash: 707445579
-i1 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
+i1 : 1:0F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
 
 o1 = $<pre style="display:inline">
 F</pre>$
 
 o1 : <pre style="display:inline">
 Fan</pre>
-i2 : mult = {1,2,-3,1}
+i2 : 2:0mult = {1,2,-3,1}
 
-o2 = $\left\{  1,\:  2,\: -3,\:  1\right\}$
+o2 = $\left\{1,\:2,\:-3,\:1\right\}$
 
 o2 : <pre style="display:inline">
 List</pre>
-i3 : tropicalCycle(F, mult)
+i3 : 3:0tropicalCycle(F, mult)
 
 o3 = $<pre style="display:inline">
 TropicalCycle</pre>\left\{\ldots 2\ldots\right\}$
 
 o3 : <pre style="display:inline">
 TropicalCycle</pre>
-i4 : 
+i4 : 4:0

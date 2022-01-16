@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: -371089811
-i1 : A = QQ{x,y,z,w}
+i1 : 1:0A = QQ{x,y,z,w}
 
 o1 = $<pre style="display:inline">
 A</pre>$
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : f = x^2+y^2+2*z^3
+i2 : 2:0f = x^2+y^2+2*z^3
 
 o2 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -14,19 +14,19 @@ CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarr
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1,\:\left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1,\:\left(<pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:z,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   2\right\}\right)\right\}$
+A</pre>\right\}\right)\ \Rightarrow \ 2\right\}\right)\right\}$
 
 o2 : $<pre style="display:inline">
 A</pre>$
-i3 : isConstant f
+i3 : 3:0isConstant f
 
 o3 = <pre style="display:inline">
 false</pre>
-i4 : g = promote(1,A)
+i4 : 4:0g = promote(1,A)
 
 o4 = $<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -34,12 +34,12 @@ CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarr
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{\,\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   1\right\}\right)\right\}$
+A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
 
 o4 : $<pre style="display:inline">
 A</pre>$
-i5 : isConstant g
+i5 : 5:0isConstant g
 
 o5 = <pre style="display:inline">
 true</pre>
-i6 : 
+i6 : 6:0

@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: -1277604553
-i1 : A = QQ{x,y}
+i1 : 1:0A = QQ{x,y}
 
 o1 = $<pre style="display:inline">
 A</pre>$
 
 o1 : <pre style="display:inline">
 NCPolynomialRing</pre>
-i2 : ideal A
+i2 : 2:0ideal A
 
 o2 = $<pre style="display:inline">
 NCIdeal</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -16,9 +16,9 @@ CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarr
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{\left(<pre style="display:inline">
 NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{\,\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \   0\right\}\right)\right\}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
+A</pre>\right\}\right)\ \Rightarrow \ 0\right\}\right)\right\}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\}$
 
 o2 : <pre style="display:inline">
 NCIdeal</pre>
-i3 : 
+i3 : 3:0

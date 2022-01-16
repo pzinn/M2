@@ -1,58 +1,58 @@
 -- -*- M2-comint -*- hash: 704393788
-i1 : R = QQ[x,y,z]
+i1 : 1:0R = QQ[x,y,z]
 
 o1 = $R$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+i2 : 2:0F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
-o2 = $\left\{x^{  3}+x\,y^{  2}+x\,z^{  2}-x,\:x^{  2}y+y^{  3}+y\,z^{  2}-y\right\}$
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\:x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
 o2 : <pre style="display:inline">
 List</pre>
-i3 : S = bertiniPosDimSolve F
+i3 : 3:0S = bertiniPosDimSolve F
 
 o3 = $<pre style="display:inline">
 S</pre>$
 
 o3 : <pre style="display:inline">
 NumericalVariety</pre>
-i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+i4 : 4:0S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = $\left\{\begin{aligned}&amp;\left\{{2.59254}\cdot 10^{-62}+{5.1258}\cdot 10^{-63}\,\mathbf{i},\:{2.54509}\cdot 10^{-62}+{7.30041}\cdot 10^{-63}\,\mathbf{i},\:-{.0239849}+{.193766}\,\mathbf{i}\right\}\end{aligned}\right\}$
+o4 = $\left\{\begin{aligned}&amp;\left\{{7.64225}\cdot 10^{-71}-{7.32048}\cdot 10^{-71}\,\mathbf{i},\:{1.10616}\cdot 10^{-70}+{5.2163}\cdot 10^{-72}\,\mathbf{i},\:{.314279}+{.513962}\,\mathbf{i}\right\}\end{aligned}\right\}$
 
 o4 : <pre style="display:inline">
 VerticalList</pre>
-i5 : S#1 --first specify dimension
+i5 : 5:0S#1 --first specify dimension
 
 o5 = $\left\{<pre style="display:inline">
 (dim=1,deg=1)</pre>\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
-i6 : peek oo_0 --then list position
+i6 : 6:0peek oo_0 --then list position
 
 o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-WitnessSet{cache => CacheTable{...3...}                                                                           }<br/>           Points => {{2.59254e-62+5.1258e-63*ii, 2.54509e-62+7.30041e-63*ii, -.0239849+.193766*ii}}<br/>           Slice => |  - .887721 - .342518*ii  2.0436 - 1.25307*ii  2.21779 - 1.4131*ii  - .220618 - .463625*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
-i7 : PD=primaryDecomposition( ideal F)
+WitnessSet{cache => CacheTable{...3...}                                                                            }<br/>           Points => {{7.64225e-71-7.32048e-71*ii, 1.10616e-70+5.2163e-72*ii, .314279+.513962*ii}}<br/>           Slice => |  - .665531 - 1.5606*ii  1.34115 - .362122*ii  1.09469 - 2.51973*ii  - 1.63908 + .229272*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
+i7 : 7:0PD=primaryDecomposition( ideal F)
 
 o7 = $\left\{<pre style="display:inline">
-ideal</pre>\left(x^{  2}+y^{  2}+z^{  2}-  1\right),\:<pre style="display:inline">
+ideal</pre>\left(x^{2}+y^{2}+z^{2}-1\right),\:<pre style="display:inline">
 ideal</pre>{}\left(y,\,x\right)\right\}$
 
 o7 : <pre style="display:inline">
 List</pre>
-i8 : dim PD_0
+i8 : 8:0dim PD_0
 
-o8 = $  2$
-i9 : degree PD_0
+o8 = $2$
+i9 : 9:0degree PD_0
 
-o9 = $  2$
-i10 : dim PD_1
+o9 = $2$
+i10 : 10:0dim PD_1
 
-o10 = $  1$
-i11 : degree PD_1
+o10 = $1$
+i11 : 11:0degree PD_1
 
-o11 = $  1$
-i12 : 
+o11 = $1$
+i12 : 12:0

@@ -1,13 +1,13 @@
 -- -*- M2-comint -*- hash: 1309898240
-i1 : k = 3;
-i2 : n = 6;
-i3 : SchPblm = {
-    ({2,1}, random(CC^6,CC^6)),
-    ({2,1}, random(CC^6,CC^6)),
-    ({2,1}, random(CC^6,CC^6))
-    };
-i4 : resetStatistics()
-i5 : solveSchubertProblem(SchPblm, k,n)
+i1 : 1:0k = 3;
+i2 : 2:0n = 6;
+i3 : 3:0SchPblm = {
+4:0    ({2,1}, random(CC^6,CC^6)),
+5:0    ({2,1}, random(CC^6,CC^6)),
+6:0    ({2,1}, random(CC^6,CC^6))
+7:0    };
+i4 : 8:0resetStatistics()
+i5 : 9:0solveSchubertProblem(SchPblm, k,n)
 
 o5 = $\left\{\left(\!\begin{array}{ccc}
 -{.973546}-{.443329}\,\mathbf{i}&amp;-{.193482}-{.957391}\,\mathbf{i}&amp;-{.460977}-{.267623}\,\mathbf{i}\\
@@ -27,7 +27,7 @@
 
 o5 : <pre style="display:inline">
 List</pre>
-i6 : printStatistics()
+i6 : 10:0printStatistics()
 # moves of type {} = 2
 # moves of type {0, 0, 0} = 3
 # moves of type {0, 1, 0} = 2
@@ -39,5 +39,5 @@ List</pre>
 # moves of type {2, 0, 0} = 3
 # moves of type {2, 1, 0} = 1
 # moves of type {2, 2, 0} = 12
-tracking time = .222589
-i7 : 
+tracking time = .223031
+i7 : 11:0

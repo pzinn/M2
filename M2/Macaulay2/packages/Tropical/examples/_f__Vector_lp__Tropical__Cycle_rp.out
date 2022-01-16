@@ -1,15 +1,15 @@
 -- -*- M2-comint -*- hash: 142020468
-i1 : QQ[x,y,z]
+i1 : 1:0QQ[x,y,z]
 
 o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : T=tropicalVariety (ideal(x+3*y+3));
-i3 : fVector T
+i2 : 2:0T=tropicalVariety (ideal(x+3*y+3));
+i3 : 3:0fVector T
 
-o3 = $\left\{  0,\:  1,\:  3\right\}$
+o3 = $\left\{0,\:1,\:3\right\}$
 
 o3 : <pre style="display:inline">
 List</pre>
-i4 : 
+i4 : 4:0

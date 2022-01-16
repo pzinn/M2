@@ -1,12 +1,12 @@
 -- -*- M2-comint -*- hash: 52239588
-i1 : k = 3;
-i2 : n = 6;
-i3 : SchPblm = {
-    ({2,1}, random(CC^6,CC^6)),
-    ({2,1}, random(CC^6,CC^6)),
-    ({2,1}, random(CC^6,CC^6))
-    };
-i4 : solveSchubertProblem(SchPblm, k,n)
+i1 : 1:0k = 3;
+i2 : 2:0n = 6;
+i3 : 3:0SchPblm = {
+4:0    ({2,1}, random(CC^6,CC^6)),
+5:0    ({2,1}, random(CC^6,CC^6)),
+6:0    ({2,1}, random(CC^6,CC^6))
+7:0    };
+i4 : 8:0solveSchubertProblem(SchPblm, k,n)
 
 o4 = $\left\{\left(\!\begin{array}{ccc}
 -{.973546}-{.443329}\,\mathbf{i}&amp;-{.193482}-{.957391}\,\mathbf{i}&amp;-{.460977}-{.267623}\,\mathbf{i}\\
@@ -26,4 +26,4 @@
 
 o4 : <pre style="display:inline">
 List</pre>
-i5 : 
+i5 : 9:0

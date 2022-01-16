@@ -1,21 +1,21 @@
 -- -*- M2-comint -*- hash: -139759152
-i1 : QQ[x,y,z]
+i1 : 1:0QQ[x,y,z]
 
 o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 
 o1 : <pre style="display:inline">
 PolynomialRing</pre>
-i2 : T=tropicalVariety (ideal(x+3*y+3));
-i3 : fan T
+i2 : 2:0T=tropicalVariety (ideal(x+3*y+3));
+i3 : 3:0fan T
 
 o3 = $<pre style="display:inline">
 Fan</pre>\left\{\ldots 1\ldots\right\}$
 
 o3 : <pre style="display:inline">
 Fan</pre>
-i4 : peek o3#cache
+i4 : 4:0peek o3#cache
 
 o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 CacheTable{computedDimension => 2              }<br/>           computedFVector => {0, 1, 3}<br/>           computedLinealityBasis => |  0  |<br/>                                     |     |<br/>                                     |  0  |<br/>                                     |     |<br/>                                     |  1  |<br/>           generatingObjects => {{0}, {1}, {2}}<br/>           inputCones => {{2}, {0}, {1}}<br/>           inputRays => |  3  0  -3  |<br/>                        |            |<br/>                        |  0  3  -3  |<br/>                        |            |<br/>                        |  1  1  -2  |<br/>           pure => true<br/>           rays => |  -3  3  0  |<br/>                   |            |<br/>                   |  -3  0  3  |<br/>                   |            |<br/>                   |  -2  1  1  |<br/>           simplicial => true<br/></pre>
-i5 : 
-
+i5 : 5:0
+6:0
