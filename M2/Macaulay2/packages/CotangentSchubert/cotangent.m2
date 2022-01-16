@@ -4,7 +4,7 @@ export {
     "sClass", "stableClass", "segreClass", "chernClass", "schubertClass",
     "sClass'", "stableClass'", "segreClass'", "chernClass'", "schubertClass'",
     "restrict", "fullToPartial", "basisCoeffs",
-    "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection",
+    "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection", "canonicalClass",
     "Presentation", "Borel", "EquivLoc",
     "inversion",
     "Partial"
@@ -56,6 +56,7 @@ promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
 tautoClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautoClass to avoid confusion with motivic classes
 zeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
 dualZeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
+canonicalClass = method(Dispatch=>{Type},Options=>true) -- note the {}
 zeroSectionInv = method(Dispatch=>{Type},Options=>true) -- internal use only
 segreClass = method(Dispatch=>{Thing,Type},Options=>true)
 sClass = method(Dispatch=>{Thing,Type},Options=>true)
@@ -287,6 +288,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1)));
+	if curCotOpts.Ktheory then canonicalClass AA :=  { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> fullToPartial(canonicalClass(AA,Partial=>false),AA)
+    	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then BB_k*BB_j^(-1) else 1)));
 	zeroSectionInv AA := { Partial => true } >> o -> (cacheValue (zeroSectionInv,o.Partial)) (AA -> (zeroSection(AA,o))^(-1));
 	-- segre Classes TODO rethink: closure?
 	sClasses AA := {Partial=>true} >> o -> (cacheValue (sClasses,o.Partial)) (if o.Partial then AA -> fullToPartial(sClasses(AA,Partial=>false),AA)
