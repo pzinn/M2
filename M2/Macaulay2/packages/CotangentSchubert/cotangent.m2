@@ -531,9 +531,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    zeroSection D := {} >> o -> (cacheValue zeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^2*FF_(j+1)/FF_(k+1) else 1))));
 	    zeroSectionInv D := {} >> o -> (cacheValue zeroSectionInv) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))));
 	    dualZeroSection D := {} >> o -> (cacheValue dualZeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then 1-FF_0^-2*FF_(j+1)^-1*FF_(k+1) else 1))));
-	    canonicalClass D := {} >> o -> (cacheValue canonicalClass) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_(j+1)^-1*FF_(k+1) else 1))));
 	    weights D := (cacheValue weights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1) else 1))) }));
 	    cotweights D := (cacheValue cotweights) (D -> map(FF^1,M, { apply(I,i->product(n,j->product(n,k->if i#j<i#k then (1-FF_(k+1)/FF_(j+1))^(-1)*(1-FF_0^2*FF_(j+1)/FF_(k+1))^(-1) else 1))) }));
+	    canonicalClass D := {} >> o -> (cacheValue canonicalClass) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_(j+1)^-1*FF_(k+1) else 1))));
+	    installMethod(canonicalClass,{}>>o->()->canonicalClass D);
 	    ) else (
 	    zeroSection D := {} >> o -> (cacheValue zeroSection) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then FF_0-FF_(j+1)+FF_(k+1) else 1))));
 	    zeroSectionInv D := {} >> o -> (cacheValue zeroSectionInv) (D -> D apply(I,i->product(n,j->product(n,k->if i#j<i#k then (FF_0-FF_(j+1)+FF_(k+1))^(-1) else 1))));
