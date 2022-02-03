@@ -108,14 +108,14 @@ texMath VerticalList := s -> concatenate(
 texMath NumberedVerticalList := s -> concatenate(
     "\\left\\{\\begin{aligned}", demark("\\\\", apply(#s, i -> i | ".\\quad&" | texMath s#i)), "\\end{aligned}\\right\\}")
 
-texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L==0 then "\\," else demark_delim apply(toList L, texMath), "\\right", cl)
+texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L > 0 then demark_delim apply(toList L, texMath) else "\\,", "\\right", cl)
 texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
 texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
 texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
 texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\:", "\\}")
 texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\{", L, ",\\,", "\\}"))
-texMathMutable := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots", "\\right\\}")
-texMath MutableList  := texMathMutable
+texMathMutable :=
+texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
 texMath HashTable := H -> if H.?texMath then H.texMath else (
     if hasAttribute(H, ReverseDictionary) then texMath toString getAttribute(H, ReverseDictionary)
