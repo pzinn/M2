@@ -100,8 +100,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    computes a motivic Chern class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    Computes a motivic Chern class with label @TT "i" (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
     (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
@@ -135,8 +135,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    computes a motivic Segre class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    Computes a motivic Segre class with label @TT "i" (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
     (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
@@ -166,8 +166,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    computes a Schubert class with label i (a ``string'', i.e., a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) in a K-theory ring @TT "A"@
+    Computes a Schubert class with label @TT "i" (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
     The primed classes are dual classes.
  Node
