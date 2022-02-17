@@ -100,7 +100,7 @@ multidoc ///
    A : Ring
   Description
    Text
-    Computes a motivic Chern class with label @TT "i" (a string made of characters from "0" to "d"
+    This function computes a motivic Chern class with label @TT "i" (a string made of characters from "0" to "d"
     where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
@@ -135,7 +135,7 @@ multidoc ///
    A : Ring
   Description
    Text
-    Computes a motivic Segre class with label @TT "i" (a string made of characters from "0" to "d"
+    This function computes a motivic Segre class with label @TT "i" (a string made of characters from "0" to "d"
     where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
@@ -166,7 +166,7 @@ multidoc ///
    A : Ring
   Description
    Text
-    Computes a Schubert class with label @TT "i" (a string made of characters from "0" to "d"
+    This function computes a Schubert class with label @TT "i" (a string made of characters from "0" to "d"
     where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
     The primed classes are dual classes.
@@ -184,7 +184,7 @@ multidoc ///
    A : Ring
   Description
    Text
-    Computes the i^th Chern class of the j^th tautological bundle of the flag variety whose K-theory (or cohomology)
+    This function computes the i-th Chern class of the j-th tautological bundle of the flag variety whose K-theory (or cohomology)
     ring is given by @TT "A"@. If @TT "A"@ is not specified, then the ring that was defined last is used.
  Node
   Key
@@ -199,23 +199,62 @@ multidoc ///
    a : RingElement
   Description
    Text
-    Pushes forward a K-theory or cohomology class from either the flag variety or its cotangent bundle.
+    This function returns the push forward of a (K-theory or cohomology) class from either the flag variety or its cotangent bundle
+    to a point.
     The ring of input @TT "a"@ must have been previously created with @TO {setupCotangent}@.
  Node
   Key
    inversion
+  Headline
+   Inversion number of a string
+ Description
+  Text
+   Given a string of digits "a_1 a_2 ... a_n", computes the inversion number of that string 
+   (the number of i<j such that a_i>a_j).
  Node
   Key
    fullToPartial
  Node
   Key
    restrict
+  Headline
+   Restriction to fixed points
+  Description
+   Text
+    Given a (K-theory or cohomology) class in a ring defined by @TO {setupCotangent}@
+    with the options @TT "Presentation => Borel" and @TT "Equivariance => true",
+    this function computes its restriction to fixed points (effectively, giving the class
+    as would be produced by the option @TT "Presentation => EquivLoc").
  Node
   Key
    zeroSection
+  Headline
+   Class of the zero section of the cotangent bundle of a flag variety
+  Description
+   Text
+    This function returns the class of the base of the cotangent bundle of the flag variety
+    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
+    if no argument is given).
  Node
   Key
    dualZeroSection
+  Headline
+   Class of the zero section of the tangent bundle of a flag variety
+  Description
+   Text
+    This function returns the class of the base of the tangent bundle of the flag variety
+    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
+    if no argument is given).
+ Node
+  Key
+   canonicalClass
+  Headline
+   Class of the canonical bundle of a flag variety
+  Description
+   Text
+    This function returns the class of the canonical bundle of the flag variety
+    in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
+    if no argument is given).   
  Node
   Key
    puzzle
@@ -239,7 +278,7 @@ multidoc ///
    Steps => ZZ
   Description
    Text
-    Produces a list of puzzles with boundaries given by strings @TT "a"@ (northwest side),
+    This function produces a list of puzzles with boundaries given by strings @TT "a"@ (northwest side),
     @TT "b"@ (northeast side), @TT "c"@ (bottom side).
     The default @TT "Generic=>true"@ produces "generic" puzzles corresponding to the multiplication of
     motivic Segre classes @TO {sClass}@, whereas @TT "Generic=>false"@ produces "classic" puzzles
