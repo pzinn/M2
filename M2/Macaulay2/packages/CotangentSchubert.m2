@@ -10,7 +10,7 @@ newPackage(
     Keywords => {"Intersection Theory"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
-    DebuggingMode => false,
+    DebuggingMode => true,
     Configuration => { "Factor" => false, "PuzzleSize" => 7 }
     )
 
@@ -100,8 +100,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    This function computes a motivic Chern class with label @TT "i" (a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
+    This function computes a motivic Chern class with label @TT "i"@ (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I"@ in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
     (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
@@ -135,8 +135,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    This function computes a motivic Segre class with label @TT "i" (a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
+    This function computes a motivic Segre class with label @TT "i"@ (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I"@ in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
    Example
     (A,B,FF,I)=setupCotangent(1,3,Presentation=>Borel,Ktheory=>true,Equivariant=>false);
@@ -166,8 +166,8 @@ multidoc ///
    A : Ring
   Description
    Text
-    This function computes a Schubert class with label @TT "i" (a string made of characters from "0" to "d"
-    where d is the number of steps of the flag variety) or list of labels @TT "I" in a K-theory ring @TT "A"@
+    This function computes a Schubert class with label @TT "i"@ (a string made of characters from "0" to "d"
+    where d is the number of steps of the flag variety) or list of labels @TT "I"@ in a K-theory ring @TT "A"@
     previously built using @TO{setupCotangent}@. If @TT "A"@ is not specified, then the ring that was defined last is used.
     The primed classes are dual classes.
  Node
@@ -207,13 +207,10 @@ multidoc ///
    inversion
   Headline
    Inversion number of a string
- Description
-  Text
-   Given a string of digits "a_1 a_2 ... a_n", computes the inversion number of that string 
-   (the number of i<j such that a_i>a_j).
- Node
-  Key
-   fullToPartial
+  Description
+   Text
+    Given a string of digits "a_1 a_2 ... a_n", computes the inversion number of that string 
+    (the number of i<j such that a_i>a_j).
  Node
   Key
    restrict
@@ -222,9 +219,9 @@ multidoc ///
   Description
    Text
     Given a (K-theory or cohomology) class in a ring defined by @TO {setupCotangent}@
-    with the options @TT "Presentation => Borel" and @TT "Equivariance => true",
+    with the options @TT "Presentation => Borel"@ and @TT "Equivariance => true"@,
     this function computes its restriction to fixed points (effectively, giving the class
-    as would be produced by the option @TT "Presentation => EquivLoc").
+    as would be produced by the option @TT "Presentation => EquivLoc"@).
  Node
   Key
    zeroSection
@@ -354,7 +351,6 @@ undocumented {
     Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
     Paths, Labels, Length, Steps, Ktheory',
     (restrict,Matrix),(restrict,Matrix,RingElement),
-    (fullToPartial,Matrix),(fullToPartial,Matrix,RingElement),
     (inversion,String)
     }
 

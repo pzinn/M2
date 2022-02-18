@@ -3,7 +3,7 @@ export {
     "tautoClass",
     "sClass", "stableClass", "segreClass", "chernClass", "schubertClass",
     "sClass'", "stableClass'", "segreClass'", "chernClass'", "schubertClass'",
-    "restrict", "fullToPartial", "basisCoeffs",
+    "restrict", "basisCoeffs",
     "pushforwardToPoint", "pushforwardToPointFromCotangent", "zeroSection", "dualZeroSection", "canonicalClass",
     "Presentation", "Borel", "EquivLoc",
     "inversion",
@@ -87,9 +87,11 @@ restrict Matrix := m -> matrix apply(flatten entries m,restrict) -- only for one
 restrict (Matrix,RingElement) := (m,X) -> matrix apply(flatten entries m,x->restrict(x,X)) -- only for one-row matrices
 
 -- from full flag to partial flag
+-*
 fullToPartial = method(Dispatch =>{Thing,Type})
 fullToPartial Matrix := m -> matrix applyTable(entries m,fullToPartial)
 fullToPartial (Matrix,RingElement) := (m,X) -> matrix applyTable(entries m,x->fullToPartial(x,X))
+*-
 
 -- pushforward
 pushforwardToPoint=method(); -- pushforward to a point from K(G/P)
@@ -100,20 +102,20 @@ q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
 FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
 promoteFromMap(FK_0,FK_-1);
-fullToPartial FK_0 := identity;
+--fullToPartial FK_0 := identity;
 
 h := getSymbol "h"; ybar := getSymbol "ybar";
 FH_-1 = frac(factor(ZZ (monoid[h,ybar]))); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ (monoid[h])));
 promoteFromMap(FH_0,FH_-1);
-fullToPartial FH_0 := identity;
+--fullToPartial FH_0 := identity;
 
 defineFK = n -> (
     if not FK#?n then (
         z := getSymbol "z"; -- q := getSymbol "q";
         FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
         promoteFromMap(FK_0,FK_n);
-	fullToPartial FK_n := identity;
+	--fullToPartial FK_n := identity;
         );
     FK#n
     )
@@ -123,7 +125,7 @@ defineFH = n -> (
         y := getSymbol "y"; -- h := getSymbol "h";
         FH_n = frac(factor(ZZ (monoid[h,y_1..y_n,MonomialOrder=>{Weights=>{n+1:1},Weights=>{1,n:0},RevLex}])));
         promoteFromMap(FH_0,FH_n);
-	fullToPartial FH_n := identity;
+	--fullToPartial FH_n := identity;
         );
     FH#n
     )
@@ -266,9 +268,12 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	if curCotOpts.Equivariant then promoteFromMap(FF0,AA,map(AA,FF0,{FF_0}));
 	promoteFromMap(AA,BB,f*map(R1,AA));
 	-- reverse transformation
-	fullToPartial (Number,AA) :=
-	fullToPartial (FF,AA) :=
-	fullToPartial (BB,AA) := (b,AA) -> (
+	--fullToPartial (Number,AA) :=
+	--fullToPartial (FF,AA) :=
+	--fullToPartial (BB,AA) := (b,AA) -> (
+	lift(Module,BB,AA) := opts -> (v,b,AA) -> vector apply(entries v,x->lift(x,AA));
+	lift(Matrix,BB,AA) := opts -> (m,b,AA) -> matrix applyTable(entries m,x->lift(x,AA));
+	lift (BB,AA) := opts -> (b,AA) -> (
 	    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
 	    AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
 	    b = sub(b,AB);
@@ -280,19 +285,19 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    );
 	--
 	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
-	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> fullToPartial(zeroSection(AA,Partial=>false),AA)
+	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> lift(zeroSection(AA,Partial=>false),AA)
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then FF_0-BB_j+BB_k else 1)));
-	dualZeroSection AA := { Partial => true} >> o -> (cacheValue (dualZeroSection,o.Partial)) (if o.Partial then AA -> fullToPartial(dualZeroSection(AA,Partial=>false),AA)
+	dualZeroSection AA := { Partial => true} >> o -> (cacheValue (dualZeroSection,o.Partial)) (if o.Partial then AA -> lift(dualZeroSection(AA,Partial=>false),AA)
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω#j<ω#k then 1-FF_0^-2*BB_k*BB_j^(-1) else 1))
 	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then -FF_0+BB_j-BB_k else 1)));
-	if curCotOpts.Ktheory then canonicalClass AA :=  { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> fullToPartial(canonicalClass(AA,Partial=>false),AA)
+	if curCotOpts.Ktheory then canonicalClass AA :=  { Partial => true} >> o -> (cacheValue (canonicalClass,o.Partial)) (if o.Partial then AA -> lift(canonicalClass(AA,Partial=>false),AA)
     	    else AA -> product(n,j->product(n,k->if ω#j<ω#k then BB_k*BB_j^(-1) else 1)));
 	zeroSectionInv AA := { Partial => true } >> o -> (cacheValue (zeroSectionInv,o.Partial)) (AA -> (zeroSection(AA,o))^(-1));
 	-- segre Classes TODO rethink: closure?
-	sClasses AA := {Partial=>true} >> o -> (cacheValue (sClasses,o.Partial)) (if o.Partial then AA -> fullToPartial(sClasses(AA,Partial=>false),AA)
+	sClasses AA := {Partial=>true} >> o -> (cacheValue (sClasses,o.Partial)) (if o.Partial then AA -> lift(sClasses(AA,Partial=>false),AA)
 		else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
@@ -326,7 +331,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	chernClass (String,AA) :=
 	chernClass (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> dualZeroSection(AA,o) * segreClass(i,AA,o);
 	-- Schubert classes
-	schubertClasses AA := {Partial=>true} >> o -> (cacheValue (schubertClasses,o.Partial)) (if o.Partial then AA -> fullToPartial(schubertClasses(AA,Partial=>false),AA)
+	schubertClasses AA := {Partial=>true} >> o -> (cacheValue (schubertClasses,o.Partial)) (if o.Partial then AA -> lift(schubertClasses(AA,Partial=>false),AA)
 	     	else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
@@ -355,14 +360,14 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	sClass' (String,AA) :=
 	sClass' (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (
 	    x := du sClass(if class i === List then reverse\i else reverse i,AA,Partial=>false);
-	    if o.Partial then fullToPartial(x,AA) else x
+	    if o.Partial then lift(x,AA) else x
 	    );
 	-- compared to Mihalcea, missing a (-t)^-dimvar; compared to dual of chernClass, missing q^#
 	segreClass' (List,AA) := 
 	segreClass' (String,AA) :=
 	segreClass' (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (
 	    x := du segreClass(if class i === List then reverse\i else reverse i,AA,Partial=>false);
-	    if o.Partial then fullToPartial(x,AA) else x
+	    if o.Partial then lift(x,AA) else x
 	    );
 	-- compared to Mihalcea, missing a (-t)^-dimvar; compared to dual of segreClass, missing q^#
 	chernClass' (List,AA) :=
@@ -371,7 +376,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	stableClass' (List,AA) := {Partial=>true} >> o -> (L,AA) -> matrix { apply(L,i->stableClass'(i,AA,o)) };
 	stableClass' (String,AA) :=
 	stableClass' (AryString,AA) := {Partial=>true} >> o -> (i,AA) -> (if curCotOpts.Ktheory then FF_0 else -1)^(2*dimvar-inversion i)*chernClass'(i,AA,o);
-	schubertClasses' AA := {Partial=>true} >> o -> (cacheValue (schubertClasses',o.Partial)) (if o.Partial then AA -> fullToPartial(schubertClasses'(AA,Partial=>false),AA)
+	schubertClasses' AA := {Partial=>true} >> o -> (cacheValue (schubertClasses',o.Partial)) (if o.Partial then AA -> lift(schubertClasses'(AA,Partial=>false),AA)
 	     	else AA -> (
 		-- monodromy matrix
 		V:=BB^(d+1);
@@ -465,8 +470,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	schubertClass' (String,BB) :=
 	schubertClass' (AryString,BB) := {Partial=>false} >> o -> (i,BB) -> schubertClass'(i,AA,o);
 	schubertClass' Thing := {Partial=>false} >> o -> i -> schubertClass'(i,AA,o);
-	fullToPartial Number := fullToPartial BB := b -> fullToPartial(b,AA);
-	pushforwardToPoint BB := b -> pushforwardToPoint fullToPartial b;
+	--fullToPartial Number := fullToPartial BB := b -> fullToPartial(b,AA);
+	pushforwardToPoint BB := b -> pushforwardToPoint lift(b,AA);
 	pushforwardToPointFromCotangent BB := b -> pushforwardToPoint (zeroSectionInv BB * b);
 	--
 	(AA,BB,FF,I)
