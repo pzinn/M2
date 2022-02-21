@@ -1,7 +1,7 @@
 newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
-    Version => "0.5",
+    Version => "0.6",
     Date => "19 Dec 2021", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
@@ -45,6 +45,9 @@ multidoc ///
  Node
   Key
    setupCotangent
+   [setupCotangent,Presentation]
+   [setupCotangent,Ktheory]
+   [setupCotangent,Equivariant]
   Headline
    Set up cotangent Schubert calculus rings
   Usage
@@ -53,6 +56,7 @@ multidoc ///
   Inputs
    dimensions : Sequence
     of integers
+   Presentation => Symbol
    Ktheory => Boolean
    Equivariant => Boolean
   Description
@@ -255,6 +259,13 @@ multidoc ///
  Node
   Key
    puzzle
+   [puzzle, Generic]
+   [puzzle, Ktheory]
+   [puzzle, Ktheory']
+   [puzzle, Equivariant]
+   [puzzle, Labels]
+   [puzzle, Paths]
+   [puzzle, Steps]
    Puzzle
   Headline
    Compute puzzles with given boundaries
@@ -289,6 +300,8 @@ multidoc ///
     whereas "*" stands for any puzzle label.
 
     @TT "Labels"@ and @TT "Paths"@ are drawing options which only affect HTML and TeX output of puzzles.
+    The Net output of puzzles is a rotated, squashed version where equilateral triangles become right triangles;
+    each cluster of three labels represents the labels around an elementary up-pointing triangle.
    Example
     puzzle ("0101","1001",Equivariant=>false)
  Node
@@ -358,14 +371,22 @@ TEST ///
 (A,B,FF,I)=setupCotangent(2,4,Presentation=>Borel,Ktheory=>false,Equivariant=>false);
 assert((schubertClass "0101")^2 == schubertClass "1001" + schubertClass "0110") -- classic Schubert calculus
 assert(pushforwardToPoint((segreClass "0101")^2*chernClass "0101")==-4) -- ex of p43 of II: chi(S_0101^3)=-4
+assert(sum apply(I,segreClass) == 1) -- sum rule for Segre classes
 ///
 
 TEST ///
-(D,FF,I)=setupCotangent(1,2,4,Ktheory=>true)
+(D,FF,I)=setupCotangent(2,4,Ktheory=>true);
+assert(sum apply(I,segreClass) == 1) -- sum rule for Segre classes
+P=puzzle("0101","0110"); assert(#P == 12) -- generic puzzles
+assert(sClass I * fugacityVector P == sClass "0101"*sClass "0110")
+///
+
+TEST ///
+(D,FF,I)=setupCotangent(1,3,5,Ktheory=>false)
 segreCls=sClass I;
-i1=I#1;i2=I#2;
+i1=I#11;i2=I#27;
 a=sClass i1*sClass i2;
-P=puzzle(i1,i2) -- generic 2-step puzzles
+P=puzzle(i1,i2); -- generic 2-step puzzles
 b=segreCls*(fugacityVector P);
 assert(a==b)
 ///
