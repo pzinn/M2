@@ -16,7 +16,7 @@ newPackage(
 
 export{"GraphicsType", "GraphicsObject", "GraphicsCoordinate", "GraphicsPoly",
     "GraphicsList", "Circle", "Light", "Ellipse", "Path", "Polygon", "Polyline", "GraphicsText", "Line", "GraphicsHtml",
-    "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot2d", "plot3d",
+    "gList", "viewPort", "rotation", "translation", "linearGradient", "radialGradient", "arrow", "plot2d", "plot3d", "listPlot", "matrixPlot",
     "Contents", "TextContent", "OneSided", "RadiusX", "RadiusY", "Specular", "Point1", "Point2", "RefPoint", "Size", "ViewPort", "Frame",
     "Perspective", "FontSize", "AnimMatrix", "TransformMatrix", "Radius",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
@@ -57,7 +57,7 @@ gParse Vector := x -> (
     else if rank class x === 4 then sub(x,RR)
     )
 gParse List := l -> apply(l,gParse)
-gParse Option := o -> if o#0 === symbol Contents then o else o#0 => gParse o#1
+gParse Option := o -> if o#0 === symbol Contents then o else o#0 => gParse o#1 -- don't parse Contents. annoying side-effect: can't use short syntax with GraphicsList
 gParse OptionTable := h -> applyValues(h,gParse)
 gParse Thing := identity
 
@@ -102,7 +102,7 @@ GraphicsObject ++ List := (opts1, opts2) -> (
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
 GraphicsType List := (T,opts) -> (
-    opts0 := T.Options;
+    opts0 := T.Options; 
     opts = gParse opts;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     (opts2,opts1):=override(,toSequence (opts0|opts));
@@ -1097,6 +1097,31 @@ plot3d = true >> o -> (P,r) -> (
 	o }
     )
 
+listPlot = true >> o -> L -> if all(L, x -> instance(x,Number)) then listPlot(o,apply(#L,i->[i,L#i])) else (
+    if #L === 0 then return;
+    L = gParse L;
+    dist := if #L === 1 then 1 else sum(#L-1,i->norm(L#(i+1)-L#i)) / (#L-1);    
+    GraphicsList { Size => 40, Axes=>true, "fill" => "black",
+	symbol Contents => flatten {
+	    Polyline { PointList => L, "fill" => "none" },
+	    apply(L, r -> Circle { r, 0.1*dist, "stroke" => "none" })
+	    }, o
+	}
+    )
+
+matrixPlot = method(Options => true)
+matrixPlot Matrix := true >> o -> m -> matrixPlot(entries m,o)
+matrixPlot List := true >> o -> L -> (
+    L' := flatten L;
+    mn := min L'; -- TODO also accept complex numbers
+    mx := max L';
+    GraphicsList {
+    	Size => 40, "stroke" => "none",
+    	symbol Contents => flatten apply(#L, i -> apply(#(L#i), j -> Polygon{PointList=>{[j,-i],[j+1,-i],[j+1,-i-1],[j,-i-1]},"fill"=>"hsl(0,0%,"|toString round(100*(L#i#j-mn)/(mx-mn))|"%)"})),
+    	o
+    	}
+    )
+
 -- existing types that get a new output
 -- partitions
 horiz := p -> gList prepend(Line{[0,0],[p#0,0]},apply(#p,i->Line{[0,-1-i],[p#i,-1-i]}))
@@ -1501,6 +1526,30 @@ multidoc ///
     R=RR[x,y];
     P=y^2-(x+1)*(x-1)*(x-2);
     plot2d(P,{-2,3},"stroke-width"=>0.05,"stroke"=>"red",Axes=>true)
+ Node
+  Key
+   matrixPlot
+   (matrixPlot,List)
+   (matrixPlot,Matrix)
+  Headline
+   Graphical representation of a matrix
+  Description
+   Text
+    Represents a matrix or table of real numbers as a black and white rectangle.
+   Example
+    random (RR^6,RR^10)
+    matrixPlot oo
+ Node
+  Key
+   listPlot
+  Headline
+   Graphical representation of a list
+  Description
+   Text
+    Given a list of real numbers or vectors, this function joins them together to form a piecewise linear curve.
+    If the arguments are numbers, they form the y coordinates, and the x coordinates are assumed to be regularly spaced.
+   Example
+    listPlot apply(10,i->0.1*i^2)
  Node
   Key
    Axes
