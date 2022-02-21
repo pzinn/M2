@@ -220,7 +220,10 @@ tex     STYLE := x -> ""
 -- (tex, TOH) defined in format.m2
 tex TO   := x -> tex TT format x#0
 tex TO2  := x -> ( tag := x#0; text := x#1; tex TT text )
-tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+--tex HREF := x -> concatenate("\\special{html:<a href=\"", texLiteral toURL first x, "\">}", tex last x, "\\special{html:</a>}")
+scan({texMath,tex}, f ->
+    f HREF := x -> concatenate("\\href{", texLiteral toURL first x, "}{", f last x, "}")
+    )
 
 tex MENU := x -> tex drop(redoMENU x, 1)
 
