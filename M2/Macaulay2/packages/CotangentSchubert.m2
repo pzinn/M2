@@ -2,7 +2,7 @@ newPackage(
     "CotangentSchubert",
     AuxiliaryFiles => true,
     Version => "0.6",
-    Date => "19 Dec 2021", -- "22 Mar 2021",
+    Date => "21 Feb 2022", -- "22 Mar 2021",
     Authors => {{Name => "Paul Zinn-Justin",
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -10,7 +10,7 @@ newPackage(
     Keywords => {"Intersection Theory"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
-    DebuggingMode => true,
+    DebuggingMode => false,
     Configuration => { "Factor" => false, "PuzzleSize" => 7 }
     )
 
@@ -213,7 +213,7 @@ multidoc ///
    Inversion number of a string
   Description
    Text
-    Given a string of digits "a_1 a_2 ... a_n", computes the inversion number of that string 
+    Given a string of digits "a_1 a_2 ... a_n", computes the inversion number of that string
     (the number of i<j such that a_i>a_j).
  Node
   Key
@@ -255,7 +255,7 @@ multidoc ///
    Text
     This function returns the class of the canonical bundle of the flag variety
     in the cohomology ring given as argument (or the last ring defined with @TO {setupCotangent}@
-    if no argument is given).   
+    if no argument is given).
  Node
   Key
    puzzle
@@ -442,4 +442,3 @@ load "series.m2"
 apply(fug2,p->p+O(ϵ^2)) -- takes too long
 
 puzzle("5 4 3 ","210   ",Separated=>true)
-
