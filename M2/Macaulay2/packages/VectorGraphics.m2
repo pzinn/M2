@@ -8,7 +8,7 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
-        DebuggingMode => true,
+        DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text","Graphs"},
 	PackageExports => {"Text"}
@@ -1539,6 +1539,7 @@ multidoc ///
    Example
     random (RR^6,RR^10)
     matrixPlot oo
+    matrixPlot apply(32,i->apply(i+1,j->binomial(i,j)%2))
  Node
   Key
    listPlot
