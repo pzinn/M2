@@ -635,20 +635,20 @@ new SVG from GraphicsObject := (S,g) -> (
 	    zmin := -zmax;
 	    );
 	axes0 := gList if g.Axes === Frame then ( -- only 2d for now
-	    xscale := -floor (log(xmax-xmin)/log 10);
-	    yscale := -floor (log(ymax-ymin)/log 10);
+	    xscale := -floor (log(xmax-xmin)/log 10-1);
+	    yscale := -floor (log(ymax-ymin)/log 10-1);
 	    Polygon { PointList => { vector {xmin,ymin,0,1}, vector {xmax,ymin,0,1}, vector {xmax,ymax,0,1}, vector {xmin,ymax,0,1} } },
 	    apply(ceiling(xmin*10^xscale)..floor(xmax*10^xscale), i -> ( x := promote(i / 10^xscale,RR); (
 		    	Line { vector {x, ymax}, vector {x, 0.995*ymax+0.05*ymin} },
-			GraphicsText { vector {x, 1.008*ymax-0.008*ymin}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "text-top", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
+			if i%10 == 0 then GraphicsText { vector {x, 1.008*ymax-0.008*ymin}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "text-top", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
 			Line { vector {x, ymin}, vector {x, 0.995*ymin+0.05*ymax} },
-			GraphicsText { vector {x, 1.008*ymin-0.008*ymax}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "hanging", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
+			if i%10 == 0 then GraphicsText { vector {x, 1.008*ymin-0.008*ymax}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "hanging", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
 			))),
-	    apply(ceiling(ymin*10^xscale)..floor(ymax*10^xscale), i -> ( y := promote(i / 10^yscale,RR); (
+	    apply(ceiling(ymin*10^yscale)..floor(ymax*10^yscale), i -> ( y := promote(i / 10^yscale,RR); (
 		    	Line { vector {xmax, y}, vector {0.995*xmax+0.05*xmin,y} },
-			GraphicsText { vector {1.008*xmax-0.008*xmin,y}, toString y, FontSize => fs, "text-anchor" => "start", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
+			if i%10 == 0 then GraphicsText { vector {1.008*xmax-0.008*xmin,y}, toString y, FontSize => fs, "text-anchor" => "start", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
 			Line { vector {xmin, y}, vector {0.995*xmin+0.05*xmax,y} },
-			GraphicsText { vector {1.008*xmin-0.008*xmax,y}, toString y, FontSize => fs, "text-anchor" => "end", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
+			if i%10 == 0 then GraphicsText { vector {1.008*xmin-0.008*xmax,y}, toString y, FontSize => fs, "text-anchor" => "end", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
 			))),
 	    Perspective => p,
 	    "stroke" => "black", "stroke-width"=>"0.5%"
