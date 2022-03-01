@@ -8,7 +8,7 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
-        DebuggingMode => false,
+        DebuggingMode => true,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text","Graphs"},
 	PackageExports => {"Text"}
@@ -1114,7 +1114,7 @@ matrixPlot Matrix := true >> o -> m -> matrixPlot(entries m,o)
 matrixPlot List := true >> o -> L -> (
     L' := flatten L;
     mn := min L'; -- TODO also accept complex numbers
-    mx := max L';
+    mx := max L'; if mx == mn then if mx>0 then mn=0 else if mn<0 then mx=0 else mx=1;
     GraphicsList {
     	Size => 40, "stroke" => "none",
     	symbol Contents => flatten apply(#L, i -> apply(#(L#i), j -> Polygon{PointList=>{[j,-i],[j+1,-i],[j+1,-i-1],[j,-i-1]},"fill"=>"hsl(0,0%,"|toString round(100*(L#i#j-mn)/(mx-mn))|"%)"})),
