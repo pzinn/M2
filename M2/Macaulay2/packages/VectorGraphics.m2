@@ -8,7 +8,7 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "A package to produce SVG graphics",
 	Keywords => {"Graphics"},
-        DebuggingMode => true,
+        DebuggingMode => false,
 	AuxiliaryFiles => true,
 	PackageImports => {"Text","Graphs"},
 	PackageExports => {"Text"}
@@ -720,8 +720,14 @@ svglen = s -> try value s else if last s == "%" then 0.01*value substring(s,0,#s
     if svgunits#?unit then svgunits#unit*value num else error "unknown svg unit"
     )
 tikzconv1 := x -> y -> (
-    if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
-	c := value substring(y,3);
+    if substring(y,0,3)=="hsl" then (
+	c := value replace("%","/100.",substring(y,3));
+	i := floor(6*c#0); f := 6*c#0-i;
+	F := if i==0 then {0,1-f,1} else if i==1 then {f,0,1} else if i==2 then {1,0,1-f} else if i==3 then {1,f,0} else if i==4 then {1-f,1,0} else if i==5 then {0,1,f} else {0,1,1};
+	rgb := c#2*({1,1,1}-c#1*F);
+	y = "{rgb,1:red,"|toString rgb#0|";green,"|toString rgb#1|";blue,"|toString rgb#2|"}";
+	) else if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
+	c = value substring(y,3);
     	y = "{rgb,255:red,"|toString min(c#0,255)|";green,"|toString min(c#1,255)|";blue,"|toString min(c#2,255)|"}";
 	);
     x|"="|y
