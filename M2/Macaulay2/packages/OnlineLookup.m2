@@ -48,7 +48,21 @@ beginDocumentation()
 multidoc ///
  Node
   Key
+   OnlineLookup
+  Headline
+   Look up mathematical information online
+  Description
+   Text
+    The purpose of this package is to collect helper functions that allow to query web sites for mathematical
+    information and format it into Macaulay2 output.
+    At present, it only contains one such function, @TO{oeis}@, but more will be implemented in the future.
+ Node
+  Key
    oeis
+   (oeis, String)
+   (oeis, VisibleList)
+   [oeis, Limit]
+   [oeis, Position]
   Headline
    OEIS lookup
   Description
@@ -56,4 +70,18 @@ multidoc ///
     This function looks up the argument (a list of integers or a string) in the Online Encyclopedia of Integer Sequences (@HREF "http://oeis.org/"@).
    Example
     oeis {1,3,31,1145}
+   Text
+    Optional arguments @TT"Limit"@ and @TT"Position"@ allow to control the maximum amount of listed answers.
+   Example
+    L = apply(5,n->n!);
+    oeis (L,Limit=>5)
+    oeis (L,Limit=>1,Position=>2)
+ Node
+  Key
+   urlEncode
+  Headline
+   URL encoding
+  Description
+   Text
+    This function provides a minimal encoding of a string in order to be used as part of a URL.
 ///
