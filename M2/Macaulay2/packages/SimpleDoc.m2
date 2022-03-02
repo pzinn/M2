@@ -18,7 +18,7 @@ newPackage(
     )
 
 export {"doc", "multidoc", "packageTemplate", -- functions
-    "arXiv", "stacksProject", "wikipedia", "oeis", -- helper functions
+    "arXiv", "stacksProject", "wikipedia", -- helper functions
     "docTemplate", "docExample", "testExample", "simpleDocFrob" -- templates and examples
     }
 
