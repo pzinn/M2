@@ -167,6 +167,7 @@ AC_CHECK_PROGS(OBJDUMP,objdump,false)
 AC_CHECK_PROGS(OBJCOPY,objcopy,false)
 AC_CHECK_PROGS(LDD,ldd,false)
 AC_CHECK_PROGS(GIT,git,false)
+AC_CHECK_PROGS(NPM,npm,false)
 
 AC_CHECK_TOOL(AR,ar,false)
 AC_CHECK_TOOL(AS,as,false)
@@ -206,6 +207,30 @@ if "$TAR" --version | head -1 | grep "GNU tar" >/dev/null 2>&1
 then AC_MSG_RESULT(yes)
 else AC_MSG_ERROR($TAR: GNU tar is required)
 fi
+
+AC_ARG_ENABLE([documentation],
+    [AS_HELP_STRING([--enable-documentation=...],
+        [space-delimited list of types of documentation to build; available
+         options are "html", "info", and "pdf"; default value is "html info"])],
+    [DOCUMENTATION=$enableval],
+    [DOCUMENTATION="html info"])
+
+if test "$DOCUMENTATION" = no
+then DOCUMENTATION=""
+elif test "$DOCUMENTATION" = yes
+then DOCUMENTATION="html info"
+else for DOCTYPE in $DOCUMENTATION
+    do case $DOCTYPE in
+            html|info|pdf)
+                ;;
+            *)
+                AC_MSG_ERROR([unknown documentation type ($DOCTYPE); expected html, info, or pdf])
+                ;;
+        esac
+    done
+fi
+
+AC_SUBST(DOCUMENTATION)
 
 AC_CANONICAL_HOST()
 AC_SUBST(ARCH,$build_cpu)
@@ -1856,6 +1881,7 @@ AC_MSG_NOTICE([with  OPTIMIZE          = $OPTIMIZE])
 AC_MSG_NOTICE([with  DEBUG             = $DEBUG])
 AC_MSG_NOTICE([with  GIT_DESCRIPTION   = $GIT_DESCRIPTION])
 AC_MSG_NOTICE([with  USING_MPIR        = $USING_MPIR])
+AC_MSG_NOTICE([with  DOCUMENTATION     = $DOCUMENTATION])
 
 subset() {
     # whether the words of $1 are among the words of $2
