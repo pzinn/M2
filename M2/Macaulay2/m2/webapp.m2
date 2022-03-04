@@ -132,8 +132,9 @@ ZZ#{WebApp,AfterPrint} = identity
 
 if topLevelMode === WebApp then (
     compactMatrixForm = false;
+    extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    processExamplesLoop ExampleItem := (x->new LITERAL from replace("\\$\\{prefix\\}","usr",x#0)) @@ (lookup(processExamplesLoop,ExampleItem));
+    processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
     -- the print hack
