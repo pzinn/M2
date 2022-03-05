@@ -1168,9 +1168,9 @@ texMath SparseMonomialVectorExpression := v -> (
 
 texMath Table := m -> (
     if m#?0 then concatenate(
-	"{\\begin{array}{", #m#0: "c", "}", newline,
-	apply(m, row -> (between("&",apply(row,texMath)), ///\\///|newline)),
-	"\\end{array}}")
+	"\\begin{array}{", #m#0: "c", "}", newline,
+	between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
+	newline, "\\end{array}")
     else "{}"
     )
 
@@ -1183,7 +1183,7 @@ texMath MatrixExpression := x -> (
 	if opts.Degrees =!= null then (
 	    degs := apply(opts.Degrees#0,texMath);
 	    if opts.CompactMatrix then "\\begin{smallmatrix}" else "\\begin{array}{l}",
-	    apply(#m, i -> degs#i | "\\vphantom{" | concatenate m#i | "}\\\\"),
+	    apply(#m, i -> concatenate(degs#i,"\\vphantom{",m#i, "}", if i<#m-1 then "\\\\")),
 	    if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}"
 	    ),
 	"\\left(",
@@ -1196,7 +1196,7 @@ texMath MatrixExpression := x -> (
 	apply(#m, i -> concatenate(
 		if opts.Degrees =!= null then "\\vphantom{"| degs#i | "}",
 		 between("&",m#i),
-		 "\\\\",
+		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
 		 if opts.BlockMatrix =!= null then if h<#opts.BlockMatrix#0-1 and j == opts.BlockMatrix#0#h then (j=0; h=h+1; "\\hline\n") else (j=j+1;)
 		 )),
