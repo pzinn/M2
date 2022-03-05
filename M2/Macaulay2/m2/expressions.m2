@@ -1217,7 +1217,8 @@ texMath VectorExpression := v -> (
     )
 
 -----------------------------------------------------------------------------
-print = x -> (<< net x << endl;) -- !! one may want to modify this depending on the type of output !!
+printFunc = new MutableHashTable from { Standard => x -> (<< net x << endl;) }
+print =  x -> printFunc#(if printFunc#?topLevelMode then topLevelMode else Standard) x
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)

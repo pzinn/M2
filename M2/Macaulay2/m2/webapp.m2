@@ -130,6 +130,13 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
 
 ZZ#{WebApp,AfterPrint} = identity
 
+
+printFunc#WebApp = x -> (
+    y := htmlInside x; -- we compute the html now (in case it produces an error)
+    if class y =!= String then error "invalid html output";
+    << webAppHtmlTag | y | webAppEndTag << endl;
+    )
+
 if topLevelMode === WebApp then (
     compactMatrixForm = false;
     extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
@@ -137,12 +144,6 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
-    -- the print hack
-    print = x -> if topLevelMode === WebApp then (
-	y := htmlInside x; -- we compute the html now (in case it produces an error)
-	if class y =!= String then error "invalid html output";
-	<< webAppHtmlTag | y | webAppEndTag << endl;
-	) else ( << net x << endl; );
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
