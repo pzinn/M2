@@ -46,7 +46,7 @@ succ(BinaryOperation,BinaryOperation) := (x,y) -> x#0 === symbol .. and y#0 === 
     succ (x#2,y#1) or (
 	instance(x#1,Subscript) and instance(x#2,Subscript)
 	and instance(y#1,Subscript) and instance(y#2,Subscript) and (
-	    a := deepSplice sequence expressionValue x#1#1; b := deepSplice sequence expressionValue x#2#1; c := deepSplice sequence expressionValue y#1#1; d := deepSplice sequence expressionValue y#2#1;
+	    a := sequence x#1#1; b := sequence x#2#1; c := sequence y#1#1; d := sequence y#2#1;
 	    -- find what endpoints have in common, remove
 	    while #a>0 and #c>0 and last a === last c do ( a=drop(a,-1); c=drop(c,-1); );
 	    if #a === 0 then a=x#1#0 else a=new Subscript from {x#1#0,unsequence a};
@@ -85,10 +85,8 @@ runLengthEncode0 = x -> (
 		    m = m+1; 
 		    continue)
 	       else first(
-		    if oi === symbol oi then (oi = i; m = 1 ; continue)
-		    else if m === 1 then hold oi
-		    else if dupin === true then hold m : expression oi
-		    else (if instance(i0,BinaryOperation) then i0#1 else expression i0) .. (if instance(oi,BinaryOperation) then oi#2 else expression oi),
+		    if oi === symbol oi then (oi = i; m = 1 ; continue) else
+		    if m === 1 then hold oi else if dupin === true then hold m : expression oi else (if instance(i0,BinaryOperation) then i0#1 else expression i0) .. (if instance(oi,BinaryOperation) then oi#2 else expression oi),
 		    (dupin = null; oi = i; m = 1))));
      x)
 
