@@ -488,13 +488,22 @@ taylor := (f,g) -> f RingElement := x -> (
     )
 
 taylor (exp, (x,n) -> (
-    s := 1; xx := 1;
-    for k from 1 to n-1 do (
-        xx = (1/k)*xx*x;
-        s = s + xx;
-        );
-    s
-    ))
+    	s := 1; xx := 1;
+    	for k from 1 to n-1 do (
+            xx = (1/k)*xx*x;
+            s = s + xx;
+            );
+    	s
+    	))
+
+taylor (expm1, (x,n) -> (
+    	s := 0; xx := 1;
+    	for k from 1 to n-1 do (
+            xx = (1/k)*xx*x;
+            s = s + xx;
+            );
+    	s
+    	))
 
 sintaylor := (x,n) -> (
     s := x; xx := x;
@@ -521,6 +530,7 @@ costaylor := (x,n) -> (
 taylor (cos, costaylor)
 
 taylor (tan, (x,n) -> sintaylor(x,n) * (costaylor(x,n))^-1)
+taylor (sec, (x,n) -> (costaylor(x,n))^-1)
 
 sinhtaylor := (x,n) -> (
     s := x; xx := x;
@@ -547,7 +557,41 @@ coshtaylor := (x,n) -> (
 taylor (cosh, coshtaylor)
 
 taylor (tanh, (x,n) -> sinhtaylor(x,n) * (coshtaylor(x,n))^-1)
+taylor (sech, (x,n) -> (coshtaylor(x,n))^-1)
 
+taylor (asin, (x,n) -> (
+    	s := x; xx := x;
+    	k := 3;
+    	while k<n do (
+            xx = (k-2)/(k-1)*xx*x^2;
+	    s = s + xx/k;
+	    k=k+2;
+            );
+    	s
+    	))
+	
+taylor (atan, (x,n) -> (
+    	s := x; xx := x;
+    	k := 3;
+    	while k<n do (
+            xx = -xx*x^2;
+	    s = s + xx/k;
+	    k=k+2;
+            );
+    	s
+    	))
+
+taylor (log1p, (x,n) -> (
+	s:=x; xx := x;
+	k := 2;
+    	while k<n do (
+        xx = -xx*x;
+	s = s + xx/k;
+	k=k+1;
+        );
+    s
+    ))
+		 
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
