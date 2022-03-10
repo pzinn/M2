@@ -210,8 +210,7 @@ typval = x -> (
  
 load "tvalues.m2"
 
-scanPairs(redefs, (k,v) -> globalAssign(baseName k,v));
- 
+scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
 
 -- TODO abs Constant
 
