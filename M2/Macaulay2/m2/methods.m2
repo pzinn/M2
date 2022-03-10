@@ -270,7 +270,7 @@ setupMethods((), {
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, rank, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
-	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw, exp,
+	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
 	  leadComponent, degreesRing, degrees, assign, numgens, realPart, imaginaryPart, conjugate,
 	  relations, cone, standardForm, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,

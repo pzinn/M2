@@ -237,7 +237,7 @@ locatePackageFile = (defaultPrefix,defaultLayoutIndex,pkgname,f) -> (
      if layoutIndex === null then layoutIndex = defaultLayoutIndex;
      tail := f Layout#layoutIndex;
      assert isAbsolutePath prefix;
-     if not fileExists (prefix|tail) 
+     if not fileExists (prefix|tail) and debugLevel>0
      then stderr << "--warning: file " << baseFilename tail << " not installed yet in package " << pkgname << endl; -- we may want to hush these warnings
      (prefix, tail)                 -- we return a pair so a relative link to the file can be created if the two prefixes are the same
      )

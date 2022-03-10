@@ -433,169 +433,20 @@ isReal RRi := isReal RR := isReal QQ := isReal ZZ := x -> true
 isReal CC := z -> imaginaryPart z == 0
 
 acosh = method()
-acosh Number := z -> log'(z+sqrt(z^2-1))
+acosh Number := z -> log(z+sqrt(z^2-1))
 acosh Constant := acosh @@ numeric
 asinh = method()
-asinh Number := z -> log'(z+sqrt(z^2+1))
+asinh Number := z -> log(z+sqrt(z^2+1))
 asinh Constant := asinh @@ numeric
 atanh = method()
-atanh Number := z -> log'((1+z)/(1-z))/2
+atanh Number := z -> log((1+z)/(1-z))/2
 atanh Constant := atanh @@ numeric
 acoth = method()
 acoth Number := z -> atanh(1/z)
 acoth Constant := acoth @@ numeric
 acot = method()
-acot Number := z -> atan'(1/z)
+acot Number := z -> atan(1/z)
 acot Constant := acot @@ numeric
-
-if member("--no-tvalues", commandLine) then end
-
--- TODO abs Constant
-typval = x -> (
-    f' := x#0;
-    if not instance(f',Function) then return;
-    s' := toString f';
-    if last s' != "'" then return;
-    s := substring(s',0,#s'-1);
-    f = value s;
-    if instance(f,Symbol) then (
-	globalAssign(f,method());
-        f = value f;
-	);
-    args := drop(drop(x,-1),1);
-    installMethod append(prepend(f,args),last x => f');
-    if args === sequence RR then f Constant := f' @@ numeric
-    else if #args === 2 then (
-	if args#0 === RR then f (Constant, args#1) := (x,y) -> f'(numeric x,y);
-	if args#1 === RR then f (args#0, Constant) := (x,y) -> f'(x,numeric y);
-	if args === (RR,RR) then f(Constant, Constant) := (x,y) -> f'(numeric x,numeric y); -- phew
-    ))
-
-load "tvalues.m2"
-
-nilp := x -> (  -- degree of nilpotency
-    R := ring x;
-    k := R; while not isField k do k = baseRing k;
-    f := map(R,k(monoid [getSymbol "X"]),{x});
-    I := kernel f;
-    if I == 0 or (l:=listForm I_0; #l>1) then infinity else l#0#0#0
-    )
-
-taylor := (f,g) -> f RingElement := x -> (
-    try promote(f lift(x,RR),ring x)
-    else try promote(f lift(x,CC),ring x)
-    else (
-	n := try nilp x else error (toString f | ": expected an algebra over QQ");
-	if n === infinity then error (toString f | ": undefined");
-	g(x,n)
-	)
-    )
-
-taylor (exp, (x,n) -> (
-    	s := 1; xx := 1;
-    	for k from 1 to n-1 do (
-            xx = (1/k)*xx*x;
-            s = s + xx;
-            );
-    	s
-    	))
-
-taylor (expm1, (x,n) -> (
-    	s := 0; xx := 1;
-    	for k from 1 to n-1 do (
-            xx = (1/k)*xx*x;
-            s = s + xx;
-            );
-    	s
-    	))
-
-sintaylor := (x,n) -> (
-    s := x; xx := x;
-    k := 3;
-    while k<n do (
-        xx = -(1/k/(k-1))*xx*x^2;
-	s = s + xx;
-	k=k+2;
-        );
-    s
-    )
-taylor (sin, sintaylor)
-
-costaylor := (x,n) -> (
-    s := 1; xx := 1;
-    k := 2;
-    while k<n do (
-        xx = -(1/k/(k-1))*xx*x^2;
-	s = s + xx;
-	k=k+2;
-        );
-    s
-    )
-taylor (cos, costaylor)
-
-taylor (tan, (x,n) -> sintaylor(x,n) * (costaylor(x,n))^-1)
-taylor (sec, (x,n) -> (costaylor(x,n))^-1)
-
-sinhtaylor := (x,n) -> (
-    s := x; xx := x;
-    k := 3;
-    while k<n do (
-        xx = (1/k/(k-1))*xx*x^2;
-	s = s + xx;
-	k=k+2;
-        );
-    s
-    )
-taylor (sinh, sinhtaylor)
-
-coshtaylor := (x,n) -> (
-    s := 1; xx := 1;
-    k := 2;
-    while k<n do (
-        xx = (1/k/(k-1))*xx*x^2;
-	s = s + xx;
-	k=k+2;
-        );
-    s
-    )
-taylor (cosh, coshtaylor)
-
-taylor (tanh, (x,n) -> sinhtaylor(x,n) * (coshtaylor(x,n))^-1)
-taylor (sech, (x,n) -> (coshtaylor(x,n))^-1)
-
-taylor (asin, (x,n) -> (
-    	s := x; xx := x;
-    	k := 3;
-    	while k<n do (
-            xx = (k-2)/(k-1)*xx*x^2;
-	    s = s + xx/k;
-	    k=k+2;
-            );
-    	s
-    	))
-	
-taylor (atan, (x,n) -> (
-    	s := x; xx := x;
-    	k := 3;
-    	while k<n do (
-            xx = -xx*x^2;
-	    s = s + xx/k;
-	    k=k+2;
-            );
-    	s
-    	))
-
-taylor (log1p, (x,n) -> (
-	s:=x; xx := x;
-	k := 2;
-    	while k<n do (
-        xx = -xx*x;
-	s = s + xx/k;
-	k=k+1;
-        );
-    s
-    ))
-		 
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
