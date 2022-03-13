@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "OnlineLookup",
-        Version => "0.5",
+        Version => "0.6",
         Date => "Mar 2, 2022",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
@@ -13,7 +13,9 @@ newPackage(
 	PackageImports => {"Text"}
         )
 
-export {"oeis","urlEncode"}
+export {"oeis","urlEncode","isc"}
+
+debug Core
 
 -- TODO might need more encoding. see also html.m2
 urlEncode = s -> if s === null then s else (
@@ -43,6 +45,23 @@ oeis String := o -> search -> (
             )))
     )
 -- e.g. oeis {1,2,7,42}
+
+isc = method()
+
+isc RR := x -> (
+    s := format(0,-1,1000,1000,"",x);
+    isc substring(s,0,#s-1) -- remove last digit for now...
+    )
+isc String := s -> (
+    url := "http://wayback.cecm.sfu.ca/cgi-bin/isc/lookup?number="|urlEncode s|"&lookup_type=simple";
+    www := last splitWWW getWWW url;
+    ans := select("(?<=<PRE>)[\\s\\S]*?(?=</PRE>)",www);
+    if #ans == 0 then return {};
+    ans = first ans;
+    lst := select(separate("\n\n",ans),x->#x>3 and substring(x,0,3)=="<B>");
+    VerticalList apply(lst,x->SPAN replace("<.*?>","",x))
+    )
+
 
 beginDocumentation()
 multidoc ///
