@@ -1105,14 +1105,14 @@ plot3d = true >> o -> (P,r) -> (
     )
 
 listPlot = true >> o -> L -> if all(L, x -> instance(x,Number)) then listPlot(o,apply(#L,i->[i,L#i])) else (
+    joined := not o.?Join or o.Join;
     if #L === 0 then return;
     L = gParse L;
-    dist := if #L === 1 then 1 else sum(#L-1,i->norm(L#(i+1)-L#i)) / (#L-1);    
+    dist := if #L === 1 then 1 else min if joined then apply(#L-1,i->norm(L#(i+1)-L#i)) else (j := #L//2; apply(#L,i->if i!=j then norm(L#j-L#i) else norm(first L-last L)));
+    pts := GraphicsList { Contents => apply(L, r -> Circle { r, 0.1*dist }), "stroke"=>"none" };
     GraphicsList { Size => 40, Axes=>true, "fill" => "black",
-	symbol Contents => flatten {
-	    Polyline { PointList => L, "fill" => "none" },
-	    apply(L, r -> Circle { r, 0.1*dist, "stroke" => "none" })
-	    }, o
+	symbol Contents => if joined then {Polyline { PointList => L, "fill" => "none" },pts} else { pts },
+	o
 	}
     )
 
@@ -1556,6 +1556,8 @@ multidoc ///
    Text
     Given a list of real numbers or vectors, this function joins them together to form a piecewise linear curve.
     If the arguments are numbers, they form the y coordinates, and the x coordinates are assumed to be regularly spaced.
+
+    The optional argument @TT "Join"@ specifies whether points should be connected by a line.
    Example
     listPlot apply(10,i->0.1*i^2)
  Node
