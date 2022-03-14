@@ -1,0 +1,15 @@
+-- -*- M2-comint -*- hash: -615542623
+i1 : 1:0isc (2*sqrt pi)
+
+o1 = $\left\{\begin{aligned}&amp;<span>Mixed constants with 5 operations
+3544907701811032 = 2*sr(Pi)</span>\\&amp;<span>Mixed constants, 2 with elementary transforms.
+3544907701811032 = 2*sr(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
+3544907701811032 = 2*Pi/sr(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
+3544907701811032 = 2*exp(1/2)^ln(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
+3544907701811032 = exp(1/2)^ln(Pi)+sr(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
+3544907701811032 = GAM(1/6)*GAM(5/6)/sr(Pi)
+</span>\end{aligned}\right\}$
+
+o1 : <pre style="display:inline">
+VerticalList</pre>
+i2 : 2:0

@@ -1,0 +1,21 @@
+-- -*- M2-comint -*- hash: 1103500785
+i1 : 1:0oeis {1,3,31,1145}
+
+o1 = $\left\{\begin{aligned}0.\quad&amp;<span><a href="https://oeis.org/A029729">A029729</a> Degree of the variety of pairs of commuting n X n matrices.</span>\\1.\quad&amp;<span><a href="https://oeis.org/A094579">A094579</a> Duplicate of A029729.</span>\end{aligned}\right\}$
+
+o1 : <pre style="display:inline">
+NumberedVerticalList</pre>
+i2 : 2:0L = apply(5,n->n!);
+i3 : 3:0oeis (L,Limit=>5)
+
+o3 = $\left\{\begin{aligned}0.\quad&amp;<span><a href="https://oeis.org/A000142">A000142</a> Factorial numbers: n! = 1*2*3*4*...*n (order of symmetric group S_n, number of permutations of n letters).</span>\\1.\quad&amp;<span><a href="https://oeis.org/A072856">A072856</a> Number of permutations satisfying i-4&lt;=p(i)&lt;=i+4, i=1..n (permutations of length n within distance 4).</span>\\2.\quad&amp;<span><a href="https://oeis.org/A061602">A061602</a> Sum of factorials of the digits of n.</span>\\3.\quad&amp;<span><a href="https://oeis.org/A177523">A177523</a> Number of permutations of 1..n avoiding adjacent step pattern up, up, up, up.</span>\\4.\quad&amp;<span><a href="https://oeis.org/A263777">A263777</a> Number of inversion sequences avoiding pattern 201 (or 210).</span>\end{aligned}\right\}$
+
+o3 : <pre style="display:inline">
+NumberedVerticalList</pre>
+i4 : 4:0oeis (L,Limit=>1,Position=>2)
+
+o4 = $\left\{\begin{aligned}0.\quad&amp;<span><a href="https://oeis.org/A061602">A061602</a> Sum of factorials of the digits of n.</span>\end{aligned}\right\}$
+
+o4 : <pre style="display:inline">
+NumberedVerticalList</pre>
+i5 : 5:0
