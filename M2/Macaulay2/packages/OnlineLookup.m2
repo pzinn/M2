@@ -9,9 +9,7 @@ newPackage(
         Headline => "Look up mathematical information online",
 	Keywords => {"System"},
         DebuggingMode => false,
-	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
-	OptionalComponentsPresent => try getWWW "http://blogs.unimelb.edu.au/paul-zinn-justin/" then true else false,
 	PackageImports => {"Text"}
         )
 
@@ -19,24 +17,31 @@ export {"oeis","urlEncode","isc"}
 
 debug Core
 
--- TODO might need more encoding. see also html.m2
-urlEncode = s -> if s === null then s else (
-     s = replace("\\s", "%20", s);
-     s = replace(",", "%2C", s);
-     s = replace("/", "%2F", s);
-     s
-     )
+percentEncoding = hashTable transpose {
+    {"␣", "!", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "/", ":", ";", "=", "?", "@", "[", "]"},
+    {"%20", "%21", "%23", "%24", "%25", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%2F", "%3A", "%3B", "%3D", "%3F", "%40", "%5B", "%5D"}
+    }
+
+-- TODO: use to/move in html.m2
+urlEncode = method()
+urlEncode Nothing := identity
+urlEncode String := s -> concatenate apply(s, c -> if percentEncoding#?c then percentEncoding#c else c)
 
 oeisHTTP := "http://oeis.org";
 oeisHTTPS := "https://oeis.org";
+
+tryWWW = url -> try last splitWWW getWWW url else (
+    << "--warning: failed to fetch from the web" << endl;
+    return "";
+    )
+
 
 oeis = method(TypicalValue => NumberedVerticalList,
     Options => {Limit => 100, Position => 0})
 oeis VisibleList := o -> L -> oeis (demark(",",toString\L),o)
 oeis String := o -> search -> (
-    if not (options OnlineLookup).OptionalComponentsPresent then return null;
     url:=oeisHTTP|"/search?q="|urlEncode search|"&fmt=text&start="|o.Position|"&n="|o.Limit; -- limit the number of results
-    www := last splitWWW getWWW url;
+    www :=  tryWWW url;
     ans := select("(?<=^%N ).*$",www);    
     NumberedVerticalList apply(ans, line -> SPAN(
             blank := regex(" ",line);
@@ -57,9 +62,8 @@ isc RR := x -> (
     isc substring(s,0,#s-1) -- remove last digit for now... TODO better
     )
 isc String := s -> (
-    if not (options OnlineLookup).OptionalComponentsPresent then return null;
     url := "http://wayback.cecm.sfu.ca/cgi-bin/isc/lookup?number="|urlEncode s|"&lookup_type=simple";
-    www := last splitWWW getWWW url;
+    www := tryWWW url;
     ans := select("(?<=<PRE>)[\\s\\S]*?(?=</PRE>)",www);
     if #ans == 0 then return {};
     ans = first ans;
