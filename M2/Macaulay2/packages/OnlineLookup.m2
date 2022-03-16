@@ -56,6 +56,13 @@ oeis String := o -> search -> (
 
 isc = method()
 
+maple2M2 = s -> ( -- some common functions
+    s = replace("sr","sqrt",s);
+    s = replace("GAM","Gamma",s);
+    s = replace("Pi","pi",s)
+    )
+
+
 isc Constant := isc @@ numeric
 isc RR := x -> (
     s := format(0,-1,1000,1000,"",x);
@@ -67,8 +74,11 @@ isc String := s -> (
     ans := select("(?<=<PRE>)[\\s\\S]*?(?=</PRE>)",www);
     if #ans == 0 then return {};
     ans = first ans;
-    lst := select(separate("\n\n",ans),x->#x>3 and substring(x,0,3)=="<B>");
-    VerticalList apply(lst,x->SPAN replace("<.*?>","",x))
+    lst := apply(select(separate("\n\n",ans),x->#x>3 and substring(x,0,3)=="<B>"),x->replace("<.*?>","",x)); -- TODO limit number
+    VerticalList apply(lst, x -> (
+	    y := separate("=",x);
+	    SPAN ( drop(y,-1) | {"=", CODE maple2M2 last y} )
+    	    ))
     )
 
 
