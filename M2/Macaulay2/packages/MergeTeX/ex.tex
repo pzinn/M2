@@ -1,0 +1,101 @@
+\documentclass[12pt,a4paper]{amsart}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usepackage{listings}
+\input lst-Macaulay2.tex
+\lstset
+{
+aboveskip=0pt,
+belowskip=0pt,
+numbers=none,
+frame=leftline,% comment out if you don't like the blue rectangles
+framerule=1ex,
+framesep=1ex,
+xleftmargin=2ex,
+columns=fixed,
+showstringspaces=false,
+fontadjust=true,
+basewidth={1.09ex},
+breaklines=false,
+}
+\usepackage[a4paper,left=2.25cm,right=2.25cm,top=3cm,bottom=3cm,headsep=1cm]{geometry}
+\title{Example file for M2inTeX}
+\author{Paul Zinn-Justin}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+some basic examples:
+\begin{lstlisting}[language=Macaulay2]
+R=QQ[x,y]; factor(x^3-y^3)
+res coker vars R
+OO_(Proj(R/(x^3-y^3)))^{1,2}
+matrix {{1,2},{3,4}}
+\end{lstlisting}
+more:
+\begin{lstlisting}[language=Macaulay2]
+318/46
+exp 3.73767
+\end{lstlisting}
+strings:
+\begin{lstlisting}[language=Macaulay2]
+"hehe"
+\end{lstlisting}
+and nets:
+\begin{lstlisting}[language=Macaulay2]
+"haha123456789"||"hoho!@#$%^&*("
+\end{lstlisting}
+printing:
+\begin{lstlisting}[language=Macaulay2]
+for i from 1 to 4 do print(i+ii)
+\end{lstlisting}
+
+\section{Help}
+\begin{lstlisting}[language=Macaulay2]
+help det
+\end{lstlisting}
+
+\section{Packages}
+packages that have a {\tt tex} output will work:
+\begin{lstlisting}[language=Macaulay2]
+needsPackage "Posets";
+booleanLattice 3
+\end{lstlisting}
+
+\section{Tricky examples}
+\begin{lstlisting}[language=Macaulay2]
+-- some tricky examples
+\end{lstlisting}
+A bunch of complicated cases: a multi-line example
+\begin{lstlisting}[language=Macaulay2]
+f = i -> (
+-- that's dumb
+i+1
+)
+\end{lstlisting}
+and another weirder one:
+\begin{lstlisting}[language=Macaulay2]
+I=ideal 0; f = i -> (
+i+1)
+\end{lstlisting}
+finally:
+\begin{lstlisting}[language=Macaulay2]
+a=1;b=2;
+c=3;
+\end{lstlisting}
+That last one has no output.
+
+\section{Reusing output}
+The output {\tt o5} is \macoutput{5}.
+The nonexistent output {\tt o18} is \macoutput{18}.
+
+\section{Inputting from external file}
+Some more code:
+\lstinputlisting[language=Macaulay2]{ex.m2}
+
+\section{Changing key/values}
+\begin{lstlisting}[showstringspaces=true,language=Macaulay2,basewidth={1.5ex}]
+"some weird spacing  and string style"
+\end{lstlisting}
+
+\end{document}
