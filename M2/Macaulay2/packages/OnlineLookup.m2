@@ -22,7 +22,7 @@ percentEncoding = hashTable transpose {
     {"%20", "%21", "%23", "%24", "%25", "%26", "%27", "%28", "%29", "%2A", "%2B", "%2C", "%2F", "%3A", "%3B", "%3D", "%3F", "%40", "%5B", "%5D"}
     }
 
--- TODO: use to/move in html.m2
+-- TODO: use in/move to html.m2
 urlEncode = method()
 urlEncode Nothing := identity
 urlEncode String := s -> concatenate apply(s, c -> if percentEncoding#?c then percentEncoding#c else c)
@@ -59,7 +59,8 @@ isc = method()
 maple2M2 = s -> ( -- some common functions
     s = replace("sr","sqrt",s);
     s = replace("GAM","Gamma",s);
-    s = replace("Pi","pi",s)
+    s = replace("Pi","pi",s);
+    s = replace("Psi","Digamma",s) -- TODO implement from mpfr
     )
 
 
