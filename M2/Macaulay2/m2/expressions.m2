@@ -1271,7 +1271,7 @@ Boolean#{Standard,AfterPrint} = identity
 
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
-toString'(Function, FilePosition) := (fmt,i) -> concatenate(i#0,":",toString i#1,":",toString i#2)
+toString FilePosition :=
 net FilePosition := i -> concatenate(i#0,":",toString i#1,":",toString i#2)
 
 -- extra stuff

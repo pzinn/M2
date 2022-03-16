@@ -29,7 +29,7 @@ recordPosition = () -> if currentFileName == "stdio" then ( -- for now only stdi
     webAppPositionTag,
 --    toString currentFileName,
 --    ":",
-    toString currentLineNumber(), -- not to be confused with lineNumber!!!
+    toString currentRowNumber(), -- not to be confused with lineNumber!!!
     ":",
     toString currentColumnNumber(),
     webAppEndTag

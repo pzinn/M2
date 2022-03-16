@@ -865,11 +865,11 @@ document {
      SeeAlso => { getGlobalSymbol }
      }
 
-document { Key => symbol currentLineNumber,
+document { Key => symbol currentRowNumber,
      Headline => "current line number of the current input file",
-     Usage => "currentLineNumber()",
+     Usage => "currentRowNumber()",
      Outputs => { ZZ => "the current line number of the current input file" },
-     EXAMPLE "currentLineNumber()",
+     EXAMPLE "currentRowNumber()",
      SeeAlso => "currentFileName" }
 document { Key => symbol currentFileDirectory,
      Headline => "the directory containing the current input file",
@@ -882,7 +882,7 @@ document { Key => symbol currentFileName,
      Usage => "currentFileName",
      Outputs => { String => "the name of the current source file" },
      EXAMPLE "currentFileName",
-     SeeAlso => "currentLineNumber" }
+     SeeAlso => "currentRowNumber" }
 
 document { Key => functionBody,
      Headline => "get the body of a function",
