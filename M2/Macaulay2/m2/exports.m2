@@ -131,6 +131,7 @@ export {
 	"Describe",
 	"Description",
 	"Dictionary",
+	"Digamma",
 	"Dispatch",
 	"Divide",
 	"DivideConquer",

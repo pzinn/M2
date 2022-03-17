@@ -1018,6 +1018,15 @@ Gamma(e:Expr):Expr := (
      );
 setupfun("Gamma",Gamma);
 setupfun("Gamma",Gamma).Protected=false;
+Digamma(e:Expr):Expr := (
+     when e
+     is x:RRcell do toExpr(Digamma(x.v))			    -- # typical value: Digamma, RR, RR
+     is x:ZZcell do toExpr(Digamma(toRR(x.v)))			    -- # typical value: Digamma, ZZ, RR
+     is x:QQcell do toExpr(Digamma(toRR(x.v)))			    -- # typical value: Digamma, QQ, RR
+     else buildErrorPacket("expected a number")
+     );
+setupfun("Digamma",Digamma);
+setupfun("Digamma",Digamma).Protected=false;
 export lgamma(x:RR):Expr := (
      z := newRRmutable(precision(x));
      i := 0;

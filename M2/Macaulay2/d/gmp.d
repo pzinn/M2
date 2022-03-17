@@ -2395,6 +2395,11 @@ export Gamma(x:RR):RR := (
      Ccode( void, "mpfr_gamma(", z, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
 
+export Digamma(x:RR):RR := (
+     z := newRRmutable(precision0(x));
+     Ccode( void, "mpfr_digamma(", z, ",", x, ", GMP_RNDN)" );
+     moveToRRandclear(z));
+
 export factorial(x:RR):RR := Gamma(x+1);
 
 export eint(x:RR):RR := (
