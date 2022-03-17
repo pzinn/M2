@@ -73,6 +73,7 @@ export {
 	"BeforePrint",
 	"BesselJ",
 	"BesselY",
+	"Beta",
 	"BettiTally",
 	"Binary",
 	"BinaryOperation",

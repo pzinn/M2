@@ -1154,6 +1154,36 @@ atan2(e:Expr):Expr := (
      else WrongNumArgs(2));
 setupfun("atan2",atan2);
 setupfun("atan2",atan2).Protected=false;
+
+Beta(yy:Expr,xx:Expr):Expr := (
+     when yy
+     is y:RRcell do (
+	  when xx
+	  is x:RRcell do toExpr(Beta(y.v,x.v))			            -- # typical value: Beta, RR, RR, RR
+	  is x:ZZcell do toExpr(Beta(y.v,toRR(x.v,precision(y.v))))	    -- # typical value: Beta, RR, ZZ, RR
+	  is x:QQcell do toExpr(Beta(y.v,toRR(x.v,precision(y.v))))	    -- # typical value: Beta, RR, QQ, RR
+	  else WrongArg(1,"a number"))
+     is y:ZZcell do (
+	  when xx
+	  is x:RRcell do toExpr(Beta(toRR(y.v,precision(x.v)),x.v))    -- # typical value: Beta, ZZ, RR, RR
+	  is x:ZZcell do toExpr(Beta(toRR(y.v),toRR(x.v)))	       -- # typical value: Beta, ZZ, ZZ, RR
+	  is x:QQcell do toExpr(Beta(toRR(y.v),toRR(x.v)))	       -- # typical value: Beta, ZZ, QQ, RR
+	  else WrongArg(1,"a number"))
+     is y:QQcell do (
+	  when xx
+	  is x:RRcell do toExpr(Beta(toRR(y.v,precision(x.v)),x.v))    -- # typical value: Beta, QQ, RR, RR
+	  is x:ZZcell do toExpr(Beta(toRR(y.v),toRR(x.v)))	       -- # typical value: Beta, QQ, ZZ, RR
+	  is x:QQcell do toExpr(Beta(toRR(y.v),toRR(x.v)))	       -- # typical value: Beta, QQ, QQ, RR
+     	  else WrongArg(1,"a number"))
+     else WrongArg(2,"a number")
+     );
+Beta(e:Expr):Expr := (
+     when e is s:Sequence do if length(s) == 2 then Beta(s.0,s.1)
+     else WrongNumArgs(2)
+     else WrongNumArgs(2));
+setupfun("Beta",Beta);
+setupfun("Beta",Beta).Protected=false;
+
 cosh(e:Expr):Expr := (
      when e
      is x:CCcell do toExpr(cosh(x.v))				    -- # typical value: cosh, CC, CC
