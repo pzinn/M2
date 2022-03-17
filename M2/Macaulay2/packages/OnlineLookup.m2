@@ -58,8 +58,11 @@ isc = method()
 
 maple2M2 = s -> ( -- some common functions
     s = replace("sr","sqrt",s);
+    s = replace("ln","log",s);
     s = replace("GAM","Gamma",s);
     s = replace("Pi","pi",s);
+    s = replace("E","(exp 1)",s);
+    s = replace("gamma","EulerConstant",s);
     s = replace("Psi","Digamma",s) -- TODO implement from mpfr
     )
 
@@ -76,9 +79,9 @@ isc String := s -> (
     if #ans == 0 then return {};
     ans = first ans;
     lst := apply(select(separate("\n\n",ans),x->#x>3 and substring(x,0,3)=="<B>"),x->replace("<.*?>","",x)); -- TODO limit number
-    VerticalList apply(lst, x -> (
+    NumberedVerticalList apply(lst, x -> (
 	    y := separate("=",x);
-	    SPAN ( drop(y,-1) | {"=", CODE maple2M2 last y} )
+	    SPAN if #y !=2 then y else { y#0, "=", CODE maple2M2 y#1 }
     	    ))
     )
 
