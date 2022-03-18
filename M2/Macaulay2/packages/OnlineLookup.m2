@@ -117,7 +117,7 @@ isc String := s -> (
     OL apply(lst, x -> (
 	    y := separate("=",x);
 	    if #y<=1 then return SPAN x;
-	    try v:=value maple2M2expr last y else (print (maple2M2expr last y); return SPAN x);
+	    try v:=value maple2M2expr last y else return SPAN x;
 	    SPAN ( drop(y,-1) | { "=", SPAN { v, "data-m2code" => maple2M2 y#1 } } )
     	    ))
     )

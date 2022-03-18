@@ -824,10 +824,10 @@ net Sum := v -> (
 isNumber = method(TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
-isNumber QQ :=
-isNumber Divide := -- QQ never appears in an expression, so we take care of it this way
+isNumber QQ := -- QQ never appears in an expression...
 isNumber ZZ := i -> true
 isNumber Holder := i -> isNumber i#0
+isNumber Divide := d -> isNumber d#0 and isNumber d#1 -- .. so we take care of it this way
 
 startsWithSymbol = method(TypicalValue => Boolean)
 startsWithSymbol Thing := i -> false
@@ -1068,22 +1068,26 @@ html Sum := v -> (
 *-
 
 texMath Product := v -> (
-     n := # v;
-     if n === 0 then "1"
-     else (
-     	  p := precedence v;
-	  nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0 and (x#1 === 1 or x#1 === ONE)));
-	  seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot " else if nums#i or class v#i === Symbol or (class v#i === Power and class v#i#0 === Symbol and (v#i#1 === 1 or v#i#1 === ONE)) then "\\," else "");
-     	  boxes := apply(v,
-		    term -> (
-			 if precedence term <= p and class expression term =!= Divide
-			 then "\\left(" | texMath term | "\\right)"
-			 else texMath term
-			 )
-		    );
-	  concatenate splice mingle (boxes,seps)
-	  )
-      )
+    n := # v;
+    if n === 0 then "1"
+    else (
+	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
+	p := precedence v;
+	nums := apply(v, x -> isNumber x);
+	precs := apply(v, x -> precedence x <= p);
+	seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot "
+	    else if class v#i =!= Power and not precs#i and not precs#(i+1) then
+	    if nums#i or (class v#i === Symbol and class v#(i+1) === Symbol) then "\\," else "\\ "
+	    else "");
+	boxes := apply(n, i -> (
+		if precs#i and class v#i =!= Divide
+		then "\\left(" | texMath v#i | "\\right)"
+		else texMath v#i
+		)
+	    );
+	concatenate splice mingle (boxes,seps)
+	)
+    )
 -*
 html Product := v -> (
      n := # v;
