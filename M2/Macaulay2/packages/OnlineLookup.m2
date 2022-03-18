@@ -81,6 +81,8 @@ maple2M2 = s -> ( -- some common functions
     )
 
 maple2M2expr = s -> (
+    s = replace("gamma","hold EulerConstant",s);
+    s = replace("Pi","hold pi",s);
     s = replace("sr|sqrt","(hold sqrt)",s);
     s = replace("ln","(hold log)",s);
     s = replace("exp","(hold exp)",s);
@@ -92,7 +94,6 @@ maple2M2expr = s -> (
     s = replace("arcsin","(hold asin)",s);
     s = replace("Pi","hold pi",s);
     s = replace("E","((hold exp) 1)",s);
-    s = replace("gamma","hold EulerConstant",s);
     s = binaryReplace("\\^","Power",",",s);
     s = binaryReplace("/","Divide",",",s);
     s
@@ -115,7 +116,9 @@ isc String := s -> (
     lst := apply(select(separate("\n\n",ans),x->#x>3 and substring(x,0,3)=="<B>"),x->replace("<.*?>","",x)); -- TODO limit number
     OL apply(lst, x -> (
 	    y := separate("=",x);
-	    SPAN if #y !=2 then x else { y#0, "=", try SPAN { value maple2M2expr y#1, "data-m2code" => maple2M2 y#1 } else y#1 } -- be more subtle
+	    if #y<=1 then return SPAN x;
+	    try v:=value maple2M2expr last y else (print (maple2M2expr last y); return SPAN x);
+	    SPAN ( drop(y,-1) | { "=", SPAN { v, "data-m2code" => maple2M2 y#1 } } )
     	    ))
     )
 
