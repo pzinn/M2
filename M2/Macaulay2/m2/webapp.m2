@@ -56,18 +56,22 @@ Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+printFunc := Thing#{WebApp,print} = x -> (
+    y := htmlInside x; -- we compute the html now (in case it produces an error)
+    if class y =!= String then error "invalid html output";
+    << webAppHtmlTag | y | webAppEndTag << endl;
+    )
+
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 
 Thing#{WebApp,Print} = x -> (
-    y := htmlInside x; -- we compute the html now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << endl << on() | " = " | webAppHtmlTag | y | webAppEndTag << endl;
+    << endl << on() | " = ";
+    printFunc x;
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
 
 -- afterprint
-
 
 htmlAfterPrint :=  x -> (
     if class x === Sequence then x = RowExpression deepSplice { x };
@@ -129,13 +133,6 @@ CoherentSheaf#{WebApp,AfterPrint} = F -> (
  )
 
 ZZ#{WebApp,AfterPrint} = identity
-
-
-printFunc#WebApp = x -> (
-    y := htmlInside x; -- we compute the html now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << webAppHtmlTag | y | webAppEndTag << endl;
-    )
 
 if topLevelMode === WebApp then (
     compactMatrixForm = false;

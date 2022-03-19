@@ -113,13 +113,17 @@ ZZ#{TeX,InputContinuationPrompt} = lineno -> #lastprompt+3
 
 Nothing#{TeX,Print} = identity
 
+printFunc := Thing#{TeX,print} = x -> (
+    y := tex x; -- we compute the tex now (in case it produces an error)
+    if class y =!= String then error "invalid TeX output";
+    << escapeChar | y | escapeChar << endl;
+    )
+
 on := () -> concatenate(escapeChar,"\\underline{",interpreterDepth:"o", toString lineNumber,"}",escapeChar)
 
 Thing#{TeX,Print} = x -> (
-    y := tex x; -- we compute the tex now (in case it produces an error)
-    if class y =!= String then error "invalid TeX output";
-    outputs#lineNumber = y; -- store output
-    << on() | " = " | escapeChar | y | escapeChar << endl
+    << on() | " = ";
+    printFunc x;
     )
 
 texAfterPrint :=  x -> (
@@ -132,13 +136,6 @@ texAfterPrint :=  x -> (
 Thing#{TeX,AfterNoPrint} = identity
 
 InexactNumber#{TeX,Print} = x ->  withFullPrecision ( () -> Thing#{TeX,Print} x )
-
-printFunc#TeX = x -> (
-    y := tex x; -- we compute the tex now (in case it produces an error)
-    if class y =!= String then error "invalid TeX output";
-    << escapeChar | y | escapeChar << endl;
-    )
-
 
 -- all that's below would go if afterprint was expressionified
 
