@@ -678,7 +678,7 @@ net Adjacent := net FunctionApplication := m -> (
      then horizontalJoin (netfun, bigParenthesize netargs)
      else horizontalJoin (bigParenthesize netfun, bigParenthesize netargs)
      )
-texMath Adjacent := texMath FunctionApplication := m -> (
+texMath Adjacent := texMath FunctionApplication := m -> if m#0 === sqrt then "\\sqrt{"| texMath m#1 |"}" else (
      p := precedence m;
      fun := m#0;
      args := m#1;
