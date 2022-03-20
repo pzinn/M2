@@ -1077,7 +1077,7 @@ texMath Product := v -> (
 	precs := apply(v, x -> precedence x <= p);
 	seps := apply (n-1, i-> if nums#i and (nums#(i+1) or class v#(i+1) === Power and isNumber v#(i+1)#0) then "\\cdot "
 	    else if class v#i =!= Power and not precs#i and not precs#(i+1) then
-	    if nums#i or (class v#i === Symbol and class v#(i+1) === Symbol) then "\\," else "\\ "
+	    if nums#i or class v#i === Symbol then "\\," else "\\ "
 	    else "");
 	boxes := apply(n, i -> (
 		if precs#i and class v#i =!= Divide

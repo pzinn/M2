@@ -70,7 +70,7 @@ maple2M2 = s -> ( -- some common functions
     s = replace("^\\s+|\\s+$","",s);
     s = replace("sr","sqrt",s);
     s = replace("ln","log",s);
-    s = replace("GAM","Gamma",s);
+    s = replace("GAMMA|GAM","Gamma",s);
     s = replace("arc","a",s);
     s = replace("Pi","pi",s);
     s = replace("E\\^","exp",s);
@@ -110,7 +110,7 @@ isc String := s -> (
 	    c := maple2M2 last y;
 	    cexpr := expr c;
 	    try v:=value cexpr else return SPAN e;
-	    SPAN ( drop(y,-1) | { "=", SPAN { v, "data-m2code" => c } } )
+	    SPAN ( drop(y,-1) | { "= ", SPAN { v, "data-m2code" => c } } )
     	    ))
     )
 
