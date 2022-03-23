@@ -60,7 +60,7 @@ binaryReplace = (bin,expr,sep,s) -> (
 	i=i#0#0;
 	j:=i-1; p:=0; while j>=0 and (p>0 or j==i-1 or (s#j!="," and s#j!="+" and s#j!="*" and s#j!="-")) do (if s#j=="(" then p=p-1 else if s#j==")" then p=p+1; if p<0 then break; j=j-1;);
 	j=j+1;
-	k:=i+1; p=0; while k<#s and (p>0 or k==i+1 or (s#k!="," and s#k!="+" and s#j!="*" and s#k!="-")) do (if s#k=="(" then p=p+1 else if s#k==")" then p=p-1; if p<0 then break; k=k+1;);
+	k:=i+1; p=0; while k<#s and (p>0 or k==i+1 or (s#k!="," and s#k!="+" and s#k!="*" and s#k!="-")) do (if s#k=="(" then p=p+1 else if s#k==")" then p=p-1; if p<0 then break; k=k+1;);
 	s=substring(s,0,j) | expr | "(" | substring(s,j,i-j) | sep | substring(s,i+1,k-i-1) | ")" | substring(s,k);
 	);
     s)
@@ -76,6 +76,9 @@ maple2M2 = s -> ( -- some common functions
     s = replace("E","(exp 1)",s);
     s = replace("gamma","EulerConstant",s);
     s = replace("Psi","Digamma",s);
+    s = replace("Re","realPart",s);
+    s = replace("Im","imaginaryPart",s);
+    s = replace("I","ii",s);
     s = binaryReplace("\\^","",")`(",s); -- to fix precedence issue of ^ in maple
     s = replace("`","^",s); -- phew
     s
