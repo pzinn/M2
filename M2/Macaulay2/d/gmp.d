@@ -2264,7 +2264,7 @@ export atan2(y:RR,x:RR):RR := (
      z := newRRmutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfr_atan2(", z, ",", y, ",", x, ", GMP_RNDN)" );
      moveToRRandclear(z));
-        
+
 export atan2(y:RRi,x:RRi):RRi := (
      z := newRRimutable(min(precision0(x),precision0(y)));
      Ccode( void, "mpfi_atan2(", z, ",", y, ",", x, ")" );

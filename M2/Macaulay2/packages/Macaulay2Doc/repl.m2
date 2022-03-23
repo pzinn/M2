@@ -865,12 +865,20 @@ document {
      SeeAlso => { getGlobalSymbol }
      }
 
+document { Key => symbol currentColumnNumber,
+     Headline => "current column number of the current input file",
+     Usage => "currentColumnNumber()",
+     Outputs => { ZZ => "the current column number of the current input file" },
+     EXAMPLE "currentColumnNumber()",
+     SeeAlso => {"currentRowNumber", "currentFileName" }
+     }
 document { Key => symbol currentRowNumber,
-     Headline => "current line number of the current input file",
+     Headline => "current row number of the current input file",
      Usage => "currentRowNumber()",
-     Outputs => { ZZ => "the current line number of the current input file" },
+     Outputs => { ZZ => "the current row number of the current input file" },
      EXAMPLE "currentRowNumber()",
-     SeeAlso => "currentFileName" }
+     SeeAlso => {"currentColumnNumber", "currentFileName" }
+     }
 document { Key => symbol currentFileDirectory,
      Headline => "the directory containing the current input file",
      Usage => "currentFileDirectory",
@@ -882,7 +890,8 @@ document { Key => symbol currentFileName,
      Usage => "currentFileName",
      Outputs => { String => "the name of the current source file" },
      EXAMPLE "currentFileName",
-     SeeAlso => "currentRowNumber" }
+     SeeAlso => {"currentRowNumber", "currentColumnNumber" }
+     }
 
 document { Key => functionBody,
      Headline => "get the body of a function",

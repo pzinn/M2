@@ -82,7 +82,6 @@ localDictionaries Dictionary := List => localDictionaries
 values HashTable := List => values
 merge(HashTable,HashTable,Function) := HashTable => merge
 mergePairs(BasicList,BasicList,Function) := BasicList => mergePairs
-fusePairs(BasicList,BasicList,Function) := BasicList => fusePairs
 mingle BasicList := List => mingle
 openDatabase String := Database => openDatabase
 openDatabaseOut String := Database => openDatabaseOut
@@ -199,17 +198,17 @@ typval = x -> (
      if redefs#?(x#0) then (
 	 f' := x#0;
 	 f := redefs#f';
-    	 args := drop(drop(x,-1),1);
-    	 installMethod append(prepend(f,args),last x => f');
+	 args := drop(drop(x,-1),1);
+	 installMethod append(prepend(f,args),last x => f');
 	 if args === sequence RR then variants#(f,Number) = variants#(f,Constant) = f' @@ numeric
-    	 else if #args === 2 then (
+	 else if #args === 2 then (
 	     if args#0 === RR then variants#(f,Number,args#1) = variants#(f,Constant,args#1) = (x,y) -> f'(numeric x,y);
 	     if args#1 === RR then variants#(f,args#0,Number) = variants#(f,args#0,Constant) = (x,y) -> f'(x,numeric y);
 	     if args === (RR,RR) then variants#(f,Number,Number) = variants#(f,Number,Constant) = variants#(f,Constant,Number) = variants#(f,Constant,Constant) = (x,y) -> f'(numeric x,numeric y); -- phew
 	     );
 	 )
      )
- 
+
 load "tvalues.m2"
 
 scanPairs(redefs, (k,v) -> globalAssign(baseName k,v))
@@ -239,22 +238,22 @@ taylor := (f,g) -> f RingElement := x -> (
     )
 
 taylor (exp, (x,n) -> (
-    	s := 1; xx := 1;
-    	for k from 1 to n-1 do (
+	s := 1; xx := 1;
+	for k from 1 to n-1 do (
             xx = (1/k)*xx*x;
             s = s + xx;
             );
-    	s
-    	))
+	s
+	))
 
 taylor (expm1, (x,n) -> (
-    	s := 0; xx := 1;
-    	for k from 1 to n-1 do (
+	s := 0; xx := 1;
+	for k from 1 to n-1 do (
             xx = (1/k)*xx*x;
             s = s + xx;
             );
-    	s
-    	))
+	s
+	))
 
 sintaylor := (x,n) -> (
     s := x; xx := x;
@@ -311,31 +310,31 @@ taylor (tanh, (x,n) -> sinhtaylor(x,n) * (coshtaylor(x,n))^-1)
 taylor (sech, (x,n) -> (coshtaylor(x,n))^-1)
 
 taylor (asin, (x,n) -> (
-    	s := x; xx := x;
-    	k := 3;
-    	while k<n do (
+	s := x; xx := x;
+	k := 3;
+	while k<n do (
             xx = (k-2)/(k-1)*xx*x^2;
 	    s = s + xx/k;
 	    k=k+2;
             );
-    	s
-    	))
-	
+	s
+	))
+
 taylor (atan, (x,n) -> (
-    	s := x; xx := x;
-    	k := 3;
-    	while k<n do (
+	s := x; xx := x;
+	k := 3;
+	while k<n do (
             xx = -xx*x^2;
 	    s = s + xx/k;
 	    k=k+2;
             );
-    	s
-    	))
+	s
+	))
 
 taylor (log1p, (x,n) -> (
 	s:=x; xx := x;
 	k := 2;
-    	while k<n do (
+	while k<n do (
         xx = -xx*x;
 	s = s + xx/k;
 	k=k+1;

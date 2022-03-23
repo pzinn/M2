@@ -587,8 +587,8 @@ export {
 	"currentDirectory",
 	"currentFileDirectory",
 	"currentFileName",
-	"currentRowNumber",
 	"currentPosition",
+	"currentRowNumber",
 	"currentString",
 	"currentTime",
 	"dd",
@@ -691,7 +691,6 @@ export {
 	"frames",
 	"from",
 	"functionBody",
-	"fusePairs",
 	"gb",
 	"gbRemove",
 	"gbSnapshot",
@@ -1091,7 +1090,6 @@ export {
 	"sheafExt",
 	"sheafHom",
 	"shield",
-	"short",
 	"show",
 	"showClassStructure",
 	"showHtml",
@@ -1240,14 +1238,7 @@ export {
         "numcols" => "numColumns",
         "numrows" => "numRows",
         "res" => "resolution",
-        "sub" => "substitute",
-        "top" => "topComponents",
-	-- bb letters (to be removed before PR) cf https://github.com/Macaulay2/M2/issues/1186
-	"ℚ" => "QQ",
-	"ℝ" => "RR",
-	"ℤ" => "ZZ",
-	"ℂ" => "CC",
-	"∞" => "infinity"
+        "sub" => "substitute"
 }
 
 exportMutable {
