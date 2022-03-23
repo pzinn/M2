@@ -9,13 +9,12 @@ newPackage(
         Headline => "Look up mathematical information online",
 	Keywords => {"System"},
         DebuggingMode => false,
+	AuxiliaryFiles => true,
 	CacheExampleOutput => true,
 	PackageImports => {"Text"}
         )
 
 export {"oeis","urlEncode","isc"}
-
-debug Core
 
 percentEncoding = hashTable transpose {
     {"␣", "!", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "/", ":", ";", "=", "?", "@", "[", "]"},
@@ -36,7 +35,7 @@ tryWWW = url -> try last splitWWW getWWW url else (
     )
 
 
-oeis = method(TypicalValue => NumberedVerticalList,
+oeis = method(TypicalValue => OL,
     Options => {Limit => 100, Position => 0})
 oeis VisibleList := o -> L -> oeis (demark(",",toString\L),o)
 oeis String := o -> search -> (
@@ -54,7 +53,7 @@ oeis String := o -> search -> (
     )
 -- e.g. oeis {1,2,7,42}
 
-isc = method()
+isc = method(TypicalValue => OL)
 
 binaryReplace = (bin,expr,sep,s) -> (
     while (i:=regex(bin,s)) =!= null do (
@@ -111,7 +110,7 @@ isc String := s -> (
 	    cexpr := expr c;
 	    try v:=value cexpr else return SPAN e;
 	    SPAN ( drop(y,-1) | { "= ", SPAN { v, "data-m2code" => c } } )
-    	    ))
+	    ))
     )
 
 
@@ -160,7 +159,7 @@ multidoc ///
     This function looks up the argument (a real number or a string) in the Inverse Symbolic Calculator.
     (@HREF "http://wayback.cecm.sfu.ca/projects/ISC/"@).
    Example
-    isc (2*sqrt pi)
+    isc (sqrt 2*pi)
  Node
   Key
    urlEncode

@@ -1,15 +1,34 @@
--- -*- M2-comint -*- hash: -615542623
-i1 : 1:0isc (2*sqrt pi)
+-- -*- M2-comint -*- hash: 674672945
+i1 : 1:0isc (sqrt 2*pi)
 
-o1 = $\left\{\begin{aligned}&amp;<span>Mixed constants with 5 operations
-3544907701811032 = 2*sr(Pi)</span>\\&amp;<span>Mixed constants, 2 with elementary transforms.
-3544907701811032 = 2*sr(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
-3544907701811032 = 2*Pi/sr(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
-3544907701811032 = 2*exp(1/2)^ln(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
-3544907701811032 = exp(1/2)^ln(Pi)+sr(Pi)</span>\\&amp;<span>Mixed constants with 5 operations
-3544907701811032 = GAM(1/6)*GAM(5/6)/sr(Pi)
-</span>\end{aligned}\right\}$
+o1 = <ol>
+  <li>
+<span>Mixed constants with 5 operations
+4442882938158366 = <span data-m2code="2*pi/sqrt(2)">$2\frac{\pi}{\sqrt{2}}$</span></span>  </li>
+  <li>
+<span>Beta(a,b), a and b elements of F24: GAMMA function
+4442882938158366 = <span data-m2code="Beta(1/4,3/4)">$<pre style="display:inline">
+Beta</pre>{}\left(\frac{1}{4},\,\frac{3}{4}\right)$</span></span>  </li>
+  <li>
+<span>Mixed constants, 2 with elementary transforms.
+4442882938158366 = <span data-m2code="Gamma(1/4)*Gamma(3/4)">$<pre style="display:inline">
+Gamma</pre>\left(\frac{1}{4}\right)\ <pre style="display:inline">
+Gamma</pre>\left(\frac{3}{4}\right)$</span></span>  </li>
+  <li>
+<span>Mixed constants with 5 operations
+4442882938158366 = <span data-m2code="Gamma(1/6)/sqrt(2)*Gamma(5/6)">$\frac{<pre style="display:inline">
+Gamma</pre>\left(\frac{1}{6}\right)}{\sqrt{2}\ <pre style="display:inline">
+Gamma</pre>\left(\frac{5}{6}\right)}$</span></span>  </li>
+  <li>
+<span>Dirichlet constants, sums of Digamma function with rat. arguments.
+4442882938158366 = <span data-m2code="-Digamma(1/4)-Digamma(3/8)+Digamma(5/8)+Digamma(3/4)">$-<pre style="display:inline">
+Digamma</pre>\left(\frac{1}{4}\right)-<pre style="display:inline">
+Digamma</pre>\left(\frac{3}{8}\right)+<pre style="display:inline">
+Digamma</pre>\left(\frac{5}{8}\right)+<pre style="display:inline">
+Digamma</pre>\left(\frac{3}{4}\right)$</span></span>  </li>
+</ol>
+
 
 o1 : <pre style="display:inline">
-VerticalList</pre>
+OL</pre>
 i2 : 2:0

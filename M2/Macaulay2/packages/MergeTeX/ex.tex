@@ -1,10 +1,10 @@
 \documentclass[12pt,a4paper]{amsart}
-\usepackage{amssymb}
+% for packages that output in tikz:
 \usepackage{tikz}
-\usepackage{listings}
+% contains listings-package-related stuff incl Macaulay2 language definition:
 \input lst-Macaulay2.tex
-\lstset
-{
+% additional options to modify appearance of code:
+\lstset{
 aboveskip=0pt,
 belowskip=0pt,
 numbers=none,
@@ -14,12 +14,9 @@ framesep=1ex,
 xleftmargin=2ex,
 columns=fixed,
 showstringspaces=false,
-fontadjust=true,
-basewidth={1.09ex},
 breaklines=false,
 }
-\usepackage[a4paper,left=2.25cm,right=2.25cm,top=3cm,bottom=3cm,headsep=1cm]{geometry}
-\title{Example file for M2inTeX}
+\title{Example file for MergeTeX}
 \author{Paul Zinn-Justin}
 \begin{document}
 \maketitle
@@ -32,27 +29,28 @@ res coker vars R
 OO_(Proj(R/(x^3-y^3)))^{1,2}
 matrix {{1,2},{3,4}}
 \end{lstlisting}
-more:
+
+The code can also be inline: \lstinline[language=Macaulay2]!gcd(1300,75)!.
+More:
 \begin{lstlisting}[language=Macaulay2]
 318/46
 exp 3.73767
 \end{lstlisting}
-strings:
+strings and nets:
 \begin{lstlisting}[language=Macaulay2]
 "hehe"
-\end{lstlisting}
-and nets:
-\begin{lstlisting}[language=Macaulay2]
-"haha123456789"||"hoho!@#$%^&*("
+( "haha123456789"
+||"hoho!@#$%^&*(")
+{oo,ooo}
 \end{lstlisting}
 printing:
 \begin{lstlisting}[language=Macaulay2]
-for i from 1 to 4 do print(i+ii)
+for i from 1 to 3 do print(i^2+ii)
 \end{lstlisting}
 
 \section{Help}
 \begin{lstlisting}[language=Macaulay2]
-help det
+help cohomology
 \end{lstlisting}
 
 \section{Packages}

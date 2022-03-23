@@ -1221,7 +1221,14 @@ texMath VectorExpression := v -> (
     )
 
 -----------------------------------------------------------------------------
-print =  x -> if Thing#?{topLevelMode,print} then Thing#{topLevelMode,print} x else (<< net x << endl;)
+print =  x -> (
+    c := class x;
+    while not c#?{topLevelMode,print} do (
+	if c === Thing then (<< net x << endl; return); -- default
+	c = parent c;
+	);
+    c#{topLevelMode,print} x
+    )
 -----------------------------------------------------------------------------
 
 File << Thing := File => (o,x) -> printString(o,net x)

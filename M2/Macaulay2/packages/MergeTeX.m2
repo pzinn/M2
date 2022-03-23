@@ -40,7 +40,7 @@ mergeTeXFile = (fn,outfn) -> (
     )
 
 -* ex of use
-"ex-parsed.tex" << mergeTeXFile "ex.tex" << close
+mergeTeXFile("ex.tex","ex-parsed.tex")
 *-
 
 mergeTeX = { Path => "" } >> o -> s -> (
@@ -102,7 +102,7 @@ lastprompt:=""; -- borrowed from startup.m2.in
 
 ZZ#{TeX,InputPrompt} = lineno -> concatenate(
     escapeChar,
-    "\\underline{",
+    "\\underline{\\tt ",
     lastprompt = concatenate(interpreterDepth:"i",toString lineno),
     "}",
     escapeChar,
@@ -113,18 +113,39 @@ ZZ#{TeX,InputContinuationPrompt} = lineno -> #lastprompt+3
 
 Nothing#{TeX,Print} = identity
 
-printFunc := Thing#{TeX,print} = x -> (
+printFunc := x -> (
     y := tex x; -- we compute the tex now (in case it produces an error)
     if class y =!= String then error "invalid TeX output";
     << escapeChar | y | escapeChar << endl;
+    y
     )
 
-on := () -> concatenate(escapeChar,"\\underline{",interpreterDepth:"o", toString lineNumber,"}",escapeChar)
+Thing#{TeX,print} = x -> (printFunc x;)
+
+on := () -> concatenate(escapeChar,"\\underline{\\tt ",interpreterDepth:"o", toString lineNumber,"}",escapeChar)
 
 Thing#{TeX,Print} = x -> (
     << on() | " = ";
-    printFunc x;
+    outputs#lineNumber = printFunc x; -- print and store output
     )
+
+InexactNumber#{TeX,Print} = x ->  withFullPrecision ( () -> Thing#{TeX,Print} x )
+
+netPrintFunc := x -> (
+    y := tex x; -- we compute the tex now (in case it produces an error)
+    if class y =!= String then error "invalid TeX output";
+    << escapeChar | "\\ttfamily " | y | escapeChar << endl;
+    y
+    )
+
+Net#{TeX,print} = x -> (netPrintFunc x;)
+
+Net#{TeX,Print} = x -> (
+    << on() | " = ";
+    outputs#lineNumber = netPrintFunc x; -- print and store output
+    )
+
+-- afterprint
 
 texAfterPrint :=  x -> (
     if class x === Sequence then x = RowExpression deepSplice { x };
@@ -134,8 +155,6 @@ texAfterPrint :=  x -> (
     )
 
 Thing#{TeX,AfterNoPrint} = identity
-
-InexactNumber#{TeX,Print} = x ->  withFullPrecision ( () -> Thing#{TeX,Print} x )
 
 -- all that's below would go if afterprint was expressionified
 
