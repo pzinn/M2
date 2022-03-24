@@ -8,7 +8,8 @@ newPackage(
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
         Headline => "Run Macaulay2 code inside a LaTeX file",
 	Keywords => {"System"},
-        DebuggingMode => false
+        DebuggingMode => false,
+	AuxiliaryFiles => true
         )
 
 export {"mergeTeX", "mergeTeXFile", "Path", "TeX"}
