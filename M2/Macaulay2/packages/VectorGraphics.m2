@@ -741,7 +741,7 @@ tikzconv := hashTable {
     "viewBox" => y -> (
     	vb := pack(value \ separate("\\s|,",y),2);
 	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
-	"execute at begin picture={\\clip ("|jsString vb#0#0|","|jsString vb#0#1|") rectangle ++("|jsString vb#1#0|","|jsString vb#1#1|");}"
+	"execute at begin picture={\\bgroup\\tikzset{every path/.style={}}\\clip ("|jsString vb#0#0|","|jsString vb#0#1|") rectangle ++("|jsString vb#1#0|","|jsString vb#1#1|");\\egroup}"
 	) }
 ovr := x -> ( -- borrowed from html.m2
     T := class x;
@@ -765,7 +765,7 @@ tex SVG := texMath SVG := x -> concatenate(
 	st = append(st,"y={(0cm,-1cm)}");
 	);
     st=append(st,"baseline=(current  bounding  box.center)");
-    st=append(st,"every picture/.style={draw="|try op#"stroke" else "black"|",fill="|try op#"fill" else "none"|"}");
+    st=append(st,"every path/.style={draw="|try op#"stroke" else "black"|",fill="|try op#"fill" else "none"|"}");
     if not op#?"stroke-linejoin" then st=append(st,"line join=round");
     "\\begin{tikzpicture}[",
     demark(",",st),
