@@ -74,10 +74,9 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 -- afterprint
 
 htmlAfterPrint :=  x -> (
+    << endl << on() | " : ";
     if class x === Sequence then x = RowExpression deepSplice { x };
-    y := htmlInside x; -- we compute the html now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << endl << on() | " : " | webAppHtmlTag | y | webAppEndTag << endl;
+    printFunc x;
     )
 
 Thing#{WebApp,AfterPrint} = x -> htmlAfterPrint class x;

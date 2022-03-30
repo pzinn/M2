@@ -150,9 +150,8 @@ Net#{TeX,Print} = x -> (
 
 texAfterPrint :=  x -> (
     if class x === Sequence then x = RowExpression deepSplice { x };
-    y := tex x; -- we compute the tex now (in case it produces an error)
-    if class y =!= String then error "invalid html output";
-    << on() | " : " | escapeChar |  y | escapeChar  << endl;
+    << on() | " : ";
+    printFunc x;
     )
 
 Thing#{TeX,AfterNoPrint} = identity
