@@ -386,14 +386,9 @@ expression RR := x -> (
 expression CC := z -> (
      x := realPart z;
      y := imaginaryPart z;
-     if y == 0 then expression x
-     else if x == 0 
-     then if y == 1 then hold ii
-     else if y == -1 then - hold ii
-     else y * hold ii
-     else if y == -1 then x - hold ii
-     else if y == 1 then x + hold ii
-     else x + y * hold ii)
+     if x == 0 then x=0;
+     if y == 0 or abs y < abs x * 2^(-precision z) then y=0;
+     x + y * hold ii)
 net InexactField := R -> net expression R
 net CC := z -> simpleToString z
 toExternalString RR := toExternalString0
