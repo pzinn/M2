@@ -221,7 +221,7 @@ multidoc ///
    [mergeTeX,Path]
    mergeTeXFile
   Headline
-   Run Macaulay2 code inside a LaTeX file   
+   Run Macaulay2 code inside a LaTeX file
   Description
    Text
     This packages parses a LaTeX file, looking for Macaulay2 code. The latter must follow the syntax of the LaTeX package "listings", namely,

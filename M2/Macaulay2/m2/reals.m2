@@ -346,7 +346,7 @@ Number / Constant := (x,c) -> x / numeric c
 Constant ^ Number := (c,x) -> (numeric c) ^ x
 Number ^ Constant := (x,c) -> x ^ (numeric c)
 
-Constant == Number := (c,x) -> numeric c == x -- probably false!
+Constant == Number := (c,x) -> numeric c == x
 Number == Constant := (x,c) -> x == numeric c
 Constant ? Number := (c,x) -> numeric c ? x
 Number ? Constant := (x,c) -> x ? numeric c
