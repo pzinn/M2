@@ -424,6 +424,7 @@ Ideal = new Type of HashTable
 Ideal.synonym = "ideal"
 
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
+ideal Ideal := identity
 
 expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
 net Ideal := (I) -> net expression I
@@ -512,7 +513,7 @@ Matrix % Ideal := Matrix => ((f,I) ->
      ) @@ samering
 Vector % Ideal := (v,I) -> new class v from {v#0%I}
 numgens Ideal := (I) -> numgens source generators I
-leadTerm Ideal := Matrix => (I) -> leadTerm generators gb I
+leadTerm Ideal := Ideal => (I) -> ideal leadTerm generators gb I
 leadTerm(ZZ,Ideal) := Matrix => (n,I) -> leadTerm(n,generators gb I)
 jacobian Ideal := Matrix => (I) -> jacobian generators I
 Ideal _ List := (I,w) -> (module I)_w
