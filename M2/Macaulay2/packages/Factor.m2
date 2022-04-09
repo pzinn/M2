@@ -178,7 +178,8 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
 	);
     promote(R,F) := (x,F) -> new F from x;
     promote(R0,F) := (x,F) -> new F from new R from x;
-    lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
+--    lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
+    lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^-1 else error "cannot lift given ring element";
     numerator F := a -> a#0;
     denominator F := a -> a#1;
     fraction(R,R) := (r,s) -> (
@@ -284,6 +285,56 @@ if ((options Factor).Configuration#"DegreesRings") then (
      	hft -> if #hft === 0 then dR0 else factor (ZZ degreesMonoid hft));
     degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then dR0 else factor(ZZ degreesMonoid n));
 )
+
+-- not directly related: fraction field of Laurent polynomial ring
+frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
+     o := options R;
+     if o.WeylAlgebra =!= {} or R.?SkewCommutative
+     then error "fraction field of non-commutative ring requested";
+     if not factoryAlmostGood R then error "not implemented yet: fraction fields of polynomial rings over rings other than ZZ, QQ, or a finite field";
+     local F;
+     if o.Inverses then (
+	 R1:=newRing(R,Inverses=>false,MonomialOrder=>GRevLex);
+	 f:=map(R1,R); g:=map(R,R1);
+	 R.frac = F = frac R1; -- !!!
+	 F.baseRings=append(F.baseRings,R);
+	 promote(R,F) := (x,F) -> (f numerator x)/(f denominator x);
+	 oldnum := F#numerator; oldden := F#denominator;
+	 numerator F := (x) -> g oldnum x;
+	 denominator F := (x) -> g oldden x;
+	 lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^(-1) else error "cannot lift given ring element";
+	 fraction(R,R) := (x,y) -> (f (numerator x*denominator y))/(f (numerator y*denominator x));
+	 return F;
+	 );
+     R.frac = F = new FractionField from rawFractionRing R.RawRing;
+     F.frac = F;
+     F.baseRings = append(R.baseRings,R);
+     commonEngineRingInitializations F;
+     factor F := options -> f -> factor numerator f / factor denominator f; -- options?
+     toString F := x -> toString expression x;
+     net F := x -> net expression x;
+     baseName F := (f) -> (
+	  if denominator f != 1
+	  then error "expected a generator"
+	  else baseName numerator f);
+     expression F := (f) -> expression numerator f / expression denominator f;
+     numerator F := (f) -> new R from rawNumerator raw f;
+     denominator F := (f) -> new R from rawDenominator raw f;
+     fraction(F,F) := F / F := (x,y) -> if y != 0 then x//y else error "division by 0";
+     fraction(R,R) := (r,s) -> new F from rawFraction(F.RawRing,raw r,raw s);
+     F % F := (x,y) -> if y == 0 then x else 0_F;	    -- not implemented in the engine, for some reason
+     F.generators = apply(generators R, m -> promote(m,F));
+     if R.?generatorSymbols then F.generatorSymbols = R.generatorSymbols;
+     if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
+     if R.?generatorExpressions then F.generatorExpressions = (
+	  R.generatorExpressions
+	  -- apply(R.generatorExpressions,F.generators,(e,x)->new Holder2 from {e#0,x})
+	  );
+     if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
+     if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
+     if R.?numallvars then F.numallvars=R.numallvars;
+     F)
+
 
 end
 
