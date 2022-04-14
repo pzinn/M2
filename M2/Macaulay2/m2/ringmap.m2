@@ -356,8 +356,8 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	  if class opt =!= Option or #opt =!= 2 then error "expected a list of options";
 	  x := opt#0;
 	  y := opt#1;
-	  if instance(y,Constant) then y = numeric y
-	  else if not instance(y,RingElement) and not instance(y,Number) then error "expected substitution values to be ring elements or numbers";
+	  if instance(y, Constant) then y = numeric y;
+	  if not instance(y,RingElement) and not instance(y,Number) then error "expected substitution values to be ring elements or numbers";
 	  if S === null
 	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
 	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
