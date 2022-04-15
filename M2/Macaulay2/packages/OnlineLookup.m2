@@ -2,7 +2,7 @@
 newPackage(
         "OnlineLookup",
         Version => "0.7",
-        Date => "Mar 2, 2022",
+        Date => "March 23, 2022", -- "March 2, 2022",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},

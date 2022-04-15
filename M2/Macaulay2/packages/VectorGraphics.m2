@@ -2,7 +2,7 @@
 newPackage(
         "VectorGraphics",
         Version => "0.99",
-        Date => "December 19, 2021", -- "May 18, 2018",
+        Date => "March 30, 2022", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},

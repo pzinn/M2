@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "MergeTeX",
-        Version => "0.5",
-        Date => "Mar 16, 2022",
+        Version => "0.6",
+        Date => "April 15, 2022", -- "March 16, 2022",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
