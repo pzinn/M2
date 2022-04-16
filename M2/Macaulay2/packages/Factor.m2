@@ -9,8 +9,8 @@ newPackage(
     Keywords => {"Miscellaneous"},
     DebuggingMode => true,
     AuxiliaryFiles => false,
-    Configuration => { "DegreesRings" => false, "OldFactor" => true }
-    -- "OldFactor" => false would be nicer but for now too many compatibility problems
+    Configuration => { "DegreesRings" => false, "OldFactor" => false }
+    -- testing "OldFactor" => false, check compatibility problems
     )
 
 export {"FactorPolynomialRing","FactorLeadMonomial"}
@@ -58,8 +58,9 @@ factor PolynomialRing := opts -> R -> (
 	-- factor R is untouched
 	) else (
     	factor Rf := opts1 -> identity;
-    	factor R := a -> new Rf from a;
+    	factor R := opts1 -> a -> new Rf from a;
 	);
+    toList Rf := a -> apply(if a#0 == 1 then a#1 else append(a#1,(a#0,1)),u->Power u); -- for compatibility with old factor
     value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1));
     raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
     if (options R).Inverses then (
