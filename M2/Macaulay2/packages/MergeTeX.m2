@@ -221,6 +221,7 @@ multidoc ///
    MergeTeX
    mergeTeX
    [mergeTeX,Path]
+   Path
    mergeTeXFile
   Headline
    Run Macaulay2 code inside a LaTeX file
