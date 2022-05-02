@@ -68,7 +68,7 @@ mergeTeX = { Path => null } >> o -> s -> (
     s = capture apply(codes, x -> codeComment | x#1);
     topLevelMode = saveMode;
     if o.Path =!= null then path = oldPath;
-    if s#0 then print ("warning: running the code produced an error"|s#1);
+    if s#0 then print ("warning: running the code produced an error: "|s#1);
     --print (fmt s#1);
     --print peek outputs;
     s = last s;
