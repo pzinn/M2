@@ -68,7 +68,7 @@ mergeTeX = { Path => null } >> o -> s -> (
     s = capture apply(codes, x -> codeComment | x#1);
     topLevelMode = saveMode;
     if o.Path =!= null then path = oldPath;
-    if s#0 then print ("warning: running the code produced an error: "|s#1);
+    if s#0 then print ("warning: running the code produced an error"|s#1);
     --print (fmt s#1);
     --print peek outputs;
     s = last s;
@@ -81,7 +81,7 @@ mergeTeX = { Path => null } >> o -> s -> (
 	    (a,b) := if l===null then (0,0) else (l#1#0,l#2#0);
 	    prev = substring(s#i,a+1,b-a-1);
 	    --print ("prev=",fmt prev);
-    	    substring(s#i,0,a)
+	    substring(s#i,0,a)
 	    ) | "\n" | codeEnd
 	);
     --print (fmt\s);
@@ -232,11 +232,11 @@ multidoc ///
     @TT "\\begin{lstinputlisting}[language=Macaulay2]{filename.m2}"@;
     one can also insert inline code with @TT "\\lstinline[language=Macaulay2]!...!"@, but it is not parsed.
     See the example file @TT "ex.tex"@.
-    
+
     It then produces a new file where the output of the code has been inserted in place of the input.
     The LaTeX file should contain @TT "\\usepackage{listings}"@ and should include a definition of the Macaulay2 language;
     this can be found in the auxiliary file @TT "lst-Macaulay2.tex"@.
-    
+
     It also replaces automatically commands of the form @TT "\\macoutput{n}"@ with the nth output of Macaulay2.
 
     @TT "mergeTeX"@ takes as input the TeX source as a string and returns the output as a string,

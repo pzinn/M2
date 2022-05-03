@@ -102,7 +102,7 @@ GraphicsObject ++ List := (opts1, opts2) -> (
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
 GraphicsType List := (T,opts) -> (
-    opts0 := T.Options; 
+    opts0 := T.Options;
     opts = gParse opts;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
     (opts2,opts1):=override(,toSequence (opts0|opts));
@@ -640,13 +640,13 @@ new SVG from GraphicsObject := (S,g) -> (
 	    yscale := -floor (log(ymax-ymin)/log 10-1);
 	    Polygon { PointList => { vector {xmin,ymin,0,1}, vector {xmax,ymin,0,1}, vector {xmax,ymax,0,1}, vector {xmin,ymax,0,1} } },
 	    apply(ceiling(xmin*10^xscale)..floor(xmax*10^xscale), i -> ( x := promote(i / 10^xscale,RR); (
-		    	Line { vector {x, ymax}, vector {x, 0.995*ymax+0.05*ymin} },
+			Line { vector {x, ymax}, vector {x, 0.995*ymax+0.05*ymin} },
 			if i%10 == 0 then GraphicsText { vector {x, 1.008*ymax-0.008*ymin}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "text-top", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
 			Line { vector {x, ymin}, vector {x, 0.995*ymin+0.05*ymax} },
 			if i%10 == 0 then GraphicsText { vector {x, 1.008*ymin-0.008*ymax}, toString x, FontSize => fs, "text-anchor" => "middle", "dominant-baseline" => "hanging", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
 			))),
 	    apply(ceiling(ymin*10^yscale)..floor(ymax*10^yscale), i -> ( y := promote(i / 10^yscale,RR); (
-		    	Line { vector {xmax, y}, vector {0.995*xmax+0.05*xmin,y} },
+			Line { vector {xmax, y}, vector {0.995*xmax+0.05*xmin,y} },
 			if i%10 == 0 then GraphicsText { vector {1.008*xmax-0.008*xmin,y}, toString y, FontSize => fs, "text-anchor" => "start", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"},
 			Line { vector {xmin, y}, vector {0.995*xmin+0.05*xmax,y} },
 			if i%10 == 0 then GraphicsText { vector {1.008*xmin-0.008*xmax,y}, toString y, FontSize => fs, "text-anchor" => "end", "dominant-baseline" => "middle", "fill"=>"black", "fill-width" => "0.2%", "stroke" => "none"}
@@ -729,7 +729,7 @@ tikzconv1 := x -> y -> (
 	y = "{rgb,1:red,"|jsString rgb#0|";green,"|jsString rgb#1|";blue,"|jsString rgb#2|"}";
 	) else if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
 	c = value substring(y,3);
-    	y = "{rgb,255:red,"|jsString min(c#0,255)|";green,"|jsString min(c#1,255)|";blue,"|jsString min(c#2,255)|"}";
+	y = "{rgb,255:red,"|jsString min(c#0,255)|";green,"|jsString min(c#1,255)|";blue,"|jsString min(c#2,255)|"}";
 	);
     x|"="|y
     )
@@ -739,7 +739,7 @@ tikzconv := hashTable {
     "stroke-width" => y -> "line width="|jsString(tikzscale*svglen y)|"cm",
     "font-size" => y -> "scale="|jsString(3.15*tikzscale*svglen y), -- messy: cm -> scale using 96dpi and 12px fontsize
     "viewBox" => y -> (
-    	vb := pack(value \ separate("\\s|,",y),2);
+	vb := pack(value \ separate("\\s|,",y),2);
 	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
 	"execute at begin picture={\\bgroup\\tikzset{every path/.style={}}\\clip ("|jsString vb#0#0|","|jsString vb#0#1|") rectangle ++("|jsString vb#1#0|","|jsString vb#1#1|");\\egroup}"
 	) }
@@ -754,8 +754,8 @@ ovr := x -> ( -- borrowed from html.m2
 tex SVG := texMath SVG := x -> concatenate(
     (op,ct,st) := ovr x;
     if op#?"viewBox" and op#?"width" and op#?"height" then (
-    	-- compute scaling
-    	vb := value \ take(separate("\\s|,",op#"viewBox"),-2);
+	-- compute scaling
+	vb := value \ take(separate("\\s|,",op#"viewBox"),-2);
 	xsc := svglen op#"width"/svgunits#"cm" / vb#0; -- a bit too big because based on 96dpi
 	ysc := svglen op#"height"/svgunits#"cm" / vb#1;
 	tikzscale = sqrt(0.5*(xsc^2+ysc^2));
@@ -936,50 +936,50 @@ filter = g -> (
     c.Filter = c.Filter | select(values g.style, y->instance(y,HypertextInternalLink));
     -- now main part
     if (g.?Blur and g.Blur != 0) or (#l > 0 and instance(g,GraphicsPoly)) then (
-    	tag := graphicsId();
-    	i:=0;
-    	opts := { "id" => tag };
-    	if g.?Blur then (
+	tag := graphicsId();
+	i:=0;
+	opts := { "id" => tag };
+	if g.?Blur then (
 	    b := g.Blur;
 	    opts = opts | { "x" => toString(-100*b)|"%", "y" => toString(-100*b)|"%", "width" => toString(100*(1+2*b))|"%", "height" => toString(100*(1+2*b))|"%" };
 	    rng := g.cache.ViewPort; if rng =!= null then (
 		drng:=rng#1-rng#0;
-    	    	r := b*min(drng_0,drng_1);
-	    	g.cache.ViewPort={rng#0-vector{r,r},rng#1+vector{r,r}}; -- a bit of a hack
-	    	opts = append(opts, feGaussianBlur { "in" => "SourceGraphic",
-		    	"result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
-	    	i=i+1;
+		r := b*min(drng_0,drng_1);
+		g.cache.ViewPort={rng#0-vector{r,r},rng#1+vector{r,r}}; -- a bit of a hack
+		opts = append(opts, feGaussianBlur { "in" => "SourceGraphic",
+			"result" => "result"|toString i, "stdDeviation" => toString(0.5*r) } ); -- problem is, this should be updated dynamically as radius changes...
+		i=i+1;
 		)
-    	    );
-    	if is3d g and instance(g,GraphicsPoly) then (
-    	    -- find first 3 coords
+	    );
+	if is3d g and instance(g,GraphicsPoly) then (
+	    -- find first 3 coords
 	    coords := select(g.PointList, x -> not instance(x,String));
-    	    if #coords>=3 then (
-	    	coords=apply(3,i->(xx:=compute(coords#i,g.cache.CurrentMatrix);(1/xx_3)*xx^{0,1,2}));
-	    	u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
-	    	if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
-	    	scan(l, gg -> (
-	    	    	-- compute reflected coords
-		    	light0 := compute(gg.Center,gg.cache.CurrentMatrix);
-		    	light := (1/light0_3)*light0^{0,1,2};
-		    	lightrel := light-coords#0;
-	    	    	sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
-	    	    	c := 2*sp/w2;
-		    	light = light - c*w;
-		    	light = p*(light || vector {1});
-		    	opts = opts | {
+	    if #coords>=3 then (
+		coords=apply(3,i->(xx:=compute(coords#i,g.cache.CurrentMatrix);(1/xx_3)*xx^{0,1,2}));
+		u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
+		if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
+		scan(l, gg -> (
+			-- compute reflected coords
+			light0 := compute(gg.Center,gg.cache.CurrentMatrix);
+			light := (1/light0_3)*light0^{0,1,2};
+			lightrel := light-coords#0;
+			sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
+			c := 2*sp/w2;
+			light = light - c*w;
+			light = p*(light || vector {1});
+			opts = opts | {
 			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg.style#"fill",
 				fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
 			    feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			    feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
-			    	"operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
+				"operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
 			    };
-	    	    	i=i+1;
-	    	    	));
-	    	);
+			i=i+1;
+			));
+		);
 	    );
-    	g.cache.Options#"filter"=svgFilter opts;
-    	c.Filter=append(c.Filter,g.cache.Options#"filter");
+	g.cache.Options#"filter"=svgFilter opts;
+	c.Filter=append(c.Filter,g.cache.Options#"filter");
 	)
     )
 
@@ -996,14 +996,14 @@ linearGradient = true >> o -> stop -> (
     tag := graphicsId();
     svgLinearGradient ({
 	"id" => tag,
-    	o }
+	o }
     | apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style }))
     )
 radialGradient = true >> o -> stop -> (
     tag := graphicsId();
     svgRadialGradient ({
 	"id" => tag,
-    	o }
+	o }
 	| apply(stop,(offset,style) -> svgStop { "offset" => offset, "style" => style }))
     )
 
@@ -1123,10 +1123,10 @@ matrixPlot List := true >> o -> L -> (
     mn := min L'; -- TODO also accept complex numbers
     mx := max L'; if mx == mn then if mx>0 then mn=0 else if mn<0 then mx=0 else mx=1;
     GraphicsList {
-    	Size => 40, "stroke" => "none",
-    	symbol Contents => flatten apply(#L, i -> apply(#(L#i), j -> Polygon{PointList=>{[j,-i],[j+1,-i],[j+1,-i-1],[j,-i-1]},"fill"=>"hsl(0,0%,"|toString round(100*(L#i#j-mn)/(mx-mn))|"%)"})),
-    	o
-    	}
+	Size => 40, "stroke" => "none",
+	symbol Contents => flatten apply(#L, i -> apply(#(L#i), j -> Polygon{PointList=>{[j,-i],[j+1,-i],[j+1,-i-1],[j,-i-1]},"fill"=>"hsl(0,0%,"|toString round(100*(L#i#j-mn)/(mx-mn))|"%)"})),
+	o
+	}
     )
 
 -- existing types that get a new output
