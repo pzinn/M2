@@ -803,7 +803,7 @@ doc///
      I = ideal(a,b)*ideal"a3,b3,c3"
      R = S/I
      needsPackage "DGAlgebras"; isGolod R
---     E = eagon(R,6) -- oom
+     E = eagon(R,6)
     Text
      We can see the vertical and horizontal strands, and the eagonBeta maps
     Example

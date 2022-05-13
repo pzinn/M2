@@ -4,7 +4,7 @@
 i3 : 3:0(m,q,qsols) = mixedVolume(f,StartSystem=>true);
 i4 : 4:0fsols = trackPaths(f,q,qsols,tDegree => 1)
 
-o4 = $\left\{\left\{-{.894935}-{.624334}\,\mathbf{i},\:{.143333}+{1.14868}\,\mathbf{i}\right\},\:\left\{-{1.59272}-{1.17455}\cdot 10^{-53}\,\mathbf{i},\:{.964857}-{1.04405}\cdot 10^{-53}\,\mathbf{i}\right\},\:\left\{{.742585}-{.425943}\,\mathbf{i},\:{.270685}+{1.00715}\,\mathbf{i}\right\},\:\left\{{1.33076}+{.335184}\,\mathbf{i},\:-{.62414}-{.513163}\,\mathbf{i}\right\},\:\left\{{1.33076}-{.335184}\,\mathbf{i},\:-{.62414}+{.513163}\,\mathbf{i}\right\},\:\left\{-{.764107}+{3.36312}\cdot 10^{-44}\,\mathbf{i},\:-{.544612}-{8.96831}\cdot 10^{-44}\,\mathbf{i}\right\},\:\left\{{.742585}+{.425943}\,\mathbf{i},\:{.270685}-{1.00715}\,\mathbf{i}\right\},\:\left\{-{.894935}+{.624334}\,\mathbf{i},\:{.143333}-{1.14868}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{-{.894935}-{.624334}\,\mathbf{i},\:{.143333}+{1.14868}\,\mathbf{i}\right\},\:\left\{-{1.59272},\:{.964857}\right\},\:\left\{{.742585}-{.425943}\,\mathbf{i},\:{.270685}+{1.00715}\,\mathbf{i}\right\},\:\left\{{1.33076}+{.335184}\,\mathbf{i},\:-{.62414}-{.513163}\,\mathbf{i}\right\},\:\left\{{1.33076}-{.335184}\,\mathbf{i},\:-{.62414}+{.513163}\,\mathbf{i}\right\},\:\left\{-{.764107},\:-{.544612}\right\},\:\left\{{.742585}+{.425943}\,\mathbf{i},\:{.270685}-{1.00715}\,\mathbf{i}\right\},\:\left\{-{.894935}+{.624334}\,\mathbf{i},\:{.143333}-{1.14868}\,\mathbf{i}\right\}\right\}$
 
 o4 : <pre style="display:inline">
 List</pre>

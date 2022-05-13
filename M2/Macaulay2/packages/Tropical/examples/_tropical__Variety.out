@@ -10,7 +10,7 @@ Ideal</pre><pre style="display:inline">
 
 o4 = $\left(\!\begin{array}{ccc}
 1&amp;-1&amp;0\\
-0&amp;-1&amp;1\\
+0&amp;-1&amp;1
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">
@@ -63,7 +63,7 @@ TropicalCycle</pre>
 3&amp;-1&amp;-1&amp;-1\\
 -1&amp;3&amp;-1&amp;-1\\
 -1&amp;-1&amp;3&amp;-1\\
--1&amp;-1&amp;-1&amp;3\\
+-1&amp;-1&amp;-1&amp;3
 \end{array}\!\right)$
 
 o12 : <pre style="display:inline">
@@ -87,7 +87,7 @@ Ideal</pre><pre style="display:inline">
 1&amp;3&amp;1&amp;-1&amp;1&amp;-1&amp;-1&amp;-1\\
 1&amp;-1&amp;1&amp;3&amp;-1&amp;1&amp;-1&amp;-1\\
 1&amp;-1&amp;-1&amp;-1&amp;1&amp;1&amp;3&amp;-1\\
--3&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;3\\
+-3&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;3
 \end{array}\!\right)$
 
 o16 : <pre style="display:inline">
@@ -111,7 +111,7 @@ List</pre>
 1\\
 1\\
 1\\
-1\\
+1
 \end{array}\!\right)$
 
 o19 : <pre style="display:inline">
@@ -130,7 +130,7 @@ Ideal</pre><pre style="display:inline">
 -4&amp;4&amp;0&amp;0&amp;4&amp;4\\
 -4&amp;0&amp;4&amp;0&amp;8&amp;0\\
 -4&amp;0&amp;0&amp;4&amp;0&amp;8\\
--3&amp;1&amp;1&amp;1&amp;3&amp;3\\
+-3&amp;1&amp;1&amp;1&amp;3&amp;3
 \end{array}\!\right)$
 
 o23 : <pre style="display:inline">
@@ -148,7 +148,7 @@ List</pre>
 0\\
 0\\
 0\\
-1\\
+1
 \end{array}\!\right)$
 
 o25 : <pre style="display:inline">
