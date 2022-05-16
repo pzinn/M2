@@ -11,7 +11,7 @@ List</pre>
 
 o4 = $\left(\!\begin{array}{ccccc}
 3&amp;3&amp;4&amp;7&amp;8\\
-4&amp;4&amp;6&amp;7&amp;8\\
+4&amp;4&amp;6&amp;7&amp;8
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">
@@ -29,7 +29,7 @@ List</pre>
 
 o8 = $\left(\!\begin{array}{ccccc}
 3&amp;3&amp;4&amp;7&amp;8\\
-4&amp;4&amp;6&amp;7&amp;8\\
+4&amp;4&amp;6&amp;7&amp;8
 \end{array}\!\right)$
 
 o8 : <pre style="display:inline">

@@ -32,7 +32,7 @@ VerticalList</pre>
 
 o7 = $\left(\!\begin{array}{cccccc}
 {.205377}+{.978683}\,\mathbf{i}&amp;{.673112}+{.739541}\,\mathbf{i}&amp;{.943327}-{.331864}\,\mathbf{i}&amp;-{.911067}-{.412259}\,\mathbf{i}&amp;{.497812}+{.867285}\,\mathbf{i}&amp;-{.883724}+{.468009}\,\mathbf{i}\\
--{.759495}+{.650513}\,\mathbf{i}&amp;-{.89022}-{.45553}\,\mathbf{i}&amp;-{.972487}+{.232959}\,\mathbf{i}&amp;-{.595572}-{.803302}\,\mathbf{i}&amp;-{.236638}-{.971598}\,\mathbf{i}&amp;{.871298}-{.490754}\,\mathbf{i}\\
+-{.759495}+{.650513}\,\mathbf{i}&amp;-{.89022}-{.45553}\,\mathbf{i}&amp;-{.972487}+{.232959}\,\mathbf{i}&amp;-{.595572}-{.803302}\,\mathbf{i}&amp;-{.236638}-{.971598}\,\mathbf{i}&amp;{.871298}-{.490754}\,\mathbf{i}
 \end{array}\!\right)$
 
 o7 : <pre style="display:inline">

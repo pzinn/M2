@@ -11,7 +11,7 @@ Ideal</pre><pre style="display:inline">
 o4 = $\left(\!\begin{array}{cc}
 1&amp;0\\
 1&amp;0\\
-0&amp;1\\
+0&amp;1
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">

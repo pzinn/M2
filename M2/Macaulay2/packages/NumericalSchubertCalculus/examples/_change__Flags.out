@@ -6,26 +6,26 @@
 i6 : 5:0F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
 o6 = $\left\{\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
-1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
+1&amp;0&amp;0&amp;0&amp;0&amp;0\\
+0&amp;1&amp;0&amp;0&amp;0&amp;0\\
+0&amp;0&amp;1&amp;0&amp;0&amp;0\\
+0&amp;0&amp;0&amp;1&amp;0&amp;0\\
+0&amp;0&amp;0&amp;0&amp;1&amp;0\\
+0&amp;0&amp;0&amp;0&amp;0&amp;1
 \end{array}\!\right)\right),\:\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;1\\
-{0}&amp;{0}&amp;{0}&amp;{0}&amp;1&amp;{0}\\
-{0}&amp;{0}&amp;{0}&amp;1&amp;{0}&amp;{0}\\
-{0}&amp;{0}&amp;1&amp;{0}&amp;{0}&amp;{0}\\
-{0}&amp;1&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
-1&amp;{0}&amp;{0}&amp;{0}&amp;{0}&amp;{0}\\
+0&amp;0&amp;0&amp;0&amp;0&amp;1\\
+0&amp;0&amp;0&amp;0&amp;1&amp;0\\
+0&amp;0&amp;0&amp;1&amp;0&amp;0\\
+0&amp;0&amp;1&amp;0&amp;0&amp;0\\
+0&amp;1&amp;0&amp;0&amp;0&amp;0\\
+1&amp;0&amp;0&amp;0&amp;0&amp;0
 \end{array}\!\right)\right),\:\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}+{.673395}\,\mathbf{i}&amp;{.0741835}+{.808694}\,\mathbf{i}&amp;{.830833}+{.538554}\,\mathbf{i}&amp;{.557119}+{.873708}\,\mathbf{i}&amp;{.0647412}+{.877846}\,\mathbf{i}&amp;{.444183}+{.644366}\,\mathbf{i}\\
 {.29398}+{.632944}\,\mathbf{i}&amp;{.362835}+{.706096}\,\mathbf{i}&amp;{.873665}+{.415912}\,\mathbf{i}&amp;{.7037}+{.681869}\,\mathbf{i}&amp;{.0340514}+{.507989}\,\mathbf{i}&amp;{.194945}+{.518585}\,\mathbf{i}\\
 {.0258884}+{.714827}\,\mathbf{i}&amp;{.127435}+{.254482}\,\mathbf{i}&amp;{.606588}+{.848005}\,\mathbf{i}&amp;{.276259}+{.605659}\,\mathbf{i}&amp;{.150294}+{.656391}\,\mathbf{i}&amp;{.987173}+{.568273}\,\mathbf{i}\\
 {.89189}+{.231053}\,\mathbf{i}&amp;{.741046}+{.108386}\,\mathbf{i}&amp;{.191734}+{.403215}\,\mathbf{i}&amp;{.96518}+{.681683}\,\mathbf{i}&amp;{.174853}+{.626892}\,\mathbf{i}&amp;{.184779}+{.370833}\,\mathbf{i}\\
 {.461944}+{.775187}\,\mathbf{i}&amp;{.348931}+{.562428}\,\mathbf{i}&amp;{.615911}+{.0147867}\,\mathbf{i}&amp;{.914199}+{.887381}\,\mathbf{i}&amp;{.350611}+{.379495}\,\mathbf{i}&amp;{.339222}+{.062212}\,\mathbf{i}\\
-{.909047}+{.314897}\,\mathbf{i}&amp;{.246268}+{.153346}\,\mathbf{i}&amp;{.223028}+{.388829}\,\mathbf{i}&amp;{.169813}+{.965004}\,\mathbf{i}&amp;{.237252}+{.116721}\,\mathbf{i}&amp;{.465736}+{.40273}\,\mathbf{i}\\
+{.909047}+{.314897}\,\mathbf{i}&amp;{.246268}+{.153346}\,\mathbf{i}&amp;{.223028}+{.388829}\,\mathbf{i}&amp;{.169813}+{.965004}\,\mathbf{i}&amp;{.237252}+{.116721}\,\mathbf{i}&amp;{.465736}+{.40273}\,\mathbf{i}
 \end{array}\!\right)\right)\right\}$
 
 o6 : <pre style="display:inline">
@@ -35,7 +35,7 @@ List</pre>
 i9 : 8:0FlagsF = F/last;
 i10 : 9:0FlagsG = G/last;
 i11 : 10:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 2.84338 seconds
+     -- used 2.09265 seconds
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -43,21 +43,21 @@ List</pre>
 {.219256}+{.214331}\,\mathbf{i}&amp;{.0873511}+{.372915}\,\mathbf{i}&amp;-{.213803}+{.410917}\,\mathbf{i}\\
 {.24818}-{.0567624}\,\mathbf{i}&amp;{.138074}+{.069527}\,\mathbf{i}&amp;-{.446051}+{.0426311}\,\mathbf{i}\\
 -{.122857}+{.030327}\,\mathbf{i}&amp;-{.0079778}-{.488031}\,\mathbf{i}&amp;{.214077}+{.374278}\,\mathbf{i}\\
--{.402855}+{.0597291}\,\mathbf{i}&amp;-{.43662}-{.200568}\,\mathbf{i}&amp;-{.254234}+{.748617}\,\mathbf{i}\\
+-{.402855}+{.0597291}\,\mathbf{i}&amp;-{.43662}-{.200568}\,\mathbf{i}&amp;-{.254234}+{.748617}\,\mathbf{i}
 \end{array}\!\right),\:\left(\!\begin{array}{ccc}
 -{.00839714}-{.407126}\,\mathbf{i}&amp;{.205329}-{.387394}\,\mathbf{i}&amp;{.424542}-{.396438}\,\mathbf{i}\\
 {.192354}-{.0445916}\,\mathbf{i}&amp;{.719274}+{.437354}\,\mathbf{i}&amp;{.49019}+{.0178286}\,\mathbf{i}\\
 -{.396883}+{.032256}\,\mathbf{i}&amp;-{.296361}-{.56774}\,\mathbf{i}&amp;-{.362153}+{.372505}\,\mathbf{i}\\
 {.153499}+{.396506}\,\mathbf{i}&amp;-{.494939}+{.496139}\,\mathbf{i}&amp;-{.411614}+{.315486}\,\mathbf{i}\\
 -{.282532}+{.248918}\,\mathbf{i}&amp;-{.874085}+{.276867}\,\mathbf{i}&amp;-{.807461}+{.498361}\,\mathbf{i}\\
-{.0284784}+{.374339}\,\mathbf{i}&amp;-{.588673}+{.906394}\,\mathbf{i}&amp;-{.233277}+{.814607}\,\mathbf{i}\\
+{.0284784}+{.374339}\,\mathbf{i}&amp;-{.588673}+{.906394}\,\mathbf{i}&amp;-{.233277}+{.814607}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
 o11 : <pre style="display:inline">
 List</pre>
 i12 : 11:0assert all(S', s-> checkIncidenceSolution(s,G))
 i13 : 12:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 2.1087 seconds
+     -- used 1.27129 seconds
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
@@ -65,14 +65,14 @@ List</pre>
 {.279834}-{.0761677}\,\mathbf{i}&amp;{.402182}-{.016251}\,\mathbf{i}&amp;-{.178732}+{.299631}\,\mathbf{i}\\
 -{.119002}+{.197573}\,\mathbf{i}&amp;-{.108802}+{.642985}\,\mathbf{i}&amp;-{.820159}-{.281606}\,\mathbf{i}\\
 -{.134096}+{.0372165}\,\mathbf{i}&amp;-{.127528}-{.0349071}\,\mathbf{i}&amp;{.204901}-{.0516554}\,\mathbf{i}\\
-{.499185}+{.465779}\,\mathbf{i}&amp;{1.13857}+{.442385}\,\mathbf{i}&amp;-{.50217}+{1.18715}\,\mathbf{i}\\
+{.499185}+{.465779}\,\mathbf{i}&amp;{1.13857}+{.442385}\,\mathbf{i}&amp;-{.50217}+{1.18715}\,\mathbf{i}
 \end{array}\!\right),\:\left(\!\begin{array}{ccc}
 {.132399}-{.579396}\,\mathbf{i}&amp;{.78366}-{.359334}\,\mathbf{i}&amp;-{.647254}+{1.41489}\,\mathbf{i}\\
 -{.0614253}+{.257063}\,\mathbf{i}&amp;-{.356136}+{.210321}\,\mathbf{i}&amp;{.116836}-{.599086}\,\mathbf{i}\\
 {.127487}-{.876713}\,\mathbf{i}&amp;{.739985}-{1.32758}\,\mathbf{i}&amp;{.872113}+{1.6876}\,\mathbf{i}\\
 -{.103026}+{.750164}\,\mathbf{i}&amp;-{.798533}+{.84669}\,\mathbf{i}&amp;-{.0252049}-{1.72596}\,\mathbf{i}\\
 -{.0428908}-{.187959}\,\mathbf{i}&amp;{.27551}-{.59017}\,\mathbf{i}&amp;{.739685}+{.785045}\,\mathbf{i}\\
--{.236198}+{.0362704}\,\mathbf{i}&amp;-{.341298}-{.374585}\,\mathbf{i}&amp;{.878579}-{.176735}\,\mathbf{i}\\
+-{.236198}+{.0362704}\,\mathbf{i}&amp;-{.341298}-{.374585}\,\mathbf{i}&amp;{.878579}-{.176735}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
 o13 : <pre style="display:inline">

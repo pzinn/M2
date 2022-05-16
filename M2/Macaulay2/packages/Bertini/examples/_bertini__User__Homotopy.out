@@ -6,14 +6,14 @@
 i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
 i6 : 6:0S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{{1.41421}+{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\left\{{1.41421}\right\},\:\left\{-{1.41421}\right\}\right\}$
 
 o6 : <pre style="display:inline">
 List</pre>
 i7 : 7:0peek S0_0
 
 o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{AccuracyEst => 5.92763e-13        }<br/>      AccuracyEstInternal => 1.20857e-13<br/>      ConditionNumber => 2.14175<br/>      Coordinates => {1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 1.24127e-16<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 8.87795e-17<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 0<br/></pre>
+Point{AccuracyEst => 4.80813e-13        }<br/>      AccuracyEstInternal => 9.43888e-14<br/>      ConditionNumber => 1.96676<br/>      Coordinates => {1.41421}<br/>      CycleNumber => 1<br/>      FinalTValue => .0015625<br/>      FunctionResidual => 1.57009e-16<br/>      MaxPrecisionUtilized => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 2.09557e-17<br/>      PathNumber => 0<br/>      PathsWithSameEndpoint => {}<br/>      PrecisionIncreased => 0<br/>      SolutionNumber => 0<br/></pre>
 i8 : 8:0R=CC[x,y,t,a]; -- include the path variable in the ring
 i9 : 9:0f1=(x^2-y^2);
 i10 : 10:0f2=(2*x^2-3*x*y+5*y^2);

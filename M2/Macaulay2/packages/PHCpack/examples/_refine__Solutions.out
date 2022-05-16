@@ -9,7 +9,7 @@
 )</pre>
 i5 : 3:0newRoots = refineSolutions(S,ourRoots,64)
 
-o5 = $\left\{\left\{{.57735},\:{1.73205}\right\},\:\left\{-{.57735}-{8.22655}\cdot 10^{-143}\,\mathbf{i},\:-{1.73205}-{5}\cdot 10^{-141}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{{.57735},\:{1.73205}\right\},\:\left\{-{.57735},\:-{1.73205}\right\}\right\}$
 
 o5 : <pre style="display:inline">
 List</pre>
