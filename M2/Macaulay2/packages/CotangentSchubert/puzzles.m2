@@ -21,7 +21,7 @@ myget = memoize(x -> first(
 	if debugLevel>0 then << x << " loaded" << endl
 	))
 
-puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Labels => true, Paths => false};
+puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Labels => true, Paths => false, Separation => null};
 export {"Steps", "Ktheory'", "Length", "Labels", "Paths"}; -- move to main file
 protect Separation;
 -- lots of global variables, not thread-safe!
@@ -37,11 +37,12 @@ myload "generic-equiv.m2";
 
 curPuzzleOpts := null;
 tiles := o -> (
-    if o === curPuzzleOpts then return;
+    newPuzzleOpts := apply(keys puzzleOpts, k -> o#k);
+    if newPuzzleOpts === curPuzzleOpts then return;
     if debugLevel>0 then << "rebuilding tiles" << newline;
-    curPuzzleOpts = o;
+    curPuzzleOpts = newPuzzleOpts;
     d := o.Steps;
-    if o#?Separation then (
+    if o#Separation =!= null then (
         (upTriangles,downTriangles,rhombi) = kogan(d,o.Separation,o.Ktheory,o.Ktheory',o.Generic,o.Equivariant);
         return;
         );
@@ -70,10 +71,11 @@ net Puzzle := p -> netList(applyTable(new List from p, a -> netList({{,a#0},{a#1
 
 puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
 
-vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => 1.7/(4.+#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
+vgFontSize = n -> 1.7/(4.+n)
+vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => vgFontSize (#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
 vgOpts := k -> { Size => k*puzzleSize, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
-cols:={"red","green","blue","yellow","magenta","cyan"};
+cols:={"red","green","blue","yellow","magenta","cyan","orange","black"};
 strk:=0.01*puzzleSize;
 
 vg = p -> gList toSequence (
@@ -173,7 +175,7 @@ initPuzzle = true >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
     args = apply(args, a -> apply(if instance(a,String) then characters a
 	    else if instance(a,VisibleList) then apply(a,toString) else error "wrong arguments",
-	    c->replace("_"," ",c)
+	    c->replace("\\+","↗",replace("\\-","↘",replace("_"," ",c)))
 	    ));
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);

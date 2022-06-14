@@ -14,7 +14,7 @@ fugacityH = p -> ( -- equivariant H
     defineFH n;
     product(n-1, i -> product(n-1-i, j -> (
                 X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0);
-                if not p.?Separation then (
+                if p.Separation === null then (
                     X = ind X; W = ind W; U = ind U;
                     s := scalar_(U,X);
                     t := scalar_(W,X); -- print(i,j,X,W,U,s,t);
@@ -29,7 +29,7 @@ q:=FK_0_0; zbar:=FK_-1_1;
 fugacityK = p -> (
     d:=p.Steps;
     n:=p.Length;
-    if p.?Separation then (
+    if p.Separation =!= null then (
 	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
 			else if a>=p.Separation and b<p.Separation then -q^(-1) else -q; -- needs more checks
 	if p.Equivariant then (
@@ -95,10 +95,10 @@ fugacityK0 = p -> (
 
 fugacity = true >> o -> p -> (
     if #o>0 then p = p ++ o; -- change options
-    if not p.?Separation and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
+    if p.Separation =!= null and p#Steps > 3 then error "Fugacities not implemented yet for d>3";
     if not p.Equivariant and not p.Ktheory then return 1; -- ha
     if not p.Generic and not p.Equivariant then return (-1)^(inversion nwside p+inversion neside p-inversion bottom p); -- difference of inversion numbers -- careful with multinumber on bdry
-    if not p.Generic and not p.?Separation and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
+    if not p.Generic and p.Separation === null and p#Steps>2 then error "cannot compute d>2 nongeneric equivariant fugacities";
     (if p.Generic then if p.Ktheory then fugacityK else fugacityH else if p.Ktheory then fugacityK0 else fugacityH0) p
     )
 
