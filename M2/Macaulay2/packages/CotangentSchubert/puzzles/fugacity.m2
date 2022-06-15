@@ -30,8 +30,9 @@ fugacityK = p -> (
     d:=p.Steps;
     n:=p.Length;
     if p.Separation =!= null then (
+	sep := toString p.Separation;
 	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
-			else if a>=p.Separation and b<p.Separation then -q^(-1) else -q; -- needs more checks
+			else if a>=sep and b<sep then -q^(-1) else -q; -- needs more checks
 	if p.Equivariant then (
 	    defineFK n;
             product(n-1, i -> product(n-1-i, j ->
@@ -40,7 +41,7 @@ fugacityK = p -> (
 			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
 			if a==b then (if a==" " then q else 1)*(1-z)/(1-q^2*z) else if a==d then 1
 			else ((1-q^2)/(1-q^2*z)
-			    * (if (a!=" " and b!=" " and a>b) or (a==" " and b<p.Separation) or (b==" " and a>=p.Separation) then 1 else z)
+			    * (if (a!=" " and b!=" " and a>b) or (a==" " and b<sep) or (b==" " and a>=sep) then 1 else z)
 			    * (tri(a,b))^(-1) * tri(d,c)
 			    )
 			)
@@ -105,13 +106,12 @@ fugacity = true >> o -> p -> (
 --tallyFugacities = true >> o -> L -> applyKeys(hashTable apply(L,p->p=>fugacity p),bottom,plus)
 fugacityTally = true >> o -> L -> sum(L,p->new VirtualTally from {bottom p=>fugacity(p,o)})
 
-String ? ZZ := (s,n) -> s ? concatenate(#s:toString n) -- 0 < 10 < 1 < 21 < 2 ...
-ZZ ? String := (n,s) -> concatenate(#s:toString n) ? s
-
+-- ordering of labels
+ord = s -> (sum ascii s)/#s -- 0 < 10 < 1 < 21 < 2 ...
 
 fugacityVector = true >> o -> L -> (
     if #L === 0 then return 0; -- error "can't determine puzzle size";
-    I := uniquePermutations sort bottom(first L);
+    I := uniquePermutations new LabelList from sort(bottom(first L),ord);
     t := fugacityTally(L,o);
     vector apply(I,i->t_i)
     )

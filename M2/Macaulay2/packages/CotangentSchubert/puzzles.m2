@@ -229,19 +229,11 @@ puzzle = puzzleOpts >> o -> args -> (
     new List from lst
     )
 
-bottom = p -> (
-    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
-    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
-    )
+bottom = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,i,2))
 
-nwside = p -> (
-    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
-    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
-    )
-neside = p -> (
-    L := apply(p.Length,i->p#(p.Length-1-i,i,2));
-    new AryString from apply(L, x -> if #x === 1 then value x else x) -- TODO rethink
-    )
+nwside = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,i,2))
+
+neside = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,i,2))
 
 -- computation of (d<=3) equivariant fugacities
 myload "fugacity.m2"
