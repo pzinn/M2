@@ -67,7 +67,31 @@ tiles := o -> (
 
 new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k->p#(i,j,k))));
 
-net Puzzle := p -> netList(applyTable(new List from p, a -> netList({{,a#0},{a#1,a#2}},HorizontalSpace=>1,Boxes=>false)),HorizontalSpace=>2,VerticalSpace=>1,Boxes=>false)
+-- ascii art for puzzles (inspired by Rui Xiong's sage code)
+trisize:=10;
+netTri := (b,a,c) -> (
+    "    /\\    "
+    || "   /  \\  "
+    || concatenate (
+	i1:=trisize//3-(1+width a)//2;
+	i3:=trisize//3-(1+width b)//2;
+	i2:=trisize-i1-i3-width a-width b;
+	-- need to test if numbers negative
+	(i1:" ",a,i2:" ",b,i3:" ")
+	)
+    || " /      \\ "
+    || concatenate if c=="" then trisize:" " else (
+	i1=trisize//2-(1+width c)//2;
+	i2=trisize-i1-width c;
+	(if i1>=1 then " ",(i1-1):"-",c,(i2-1):"-",if i2>=1 then " ")
+	)
+    )
+
+net Puzzle := p -> (
+    stack apply(p.Length,i->horizontalJoin prepend(
+	    (trisize//2)*(p.Length-1-i):" ",
+	    apply(i+1,r->netTri(p#(i-r,r,0),p#(i-r,r,1),p#(i-r,r,2)))
+            )))
 
 puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
 
