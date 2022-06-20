@@ -300,8 +300,6 @@ multidoc ///
     whereas "*" stands for any puzzle label.
 
     @TT "Labels"@ and @TT "Paths"@ are drawing options which only affect HTML and TeX output of puzzles.
-    The Net output of puzzles is a rotated, squashed version where equilateral triangles become right triangles;
-    each cluster of three labels represents the labels around an elementary up-pointing triangle.
    Example
     puzzle ("0101","1001",Equivariant=>false)
  Node
