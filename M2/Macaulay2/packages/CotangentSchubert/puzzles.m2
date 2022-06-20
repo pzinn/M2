@@ -95,7 +95,7 @@ net Puzzle := p -> (
 puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
 
 vgFontSize = n -> 1.7/(4.+n)
-vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => vgFontSize (#s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
+vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => vgFontSize (width s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
 vgOpts := k -> { Size => k*puzzleSize, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
 cols:={"red","green","blue","yellow","magenta","cyan","orange","black"};
@@ -194,17 +194,18 @@ Puzzle ++ List := (opts1, opts2) -> opts1 ++ new class opts1 from opts2 -- cf si
 
 Puzzle == Puzzle := (p,q) -> (new List from p) == (new List from q)
 
+charSyns := hashTable { "" => " ", "_" => " ", "+" => "↗", "-" => "↘" };
+
 initPuzzle = true >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
     args = apply(args, a -> apply(if instance(a,String) then characters a
 	    else if instance(a,VisibleList) then apply(a,toString) else error "wrong arguments",
-	    c->replace("\\+","↗",replace("\\-","↘",replace("_"," ",c)))
+	    c->if charSyns#?c then charSyns#c else c
 	    ));
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
-    separated := any(join args, s -> s===" ");
     new Puzzle from pairs o | { Length=>n,
-	if separated then Separation => 1 + max flatten apply(args#1,ascii) - 48,
+	if o.Separation === null and any(join args, s -> s===" ") then Separation => 1 + max flatten apply(args#1,ascii) - 48,
         if o.Steps === null then Steps => max(max flatten apply(join args,ascii) - 48,1) -- d>=1
         } | flatten flatten apply(n, i ->
         apply(n-i, j -> {
