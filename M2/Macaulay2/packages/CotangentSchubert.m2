@@ -360,7 +360,7 @@ multidoc ///
 ///
 undocumented {
     Presentation, Ktheory, Equivariant, Partial, Borel, EquivLoc,
-    Paths, Labels, Length, Steps, Ktheory',
+    Paths, Labels, Length, Steps, Ktheory', Separation,
     (restrict,Matrix),(restrict,Matrix,RingElement),
     (inversion,String)
     }

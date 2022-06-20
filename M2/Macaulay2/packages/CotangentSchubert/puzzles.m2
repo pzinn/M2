@@ -22,8 +22,7 @@ myget = memoize(x -> first(
 	))
 
 puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Labels => true, Paths => false, Separation => null};
-export {"Steps", "Ktheory'", "Length", "Labels", "Paths"}; -- move to main file
-protect Separation;
+export {"Steps", "Ktheory'", "Length", "Labels", "Paths", "Separation"}; -- move to main file
 -- lots of global variables, not thread-safe!
 upTriangles=downTriangles=rhombi={};
 apply({rhombusStyle,downTriStyle,upTriStyle},protect);
