@@ -104,8 +104,9 @@ strk:=0.01*puzzleSize;
 vg = p -> gList toSequence (
     n:=p.Length;
     flatten apply(n, i -> flatten apply(n-i, j -> (
-                a := p#(i,j,0);
-                b := p#(i,j,1);
+                a := try p#(i,j,0) else break;
+                b := try p#(i,j,1) else break;
+		c := try p#(i,j,2) else break;
                 deepSplice {
                     local kk;
                     adj := (dir,a,x,y) -> (
@@ -116,8 +117,7 @@ vg = p -> gList toSequence (
                         else if dir === 1 then [x+cf*r,y]
                         else [x+cf*r,y-cf*r]
                         );
-                    if p#(i,j,2) != "" then (
-                        c := p#(i,j,2);
+                    if c != "" then (
 			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#(i,j,upTriStyle));
                         Polygon opts,
                         if (i+j<n-1) then (
@@ -255,9 +255,11 @@ puzzle = puzzleOpts >> o -> args -> (
 
 bottom = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,i,2))
 
-nwside = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,i,2))
+-- these last 2 are currently not exported
 
-neside = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,i,2))
+nwside = p -> new LabelList from apply(p.Length,i->p#(p.Length-1-i,0,1))
+
+neside = p -> new LabelList from apply(p.Length,i->p#(0,i,0))
 
 -- computation of (d<=3) equivariant fugacities
 myload "fugacity.m2"
