@@ -11,12 +11,12 @@ kogan = (d,sep,Ktheory,Ktheory',Generic,Equivariant) -> (
     	| flatten apply(toList(0..d), j->apply(toList(0..j-1),i->{toString i,toString j,toString i | toString j}));
 	if Ktheory then (
 	    upTriangles = upTriangles | toList splice table(0..sep-1,sep..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
-	    downTriangles = downTriangles | flatten apply(sep,j->apply(j,i->{toString i,toString j,toString i|toString j,"fill"=>"yellow"}))
-	    | flatten apply(toList(sep..d),j->apply(toList(sep..j-1),i->{toString i,toString j,toString i|toString j,"fill"=>"yellow"}))
+	    downTriangles = downTriangles | flatten apply(sep,j->apply(j,i->{toString j,toString i,toString i|toString j,"fill"=>"yellow"}))
+	    | flatten apply(toList(sep..d),j->apply(toList(sep..j-1),i->{toString j,toString i,toString i|toString j,"fill"=>"yellow"}))
 	    ) else if Ktheory' then (
 	    downTriangles = downTriangles | toList splice table(0..sep-1,sep..d,(i,j)->{toString j,toString i,toString i|toString j,"fill"=>"yellow"});
-	    upTriangles = upTriangles | flatten apply(sep,j->apply(j,i->{toString i,toString j,toString i|toString j,"fill"=>"yellow"}))
-	    | flatten apply(toList(sep..d),j->apply(toList(sep..j-1),i->{toString i,toString j,toString i|toString j,"fill"=>"yellow"}))
+	    upTriangles = upTriangles | flatten apply(sep,j->apply(j,i->{toString j,toString i,toString i|toString j,"fill"=>"yellow"}))
+	    | flatten apply(toList(sep..d),j->apply(toList(sep..j-1),i->{toString j,toString i,toString i|toString j,"fill"=>"yellow"}))
 	    );
 	);
     (upTriangles,downTriangles,rhombi)
