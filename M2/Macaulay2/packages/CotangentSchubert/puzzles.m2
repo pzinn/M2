@@ -71,6 +71,9 @@ new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k
 -- ascii art for puzzles (inspired by Rui Xiong's sage code)
 trisize:=10;
 netTri := (b,a,c) -> (
+    if a=="_" then a="/";
+    if b=="_" then b="\\";
+    if c=="_" then c="-";
     "    /\\    "
     || "   /  \\  "
     || concatenate (
@@ -157,9 +160,9 @@ vg = p -> gList toSequence (
                                 )
                             ),
                         if p#Labels then (
-                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
-                            GraphicsText ({[i+.5,j],b} | vgTextOpts b),
-                            GraphicsText ({[i+.5,j+.5],c} | vgTextOpts c)
+                            if a!="_" then GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            if b!="_" then GraphicsText ({[i+.5,j],b} | vgTextOpts b),
+                            if c!="_" then GraphicsText ({[i+.5,j+.5],c} | vgTextOpts c)
                             )
                         ) else (
 			opts = {{[i+1,j],[i,j],[i,j+1],[i+1,j+1]}};
@@ -178,8 +181,8 @@ vg = p -> gList toSequence (
                                         )
                                     ))),
                         if p#Labels then (
-                            GraphicsText ({[i,j+.5],a} | vgTextOpts a),
-                            GraphicsText ({[i+.5,j],b} | vgTextOpts b)
+                            if a!="_" then GraphicsText ({[i,j+.5],a} | vgTextOpts a),
+                            if b!="_" then GraphicsText ({[i+.5,j],b} | vgTextOpts b)
                             )
                         )
                     }
