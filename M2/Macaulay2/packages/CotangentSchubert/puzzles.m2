@@ -34,7 +34,8 @@ myload "equiv.m2";
 myload "generic.m2";
 myload "generic-equiv.m2";
 
-Kstyle = "fill"=>"LightGray";
+Kstyle = "fill"=>"LightPink";
+equivstyle = "fill"=>"LightGray";
 
 curPuzzleOpts := null;
 tiles := o -> (
@@ -62,7 +63,7 @@ tiles := o -> (
             upTriangles = upTriangles | apply(KDown, x -> append(x,Kstyle));
             downTriangles = downTriangles | apply(KUp, x -> append(x,Kstyle));
             );
-        rhombi = if o#Equivariant then apply(equivRhombi d, x -> append(x,"fill"=>"gray")) else {};
+        rhombi = if o#Equivariant then apply(equivRhombi d, x -> append(x,equivstyle)) else {};
         )
     )
 

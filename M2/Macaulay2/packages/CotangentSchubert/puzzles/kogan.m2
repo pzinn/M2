@@ -4,7 +4,7 @@ kogan = (d,sep,Ktheory,Ktheory',Generic,Equivariant) -> (
     koganStates2 := apply(toList(0..d), toString) 
     | flatten apply(toList(0..d), j->apply(toList(0..j-1),i->toString i | toString j)); -- on horiz edges
     
-    rhombi := if Equivariant then if Generic then apply(koganStates1,i->{i,i,i,i}) else {{"_","_","_","_","fill"=>"gray"}} else {}; -- actually, Generic makes no diff because iiii never occurs for i!="_"
+    rhombi := if Equivariant then if Generic then apply(koganStates1,i->{i,i,i,i}) else {{"_","_","_","_",equivstyle}} else {}; -- actually, Generic makes no diff because iiii never occurs for i!="_"
     if Generic then upTriangles := downTriangles := select(flatten table(koganStates1,koganStates1, (a,b) -> {a,b,if a=="_" then b else if b=="_" then a else concatenate sort {a,b}}), tri -> member(tri#2,koganStates2)) else (
 	upTriangles = downTriangles = apply(toList(0..d),i->{"_",toString i,toString i})
     	| apply(toList(0..d),i->{toString i,"_",toString i})
