@@ -31,7 +31,7 @@ fugacityK = p -> (
     n:=p.Length;
     if p.Separation =!= null then (
 	sep := toString p.Separation;
-	tri := (a,b) -> if  a==" " or b==" " or a<b then 1
+	tri := (a,b) -> if  a=="_" or b=="_" or a<b then 1
 			else if a>=sep and b<sep then -q^(-1) else -q; -- needs more checks
 	if p.Equivariant then (
 	    defineFK n;
@@ -39,9 +39,9 @@ fugacityK = p -> (
 		    (
 			z := FK_n_(n-i)/FK_n_(j+1);
 			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
-			if a==b then (if a==" " then q else 1)*(1-z)/(1-q^2*z) else if a==d then 1
+			if a==b then (if a=="_" then q else 1)*(1-z)/(1-q^2*z) else if a==d then 1
 			else ((1-q^2)/(1-q^2*z)
-			    * (if (a!=" " and b!=" " and a>b) or (a==" " and b<sep) or (b==" " and a>=sep) then 1 else z)
+			    * (if (a!="_" and b!="_" and a>b) or (a=="_" and b<sep) or (b=="_" and a>=sep) then 1 else z)
 			    * (tri(a,b))^(-1) * tri(d,c)
 			    )
 			)
