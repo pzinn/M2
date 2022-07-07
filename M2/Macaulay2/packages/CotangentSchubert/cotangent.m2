@@ -16,9 +16,9 @@ debug Core -- to use basering, generatorSymbols, frame
 
 -- labeling of classes
 LabelList = new Type of List;
-new LabelList from String := (T,s) -> characters s
+new LabelList from String := (T,s) -> select(characters s,c->c!=" ") -- should we allow multinumbers by using spaces?
 new LabelList from List := (T,l) -> apply(l,toString)
-texMath LabelList := s -> concatenate between("\\,",apply(s,c->if c==" " then "\\_" else c))
+texMath LabelList := s -> concatenate between("\\,",s)
 net LabelList := toString LabelList := s -> concatenate between(" ",s)
 toExternalString LabelList := s -> toExternalString toString s
 -- inversion number of a string

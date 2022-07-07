@@ -188,7 +188,7 @@ vg = p -> gList toSequence (
 html Puzzle := p -> html vg p
 tex Puzzle := texMath Puzzle := p -> tex vg p
 
-digit := s -> #s==1 and first ascii s >=48 and first ascii s <= 48+9;
+digit := s -> #s==1 -- should be enough
 valid := (x,y) -> x === y or (x === "#" and digit y) or x === "*" or x === "**";
 
 Puzzle ++ HashTable := (opts1, opts2) -> merge(opts1,opts2,last)
@@ -196,19 +196,16 @@ Puzzle ++ List := (opts1, opts2) -> opts1 ++ new class opts1 from opts2 -- cf si
 
 Puzzle == Puzzle := (p,q) -> (new List from p) == (new List from q)
 
-charSyns := hashTable { "" => " ", "_" => " ", "+" => "↗", "-" => "↘" };
+digitvals := l -> apply(select(flatten apply(l,ascii),i->i>=48 and i<58),i->i-48)
 
 initPuzzle = true >> o -> args -> (
     if debugLevel>0 then << "initializing puzzle" << newline;
-    args = apply(args, a -> apply(if instance(a,String) then characters a
-	    else if instance(a,VisibleList) then apply(a,toString) else error "wrong arguments",
-	    c->if charSyns#?c then charSyns#c else c
-	    ));
+    args = apply(args, a -> new LabelList from a);
     if length unique apply(args,length) != 1 then error "inputs should have the same length";
     n := #(args#0);
     new Puzzle from pairs o | { Length=>n,
-	if o.Separation === null and any(join args, s -> s===" ") then Separation => 1 + max flatten apply(args#1,ascii) - 48,
-        if o.Steps === null then Steps => max(max flatten apply(join args,ascii) - 48,1) -- d>=1
+	if o.Separation === null and any(join args, s -> s==="_") then Separation => 1 + max digitvals(args#1),
+        if o.Steps === null then Steps => max(max digitvals(join args),1) -- d>=1
         } | flatten flatten apply(n, i ->
         apply(n-i, j -> {
                 (i,j,0) => if i==0 then args#1#j else "**",
@@ -279,7 +276,7 @@ puzzle("0123","3210",Generic=>true,Equivariant=>true)
 
 #puzzle("#######","0101212","#######") -- # is any single-digit, * is anything
 
-puzzle("5 4 3 ","210   ",Generic=>false,Equivariant=>false)
+puzzle("5_4_3_","210___",Generic=>false,Equivariant=>false)
 
 -- a complicated example: app C1 d=3
 
