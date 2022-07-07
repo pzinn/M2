@@ -34,6 +34,8 @@ myload "equiv.m2";
 myload "generic.m2";
 myload "generic-equiv.m2";
 
+Kstyle = "fill"=>"LightGray";
+
 curPuzzleOpts := null;
 tiles := o -> (
     newPuzzleOpts := apply(keys puzzleOpts, k -> o#k);
@@ -52,13 +54,13 @@ tiles := o -> (
         upTriangles = downTriangles = basicTriangles d;
         if o.Ktheory then (
             (KUp,KDown) := KTriangles d;
-            upTriangles = upTriangles | apply(KUp, x -> append(x,"fill"=>"yellow"));
-            downTriangles = downTriangles | apply(KDown, x -> append(x,"fill"=>"yellow"));
+            upTriangles = upTriangles | apply(KUp, x -> append(x,Kstyle));
+            downTriangles = downTriangles | apply(KDown, x -> append(x,Kstyle));
             );
         if o#Ktheory' then (
             (KUp,KDown) = KTriangles d;
-            upTriangles = upTriangles | apply(KDown, x -> append(x,"fill"=>"yellow"));
-            downTriangles = downTriangles | apply(KUp, x -> append(x,"fill"=>"yellow"));
+            upTriangles = upTriangles | apply(KDown, x -> append(x,Kstyle));
+            downTriangles = downTriangles | apply(KUp, x -> append(x,Kstyle));
             );
         rhombi = if o#Equivariant then apply(equivRhombi d, x -> append(x,"fill"=>"gray")) else {};
         )
