@@ -30,24 +30,33 @@ shorten := s -> (
 -- TODO: remove as duplicate
 noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
-texLiteralTable := new MutableHashTable -- rewrite
-scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
-scan(ascii(32 .. 126), c -> texLiteralTable#c = c)
-scan("\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))
-texLiteralTable#"\n" = "\n"
-texLiteralTable#"\r" = "\r"
-texLiteralTable#"\t" = "\t"
-texLiteralTable#"`"  = "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-texLiteral = s -> concatenate apply(s, c -> texLiteralTable#c)
+texLiteralEncode := c -> concatenate apply(ascii c,i->("{\\char ",toString i,"}"))
+texLiteralPairs := splice {
+    apply(ascii(0..8)|ascii(11..12)|ascii(14..31)|"\\{}$&#^_%~|<>\""|ascii(127..255), c -> c => texLiteralEncode c),
+    "`"  => "{`}", -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
+    -- various unicode symbols
+    "←" => "\\(\\leftarrow\\)",
+    "↑" => "\\(\\uparrow\\)",
+    "→" => "\\(\\rightarrow\\)",
+    "↓" => "\\(\\downarrow\\)",
+    "↔" => "\\(\\leftrightarrow\\)",
+    "↕" => "\\(\\updownarrow\\)",
+    "↖" => "\\(\\nwarrow\\)",
+    "↗" => "\\(\\nearrow\\)",
+    "↘" => "\\(\\searrow\\)",
+    "↙" => "\\(\\swarrow\\)"
+    }
+texLiteralTable := hashTable texLiteralPairs
+
+texLiteral = s -> concatenate apply(characters s, c -> if texLiteralTable#?c then texLiteralTable#c else c)
 
 HALFLINE    := "\\vskip 4.75pt\n"
 ENDLINE     := "\\leavevmode\\hss\\endgraf\n"
 VERBATIM    := "\\begingroup\\tt "
 ENDVERBATIM := "\\endgroup{}"
 
-texExtraLiteralTable := copy texLiteralTable
-texExtraLiteralTable#" " = "\\ "
-texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(l, c -> texExtraLiteralTable#c)))
+texExtraLiteralTable := hashTable append(texLiteralPairs," " => "\\ ")
+texExtraLiteral := s -> demark(ENDLINE, apply(lines s, l -> apply(l, c -> if texExtraLiteralTable#?c then texExtraLiteralTable#c else c)))
 
 --------------------------------------------
 -- this loop depends on the feature of hash tables that when the keys
