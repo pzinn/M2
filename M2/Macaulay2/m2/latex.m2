@@ -30,7 +30,7 @@ shorten := s -> (
 -- TODO: remove as duplicate
 noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
-texLiteralTable := new MutableHashTable
+texLiteralTable := new MutableHashTable -- rewrite
 scan(0 .. 255, c -> texLiteralTable#(ascii{c}) = concatenate(///{\char ///, toString c, "}"))
 scan(ascii(32 .. 126), c -> texLiteralTable#c = c)
 scan("\\{}$&#^_%~|<>\"", c -> texLiteralTable#c = concatenate("{\\char ", toString (ascii c)#0, "}"))

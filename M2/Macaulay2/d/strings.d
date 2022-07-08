@@ -1,5 +1,4 @@
 --		Copyright 1994 by Daniel R. Grayson
-
 use arithmetic;
 use system;
 
@@ -73,7 +72,7 @@ utf8charlength(c0:char):int := (
     else 4
 );
 
-export utf8width(s:string):int := (
+export utf8width(s:string):int := ( -- maybe should be called utf8length, less ambiguous
      n := length(s);
      i := 0;
      l := 0;
@@ -98,7 +97,13 @@ export utf8substr(s:string,start:int,wid:int):string := ( -- compared to substr,
      substr(s,start1,i-start1)
 );
 
-
+export utf8characters(s:string):array(string) := (
+     i := 0; j := 0; l := length(s);
+     new array(string) len utf8width(s) do for k from 0 to utf8width(s)-1 do provide (
+          i = i+j;
+	  j = utf8charlength(s.i);
+	  substr(s,i,j)
+     ))
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d strings.o "

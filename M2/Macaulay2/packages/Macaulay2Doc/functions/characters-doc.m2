@@ -3,7 +3,7 @@
 --- notes: 
 
 document { 
-     Key => {characters,(characters,String)},
+     Key => characters,
      Headline => "get characters from a string",
      Usage => "characters s",
      Inputs => {
