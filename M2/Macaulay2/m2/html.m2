@@ -8,7 +8,6 @@ needs "format.m2"
 needs "gb.m2" -- for for GroebnerBasis
 needs "packages.m2" -- for Package
 needs "system.m2" -- for getViewer
-needs "latex.m2"
 
 getStyleFile := fn -> locateCorePackageFileRelative("Style",
     layout -> replace("PKG", "Style", layout#"package") | fn,
@@ -165,7 +164,7 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-html Thing := htmlLiteral @@ (lookup(tex,Thing)) -- by default, we use tex (as opposed to actual html)
+html Thing := htmlLiteral @@ (x -> "$" | texMath x | "$") -- by default, we use math mode tex (as opposed to actual html)
 html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
