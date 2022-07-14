@@ -18,11 +18,9 @@ document {
      PARA{},
      "utf8 characters are correctly treated:",
      PARA{},
-     EXAMPLE "s = \"π ≈ 3.14159\"; characters s",
+     EXAMPLE "characters \"π ≈ 3.14159\"",
      PARA{},
-     "To get the one-byte characters of the string, use ", TO "toList", " instead:",
-     PARA{},
-     EXAMPLE "toList s",
+     "To get the one-byte characters of the string, use ", TO "toList", " instead.",
      SeeAlso => {String}
      }
 
