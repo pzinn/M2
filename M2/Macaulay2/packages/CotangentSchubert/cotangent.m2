@@ -24,9 +24,11 @@ new LabelList from List := (T,l) -> apply(l,toString)
 texMath LabelList := s -> concatenate between("\\,",s)
 net LabelList := toString LabelList := s -> concatenate between(" ",s)
 toExternalString LabelList := s -> toExternalString toString s
+-- ordering of labels
+ord = s -> (sum ascii s)/#s -- 0 < 10 < 1 < 21 < 2 ... TODO also treat sep / almost sep labels (seems impossible on NW/NE)
 -- inversion number of a string
 inversion = method()
-inversion LabelList := p -> sum(#p-1,i->sum(i+1..#p-1,j->if p_i>p_j then 1 else 0))
+inversion LabelList := p -> sum(#p-1,i->sum(i+1..#p-1,j->if ord p_i>ord p_j then 1 else 0))
 inversion String := s -> inversion new LabelList from s
 
 -- a simple function that seems like it should already exist
