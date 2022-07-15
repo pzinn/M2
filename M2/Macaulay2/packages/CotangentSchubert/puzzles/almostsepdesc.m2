@@ -4,9 +4,15 @@ str := x -> (
     )
 almostsepdesc = (d,sep,Ktheory,Ktheory',Generic,Equivariant) -> (
     if d>9 then error "this value of d not implemented"; -- arbitrary
-    if Equivariant then error "not implemented yet"; -- TODO
     l:=toList(0..d);
     s:=subsets l;
+    if Equivariant then (
+	if not Generic then error "not implemented"; -- more precisely, doesn't exist!
+	rhombi:=flatten flatten table(l,l,(a,b)->(
+		s:=set a+set b-(set a)*(set b);
+		-- TODO
+		));
+	) else rhombi = {};
     if Generic then (
 	upTriangles = downTriangles = nonnull flatten table(s,s,(a,b)->
         if #a==#b+1 and isSubset(b,a) then {str a,str b, "↗"|toString first toList(set a - set b)}
@@ -56,5 +62,5 @@ almostsepdesc = (d,sep,Ktheory,Ktheory',Generic,Equivariant) -> (
             )
         else if a==b and #a<=1 then {str a,str b,if odd (#a) then "odd" else "even"});
 	);
-    (upTriangles,downTriangles,{})
+    (upTriangles,downTriangles,rhombi)
     )

@@ -43,7 +43,6 @@ tiles := o -> (
     newPuzzleOpts := apply(keys puzzleOpts, k -> o#k);
     if newPuzzleOpts === curPuzzleOpts then return;
     if debugLevel>0 then << "rebuilding tiles" << newline;
-    curPuzzleOpts = newPuzzleOpts;
     d := o.Steps;
     if o#Separation =!= null then (
 	-- for ordinary (resp. almost) sep desc, k is a half-integer (resp. integer)
@@ -51,9 +50,8 @@ tiles := o -> (
 	sepdesc(d,lift(o.Separation-1/2,ZZ),o.Ktheory,o.Ktheory',o.Generic,o.Equivariant)
 	else
 	almostsepdesc(d,o.Separation,o.Ktheory,o.Ktheory',o.Generic,o.Equivariant);
-        return;
-        );
-    if o#Generic then (
+        )
+    else if o#Generic then (
         upTriangles = downTriangles = allTriangles d;
         rhombi = if o#Equivariant then allRhombi d else {};
         ) else (
@@ -69,7 +67,8 @@ tiles := o -> (
             downTriangles = downTriangles | apply(KUp, x -> append(x,Kstyle));
             );
         rhombi = if o#Equivariant then apply(equivRhombi d, x -> append(x,equivstyle)) else {};
-        )
+        );
+    curPuzzleOpts = newPuzzleOpts;
     )
 
 new List from Puzzle := (T,p) -> apply(p.Length,i->apply(p.Length-i,j->apply(3,k->p#(i,j,k))));

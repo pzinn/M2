@@ -18,9 +18,9 @@ fugacityH = p -> ( -- equivariant H
                     X = ind X; W = ind W; U = ind U;
                     s := scalar_(U,X);
                     t := scalar_(W,X); -- print(i,j,X,W,U,s,t);
-                    ) else (
+                    ) else if instance(p.Separation,QQ) then (
                     if X == W then ( s=1; t=1; ) else if X == U then (  s=1; t=0; ) else ( s=0; t=0; ); -- A_n scalar products ~ A_1 scalar products
-                    );
+                    ) else error "not implemented yet"; -- TODO D_n
                 (map(FH_n,FH_-1,{FH_n_0,FH_n_(n-i)-FH_n_(j+1)})) fug_(s,t)
                 ))))
 
@@ -30,7 +30,8 @@ fugacityK = p -> (
     d:=p.Steps;
     n:=p.Length;
     if p.Separation =!= null then (
-	sep := toString p.Separation;
+	if instance(p.Separation,ZZ) then error "not implemented yet"; -- TODO D_n
+	sep := toString (p.Separation-1/2);
 	tri := (a,b) -> if  a=="_" or b=="_" or a<b then 1
 			else if a>=sep and b<sep then -q^(-1) else -q; -- needs more checks
 	if p.Equivariant then (
@@ -105,9 +106,6 @@ fugacity = true >> o -> p -> (
 
 --tallyFugacities = true >> o -> L -> applyKeys(hashTable apply(L,p->p=>fugacity p),bottom,plus)
 fugacityTally = true >> o -> L -> sum(L,p->new VirtualTally from {bottom p=>fugacity(p,o)})
-
--- ordering of labels
-ord = s -> (sum ascii s)/#s -- 0 < 10 < 1 < 21 < 2 ...
 
 fugacityVector = true >> o -> L -> (
     if #L === 0 then return 0; -- error "can't determine puzzle size";
