@@ -17,7 +17,7 @@ newPackage(
 if (options CotangentSchubert).Configuration#"Factor" then needsPackage "Factor" else factor PolynomialRing := opts -> identity;
 
 opts = new OptionTable from {Ktheory => false, Equivariant => true} -- common options
-export {"Ktheory", "Equivariant" };
+export {"Ktheory", "Equivariant", "Separation" };
 
 load "CotangentSchubert/cotangent.m2";
 load "CotangentSchubert/puzzles.m2";
