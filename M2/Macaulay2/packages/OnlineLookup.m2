@@ -79,6 +79,7 @@ maple2M2 = s -> ( -- some common functions
     s = replace("Re","realPart",s);
     s = replace("Im","imaginaryPart",s);
     s = replace("I","ii",s);
+    s = replace(";",",",s); -- not great
     s = binaryReplace("\\^","",")`(",s); -- to fix precedence issue of ^ in maple
     s = replace("`","^",s); -- phew
     s
