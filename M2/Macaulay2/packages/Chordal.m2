@@ -700,6 +700,15 @@ runcmd = cmd -> (
     if r != 0 then error("-- command failed, error return code ", r);
 )
 
+html ElimTree := G -> ( -- ideally should be cached but ElimTree's don't have cache
+     dotBinary := ((options Graphs).Configuration)#"DotBinary";
+     dotfilename := temporaryFileName() | ".dot";
+     writeDotFile(dotfilename, G);
+     svgfilename := temporaryFileName() | ".svg";
+     runcmd(dotBinary  | " -Tsvg " | dotfilename | " -o " | svgfilename);
+     get svgfilename
+     )
+
 --###################################
 -- Digraph and Ring maps
 --###################################
