@@ -32,7 +32,7 @@ export {PolyhedralObject, Polyhedron, Cone, Fan, convexHull, posHull, intersecti
 needsPackage "FourierMotzkin"
 
 
--- Definind the new type PolyhedralObject
+-- Defining the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
 globalAssignment PolyhedralObject
 
@@ -2484,7 +2484,7 @@ statePolytope Ideal := I -> (
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
-	  -- Generate the matrix 'M' that spans the space of the differeneces of the 
+	  -- Generate the matrix 'M' that spans the space of the differences of the 
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
@@ -3853,7 +3853,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "makeFan", " is applied to a ", TO Cone, " it generates 
-     the ", TO Fan, " given by the the Cone and all of its faces. If applied to 
+     the ", TO Fan, " given by the Cone and all of its faces. If applied to 
      a ", TO List, " the list must only contain Cones and Fans in the same 
      ambient space. Then it adds the Cones in the List and the generating Cones 
      of the Fans in the List one by one to the Fan, checking each time if the 

@@ -173,7 +173,7 @@ raySort = rays -> rays _ (reverse sortColumns (- matrix {rays}))
 --  -Symmetry group for polytopes
 
 
--- Definind the new type PolyhedralObject
+-- Defining the new type PolyhedralObject
 PolyhedralObject = new Type of HashTable
 globalAssignment PolyhedralObject
 
@@ -3242,7 +3242,7 @@ cyclicPolytope(ZZ,ZZ) := (d,n) -> (
      convexHull map(ZZ^d, ZZ^n, (i,j) -> j^(i+1)))
 
 -- PURPOSE : Computing the cell decomposition of a compact polyhedron given by a weight vector on the lattice points
---   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with with lattice points of 'P' 
+--   INPUT : '(P,w)',  where 'P' is a compact polyhedron and 'w' is a one row matrix with lattice points of 'P' 
 --     	    	       many entries
 --  OUTPUT : A list of polyhedra that are the corresponding cell decomposition
 cellDecompose = method(TypicalValue => List)
@@ -3412,7 +3412,7 @@ statePolytope Ideal := I -> (
      -- Check if there exists a strictly positive grading such that 'I' is homogeneous with
      -- respect to this grading
      homogeneityCheck := I -> (
-	  -- Generate the matrix 'M' that spans the space of the differeneces of the 
+	  -- Generate the matrix 'M' that spans the space of the differences of the 
 	  -- exponent vectors of the generators of 'I'
 	  L := flatten entries gens I;
 	  lt := apply(L, leadTerm);
@@ -4965,7 +4965,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "fan", " is applied to a ", TO Cone, " it generates 
-     the ", TO Fan, " given by the the Cone and all of its faces. If applied to 
+     the ", TO Fan, " given by the Cone and all of its faces. If applied to 
      a ", TO List, " the list must only contain Cones and Fans in the same 
      ambient space. Then it adds the Cones in the List and the generating Cones 
      of the Fans in the List one by one to the Fan, checking each time if the 
@@ -5001,7 +5001,7 @@ document {
 	  },
      
      PARA{}, " If ",TT "polyhedralComplex", " is applied to a ", TO Polyhedron, " it generates 
-     the ", TO PolyhedralComplex, " given by the the Polyhedron and all of its faces. If applied to 
+     the ", TO PolyhedralComplex, " given by the Polyhedron and all of its faces. If applied to 
      a ", TO List, " the list must only contain Polyhedra and PolyhedralComplexes in the same 
      ambient space. Then it adds the Polyhedra in the List and the generating Polyhedra 
      of the PolyhedralComplexes in the List one by one to the new PolyhedralComplex, checking each time if the 

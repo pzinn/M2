@@ -3477,7 +3477,7 @@ isIsomorphic(truncate(3, R0), truncate(3,dual dual R0))
 
 R1=prune HH^1 source AA#1#0
 degree R1, rank R1, ann R1
--- R1 is a skyscrapper sheaf at the the images of P and Q (indeed, P and Q map to the same point of P^1)
+-- R1 is a skyscrapper sheaf at the images of P and Q (indeed, P and Q map to the same point of P^1)
 --------------------------------
 
 
@@ -3638,7 +3638,7 @@ composedFunctions = () -> (
      --Text
      -- The additional entry h in the zero position of the cohomology matrix of uQ
      -- indicates that we can recover
-     -- the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+     -- the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
      -- in this specific case.
      --Example
       uQ.dd_(-1)
@@ -4017,7 +4017,7 @@ doc ///
      Text
       The additional entry h in the zero position of the cohomology matrix of uQ
       indicates that we can recover
-      the original square of the maximal ideal of E from the differential of of the first quadrant complex uQ
+      the original square of the maximal ideal of E from the differential of the first quadrant complex uQ
       in this specific case.
      Example
       uQ.dd_(-1)
@@ -5506,7 +5506,7 @@ doc ///
        free S-modules in case of the default option BundleType=>PrunedQuotient, or as submodules of free S-modules.
        The true Beilinson functor is obtained by the sheafication of resulting the complex.
 
-       The Beilinson monad of a coherent sheaf $\mathcal F$ is the the sheafication of
+       The Beilinson monad of a coherent sheaf $\mathcal F$ is the sheafication of
        beilinson( T($\mathcal F$)) of its Tate resolution T($\mathcal F$).
      Example
         (S,E) = productOfProjectiveSpaces {2,1}

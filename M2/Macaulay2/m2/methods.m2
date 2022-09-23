@@ -270,12 +270,12 @@ setupMethods((), {
 	  getChangeMatrix, cover, coverMap, super, terms,
 	  cokernel, coimage, comodule, image, someTerms, scanKeys, scanValues,
 	  substitute, complete, ambient, remainder, quotientRemainder, remainder', quotientRemainder', quotient',
-	  coefficients, monomials, size, sum, product, exponents, nullhomotopy, module, raw,
+	  coefficients, monomials, size, sum, product, nullhomotopy, module, raw,
 	  content, leadTerm, leadCoefficient, leadMonomial, components,
-	  leadComponent, degreesRing, assign, realPart, imaginaryPart, conjugate,
-	  relations, cone, standardForm, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
+	  leadComponent, assign, realPart, imaginaryPart, conjugate,
+	  relations, cone, inverse, numeric, numericInterval, floor, ceiling, round, degree, multidegree,
 	  presentation, dismiss, precision, 
-	  norm, clean, fraction, part, coefficient, preimage,
+	  norm, clean, fraction, part, preimage,
 	  hasEngineLinearAlgebra, nullSpace,
       isBasicMatrix, basicDet, basicInverse, basicKernel, basicRank, basicSolve, basicRankProfile
 	  })
@@ -453,6 +453,10 @@ scanKeys(Database,Function) := (x,f) -> (
 	       f s;
 	       s = nextkey x;
 	       ))
+
+-- originally defined (as null) in evaluate.d
+iterator = method()
+next = method()
 
 -- TODO: eventually move this to lists.m2
 select' = select

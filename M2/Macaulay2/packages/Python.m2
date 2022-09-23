@@ -35,12 +35,12 @@ exportFrom_Core {
     "objectType"}
 
 importFrom_Core {
+    "getPythonNone",
     "pythonComplexFromDoubles",
     "pythonDictNew",
     "pythonDictSetItem",
     "pythonFalse",
     "pythonImportImportModule",
-    "pythonNone",
     "pythonListNew",
     "pythonListSetItem",
     "pythonLongAsLong",
@@ -57,7 +57,6 @@ importFrom_Core {
     "pythonSetNew",
     "pythonTrue",
     "pythonTupleNew",
-    "pythonTupleSetItem",
     "pythonUnicodeAsUTF8",
     "pythonUnicodeFromString"
 }
@@ -68,9 +67,6 @@ export { "pythonHelp", "context", "Preprocessor", "toPython",
     "getitem",
     "hasattr",
     "import",
-    "iter",
-    "iterableToList",
-    "next",
     "pythonValue",
     "setattr",
     "setitem",
@@ -90,6 +86,8 @@ PythonObject#{Standard,AfterPrint} = x -> (
      t = replace("<([a-z]+) '(.*)'>","of \\1 \\2",t);
      << concatenate(interpreterDepth:"o") << lineNumber << " : PythonObject " << t << endl;
      )
+
+pythonNone = getPythonNone()
 
 pythonValue = method(Dispatch => Thing)
 pythonValue String := s -> (
@@ -153,17 +151,6 @@ Context String := (c,s) -> c.stmtexpr s
 import = method()
 import(String) := pythonImportImportModule
 
-iterableToList = method()
-iterableToList(PythonObject) :=  x -> (
-	i := iter x;
-	while (y := next i; y =!= null) list value y)
-
-dictToHashTable = method()
-dictToHashTable(PythonObject) := x -> (
-    i := iter x;
-    hashTable while (y := next i; y =!= null)
-	list value y => value x_y)
-
 toFunction = method()
 toFunction PythonObject := x -> y -> (
     p := partition(a -> instance(a, Option),
@@ -191,12 +178,14 @@ addHook((value, PythonObject),
     Strategy => "unknown -> PythonObject")
 addPyToM2Function({"function", "builtin_function_or_method", "method-wrapper"},
     toFunction, "function -> FunctionClosure")
+dictToHashTable = x -> hashTable for key in x list value key => value x_key
 addPyToM2Function("Counter", x -> new Tally from dictToHashTable x,
     "Counter -> Tally")
 addPyToM2Function({"dict", "defaultdict"}, dictToHashTable, "dict -> HashTable")
-addPyToM2Function({"set", "frozenset"}, set @@ iterableToList, "set -> Set")
-addPyToM2Function("list", iterableToList, "list -> List")
-addPyToM2Function({"tuple", "range"}, toSequence @@ iterableToList,
+pyListToM2List = x -> for y in x list value y
+addPyToM2Function({"set", "frozenset"}, set @@ pyListToM2List, "set -> Set")
+addPyToM2Function("list", pyListToM2List, "list -> List")
+addPyToM2Function({"tuple", "range"}, toSequence @@ pyListToM2List,
     "tuple -> Sequence")
 addPyToM2Function("str", toString, "str -> String")
 addPyToM2Function("complex", x -> x@@"real" + ii * x@@"imag", "complex -> CC")
@@ -261,11 +250,9 @@ PythonObject Thing := (o, x) -> (toFunction o) x
 
 length PythonObject := x -> value x@@"__len__"()
 
-next = method()
 next PythonObject := x -> x@@"__next__"();
 
-iter = method()
-iter PythonObject := x -> x@@"__iter__"()
+iterator PythonObject := x -> x@@"__iter__"()
 
 getitem = method()
 getitem(PythonObject, Thing) :=
@@ -326,11 +313,7 @@ toPython ZZ := pythonLongFromLong
 toPython Boolean := x -> if x then pythonTrue else pythonFalse
 toPython Constant := x -> toPython(x + 0)
 toPython String := pythonUnicodeFromString
-toPython Sequence := L -> (
-    n := #L;
-    result := pythonTupleNew n;
-    for i to n - 1 do pythonTupleSetItem(result, i, toPython L_i);
-    result)
+toPython Sequence := x -> pythonTupleNew \\ toPython \ x
 toPython VisibleList := L -> (
     n := #L;
     result := pythonListNew n;
@@ -588,6 +571,14 @@ assert Equation(ceiling(-e), -2)
 x = help (import "math")@@cos
 assert instance(x, String)
 assert match("cosine", x)
+///
+
+TEST ///
+-- large integers
+assert Equation(toPython 10^100, pythonValue "10**100")
+assert Equation(toPython(-10^100), pythonValue "-10**100")
+assert Equation(value pythonValue "10**100", 10^100)
+assert Equation(value pythonValue "-10**100", -10^100)
 ///
 
 end --------------------------------------------------------
