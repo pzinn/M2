@@ -75,16 +75,13 @@ reduce = (tar,rawF) -> (
 
 addHook(ReduceHooks, Strategy => Default, (tar, rawF) -> rawF % raw gb presentation tar)
 
-Matrix * Number := Matrix * ZZ := (m,i) -> i * m
-Number * Matrix := (r,m) -> (
-     S := ring m;
-     try r = promote(r,S) else error "can't promote scalar to ring of matrix";
-     map(target m, source m, reduce(target m, raw r * raw m)))
 InfiniteNumber * Matrix := (r,m) -> (map(target m, source m, matrix(r*(entries m))))
 Matrix * InfiniteNumber := (m,r) -> r*m
+Number * Matrix :=
 RingElement * Matrix := (r,m) -> (
     if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
      map(target m, source m, reduce(target m, raw r * raw m)))
+Matrix * Number :=
 Matrix * RingElement := (m,r) -> r*m
 
 toSameRing = (m,n) -> (
