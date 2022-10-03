@@ -189,10 +189,11 @@ gList = true >> opts -> x -> (
 )
 -- lists with preferred coordinate
 gNode = true >> opts -> x -> (
-    x = deepSplice x;
+    x = nonnull toList deepSplice if instance(x,List) then toSequence x else sequence x;
     ctr := x#0;
-    cnt := nonnull toList drop(x,1);
+    cnt := drop(x,1);
     if any(cnt,y->not instance(y,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
+    -- minor optimization: if exactly one content, we don't encapsulate it in a GraphicsList
     (if #cnt === 1 then if #opts === 0 then cnt#0 else new class cnt#0 from merge(cnt#0,opts,last) else GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
     )
 Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
@@ -695,7 +696,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	sizex := rr_0*min(0.5,1.5/g.cache.Size_0); sizey := rr_1*min(0.5,1.5/g.cache.Size_1); -- can't be larger than half the pic; default = 1.5em
 	ss = append(ss,
 	(svgElement GraphicsList) {
-	    "transform" => "translate("|toString(r#0_0)|" "|toString(-r#1_1)|") scale("|toString sizex|" "|toString sizey|")",
+	    "transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
 	    "class" => "gfxauto",
 	    "onclick" => "gfxToggleRotation(event)",
 	    (svgElement Circle) { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
