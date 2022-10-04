@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "0.99",
-        Date => "March 30, 2022", -- "May 18, 2018",
+        Version => "1.0",
+        Date => "October 4, 2022", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -64,14 +64,22 @@ gParse Thing := identity
 GraphicsAncestor = new Type of HashTable -- ancestor type, not meant to be used directly
 GraphicsCoordinate = new Type of GraphicsAncestor
 GraphicsObject = new Type of GraphicsAncestor
-gParse GraphicsObject := g -> ( -- GraphicsObject used as coordinate
-    new GraphicsCoordinate from {
+gParse GraphicsObject := g -> new GraphicsCoordinate from g -- GraphicsObject used as coordinate
+new GraphicsCoordinate from GraphicsObject := (T,g) -> hashTable { -- don't need to call directly, conversion is automatic anyway
 	symbol RefPointFunc => cmat -> g.cache.CurrentMatrix_3, -- closure
 	symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
-    }
-)
+	symbol formation => hold if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else "a "|toString class g
+    	}
 gParse GraphicsCoordinate := identity
 
+globalAssignment GraphicsAncestor
+scan({net,toString}, f -> f GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then f getAttribute(g,ReverseDictionary) else (lookup(f,HashTable)) g)
+expression GraphicsAncestor := hold
+-- TODO improve: keep track as e.g. direct sum. expressionify.
+toString GraphicsCoordinate := toString @@ expression
+net GraphicsCoordinate := net @@ expression
+html GraphicsCoordinate := html @@ expression
+expression GraphicsCoordinate := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else g.formation -- "a graphics coordinate"
 
 GraphicsObject ++ List := (opts1, opts2) -> (
     opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
@@ -196,10 +204,13 @@ gNode = true >> opts -> x -> (
     -- minor optimization: if exactly one content, we don't encapsulate it in a GraphicsList
     (if #cnt === 1 then if #opts === 0 then cnt#0 else new class cnt#0 from merge(cnt#0,opts,last) else GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
     )
-Number * GraphicsAncestor := (x,v) -> new GraphicsCoordinate from {
+Number * GraphicsAncestor := (x,v) -> (
+    v = gParse v;
+    new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> x*compute(v,cmat),
-    symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")"
-    }
+    symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")",
+    symbol formation => Product{expression x,expression v}
+    })
 --Array + GraphicsAncestor := -- too messy to include Arrays in complex coordinate operations
 --GraphicsAncestor + Array :=
 Vector + GraphicsAncestor :=
@@ -209,7 +220,8 @@ GraphicsAncestor + GraphicsAncestor := (v,w) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> compute(v,cmat)+compute(w,cmat),
-    symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")"
+    symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")",
+    symbol formation => Sum{expression v,expression w}
     })
 - GraphicsAncestor := v -> (-1)*v
 Vector - GraphicsAncestor :=
@@ -226,7 +238,8 @@ place (GraphicsAncestor,GraphicsAncestor,Number,Number) := (v,w,a,b) -> (
     w = gParse w;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> place(compute(v,cmat),compute(w,cmat),a,b),
-    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")"
+    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")",
+    symbol formation => FunctionApplication{place,(expression v,expression w)}
     })
 place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
     v = gParse v;
@@ -262,7 +275,8 @@ crossing t := true >> o -> (v1,v2,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> crossing(compute(v1,cmat),compute(v2,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")"
+    symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")",
+    symbol formation => FunctionApplication{crossing,(expression v1,expression v2,expression w1,expression w2)}
     }))
 
 bisector = method()
@@ -283,7 +297,8 @@ bisector t := (v,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> bisector(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol JsFunc => () -> "gBisect("|jsString v|","|jsString w1|","|jsString w2|")"
+    symbol JsFunc => () -> "gBisect("|jsString v|","|jsString w1|","|jsString w2|")",
+    symbol formation => FunctionApplication{bisector,(expression v,expression w1,expression w2)}
     })
 )
 
@@ -306,7 +321,8 @@ projection t := (v,w1,w2) -> (
     w2 = gParse w2;
     new GraphicsCoordinate from {
     symbol RefPointFunc => cmat -> projection(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
-    symbol JsFunc => () -> "gProject("|jsString v|","|jsString w1|","|jsString w2|")"
+    symbol JsFunc => () -> "gProject("|jsString v|","|jsString w1|","|jsString w2|")",
+    symbol formation => FunctionApplication{projection,(expression v,expression w1,expression w2)}
     })
 )
 
@@ -577,11 +593,6 @@ svg = g -> (
     updateGraphicsCache(g,one);
     svg2(g,one)
     )
-
-globalAssignment GraphicsAncestor
-toString GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then toString getAttribute(g,ReverseDictionary) else (lookup(toString,HashTable)) g
-net GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then net getAttribute(g,ReverseDictionary) else (lookup(net,HashTable)) g
-expression GraphicsAncestor := hold
 
 shortSize := 3.8
 short GraphicsObject := g -> (
@@ -1283,10 +1294,21 @@ multidoc ///
    Text
     A type that is used to describe (possibly dynamic) coordinates. Internally all coordinates are in $\RR^4$ (projective coordinates).
     Any @TO {GraphicsObject}@ can be turned into a @BOLD "GraphicsCoordinate"@ corresponding to the reference point $(0,0,0,1)$ in its local coordinate system.
-    It can then be manipulated using various operations such as addition, multiplication by scalar, etc
+    @BOLD "GraphicsCoodinate"@s can also be manipulated using various operations such as addition, multiplication by scalar, etc.
+    Though you can perform the conversion from @TO {GraphicsObject}@ to @BOLD "GraphicsCoodinate"@s explicitly using "new... from...",
+    you do not ever need to do so since this conversion is performed automatically
+    if you use a @TO {GraphicsObject}@ as coordinate inside another object, or apply arithmetic operations to it.
+    A convenient way to define @BOLD "GraphicsCoodinate"@s is via @TO {gNode}@.
    Example
     a=gNode([0,0],Circle{Radius=>1}); b=gNode([1,1],Circle{Radius=>1}); mid=a+b
     gList(a,b,Circle{mid,Radius=>1-1/sqrt 2})
+   Text
+    Note that any object that the @BOLD "GraphicsCoodinate"@ depends on must be provided explicitly as part of the picture, even
+    if that object happens to be "invisible". In the example that follows, @TT "a"@ is an empty graphical object, yet it must
+    be included in the @TO {gList}@ for the animation to work correctly.
+   Example
+    a=gNode([0,1],AnimMatrix=>rotation 0.1);
+    gList(a,Circle{Radius=>1},Polygon{{a,[-1,0],[1,0]}})
  Node
   Key
    Ellipse
@@ -1730,7 +1752,9 @@ undocumented {
     Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY, Frame,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsAncestor), (html,GraphicsObject), (net,GraphicsAncestor), (toString,GraphicsAncestor), (short,GraphicsObject),
-    (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject),
+    (tex, SVG), (texMath, SVG), (tex, GraphicsObject), (texMath, GraphicsObject), 
+    (expression, GraphicsCoordinate), (net, GraphicsCoordinate), (html, GraphicsCoordinate), (toString, GraphicsCoordinate),
+    (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject), (NewFromMethod,GraphicsCoordinate,GraphicsObject)
 }
 
 end
