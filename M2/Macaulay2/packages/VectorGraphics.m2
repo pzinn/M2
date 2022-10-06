@@ -888,7 +888,7 @@ rotation = args -> (
     args = sequence args;
     if #args>3 then error("Too many arguments");
     angle := args#0;
-    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Sequence) and #args#1 === 3 )));
+    threeD :=  #args === 3 or (#args === 2 and (( instance(args#1,Vector) and rank class args#1 === 3 ) or ( instance(args#1,Array) and #args#1 === 3 )));
     axis := promote(if threeD then if instance(args#1,Vector) then args#1 else vector toList args#1 else vector {0,0,1},RR);
     invr := 1/sqrt(axis_0^2+axis_1^2+axis_2^2);
     axis = invr*axis;
