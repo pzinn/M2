@@ -1454,7 +1454,7 @@ multidoc ///
    Set the size of a picture
   Description
    Text
-    An option to fix the size of the @ TO {GraphicsObject} @ in line width units.
+    An option to fix the size of the @ TO {GraphicsObject} @ in HTML em units (1em = font size = width of one line of text).
     Only has an effect if in the outermost @ TO {GraphicsObject} @.
     Can be either a vector { width, height } or a number (diagonal).
  Node
