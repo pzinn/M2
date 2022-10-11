@@ -62,24 +62,25 @@ gParse OptionTable := h -> applyValues(h,gParse)
 gParse Thing := identity
 
 GraphicsAncestor = new Type of HashTable -- ancestor type, not meant to be used directly
-GraphicsCoordinate = new Type of GraphicsAncestor
+GraphicsCoordinate = new SelfInitializingType of GraphicsAncestor
 GraphicsObject = new Type of GraphicsAncestor
 gParse GraphicsObject := g -> new GraphicsCoordinate from g -- GraphicsObject used as coordinate
 new GraphicsCoordinate from GraphicsObject := (T,g) -> hashTable { -- don't need to call directly, conversion is automatic anyway
 	symbol RefPointFunc => cmat -> g.cache.CurrentMatrix_3, -- closure
 	symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
-	symbol formation => hold if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else "a "|toString class g
+	symbol formation => FunctionApplication{GraphicsCoordinate,if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else short g}
     	}
 gParse GraphicsCoordinate := identity
 
 globalAssignment GraphicsAncestor
 scan({net,toString}, f -> f GraphicsAncestor := g -> if hasAttribute(g,ReverseDictionary) then f getAttribute(g,ReverseDictionary) else (lookup(f,HashTable)) g)
 expression GraphicsAncestor := hold
--- TODO improve: keep track as e.g. direct sum. expressionify.
+precedence GraphicsObject := x -> strength1 symbol symbol
+
 toString GraphicsCoordinate := toString @@ expression
 net GraphicsCoordinate := net @@ expression
 html GraphicsCoordinate := html @@ expression
-expression GraphicsCoordinate := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else g.formation -- "a graphics coordinate"
+expression GraphicsCoordinate := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else g.formation
 
 GraphicsObject ++ List := (opts1, opts2) -> (
     opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
