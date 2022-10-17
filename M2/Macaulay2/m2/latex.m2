@@ -32,7 +32,7 @@ noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 
 texLiteralEncode := c -> concatenate apply(ascii c,i->("{\\char ",toString i,"}"))
 texLiteralPairs := splice {
-    apply(ascii(0..8)|ascii(11..12)|ascii(14..31)|"\\{}$&#^_%~|<>\""|ascii(127..255), c -> c => texLiteralEncode c),
+    apply(0..8|11..12|14..31|127..255|toSequence ascii "\\{}$&#^_%~|<>\"", c -> ascii c => texLiteralEncode ascii c),
     "`"  => "{`}", -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
     -- various unicode symbols
     "←" => "\\(\\leftarrow\\)",
