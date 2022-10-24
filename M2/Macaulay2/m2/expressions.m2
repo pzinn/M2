@@ -1329,9 +1329,7 @@ short = method(Dispatch => Thing, TypicalValue => Expression)
 short Thing := short @@ expression
 short Expression := identity
 short MatrixExpression := x -> (
-    opts := hashTable{CompactMatrix=>compactMatrixForm,BlockMatrix=>null,Degrees=>null};
-    (opts,x) = override(opts,toSequence x);
-    m := toList x;
+    (opts,m) := matrixOpts x;
     shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
     new MatrixExpression from {
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
