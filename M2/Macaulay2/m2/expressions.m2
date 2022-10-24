@@ -1316,27 +1316,31 @@ texMath Set := x -> texMath expression x
 
 -- shortening expressions
 Dots = new Type of Symbol
-texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
-toString Dots := net Dots := x -> "..."
 cdots=new Dots from symbol cdots
 ddots=new Dots from symbol ddots
 vdots=new Dots from symbol vdots
 ldots=new Dots from symbol ldots
+texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
+toString Dots := x -> "..."
+net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
 shortLength := 8
 -- used in chaincomplexes.m2
 short = method(Dispatch => Thing, TypicalValue => Expression)
 short Thing := short @@ expression
 short Expression := identity
+shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
 short MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
     new MatrixExpression from {
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
 	    else toList m,short),
 	CompactMatrix=>true
 	}
     )
+short Table := m -> new Table from apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
+    else toList m,short)
+
 short VectorExpression :=
 short VisibleList :=
 short Product :=
