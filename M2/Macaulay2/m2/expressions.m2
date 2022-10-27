@@ -533,12 +533,9 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-blockMatrixForm=false;  -- governs MatrixExpression output
-compactMatrixForm=true; -- governs MatrixExpression output
 matrixOpts := x -> ( -- helper function
-    opts := new OptionTable from {CompactMatrix=>compactMatrixForm,BlockMatrix=>blockMatrixForm,Blocks=>null,Degrees=>null,MutableMatrix=>false};
+    opts := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
     (opts,x) = override(opts,toSequence x);
-    if opts.Blocks===null then opts = opts ++ { BlockMatrix => false }; -- clumsy. maybe kill BlockMatrix?
     if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
     (opts,x)
     )
@@ -930,6 +927,8 @@ net SparseMonomialVectorExpression := v -> (
 
 net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
+blockMatrixForm=false;  -- governs MatrixExpression output
+compactMatrixForm=true; -- governs net MatrixExpression
 matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Alignment => Left },
                                    false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Alignment => Center } }
 
@@ -951,12 +950,13 @@ toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
+    blk := blockMatrixForm and opts.Blocks =!= null; -- whether to display blocks
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    net1 := if opts.CompactMatrix then toCompactString else net;
+    net1 := if compactMatrixForm then toCompactString else net;
     vbox0 := if opts.Degrees === null then 0 else 1;
-    (hbox,vbox) := if opts.BlockMatrix then (drop(accumulate(plus,0,opts.Blocks#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.Blocks#1))) else (false,{vbox0,vbox0+#m#0});
+    (hbox,vbox) := if blk then (drop(accumulate(plus,0,opts.Blocks#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.Blocks#1))) else (false,{vbox0,vbox0+#m#0});
     m = if opts.Degrees =!= null then apply(#m,i->apply(prepend(opts.Degrees#0#i,m#i),net1)) else applyTable(m,net1);
-    netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#(opts.CompactMatrix))
+    netList(m,Boxes=>{hbox,vbox},matrixDisplayOptions#compactMatrixForm)
     )
 
 --html MatrixExpression := x -> html TABLE toList x
@@ -1184,30 +1184,29 @@ texMath Table := m -> (
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    if opts.BlockMatrix then ( j := 0; h := 0; );
+    blk := blockMatrixForm and opts.Blocks =!= null; -- whether to display blocks
+    if blk then ( j := 0; h := 0; );
     m = applyTable(m,texMath);
     concatenate(
 	if opts.Degrees =!= null then (
 	    degs := apply(opts.Degrees#0,texMath);
-	    if opts.CompactMatrix then "\\begin{smallmatrix}" else "\\begin{array}{l}",
+	    "\\begin{array}{l}",
 	    apply(#m, i -> concatenate(degs#i,"\\vphantom{",m#i, "}", if i<#m-1 then "\\\\")),
-	    if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}"
+	    "\\end{array}"
 	    ),
 	"\\left(",
-	if opts.CompactMatrix then "\\begin{smallmatrix}" else { -- right now no vertical bars in compact mode TODO
-	    "\\!\\begin{array}{",
-	    if opts.BlockMatrix then demark("|",apply(opts.Blocks#1,i->i:"c")) else #m#0:"c",
-	    "}"
-	    },
+	"\\!\\begin{array}{",
+	if blk then demark("|",apply(opts.Blocks#1,i->i:"c")) else #m#0:"c",
+	"}",
 	newline,
 	apply(#m, i -> concatenate(
 		if opts.Degrees =!= null then "\\vphantom{"| degs#i | "}",
 		 between("&",m#i),
 		 if i<#m-1 then "\\\\", -- sadly, LaTeX *requires* no final \\
 		 newline,
-		 if opts.BlockMatrix then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
+		 if blk then (j=j+1; if h<#opts.Blocks#0-1 and j == opts.Blocks#0#h then (j=0; h=h+1; "\\hline\n"))
 		 )),
-	if opts.CompactMatrix then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\end{array}\\!",
 	"\\right)"
 	)
 )
@@ -1215,10 +1214,10 @@ texMath MatrixExpression := x -> (
 texMath VectorExpression := v -> (
     concatenate(
 	"\\left(",
-	if compactMatrixForm then "\\begin{smallmatrix}" else "\\!\\begin{array}{c}",
+	"\\!\\begin{array}{c}",
 	newline,
 	between(///\\///,apply(toList v,texMath)),
-	if compactMatrixForm then "\\end{smallmatrix}" else "\\end{array}\\!",
+	"\\end{array}\\!",
 	"\\right)"
 	)
     )
@@ -1351,6 +1350,7 @@ short Sum := x -> Short { apply(if #x>shortLength then new class x from {
 	last x
 	}
     else x,short) }
+short Minus := identity
 short String := s -> Short if #s > shortLength then first s | "..." | last s else s
 short Net := n -> Short if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
