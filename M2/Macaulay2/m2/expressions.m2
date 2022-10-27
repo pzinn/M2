@@ -1331,7 +1331,7 @@ shortLength := 8
 Short = new WrapperType of Holder
 short = method(Dispatch => Thing, TypicalValue => Short)
 short Thing := x -> short expression x
-short Holder := x -> Short x
+short Holder := x -> Short unhold x
 expressionValue Short := x -> error "can't evaluate a shortened expression"
 short Table := m -> Short (
     shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
