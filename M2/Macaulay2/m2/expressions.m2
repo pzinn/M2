@@ -926,7 +926,6 @@ net SparseMonomialVectorExpression := v -> (
 
 net Table := x -> netList (toList x, HorizontalSpace=>2, VerticalSpace => 1, BaseRow => 0, Boxes => false, Alignment => Center)
 
-blockMatrixForm=false;  -- governs MatrixExpression output
 compactMatrixForm=true; -- governs net MatrixExpression
 matrixDisplayOptions := hashTable { true => new OptionTable from { HorizontalSpace => 1, VerticalSpace => 0, BaseRow => 0, Alignment => Left },
                                    false => new OptionTable from { HorizontalSpace => 2, VerticalSpace => 1, BaseRow => 0, Alignment => Center } }
@@ -949,7 +948,7 @@ toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    blk := blockMatrixForm and opts.Blocks =!= null; -- whether to display blocks
+    blk := opts.Blocks =!= null; -- whether to display blocks
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if compactMatrixForm then toCompactString else net;
     vbox0 := if opts.Degrees === null then 0 else 1;
@@ -1183,7 +1182,7 @@ texMath Table := m -> (
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
     if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    blk := blockMatrixForm and opts.Blocks =!= null; -- whether to display blocks
+    blk := opts.Blocks =!= null; -- whether to display blocks
     if blk then ( j := 0; h := 0; );
     m = applyTable(m,texMath);
     concatenate(

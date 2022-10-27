@@ -207,13 +207,16 @@ Matrix * Vector := Matrix Vector := Vector => (m,v) -> (
 blocks := m -> if m.cache.?components then flatten apply(m.cache.components,blocks) else { rank m }
 
 protect Blocks
+blockMatrixForm=false;  -- governs expression Matrix inclusion of blocks
 expression Matrix := m -> (
     x := applyTable(entries m, expression);
     d := degrees -* cover *- target m;
     if not all(d, i -> all(i, j -> j == 0)) then x=append(x,Degrees=>{d, degrees source m});
-    b1 := blocks target m;
-    b2 := blocks source m;
-    if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
+    if blockMatrixForm then (
+    	b1 := blocks target m;
+    	b2 := blocks source m;
+    	if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
+	);
     MatrixExpression x
     )
 
