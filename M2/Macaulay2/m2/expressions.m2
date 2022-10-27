@@ -538,7 +538,7 @@ compactMatrixForm=true; -- governs MatrixExpression output
 matrixOpts := x -> ( -- helper function
     opts := new OptionTable from {CompactMatrix=>compactMatrixForm,BlockMatrix=>blockMatrixForm,Blocks=>null,Degrees=>null,MutableMatrix=>false};
     (opts,x) = override(opts,toSequence x);
-    if opts.Blocks===null then opts = opts ++ { BlockMatrix => false }; -- clumsy
+    if opts.Blocks===null then opts = opts ++ { BlockMatrix => false }; -- clumsy. maybe kill BlockMatrix?
     if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
     (opts,x)
     )
@@ -1328,33 +1328,31 @@ toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
 shortLength := 8
--- used in chaincomplexes.m2
-short = method(Dispatch => Thing, TypicalValue => Expression)
-short Thing := short @@ expression
-short Expression := identity
-shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
-short MatrixExpression := x -> (
-    (opts,m) := matrixOpts x;
-    new MatrixExpression from {
+-- used e.g. in chaincomplexes.m2
+Short = new WrapperType of Holder
+short = method(Dispatch => Thing, TypicalValue => Short)
+short Thing := x -> short expression x
+short Dots := identity
+short Expression := x -> Short x
+expressionValue Short := x -> error "can't evaluate a shortened expression"
+short Table := m -> Short (
+    shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
+    new class m from
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
-	    else toList m,short),
-	CompactMatrix=>true
-	}
+	    else m,shortRow)
     )
-short Table := m -> new Table from apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
-    else toList m,short)
-
+short MatrixExpression := x -> Short new MatrixExpression from first short Table x#0
 short VectorExpression :=
 short VisibleList :=
 short Product :=
-short Sum := x -> apply(if #x>shortLength then new class x from {
+short Sum := x -> Short { apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
 	}
-    else x,short)
-short String := s -> if #s > shortLength then first s | "..." | last s else s
-short Net := n -> if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
+    else x,short) }
+short String := s -> Short if #s > shortLength then first s | "..." | last s else s
+short Net := n -> Short if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
