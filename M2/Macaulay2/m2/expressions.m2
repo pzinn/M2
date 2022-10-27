@@ -1354,6 +1354,19 @@ short Minus := identity
 short String := s -> Short if #s > shortLength then first s | "..." | last s else s
 short Net := n -> Short if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
+texMath Short := s -> ( -- semi-temp -- one day there'll be a texMath'
+    s = s#0;
+    if class s =!= MatrixExpression and class s =!= Table then return texMath s;
+    if all(s,r->all(r,i->class i===ZeroExpression)) then return "0";
+    concatenate(
+    if class s === MatrixExpression then "\\left(",
+    "\\begin{smallmatrix}", newline,
+    between(///\\/// | newline, apply(toList s, row -> between("&",apply(row,texMath)))),
+    newline, "\\end{smallmatrix}",
+    if class s === MatrixExpression then "\\right)"
+    ))
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
