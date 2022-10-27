@@ -533,15 +533,14 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-matrixOpts := x -> ( -- helper function
-    opts := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
-    (opts,x) = override(opts,toSequence x);
-    if class x === Sequence then x = toList x else if #x === 0 or class x#0 =!= List then x = { x }; -- for backwards compatibility
-    (opts,x)
+matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
+matrixOpts := m -> ( -- helper function
+    (opts,x) := override(matrixOpts1,toSequence m);
+    (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    m = (if opts#MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+    m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
     -- TODO: keep track of blocks too
     if opts.Degrees === null then m else (
     R := ring m;
@@ -1333,13 +1332,14 @@ short = method(Dispatch => Thing, TypicalValue => Short)
 short Thing := x -> short expression x
 short Holder := x -> Short unhold x
 expressionValue Short := x -> error "can't evaluate a shortened expression"
-short Table := m -> Short (
+short MatrixExpression :=
+short Table := x -> Short (
+    (opts,m) := matrixOpts x;
     shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
-    new class m from
+    new class x from
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
 	    else m,shortRow)
     )
-short MatrixExpression := x -> Short new MatrixExpression from first short Table x#0
 short VisibleList :=
 short Expression := x -> Short { apply(if #x>shortLength then new class x from {
 	first x,
@@ -1353,16 +1353,17 @@ short Power := p -> Short Power {short p#0,p#1}
 short String := s -> Short if #s > shortLength then first s | "..." | last s else s
 short Net := n -> Short if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
-texMath Short := s -> ( -- semi-temp -- one day there'll be a texMath'
-    s = s#0;
-    if class s =!= MatrixExpression and class s =!= Table then return texMath s;
-    if all(s,r->all(r,i->class i===ZeroExpression)) then return "0";
+texMath Short := x -> ( -- semi-temp -- one day there'll be a texMath'
+    x = x#0;
+    if class x =!= MatrixExpression and class x =!= Table then return texMath x;
+    (opts,m):=matrixOpts x;
+    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     concatenate(
-    if class s === MatrixExpression then "\\left(",
+    if class x === MatrixExpression then "\\left(",
     "\\begin{smallmatrix}", newline,
-    between(///\\/// | newline, apply(toList s, row -> between("&",apply(row,texMath)))),
+    between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
     newline, "\\end{smallmatrix}",
-    if class s === MatrixExpression then "\\right)"
+    if class x === MatrixExpression then "\\right)"
     ))
 
 
