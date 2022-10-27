@@ -1331,8 +1331,7 @@ shortLength := 8
 Short = new WrapperType of Holder
 short = method(Dispatch => Thing, TypicalValue => Short)
 short Thing := x -> short expression x
-short Dots := identity
-short Expression := x -> Short x
+short Holder := x -> Short x
 expressionValue Short := x -> error "can't evaluate a shortened expression"
 short Table := m -> Short (
     shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
@@ -1341,16 +1340,16 @@ short Table := m -> Short (
 	    else m,shortRow)
     )
 short MatrixExpression := x -> Short new MatrixExpression from first short Table x#0
-short VectorExpression :=
 short VisibleList :=
-short Product :=
-short Sum := x -> Short { apply(if #x>shortLength then new class x from {
+short Expression := x -> Short { apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
 	}
     else x,short) }
 short Minus := identity
+short BinaryOperation := b -> Short BinaryOperation {b#0,short b#1,short b#2}
+short Power := p -> Short Power {short p#0,p#1}
 short String := s -> Short if #s > shortLength then first s | "..." | last s else s
 short Net := n -> Short if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
