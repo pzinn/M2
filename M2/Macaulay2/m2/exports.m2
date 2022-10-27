@@ -1283,6 +1283,7 @@ exportMutable {
 	"allowableThreads",
 	"applicationDirectorySuffix",
 	"backtrace",
+	"blockMatrixForm",
 	"compactMatrixForm",
 	"current",
 	"currentLayout",
