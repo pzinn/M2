@@ -46,7 +46,7 @@ NCPolynomialRing</pre>
 
 o7 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 C</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">

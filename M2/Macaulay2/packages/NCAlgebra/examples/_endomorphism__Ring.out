@@ -14,36 +14,36 @@ QuotientRing</pre>
 i3 : 3:0kRes = res(coker vars R, LengthLimit=>7)
 
 o3 = $\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
-a&amp;b&amp;c\\
+a&amp;b&amp;c
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}1}{R^{3}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-c&amp;b&amp;0\\
 -c&amp;0&amp;0&amp;a\\
-b&amp;a&amp;-c&amp;-c\\
+b&amp;a&amp;-c&amp;-c
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}2}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 a&amp;0&amp;0&amp;c\\
 0&amp;b&amp;c&amp;0\\
 0&amp;c&amp;a&amp;0\\
-c&amp;0&amp;0&amp;b\\
+c&amp;0&amp;0&amp;b
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}3}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 -b&amp;0&amp;0&amp;-c\\
 0&amp;-a&amp;-c&amp;0\\
 0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a\\
+c&amp;0&amp;0&amp;a
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}4}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;0&amp;-c\\
 -b&amp;0&amp;-c&amp;0\\
 c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b\\
+0&amp;c&amp;0&amp;b
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}5}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;-c&amp;0\\
 -b&amp;0&amp;0&amp;-c\\
 0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a\\
+c&amp;0&amp;0&amp;a
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}6}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
 0&amp;-a&amp;0&amp;-c\\
 -b&amp;0&amp;-c&amp;0\\
 c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b\\
+0&amp;c&amp;0&amp;b
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}7}{R^{4}}$
 
 o3 : <pre style="display:inline">
@@ -51,11 +51,11 @@ ChainComplex</pre>
 i4 : 4:0M = coker kRes.dd_5
 
 o4 = $<pre style="display:inline">
-cokernel</pre>\ \begin{array}{l}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\\\end{array}\left(\!\begin{array}{cccc}
+cokernel</pre>\ \begin{array}{l}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;-a&amp;0&amp;-c\\
 \vphantom{\left\{4\right\}}-b&amp;0&amp;-c&amp;0\\
 \vphantom{\left\{4\right\}}c&amp;0&amp;a&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;c&amp;0&amp;b\\
+\vphantom{\left\{4\right\}}0&amp;c&amp;0&amp;b
 \end{array}\!\right)$
 
 o4 : $R$<pre style="display:inline">
@@ -222,26 +222,26 @@ NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarro
 List</pre>
 i8 : 8:0maps = B.cache.endomorphismRingGens
 
-o8 = $\left\{\begin{array}{l}\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\\\end{array}\left(\!\begin{array}{cccc}
+o8 = $\left\{\begin{array}{l}\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;0&amp;1&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0\\
-\end{array}\!\right),\:\begin{array}{l}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\\\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0
+\end{array}\!\right),\:\begin{array}{l}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\\\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;1&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;1&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
-\end{array}\!\right),\:\begin{array}{l}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\\\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\\\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0
+\end{array}\!\right),\:\begin{array}{l}\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\\\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1\\
 \vphantom{\left\{4\right\}}1&amp;0&amp;0&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
-\end{array}\!\right),\:\begin{array}{l}\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\\\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0
+\end{array}\!\right),\:\begin{array}{l}\left\{4\right\}\vphantom{1000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0001}\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}1&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;0\\
-\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1
 \end{array}\!\right)\right\}$
 
 o8 : <pre style="display:inline">

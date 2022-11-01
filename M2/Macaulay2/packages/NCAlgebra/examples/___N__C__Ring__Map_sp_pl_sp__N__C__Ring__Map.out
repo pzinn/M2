@@ -10,7 +10,7 @@ NCPolynomialRing</pre>
 
 o2 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -34,7 +34,7 @@ NCRingMap</pre>
 
 o3 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -58,7 +58,7 @@ NCRingMap</pre>
 
 o4 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -93,7 +93,7 @@ NCMatrix</pre>
 
 o6 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">

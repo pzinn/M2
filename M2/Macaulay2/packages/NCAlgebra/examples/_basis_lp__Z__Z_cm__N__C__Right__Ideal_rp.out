@@ -58,7 +58,7 @@ A</pre>$
 
 o5 = $<pre style="display:inline">
 NCRightIdeal</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
 CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
 A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">

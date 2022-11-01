@@ -17,7 +17,7 @@ NCPolynomialRing</pre>
 1\\
 1\\
 1\\
-1\\
+1
 \end{array}\!\right)$
 
 o3 : <pre style="display:inline">
@@ -93,7 +93,7 @@ Matrix</pre><pre style="display:inline">
 0\\
 0\\
 0\\
-1\\
+1
 \end{array}\!\right)$
 
 o6 : <pre style="display:inline">
@@ -165,7 +165,7 @@ Matrix</pre><pre style="display:inline">
 0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
 0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
 0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
-1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
+1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1
 \end{array}\!\right)$
 
 o7 : <pre style="display:inline">

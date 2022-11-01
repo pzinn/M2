@@ -16,7 +16,7 @@ NCQuotientRing</pre>
 
 o3 = $<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -46,7 +46,7 @@ NCRingMap</pre>
 
 o4 = $\left\{<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -70,7 +70,7 @@ A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right)\right\}\r
 A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\},\:<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -94,7 +94,7 @@ A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right)\right\}\r
 A</pre>,\:\textit{target}\ \Rightarrow \ <pre style="display:inline">
 A</pre>\right\},\:<pre style="display:inline">
 NCRingMap</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
+CacheTable</pre>\left\{\,\right\}\right),\:\textit{Derivation}\ \Rightarrow \ <pre style="display:inline">
 false</pre>,\:\textit{functionHash}\ \Rightarrow \ \left(<pre style="display:inline">
 HashTable</pre>\left\{x\ \Rightarrow \ \left(<pre style="display:inline">
 A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
@@ -232,7 +232,7 @@ true</pre>
 -w+1\\
 0\\
 -w\\
-0\\
+0
 \end{array}\!\right)$
 
 o13 : <pre style="display:inline">
