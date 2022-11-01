@@ -824,8 +824,7 @@ document {
      PARA{},
      "The default value is ", TT "false", ".",
      EXAMPLE {
-	  "R = ZZ[x,y];",
-	  "M = R^1 ++ R^2 ++ R^3",
+	  "M = ZZ^1 ++ ZZ^2 ++ ZZ^3",
 	  "f = random(M,M)",
 	  "blockMatrixForm = true;",
 	  "f"
