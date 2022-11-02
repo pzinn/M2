@@ -1705,6 +1705,9 @@ map(e:Expr,f:Expr):Expr := (
 	  if !isInt(i)
 	  then WrongArgSmallInteger()
 	  else map(toInt(i),f))
+     is s:stringCell do (
+	 toSequence(applyEEE(
+		 getGlobalVariable(applyIteratorS), getIterator(e), f)))
      else (
 	 iter := getIterator(e);
 	 if iter != nullE
