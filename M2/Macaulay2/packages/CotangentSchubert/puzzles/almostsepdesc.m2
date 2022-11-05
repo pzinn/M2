@@ -8,7 +8,7 @@ almostsepdesc = (d,sep,Ktheory,Ktheory',Generic,Equivariant) -> (
     s:=subsets l;
     if Equivariant then (
 	if not Generic then error "not implemented"; -- more precisely, doesn't exist!
-	rhombi:=flatten flatten table(l,l,(a,b)->(
+	rhombi:=flatten flatten table(s,s,(a,b)->(
 		s:=set a+set b-(set a)*(set b);
 		-- TODO
 		));
