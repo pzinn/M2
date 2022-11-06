@@ -74,6 +74,8 @@ fugacityK = p -> (
         )
     )
 
+-- this is equivariant cohomology nongeneric d<=2 (phew)
+-- missing almostsepdesc
 fugacityH0 = p -> (
     n:=p.Length;
     defineFH n;
@@ -83,16 +85,26 @@ fugacityH0 = p -> (
 len := s -> #(replace("\\(|\\)","",s))
 sign := (a,b,c) -> if a==b and a==c then (-1)^(len a-1) else if len a == len b+len c or len b==len a+len c or len c==len a+len b then 1 else -1
 
+-- this is equivariant K-theory nongeneric d<=2 (phew)
+-- missing sepdesc and almostsepdesc.
 fugacityK0 = p -> (
     n:=p.Length;
     defineFK n;
     product(n-1, i -> product(n-1-i, j -> if p#(i,j,2)=="" then 1-FK_n_(j+1)*FK_n_(n-i)^-1 else (
 		X := p#(i,j,1); W:=p#(i,j,0); U := p#(i+1,j,0); V := p#(i,j+1,1); C := p#(i,j,2);
-		(if (len X+len W>len U+len V) or (len X+len W==len U+len V and 
-			((W=="2" and X=="20" and U=="1") or (W=="2" and X=="21" and U=="10") or (W=="20" and X=="0" and U=="21") or (W=="21" and X=="21" and U=="(21)0") or (W=="20" and X=="21" and U=="(21)0")))
-		    then FK_n_(j+1)*FK_n_(n-i)^-1 else 1)
-		*sign(C,W,X)*sign(U,V,C)
-		)))
+		if p.Separation === null then (
+		    (if (len X+len W>len U+len V) or (len X+len W==len U+len V and 
+			    ((W=="2" and X=="20" and U=="1") or (W=="2" and X=="21" and U=="10") or (W=="20" and X=="0" and U=="21") or (W=="21" and X=="21" and U=="(21)0") or (W=="20" and X=="21" and U=="(21)0")))
+		    	then FK_n_(j+1)*FK_n_(n-i)^-1 else 1)
+		    *sign(C,W,X)*sign(U,V,C)
+		    ) else ( -- X=m W=l U=i V=j
+		    sep := toString (p.Separation-1/2);
+		    if U==W and V==X and U!=X then 1
+		    else if U!="_" and V!="_" and U<=sep and V>sep then -FK_n_(j+1)*FK_n_(n-i)^-1
+		    else if U!="_" and V!="_" and V<U and (U<=sep or V>sep) then -1
+		    else if (U=="_" and V>sep) or (U<=sep and V=="_") then FK_n_(j+1)*FK_n_(n-i)^-1
+		    else 1
+		))))
 )
 
 fugacity = true >> o -> p -> (
