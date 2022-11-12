@@ -1325,6 +1325,7 @@ toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
 shortLength := 8
+shortMode = false
 -- used e.g. in chaincomplexes.m2
 Short = new WrapperType of Holder
 unhold Short := identity

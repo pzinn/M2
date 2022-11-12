@@ -57,7 +57,7 @@ Thing#{WebApp,BeforePrint} = identity
 Nothing#{WebApp,Print} = identity
 
 printFunc := Thing#{WebApp,print} = x -> (
-    y := htmlInside x; -- we compute the html now (in case it produces an error)
+    y := htmlInside if shortMode then short x else x; -- we compute the html now (in case it produces an error)
     if class y =!= String then error "invalid html output";
     << webAppHtmlTag | y | webAppEndTag << endl;
     )

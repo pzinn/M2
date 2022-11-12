@@ -1097,6 +1097,7 @@ export {
 	"sheafExt",
 	"sheafHom",
 	"shield",
+	"short",
 	"show",
 	"showClassStructure",
 	"showHtml",
@@ -1318,6 +1319,7 @@ exportMutable {
 	"programPaths",
 	"recursionLimit",
 	"scriptCommandLine",
+	"shortMode",
 	"stopIfError",
 	"topLevelMode"
 	}
