@@ -21,7 +21,7 @@ new LabelList from String := (T,s) -> (
     if #l==1 then characters s else select(l,c->c!="")
     )
 new LabelList from List := (T,l) -> apply(l,toString)
-texMath LabelList := s -> concatenate between("\\,",apply(s,a->if a=="_" then "\\_" else a))
+texMath LabelList := s -> concatenate between("\\,",apply(s,a->if a==="_" then "\\_" else a))
 net LabelList := toString LabelList := s -> concatenate between(" ",s)
 toExternalString LabelList := s -> toExternalString toString s
 -- ordering of labels

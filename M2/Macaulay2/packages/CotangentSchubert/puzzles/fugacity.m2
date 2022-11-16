@@ -31,19 +31,17 @@ fugacityK = p -> (
     n:=p.Length;
     if p.Separation =!= null then (
 	if instance(p.Separation,ZZ) then error "not implemented yet"; -- TODO D_n
-	sep := toString (p.Separation-1/2);
-	tri := (a,b) -> if  a=="_" or b=="_" or a<b then 1
-			else if a>=sep and b<sep then -q^(-1) else -q; -- needs more checks
+	sep1 := a -> if a=="_" then p.Separation else first ascii a - 48;
+    	tri := (a,b) -> if sep1 b < sep1 a then -q else 1;
 	if p.Equivariant then (
 	    defineFK n;
             product(n-1, i -> product(n-1-i, j ->
 		    (
 			z := FK_n_(n-i)/FK_n_(j+1);
-			(a,b,c,d) := (p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)); -- i,j,k,l
-			if a==b then (if a=="_" then q else 1)*(1-z)/(1-q^2*z) else if a==d then 1
+			(a,b,c,d) := apply((p#(i+1,j,0),p#(i,j+1,1),p#(i,j,1),p#(i,j,0)),sep1); -- i,j,k,l
+			if a==b then q*(1-z)/(1-q^2*z) else if a==d then 1
 			else ((1-q^2)/(1-q^2*z)
-			    * (if (a!="_" and b!="_" and a>b) or (a=="_" and b<sep) or (b=="_" and a>=sep) then 1 else z)
-			    * (tri(a,b))^(-1) * tri(d,c)
+			    * (if a<b then -q*z else -q^-1)
 			    )
 			)
                     )) * product(n,i->(
