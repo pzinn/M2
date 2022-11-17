@@ -62,7 +62,13 @@ document {
 			 has been modified to accommodate both homological and internal
 			 grading in a simplied format." 
                 	 }
-	       	    }}
+		     }
+		 },
+	  LI { "functionality changed in a way that could break code:",
+	       UL {
+		    LI { TO remove, " may now be used to remove elements from mutable lists.  Its previous (undocumented) behavior was equivalent to ", TO drop, "."}
+		    }
+	       }
 	  }}
     
 document {
@@ -1098,7 +1104,7 @@ document {
      UL {
 	  LI { "major improvements and additions:",
 	        UL {
-                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and moduless over 
+                LI { "Fast minimal betti number and non-minimal resolution code, for homogeneous ideals and modules over 
                     polynomial rings over finite prime fields.  Also is functional for ideals and
                     modules over exterior algebras.  See ", TO "FastNonminimal", " and ", TO [betti,Minimize], ".  For 
                     computing minimal betti numbers, on larger examples, this code is often hundreds to thousands of times faster than 
