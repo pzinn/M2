@@ -6,11 +6,14 @@ newPackage("ForeignFunctions",
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
 	    HomePage => "https://webwork.piedmont.edu/~dtorrance"}},
-    Keywords => {"Interfaces"},
-    CacheExampleOutput => true,
-    AuxiliaryFiles => true,
-    OptionalComponentsPresent => Core#"private dictionary"#?"ffiCall"
+    Keywords => {"Interfaces"}
     )
+
+if not Core#"private dictionary"#?"ffiCall" then (
+    document{Key => "ForeignFunctions",
+	"Macaulay2 was built without libffi support, so the ForeignFunctions ",
+	"package is not functional."};
+    end)
 
 -------------------------
 -- exports and imports --
@@ -30,7 +33,7 @@ export {
     "ForeignPointerArrayType",
     "ForeignUnionType",
     "ForeignStructType",
-    "ForeignFunctionPointerType",
+--    "ForeignFunctionPointerType",
     "ForeignObject",
 
 -- built-in foreign types
@@ -67,7 +70,7 @@ export {
     "foreignPointerArrayType",
     "foreignStructType",
     "foreignUnionType",
-    "foreignFunctionPointerType",
+--    "foreignFunctionPointerType",
     "foreignSymbol",
     "getMemory",
 
@@ -76,7 +79,7 @@ export {
     "Variadic"
     }
 
-ffiDFunctions = {
+importFrom_Core {
     "dlopen",
     "dlsym",
     "ffiPrepCif",
@@ -102,24 +105,12 @@ ffiDFunctions = {
     "registerFinalizerForPointer"
     }
 
-if (options currentPackage).OptionalComponentsPresent
-then importFrom_Core ffiDFunctions else
-for f in ffiDFunctions do (
-    currentPackage#"private dictionary"#f = getSymbol f;
-    getSymbol f <- (
-	if member(f, {"ffiIntegerType", "ffiRealType"}) then x -> null
-	else x -> error "Macaulay2 built without libffi"))
 
 -------------
 -- pointer --
 -------------
 
-exportFrom_Core {"Pointer"}
-if (options currentPackage).OptionalComponentsPresent
-then exportFrom_Core {"nullPointer"} else (
-    currentPackage#"private dictionary"#"nullPointer" = getSymbol "nullPointer";
-    getSymbol "nullPointer" <- null)
-
+exportFrom_Core {"Pointer", "nullPointer"}
 Pointer.synonym = "pointer"
 Pointer + ZZ := (ptr, n) -> ptr + n -- defined in actors.d
 ZZ + Pointer := (n, ptr) -> ptr + n
@@ -469,6 +460,9 @@ isAtomic ForeignUnionType := T -> T.Atomic
 -----------------------------------
 -- foreign function pointer type --
 -----------------------------------
+
+-- not exported -- causes crashes on some systems
+-- https://github.com/Macaulay2/M2/issues/2683
 
 ForeignFunctionPointerType = new Type of ForeignType
 ForeignFunctionPointerType.synonym = "foreign function pointer type"
@@ -1294,7 +1288,8 @@ doc ///
       myunion double 5
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     ForeignFunctionPointerType
   Headline
@@ -1306,7 +1301,8 @@ doc ///
       @TO "foreignFunctionPointerType"@.
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     foreignFunctionPointerType
     (foreignFunctionPointerType, ForeignType, ForeignType)
@@ -1338,7 +1334,8 @@ doc ///
       foreignFunctionPointerType(int, {voidstar, voidstar})
 ///
 
-doc ///
+-- TODO: add doc when #2683 fixed
+///
   Key
     (symbol SPACE, ForeignFunctionPointerType, Function)
   Headline
@@ -1961,7 +1958,8 @@ assert Equation(value foreignSymbol("mpfi_error", int), 5)
 (foreignFunction(mpfi, "mpfi_reset_error", void, void))()
 ///
 
-TEST ///
+-- TODO: add test when #2683 fixed
+///
 -------------------------------
 -- foreign function pointers --
 -------------------------------
