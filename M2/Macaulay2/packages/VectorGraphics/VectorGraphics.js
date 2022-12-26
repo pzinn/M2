@@ -25,10 +25,12 @@ window.gfxToggleRotation = function(event) {
     if (el.classList.contains("active")) {
 	clearInterval(el.intervalId);
 	el.classList.remove("active");
+	svgel.pauseAnimations(); // for SVG style animate
     }
     else
     {
 	el.classList.add("active");
+	svgel.unpauseAnimations(); // for SVG style animate
 	el.intervalId=setInterval(() => {
 	    if ((!svgel)||(!document.body.contains(svgel))) {
 		svgel=null; // for garbage collecting

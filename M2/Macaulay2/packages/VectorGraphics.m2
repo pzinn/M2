@@ -22,7 +22,8 @@ export{"GraphicsType", "GraphicsObject", "GraphicsCoordinate", "GraphicsPoly",
     "Blur", "Static", "PointList", "Axes", "Margin", "Mesh", "Draggable",
     "SVG",
     "gNode", "place", "bisector", "projection", "crossing",
-    "showGraph"
+    "showGraph",
+    "Animate"
     }
 
 protect Filter
@@ -347,8 +348,8 @@ Light = new GraphicsType of Circle from ( "circle",
 
 --
 animated := method()
-animated GraphicsObject := x -> x.?AnimMatrix
-animated GraphicsList := x -> x.?AnimMatrix or any(x.Contents,animated)
+animated GraphicsObject := x -> x.?AnimMatrix or x.?Animate -- TODO merge the two
+animated GraphicsList := x -> x.?AnimMatrix or x.?Animate or any(x.Contents,animated)
 
 draggable := method()
 draggable GraphicsObject := x -> x.?Draggable and x.Draggable
@@ -573,6 +574,17 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
 	);
     )
 
+-- defs
+animate = new MarkUpType of HypertextParagraph
+animate.qname="animate"
+addAttribute(animate,svgAttr|{
+"begin", "dur", "end", "min", "max", "restart", "repeatCount", "repeatDur", "fill",
+"calcMode", "values", "keyTimes", "keySplines", "from", "to", "by",
+"attributeName", "additive", "accumulate",
+"onbegin", "onend", "onrepeat"
+})
+
+
 svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     s := try svgElement class g else return; -- what is the else for?
     updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
@@ -582,6 +594,8 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
+--    if g.?Animate then args=append(args,animate g.Animate);
+    if g.?Animate then args=append(args,animate append(g.Animate,"onbegin" => "this.ownerSVGElement.pauseAnimations();"));
     style(s args,new OptionTable from g.style)
     )
 
