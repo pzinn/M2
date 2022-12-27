@@ -595,8 +595,14 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
     if g.?Animate then (
---	args=append(args,animate append(g.Animate,"begin" => g.cache.Owner.Options#"id"|".click")); -- just an example
-    args=append(args,animate g.Animate);
+	anim := new OptionTable from g.Animate; -- <animate/> only has options
+	anim = applyValues(anim, s -> (
+		while ((r:=regex(///`([^`]*)`///,s))=!=null) do
+		s=substring(0,r#0#0,s) | (try (value substring(r#1,s)).cache.Options#"id" else g.cache.Options#"id") | substring(r#0#0+r#0#1,s);
+		s
+		));
+	--	args=append(args,animate append(g.Animate,"begin" => g.cache.Owner.Options#"id"|".click")); -- just an example
+    	args=append(args,animate anim);
 	);
     style(s args,new OptionTable from g.style)
     )
