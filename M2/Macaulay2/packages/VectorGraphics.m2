@@ -23,7 +23,7 @@ export{"GraphicsType", "GraphicsObject", "GraphicsCoordinate", "GraphicsPoly",
     "SVG",
     "gNode", "place", "bisector", "projection", "crossing",
     "showGraph",
-    "Animate"
+    "Animate", "AnimStart"
     }
 
 protect Filter
@@ -594,8 +594,10 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
---    if g.?Animate then args=append(args,animate g.Animate);
-    if g.?Animate then args=append(args,animate append(g.Animate,"onbegin" => "this.ownerSVGElement.pauseAnimations();"));
+    if g.?Animate then (
+--	args=append(args,animate append(g.Animate,"begin" => g.cache.Owner.Options#"id"|".click")); -- just an example
+    args=append(args,animate g.Animate);
+	);
     style(s args,new OptionTable from g.style)
     )
 
@@ -728,7 +730,8 @@ new SVG from GraphicsObject := (S,g) -> (
 	    (svgElement Circle) { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
 	    (svgElement Polygon) { "class" => "gfxautoplay", "points" => "0.3,0.25 0.8,0.5 0.3,0.75", "style" => "stroke:none; fill:black" },
 	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.3", "y1" => "0.25", "x2" => "0.3", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
-	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" }
+	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
+	    animate {"onbegin"=>"gfxToggleRotation(event, "| toString(not g.?AnimStart or g.AnimStart)|")"} -- start animation unless AnimStart false
 	    }
 	));
     ss
