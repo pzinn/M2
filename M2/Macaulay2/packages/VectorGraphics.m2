@@ -575,14 +575,19 @@ updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
     )
 
 -- defs
+animateAttr = {
+    "begin", "dur", "end", "min", "max", "restart", "repeatCount", "repeatDur", "fill",
+    "calcMode", "values", "keyTimes", "keySplines", "from", "to", "by",
+    "attributeType", "attributeName", "additive", "accumulate",
+    "onbegin", "onend", "onrepeat"
+    };
+
 animate = new MarkUpType of HypertextParagraph
 animate.qname="animate"
-addAttribute(animate,svgAttr|{
-"begin", "dur", "end", "min", "max", "restart", "repeatCount", "repeatDur", "fill",
-"calcMode", "values", "keyTimes", "keySplines", "from", "to", "by",
-"attributeName", "additive", "accumulate",
-"onbegin", "onend", "onrepeat"
-})
+addAttribute(animate,svgAttr|animateAttr)
+animateTransform = new MarkUpType of HypertextParagraph
+animateTransform.qname="animateTransform"
+addAttribute(animateTransform,svgAttr|animateAttr|{"type"})
 
 
 svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
@@ -594,16 +599,14 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     args := g.cache.Contents;
     if #g.cache.Options>0 then args = append(args, applyValues(new OptionTable from g.cache.Options,jsString));
     if hasAttribute(g,ReverseDictionary) then args = append(args, TITLE toString getAttribute(g,ReverseDictionary));
-    if g.?Animate then (
-	anim := new OptionTable from g.Animate; -- <animate/> only has options
-	anim = applyValues(anim, s -> (
+    if g.?Animate then args = args | apply(if all(g.Animate,u->instance(u,List)) then g.Animate else {g.Animate}, anim -> (
+	anim = applyValues(new OptionTable from anim, s -> ( -- <animate/> only has options
 		while ((r:=regex(///`([^`]*)`///,s))=!=null) do
 		s=substring(0,r#0#0,s) | (try (value substring(r#1,s)).cache.Options#"id" else g.cache.Options#"id") | substring(r#0#0+r#0#1,s);
 		s
 		));
-	--	args=append(args,animate append(g.Animate,"begin" => g.cache.Owner.Options#"id"|".click")); -- just an example
-    	args=append(args,animate anim);
-	);
+	(if anim#?"attributeName" and anim#"attributeName" == "transform" then animateTransform else animate) anim
+	));
     style(s args,new OptionTable from g.style)
     )
 
