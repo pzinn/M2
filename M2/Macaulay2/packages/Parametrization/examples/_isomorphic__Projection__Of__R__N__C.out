@@ -22,7 +22,7 @@ Ideal</pre><pre style="display:inline">
 i6 : 6:0isomorphicProjectionOfRNC(I)
 
 o6 = $\left(\!\begin{array}{ccc}
-x_{0}&amp;-x_{3}&amp;x_{6}\\
+x_{0}&amp;-x_{3}&amp;x_{6}
 \end{array}\!\right)$
 
 o6 : <pre style="display:inline">

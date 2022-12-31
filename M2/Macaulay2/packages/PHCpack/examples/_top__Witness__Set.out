@@ -25,7 +25,7 @@ Sequence</pre>
 i8 : 8:0toString points(w)
 
 o8 = <pre style="display:inline">
-VerticalList{Point{...4...}, Point{...4...}, Point{...4...}}</pre>
+VerticalList{new Point from {Coordinates => {-.064406+1.00899*ii, -1.0139-.129969*ii, .196438-1.01464*ii, -1.03558e-33-7.18097e-33*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {-1.16558-.143085*ii, 1.3381+.333554*ii, -1.51194-.580247*ii, -2.36625e-32+2.72991e-32*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {.840447+.055110*ii, .703315+.092635*ii, .585994+.116614*ii, -1.00052e-32-9.34768e-33*ii}, cache => CacheTable{...3...}}}</pre>
 i9 : 9:0R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
 o10 = $\left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\:x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\:x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}$

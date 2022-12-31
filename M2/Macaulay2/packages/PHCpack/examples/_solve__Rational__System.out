@@ -10,5 +10,5 @@ List</pre>
 i4 : 4:0peek first sols
 
 o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{ConditionNumber => 4.87567                }<br/>      Coordinates => {.543689, .295598, .160713}<br/>      LastT => 1<br/>      SolutionStatus => Regular<br/></pre>
+Point{cache => CacheTable{...3...}              }<br/>      Coordinates => {.543689, .295598, .160713}<br/></pre>
 i5 : 5:0

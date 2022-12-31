@@ -4,7 +4,7 @@
 o1 = $\left(\!\begin{array}{ccc}
 \frac{9}{2}&amp;\frac{1}{2}&amp;\frac{3}{2}\\
 \frac{1}{2}&amp;1&amp;\frac{3}{4}\\
-\frac{9}{4}&amp;\frac{3}{4}&amp;\frac{7}{4}\\
+\frac{9}{4}&amp;\frac{3}{4}&amp;\frac{7}{4}
 \end{array}\!\right)$
 
 o1 : <pre style="display:inline">
@@ -22,7 +22,7 @@ List</pre>
 o4 = $\left(\!\begin{array}{ccc}
 1&amp;0&amp;0\\
 0&amp;1&amp;0\\
-0&amp;0&amp;1\\
+0&amp;0&amp;1
 \end{array}\!\right)$
 
 o4 : <pre style="display:inline">
@@ -33,7 +33,7 @@ Matrix</pre><pre style="display:inline">
 o5 = $\left(\!\begin{array}{ccc}
 \frac{9}{2}&amp;\frac{1}{2}&amp;\frac{3}{2}\\
 0&amp;\frac{17}{18}&amp;\frac{7}{12}\\
-0&amp;0&amp;\frac{47}{68}\\
+0&amp;0&amp;\frac{47}{68}
 \end{array}\!\right)$
 
 o5 : <pre style="display:inline">
@@ -44,7 +44,7 @@ Matrix</pre><pre style="display:inline">
 o6 = $\left(\!\begin{array}{ccc}
 1&amp;0&amp;0\\
 \frac{1}{9}&amp;1&amp;0\\
-\frac{1}{2}&amp;\frac{9}{17}&amp;1\\
+\frac{1}{2}&amp;\frac{9}{17}&amp;1
 \end{array}\!\right)$
 
 o6 : <pre style="display:inline">

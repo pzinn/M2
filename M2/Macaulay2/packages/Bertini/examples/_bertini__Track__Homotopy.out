@@ -13,7 +13,7 @@ List</pre>
 i7 : 7:0peek S0_0
 
 o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{ConditionNumber => 1           }<br/>      Coordinates => {-1.41421}<br/>      CycleNumber => 1<br/>      FunctionResidual => 4.44089e-16<br/>      LastT => .0015625<br/>      MaximumPrecision => 52<br/>      Multiplicity => 1<br/>      NewtonResidual => 0<br/>      SolutionNumber => -1<br/>      SolutionStatus => Regular<br/></pre>
+Point{cache => CacheTable{...9...}}<br/>      Coordinates => {-1.41421}<br/></pre>
 i8 : 8:0R=CC[x,y,t]; -- include the path variable in the ring
 i9 : 9:0f1=(x^2-y^2);
 i10 : 10:0f2=(2*x^2-3*x*y+5*y^2);
@@ -38,7 +38,7 @@ Point</pre>
 List</pre>
 i15 : 15:0S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\left\{-{1.68504}-{.089308}\,\mathbf{i},\:-{.555236}+{.911398}\,\mathbf{i}\right\},\:\left\{{.205172}-{1.05942}\,\mathbf{i},\:{.651414}-{.203593}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{{.652581}-{.338941}\,\mathbf{i},\:{.00705985}-{.465024}\,\mathbf{i}\right\},\:\left\{{1.02579}-{2.31625}\,\mathbf{i},\:{1.59737}-{.123739}\,\mathbf{i}\right\}\right\}$
 
 o15 : <pre style="display:inline">
 List</pre>
