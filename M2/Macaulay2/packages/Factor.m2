@@ -277,7 +277,7 @@ first(g value F,
 )
 *-
 
-FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
+--FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
 
 if ((options Factor).Configuration#"DegreesRings") then (
     -- degrees rings
