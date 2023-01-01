@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "1.0",
+        Version => "1.01",
         Date => "October 4, 2022", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
@@ -148,7 +148,7 @@ project3d := (x,g) -> (
     )
 
 graphicsIdCount := 0;
-graphicsId := () -> (
+graphicsId = () -> (
     graphicsIdCount=graphicsIdCount+1;
     "gfx_" | toString processID() | "_" | toString graphicsIdCount
     )
@@ -528,7 +528,7 @@ svg1 GraphicsText := g -> (
 svg1 GraphicsList := g -> (
     x:=g.Contents;
     g.cache.Contents = if is3d g then (
-	scan(x, y -> y.cache.svgElement = svg2(y,g.cache.CurrentMatrix));
+	scan(x, y -> svg2(y,g.cache.CurrentMatrix));
 	-- distance
 	g.cache.Distance = if #(g.Contents) === 0 then 0_RR else sum(x, y->y.cache.Distance) / #x;
 	-- sorting
@@ -603,11 +603,12 @@ svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
 	anim = applyValues(new OptionTable from anim, s -> ( -- <animate/> only has options
 		while ((r:=regex(///`([^`]*)`///,s))=!=null) do
 		s=substring(0,r#0#0,s) | (try (value substring(r#1,s)).cache.Options#"id" else g.cache.Options#"id") | substring(r#0#0+r#0#1,s);
+--		s=substring(0,r#0#0,s) | (value substring(r#1,s)).cache.Options#"id" | substring(r#0#0+r#0#1,s);
 		s
 		));
 	(if anim#?"attributeName" and anim#"attributeName" == "transform" then animateTransform else animate) anim
 	));
-    style(s args,new OptionTable from g.style)
+    g.cache.svgElement = style(s args,new OptionTable from g.style)
     )
 
 -- produces SVG element hypertext
