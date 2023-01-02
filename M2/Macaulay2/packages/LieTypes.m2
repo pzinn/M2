@@ -46,7 +46,8 @@ export {
     "fusionProduct",
     "fusionCoefficient",
     "MaxWordLength",
-    "positiveRoots"
+    "positiveRoots",
+    "LieAlgebraModuleFromWeights"
     }
 
 
@@ -246,7 +247,7 @@ LieAlgebraModule ^ ZZ := (M,n) -> (
     else new LieAlgebraModule from hashTable {
 	"isIrreducible" => false,
 	"LieAlgebra" => M#"LieAlgebra",
-	"DecompositionIntoIrreducibles" => if n==0 then hashTable {} else applyValues(M#"DecompositionIntoIrreducibles", a -> a*n)
+	"DecompositionIntoIrreducibles" => if n==0 then new Tally else applyValues(M#"DecompositionIntoIrreducibles", a -> a*n)
 	}
     )
 
@@ -296,7 +297,7 @@ irreducibleLieAlgebraModule = method(
     )
 irreducibleLieAlgebraModule(List,LieAlgebra) := (v,g) -> (
     if #v != rank g then error "wrong size of highest weight";
-    new LieAlgebraModule from {"LieAlgebra"=>g,"highestWeight"=>v,"isIrreducible"=>true,"DecompositionIntoIrreducibles"=>(new HashTable from {v=>1})}
+    new LieAlgebraModule from {"LieAlgebra"=>g,"highestWeight"=>v,"isIrreducible"=>true,"DecompositionIntoIrreducibles"=>(new Tally from {v=>1})}
     )
 
 
@@ -580,18 +581,18 @@ multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
 
 
 weightDiagram = method(
-    TypicalValue=>HashTable)
+    TypicalValue=>Tally)
 weightDiagram(String,ZZ,List) := memoize((type,m,v) -> (
     Omega:=toList Freud(type,m,v);     
-    new HashTable from apply(#Omega, i-> {Omega_i,multiplicityOfWeightInLieAlgebraModule(type,m,v,Omega_i)})     
+    new Tally from apply(#Omega, i-> {Omega_i,multiplicityOfWeightInLieAlgebraModule(type,m,v,Omega_i)})
 ))
 
 weightDiagram(LieAlgebraModule) := (M) -> (
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    w:=hashTable{};
-    scanPairs(M#"DecompositionIntoIrreducibles", (v,mul) -> w = merge(w,applyValues(weightDiagram(type,m,v),i->i*mul),plus));
+    w:=new Tally;
+    scanPairs(M#"DecompositionIntoIrreducibles", (v,mul) -> w = w + applyValues(weightDiagram(type,m,v),i->i*mul));
     w
 )
 
@@ -610,47 +611,23 @@ findOneHighestWeight = (type,m,W) -> (
         v=K_i;
         if apply(DeltaPlus, w-> member(w+v,set(K))) == apply(#DeltaPlus, j -> false) then return v   
     );
-    error "no highest weights found"
+    return null;
 )
 
-
---Function to subtract one mutable hash table from another
---In the application below, the answers are all supposed be positive.  This functions throws an error if not
-subtractMutableHashTable = (T,U) -> (
-    U= pairs U;
-    for i from 0 to #U-1 do (
-        if T#?(U_i_0) then (
-	    if T#(U_i_0) >= U_i_1 then T#(U_i_0) = T#(U_i_0) - U_i_1;
-	    if T#(U_i_0) < U_i_1 then error "Can't subtract these hash tables"
-	);
-	if not (T#?(U_i_0)) then error "Can't subtract these hash tables"
-    );
-    new MutableHashTable from pairs(U)
-)
 
 
 LieAlgebraModuleFromWeights = method(
     TypicalValue => LieAlgebraModule
     )
-LieAlgebraModuleFromWeights(List,LieAlgebra) := (W,g) -> (
+LieAlgebraModuleFromWeights(Tally,LieAlgebra) := (W,g) -> (
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    M:=new MutableHashTable from pairs(W);
-    mu:=0;
-    v:={};
-    decompositionData:={};
     --find and peel off irreducibles
-    while #M>0 do (
-        v=findOneHighestWeight M;     
-        mu=M#v;
-        decompositionData = append(decompositionData,{v,mu});
-        WDv:=weightDiagram v;
-        M= subtractMutableHashTable(M,WDv)
+    decompositionData := while (v:=findOneHighestWeight (type,m,W)) =!= null list (v,mu:=W#v) do (
+        WDv:=weightDiagram (type,m,v); assert(WDv#v === 1);
+	W=W-applyValues(WDv,i->i*mu);
     );
-    if #decompositionData == 1 and decompositionData_0_0 ==1 then (
-        return new LieAlgebraModule from {"LieAlgebra"=>g,"highestWeight"=>decompositionData_0_1,"isIrreducible"=>true,"DecompositionIntoIrreducibles"=>(new HashTable from decompositionData)}  
-    );
-    new LieAlgebraModule from {"LieAlgebra"=>g,"isIrreducible"=>false,"DecompositionIntoIrreducibles"=>(new HashTable from decompositionData)}
+    new LieAlgebraModule from {"LieAlgebra"=>g,"isIrreducible"=>false,"DecompositionIntoIrreducibles"=>new Tally from decompositionData}
 )     
 
 ---------------------------------------------------------
@@ -759,12 +736,12 @@ tens := memoize( (lambda,mu,g) -> (
     wdh=pairs(wdh);
     newwdh:=delete(null, apply(#wdh, i -> if wdh_i_1 != 0 then wdh_i));
     if #newwdh == 1 and newwdh_0_1 == 1 then irreducibleLieAlgebraModule(newwdh_0_0,g)
-    else new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new HashTable from newwdh,"isIrreducible"=>false}
+    else new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new Tally from newwdh,"isIrreducible"=>false}
     ))
 LieAlgebraModule ** LieAlgebraModule := (V,W) -> (
     g:=V#"LieAlgebra";
     if g != W#"LieAlgebra" then error "V and W must be modules over the same Lie algebra";
-    X := new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>hashTable{}};
+    X := new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new Tally};
     scanPairs(V#"DecompositionIntoIrreducibles",(w,mul)->
 	scanPairs(W#"DecompositionIntoIrreducibles",(w',mul')->
 	    X = X ++ (tens(w,w',g))^(mul*mul')
@@ -778,7 +755,7 @@ tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := memoiz
 	if not W#?"isIrreducible" or not W#"isIrreducible" then error "third module must be irreducible";
     	nu:=W#"highestWeight";
     	fullTensorProduct:=(U**V)#"DecompositionIntoIrreducibles";
-    	if fullTensorProduct#?nu then lift(fullTensorProduct#nu,ZZ) else 0
+    	lift(fullTensorProduct_nu,ZZ)
     ))
 
 
@@ -851,7 +828,7 @@ fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := memoize( opts-> (M,N,l) -
     wdh=pairs(wdh);
     newwdh:=delete(null, apply(#wdh, i -> if wdh_i_1 != 0 then wdh_i));
     if #newwdh == 1 and newwdh_0_1 == 1 then return irreducibleLieAlgebraModule(newwdh_0_0,simpleLieAlgebra(type,m));
-    return new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra(type,m),"DecompositionIntoIrreducibles"=>new HashTable from newwdh,"isIrreducible"=>false};	  
+    return new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra(type,m),"DecompositionIntoIrreducibles"=>new Tally from newwdh,"isIrreducible"=>false};
 ))
 
 
@@ -863,7 +840,7 @@ fusionCoefficient(LieAlgebraModule,LieAlgebraModule,LieAlgebraModule,ZZ) := memo
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
     fullFusionProduct:=(fusionProduct(U,V,l,MaxWordLength=>wl))#"DecompositionIntoIrreducibles";
-    if fullFusionProduct#?(W#"highestWeight") then return lift(fullFusionProduct#(W#"highestWeight"),ZZ) else return 0     
+    if fullFusionProduct#?(W#"highestWeight") then return lift(fullFusionProduct#(W#"highestWeight"),ZZ) else return 0
 ))
 
 
@@ -1180,7 +1157,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"highestWeight"=>{1,1}, "DecompositionIntoIrreducibles"=>new HashTable from {{1,1}=>1}, "isIrreducible"=>true})
+    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"highestWeight"=>{1,1}, "DecompositionIntoIrreducibles"=>new Tally from {{1,1}=>1}, "isIrreducible"=>true})
 ///	
 		
 doc ///
@@ -1250,7 +1227,7 @@ doc ///
     Inputs
         V:LieAlgebraModule
     Outputs
-        T:HashTable
+        T:Tally
     Description
         Text
 	    This function implements Freudenthal's recursive algorithm; see Humphreys, {\it Introduction to Lie Algebras and Representation Theory}, Section 22.3.  Let $V$ be the irreducible $\mathbf{g}$-module with highest weight $v$.  This function returns a hash table whose keys are the weights appearing in $V$ and whose values are the multiplicities of these weights.  The character of $V$ can be easily computed from this information (but characters of Lie algebra modules have not been implemented in this version of LieTypes).  
@@ -1265,7 +1242,7 @@ doc ///
 ///
 
 TEST ///
-    assert(weightDiagram(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2))) === new HashTable from {{{-1, 1}, 2}, {{1, 0}, 2}, {{3, -1}, 1}, {{-2, 0}, 1}, {{0, -1}, 2}, {{2, -2}, 1}, {{-2, 3}, 1}, {{0, 2}, 1}, {{2, 1}, 1}, {{-1, -2}, 1}, {{1, -3}, 1}, {{-3, 2}, 1}})
+    assert(weightDiagram(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2))) === new Tally from {{{-1, 1}, 2}, {{1, 0}, 2}, {{3, -1}, 1}, {{-2, 0}, 1}, {{0, -1}, 2}, {{2, -2}, 1}, {{-2, 3}, 1}, {{0, 2}, 1}, {{2, 1}, 1}, {{-1, -2}, 1}, {{1, -3}, 1}, {{-3, 2}, 1}})
 ///	
 
 	
@@ -1297,7 +1274,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"isIrreducible"=>false, ,"DecompositionIntoIrreducibles"=>new HashTable from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"isIrreducible"=>false, ,"DecompositionIntoIrreducibles"=>new Tally from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
 ///
 
 doc ///
@@ -1324,7 +1301,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"isIrreducible"=>false, ,"DecompositionIntoIrreducibles"=>new HashTable from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"isIrreducible"=>false, ,"DecompositionIntoIrreducibles"=>new Tally from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
 ///
 
 doc ///
@@ -1406,6 +1383,25 @@ doc ///
 	    fusionCoefficient(U,V,W,3)
 ///
 
+doc ///
+    Key
+       LieAlgebraModuleFromWeights
+       (LieAlgebraModuleFromWeights,Tally,LieAlgebra)
+    Headline
+       finds a Lie algebra module based on its weights
+    Usage
+        LieAlgebraModuleFromWeights(T,g)
+    Inputs
+        T:Tally
+	g:LieAlgebra
+    Description
+        Example
+	    g=simpleLieAlgebra("A",2);
+	    U=irreducibleLieAlgebraModule({1,1},g);
+	    M=U**U
+	    T=weightDiagram M
+            LieAlgebraModuleFromWeights(T,g)
+///
 doc ///
     Key
         fusionProduct
