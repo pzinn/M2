@@ -38,7 +38,7 @@ export {
     "weylAlcove",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
-    "irreducibleLieAlgebraModule",
+    "irreducibleLieAlgebraModule", "LL",
     "isIsomorphic",
     "casimirScalar",
     "weightDiagram",
@@ -111,18 +111,15 @@ global variable names instead of the hash table contents.
 LieAlgebra = new Type of HashTable  
 LieAlgebra.GlobalAssignHook = globalAssignFunction
 LieAlgebra.GlobalReleaseHook = globalReleaseFunction
-expression LieAlgebra := g -> (
-    if hasAttribute(g,ReverseDictionary) then return expression toString getAttribute(g,ReverseDictionary);
-    if not hasAttribute(g,ReverseDictionary) then (
-        if g#"isSimple" then return concatenate("Simple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"));
-	if not g#"isSimple" then return concatenate("Nonsimple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"))
-    );
+describe LieAlgebra := g -> Describe (
+    if g#"isSimple" then (expression simpleLieAlgebra) (g#"RootSystemType",g#"LieAlgebraRank")
+    else concatenate("Nonsimple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"))
 )	
+expression LieAlgebra := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else unhold describe g;
 net LieAlgebra := X -> net expression X;
+texMath LieAlgebra := X -> texMath expression X;
 
-
-
-
+rank LieAlgebra := g -> g#"LieAlgebraRank"
 
 LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 
@@ -196,9 +193,7 @@ highestRoot(LieAlgebra) := memoize((g) -> (--see Appendix 13.A, [DMS]
     highestRoot(type,m)
 ));
 
-starInvolution = method(
-    TypicalValue => List
-    )
+starInvolution = method()
 starInvolution(String,ZZ,List) := memoize((type, m, w) ->  ( N:=#w;
     if type == "A" then return apply(N,i-> w_(N-i-1));
     if type == "B" or type == "C" or type == "F" or type == "G" then return w;
@@ -230,33 +225,49 @@ starInvolution(List,LieAlgebra) := memoize((v,g) -> (
 LieAlgebraModule = new Type of HashTable 
 LieAlgebraModule.GlobalAssignHook = globalAssignFunction
 LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
-expression LieAlgebraModule := V -> (
-    if hasAttribute(V,ReverseDictionary) then expression toString getAttribute(V,ReverseDictionary) else toString(pairs V)
-);
-net LieAlgebraModule := V -> (
-    if hasAttribute(V,ReverseDictionary) then return net expression V; 
-    if not hasAttribute(V,ReverseDictionary) then return (
-	orderedPairs:=delete(null,{("LieAlgebra",V#"LieAlgebra"),("isIrreducible",V#"isIrreducible"),if V#?"highestWeight" then ("highestWeight",V#"highestWeight"),("DecompositionIntoIrreducibles",V#"DecompositionIntoIrreducibles")});
-	horizontalJoin flatten (
-          "{",
-          -- the first line prints the parts vertically, second: horizontally    
-          stack (horizontalJoin \ apply(orderedPairs,(k,v) -> (net k, " => ", net v))),                                        
-          "}"
-          )
-      )
-);
-LieAlgebraModule#{Standard,AfterPrint} = V -> ( s:="";
-    if not hasAttribute(V#"LieAlgebra",ReverseDictionary) then s = " : LieAlgebraModule";
-    if hasAttribute(V#"LieAlgebra",ReverseDictionary) then (
-	s = concatenate(" : ",expression(V#"LieAlgebra")," module")	
-    );	
-    << endl;				  -- double space
-    << concatenate(interpreterDepth:"o") << lineNumber << s;
-    << endl;
- );
+LieAlgebraModuleZERO = new ZeroExpression from { 0, LieAlgebraModule }
+LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(toList w,g) }
+LL.texMath = ///{\mathcal L}///
+
+describe LieAlgebraModule := M -> Describe (
+    e := LieAlgebraModuleZERO;
+    scanPairs(M#"DecompositionIntoIrreducibles",(k,v) -> e = e ++ Power{Adjacent{Subscript{LL,toSequence k},Parenthesize expression M#"LieAlgebra"},expression v});
+    e
+    )
+expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else unhold describe M;
+
+net LieAlgebraModule := V -> net expression V
+texMath LieAlgebraModule := V -> texMath expression V
 
 
+LieAlgebraModule ^ ZZ := (M,n) -> (
+    if n<0 then error "nonnegative powers only"
+    else if n==1 then M
+    else new LieAlgebraModule from hashTable {
+	"isIrreducible" => false,
+	"LieAlgebra" => M#"LieAlgebra",
+	"DecompositionIntoIrreducibles" => if n==0 then hashTable {} else applyValues(M#"DecompositionIntoIrreducibles", a -> a*n)
+	}
+    )
 
+LieAlgebraModule#AfterPrint = V -> (
+    if V#"isIrreducible" then "irreducible ",
+    V#"LieAlgebra",
+    " - module"
+ )
+
+LieAlgebraModule ^** ZZ := (M,n) -> (
+    if n<0 then (starInvolution M)^** (-n)
+    else if n==0 then irreducibleLieAlgebraModule(toList(M#"LieAlgebra"#"LieAlgebraRank":0),M#"LieAlgebra")
+    else if n==1 then M
+    else (M^**(n-1))**M
+    )
+
+starInvolution LieAlgebraModule := M -> applyPairs(M,(k,v) -> (k,
+	if k === "highestWeight" then starInvolution(v,M#"LieAlgebra")
+	else if k ==="DecompositionIntoIrreducibles" then applyKeys(v,k' -> starInvolution(k',M#"LieAlgebra"))
+	else v
+	))
 
 
 isIsomorphic = method(
@@ -269,18 +280,14 @@ isIsomorphic(LieAlgebraModule,LieAlgebraModule) := (M,N) -> (
 
 
 LieAlgebraModule ++ LieAlgebraModule := (M,N) -> (
+    if M#"LieAlgebra" =!= N#"LieAlgebra" then error "Modules must be over the same Lie algebra";
     if dim(M) == 0 then return N;
     if dim(N) == 0 then return M; 
-    if M#"LieAlgebra" != N#"LieAlgebra" then error "Modules must be over the same Lie algebra";
-    g:=M#"LieAlgebra";
-    Mdecomposition:=new MutableHashTable from pairs(M#"DecompositionIntoIrreducibles");
-    Ndecomposition:= pairs(N#"DecompositionIntoIrreducibles");
-    for i from 0 to #Ndecomposition-1 do (
-        if Mdecomposition#?(Ndecomposition_i_0) then Mdecomposition#(Ndecomposition_i_0) = Mdecomposition#(Ndecomposition_i_0) + Ndecomposition_i_1;
-	if not (Mdecomposition#?(Ndecomposition_i_0)) then Mdecomposition#(Ndecomposition_i_0) = Ndecomposition_i_1;
-    );
-    D:=new HashTable from pairs(Mdecomposition);
-    new LieAlgebraModule from {"LieAlgebra"=>g,"isIrreducible"=>false,"DecompositionIntoIrreducibles"=>D}
+    new LieAlgebraModule from {
+	"LieAlgebra"=>M#"LieAlgebra",
+	"isIrreducible"=>false,
+	"DecompositionIntoIrreducibles"=>merge(M#"DecompositionIntoIrreducibles",N#"DecompositionIntoIrreducibles",plus)
+	}
 )
 
 
@@ -288,6 +295,7 @@ irreducibleLieAlgebraModule = method(
     TypicalValue => LieAlgebraModule
     )
 irreducibleLieAlgebraModule(List,LieAlgebra) := (v,g) -> (
+    if #v != rank g then error "wrong size of highest weight";
     new LieAlgebraModule from {"LieAlgebra"=>g,"highestWeight"=>v,"isIrreducible"=>true,"DecompositionIntoIrreducibles"=>(new HashTable from {v=>1})}
     )
 
@@ -579,18 +587,19 @@ weightDiagram(String,ZZ,List) := memoize((type,m,v) -> (
 ))
 
 weightDiagram(LieAlgebraModule) := (M) -> (
-    if not M#?"isIrreducible" or not M#"isIrreducible" then error "Weight diagrams are currently implemented only for irreducible Lie algebra modules";
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    v:=M#"highestWeight";    
-    weightDiagram(type,m,v)
+    w:=hashTable{};
+    scanPairs(M#"DecompositionIntoIrreducibles", (v,mul) -> w = merge(w,applyValues(weightDiagram(type,m,v),i->i*mul),plus));
+    w
 )
 
 dim LieAlgebraModule := M -> (
-    Mdecomposition:=pairs(M#"DecompositionIntoIrreducibles");
-    Mdecomposition=apply(#Mdecomposition, i -> {irreducibleLieAlgebraModule(Mdecomposition_i_0,M#"LieAlgebra"), Mdecomposition_i_1});
-    sum apply(#Mdecomposition, i -> (Mdecomposition_i_1)*(sum values weightDiagram(Mdecomposition_i_0)))
+    g:=M#"LieAlgebra";
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    sum apply(pairs(M#"DecompositionIntoIrreducibles"), (v,mul) -> mul*(sum values weightDiagram(type,m,v)))
 )	  
 
 findOneHighestWeight = (type,m,W) -> (
@@ -721,17 +730,11 @@ tensorReflectionData = memoize( (type,m,maxwordlength,remainingWeights) -> (
     if #remainingWeights==0 then return {sort toList(answer),sort fixed,true,remainingWeights} else return {sort toList(answer), sort fixed,false,remainingWeights}
 ))
 
-
-
-LieAlgebraModule ** LieAlgebraModule := memoize( (V,W) -> (
-    if V#"LieAlgebra" != W#"LieAlgebra" then error "V and W must be modules over the same Lie algebra";	  
-    g:=V#"LieAlgebra"; 
+tens := memoize( (lambda,mu,g) -> (
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";	  
     posRoots:=positiveRoots(type,m);
-    wl:=#posRoots;	  
-    lambda:=V#"highestWeight";
-    mu:=W#"highestWeight";
+    wl:=#posRoots;
     wd:=pairs weightDiagram(type,m,lambda);
     theta:=highestRoot(type,m);
     l:=max apply(#wd, i -> KillingForm(type,m,wd_i_0,theta));
@@ -755,17 +758,27 @@ LieAlgebraModule ** LieAlgebraModule := memoize( (V,W) -> (
     );
     wdh=pairs(wdh);
     newwdh:=delete(null, apply(#wdh, i -> if wdh_i_1 != 0 then wdh_i));
-    newdim:=(dim V)*(dim W);
-    if #newwdh == 1 and newwdh_0_1 == 1 then return irreducibleLieAlgebraModule(newwdh_0_0,g);
-    return new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new HashTable from newwdh,"isIrreducible"=>false};
-))
+    if #newwdh == 1 and newwdh_0_1 == 1 then irreducibleLieAlgebraModule(newwdh_0_0,g)
+    else new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new HashTable from newwdh,"isIrreducible"=>false}
+    ))
+LieAlgebraModule ** LieAlgebraModule := (V,W) -> (
+    g:=V#"LieAlgebra";
+    if g != W#"LieAlgebra" then error "V and W must be modules over the same Lie algebra";
+    X := new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>hashTable{}};
+    scanPairs(V#"DecompositionIntoIrreducibles",(w,mul)->
+	scanPairs(W#"DecompositionIntoIrreducibles",(w',mul')->
+	    X = X ++ (tens(w,w',g))^(mul*mul')
+	    ));
+    X
+    )
 
 tensorCoefficient = method(
     TypicalValue=>ZZ)
 tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := memoize((U,V,W) -> (
-    nu:=W#"highestWeight";	  
-    fullTensorProduct:=(U**V)#"DecompositionIntoIrreducibles";
-    if fullTensorProduct#?nu then return lift(fullTensorProduct#nu,ZZ) else return 0     
+	if not W#?"isIrreducible" or not W#"isIrreducible" then error "third module must be irreducible";
+    	nu:=W#"highestWeight";
+    	fullTensorProduct:=(U**V)#"DecompositionIntoIrreducibles";
+    	if fullTensorProduct#?nu then lift(fullTensorProduct#nu,ZZ) else 0
     ))
 
 
