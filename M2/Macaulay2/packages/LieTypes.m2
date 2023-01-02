@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.5",
-    Date => "June 22, 2018",
+    Version => "0.6",
+    Date => "Jan 3, 2023",
     Headline => "common types for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
@@ -98,6 +98,21 @@ Many of these functions are copied over from early versions of Swinarski's Confo
 Fixed a minor bug in multiplicity function (needed to allow for options, since multiplicity is 
 a method with options.)  Changed the LieAlgebra and LieAlgebraModule classes to print out the
 global variable names instead of the hash table contents. 
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.6, January 2023 (Paul Zinn-Justin)
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+Improved output methods
+Introduced shorthand LL for simple (irreducible) modules
+Fixed and exported LieAlgebraModuleFromWeights
+Fixed tensor product of modules
+Added ^** and ^ for modules
+Additional sanity checks
+Allow inputting weights as vectors
+
 *-
 
 
@@ -204,11 +219,13 @@ starInvolution(String,ZZ,List) := memoize((type, m, w) ->  ( N:=#w;
         return append(drop(x,{#x-2,#x-2}),w_(#w-2)));
     if type == "E" and m== 6 then return {w_5,w_1,w_4,w_3,w_2,w_0};
     ));
+starInvolution(String,ZZ,Vector) := (type,m,w) -> starInvolution(type,m,entries w)
 starInvolution(List,LieAlgebra) := memoize((v,g) -> (
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";   
     starInvolution(type,m,v)
 ));
+starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- The LieAlgebraModule type
@@ -257,14 +274,17 @@ LieAlgebraModule#AfterPrint = V -> (
     " - module"
  )
 
+trivialModule = method(TypicalValue => LieAlgebraModule)
+trivialModule LieAlgebra := g -> irreducibleLieAlgebraModule(toList(g#"LieAlgebraRank":0),g)
+
 LieAlgebraModule ^** ZZ := (M,n) -> (
-    if n<0 then (starInvolution M)^** (-n)
-    else if n==0 then irreducibleLieAlgebraModule(toList(M#"LieAlgebra"#"LieAlgebraRank":0),M#"LieAlgebra")
+    if n<0 then "error nonnegative powers only"
+    else if n==0 then trivialModule M#"LieAlgebra"
     else if n==1 then M
     else (M^**(n-1))**M
     )
 
-starInvolution LieAlgebraModule := M -> applyPairs(M,(k,v) -> (k,
+dual LieAlgebraModule := starInvolution LieAlgebraModule := M -> applyPairs(M,(k,v) -> (k,
 	if k === "highestWeight" then starInvolution(v,M#"LieAlgebra")
 	else if k ==="DecompositionIntoIrreducibles" then applyKeys(v,k' -> starInvolution(k',M#"LieAlgebra"))
 	else v
@@ -299,6 +319,7 @@ irreducibleLieAlgebraModule(List,LieAlgebra) := (v,g) -> (
     if #v != rank g then error "wrong size of highest weight";
     new LieAlgebraModule from {"LieAlgebra"=>g,"highestWeight"=>v,"isIrreducible"=>true,"DecompositionIntoIrreducibles"=>(new Tally from {v=>1})}
     )
+irreducibleLieAlgebraModule(Vector,LieAlgebra) := (v,g) -> irreducibleLieAlgebraModule(entries v,g)
 
 
 -*-----------------------------------------------------------------------------------------------
@@ -578,6 +599,7 @@ multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
     W:=weightDiagram(M);
     W#w 
 )
+multiplicity(Vector,LieAlgebraModule) := o -> (w,M) -> multiplicity(entries w,M)
 
 
 weightDiagram = method(
@@ -586,6 +608,7 @@ weightDiagram(String,ZZ,List) := memoize((type,m,v) -> (
     Omega:=toList Freud(type,m,v);     
     new Tally from apply(#Omega, i-> {Omega_i,multiplicityOfWeightInLieAlgebraModule(type,m,v,Omega_i)})
 ))
+weightDiagram(String,ZZ,Vector) := (type,m,v) -> weightDiagram(type,m,entries v)
 
 weightDiagram(LieAlgebraModule) := (M) -> (
     g:=M#"LieAlgebra";
@@ -1024,6 +1047,7 @@ doc ///
         starInvolution
 	(starInvolution,List,LieAlgebra)
 	(starInvolution,String,ZZ,List)
+	(starInvolution,LieAlgebraModule)
     Headline
         computes w* for a weight w
     Usage
@@ -1137,6 +1161,7 @@ doc ///
     Key
         irreducibleLieAlgebraModule
 	(irreducibleLieAlgebraModule,List,LieAlgebra)
+	LL
     Headline
         construct the irreducible Lie algebra module with given highest weight
     Usage
@@ -1150,10 +1175,13 @@ doc ///
     Description
         Text
             This function creates the irreducible Lie algebra module with a given highest weight.
-        
 	Example
 	    g=simpleLieAlgebra("A",2)
             irreducibleLieAlgebraModule({1,1},g)
+        Text
+	    One can also use the shorthand LL:
+	Example
+            LL_(1,1) (g)
 ///
 
 TEST ///
