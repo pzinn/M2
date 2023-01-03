@@ -105,13 +105,14 @@ global variable names instead of the hash table contents.
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 
-Improved output methods
-Introduced shorthand LL for simple (irreducible) modules
-Fixed and exported LieAlgebraModuleFromWeights
-Fixed tensor product of modules
-Added ^** and ^ for modules
-Additional sanity checks
-Allow inputting weights as vectors
+* Improved output methods
+* Introduced shorthand LL for simple (irreducible) modules
+* Fixed and exported LieAlgebraModuleFromWeights
+* Fixed tensor product of modules
+* Added ^** and ^ for modules
+* Added trivialModule
+* Additional sanity checks
+* Allow inputting weights as vectors
 
 *-
 
@@ -243,14 +244,15 @@ starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
 LieAlgebraModule = new Type of HashTable 
 LieAlgebraModule.GlobalAssignHook = globalAssignFunction
 LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
-LieAlgebraModuleZERO = new ZeroExpression from { 0, LieAlgebraModule }
 LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(toList w,g) }
 LL.texMath = ///{\mathcal L}///
 
 describe LieAlgebraModule := M -> Describe (
-    e := LieAlgebraModuleZERO;
-    scanPairs(M#"DecompositionIntoIrreducibles",(k,v) -> e = e ++ Power{Adjacent{Subscript{LL,toSequence k},Parenthesize expression M#"LieAlgebra"},expression v});
-    e
+    dec := M#"DecompositionIntoIrreducibles";
+    g := Parenthesize expression M#"LieAlgebra";
+    if #dec == 0 then expression 0
+    else fold((a,b)->a++b,
+	apply(pairs dec,(v,mul) -> ((expression LL)_(toSequence v) g)^mul))
     )
 expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else unhold describe M;
 
