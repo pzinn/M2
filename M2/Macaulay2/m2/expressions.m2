@@ -357,10 +357,8 @@ Holder     == Holder        := (x,y) -> new Equation from {unhold x,unhold y}
 Expression == Thing         := (x,y) -> x == expression y
 Thing == Expression         := (x,y) -> expression x == y
 ZeroExpression + Expression := (x,y) -> y
-ZeroExpression ++ Expression := (x,y) -> y
 Sum + ZeroExpression     :=
 Holder + ZeroExpression     :=
-Expression ++ ZeroExpression :=
 Expression + ZeroExpression := (x,y) -> x
 Sum + Sum                   := join
 Sum + Expression            := append
