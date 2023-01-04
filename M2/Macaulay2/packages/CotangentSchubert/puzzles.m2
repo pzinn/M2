@@ -34,6 +34,7 @@ myload "K.m2";
 myload "equiv.m2";
 myload "generic.m2";
 myload "generic-equiv.m2";
+myload "assoc.m2";
 
 Kstyle = "fill"=>"LightPink";
 equivstyle = "fill"=>"LightGray";
@@ -278,7 +279,7 @@ neside = p -> new LabelList from apply(p.Length,i->p#(0,i,0))
 -- computation of (d<=3) equivariant fugacities
 myload "fugacity.m2"
 
-export { "puzzle", "bottom", "fugacity", "fugacityTally", "fugacityVector", "Puzzle" }
+export { "puzzle", "bottom", "fugacity", "fugacityTally", "fugacityVector", "Puzzle", "assoc", "doublePuzzle" }
 end
 
 -- ex of use
