@@ -244,7 +244,7 @@ starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
 LieAlgebraModule = new Type of HashTable 
 LieAlgebraModule.GlobalAssignHook = globalAssignFunction
 LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
-LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(toList w,g) }
+LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(deepSplice toList w,g) }
 LL.texMath = ///{\mathcal L}///
 
 describe LieAlgebraModule := M -> Describe (
@@ -286,9 +286,9 @@ LieAlgebraModule ^** ZZ := (M,n) -> (
     else (M^**(n-1))**M
     )
 
-dual LieAlgebraModule := starInvolution LieAlgebraModule := M -> applyPairs(M,(k,v) -> (k,
+dual LieAlgebraModule := {} >> o -> starInvolution LieAlgebraModule := M -> applyPairs(M, (k,v) -> (k,
 	if k === "highestWeight" then starInvolution(v,M#"LieAlgebra")
-	else if k ==="DecompositionIntoIrreducibles" then applyKeys(v,k' -> starInvolution(k',M#"LieAlgebra"))
+	else if k === "DecompositionIntoIrreducibles" then applyKeys(v,k' -> starInvolution(k',M#"LieAlgebra"))
 	else v
 	))
 
