@@ -56,8 +56,12 @@ Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+protect WebAppPrint
+
 printFunc := Thing#{WebApp,print} = x -> (
-    y := htmlInside if shortMode then short x else x; -- we compute the html now (in case it produces an error)
+    topLevelMode=WebAppPrint;
+    y := html if shortMode then short x else x; -- we compute the html now (in case it produces an error)
+    topLevelMode=WebApp;
     if class y =!= String then error "invalid html output";
     << webAppHtmlTag | y | webAppEndTag << endl;
     )
@@ -128,58 +132,23 @@ if topLevelMode === WebApp then (
 )
 
 -- the texMath hack
-currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global texMath);
-currentPackage#"exported mutable symbols"=append(currentPackage#"exported mutable symbols",global html);
-texMathBackup := texMath;
-htmlBackup := html;
-texMathInside := x -> if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) or instance(x,Nothing) then texMathBackup x else concatenate( -- to avoid trouble with holders
+texMath1 = x -> (
+    l' := lookup(html,class x);
+    xx := if l' === Thing#html or instance(x,Expression) or instance(x,Nothing) then (
+    	l := lookup(texMath,class x);
+    	if l === null then error noMethodSingle(texMath, x, false);
+    	l x
+    ) else concatenate(
     webAppHtmlTag,
-    html x,
+    l' x,
     webAppEndTag
     );
-local texMathDebug,htmlDebug;
-texMathDebug = x -> concatenate(
-    global texMath <- texMathBackup;
-    y:=texMath class x;
-    global texMath <- texMathDebug;
-    "\\underset{\\tiny ",
-    y,
-    "}{\\fcolorbox{gray}{transparent}{$",
-    if lookup(htmlBackup,class x) === lookup(htmlBackup,Thing) or instance(x,Expression) or instance(x,Nothing) then texMathBackup x else concatenate( -- to avoid trouble with holders
-	webAppHtmlTag,
-	htmlBackup x,
-	webAppEndTag
-	),
-    "$}}"
-    );
-
-htmlDebug = x -> (
-    flag := instance(x,Hypertext) and (try (options class x)#"xmlns" else null) =!= null; -- don't mess inside non HTML
-    if flag then (
-	global html <- htmlBackup;
-	global texMath <- texMathInside;
-	);
-    y := if instance(x,Hypertext) then
-    "<span class=\"M2Debug\" data-type=\"" | toString class x | "\">" | htmlBackup x | "</span>"
-    else (lookup(tex,Thing)) x;
-    if flag then (
-	global html <- htmlDebug;
-	global texMath <- texMathDebug;
-    );
-    y
-    )
-htmlInside = x -> (
-    if debugLevel == 42 then (
-	    global texMath <- texMathDebug;
-	    global html <- htmlDebug;
-	    y:=html x;
-	    global texMath <- texMathBackup;
-	    global html <- htmlBackup;
-	    )
-	else (
-	    global texMath <- texMathInside;
-	    y=html x;
-	    global texMath <- texMathBackup;
-	    );
-	y);
-
+    if debugLevel != 42 then xx else concatenate(
+	c:=class x;
+	"\\underset{\\tiny ",
+    	if c.?texMath then c.texMath else "\\texttt{"|toString c|"}",
+    	"}{\\fcolorbox{gray}{transparent}{$",
+    	xx,
+    	"$}}"
+	)
+)

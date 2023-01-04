@@ -683,7 +683,16 @@ html = method(Dispatch => Thing, TypicalValue => String)
 markdown = method(Dispatch => Thing, TypicalValue => String)
 mathML = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
-texMath = method(Dispatch => Thing, TypicalValue => String)
+--
+if topLevelMode =!= WebApp then texMath = method(Dispatch => Thing, TypicalValue => String) else (
+    texMath = new MethodFunctionSingle from (x -> if topLevelMode === WebAppPrint then texMath1 x else (
+    	    l := lookup(texMath,class x);
+    	    if l === null then error noMethodSingle(texMath, x, false);
+    	    l x
+    	    ));
+    typicalValues#texMath = String;
+    )
+-- 
 info = method(Dispatch => Thing, TypicalValue => String)
 -- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
 
