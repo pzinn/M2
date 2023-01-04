@@ -12,7 +12,7 @@ export {
 
 cotOpts := opts ++ { Presentation => EquivLoc }
 
-debug Core -- to use basering, generatorSymbols, frame
+debug Core -- to use BaseRing, generatorSymbols, frame
 
 -- labeling of classes
 LabelList = new Type of List;
@@ -46,7 +46,7 @@ inversion LabelList := o -> p -> (
 inversion String := o -> s -> inversion (new LabelList from s,o)
 
 -- a simple function that seems like it should already exist
-basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x),(ring x).basering)
+basisCoeffs = x -> lift(last coefficients(x, Monomials => basis ring x), (ring x).BaseRing)
 
 -- next two functions should be memoized
 elem := (i,vrs) -> sum(subsets(vrs,i), product);
