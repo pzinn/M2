@@ -52,7 +52,6 @@ factor PolynomialRing := opts -> R -> (
     commonEngineRingInitializations Rf;
     if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
     expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e);
-    oldFactor := R#factor;
     if OldFactor then (
     	factor Rf := opts1 -> a -> Product apply(if a#0 == 1 then a#1 else append(a#1,(a#0,1)),u->Power u); -- emulation of old factor
 	-- factor R is untouched
@@ -72,16 +71,16 @@ factor PolynomialRing := opts -> R -> (
         denominator Rf := a -> new Rf from { denominator a#0, {} };
         numerator Rf := a -> new Rf from { numerator a#0, a#1 };
         );
-    new Rf from R := (A,a) -> (
+    new Rf from R := (A,a) -> ( -- should I just call m2-level factor here?
         if (options R).Inverses then (
             -- a bit of a hack if a==0, but works
-            minexps:=min\transpose apply(toList (rawPairs(raw R.basering,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
+            minexps:=min\transpose apply(toList (rawPairs(raw R.BaseRing,raw a))#1,m->exponents(R.numallvars,m)); -- sadly, exponents doesn't take an optional Variables like coefficients... might wanna change that
             a=a*R_(-minexps); -- get rid of monomial in factor if a Laurent polynomial.
             c:=R_minexps;
             )
         else c = 1_R;
 	-*
-   	       R1 := R.basering;	
+   	       R1 := R.BaseRing;	
 	       isSimpleNumberField := F -> isField F and instance(baseRing F, QuotientRing) and coefficientRing baseRing F === QQ and numgens baseRing F == 1 and numgens ideal baseRing F == 1; 
 	       fe := if isSimpleNumberField R1 then (
 		   (R', toR') := flattenRing(R, CoefficientRing=>QQ);
@@ -102,7 +101,7 @@ factor PolynomialRing := opts -> R -> (
                 if (options R).Inverses and opts.FactorLeadMonomial and ff!=0 then (c=c*(leadMonomial ff)^e; ff=ff*(leadMonomial ff)^(-1)); -- should only be used with Inverses=>true
                 if leadCoeff ff >= 0 then ff else (if odd e then c=-c; -ff),e)
             );
-        if liftable(fe#0#0,R.basering) then (
+        if liftable(fe#0#0,R.BaseRing) then (
             -- factory returns the possible constant factor in front
             assert(fe#0#1 == 1);
             c = c*(fe#0#0);
