@@ -1,3 +1,4 @@
+puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/puzzles/";
 debug VectorGraphics
 -- move to appropriate files
 INPUT = new MarkUpType of HypertextParagraph
@@ -81,13 +82,13 @@ assoc = (P1,P2) -> ( -- TODO maybe should create a class rather than returning a
     Sid:=graphicsId();
     -- add style and a switch
     SPAN{
-    	STYLE get "assoc.css",
+    	STYLE get (puzzleDir|"assoc.css"),
     	SVG {"xmlns"=>"http://www.w3.org/2000/svg",
     	    "id" => Sid,
     	    "style"=>"width:40em;height:40em;stroke:black;stroke-width:0.01",
     	    "viewBox"=>toString(-n-1)|" -1 "|toString(2*n+1)|" "|toString(2*n+1),
     	    lst1,lst2,defs,
-    	    "onclick"=>get "assoc.js"}, -- , "class" => "labels"
+    	    "onclick"=>get (puzzleDir|"assoc.js")}, -- , "class" => "labels"
     	INPUT{"type"=>"checkbox","id"=>"labels","onclick"=>Sid|".classList.toggle('labels')"},
     	LABEL{"for"=>"labels","Labels"}
     	}
