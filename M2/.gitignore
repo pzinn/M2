@@ -142,3 +142,5 @@ LOGFILE
 /Macaulay2/tests/ComputationsBook/programming/foo
 /cmake-build-*
 *.out
+*.aux
+*.log
