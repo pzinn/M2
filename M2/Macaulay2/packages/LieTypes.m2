@@ -1,15 +1,17 @@
+k
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
     Version => "0.6",
-    Date => "Jan 3, 2023",
+    Date => "Jan 6, 2023",
     Headline => "common types for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
+    DebuggingMode => true,
     Certification => {
 	 -- same article as for package ConformalBlocks
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -47,9 +49,13 @@ export {
     "fusionCoefficient",
     "MaxWordLength",
     "positiveRoots",
-    "LieAlgebraModuleFromWeights"
+    "LieAlgebraModuleFromWeights",
+    "trivialModule",
+    "isIrreducible",
+    "character"
     }
 
+tim=0;
 
 -- Access hasAttribute, getAttribute
 debug Core
@@ -75,7 +81,7 @@ starInvolution
 KillingForm
 weylAlcove
 
-LieAlgebraModules have three keys: LieAlgebra, HighestWeight, and isIrreducible
+LieAlgebraModules have two keys: LieAlgebra and DecompositionIntoIrreducibles
 The functions available for LieAlgebraModules are:
 dimension
 weights
@@ -108,12 +114,16 @@ global variable names instead of the hash table contents.
 * Improved output methods
 * Introduced shorthand LL for simple (irreducible) modules
 * Fixed and exported LieAlgebraModuleFromWeights
-* Fixed tensor product of modules
+* Fixed and optimized tensor product of modules
 * Added ^** and ^ for modules
 * Added trivialModule
 * Additional sanity checks
 * Allow inputting weights as vectors
-
+* isIrreducible is now a method
+* use of Tally rather than HashTable for its methods
+* Added character method
+* character and weightDiagram have 2 strategies, Weyl or Freudenthal
+  (Weyl seems slower for small reps, but significantly faster for large highest weights)
 *-
 
 
@@ -151,8 +161,10 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     if type=="D" and m<= 2 then error "The rank for type D must be >= 3.";
     if type=="E" and not member(m,{6,7,8}) then error "The rank for type E must be 6, 7, or 8.";
     if type=="F" and m!=4 then error "The rank for type F must be 4.";
-    if type=="G" and m!=2 then error "The rank for type G must be 2.";                    
-    new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,"isSimple"=>true}
+    if type=="G" and m!=2 then error "The rank for type G must be 2.";
+    new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,"isSimple"=>true,cache=>new CacheTable from {
+	    x:=getSymbol "x";
+	    "Ring" => ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>Lex])}}
     )
 -*simpleLieAlgebra(IndexedVariable) := (v) -> (
     if #v > 2 or not member(v#0,{symbol sl, symbol so, symbol sp}) or not instance(v#1,ZZ) then error "Input not understood; enter sl_k, sp_k, or so_k, or use the syntax simpleLieAlgebra(\"A\",1) instead";
@@ -212,11 +224,11 @@ highestRoot(LieAlgebra) := memoize((g) -> (--see Appendix 13.A, [DMS]
 
 starInvolution = method()
 starInvolution(String,ZZ,List) := memoize((type, m, w) ->  ( N:=#w;
-    if type == "A" then return apply(N,i-> w_(N-i-1));
+    if type == "A" then return reverse w;
     if type == "B" or type == "C" or type == "F" or type == "G" then return w;
     if type == "E" and m!= 6 then return w;
-    if type == "D" and even(m) == true then return w;
-    if type == "D" and odd(m) == true then (x:=w;
+    if type == "D" and even(m) then return w;
+    if type == "D" and odd(m) then (x:=w;
         return append(drop(x,{#x-2,#x-2}),w_(#w-2)));
     if type == "E" and m== 6 then return {w_5,w_1,w_4,w_3,w_2,w_0};
     ));
@@ -227,6 +239,8 @@ starInvolution(List,LieAlgebra) := memoize((v,g) -> (
     starInvolution(type,m,v)
 ));
 starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
+
+ring LieAlgebra := g -> g.cache#"Ring"
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- The LieAlgebraModule type
@@ -236,8 +250,6 @@ starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
 
 -- LieAlgebraModule= {
 --   LieAlgebra => 
---   isIrreducible => Boolean
---   highestWeight
 --   }
 --Functions: weights, dimension, **
 
@@ -251,7 +263,7 @@ describe LieAlgebraModule := M -> Describe (
     dec := M#"DecompositionIntoIrreducibles";
     g := Parenthesize expression M#"LieAlgebra";
     if #dec == 0 then expression 0
-    else fold((a,b)->a++b,
+    else fold((a,b)->a++b, -- TODO rewrite using DirectSum to avoid error: at print: recursion limit of 300 exceeded
 	apply(pairs dec,(v,mul) -> ((expression LL)_(toSequence v) g)^mul))
     )
 expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else unhold describe M;
@@ -260,18 +272,23 @@ net LieAlgebraModule := V -> net expression V
 texMath LieAlgebraModule := V -> texMath expression V
 
 
+isIrreducible = method()
+isIrreducible LieAlgebraModule := M -> (
+    dec := M#"DecompositionIntoIrreducibles";
+    #dec == 1 and first values dec == 1
+    )
+
 LieAlgebraModule ^ ZZ := (M,n) -> (
     if n<0 then error "nonnegative powers only"
     else if n==1 then M
     else new LieAlgebraModule from hashTable {
-	"isIrreducible" => false,
 	"LieAlgebra" => M#"LieAlgebra",
 	"DecompositionIntoIrreducibles" => if n==0 then new Tally else applyValues(M#"DecompositionIntoIrreducibles", a -> a*n)
 	}
     )
 
 LieAlgebraModule#AfterPrint = V -> (
-    if V#"isIrreducible" then "irreducible ",
+    if isIrreducible V then "irreducible ",
     V#"LieAlgebra",
     " - module"
  )
@@ -283,43 +300,42 @@ LieAlgebraModule ^** ZZ := (M,n) -> (
     if n<0 then "error nonnegative powers only"
     else if n==0 then trivialModule M#"LieAlgebra"
     else if n==1 then M
-    else (M^**(n-1))**M
+    else M**(M^**(n-1)) -- order matters for speed purposes
     )
 
-dual LieAlgebraModule := {} >> o -> starInvolution LieAlgebraModule := M -> applyPairs(M, (k,v) -> (k,
-	if k === "highestWeight" then starInvolution(v,M#"LieAlgebra")
-	else if k === "DecompositionIntoIrreducibles" then applyKeys(v,k' -> starInvolution(k',M#"LieAlgebra"))
-	else v
-	))
+starInvolution LieAlgebraModule := M -> new LieAlgebraModule from {
+    "LieAlgebra" => M#"LieAlgebra",
+    "DecompositionIntoIrreducibles" => applyKeys(M#"DecompositionIntoIrreducibles", v -> starInvolution(v,M#"LieAlgebra"))
+    }
+dual LieAlgebraModule := {} >> o -> lookup(starInvolution,LieAlgebraModule)
 
 
 isIsomorphic = method(
     TypicalValue => Boolean
     )
-isIsomorphic(LieAlgebraModule,LieAlgebraModule) := (M,N) -> (
+isIsomorphic(LieAlgebraModule,LieAlgebraModule) := (M,N) -> ( -- actually this is the same as ===
     if M#"LieAlgebra" != N#"LieAlgebra" then return false;
     M#"DecompositionIntoIrreducibles"===N#"DecompositionIntoIrreducibles"
 )
 
+LieAlgebraModule == ZZ := (M,n) -> if n=!=0 then error "attempted to compare module to nonzero integer" else #(M#"DecompositionIntoIrreducibles") == 0
 
-LieAlgebraModule ++ LieAlgebraModule := (M,N) -> (
-    if M#"LieAlgebra" =!= N#"LieAlgebra" then error "Modules must be over the same Lie algebra";
-    if dim(M) == 0 then return N;
-    if dim(N) == 0 then return M; 
+directSum LieAlgebraModule := identity
+LieAlgebraModule.directSum = args -> (
+    if not same apply(args, M -> M#"LieAlgebra") then error "modules must be over the same Lie algebra";
     new LieAlgebraModule from {
-	"LieAlgebra"=>M#"LieAlgebra",
-	"isIrreducible"=>false,
-	"DecompositionIntoIrreducibles"=>merge(M#"DecompositionIntoIrreducibles",N#"DecompositionIntoIrreducibles",plus)
+	"LieAlgebra"=>(first args)#"LieAlgebra",
+	"DecompositionIntoIrreducibles"=>sum(args,M->M#"DecompositionIntoIrreducibles")
 	}
 )
-
+LieAlgebraModule ++ LieAlgebraModule := directSum
 
 irreducibleLieAlgebraModule = method(
     TypicalValue => LieAlgebraModule
     )
 irreducibleLieAlgebraModule(List,LieAlgebra) := (v,g) -> (
-    if #v != rank g then error "wrong size of highest weight";
-    new LieAlgebraModule from {"LieAlgebra"=>g,"highestWeight"=>v,"isIrreducible"=>true,"DecompositionIntoIrreducibles"=>(new Tally from {v=>1})}
+    if #v != rank g or not all(v, a -> class a === ZZ) then error "wrong highest weight";
+    new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>tally {v}}
     )
 irreducibleLieAlgebraModule(Vector,LieAlgebra) := (v,g) -> irreducibleLieAlgebraModule(entries v,g)
 
@@ -457,10 +473,11 @@ casimirScalar(String,ZZ,List) := memoize((type, m, w) -> (
     KillingForm(type,m,w,w) + 2*KillingForm(type,m,w,rho)
 ));
 casimirScalar(LieAlgebraModule) := memoize((M) -> (
+    if not isIrreducible M then error "Casimir scalar on irreducible modules only";
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    v:=M#"highestWeight";
+    v:=first keys M#"DecompositionIntoIrreducibles";
     casimirScalar(type,m,v)	  
 ));
   
@@ -533,16 +550,12 @@ positiveRoots(LieAlgebra):=(g) -> (
 --The function Freud computes the set of weights in a Lie algebra module without their multiplicities
 Freud = memoize ((type,m,v) -> (
     simpleroots:=simpleRoots(type,m);
-    if apply(#v, i -> v_i < 0) == apply(#v, i->true) then return set({v});
+    if all(v, a -> a < 0) then return set{v};
     answer:=set {v};
-    for i from 0 to #v-1 do (
-        if v_i < 0 then continue;
-        for j from 1 to lift(v_i,ZZ) do (
-            answer= answer+Freud(type,m,v-j*simpleroots_i)
-    ));
-    answer=toList answer;
-    answer=apply(#answer, i -> apply(#(answer_i), j-> lift(answer_i_j,ZZ)));
-    set answer
+    for i from 0 to #v-1 do
+        for j from 1 to v_i do
+            answer = answer + Freud(type,m,v-j*simpleroots_i);
+    answer
 ))
 
 
@@ -579,18 +592,17 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
     if v==w then return 1;
     Omega:=Freud(type,m,v);
     if not member(w,Omega) then return 0;
-    L:=weightsAboveMu(type,m,v,w);
+--    L:=weightsAboveMu(type,m,v,w);
     posroots:=positiveRoots(type,m);
     rhs:=0;
-    lhs:=1;
-    K:=0;
+    k:=0;
     for a from 0 to #posroots-1 do (
-        K=0;
-        while isSubset(set {w+K*(posroots_a)},Omega) do (K=K+1);
-        if K <= 1 then continue;
-        for k from 1 to K-1 do (
-            rhs= rhs+KillingForm(type,m,w+k*(posroots_a),posroots_a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w+k*(posroots_a)) ));
-    lhs=KillingForm(type,m,v+rho,v+rho)-KillingForm(type,m,w+rho,w+rho);
+        k=1;
+        while member(w+k*(posroots_a),Omega) do (
+	    rhs=rhs+KillingForm(type,m,w+k*(posroots_a),posroots_a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w+k*(posroots_a));
+	    k=k+1;
+	    ));
+    lhs:=KillingForm(type,m,v+rho,v+rho)-KillingForm(type,m,w+rho,w+rho);
     lift(2*rhs/lhs,ZZ)
 ))
 
@@ -599,34 +611,113 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
 
 multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
     W:=weightDiagram(M);
-    W#w 
+    W_w 
 )
 multiplicity(Vector,LieAlgebraModule) := o -> (w,M) -> multiplicity(entries w,M)
 
+character = method(
+    Options=>{Strategy=>null},
+    TypicalValue => RingElement
+    )
 
-weightDiagram = method(
-    TypicalValue=>Tally)
-weightDiagram(String,ZZ,List) := memoize((type,m,v) -> (
-    Omega:=toList Freud(type,m,v);     
-    new Tally from apply(#Omega, i-> {Omega_i,multiplicityOfWeightInLieAlgebraModule(type,m,v,Omega_i)})
-))
-weightDiagram(String,ZZ,Vector) := (type,m,v) -> weightDiagram(type,m,entries v)
+-- TODO jacobi trudi
 
-weightDiagram(LieAlgebraModule) := (M) -> (
-    g:=M#"LieAlgebra";
+stdVars = method()
+stdVars(LieAlgebra) := (cacheValue stdVars) ( g -> (
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
+    R := ring g;
+    if type == "A" then apply(m+1, i -> (if i==m then 1 else R_i) * (if i==0 then 1 else R_(i-1)^-1))
+    else if type=="B" then apply(m, i -> (if i==m-1 then R_i^2 else R_i) * (if i==0 then 1 else R_(i-1)^-1))
+    else if type == "C" then apply(m, i -> R_i * (if i==0 then 1 else R_(i-1)^-1))
+    else if type == "D" then apply(m-2, i -> R_i*(if i==0 then 1 else R_(i-1)^-1)) | {R_(m-2)*R_(m-1)*R_(m-3)^-1,R_(m-1)*R_(m-2)^-1}
+    ))
+
+-- TODO move hooks to the function below?
+-- Weyl character formula
+character(LieAlgebra,List) := o -> (g,v) -> if g.cache#?(character,v) then g.cache#(character,v) else g.cache#(character,v) = (
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    z := stdVars g;
+    if type == "A" then (
+	pows := apply(m+1,j->sum(j..m-1,k->1+v#k));
+    	num := det matrix table(m+1,m+1,(i,j)->z_i^(pows#j));
+    	den := product(m+1,j->product(j,i->z_i-z_j)); --  type A Weyl denominator formula
+	)
+    else if type=="B" then (
+	pows = apply(m,j->sum(j..m-2,k->1+v#k)+(1+v#(m-1))//2);
+	par := (1+v#(m-1)) % 2; -- shift of 1/2 to avoid half-integer powers
+	num = (ring g)_(m-1)^(1-par)*det matrix table(m,m,(i,j)->z_i^(pows#j+par)-z_i^(-pows#j)); -- TODO FIX
+    	den = product(m,i->z_i-1)*product(m,j->product(j,i->(z_i^-1 - z_j)*(1-z_i*z_j^-1))); --  type B Weyl denominator formula
+	)
+    else if type == "C" then (
+	pows = apply(m,j->sum(j..m-1,k->1+v#k));
+    	num = det matrix table(m,m,(i,j)->z_i^(pows#j)-z_i^(-pows#j));
+    	den = product(m,i->z_i-z_i^-1)*product(m,j->product(j,i->(z_i^-1 - z_j)*(1-z_i*z_j^-1))); --  type C Weyl denominator formula
+	)
+    else if type == "D" then (
+	pows = append(apply(m-1,j->sum(j..m-3,k->1+v#k)+(2+v#(m-2)+v#(m-1))//2),(v#(m-1)-v#(m-2))//2);
+	par = (v#(m-2)+v#(m-1)) % 2; -- shift of 1/2 to avoid half-integer powers
+    	num = det matrix table(m,m,(i,j)->if pows#j + par == 0 then 1 else z_i^(pows#j+par)+z_i^(-pows#j));
+    	den = product(m,j->product(j,i->(z_i^-1 - z_j)*(1-z_i*z_j^-1))); --  type D Weyl denominator formula
+	print (factor den,num%den);
+	)
+    else return;
+    num//den -- would factoring be faster?
+)
+character(LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
+
+LieAlgebraModule#(character,"Freudenthal") = M -> (
+    R:= ring M#"LieAlgebra";
+    sum(pairs weightDiagram(M,Strategy=>"Freudenthal"),(w,a)->a*R_w)
+)
+
+LieAlgebraModule#(character,"Weyl") = M -> (
+    g:=M#"LieAlgebra";
+    type:=g#"RootSystemType";
+    if type >= "E" then return;
+    sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (g,v) )
+)
+
+weightDiagram = method(
+    Options=>{Strategy=>null},
+    TypicalValue=>Tally
+    )
+
+-- TODO move hooks to the function below
+-- or more radical: make weightDiagram just be new Tally from listForm all the time? <------
+-- and all is in character (after all, Freud doesn't really care -- well, it kinda does, need to time it)
+-- Freudenthal formula
+weightDiagram(LieAlgebra,List) := o -> (g,v) -> if g.cache#?(weightDiagram,v) then g.cache#(weightDiagram,v) else g.cache#(weightDiagram,v) = (
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    Omega:=toList Freud(type,m,v);
+    new Tally from apply(Omega, w -> {w,multiplicityOfWeightInLieAlgebraModule(type,m,v,w)})
+)
+weightDiagram(LieAlgebra,Vector) := o -> (g,v) -> weightDiagram(g,entries v,o)
+
+LieAlgebraModule#(weightDiagram,"Freudenthal") = M -> (
+    g:=M#"LieAlgebra";
     w:=new Tally;
-    scanPairs(M#"DecompositionIntoIrreducibles", (v,mul) -> w = w + applyValues(weightDiagram(type,m,v),i->i*mul));
+    scanPairs(M#"DecompositionIntoIrreducibles", (v,mul) -> w = w + applyValues(weightDiagram(g,v),i->i*mul));
     w
 )
 
-dim LieAlgebraModule := M -> (
+LieAlgebraModule#(weightDiagram,"Weyl") = M -> (
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    sum apply(pairs(M#"DecompositionIntoIrreducibles"), (v,mul) -> mul*(sum values weightDiagram(type,m,v)))
-)	  
+    if type <= "D" then new Tally from listForm character(M,Strategy=>"Weyl")
+)
+
+-- Weyl is last strategy = first choice
+-- TODO move hooks to the (LieAlgebra,List) method?
+scan({character,weightDiagram}, meth -> (
+	scan({"Freudenthal","Weyl"}, strat -> addHook((meth,LieAlgebraModule),LieAlgebraModule#(meth,strat),Strategy=>strat));
+	meth LieAlgebraModule := o -> (M) -> runHooks((meth,LieAlgebraModule),M,o);
+	))
+
+
+dim LieAlgebraModule := M -> sum values weightDiagram M
 
 findOneHighestWeight = (type,m,W) -> (
     DeltaPlus :=positiveRoots(type,m);
@@ -649,10 +740,10 @@ LieAlgebraModuleFromWeights(Tally,LieAlgebra) := (W,g) -> (
     m:=g#"LieAlgebraRank";
     --find and peel off irreducibles
     decompositionData := while (v:=findOneHighestWeight (type,m,W)) =!= null list (v,mu:=W#v) do (
-        WDv:=weightDiagram (type,m,v); assert(WDv#v === 1);
+        WDv:=weightDiagram (g,v); assert(WDv#v === 1);
 	W=W-applyValues(WDv,i->i*mu);
     );
-    new LieAlgebraModule from {"LieAlgebra"=>g,"isIrreducible"=>false,"DecompositionIntoIrreducibles"=>new Tally from decompositionData}
+    new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new Tally from decompositionData}
 )     
 
 ---------------------------------------------------------
@@ -669,8 +760,8 @@ wordAction = (type,m,l,I,v) -> (
     for j from 0 to #J-1 do (     
         if J_j >0 then (
 	    rho:=apply(#w, i-> 1);
-            w=w+rho;     
-            w = w-(w_(J_j-1))*simpleroots_(J_j-1);     
+            w=w+rho;
+            w = w-(w_(J_j-1))*simpleroots_(J_j-1);
             w=w-rho);
         if J_j ==0 then (
             theta:=highestRoot(type,m);
@@ -683,7 +774,7 @@ wordAction = (type,m,l,I,v) -> (
 
 
 squarefreeWordsOfLengthP = (L,p) -> (
-    if p==0 then return {};     
+    if p==0 then return {};
     if p==1 then return apply(#L, i -> {L_i});
     wlm1:=squarefreeWordsOfLengthP(L,p-1);
     answer:=delete(null, flatten apply(#L, i -> apply(#wlm1, j -> if L_i != wlm1_j_0 then prepend(L_i,wlm1_j))));
@@ -695,92 +786,36 @@ isIdentity = (type,m,l,w) -> (
     apply(m, i -> wordAction(type,m,l,w,fdw_i)) == fdw      
 )
 
-
-
-tensorReflectionData = memoize( (type,m,maxwordlength,remainingWeights) -> (
-    theta:=highestRoot(type,m);
-    l:=max apply(#remainingWeights, i -> KillingForm(type,m,remainingWeights_i,theta));	
-    l=lift(l,ZZ);
-    Pl:=weylAlcove(type,m,l);
-    wl:=1;
---initialize;
-    remainingWeights=toList(set(remainingWeights)-set(Pl));
-    found:= set Pl;
-    answer:= set apply(#Pl, i -> {Pl_i,{}});
-    fixed:={};
-    S:=apply(m,i->i+1);
-    while #remainingWeights >0 and wl<=maxwordlength do (
-        words:=squarefreeWordsOfLengthP(S,wl);
-        for i from 0 to #words-1 do (
-            if isIdentity(type,m,l,words_i) then continue;
-            newremainingWeights:={};
-            for j from 0 to #remainingWeights-1 do ( 
-                if wordAction(type,m,l,words_i,remainingWeights_j)==remainingWeights_j then (
-                    answer = answer + set {{remainingWeights_j,reverse(words_i)}};
-                    fixed = append(fixed,remainingWeights_j)) 
-	        else newremainingWeights=append(newremainingWeights,remainingWeights_j)   
-            );
-            remainingWeights=newremainingWeights;
---image of basis under words_i
-            im:=apply(#Pl, j -> wordAction(type,m,l,words_i,Pl_j));
-            if member(im,found) then continue else (
-                found = found + set(im);
-                remainingWeights=toList(set(remainingWeights)-set(im));
-                answer=answer+set apply(#im, k -> {im_k,reverse(words_i)});
-            ));
-            wl=wl+1);
-    if #remainingWeights==0 then return {sort toList(answer),sort fixed,true,remainingWeights} else return {sort toList(answer), sort fixed,false,remainingWeights}
-))
-
-tens := memoize( (lambda,mu,g) -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";	  
-    posRoots:=positiveRoots(type,m);
-    wl:=#posRoots;
-    wd:=pairs weightDiagram(type,m,lambda);
-    theta:=highestRoot(type,m);
-    l:=max apply(#wd, i -> KillingForm(type,m,wd_i_0,theta));
-    l=lift(l,ZZ);	  
-    Pl:=weylAlcove(type,m,l);
-    wd=apply(#wd, i -> {wd_i_0+mu,wd_i_1});
-    rd:=tensorReflectionData(type,m,wl,apply(#wd, i -> wd_i_0));
-    if rd_2 == false then error "Need to allow longer words";
-    fixed:=rd_1;
-    rd=hashTable(rd_0);
-    wtsinPl:=delete(null, apply(#wd, i -> if member(wd_i_0,Pl) and not member(wd_i_0,fixed) then wd_i));     
-    wdh:=new MutableHashTable from wtsinPl;
-    for i from 0 to #wd-1 do (
-        if member(wd_i_0,Pl) then continue;     
-        if member(wd_i_0,fixed) then continue;
-        word:=rd#(wd_i_0);
-        e:=#word;
-        e=(-1)^e;
-        im:=wordAction(type,m,l,word,wd_i_0);
-        if not wdh#?im  then  wdh#im = (e)*(wd_i_1) else  wdh#im = wdh#im + (e)*(wd_i_1)     
-    );
-    wdh=pairs(wdh);
-    newwdh:=delete(null, apply(#wdh, i -> if wdh_i_1 != 0 then wdh_i));
-    if #newwdh == 1 and newwdh_0_1 == 1 then irreducibleLieAlgebraModule(newwdh_0_0,g)
-    else new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new Tally from newwdh,"isIrreducible"=>false}
-    ))
-LieAlgebraModule ** LieAlgebraModule := (V,W) -> (
+LieAlgebraModule ** LieAlgebraModule := (V,W) -> ( -- cf Humpheys' intro to LA & RT sec 24 exercise 9
     g:=V#"LieAlgebra";
     if g != W#"LieAlgebra" then error "V and W must be modules over the same Lie algebra";
-    X := new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new Tally};
-    scanPairs(V#"DecompositionIntoIrreducibles",(w,mul)->
-	scanPairs(W#"DecompositionIntoIrreducibles",(w',mul')->
-	    X = X ++ (tens(w,w',g))^(mul*mul')
-	    ));
-    X
+    wd:=weightDiagram V;
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    sr:=simpleRoots(type,m);
+    rho:=toList(m:1);
+    ans := new MutableHashTable;
+    add := (w,a) -> if ans#?w then ( s := ans#w+a; if s!=0 then ans#w = s else remove(ans,w) ) else ans#w = a;
+    scanPairs(W#"DecompositionIntoIrreducibles", (w,a) -> -- loop over highest weights of W
+    	scanPairs(wd, (v,b) -> ( -- loop over all weights of V
+    		u:=v+w+rho;
+		t:=1; i:=-1;
+		while not any(u,zero) and ((i=position(u,j->j<0)) =!= null) do (
+	    	    u=u-u#i*sr#i;
+	    	    t=-t;
+	    	    );
+		if i === null then add(u-rho,a*b*t);
+		)));
+    new LieAlgebraModule from {"LieAlgebra"=>g,"DecompositionIntoIrreducibles"=>new Tally from ans}
     )
 
 tensorCoefficient = method(
     TypicalValue=>ZZ)
 tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := memoize((U,V,W) -> (
-	if not W#?"isIrreducible" or not W#"isIrreducible" then error "third module must be irreducible";
-    	nu:=W#"highestWeight";
+	if not isIrreducible W then error "third module must be irreducible";
+    	nu:=first keys W#"DecompositionIntoIrreducibles";
     	fullTensorProduct:=(U**V)#"DecompositionIntoIrreducibles";
-    	lift(fullTensorProduct_nu,ZZ)
+    	fullTensorProduct_nu
     ))
 
 
@@ -807,7 +842,7 @@ fusionReflectionData = memoize( (type,m,l,maxwordlength,remainingWeights) -> (
             for j from 0 to #remainingWeights-1 do (
                 if wordAction(type,m,l,words_i,remainingWeights_j)==remainingWeights_j then (
                     answer = answer + set {{remainingWeights_j,reverse(words_i)}};
-                    fixed = append(fixed,remainingWeights_j)) else newremainingWeights=append(newremainingWeights,remainingWeights_j)   
+                    fixed = append(fixed,remainingWeights_j)) else newremainingWeights=append(newremainingWeights,remainingWeights_j)
             );
             remainingWeights=newremainingWeights;
             im:=apply(#Pl, j -> wordAction(type,m,l,words_i,Pl_j));
@@ -825,30 +860,31 @@ fusionProduct = method(
     TypicalValue=>HashTable,Options=>{MaxWordLength=>10})
 
 fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := memoize( opts-> (M,N,l) -> (
-    wl:= opts.MaxWordLength;	 
+    wl:= opts.MaxWordLength;
     if M#"LieAlgebra" != N#"LieAlgebra" then error "The Lie algebra modules must be over the same Lie algebra.";
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    lambda:=M#"highestWeight";
-    mu:=N#"highestWeight";
-    wd:=pairs weightDiagram(type,m,lambda);
+    if not isIrreducible M or not isIrreducible N then error "modules need to be irreducible";
+    lambda:=first keys M#"DecompositionIntoIrreducibles";
+    mu:=first keys N#"DecompositionIntoIrreducibles";
+    wd:=pairs weightDiagram(g,lambda);
     wd=apply(#wd, i -> {wd_i_0+mu,wd_i_1});
     rd:=fusionReflectionData(type,m,l,wl,apply(#wd, i -> wd_i_0));
     if rd_2 == false then error "Need to allow longer words";
     fixed:=rd_1;
     rd=hashTable(rd_0);
     Pl:=weylAlcove(type,m,l);
-    wtsinPl:=delete(null, apply(#wd, i -> if member(wd_i_0,Pl) and not member(wd_i_0,fixed) then wd_i));     
+    wtsinPl:=delete(null, apply(#wd, i -> if member(wd_i_0,Pl) and not member(wd_i_0,fixed) then wd_i));
     wdh:=new MutableHashTable from wtsinPl;
     for i from 0 to #wd-1 do (
-        if member(wd_i_0,Pl) then continue;     
+        if member(wd_i_0,Pl) then continue;
         if member(wd_i_0,fixed) then continue;
         word:=rd#(wd_i_0);
         e:=#word;
         e=(-1)^e;
         im:=wordAction(type,m,l,word,wd_i_0);
-        wdh#im = wdh#im + (e)*(wd_i_1)     
+        wdh#im = wdh#im + (e)*(wd_i_1)
     );
     wdh=pairs(wdh);
     newwdh:=delete(null, apply(#wdh, i -> if wdh_i_1 != 0 then wdh_i));
@@ -865,7 +901,7 @@ fusionCoefficient(LieAlgebraModule,LieAlgebraModule,LieAlgebraModule,ZZ) := memo
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
     fullFusionProduct:=(fusionProduct(U,V,l,MaxWordLength=>wl))#"DecompositionIntoIrreducibles";
-    if fullFusionProduct#?(W#"highestWeight") then return lift(fullFusionProduct#(W#"highestWeight"),ZZ) else return 0
+    if fullFusionProduct#?(first keys W#"DecompositionIntoIrreducibles") then return lift(fullFusionProduct#(first keys W#"DecompositionIntoIrreducibles"),ZZ) else return 0
 ))
 
 
@@ -926,7 +962,7 @@ doc ///
 ///	 	 
 
 TEST ///
-    assert(simpleLieAlgebra("A",1) === new LieAlgebra from {"LieAlgebraRank"=>1,"RootSystemType"=>"A","isSimple"=>true} )
+    assert(A=simpleLieAlgebra("A",1); A#"LieAlgebraRank"===1 and A#"RootSystemType"==="A" and A#"isSimple")
 ///
 
 doc ///
@@ -1187,7 +1223,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"highestWeight"=>{1,1}, "DecompositionIntoIrreducibles"=>new Tally from {{1,1}=>1}, "isIrreducible"=>true})
+    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"DecompositionIntoIrreducibles"=>new Tally from {{1,1}=>1} })
 ///	
 		
 doc ///
@@ -1249,7 +1285,8 @@ doc ///
     Key
         weightDiagram
 	(weightDiagram,LieAlgebraModule)
-	(weightDiagram,String,ZZ,List)
+	(weightDiagram,LieAlgebra,List)
+	(weightDiagram,LieAlgebra,Vector)
     Headline
         computes the weights in a Lie algebra module and their multiplicities
     Usage
@@ -1304,7 +1341,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"isIrreducible"=>false, ,"DecompositionIntoIrreducibles"=>new Tally from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"DecompositionIntoIrreducibles"=>new Tally from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
 ///
 
 doc ///
@@ -1331,7 +1368,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"isIrreducible"=>false, ,"DecompositionIntoIrreducibles"=>new Tally from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from {"LieAlgebra"=>simpleLieAlgebra("A",2),"DecompositionIntoIrreducibles"=>new Tally from {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} })
 ///
 
 doc ///
