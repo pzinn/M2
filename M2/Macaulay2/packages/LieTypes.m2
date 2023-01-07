@@ -1,4 +1,3 @@
-k
 -- -*- coding: utf-8 -*-
 -- licensed under GPL v2 or any later version
 newPackage(
@@ -620,8 +619,6 @@ character = method(
     TypicalValue => RingElement
     )
 
--- TODO jacobi trudi
-
 stdVars = method()
 stdVars(LieAlgebra) := (cacheValue stdVars) ( g -> (
     type:=g#"RootSystemType";
@@ -633,9 +630,35 @@ stdVars(LieAlgebra) := (cacheValue stdVars) ( g -> (
     else if type == "D" then apply(m-2, i -> R_i*(if i==0 then 1 else R_(i-1)^-1)) | {R_(m-2)*R_(m-1)*R_(m-3)^-1,R_(m-1)*R_(m-2)^-1}
     ))
 
--- TODO move hooks to the function below?
+characterAlgorithms := new MutableHashTable;
+-- Jacobi Trudi formulae
+elemSym = memoize((L,i) -> (
+    if i<0 or i>#L then 0
+    else sum(subsets(L,i),product)
+    ))
+characterAlgorithms#"JacobiTrudi'" = (g,v) -> ( -- good for high rank algebras, small weights
+    type:=g#"RootSystemType";
+    if type != "A" then return;
+    z := stdVars g;
+    m:=g#"LieAlgebraRank";
+    conj:=reverse splice apply(m,i -> v#i : i+1);
+    if #conj == 0 then 1_(ring g) else det matrix table(#conj,#conj,(i,j)->elemSym(z,conj#i+j-i))
+    )
+completeSym = memoize((L,i) -> (
+    if i<0 then 0
+    else sum(compositions(#L,i),c->product(L,c,(v,k)->v^k))
+    ))
+characterAlgorithms#"JacobiTrudi" = (g,v) -> ( -- good for high rank algebras, high weights
+    type:=g#"RootSystemType";
+    if type != "A" then return;
+    z := stdVars g;
+    m:=g#"LieAlgebraRank";
+    pows := apply(m+1,j->sum(j..m-1,k->v#k));
+    det matrix table(m+1,m+1,(i,j)->completeSym(z,pows#i+j-i))
+    )
+
 -- Weyl character formula
-character(LieAlgebra,List) := o -> (g,v) -> if g.cache#?(character,v) then g.cache#(character,v) else g.cache#(character,v) = (
+characterAlgorithms#"Weyl" = (g,v) -> ( -- good for low rank algebras
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
     z := stdVars g;
@@ -647,7 +670,7 @@ character(LieAlgebra,List) := o -> (g,v) -> if g.cache#?(character,v) then g.cac
     else if type=="B" then (
 	pows = apply(m,j->sum(j..m-2,k->1+v#k)+(1+v#(m-1))//2);
 	par := (1+v#(m-1)) % 2; -- shift of 1/2 to avoid half-integer powers
-	num = (ring g)_(m-1)^(1-par)*det matrix table(m,m,(i,j)->z_i^(pows#j+par)-z_i^(-pows#j)); -- TODO FIX
+	num = (ring g)_(m-1)^(1-par)*det matrix table(m,m,(i,j)->z_i^(pows#j+par)-z_i^(-pows#j));
     	den = product(m,i->z_i-1)*product(m,j->product(j,i->(z_i^-1 - z_j)*(1-z_i*z_j^-1))); --  type B Weyl denominator formula
 	)
     else if type == "C" then (
@@ -658,64 +681,35 @@ character(LieAlgebra,List) := o -> (g,v) -> if g.cache#?(character,v) then g.cac
     else if type == "D" then (
 	pows = append(apply(m-1,j->sum(j..m-3,k->1+v#k)+(2+v#(m-2)+v#(m-1))//2),(v#(m-1)-v#(m-2))//2);
 	par = (v#(m-2)+v#(m-1)) % 2; -- shift of 1/2 to avoid half-integer powers
-    	num = det matrix table(m,m,(i,j)->if pows#j + par == 0 then 1 else z_i^(pows#j+par)+z_i^(-pows#j));
+    	num1 := det matrix table(m,m,(i,j)->z_i^(pows#j+par)+z_i^(-pows#j));
+	num2 := det matrix table(m,m,(i,j)->z_i^(pows#j+par)-z_i^(-pows#j));
     	den = product(m,j->product(j,i->(z_i^-1 - z_j)*(1-z_i*z_j^-1))); --  type D Weyl denominator formula
-	print (factor den,num%den);
+	num = (ring g)_(m-1)^(-par)*(num1+num2)//2;
 	)
     else return;
     num//den -- would factoring be faster?
 )
-character(LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
 
-LieAlgebraModule#(character,"Freudenthal") = M -> (
-    R:= ring M#"LieAlgebra";
-    sum(pairs weightDiagram(M,Strategy=>"Freudenthal"),(w,a)->a*R_w)
-)
-
-LieAlgebraModule#(character,"Weyl") = M -> (
-    g:=M#"LieAlgebra";
+characterAlgorithms#"Freudenthal" = (g,v) -> (
     type:=g#"RootSystemType";
-    if type >= "E" then return;
-    sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (g,v) )
-)
+    m:=g#"LieAlgebraRank";
+    R:= ring g;
+    sum(toList Freud(type,m,v), w -> multiplicityOfWeightInLieAlgebraModule(type,m,v,w) * R_w)
+    )
+
+-- last strategy = first choice
+scan({"Freudenthal","Weyl","JacobiTrudi","JacobiTrudi'"}, strat -> addHook((character,LieAlgebraModule),characterAlgorithms#strat,Strategy=>strat))
+character (LieAlgebra,List) := o -> (g,v) ->  if g.cache#?(character,v) then g.cache#(character,v) else g.cache#(character,v) = runHooks((character,LieAlgebraModule),(g,v),o)
+character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
+character LieAlgebraModule := o -> (M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o))
 
 weightDiagram = method(
     Options=>{Strategy=>null},
     TypicalValue=>Tally
     )
 
--- TODO move hooks to the function below
--- or more radical: make weightDiagram just be new Tally from listForm all the time? <------
--- and all is in character (after all, Freud doesn't really care -- well, it kinda does, need to time it)
--- Freudenthal formula
-weightDiagram(LieAlgebra,List) := o -> (g,v) -> if g.cache#?(weightDiagram,v) then g.cache#(weightDiagram,v) else g.cache#(weightDiagram,v) = (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    Omega:=toList Freud(type,m,v);
-    new Tally from apply(Omega, w -> {w,multiplicityOfWeightInLieAlgebraModule(type,m,v,w)})
-)
-weightDiagram(LieAlgebra,Vector) := o -> (g,v) -> weightDiagram(g,entries v,o)
-
-LieAlgebraModule#(weightDiagram,"Freudenthal") = M -> (
-    g:=M#"LieAlgebra";
-    w:=new Tally;
-    scanPairs(M#"DecompositionIntoIrreducibles", (v,mul) -> w = w + applyValues(weightDiagram(g,v),i->i*mul));
-    w
-)
-
-LieAlgebraModule#(weightDiagram,"Weyl") = M -> (
-    g:=M#"LieAlgebra";
-    type:=g#"RootSystemType";
-    if type <= "D" then new Tally from listForm character(M,Strategy=>"Weyl")
-)
-
--- Weyl is last strategy = first choice
--- TODO move hooks to the (LieAlgebra,List) method?
-scan({character,weightDiagram}, meth -> (
-	scan({"Freudenthal","Weyl"}, strat -> addHook((meth,LieAlgebraModule),LieAlgebraModule#(meth,strat),Strategy=>strat));
-	meth LieAlgebraModule := o -> (M) -> runHooks((meth,LieAlgebraModule),M,o);
-	))
-
+weightDiagram LieAlgebraModule := o -> (M) -> new Tally from listForm character(M,o)
+weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v) -> new Tally from listForm character(g,v,o)
 
 dim LieAlgebraModule := M -> sum values weightDiagram M
 
@@ -904,8 +898,6 @@ fusionCoefficient(LieAlgebraModule,LieAlgebraModule,LieAlgebraModule,ZZ) := memo
     if fullFusionProduct#?(first keys W#"DecompositionIntoIrreducibles") then return lift(fullFusionProduct#(first keys W#"DecompositionIntoIrreducibles"),ZZ) else return 0
 ))
 
-
-
 beginDocumentation()
 
 
@@ -1084,8 +1076,11 @@ doc ///
     Key
         starInvolution
 	(starInvolution,List,LieAlgebra)
+	(starInvolution,Vector,LieAlgebra)
 	(starInvolution,String,ZZ,List)
+	(starInvolution,String,ZZ,Vector)
 	(starInvolution,LieAlgebraModule)
+	(dual,LieAlgebraModule)
     Headline
         computes w* for a weight w
     Usage
@@ -1199,6 +1194,7 @@ doc ///
     Key
         irreducibleLieAlgebraModule
 	(irreducibleLieAlgebraModule,List,LieAlgebra)
+	(irreducibleLieAlgebraModule,Vector,LieAlgebra)
 	LL
     Headline
         construct the irreducible Lie algebra module with given highest weight
@@ -1229,6 +1225,7 @@ TEST ///
 doc ///
     Key 
 	(multiplicity,List,LieAlgebraModule)
+	(multiplicity,Vector,LieAlgebraModule)
     Headline
         compute the multiplicity of a weight in a Lie algebra module
     Usage
@@ -1239,9 +1236,6 @@ doc ///
     Outputs
         k:ZZ
     Description
-        Text
-	    This function implements Freudenthal's recursive algorithm; see Humphreys, {\it Introduction to Lie Algebras and Representation Theory}, Section 22.3. This function returns the multiplicity of the weight v in the irreducible Lie algebra module M.  For Type A (that is, $g = sl_k$), these multiplicities are related to the Kostka numbers (though in this package, irreducible representations are indexed by the Dynkin labels of their highest weights, rather than by partitions).      
-	       
 	Text     
 	    The example below shows that the $sl_3$ module with highest weight $(2,1)$ contains the weight $(-1,1)$ with multiplicity 2.
          
@@ -1287,6 +1281,7 @@ doc ///
 	(weightDiagram,LieAlgebraModule)
 	(weightDiagram,LieAlgebra,List)
 	(weightDiagram,LieAlgebra,Vector)
+	[weightDiagram,Strategy]
     Headline
         computes the weights in a Lie algebra module and their multiplicities
     Usage
@@ -1297,7 +1292,8 @@ doc ///
         T:Tally
     Description
         Text
-	    This function implements Freudenthal's recursive algorithm; see Humphreys, {\it Introduction to Lie Algebras and Representation Theory}, Section 22.3.  Let $V$ be the irreducible $\mathbf{g}$-module with highest weight $v$.  This function returns a hash table whose keys are the weights appearing in $V$ and whose values are the multiplicities of these weights.  The character of $V$ can be easily computed from this information (but characters of Lie algebra modules have not been implemented in this version of LieTypes).  
+	    Let $V$ be the irreducible $\mathbf{g}$-module with highest weight $v$.  This function returns a tally whose keys are the weights appearing in $V$ and whose values are the multiplicities of these weights.
+	    An optional argument {\tt "Strategy"} allows to specify which algorithm to use, see @TO character@.
 	     
         Example
 	     g=simpleLieAlgebra("A",2)
@@ -1305,7 +1301,8 @@ doc ///
 	     weightDiagram(V)
 	     
     SeeAlso
-        (multiplicity,List,LieAlgebraModule)     
+        (multiplicity,List,LieAlgebraModule)
+	character
 ///
 
 TEST ///
@@ -1347,6 +1344,7 @@ TEST ///
 doc ///
     Key
 	(symbol ++, LieAlgebraModule, LieAlgebraModule)
+	(directSum, LieAlgebraModule)
     Headline
         direct sum of LieAlgebraModules
     Usage
@@ -1587,29 +1585,7 @@ TEST ///
 doc ///
     Key
         MaxWordLength
-    Headline
-        Optional argument to specify the allowable length of words in the affine Weyl group when computing fusion products.
-    Description
-        Text
-	    The Weyl group of a simple Lie algebra is finite; in contrast, the affine Weyl group of an affine Lie algebra is infinite.  To keep Macaulay2 from trying to compute infinitely long words in this group, the default length of allowed words is set to 10.   The user may override this with the optional argument "MaxWordLength".  If the word length is too small, the program will return an error.  
-
-///
-
-doc ///
-    Key
         [fusionCoefficient, MaxWordLength]
-    Headline
-        Optional argument to specify the allowable length of words in the affine Weyl group when computing fusion products.
-    Description
-        Text
-            The Weyl group of a simple Lie algebra is finite; in contrast, the affine Weyl group of an affine Lie algebra is infinite.  To keep Macaulay2 from trying to compute infinitely long words in this group, the default length of allowed words is set to 10.   The user may override this with the optional argument "MaxWordLength".  If the word length is too small, the program will return an error.
-
-///
-
-
-
-doc ///
-    Key
         [fusionProduct, MaxWordLength]
     Headline
         Optional argument to specify the allowable length of words in the affine Weyl group when computing fusion products.
@@ -1619,5 +1595,73 @@ doc ///
 
 ///
 
+doc ///
+    Key
+        character
+	(character,LieAlgebraModule)
+	(character,LieAlgebra,List)
+	(character,LieAlgebra,Vector)
+	[character,Strategy]
+    Headline
+        Computes the character of a Lie algebra module
+    Usage
+        character V
+    Inputs
+        V:LieAlgebraModule
+    Outputs
+        C:RingElement
+    Description
+        Text
+	    An optional argument {\tt "Strategy"} allows to specify which algorithm to use:
+	    {\tt "Freudenthal"} for Freudenthal's recursive algorithm; see Humphreys, {\it Introduction to Lie Algebras and Representation Theory}, Section 22.3.
+	    {\tt "Weyl"} for Weyl's character formula (in classical types).
+	    {\tt "JacobiTrudi"} and {\tt "JacobiTrudi'"} for Jacobi-Trudi and dual Jacobi-Trudi formulae (in type A).
+    SeeAlso
+        weightDiagram
+///
 
+TEST ///
+    g=simpleLieAlgebra("D",4);
+    M=LL_(1,1,0,0) g;
+    N=LL_(1,0,0,1) g;
+    assert(character(M**N) == character M * character N)
+///
+
+doc ///
+    Key
+        isIrreducible
+	(isIrreducible,LieAlgebraModule)
+    Headline
+        Whether a Lie algebra module is irreducible or not
+    Description
+        Example
+	    g=simpleLieAlgebra("A",2)
+	    M=irreducibleLieAlgebraModule({2,1},g)
+	    isIrreducible M
+	    isIrreducible(M++M)
+	    isIrreducible(M**M)
+///	
+
+TEST ///
+    g=simpleLieAlgebra("A",2);
+    assert(isIrreducible irreducibleLieAlgebraModule({2,1},g))
+///
+
+doc ///
+    Key
+        trivialModule
+	(trivialModule,LieAlgebra)
+    Headline
+        The trivial module of a Lie algebra
+    Description
+        Text
+	    Returns the one-dimensional module with zero highest weight.
+///	
+
+TEST ///
+    g=simpleLieAlgebra("A",2);
+    M=irreducibleLieAlgebraModule({2,1},g)
+    assert(M ** trivialModule g == M)
+///
+	    
 endPackage "LieTypes" 
