@@ -169,7 +169,7 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     if type=="E" and not member(m,{6,7,8}) then error "The rank for type E must be 6, 7, or 8.";
     if type=="F" and m!=4 then error "The rank for type F must be 4.";
     if type=="G" and m!=2 then error "The rank for type G must be 2.";
-    Q:=sum entries quadraticFormMatrix(type,m);
+    Q:=sum \ entries inverse cartanMatrixQQ(type,m);
     l:=lcm(denominator\Q);
     Q=apply(Q,q->lift(q*l,ZZ));
     x:=getSymbol "x";
