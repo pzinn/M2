@@ -648,7 +648,7 @@ completeSym = memoize((L,i) -> (
     if i<0 then 0
     else sum(compositions(#L,i),c->product(L,c,(v,k)->v^k))
     ))
-characterAlgorithms#"JacobiTrudi" = (g,v) -> ( -- good for high rank algebras, high weights
+characterAlgorithms#"JacobiTrudi" = (g,v) -> (
     type:=g#"RootSystemType";
     if type != "A" then return;
     z := stdVars g;
@@ -724,6 +724,17 @@ findOneHighestWeight = (type,m,W) -> (
     return null;
 )
 
+-- adams = mehod( TypicalValue => LieAlgebraModule )
+-- adams (ZZ,LieAlgebraModule) := (k,M) -> (
+
+symmetricPower(ZZ,LieAlgebraModule) := (n,M) -> (
+    if n<0 then "error nonnegative powers only"
+    else if n==0 then trivialModule M#"LieAlgebra"
+    else if n==1 then M
+    else (
+	
+	)
+    )
 
 
 LieAlgebraModuleFromWeights = method(
