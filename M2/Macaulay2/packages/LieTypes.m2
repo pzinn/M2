@@ -52,7 +52,8 @@ export {
     "trivialModule",
     "isIrreducible",
     "character",
-    "adams"
+    "adams",
+    "dynkinDiagram"
     }
 
 tim=0;
@@ -154,6 +155,22 @@ net LieAlgebra := X -> net expression X;
 texMath LieAlgebra := X -> texMath expression X;
 
 rank LieAlgebra := g -> g#"LieAlgebraRank"
+
+dynkinDiagram = method(TypicalValue => Net)
+dynkinA = (l,m) -> stack (
+    (if l>1 then "---" else "") | demark("---",m-l+1:"o"),
+    concatenate apply(l..m,i->if i==1 then "1" else pad(4,toString i))
+    )
+dynkinDiagram (String,ZZ) := (type,m) -> (
+    if type=="A" then dynkinA (1,m)
+    else if type=="B" then dynkinA (1,m-1) | ("=>=o"||pad(4,toString m))
+    else if type=="C" then dynkinA (1,m-1) | ("=<=o"||pad(4,toString m))
+    else if type=="D" then dynkinA (1,m-2) | ((" o"|toString(m-1))||"/"||""||"\\"||(" o"|toString m))^2
+    else if type=="E" then "        o 2"||"        |"|| (dynkinA (1,1)|dynkinA(3,m))
+    else if type=="F" then dynkinA (1,2) | ("=>=o---o"||"   3   4")
+    else if type=="G" then "o≡<≡o"||"1   2"
+    )
+dynkinDiagram LieAlgebra := g -> dynkinDiagram(g#"RootSystemType",g#"LieAlgebraRank")
 
 LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 
