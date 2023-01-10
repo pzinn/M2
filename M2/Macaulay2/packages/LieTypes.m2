@@ -128,9 +128,9 @@ global variable names instead of the hash table contents.
 * adams, symmetricPower, exteriorPower added
 
 TODO:
-* replace more memoize with cacheValue. LieAlgebraModule should probably have their own cache
-* have some description of the Dynkin diagrams
-* get rid of isIsomorphic
+* replace more memoize with cacheValue
+* get rid of isIsomorphic, turn isSimple into a method
+* turn dynkinDiagram into a Type with various outputs. should have same fields as LieAlgebra, ideally, so can go back and forth easily
 * fix and optimize fusionProduct
 *-
 
@@ -775,7 +775,7 @@ LieAlgebraModuleFromWeights(RingElement,LieAlgebra) := (c0,g) -> (
     	cache => new CacheTable from { character => c0 }
     	}
     )
--- another algorithm would be to apply the same Brauer/Klimyk algorithm as tensor product (with second weight = trivial one)
+-- another algorithm would be to apply the same Racah/Brauer/Klimyk algorithm as tensor product (with second weight = trivial one)
 -- not clear which is faster
 
 LieAlgebraModuleFromWeights(VirtualTally,LieAlgebra) := (W,g) -> (
