@@ -110,6 +110,10 @@ numeric(ZZ,Vector) := (prec,v) -> (
      if F === ZZ or F === QQ then return promote(v,RR_prec);
      error "expected vector of numbers"
      )
+lift(Vector,InexactNumber) := 
+lift(Vector,InexactNumber') :=
+lift(Vector,RingElement) := 
+lift(Vector,Number) := Vector => o -> (v,S) -> vector (lift(v#0,S))
 
 - Vector := Vector => v -> new class v from {-v#0}
 Number * Vector := RingElement * Vector := Vector => (r,v) -> vector(r * v#0)
