@@ -39,7 +39,7 @@ export {
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
     "irreducibleLieAlgebraModule", "LL",
-    "isIsomorphic",
+--    "isIsomorphic",
     "casimirScalar",
     "weightDiagram",
     "tensorCoefficient",
@@ -53,7 +53,9 @@ export {
     "isIrreducible",
     "character",
     "adams",
-    "dynkinDiagram"
+    "dynkinDiagram",
+    "isSimple",
+    "cartanMatrix"
     }
 
 tim=0;
@@ -129,7 +131,6 @@ global variable names instead of the hash table contents.
 
 TODO:
 * replace more memoize with cacheValue
-* get rid of isIsomorphic, turn isSimple into a method
 * turn dynkinDiagram into a Type with various outputs. should have same fields as LieAlgebra, ideally, so can go back and forth easily
 * fix and optimize fusionProduct
 *-
@@ -140,28 +141,38 @@ TODO:
 -- LieAlgebra= {
 --   LieAlgebraRank => ZZ, dim of Cartan subalgebra
 --   RootSystemType => String, type A through G
---   isSimple => Boolean
 --   }
 
 LieAlgebra = new Type of HashTable  
 LieAlgebra.GlobalAssignHook = globalAssignFunction
 LieAlgebra.GlobalReleaseHook = globalReleaseFunction
 describe LieAlgebra := g -> Describe (
-    if g#"isSimple" then (expression simpleLieAlgebra) (g#"RootSystemType",g#"LieAlgebraRank")
+    if isSimple g then (expression simpleLieAlgebra) (g#"RootSystemType",g#"LieAlgebraRank")
     else concatenate("Nonsimple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"))
-)	
+)
 expression LieAlgebra := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else unhold describe g;
 net LieAlgebra := X -> net expression X;
 texMath LieAlgebra := X -> texMath expression X;
 
 rank LieAlgebra := g -> g#"LieAlgebraRank"
 
+isSimple = method(TypicalValue => Boolean)
+isSimple (String,ZZ) := (type,m) -> (
+    (type=="A" and m>=1)
+    or ((type=="B" or type=="C") and m>=2)
+    or (type=="D" and m>=3)
+    or (type=="E" and m>=6 and m<=8)
+    or (type=="F" and m==4)
+    or (type=="G" and m==2)
+    )
+isSimple LieAlgebra := g -> isSimple(g#"RootSystemType",g#"LieAlgebraRank")
+
 dynkinDiagram = method(TypicalValue => Net)
 dynkinA = (l,m) -> stack (
     (if l>1 then "---" else "") | demark("---",m-l+1:"o"),
     concatenate apply(l..m,i->if i==1 then "1" else pad(4,toString i))
     )
-dynkinDiagram (String,ZZ) := (type,m) -> (
+dynkinDiagram (String,ZZ) := (type,m) -> if not isSimple(type,m) then error "can only draw simple Lie algebra Dynkin diagram" else (
     if type=="A" then dynkinA (1,m)
     else if type=="B" then dynkinA (1,m-1) | ("=>=o"||pad(4,toString m))
     else if type=="C" then dynkinA (1,m-1) | ("=<=o"||pad(4,toString m))
@@ -174,23 +185,27 @@ dynkinDiagram LieAlgebra := g -> dynkinDiagram(g#"RootSystemType",g#"LieAlgebraR
 
 LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 
+cartanMatrixQQ := (type, m) -> promote(cartanMatrix(type,m),QQ)
+
 simpleLieAlgebra = method(
     TypicalValue => LieAlgebra
     )
 simpleLieAlgebra(String,ZZ) := (type,m) -> (
-    if not member(type,{"A","B","C","D","E","F","G"}) then error "The simple Lie algebras over the complex numbers have types A, B, C, D, E, F, or G";
-    if type=="A" and m<= 0 then error "The rank for type A must be >= 1.";
-    if type=="B" and m<= 1 then error "The rank for type B must be >= 2.";
-    if type=="C" and m<= 1 then error "The rank for type C must be >= 2.";
-    if type=="D" and m<= 2 then error "The rank for type D must be >= 3.";
-    if type=="E" and not member(m,{6,7,8}) then error "The rank for type E must be 6, 7, or 8.";
-    if type=="F" and m!=4 then error "The rank for type F must be 4.";
-    if type=="G" and m!=2 then error "The rank for type G must be 2.";
+    if not isSimple(type,m) then (
+    	if not member(type,{"A","B","C","D","E","F","G"}) then error "The simple Lie algebras over the complex numbers have types A, B, C, D, E, F, or G";
+    	if type=="A" and m<= 0 then error "The rank for type A must be >= 1.";
+    	if type=="B" and m<= 1 then error "The rank for type B must be >= 2.";
+    	if type=="C" and m<= 1 then error "The rank for type C must be >= 2.";
+    	if type=="D" and m<= 2 then error "The rank for type D must be >= 3.";
+    	if type=="E" and not member(m,{6,7,8}) then error "The rank for type E must be 6, 7, or 8.";
+    	if type=="F" and m!=4 then error "The rank for type F must be 4.";
+    	if type=="G" and m!=2 then error "The rank for type G must be 2.";
+	);
     Q:=sum \ entries inverse cartanMatrixQQ(type,m);
     l:=lcm(denominator\Q);
     Q=apply(Q,q->lift(q*l,ZZ));
     x:=getSymbol "x";
-    new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,"isSimple"=>true,cache=>new CacheTable from {
+    new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,cache=>new CacheTable from {
 	    "Ring" => ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])}}
     )
 -*simpleLieAlgebra(IndexedVariable) := (v) -> (
@@ -346,6 +361,10 @@ starInvolution LieAlgebraModule := M -> new LieAlgebraModule from (
 dual LieAlgebraModule := {} >> o -> lookup(starInvolution,LieAlgebraModule)
 
 
+
+LieAlgebraModule == LieAlgebraModule := (V,W)-> (V===W)
+
+-*
 isIsomorphic = method(
     TypicalValue => Boolean
     )
@@ -353,6 +372,7 @@ isIsomorphic(LieAlgebraModule,LieAlgebraModule) := (M,N) -> ( -- actually this i
     if M#"LieAlgebra" != N#"LieAlgebra" then return false;
     M#"DecompositionIntoIrreducibles"===N#"DecompositionIntoIrreducibles"
 )
+*-
 
 LieAlgebraModule == ZZ := (M,n) -> if n=!=0 then error "attempted to compare module to nonzero integer" else #(M#"DecompositionIntoIrreducibles") == 0
 
@@ -393,41 +413,47 @@ implementations because I want the Cartan matrix over QQ (so I can invert it) an
 (theta,theta) = 2, where theta is the highest root.  This is a popular convention in the conformal blocks literature that is not used in WeylGroups. 
 
 To avoid shadowing, I have named my function cartanMatrixQQ
+
+PZJ: actually there's so much shadowing already...
+
 *-
 
-cartanMatrixQQ = memoize((type, m) ->( M:={};
-	  i:=0;
+cartanMatrix = method ( TypicalValue => Matrix )
+
+cartanMatrix LieAlgebra := (cacheValue cartanMatrix) ( g -> cartanMatrix (g#"RootSystemType",g#"LieAlgebraRank") )
+
+cartanMatrix (String,ZZ) := (type, m) -> ( M:={};
     if type=="A" then (
-        return matrix apply(m, i-> (1/1)*apply(m, j -> if j==i-1 then -1 else if j==i then 2 else if j==i+1 then -1 else 0))
+        return matrix apply(m, i-> apply(m, j -> if j==i-1 then -1 else if j==i then 2 else if j==i+1 then -1 else 0))
     );
     if type=="B" then (
-        M = apply(m-2, i ->  (1/1)*apply(m, j -> if j==i-1 then -1 else if j==i then 2 else if j==i+1 then -1 else 0)); 
-        M = append(M, (1/1)*apply(m, j -> if j==(m-2)-1 then -1 else if j==(m-2)then 2 else if j==(m-2)+1 then -2 else 0)); 
-        M = append(M, (1/1)*apply(m, j -> if j==(m-1)-1 then -1 else if j==(m-1) then 2 else if j==(m-1)+1 then -1 else 0));
+        M = apply(m-2, i ->  apply(m, j -> if j==i-1 then -1 else if j==i then 2 else if j==i+1 then -1 else 0));
+        M = append(M, apply(m, j -> if j==(m-2)-1 then -1 else if j==(m-2)then 2 else if j==(m-2)+1 then -2 else 0));
+        M = append(M, apply(m, j -> if j==(m-1)-1 then -1 else if j==(m-1) then 2 else if j==(m-1)+1 then -1 else 0));
         return matrix M
     );
     if type=="C" then (
-        M = apply(m-2, i -> (1/1)*apply(m, j -> if j==i-1 then -1/1 else if j==i then 2 else if j==i+1 then -1 else 0)); 
-        M = append(M, (1/1)*apply(m, j -> if j==m-2-1 then -1 else if j==m-2 then 2 else if j==m-2+1 then -2 else 0)); 
-        M = append(M, (1/1)*apply(m, j -> if j==m-1-1 then -1 else if j==m-1 then 2 else if j==m-1+1 then -1 else 0));
+        M = apply(m-2, i -> apply(m, j -> if j==i-1 then -1/1 else if j==i then 2 else if j==i+1 then -1 else 0));
+        M = append(M, apply(m, j -> if j==m-2-1 then -1 else if j==m-2 then 2 else if j==m-2+1 then -2 else 0));
+        M = append(M, apply(m, j -> if j==m-1-1 then -1 else if j==m-1 then 2 else if j==m-1+1 then -1 else 0));
         return transpose matrix M
     );
     if type=="D" then (
-        M = apply(m-3, i -> (1/1)*apply(m, j -> if j==i-1 then -1/1 else if j==i then 2 else if j==i+1 then -1 else 0));
-        M = append(M,(1/1)*apply(m, j -> if j==m-3-1 then -1 else if j==m-3 then 2 else if j==m-3+1 then -1 else if j==m-3+2 then -1 else 0));
-        M = append(M,(1/1)*apply(m, j -> if j==m-2 then 2 else if j==m-2-1 then -1 else 0));
-        M = append(M,(1/1)*apply(m, j -> if j==m-1 then 2 else if j==m-1-2 then -1 else 0));
+        M = apply(m-3, i -> apply(m, j -> if j==i-1 then -1/1 else if j==i then 2 else if j==i+1 then -1 else 0));
+        M = append(M,apply(m, j -> if j==m-3-1 then -1 else if j==m-3 then 2 else if j==m-3+1 then -1 else if j==m-3+2 then -1 else 0));
+        M = append(M,apply(m, j -> if j==m-2 then 2 else if j==m-2-1 then -1 else 0));
+        M = append(M,apply(m, j -> if j==m-1 then 2 else if j==m-1-2 then -1 else 0));
         return matrix M
     );
     if type=="E" and m==6 then (
-        return matrix {{2/1, 0, -1, 0, 0, 0}, {0, 2, 0, -1, 0, 0}, {-1, 0, 2, -1, 0, 0}, {0, -1, -1, 2, -1, 0}, {0, 0, 0, -1, 2, -1}, {0, 0, 0, 0, -1, 2}});  
+        return matrix {{2, 0, -1, 0, 0, 0}, {0, 2, 0, -1, 0, 0}, {-1, 0, 2, -1, 0, 0}, {0, -1, -1, 2, -1, 0}, {0, 0, 0, -1, 2, -1}, {0, 0, 0, 0, -1, 2}});
     if type=="E" and m==7 then (
-	return matrix {{2/1, 0, -1, 0, 0, 0, 0}, {0, 2, 0, -1, 0, 0, 0}, {-1, 0, 2, -1, 0, 0, 0}, {0, -1, -1, 2, -1, 0, 0}, {0, 0, 0, -1, 2, -1, 0}, {0, 0, 0, 0, -1, 2, -1}, {0, 0, 0, 0, 0, -1, 2}});
+	return matrix {{2, 0, -1, 0, 0, 0, 0}, {0, 2, 0, -1, 0, 0, 0}, {-1, 0, 2, -1, 0, 0, 0}, {0, -1, -1, 2, -1, 0, 0}, {0, 0, 0, -1, 2, -1, 0}, {0, 0, 0, 0, -1, 2, -1}, {0, 0, 0, 0, 0, -1, 2}});
     if type=="E" and m==8 then (
-	return matrix {{2/1, 0, -1, 0, 0, 0, 0, 0}, {0, 2, 0, -1, 0, 0, 0, 0}, {-1, 0, 2, -1, 0, 0, 0, 0}, {0, -1, -1, 2, -1, 0, 0, 0}, {0, 0, 0, -1, 2, -1, 0, 0}, {0, 0, 0, 0, -1, 2, -1, 0}, {0, 0, 0, 0, 0, -1, 2, -1}, {0, 0, 0, 0, 0, 0, -1, 2}});
-    if type == "F" then return matrix({{2/1,-1,0,0},{-1,2,-2,0},{0,-1,2,-1},{0,0,-1,2}});
-    if type == "G" then return matrix({{2/1,-1},{-3,2}});
-    ));
+	return matrix {{2, 0, -1, 0, 0, 0, 0, 0}, {0, 2, 0, -1, 0, 0, 0, 0}, {-1, 0, 2, -1, 0, 0, 0, 0}, {0, -1, -1, 2, -1, 0, 0, 0}, {0, 0, 0, -1, 2, -1, 0, 0}, {0, 0, 0, 0, -1, 2, -1, 0}, {0, 0, 0, 0, 0, -1, 2, -1}, {0, 0, 0, 0, 0, 0, -1, 2}});
+    if type == "F" then return matrix({{2,-1,0,0},{-1,2,-2,0},{0,-1,2,-1},{0,0,-1,2}});
+    if type == "G" then return matrix({{2,-1},{-3,2}});
+    )
 
 
 --We code what Di Francesco, Mathieu, and Senechal call the quadratic form matrix
@@ -435,7 +461,7 @@ cartanMatrixQQ = memoize((type, m) ->( M:={};
 --For the other types Appendix 13.A, [DMS]
 
 
-quadraticFormMatrix = memoize((type, m) -> ( M:={};
+quadraticFormMatrix = memoize((type, m) -> ( M:={}; -- TODO unmemoize
     if type=="A" or type =="D" or type=="E" then return (cartanMatrixQQ(type,m))^-1;
     if type =="B" then (
         M=apply(m-1, i -> append(apply(m-1, j -> if j+1<=i+1 then 2*(j+1) else 2*(i+1 )),i+1));
@@ -522,13 +548,10 @@ simpleRoots = method(
 )
   
 simpleRoots(String,ZZ) := memoize((type,m) -> ( -- TODO unmemoize, see Freud
-    C:=cartanMatrixQQ(type,m);     
-    entries lift(C,ZZ)
+    entries cartanMatrix(type,m)
 ))
 
-simpleRoots(LieAlgebra):=(cacheValue simpleRoots) ((g) -> (
-    simpleRoots(g#"RootSystemType",g#"LieAlgebraRank")  
-))
+simpleRoots(LieAlgebra):=(cacheValue simpleRoots) ((g) -> entries cartanMatrix g)
 
 
 positiveRoots = method(
@@ -1024,7 +1047,7 @@ doc ///
 ///	 	 
 
 TEST ///
-    assert(A=simpleLieAlgebra("A",1); A#"LieAlgebraRank"===1 and A#"RootSystemType"==="A" and A#"isSimple")
+    assert(A=simpleLieAlgebra("A",1); A#"LieAlgebraRank"===1 and A#"RootSystemType"==="A" and isSimple A)
 ///
 
 doc ///
@@ -1626,7 +1649,7 @@ TEST ///
     assert(casimirScalar(V) === 8/3)
 ///
 
-
+-*
 doc ///
     Key
         isIsomorphic
@@ -1665,6 +1688,7 @@ TEST ///
     assert(isIsomorphic(M,M**Z) === true)
     assert(isIsomorphic(M**N,N**M) ===true)
 ///
+*-
 
 doc ///
     Key
