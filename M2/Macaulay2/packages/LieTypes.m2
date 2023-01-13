@@ -2,14 +2,19 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.61",
-    Date => "Jan 9, 2023",
+    Version => "0.7",
+    Date => "Jan 15, 2023",
     Headline => "common types for Lie groups and Lie algebras",
     Authors => {
-	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"}
+	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
+	  {
+	      Name => "Paul Zinn-Justin", -- starting with version 0.6
+	      Email => "pzinn@unimelb.edu.au",
+	      HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
+    DebuggingMode => true,
     Certification => {
 	 -- same article as for package ConformalBlocks
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -34,7 +39,7 @@ export {
     "dualCoxeterNumber", 
     "highestRoot",
     "starInvolution",
-    "KillingForm",
+    "killingForm",
     "weylAlcove",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
@@ -45,7 +50,7 @@ export {
     "tensorCoefficient",
     "fusionProduct",
     "fusionCoefficient",
-    "MaxWordLength",
+--    "MaxWordLength",
     "positiveRoots",
     "simpleRoots",
     "LieAlgebraModuleFromWeights",
@@ -55,7 +60,8 @@ export {
     "adams",
     "dynkinDiagram",
     "isSimple",
-    "cartanMatrix"
+    "cartanMatrix",
+    "qdim"
     }
 
 tim=0;
@@ -81,7 +87,7 @@ simpleLieAlgebra
 dualCoxeterNumber
 highestRoot
 starInvolution
-KillingForm
+killingForm
 weylAlcove
 
 LieAlgebraModules have two keys: LieAlgebra and DecompositionIntoIrreducibles
@@ -110,7 +116,7 @@ global variable names instead of the hash table contents.
 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
--- Summary, Version 0.6, January 2023 (Paul Zinn-Justin)
+-- Summary, Version 0.6, January 2023
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 
@@ -129,13 +135,41 @@ global variable names instead of the hash table contents.
   (Weyl seems slower for small reps, but significantly faster for large highest weights)
 * adams, symmetricPower, exteriorPower added
 
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.7, January 2023
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+* replaced isIsomorphic with ==, turned isSimple into a method
+* fixed and optimized fusionProduct
+* added PZJ as author due to novel implementation of Kac-Watson
+* Weyl product formula for dim and qdim (principal specialization)
+* added method dynkinDiagram
+* reverted cartanMatrixQQ to cartanMatrix
+
 TODO:
+* fix qdim (non-integer issue in nonsimply laced)  <---------
+* relatedly, rethink fusion product: same issue with scalar product with roots, maybe denominator needs fixing once and for all given g
+basically, what are possible denominators of <root,weight>? root=2coroot/<coroot,coroot> so <root,weight>=2/<coroot,coroot>
+which annoyingly depends on convention of normalization of scalar product
+of course weyl formula doesn't. and fusion product does, but it's a convention on level...
 * replace more memoize with cacheValue
 * turn dynkinDiagram into a Type with various outputs. should have same fields as LieAlgebra, ideally, so can go back and forth easily
-* fix and optimize fusionProduct
+* define an adjointRepresentation method
+* document/test qdim (show multiplicativity)
+* review Freudenthal code for character computation
+* cleanup (useless internal methods?)
+* the arguments of weylAlcove are inconsistent
+
 *-
 
 
+-- hopefully will be integrated into Core: cache into i^th argument
+cacheValue' = (i,key) -> f -> new CacheFunction from ( x -> (
+c:=(x#i).cache;
+key':=replace(i,key,x);
+if c#?key' then c#key' else c#key'=f x
+) )
 
 -----------------------------------------------------------------------
 -- LieAlgebra= {
@@ -151,8 +185,8 @@ describe LieAlgebra := g -> Describe (
     else concatenate("Nonsimple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"))
 )
 expression LieAlgebra := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else unhold describe g;
-net LieAlgebra := X -> net expression X;
-texMath LieAlgebra := X -> texMath expression X;
+net LieAlgebra := net @@ expression;
+texMath LieAlgebra := texMath @@ expression;
 
 rank LieAlgebra := g -> g#"LieAlgebraRank"
 
@@ -206,7 +240,7 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     Q=apply(Q,q->lift(q*l,ZZ));
     x:=getSymbol "x";
     new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,cache=>new CacheTable from {
-	    "Ring" => ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])}}
+	    ring => ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])}} -- could cacheValue ring
     )
 -*simpleLieAlgebra(IndexedVariable) := (v) -> (
     if #v > 2 or not member(v#0,{symbol sl, symbol so, symbol sp}) or not instance(v#1,ZZ) then error "Input not understood; enter sl_k, sp_k, or so_k, or use the syntax simpleLieAlgebra(\"A\",1) instead";
@@ -258,7 +292,7 @@ highestRoot(String,ZZ) := (type, m) -> (--see Appendix 13.A, [DMS]
     if type == "G" then return {0,1}
 )
 
-highestRoot(LieAlgebra) := (cacheValue highestRoot) ((g) -> (--see Appendix 13.A, [DMS]
+highestRoot(LieAlgebra) := (cacheValue highestRoot) ((g) -> (
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";   
     highestRoot(type,m)
@@ -282,7 +316,7 @@ starInvolution(List,LieAlgebra) := (v,g) -> (
 )
 starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
 
-ring LieAlgebra := g -> g.cache#"Ring"
+ring LieAlgebra := g -> g.cache#ring
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- The LieAlgebraModule type
@@ -298,7 +332,7 @@ ring LieAlgebra := g -> g.cache#"Ring"
 LieAlgebraModule = new Type of HashTable 
 LieAlgebraModule.GlobalAssignHook = globalAssignFunction
 LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
-LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(deepSplice toList w,g) }
+LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(deepSplice toList sequence w,g) }
 LL.texMath = ///{\mathcal L}///
 
 describe LieAlgebraModule := M -> Describe (
@@ -306,12 +340,12 @@ describe LieAlgebraModule := M -> Describe (
     g := Parenthesize expression M#"LieAlgebra";
     if #dec == 0 then expression 0
     else fold((a,b)->a++b, -- TODO rewrite using DirectSum to avoid error: at print: recursion limit of 300 exceeded
-	apply(pairs dec,(v,mul) -> ((expression LL)_(toSequence v) g)^mul))
+	apply(sort pairs dec,(v,mul) -> ((expression LL)_(toSequence v) g)^mul))
     )
 expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else unhold describe M;
 
-net LieAlgebraModule := V -> net expression V
-texMath LieAlgebraModule := V -> texMath expression V
+net LieAlgebraModule := net @@ expression
+texMath LieAlgebraModule := texMath @@ expression
 
 new LieAlgebraModule from Sequence := (T,s) -> new LieAlgebraModule from {
     "LieAlgebra" => s#0,
@@ -346,9 +380,8 @@ LieAlgebraModule#AfterPrint = M -> (
 trivialModule = method(TypicalValue => LieAlgebraModule)
 trivialModule LieAlgebra := g -> irreducibleLieAlgebraModule(toList(g#"LieAlgebraRank":0),g)
 
-LieAlgebraModule ^** ZZ := (M,n) -> (
-    if n<0 then "error nonnegative powers only";
-    if M.cache#?(symbol ^**,n) then M.cache#(symbol ^**,n) else M.cache#(symbol ^**,n) = (
+LieAlgebraModule ^** ZZ := (cacheValue'(0,symbol ^**)) ((M,n) -> (
+	if n<0 then "error nonnegative powers only";
     	if n==0 then trivialModule M#"LieAlgebra"
     	else if n==1 then M
     	else M**(M^**(n-1)) -- order matters for speed purposes
@@ -478,18 +511,13 @@ quadraticFormMatrix = memoize((type, m) -> ( M:={}; -- TODO unmemoize
     
 
 
-KillingForm = method(
+killingForm = method(
     TypicalValue => QQ
     )     
-KillingForm(String,ZZ,List,List) := (type, m, v,w) ->   (
-    ((matrix({(1/1)*v})*(quadraticFormMatrix(type,m))*matrix(transpose({(1/1)*w}))) )_(0,0)
+killingForm(String,ZZ,List,List) := (type, m, v,w) ->   (
+    (matrix{v}*quadraticFormMatrix(type,m)*matrix transpose{w})_(0,0)
 )
-KillingForm(LieAlgebra,List,List) := (g, v,w) ->   (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    (matrix({(1/1)*v})*(quadraticFormMatrix(type,m))*matrix(transpose({(1/1)*w})))_(0,0)
-)
-
+killingForm(LieAlgebra,List,List) := (g, v,w) -> killingForm(g#"RootSystemType",g#"LieAlgebraRank",v,w)
  
     
 --This function returns the weights in the Weyl alcove
@@ -510,7 +538,7 @@ weylAlcove(String,ZZ,ZZ) := memoize((type, m, l) -> ( pl:={};
     if type != "A" and type != "C" then (
         pl=weylAlcove("A",m,l);    
 	Theta :=highestRoot(type,m);
-	answer:=delete(null, apply(#pl, i -> if KillingForm(type, m, pl_i, Theta) <= l then pl_i));
+	answer:=delete(null, apply(#pl, i -> if killingForm(type, m, pl_i, Theta) <= l then pl_i));
         return sort answer
     )
 ));  
@@ -532,7 +560,7 @@ casimirScalar = method(
     )     
 casimirScalar(String,ZZ,List) := (type, m, w) -> (
     rho:=apply(m,h->1/1);
-    KillingForm(type,m,w,w) + 2*KillingForm(type,m,w,rho)
+    killingForm(type,m,w,w) + 2*killingForm(type,m,w,rho)
 )
 casimirScalar(LieAlgebraModule) := (M) -> (
     if not isIrreducible M then error "Casimir scalar on irreducible modules only";
@@ -610,8 +638,21 @@ positiveRoots(String,ZZ):= (type,m) -> (
 )
 
 positiveRoots(LieAlgebra):=(cacheValue positiveRoots) ((g) -> (
-    positiveRoots(g#"RootSystemType",g#"LieAlgebraRank")  
+    positiveRoots(g#"RootSystemType",g#"LieAlgebraRank")
+    ))
+
+positiveCoroots = method(
+    TypicalValue => List
+)
+
+positiveCoroots(LieAlgebra):=(cacheValue positiveCoroots) ((g) -> (
+	type:=g#"RootSystemType";
+	m:=g#"LieAlgebraRank";
+	pr:=positiveRoots g;
+	if type=="A" or type=="D" or type=="E" then return pr;
+	apply(pr, v -> (2/killingForm(g,v,v)) * v)
 ))
+
 
 --In the next four functions we implement Freudenthal's recursive algorithm for computing the weights in a Lie algebra module and their multiplicities
 --The function Freud computes the set of weights in a Lie algebra module without their multiplicities
@@ -666,10 +707,10 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
     for a from 0 to #posroots-1 do (
         k=1;
         while member(w+k*(posroots_a),Omega) do (
-	    rhs=rhs+KillingForm(type,m,w+k*(posroots_a),posroots_a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w+k*(posroots_a));
+	    rhs=rhs+killingForm(type,m,w+k*(posroots_a),posroots_a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w+k*(posroots_a));
 	    k=k+1;
 	    ));
-    lhs:=KillingForm(type,m,v+rho,v+rho)-KillingForm(type,m,w+rho,w+rho);
+    lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
     lift(2*rhs/lhs,ZZ)
 ))
 
@@ -767,7 +808,7 @@ characterAlgorithms#"Freudenthal" = (g,v) -> (
 
 -- last strategy = first choice
 scan({"Freudenthal","Weyl","JacobiTrudi","JacobiTrudi'"}, strat -> addHook((character,LieAlgebraModule),characterAlgorithms#strat,Strategy=>strat))
-character (LieAlgebra,List) := o -> (g,v) ->  if g.cache#?(character,v) then g.cache#(character,v) else g.cache#(character,v) = runHooks((character,LieAlgebraModule),(g,v),o)
+character (LieAlgebra,List) := o -> (cacheValue'(0,character)) ((g,v) -> runHooks((character,LieAlgebraModule),(g,v),o))
 character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
 character LieAlgebraModule := o -> (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
 
@@ -779,7 +820,47 @@ weightDiagram = method(
 weightDiagram LieAlgebraModule := o -> (M) -> new VirtualTally from listForm character(M,o)
 weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v) -> new VirtualTally from listForm character(g,v,o)
 
-dim LieAlgebraModule := M -> sum values weightDiagram M
+qden = (cacheValue'(0,symbol qden)) ( (g,qnum) -> (
+    	rho:=toList(rank g : 1);
+	product(positiveRoots g, a -> qnum(killingForm(g,rho,a)))
+	))
+
+qdim1 = (M,qnum) -> ( -- used internally by dim and qdim: Weyl product formula
+    g:=M#"LieAlgebra";
+    rho:=toList(rank g : 1);
+    (sum(pairs M#"DecompositionIntoIrreducibles", (w,mu) ->
+	mu * product(positiveRoots g, a -> qnum(killingForm(g,w+rho,a)))
+	))//qden(g,qnum)
+    )
+
+dim LieAlgebraModule := (cacheValue dim) (M -> lift(qdim1(M,identity),ZZ)) -- TEMP? TODO get rid of denominators better
+
+-- we use one q ring for everyone, to simplify
+q:=getSymbol "q"
+R:=ZZ(monoid[q,Inverses=>true,MonomialOrder=>Lex])
+R':=ZZ(monoid[q]) -- annoying: can't take quotients with Inverses => true
+-*
+cyclotomic = memoize ( n -> ( -- clever but silly implementation
+	facs := first \ toList factor (if odd n then R'_0^n-1 else R'_0^(n//2)+1);
+	facs#(maxPosition(first\degree\facs))
+	))
+*-
+cyclotomic = memoize ( n -> (
+	P := R'_0^n - 1;
+	scan(1..n//2, d -> if n%d==0 then P = P // cyclotomic d);
+	P
+	))
+
+sqr:=map(R',R',{R'_0^2})
+qring := memoize ( n ->	R'/sqr cyclotomic n )
+qnum := n->sum(n,i->R_0^(2*i-n+1))
+
+qdim = method()
+qdim LieAlgebraModule := (cacheValue qdim) (M -> qdim1(M,qnum))
+qdim (LieAlgebraModule,ZZ) := (M,l) -> (
+    (map(qring(l+dualCoxeterNumber M#"LieAlgebra"),R)) qdim M
+    )
+
 
 LieAlgebraModuleFromWeights = method(
     TypicalValue => LieAlgebraModule
@@ -815,23 +896,19 @@ adams (ZZ,LieAlgebraModule) := (k,M) -> (
     else LieAlgebraModuleFromWeights(applyKeys(weightDiagram M, w -> k*w),g) -- primitive but works
 )
 
-symmetricPower(ZZ,LieAlgebraModule) := (n,M) -> (
+symmetricPower(ZZ,LieAlgebraModule) := (cacheValue'(1,symmetricPower)) ((n,M) -> (
     if n<0 then error "nonnegative powers only";
-    if M.cache#?(symmetricPower,n) then M.cache#(symmetricPower,n) else M.cache#(symmetricPower,n) = (
-	if n==0 then trivialModule M#"LieAlgebra"
-    	else if n==1 then M
-    	else (directSum apply(1..n, k -> adams(k,M) ** symmetricPower(n-k,M)))^(1/n)
-	)
-)
+    if n==0 then trivialModule M#"LieAlgebra"
+    else if n==1 then M
+    else (directSum apply(1..n, k -> adams(k,M) ** symmetricPower(n-k,M)))^(1/n)
+    ))
 
-exteriorPower(ZZ,LieAlgebraModule) := o -> (n,M) -> (
+exteriorPower(ZZ,LieAlgebraModule) := o -> (cacheValue'(1,exteriorPower)) ((n,M) -> (
     if n<0 then error "nonnegative powers only";
-    if M.cache#?(exteriorPower,n) then M.cache#(exteriorPower,n) else M.cache#(exteriorPower,n) = (
-	if n==0 then trivialModule M#"LieAlgebra"
-    	else if n==1 then M
-    	else (directSum apply(1..n, k -> (adams(k,M) **exteriorPower(n-k,M))^((-1)^(k-1)) ))^(1/n)
-	)
-)
+    if n==0 then trivialModule M#"LieAlgebra"
+    else if n==1 then M
+    else (directSum apply(1..n, k -> (adams(k,M) ** exteriorPower(n-k,M))^((-1)^(k-1)) ))^(1/n)
+    ))
 
 ---------------------------------------------------------
 ---------------------------------------------------------
@@ -853,7 +930,7 @@ wordAction = (type,m,l,I,v) -> (
         if J_j ==0 then (
             theta:=highestRoot(type,m);
             theta=apply(#theta, i -> lift(theta_i,ZZ));
-            l0:=lift(l-KillingForm(type,m,w,theta),ZZ);
+            l0:=lift(l-killingForm(type,m,w,theta),ZZ);
             w = w+(l0+1)*theta);
     );
     w
@@ -876,6 +953,7 @@ isIdentity = (type,m,l,w) -> (
 LieAlgebraModule ** LieAlgebraModule := (V,W) -> ( -- cf Humpheys' intro to LA & RT sec 24 exercise 9
     g:=V#"LieAlgebra";
     if g != W#"LieAlgebra" then error "V and W must be modules over the same Lie algebra";
+    if V =!= W and dim W < dim V then (V,W)=(W,V); -- maybe should first test if characters already computed?
     wd:=weightDiagram V;
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
@@ -898,12 +976,12 @@ LieAlgebraModule ** LieAlgebraModule := (V,W) -> ( -- cf Humpheys' intro to LA &
 
 tensorCoefficient = method(
     TypicalValue=>ZZ)
-tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := memoize((U,V,W) -> (
+tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := (U,V,W) -> (
 	if not isIrreducible W then error "third module must be irreducible";
     	nu:=first keys W#"DecompositionIntoIrreducibles";
     	fullTensorProduct:=(U**V)#"DecompositionIntoIrreducibles";
     	fullTensorProduct_nu
-    ))
+    )
 
 
 ---------------------------------------------------------
@@ -912,6 +990,7 @@ tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := memoiz
 ---------------------------------------------------------
 --------------------------------------------------------- 
 
+-*
 fusionReflectionData = memoize( (type,m,l,maxwordlength,remainingWeights) -> (
     Pl:=weylAlcove(type,m,l);
     wl:=1;
@@ -942,10 +1021,80 @@ fusionReflectionData = memoize( (type,m,l,maxwordlength,remainingWeights) -> (
         wl=wl+1);
     if #remainingWeights==0 then return {sort toList(answer),sort fixed,true,remainingWeights} else return {sort toList(answer), sort fixed,false,remainingWeights}
 ))
+*-
 
 fusionProduct = method(
-    TypicalValue=>HashTable,Options=>{MaxWordLength=>10})
+--    TypicalValue=>HashTable,Options=>{MaxWordLength=>10})
+    TypicalValue=>LieAlgebraModule)
 
+-- TODO: allow for arbitrary number of args just like tensor and directSum
+
+-*
+-- try to define abbreviated syntax? something like (except not very consistent: should output a fusion module)
+FusionModule := new Type of BasicList
+expression FusionModule := F -> new BinaryOperation from { symbol @, expression F#0, expression F#1 } 
+texMath FusionModule := texMath @@ expression
+net FusionModule := net @@ expression
+LieAlgebraModule @ ZZ := (V,n) -> new FusionModule from {V,n}
+FusionModule ** LieAlgebraModule := (F,W) -> fusionProduct(F#0,W,F#1)
+LieAlgebraModule ** FusionModule := (W,F) -> fusionProduct(F#0,W,F#1)
+FusionModule ** FusionModule := (F,F') -> if F#1 != F'#1 then error "modules must have same level" else fusionProduct(F#0,F'#0,F#1)
+FusionModule ^** ZZ := (F,n) -> ( -- doesn't work because of precedence
+    M := F#0;
+    if n<0 then "error nonnegative powers only";
+    if n==0 then trivialModule M#"LieAlgebra"
+    else if n==1 then M
+    else fusionProduct(M,F^**(n-1),F#1)
+)
+*-
+
+fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := (V,W,l) -> (
+    g:=V#"LieAlgebra";
+    l = l + dualCoxeterNumber g;
+    if g != W#"LieAlgebra" then error "V and W must be modules over the same Lie algebra";
+    wd:=weightDiagram V;
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    sr:=simpleRoots(type,m);
+    rho:=toList(m:1);
+    pc:=positiveCoroots g;
+    pr:=positiveRoots g;
+--    Q:=quadraticFormMatrix g;
+--    Q:=quadraticFormMatrix (type,m);
+--    pr':=apply(pr, u -> entries(lift(Ci*vector u,ZZ))); -- possibly reinstate after non simply laced fix
+--    pr':=apply(pr, u -> (2/killingForm(g,u,u))*entries(Q*vector u));
+    ans := new MutableHashTable;
+    add := (w,a) -> if ans#?w then ( s := ans#w+a; if s!=0 then ans#w = s else remove(ans,w) ) else ans#w = a;
+    scanPairs(W#"DecompositionIntoIrreducibles", (w,a) -> -- loop over highest weights of W
+    	scanPairs(wd, (v,b) -> ( -- loop over all weights of V
+    		u:=v+w+rho;
+		-- first recenter it using translations
+		cnt:=0; i:=0;
+        	while cnt < #pr do (
+--		    s := sum(u,pr'#i,times);
+		    s := killingForm(g,u,pr#i); -- is the same just more explicit
+		    sn := numerator s; sd := denominator s; -- in non simply laced types, there can be a denimonator
+		    if sn % (l * sd)  == 0 then break else if s < -l or s > l then (
+			u=u-((sn+l*sd)//(2*l*sd))*l*pr#i;
+			cnt=0;
+			) else cnt=cnt+1;
+		    i=i+1; if i==#pr then i=0;
+            	    );
+		if cnt == #pr then (
+		    -- then end with usual algo
+		    -- except the any(u,zero) not needed, filtered already
+		    t:=1;
+		    while (i=position(u,j->j<0)) =!= null do (
+		    	u=u-u#i*sr#i;
+		    	t=-t;
+		    	);
+		    add(u-rho,a*b*t);
+		    )
+		)));
+    new LieAlgebraModule from (g,ans)
+    )
+
+-*
 fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := memoize( opts-> (M,N,l) -> (
     wl:= opts.MaxWordLength;
     if M#"LieAlgebra" != N#"LieAlgebra" then error "The Lie algebra modules must be over the same Lie algebra.";
@@ -978,22 +1127,24 @@ fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := memoize( opts-> (M,N,l) -
     if #newwdh == 1 and newwdh_0_1 == 1 then return irreducibleLieAlgebraModule(newwdh_0_0,simpleLieAlgebra(type,m));
     return new LieAlgebraModule from (simpleLieAlgebra(type,m),newwdh)
 ))
-
+*-
 
 fusionCoefficient=method(
-    TypicalValue=>ZZ,Options=>{MaxWordLength=>10})
-fusionCoefficient(LieAlgebraModule,LieAlgebraModule,LieAlgebraModule,ZZ) := memoize(opts -> (U,V,W,l) -> (
-    wl:=opts.MaxWordLength;	  
+--    TypicalValue=>ZZ,Options=>{MaxWordLength=>10})
+    TypicalValue=>ZZ)
+fusionCoefficient(LieAlgebraModule,LieAlgebraModule,LieAlgebraModule,ZZ) := (U,V,W,l) -> (
+    if not isIrreducible W then error "third module must be irreducible";
+    nu:=first keys W#"DecompositionIntoIrreducibles";
+--    wl:=opts.MaxWordLength;	  
     g:=U#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    fullFusionProduct:=(fusionProduct(U,V,l,MaxWordLength=>wl))#"DecompositionIntoIrreducibles";
-    if fullFusionProduct#?(first keys W#"DecompositionIntoIrreducibles") then return lift(fullFusionProduct#(first keys W#"DecompositionIntoIrreducibles"),ZZ) else return 0
-))
+    fullFusionProduct:=(fusionProduct(U,V,l))#"DecompositionIntoIrreducibles";
+    fullFusionProduct_nu
+)
+
 
 beginDocumentation()
-
-
 
 doc ///
     Key
@@ -1227,13 +1378,13 @@ TEST ///
 
 doc ///
     Key
-        KillingForm
-	(KillingForm,LieAlgebra,List,List)
-	(KillingForm,String,ZZ,List,List)
+        killingForm
+	(killingForm,LieAlgebra,List,List)
+	(killingForm,String,ZZ,List,List)
     Headline 
         computes the scaled Killing form applied to two weights
     Usage 
-        KillingForm(g,v,w)
+        killingForm(g,v,w)
     Inputs 
         g:LieAlgebra
 	v:List
@@ -1244,13 +1395,14 @@ doc ///
 	    
         Example
             g=simpleLieAlgebra("A",2)
-	    KillingForm(g,{1,0},{0,1})
+	    killingForm(g,{1,0},{0,1})
 ///
 
 TEST ///
     g=simpleLieAlgebra("A",2)
-    assert(KillingForm(g,{1,0},{0,1}) === 1/3)
-///	
+    assert(killingForm(g,{1,0},{0,1}) === 1/3)
+    assert(lift(matrix table(simpleRoots g,simpleRoots g,(v,w)->killingForm(g,v,w)),ZZ) == cartanMatrix g) -- true for all simply laced
+///
 	
 doc ///
     Key
@@ -1266,7 +1418,13 @@ doc ///
         g:LieAlgebra
     Description
         Text
-            Let $\mathbf{g}$ be a Lie algebra, and let $l$ be a nonnegative integer.  Choose a Cartan subalgebra $\mathbf{h}$ and a base $\Delta= \{ \alpha_1,\ldots,\alpha_n\}$ of simple roots of $\mathbf{g}$.  These choices determine a highest root $\theta$. (See @TO highestRoot@).   Let $\mathbf{h}_{\mathbf{R}}^*$ be the real span of $\Delta$, and let $(,)$ denote the Killing form, normalized so that $(\theta,\theta)=2$.  The fundamental Weyl chamber is $C^{+} = \{ \lambda \in \mathbf{h}_{\mathbf{R}}^*  : $(\lambda,\alpha_i)$ >= 0, i=1,\ldots,n \}$.  The fundamental Weyl alcove is the subset of the fundamental Weyl chamber such that $(\lambda,\theta) \leq l$.  This function computes the set of integral weights in the fundamental Weyl alcove.  
+            Let $\mathbf{g}$ be a Lie algebra, and let $l$ be a nonnegative integer.
+	    Choose a Cartan subalgebra $\mathbf{h}$ and a base $\Delta= \{ \alpha_1,\ldots,\alpha_n\}$ of simple roots of $\mathbf{g}$.
+	    These choices determine a highest root $\theta$. (See @TO highestRoot@).
+	    Let $\mathbf{h}_{\mathbf{R}}^*$ be the real span of $\Delta$, and let $(,)$ denote the Killing form, normalized so that $(\theta,\theta)=2$.
+	    The fundamental Weyl chamber is $C^{+} = \{ \lambda \in \mathbf{h}_{\mathbf{R}}^*  : (\lambda,\alpha_i) \ge 0, i=1,\ldots,n \}$.
+	    The fundamental Weyl alcove is the subset of the fundamental Weyl chamber such that $(\lambda,\theta) \leq l$.
+	    This function computes the set of integral weights in the fundamental Weyl alcove.
 	    
         Text
             In the example below, we see that the Weyl alcove of $sl_3$ at level 3 contains 10 integral weights.
@@ -1377,8 +1535,10 @@ doc ///
 ///
 TEST ///
     g=simpleLieAlgebra("A",2)
-    V=irreducibleLieAlgebraModule({1,0},g)  
+    V=irreducibleLieAlgebraModule({1,0},g)
     assert(dim(V) === 3)
+    W=irreducibleLieAlgebraModule({5,2},g)
+    assert(dim W == sum values weightDiagram W)
 ///
 
 doc ///
@@ -1540,8 +1700,6 @@ doc ///
 	Text    
 	    Given three irreducible Lie algebra modules $U$, $V$, and $W$, the function returns the multiplicity of $W$ in the fusion product of $U$ and $V$ at level $l$.  (We are abusing notation and terminology a little here; the fusion product is really a product for modules over an affine Lie algebra.  However, since the Kac-Walton algorithm is defined entirely using the combinatorics of the root system of the underlying finite-dimensional Lie algebra, we may therefore use the Kac-Walton algorithm to define a product on Lie algebra modules as well.)
        
-	Text 
-           The Weyl group of a simple Lie algebra is finite; in contrast, the affine Weyl group of an affine Lie algebra is infinite.  To keep Macaulay2 from trying to compute infinitely long words in this group, the default length of allowed words is set to 10.   The user may override this with the optional argument @TO "MaxWordLength"@. 
        
 	Text
 	    The example below shows that for $g=sl_3$ and $\lambda=2 \omega_1 + \omega_2$, $\mu= \omega_1 + 2 \omega_2$, and $\nu= \omega_1 +  \omega_2$, the level 3 fusion product  $V_{\lambda} \otimes_3  V_{\mu}$ contains one copy of $V_{\nu}$.
@@ -1593,8 +1751,6 @@ doc ///
  	Text   
 	    Given two irreducible Lie algebra modules $U$ and $V$, the function returns the fusion product of $U$ and $V$ at level $l$.  (We are abusing notation and terminology a little here; the fusion product is really a product for modules over an affine Lie algebra.  However, since the Kac-Walton algorithm is defined entirely using the combinatorics of the root system of the underlying finite-dimensional Lie algebra, we may therefore use the Kac-Walton algorithm to define a product on Lie algebra modules as well.)  
 	    
-        Text 
-            The Weyl group of a simple Lie algebra is finite; in contrast, the affine Weyl group of an affine Lie algebra is infinite.  To keep Macaulay2 from trying to compute infinitely long words in this group, the default length of allowed words is set to 10.   The user may override this with the optional argument @TO "MaxWordLength"@. 
 	    
         Text
 	    The example below shows that for $g=sl_3$ and $\lambda=2 \omega_1 + \omega_2 = (2,1)$, $\mu= \omega_1 + 2 \omega_2 = (1,2)$, the level 3 fusion product  $V_{(2,1)} \otimes_3  V_{(1,2)}$ contains one copy of $V_{(0,0)}$ and one copy of $V_{(1,1)}$.
@@ -1688,7 +1844,6 @@ TEST ///
     assert(isIsomorphic(M,M**Z) === true)
     assert(isIsomorphic(M**N,N**M) ===true)
 ///
-*-
 
 doc ///
     Key
@@ -1702,6 +1857,7 @@ doc ///
             The Weyl group of a simple Lie algebra is finite; in contrast, the affine Weyl group of an affine Lie algebra is infinite.  To keep Macaulay2 from trying to compute infinitely long words in this group, the default length of allowed words is set to max \{10, rank($\mathbf{g}$)+1\}.   The user may override this with the optional argument "MaxWordLength".  If the word length is too small, the program will return an error.
 
 ///
+*-
 
 doc ///
     Key
