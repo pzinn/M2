@@ -41,6 +41,12 @@ export {
     "starInvolution",
     "killingForm",
     "weylAlcove",
+    "positiveRoots",
+    "simpleRoots",
+    "dynkinDiagram",
+    "isSimple",
+    "cartanMatrix",
+    "𝔞", "𝔟", "𝔠", "𝔡", "𝔢", "𝔣", "𝔤"
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
     "irreducibleLieAlgebraModule", "LL",
@@ -51,20 +57,14 @@ export {
     "fusionProduct",
     "fusionCoefficient",
 --    "MaxWordLength",
-    "positiveRoots",
-    "simpleRoots",
     "LieAlgebraModuleFromWeights",
     "trivialModule",
     "adjointModule",
     "isIrreducible",
     "character",
     "adams",
-    "dynkinDiagram",
-    "isSimple",
-    "cartanMatrix",
     "qdim",
     "branchingRule",
-    "𝔞", "𝔟", "𝔠", "𝔡", "𝔢", "𝔣", "𝔤"
     }
 
 -- Access hasAttribute, getAttribute
@@ -155,8 +155,8 @@ TODO:
 * replace more memoize with cacheValue
 * review Freudenthal code for character computation, make sure everything cached as should be
 * turn dynkinDiagram into a Type with various outputs. should have same fields as LieAlgebra, ideally, so can go back and forth easily
-* ideally, should allow for *semi-*simple Lie algebras. but that would require a lot of recoding
-* branching rules (using module-from-weights)
+* ideally, should allow for *semi-*simple Lie algebras. but that would require a bit of recoding
+* document branchingRule
 
 *-
 
@@ -1102,7 +1102,7 @@ fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := (V,W,l) -> (
 --		    s := sum(u,pr'#i,times);
 		    s := killingForm(g,u,pr#i); -- is the same just more explicit
 		    sn := numerator s; sd := denominator s; -- in non simply laced types, there can be a denimonator
-		    if sn % (l * sd)  == 0 then break else if s < -l or s > l then (
+		    if sd == 1 and sn % l == 0 then break else if s < -l or s > l then (
 			u=u-((sn+l*sd)//(2*l*sd))*l*pr#i;
 			cnt=0;
 			) else cnt=cnt+1;
