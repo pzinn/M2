@@ -62,7 +62,9 @@ export {
     "dynkinDiagram",
     "isSimple",
     "cartanMatrix",
-    "qdim"
+    "qdim",
+    "branchingRule",
+    "𝔞", "𝔟", "𝔠", "𝔡", "𝔢", "𝔣", "𝔤"
     }
 
 -- Access hasAttribute, getAttribute
@@ -147,11 +149,14 @@ global variable names instead of the hash table contents.
 * added/exported method adjointModule
 * reintroduced and exported cartanMatrix, cartanMatrixQQ now calls cartanMatrix
 * allow alternate ordering of arguments of weylAlcove, irreducibleModule to fix inconsistency
+* fraktur for shorthand of Lie algebras
 
 TODO:
 * replace more memoize with cacheValue
 * review Freudenthal code for character computation, make sure everything cached as should be
 * turn dynkinDiagram into a Type with various outputs. should have same fields as LieAlgebra, ideally, so can go back and forth easily
+* ideally, should allow for *semi-*simple Lie algebras. but that would require a lot of recoding
+* branching rules (using module-from-weights)
 
 *-
 
@@ -172,8 +177,10 @@ if c#?key' then c#key' else c#key'=f x
 LieAlgebra = new Type of HashTable  
 LieAlgebra.GlobalAssignHook = globalAssignFunction
 LieAlgebra.GlobalReleaseHook = globalReleaseFunction
+fraktur := hashTable { ("A",𝔞),("B",𝔟),("C",𝔠),("D",𝔡),("E",𝔢),("F",𝔣),("G",𝔤) }
 describe LieAlgebra := g -> Describe (
-    if isSimple g then (expression simpleLieAlgebra) (g#"RootSystemType",g#"LieAlgebraRank")
+--    if isSimple g then (expression simpleLieAlgebra) (g#"RootSystemType",g#"LieAlgebraRank")
+    if isSimple g then (hold fraktur#(g#"RootSystemType"))_(g#"LieAlgebraRank")
     else concatenate("Nonsimple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"))
 )
 expression LieAlgebra := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else unhold describe g;
@@ -309,6 +316,13 @@ starInvolution(List,LieAlgebra) := (v,g) -> (
 starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
 
 ring LieAlgebra := g -> g.cache#ring
+
+-- shorthand notation
+scan(pairs fraktur, (let,sym) ->
+    sym <- new ScriptedFunctor from { subscript => n -> simpleLieAlgebra(let,n) }
+    )
+
+
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- The LieAlgebraModule type
@@ -345,7 +359,10 @@ new LieAlgebraModule from Sequence := (T,s) -> new LieAlgebraModule from {
     cache => new CacheTable
     }
 
+simpleLieAlgebra LieAlgebraModule := M -> M#"LieAlgebra"
 
+LieAlgebraModule_ZZ := (M,i) -> irreducibleLieAlgebraModule(M#"LieAlgebra",(sort keys M#"DecompositionIntoIrreducibles")#i)
+LieAlgebraModule_* := M -> apply(sort keys M#"DecompositionIntoIrreducibles", v -> irreducibleLieAlgebraModule(M#"LieAlgebra",v))
 
 isIrreducible = method()
 isIrreducible LieAlgebraModule := M -> (
@@ -1150,6 +1167,58 @@ fusionCoefficient(LieAlgebraModule,LieAlgebraModule,LieAlgebraModule,ZZ) := (U,V
     fullFusionProduct_nu
 )
 
+-- branching rule
+
+branchingRule = method ( TypicalValue => LieAlgebraModule )
+
+branchingRule (LieAlgebraModule, Set) := (M,S) -> branchingRule(M,toList S)
+branchingRule (LieAlgebraModule, List) := (M,S) -> (
+    S=deepSplice S;
+    g:=M#"LieAlgebra";
+    -- identify the sub-Dynkin diagram
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    err := () -> error "Dynkin subdiagram not simple";
+    if #S == 0 then err();
+    S=sort S; -- we insist that S be sorted. TODO allow Dynkin diagram automorphisms? i.e., S == reverse toList(a..b) ?
+    a:=min S;
+    b:=max S;
+    if type == "A" then (
+	if S != toList(a..b) then err();
+    	type':="A";
+	)
+    else if type == "B" or type == "C" then (
+	if S != toList(a..b) then err();
+	type'=if b==m and a<m then type else "A";
+    	)
+    else if type == "D" then (
+	if b==m and not member(m-1,S) then ( if S != append(toList(a..m-2),m) then err(); ) else if S != toList(a..b) then err();
+	type'=if member(m-1,S) and member(m,S) then "D" else "A";
+	)
+    else if type == "E" then (
+	if not member(2,S) then (
+	    if S != delete(2,toList(a..b)) then err();
+	    type'="A";
+	    ) else if not member(1,S) and not member(3,S) then (
+	    if S != delete(3,toList(a..b)) then err();
+	    type'="A";
+	    ) else if member(1,S) then (
+	    if S != toList(a..b) then err();
+	    type'=if b==4 then (S={1,3,4,2}; "A") else if b==5 then (S={1,3,4,2,5}; "D") else "E"; -- ordering of labels not same for A/D/E
+	    )
+	)
+    else if type == "F" then (
+	if S != delete(2,toList(a..b)) then err();
+	type'=if a==b or b==2 or a==3 then "A" else if a==2 and b==4 then (S={4,3,2}; "C") else if b==3 then "B" else "F";
+	)
+    else if type == "G" then (
+	type'=if a==b then "A" else "G";
+	);
+    h:=simpleLieAlgebra(type',#S);
+    -- the rest is easy
+    S=apply(S,i->i-1);
+    LieAlgebraModuleFromWeights(applyKeys(weightDiagram M,a->a_S,plus),h)
+    )
 
 beginDocumentation()
 
@@ -1170,11 +1239,14 @@ doc ///
         class for Lie algebras
     Description
         Text 
-    	    This class represents Lie algebras.  Currently only simple Lie algebras over the complex numbers are supported.  An object of type LieAlgebra is a hash table whose keys record whether the Lie algebra is simple, the rank of the Lie algebra, and the type of the root system.
-	     
+    	    This class represents Lie algebras.  Currently only simple Lie algebras over the complex numbers are supported.  An object of type @TT "LieAlgebra"@ is a hash table whose keys record the rank of the Lie algebra and the type of the root system.
         Example
 	    g=simpleLieAlgebra("A",1)
-	    g=simpleLieAlgebra("E",6)                    
+	    h=simpleLieAlgebra("E",6)
+	Text
+	    If you have access to unicode fraktur, you can use the shorthand
+	Example
+	    𝔣_4
 ///
 
 doc ///
@@ -2073,7 +2145,7 @@ TEST ///
     assert(cartanMatrix simpleLieAlgebra("B",2) == matrix {{2,-2},{-1,2}})
 ///
 
-undocumented {
+undocumented ({
     (describe,LieAlgebra),(expression,LieAlgebra),(net,LieAlgebra),(texMath,LieAlgebra),
     (describe,LieAlgebraModule),(expression,LieAlgebraModule),(net,LieAlgebraModule),(texMath,LieAlgebraModule),
     (symbol ==,LieAlgebraModule,LieAlgebraModule), (symbol ==,LieAlgebraModule,ZZ),
@@ -2081,7 +2153,8 @@ undocumented {
     (symbol ^,LieAlgebraModule,QQ),
     (irreducibleLieAlgebraModule,LieAlgebra,Thing),
     (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
-    (dim,LieAlgebra),(ring,LieAlgebra),(rank,LieAlgebra)
-    }
+    (dim,LieAlgebra),(ring,LieAlgebra),(rank,LieAlgebra),
+    (simpleLieAlgebra,LieAlgebraModule)
+    } | values fraktur)
 
 endPackage "LieTypes" 
