@@ -64,6 +64,7 @@ export {
     "character",
     "adams",
     "qdim",
+    "subLieAlgebra",
     "branchingRule"
     }
 
@@ -155,6 +156,7 @@ TODO:
 * replace more memoize with cacheValue
 * review Freudenthal code for character computation, make sure everything cached as should be
 * turn dynkinDiagram into a Type with various outputs. should have same fields as LieAlgebra, ideally, so can go back and forth easily
+* add more tests, especially involving various types
 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
@@ -163,6 +165,7 @@ TODO:
 -----------------------------------------------------------------------------------------------
 * semi-simple Lie algebras are possible, use ++
 * branching rule supports general semi-simple Lie algebras
+* new function subLieAlgebra
 
 *-
 
@@ -217,20 +220,28 @@ isSimple (String,ZZ) := (type,m) -> (
 isSimple LieAlgebra := g -> class g#"RootSystemType" === String and class g#"LieAlgebraRank" === ZZ and isSimple(g#"RootSystemType",g#"LieAlgebraRank") -- should we test each time?
 
 dynkinDiagram = method(TypicalValue => Net)
-dynkinA = (l,m) -> stack (
-    (if l>1 then "---" else "") | demark("---",m-l+1:"o"),
-    concatenate apply(l..m,i->if i==1 then "1" else pad(4,toString i))
+dynkinA := (l,m,flag) -> stack ( -- flag = part of diagram
+    (if flag then "---" else "") | demark("---",m-l+1:"o"),
+    concatenate apply(l..m,i->if i==l and not flag then toString l else pad(4,toString i))
     )
-dynkinDiagram (String,ZZ) := (type,m) -> if not isSimple(type,m) then error "can only draw simple Lie algebra Dynkin diagram" else (
-    if type=="A" then dynkinA (1,m)
-    else if type=="B" then dynkinA (1,m-1) | ("=>=o"||pad(4,toString m))
-    else if type=="C" then dynkinA (1,m-1) | ("=<=o"||pad(4,toString m))
-    else if type=="D" then dynkinA (1,m-2) | ((" o"|toString(m-1))||"/"||""||"\\"||(" o"|toString m))^2
-    else if type=="E" then "        o 2"||"        |"|| (dynkinA (1,1)|dynkinA(3,m))
-    else if type=="F" then dynkinA (1,2) | ("=>=o---o"||"   3   4")
-    else if type=="G" then "o≡<≡o"||"1   2"
+dynkinDiagram (String,ZZ,ZZ) := (type,m,shift) -> if not isSimple(type,m) then error "can only draw simple Lie algebra Dynkin diagram" else (
+    if type=="A" then dynkinA (1+shift,m+shift,false)
+    else if type=="B" then dynkinA (1+shift,m-1+shift,false) | ("=>=o"||pad(4,toString(m+shift)))
+    else if type=="C" then dynkinA (1+shift,m-1+shift,false) | ("=<=o"||pad(4,toString(m+shift)))
+    else if type=="D" then dynkinA (1+shift,m-2+shift,false) | ((" o"|toString(m-1+shift))||"/"||""||"\\"||(" o"|toString(m+shift)))^2
+    else if type=="E" then "        o 2"||"        |"|| (dynkinA (1+shift,1+shift,false)|dynkinA(3+shift,m+shift,true))
+    else if type=="F" then dynkinA (1,2,false) | ("=>=o---o"||"   3   4")
+    else if type=="G" then "o≡<≡o"||(toString(shift+1)|pad(4,toString(shift+2)))
     )
-dynkinDiagram LieAlgebra := g -> horizontalJoin between("   ",apply(sequence g#"RootSystemType",sequence g#"LieAlgebraRank",dynkinDiagram)) -- TODO fix numbering
+dynkinDiagram (String,ZZ) := (type,m) -> dynkinDiagram(type,m,0)
+dynkinDiagram LieAlgebra := g -> (
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    if isSimple g then dynkinDiagram(type,m) else (
+    	L:=prepend(0,accumulate(plus,0,m)); -- why does accumulate suck
+    	horizontalJoin between("   ",apply(#m,i->dynkinDiagram(type#i,m#i,L#i)))
+	)
+    )
 
 LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 
@@ -416,7 +427,7 @@ LieAlgebraModule#AfterPrint = M -> (
  )
 
 trivialModule = method(TypicalValue => LieAlgebraModule)
-trivialModule LieAlgebra := g -> irreducibleLieAlgebraModule(toList(g#"LieAlgebraRank":0),g)
+trivialModule LieAlgebra := g -> irreducibleLieAlgebraModule(toList(rank g:0),g)
 
 LieAlgebraModule ^** ZZ := (cacheValue'(0,symbol ^**)) ((M,n) -> (
 	if n<0 then "error nonnegative powers only";
@@ -538,13 +549,13 @@ cartanMatrix (String,ZZ) := (type, m) -> ( M:={};
         return matrix M
     );
     if type=="C" then (
-        M = apply(m-2, i -> apply(m, j -> if j==i-1 then -1/1 else if j==i then 2 else if j==i+1 then -1 else 0));
+        M = apply(m-2, i -> apply(m, j -> if j==i-1 then -1 else if j==i then 2 else if j==i+1 then -1 else 0));
         M = append(M, apply(m, j -> if j==m-2-1 then -1 else if j==m-2 then 2 else if j==m-2+1 then -2 else 0));
         M = append(M, apply(m, j -> if j==m-1-1 then -1 else if j==m-1 then 2 else if j==m-1+1 then -1 else 0));
         return transpose matrix M
     );
     if type=="D" then (
-        M = apply(m-3, i -> apply(m, j -> if j==i-1 then -1/1 else if j==i then 2 else if j==i+1 then -1 else 0));
+        M = apply(m-3, i -> apply(m, j -> if j==i-1 then -1 else if j==i then 2 else if j==i+1 then -1 else 0));
         M = append(M,apply(m, j -> if j==m-3-1 then -1 else if j==m-3 then 2 else if j==m-3+1 then -1 else if j==m-3+2 then -1 else 0));
         M = append(M,apply(m, j -> if j==m-2 then 2 else if j==m-2-1 then -1 else 0));
         M = append(M,apply(m, j -> if j==m-1 then 2 else if j==m-1-2 then -1 else 0));
@@ -723,7 +734,7 @@ positiveCoroots(LieAlgebra):=(cacheValue positiveCoroots) ((g) -> (
 	type:=g#"RootSystemType";
 	m:=g#"LieAlgebraRank";
 	pr:=positiveRoots g;
-	if type==="A" or type==="D" or type==="E" then return pr; -- TODO rethink
+	if all(sequence type, t -> t==="A" or t==="D" or t==="E") then return pr;
 	apply(pr, v -> (2/killingForm(g,v,v)) * v)
 ))
 
@@ -787,8 +798,6 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
     lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
     lift(2*rhs/lhs,ZZ)
 ))
-
-
 
 
 multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
@@ -1241,24 +1250,33 @@ blocks = C -> ( -- given a Cartan (or adjacency) matrix, decompose into irreduci
 	    C^b_b ))
 )
 
+subLieAlgebra = method ( TypicalValue => LieAlgebra )
+
+subLieAlgebra (LieAlgebra, Set) := (g,S) -> subLieAlgebra(g,toList S)
+subLieAlgebra (LieAlgebra, List) := (g,S) -> (
+    -- identify the sub-Dynkin diagram
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    if #S == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),cache=>new CacheTable from {ring => ZZ[Inverses=>true,MonomialOrder=>Lex]}};
+    S=deepSplice S;
+    S=apply(S,i->i-1);
+    S=sort S; -- we insist that S be sorted. TODO allow Dynkin diagram automorphisms?
+    -- there's an annoying issue that subdiagrams of E_n & F_4 can have different ordering of labels
+    C:=blocks((cartanMatrix g)^S_S);
+    L := transpose apply(C, c -> scan("A".."G",t->if c === (try cartanMatrix(t,numRows c)) then break {t,numRows c})); -- for now will just error if not found
+    -- TODO handle error better, issues with ordering of labels
+    directSum apply(L#0,L#1,simpleLieAlgebra)
+    )
+    
 branchingRule = method ( TypicalValue => LieAlgebraModule )
 
 branchingRule (LieAlgebraModule, Set) := (M,S) -> branchingRule(M,toList S)
 branchingRule (LieAlgebraModule, List) := (M,S) -> (
-    S=deepSplice S;
-    g:=M#"LieAlgebra";
-    -- identify the sub-Dynkin diagram
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    if #S == 0 then error "empty subset"; --  the trivial LieAlgebra... TODO
-    S=sort S; -- we insist that S be sorted. TODO allow Dynkin diagram automorphisms?
-    -- there's an annoying issue that subdiagrams of E_n & F_4 can have different ordering of labels
-    S=apply(S,i->i-1);
-    C:=blocks((cartanMatrix g)^S_S);
-    L := transpose apply(C, c -> scan("A".."G",t->if c == cartanMatrix(t,numRows c) then break {t,numRows c})); -- for now will just error if not found
-    -- TODO handle error better, issues with ordering of labels
-    h:=directSum apply(L#0,L#1,simpleLieAlgebra);
+    h:=subLieAlgebra(M#"LieAlgebra",S);
     -- the rest is easy
+    S=deepSplice S;
+    S=apply(S,i->i-1);
+    S=sort S;
     LieAlgebraModuleFromWeights(applyKeys(weightDiagram M,a->a_S,plus),h)
     )
 
