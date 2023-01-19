@@ -86,7 +86,8 @@ operatorFunctions := new HashTable from {
      symbol ^^ => ((x,y) -> x ^^ y)
      }
 
-
+spacedOps := set { symbol =>, symbol and, symbol or, symbol xor, symbol ++, symbol == } -- some operators need extra space around them
+spacedToString := s -> if spacedOps#?s then " "|toString s|" " else toString s
 
 HeaderType = new Type of Type
 HeaderType.synonym = "header type"
@@ -190,7 +191,7 @@ toString'(Function, AssociativeExpression) := (fmt,v) -> (
 	       )
 	  );
      if # v === 0 then fmt lookup(EmptyName,op)
-     else demark(fmt lookup(operator,op),names)
+     else demark(spacedToString lookup(operator,op),names)
      )
 net AssociativeExpression := v -> (
      op := class v;
@@ -200,7 +201,7 @@ net AssociativeExpression := v -> (
 	       then bigParenthesize net term
 	       else net term));
      if # v === 0 then net lookup(EmptyName,op)
-     else horizontalJoin between(net lookup(operator,op),names)
+     else horizontalJoin between(spacedToString lookup(operator,op),names)
      )
 
 
@@ -240,6 +241,7 @@ expressionValue Equation := (v) -> (
      	  all(w,y->x==y)
      	  )
      )
+-*
 net Equation := v -> (
      n := # v;
      if n === 0 then "Equation{}"
@@ -256,6 +258,7 @@ toString'(Function, Equation) := (fmt,v) -> (
 	  p := precedence v;
 	  demark(" == ", 
 	       apply(toList v, e -> if precedence e <= p then ("(", fmt e, ")") else fmt e))))
+*-
 -----------------------------------------------------------------------------
 ZeroExpression = new Type of Holder
 ZeroExpression.synonym = "zero expression"
@@ -579,8 +582,6 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
      "}" )
 -----------------------------------------------------------------------------
 
-spacedOps := set { symbol =>, symbol and, symbol or, symbol xor, symbol ++ }
-
 -- TODO: move this to latex.m2
 keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",
@@ -629,7 +630,7 @@ net BinaryOperation := m -> (
      y := net m#2;
      if rightPrecedence m#1 < lprec m#0 then x = bigParenthesize x;
      if precedence m#2 <= rprec m#0 then y = bigParenthesize y;
-     if spacedOps#?(m#0) then horizontalJoin( x, " ", toString m#0, " ", y ) else horizontalJoin( x, toString m#0, y )
+     horizontalJoin( x, spacedToString m#0, y )
      )
 
 texMath BinaryOperation := m -> (
@@ -645,7 +646,7 @@ toString'(Function, BinaryOperation) := (fmt,m) -> (
      y := fmt m#2;
      if rightPrecedence m#1 < lprec m#0 then x = ("(",x,")");
      if precedence m#2 <= rprec m#0 then y = ("(",y,")");
-     if spacedOps#?(m#0) then concatenate( x, " ", toString m#0, " ", y ) else concatenate( x, toString m#0, y )
+     concatenate( x, spacedToString m#0, y )
      )
 
 -----------------------------------------------------------------------------
