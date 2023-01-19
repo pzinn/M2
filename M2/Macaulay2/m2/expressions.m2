@@ -18,6 +18,7 @@ uprec = strength1 = x -> (getParsing x)#2
 EmptyName := symbol EmptyName
 unit := symbol unit
 operator := symbol operator
+-*
 letters := set characters "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'"
 digits := set characters "0123456789"
 endsWithIdentifier := s -> (
@@ -28,7 +29,7 @@ endsWithIdentifier := s -> (
 	  n > 0 and digits#?c
 	  ) do n = n - 1;
      letters#?c)
-
+*-
 -----------------------------------------------------------------------------
 bigParenthesize = n -> (
      h := height n;
@@ -56,7 +57,6 @@ Expression = new Type of BasicList
 Expression.synonym = "expression"
 expression = method(Dispatch => Thing, TypicalValue => Expression)
 expression Expression := identity
-Expression#operator = ""
 
 expressionValue = method(Dispatch => Thing)
 expressionValue VisibleList := x -> apply(x,expressionValue)
@@ -106,12 +106,17 @@ unhold Expression := identity
 
 AssociativeExpression = new Type of Expression
 AssociativeExpression.synonym = "associative expression"
+AssociativeExpression#operator = ""
+AssociativeExpression#EmptyName = ""
+AssociativeExpression#unit = ""
+
 --new AssociativeExpression from Sequence := 
 --new AssociativeExpression from List := (type,v) -> (
 --     toList splice apply(v, 
 --	  term -> if class term === type then toSequence term else term
 --	  )
 --     )
+
 
 lookupi := x -> (
      r := lookup x;
@@ -127,7 +132,7 @@ toExternalFormat Thing := toExternalString
 toExternalFormat Expression := v -> toString'(toExternalFormat,v)
 toExternalFormat Symbol := toExternalFormat Sequence := toString
 
-toString'(Function, Expression) := (fmt,v) -> (
+toString'(Function, AssociativeExpression) := (fmt,v) -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
@@ -136,9 +141,20 @@ toString'(Function, Expression) := (fmt,v) -> (
 	       else fmt term
 	       )
 	  );
-     if # v === 0 then op#EmptyName
-     else demark(op#operator,names)
+     if # v === 0 then lookup(EmptyName,op)
+     else demark(lookup(operator,op),names)
      )
+net AssociativeExpression := v -> (
+     op := class v;
+     p := precedence v;
+     names := apply(toList v,term -> (
+	       if precedence term <= p
+	       then bigParenthesize net term
+	       else net term));
+     if # v === 0 then lookup(EmptyName,op)
+     else horizontalJoin between(lookup(operator,op),names)
+     )
+
 
 texMath Holder := v -> texMath v#0
 html Holder := v -> html v#0
@@ -256,6 +272,7 @@ toString'(Function, Product) := (fmt,v) -> (
 	  )
      )
 
+-*
 NonAssociativeProduct = new WrapperType of Expression
 NonAssociativeProduct.synonym = "nonassociative product expression"
 
@@ -290,6 +307,7 @@ toString'(Function, NonAssociativeProduct) := (fmt,v) -> (
 	  concatenate mingle ( seps, names )
 	  )
      )
+*-
 
 Divide = new HeaderType of Expression
 Divide.synonym = "divide expression"
@@ -396,16 +414,20 @@ Holder     ** OneExpression :=
 Expression ** OneExpression := (x,y) -> x
 OneExpression ** Holder     :=
 OneExpression ** Expression := (x,y) -> y
+-*
 NonAssociativeProduct ** NonAssociativeProduct := join
 NonAssociativeProduct ** Expression := append
 NonAssociativeProduct ** Holder     := append0
+*-
 Expression Expression := Adjacent => (x,y) -> new Adjacent from {x,y}
      -- are lists expressions, too???
 Expression Thing      := (x,y) -> x (expression y)
      Thing Expression := (x,y) -> (expression x) y
+-*
 Expression ** NonAssociativeProduct := prepend
 Holder     ** NonAssociativeProduct := prepend0
 Expression ** Expression := NonAssociativeProduct => (x,y) -> new NonAssociativeProduct from {x,y}
+*-
 Holder     / OneExpression :=
 Expression / OneExpression := (x,y) -> x
 Expression / Expression := Divide => (x,y) -> new Divide from {x,y}
@@ -710,7 +732,7 @@ returns = t -> x -> t
 		 precedence Thing := returns 0
 		   precedence Sum := returns prec symbol +
 	       precedence Product := returns prec symbol *
- precedence NonAssociativeProduct := returns prec symbol **
+-- precedence NonAssociativeProduct := returns prec symbol **
 		 precedence Minus := returns strength1 symbol -
    precedence FunctionApplication := returns prec symbol SPACE
               precedence Adjacent := returns prec symbol SPACE
@@ -865,23 +887,6 @@ net Product := v -> (
 	  horizontalJoin splice mingle (seps, boxes)
 	  )
      )
-net NonAssociativeProduct := v -> (
-     n := # v;
-     if n === 0 then "1"
-     else (
-     	  p := precedence v;
-	  seps := newClass(MutableList, apply(n+1, i -> "**"));
-	  seps#0 = seps#n = "";
-     	  boxes := apply(#v,
-	       i -> (
-		    term := v#i;
-	       	    if precedence term <= p then bigParenthesize net term
-	       	    else net term
-	       	    )
-	       );
-	  horizontalJoin splice mingle (seps, boxes)
-	  )
-     )
 
 net Minus := x -> (
      term := x#0;
@@ -972,43 +977,17 @@ net VectorExpression := x -> (
 -----------------------------------------------------------------------------
 -- tex stuff
 
-texMath Expression := v -> (
+texMath AssociativeExpression := v -> (
      op := class v;
      p := precedence v;
      names := apply(toList v,term -> (
 	       if precedence term <= p
 	       then ("{\\left(", texMath term, "\\right)}")
 	       else ("{", texMath term, "}") ) );
-     if # v === 0 then (
-	  if op#?EmptyName then op#EmptyName
-	  else error("no method for texMath ", op)
-	  )
-     else (
-	  if op#?operator then demark(op#operator,names)
-	  else error("no method for texMath ", op)
-	  )
+     if # v === 0 then lookup(EmptyName,op)
+     else demark(lookup(operator,op),names)
      )
 
---html Thing := toString
--*
-html Expression := v -> (
-     op := class v;
-     p := precedence v;
-     names := apply(toList v,term -> (
-	       if precedence term <= p
-	       then ("(", html term, ")")
-	       else html term));
-     if # v === 0
-     then (
-	  if op#?EmptyName then op#EmptyName
-	  else error("no method for html ", op)
-	  )
-     else (
-	  if op#?operator then demark(op#operator,names)
-	  else error("no method for html ", op)
-	  )
-     )
-*-
 texMath Minus := v -> (
      term := v#0;
      if precedence term <= precedence v
@@ -1312,7 +1291,7 @@ expressionValue SheafExpression := x -> sheaf expressionValue x#0
 
 moduleZERO = new ZeroExpression from { 0, Module }
 
--- little used at the moment. note that one can't have a symbol <---
+-- note that one can't have a symbol <---
 MapExpression = new HeaderType of Expression;
 toString'(Function, MapExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { map, toSequence x })
 lineOnTop := (s) -> concatenate(width s : "-") || s
