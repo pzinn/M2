@@ -46,7 +46,7 @@ export {
     "dynkinDiagram",
     "isSimple",
     "cartanMatrix",
-    "𝔞", "𝔟", "𝔠", "𝔡", "𝔢", "𝔣", "𝔤"
+    "𝔞", "𝔟", "𝔠", "𝔡", "𝔢", "𝔣", "𝔤",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
     "irreducibleLieAlgebraModule", "LL",
@@ -64,7 +64,7 @@ export {
     "character",
     "adams",
     "qdim",
-    "branchingRule",
+    "branchingRule"
     }
 
 -- Access hasAttribute, getAttribute
@@ -345,8 +345,7 @@ describe LieAlgebraModule := M -> Describe (
     dec := M#"DecompositionIntoIrreducibles";
     g := Parenthesize expression M#"LieAlgebra";
     if #dec == 0 then expression 0
-    else fold((a,b)->a++b, -- TODO rewrite using DirectSum to avoid error: at print: recursion limit of 300 exceeded
-	apply(sort pairs dec,(v,mul) -> ((expression LL)_(toSequence v) g)^mul))
+    else DirectSum apply(sort pairs dec,(v,mul) -> ((expression LL)_(toSequence v) g)^mul)
     )
 expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else unhold describe M;
 
