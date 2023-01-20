@@ -168,6 +168,8 @@ TODO:
 * new function subLieAlgebra
 * define a Lie algebra based on its Cartan
 
+TODO:
+fix nonsimply laced subalgebra
 *-
 
 
@@ -190,8 +192,7 @@ LieAlgebra.GlobalReleaseHook = globalReleaseFunction
 fraktur := hashTable { ("A",𝔞),("B",𝔟),("C",𝔠),("D",𝔡),("E",𝔢),("F",𝔣),("G",𝔤) }
 describe LieAlgebra := g -> Describe (
     if isSimple g then (hold fraktur#(g#"RootSystemType"))_(g#"LieAlgebraRank")
-    -- else concatenate("Nonsimple Lie algebra, type ",toString(g#"RootSystemType"),", rank ",toString(g#"LieAlgebraRank"))
-    else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",(type,m) -> expression simpleLieAlgebra(type,m))
+     else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",(type,m) -> unhold describe simpleLieAlgebra(type,m)) -- lazy
 )
 expression LieAlgebra := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else unhold describe g;
 net LieAlgebra := net @@ expression;
@@ -199,7 +200,7 @@ texMath LieAlgebra := texMath @@ expression;
 
 LieAlgebra ++ LieAlgebra := directSum
 directSum LieAlgebra := identity
-LieAlgebra.directSum = args -> new LieAlgebra from {
+LieAlgebra.directSum = args -> if #args == 1 then args#0 else new LieAlgebra from {
     "RootSystemType" => join apply(args, g -> sequence g#"RootSystemType" ),
     "LieAlgebraRank" => join apply(args, g -> sequence g#"LieAlgebraRank" ),
     cache=>new CacheTable from {
@@ -361,7 +362,7 @@ ring LieAlgebra := g -> g.cache#ring
 
 -- shorthand notation
 scan(pairs fraktur, (let,sym) ->
-    sym <- new ScriptedFunctor from { subscript => n -> simpleLieAlgebra(let,n) }
+    globalAssign(sym, new ScriptedFunctor from { subscript => n -> simpleLieAlgebra(let,n), symbol texMath => "\\mathfrak "|replace(".","\\L$&",let)})
     )
 
 
@@ -400,7 +401,7 @@ new LieAlgebraModule from Sequence := (T,s) -> new LieAlgebraModule from {
     cache => new CacheTable
     }
 
-simpleLieAlgebra LieAlgebraModule := M -> M#"LieAlgebra"
+--simpleLieAlgebra LieAlgebraModule := M -> M#"LieAlgebra" -- no longer works now Lie algebras aren't always simple
 
 LieAlgebraModule_ZZ := (M,i) -> irreducibleLieAlgebraModule(M#"LieAlgebra",(sort keys M#"DecompositionIntoIrreducibles")#i)
 LieAlgebraModule_* := M -> apply(sort keys M#"DecompositionIntoIrreducibles", v -> irreducibleLieAlgebraModule(M#"LieAlgebra",v))
@@ -1252,6 +1253,7 @@ blocks = C -> ( -- given a Cartan (or adjacency) matrix, decompose into irreduci
 )
 
 new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Cartan matrix
+    if numColumns C == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),cache=>new CacheTable from {ring => ZZ[Inverses=>true,MonomialOrder=>Lex],order=>{}}};
     B:=blocks C;
     type':=(); m':=(); L:={}; -- L is permutation of rows/columns to match normal Cartan matrix
     scan(B, b -> (
@@ -1267,17 +1269,17 @@ new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Ca
 			if c'=!=null and det c == det c' and sort sum entries c == sort sum entries c' -- fun fact: characterizes uniquely
 			then break t;
 			));
-		if t === null then error "not a sub Lie algebra";    -- should never happen with List/Set but could with Matrix
+		if t === null then error ("not the Cartan matrix of a semi-simple Lie algebra");
 		-- just try every permutation, damnit
 		p:=scan(permutations n,p->if c_p^p==c' then break p);
-		if p === null then error "not a sub Lie algebra";    -- should never happen with List/Set but could with Matrix
+		if p === null then error ("not the Cartan matrix of a semi-simple Lie algebra");
     	    	b=b_p;
 		);
 	    type'=append(type',t); m'=append(m',n);
 	    L=L|b;
 	    ));
-    h:=directSum apply(type',m',simpleLieAlgebra); -- lazy TODO better
-    h.cache.order=L; -- lame, only needed temporarily
+    h:=directSum apply(type',m',simpleLieAlgebra); -- lazy though avoids unsequence
+    h.cache.order=L; -- only needed temporarily
     -- in principle one could conceive not permuting at all but it would require some rewrite (positiveRoots, etc)
     assert(cartanMatrix h == C_L^L);
     h
@@ -1285,24 +1287,31 @@ new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Ca
 
 subLieAlgebra = method ( TypicalValue => LieAlgebra )
 
--- TODO matrix of coroots
--- there's an annoying issue that subdiagrams of E_n & F_4 can have different ordering of labels
 subLieAlgebra (LieAlgebra, Set) := (g,S) -> subLieAlgebra(g,toList S)
-subLieAlgebra (LieAlgebra, List) := (g,S) -> (
+subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(ZZ^(rank g),0,0) else matrix transpose apply(S,s ->
+	if class s === ZZ then apply(rank g, j -> if j+1 == s then 1 else 0)
+	else if instance(s,Vector) and rank class s == rank g then entries s
+	else if class s === List and #s == rank g then s
+	else error "wrong argument"))
+
+-*
     -- identify the sub-Dynkin diagram
     S=deepSplice S;
     if #S == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),cache=>new CacheTable from {ring => ZZ[Inverses=>true,MonomialOrder=>Lex]}};
     S=apply(S,i->i-1);
     C:=(cartanMatrix g)^S_S;
     h:=new LieAlgebra from C;
-    h.cache#(subLieAlgebra,g)=S_(h.cache.order); -- store permuted labels. should it be in cache or in hash table itself? difference is for ==
-    h
     )
+*-
+
 subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
+    if numRows M != rank g then error "wrong size of coroots";
     C := transpose M * cartanMatrix g * M; -- TODO this only works for simply laced CHECK
     h:=new LieAlgebra from C;
-    h.cache#(subLieAlgebra,g)=M_(h.cache.order); -- store permuted matrix of coroots
-    h
+    M=M_(h.cache.order); -- permuted matrix of coroots
+    subs:=hashTable{g=>M};
+    if g#?subLieAlgebra then subs=merge(applyValues(g#subLieAlgebra, A -> A*M),subs,last);
+    new LieAlgebra from merge(h,hashTable{subLieAlgebra=>subs},last)
     )
     
 
@@ -1314,8 +1323,9 @@ branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra
 
 branchingRule (LieAlgebraModule, LieAlgebra) := (M,h) -> ( -- here h must be a (known) subalgebra of that of M
     g:=M#"LieAlgebra";
-    S:=try h.cache#(subLieAlgebra,g) else error "not a Lie subalgebra"; -- reorder vertices
-    f:=if class S===List then a -> a_S else a -> entries(transpose S*vector a);
+    S:=try h#subLieAlgebra#g else error "not a Lie subalgebra";
+    --    f:=if class S===List then a -> a_S else a -> entries(transpose S*vector a);
+    f:=a -> entries(transpose S*vector a); -- lame but what we get for using Lists rather than vectors
     LieAlgebraModuleFromWeights(applyKeys(weightDiagram M,f,plus),h)
     )
 
@@ -1338,15 +1348,19 @@ doc ///
     Headline
         class for Lie algebras
     Description
-        Text 
-    	    This class represents Lie algebras.  Currently only simple Lie algebras over the complex numbers are supported.  An object of type @TT "LieAlgebra"@ is a hash table whose keys record the rank of the Lie algebra and the type of the root system.
+        Text
+    	    This class represents Lie algebras.  Currently only semi-simple Lie algebras over the complex numbers are supported.
+	    An object of type @TT "LieAlgebra"@ is a hash table whose keys record the rank of the Lie algebra and the type of the root system.
         Example
 	    g=simpleLieAlgebra("A",1)
 	    h=simpleLieAlgebra("E",6)
+	    g++h
 	Text
 	    If you have access to unicode fraktur, you can use the shorthand
 	Example
 	    𝔣_4
+	Text
+	    See also @TO (NewFromMethod,LieAlgebra,Matrix)@.
 ///
 
 doc ///
@@ -2247,21 +2261,55 @@ TEST ///
 
 doc ///
     Key
-    	branchingRule
+    	subLieAlgebra
+	(subLieAlgebra,LieAlgebra,List)
+	(subLieAlgebra,LieAlgebra,Set)
+	(subLieAlgebra,LieAlgebra,Matrix)
     Headline
-       A Lie algebra module viewed as a module over a Lie subalgebra 
+        Define a sub-Lie algebra of an existing one
     Usage
-       branchingRule(M,S)
+       subLieAlgebra(g,S)
     Inputs
-        M:LieAlgebraModule
-	S:{List,Set}
+        g:LieAlgebra
+	S:{List,Set,Matrix}
     Outputs
-        M':LieAlgebraModule
+        h:LieAlgebra
     Description
         Text
-	   @TT "S"@ must be a subset of vertices of the Dynkin diagram of the Lie algebra of @TT "M"@ (as labelled by @TO dynkinDiagram@).
-	   The ordering of vertices is irrelevant, as the method will reorder the vertices to match the labelling of the Dynkin subdiagram.
-	   Returns @TT "M"@ viewed as a module over the Lie subalgebra determined by @TT "S"@.
+	   @TT "S"@ must be a subset of vertices of the Dynkin diagram of @TT "g"@ (as labelled by @TO dynkinDiagram@);
+	   or a matrix whose columns are the simple coroots of the subalgebra expanded in the basis of simple coroots of @TT "g"@.
+	Example
+	   dynkinDiagram 𝔢_8
+	   subLieAlgebra(𝔢_8,{1,2,3,4,5,8})
+///
+
+TEST ///
+g = simpleLieAlgebra("E",8)
+h = subLieAlgebra(g,{2,3,4,5})
+assert ( h#"LieAlgebraRank" == 4 and h#"RootSystemType" == "D" )
+///
+
+doc ///
+    Key
+        branchingRule
+        (branchingRule,LieAlgebraModule,List)
+        (branchingRule,LieAlgebraModule,Set)
+        (branchingRule,LieAlgebraModule,Matrix)
+        (branchingRule,LieAlgebraModule,LieAlgebra)
+    Headline
+        A Lie algebra module viewed as a module over a Lie subalgebra 
+    Usage
+        branchingRule(V,S)
+    Inputs
+        V:LieAlgebraModule
+	S:{List,Set,Matrix,LieAlgebra}
+    Outputs
+        V':LieAlgebraModule
+    Description
+        Text
+	   @TT "S"@ must be a subset of vertices of the Dynkin diagram of the Lie algebra of @TT "V"@, or a matrix, see @TO subLieAlgebra@;
+	   or a sub-Lie algebra.
+	   Returns @TT "V"@ viewed as a module over the Lie subalgebra determined by @TT "S"@.
 	Example
 	    g=simpleLieAlgebra("D",4);
 	    M=adjointModule g;
@@ -2274,7 +2322,26 @@ M=LL_(4,2);
 assert(dim branchingRule(M,{1}) == dim M)
 ///
 
-undocumented ({
+doc ///
+    Key
+        (NewFromMethod,LieAlgebra,Matrix)
+    Headline
+        Define a Lie algebra from its Cartan matrix
+    Description
+        Text
+	   @TT "new LieAlgebra from M"@
+
+	   If M is a valid Cartan matrix, it will reorder if nedded the rows/columns of M to a standard form and then output the
+	   corresponding Lie algebra @TT "g"@. (the permutation of rows/columns is stored in @TT "g.cache#order"@).
+	Example
+	    M = matrix {{2, 0, -3, 0}, {0, 2, 0, -1}, {-1, 0, 2, 0}, {0, -1, 0, 2}}
+	    h := new LieAlgebra from M
+	    cartanMatrix h
+	    h.cache.order
+///
+
+
+undocumented ( {
     (describe,LieAlgebra),(expression,LieAlgebra),(net,LieAlgebra),(texMath,LieAlgebra),
     (describe,LieAlgebraModule),(expression,LieAlgebraModule),(net,LieAlgebraModule),(texMath,LieAlgebraModule),
     (symbol ==,LieAlgebraModule,LieAlgebraModule), (symbol ==,LieAlgebraModule,ZZ),
@@ -2283,9 +2350,8 @@ undocumented ({
     (irreducibleLieAlgebraModule,LieAlgebra,Vector), (irreducibleLieAlgebraModule,LieAlgebra,List),
     (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
     (dim,LieAlgebra),(ring,LieAlgebra),(rank,LieAlgebra),
-    (simpleLieAlgebra,LieAlgebraModule),
-    (branchingRule,LieAlgebraModule,Set),
-    (branchingRule,LieAlgebraModule,List)    
+    (character,String,ZZ,List,List),
+    (dynkinDiagram,String,ZZ,ZZ),
     } | values fraktur)
 
 endPackage "LieTypes" 
