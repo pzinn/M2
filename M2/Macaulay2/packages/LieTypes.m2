@@ -150,26 +150,18 @@ global variable names instead of the hash table contents.
 * added/exported method adjointModule
 * reintroduced and exported cartanMatrix, cartanMatrixQQ now calls cartanMatrix
 * allow alternate ordering of arguments of weylAlcove, irreducibleModule to fix inconsistency
-* fraktur for shorthand of Lie algebras
-
-TODO:
-* replace more memoize with cacheValue
-* review Freudenthal code for character computation, make sure everything cached as should be
-* turn dynkinDiagram into a Type with various outputs. should have same fields as LieAlgebra, ideally, so can go back and forth easily
-* add more tests, especially involving various types
 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- Summary, Version 0.8, January 2023
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
+* fraktur for shorthand of Lie algebras
 * semi-simple Lie algebras are possible, use ++
-* branching rule supports general semi-simple Lie algebras
+* branching rule, supports general semi-simple Lie algebras
 * new function subLieAlgebra
 * define a Lie algebra based on its Cartan
 
-TODO:
-fix nonsimply laced subalgebra
 *-
 
 
@@ -189,24 +181,73 @@ if c#?key' then c#key' else c#key'=f x
 LieAlgebra = new Type of HashTable  
 LieAlgebra.GlobalAssignHook = globalAssignFunction
 LieAlgebra.GlobalReleaseHook = globalReleaseFunction
+
+cartanMatrixQQ := (type, m) -> promote(cartanMatrix(type,m),QQ)
+characterRing := memoize( (type,m) -> (
+    Q:=sum \ entries inverse cartanMatrixQQ(type,m);
+    l:=lcm(denominator\Q);
+    Q=apply(Q,q->lift(q*l,ZZ));
+    x:=getSymbol "x";
+    ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])
+    ))
+
+simpleLieAlgebra = method(
+    TypicalValue => LieAlgebra
+    )
+simpleLieAlgebra(String,ZZ) := (type,m) -> (
+    if not isSimple(type,m) then (
+    	if not member(type,{"A","B","C","D","E","F","G"}) then error "The simple Lie algebras over the complex numbers have types A, B, C, D, E, F, or G";
+    	if type=="A" and m<= 0 then error "The rank for type A must be >= 1.";
+    	if type=="B" and m<= 1 then error "The rank for type B must be >= 2.";
+    	if type=="C" and m<= 1 then error "The rank for type C must be >= 2.";
+    	if type=="D" and m<= 2 then error "The rank for type D must be >= 3.";
+    	if type=="E" and not member(m,{6,7,8}) then error "The rank for type E must be 6, 7, or 8.";
+    	if type=="F" and m!=4 then error "The rank for type F must be 4.";
+    	if type=="G" and m!=2 then error "The rank for type G must be 2.";
+	);
+    new LieAlgebra from {
+	"LieAlgebraRank"=>m,
+	"RootSystemType"=>type,
+	ring => characterRing(type,m),
+	cache => new CacheTable -- TODO remove
+	}
+    )
+
 fraktur := hashTable { ("A",𝔞),("B",𝔟),("C",𝔠),("D",𝔡),("E",𝔢),("F",𝔣),("G",𝔤) }
 describe LieAlgebra := g -> Describe (
     if isSimple g then (hold fraktur#(g#"RootSystemType"))_(g#"LieAlgebraRank")
      else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",(type,m) -> unhold describe simpleLieAlgebra(type,m)) -- lazy
 )
-expression LieAlgebra := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else unhold describe g;
+expression LieAlgebra := g -> (
+    if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary)
+    else if isSimple g then unhold describe g
+    else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",(type,m) -> expression simpleLieAlgebra(type,m)) -- lazy
+    )
 net LieAlgebra := net @@ expression;
 texMath LieAlgebra := texMath @@ expression;
+
+tensor1 := memoize tensor
 
 LieAlgebra ++ LieAlgebra := directSum
 directSum LieAlgebra := identity
 LieAlgebra.directSum = args -> if #args == 1 then args#0 else new LieAlgebra from {
     "RootSystemType" => join apply(args, g -> sequence g#"RootSystemType" ),
     "LieAlgebraRank" => join apply(args, g -> sequence g#"LieAlgebraRank" ),
-    cache=>new CacheTable from {
-	    ring => tensor apply(args,ring)
+    ring => tensor1 apply(args,ring),
+    if any(args,g->g#?subLieAlgebra) then (
+	-- a bit messy
+	subList := apply(args, g -> try g#subLieAlgebra else hashTable { g => id_(ZZ^(rank g)) });
+	-- any Lie algebra is a subalgebra of itself... but we can't hardcode it cause can't have a loop in an immutable HashTable TODO rethink
+	subs := null;
+	scan(subList, s -> subs = if subs===null then s else combine(subs,s,directSum,directSum,(a,b)->error"key collision"));
+	subLieAlgebra => subs
+	),
+    if any(args,g->g#?parent) then (
+	parList := apply(args, g -> try g#parent else g); -- same as above
+	parent => directSum parList
+	),
+    cache=>new CacheTable -- TODO remove
     }
-}
 
 rank LieAlgebra := g -> plus sequence g#"LieAlgebraRank"
 
@@ -247,39 +288,6 @@ dynkinDiagram LieAlgebra := g -> (
 
 LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 
-cartanMatrixQQ := (type, m) -> promote(cartanMatrix(type,m),QQ)
-
-simpleLieAlgebra = method(
-    TypicalValue => LieAlgebra
-    )
-simpleLieAlgebra(String,ZZ) := (type,m) -> (
-    if not isSimple(type,m) then (
-    	if not member(type,{"A","B","C","D","E","F","G"}) then error "The simple Lie algebras over the complex numbers have types A, B, C, D, E, F, or G";
-    	if type=="A" and m<= 0 then error "The rank for type A must be >= 1.";
-    	if type=="B" and m<= 1 then error "The rank for type B must be >= 2.";
-    	if type=="C" and m<= 1 then error "The rank for type C must be >= 2.";
-    	if type=="D" and m<= 2 then error "The rank for type D must be >= 3.";
-    	if type=="E" and not member(m,{6,7,8}) then error "The rank for type E must be 6, 7, or 8.";
-    	if type=="F" and m!=4 then error "The rank for type F must be 4.";
-    	if type=="G" and m!=2 then error "The rank for type G must be 2.";
-	);
-    Q:=sum \ entries inverse cartanMatrixQQ(type,m);
-    l:=lcm(denominator\Q);
-    Q=apply(Q,q->lift(q*l,ZZ));
-    x:=getSymbol "x";
-    new LieAlgebra from {"LieAlgebraRank"=>m,"RootSystemType"=>type,cache=>new CacheTable from {
-	    ring => ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])}} -- could cacheValue ring
-    )
--*simpleLieAlgebra(IndexedVariable) := (v) -> (
-    if #v > 2 or not member(v#0,{symbol sl, symbol so, symbol sp}) or not instance(v#1,ZZ) then error "Input not understood; enter sl_k, sp_k, or so_k, or use the syntax simpleLieAlgebra(\"A\",1) instead";
-    k:=v#1;
-    if v#0 == symbol sl and k >= 2 then return simpleLieAlgebra("A",k-1);
-    if v#0 == symbol so and odd(k) and k>=5  then return simpleLieAlgebra("B",lift((k-1)/2,ZZ));
-    if v#0 == symbol sp and even(k) and k >= 4 then return simpleLieAlgebra("C",lift(k/2,ZZ));
-    if v#0 == symbol so and even(k) and k >= 8 then return simpleLieAlgebra("D",lift(k/2,ZZ));
-    )
-*-
-    
 dualCoxeterNumber = method(
     TypicalValue => ZZ
     )     
@@ -358,12 +366,18 @@ starInvolution(List,LieAlgebra) := (v,g) -> (
 )
 starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
 
-ring LieAlgebra := g -> g.cache#ring
+ring LieAlgebra := g -> g#ring
 
 -- shorthand notation
 scan(pairs fraktur, (let,sym) ->
     globalAssign(sym, new ScriptedFunctor from { subscript => n -> simpleLieAlgebra(let,n), symbol texMath => "\\mathfrak "|replace(".","\\L$&",let)})
     )
+
+LieAlgebra#AfterPrint = g -> (
+    class g,
+    if isSimple g then ", simple",
+    if g#?parent then (", subalgebra of ",g#parent)
+ )
 
 
 -----------------------------------------------------------------------------------------------
@@ -1278,7 +1292,7 @@ new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Ca
 	    type'=append(type',t); m'=append(m',n);
 	    L=L|b;
 	    ));
-    h:=directSum apply(type',m',simpleLieAlgebra); -- lazy though avoids unsequence
+    h:=directSum apply(type',m',simpleLieAlgebra); -- lazy though avoids unsequence, worrying about rings etc
     h.cache.order=L; -- only needed temporarily
     -- in principle one could conceive not permuting at all but it would require some rewrite (positiveRoots, etc)
     assert(cartanMatrix h == C_L^L);
@@ -1287,7 +1301,6 @@ new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Ca
 
 subLieAlgebra = method ( TypicalValue => LieAlgebra )
 
-subLieAlgebra (LieAlgebra, Set) := (g,S) -> subLieAlgebra(g,toList S)
 subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(ZZ^(rank g),0,0) else matrix transpose apply(S,s ->
 	if class s === ZZ then apply(rank g, j -> if j+1 == s then 1 else 0)
 	else if instance(s,Vector) and rank class s == rank g then entries s
@@ -1311,14 +1324,13 @@ subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
     M=M_(h.cache.order); -- permuted matrix of coroots
     subs:=hashTable{g=>M};
     if g#?subLieAlgebra then subs=merge(applyValues(g#subLieAlgebra, A -> A*M),subs,last);
-    new LieAlgebra from merge(h,hashTable{subLieAlgebra=>subs},last)
+    new LieAlgebra from merge(h,hashTable{subLieAlgebra=>subs,parent=>g},last)  -- parent is just for aesthetics
     )
     
 
 branchingRule = method ( TypicalValue => LieAlgebraModule )
 
 branchingRule (LieAlgebraModule, Matrix) :=
-branchingRule (LieAlgebraModule, Set) :=
 branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra(M#"LieAlgebra",S))
 
 branchingRule (LieAlgebraModule, LieAlgebra) := (M,h) -> ( -- here h must be a (known) subalgebra of that of M
@@ -2263,7 +2275,6 @@ doc ///
     Key
     	subLieAlgebra
 	(subLieAlgebra,LieAlgebra,List)
-	(subLieAlgebra,LieAlgebra,Set)
 	(subLieAlgebra,LieAlgebra,Matrix)
     Headline
         Define a sub-Lie algebra of an existing one
@@ -2271,7 +2282,7 @@ doc ///
        subLieAlgebra(g,S)
     Inputs
         g:LieAlgebra
-	S:{List,Set,Matrix}
+	S:{List,Matrix}
     Outputs
         h:LieAlgebra
     Description
@@ -2293,7 +2304,6 @@ doc ///
     Key
         branchingRule
         (branchingRule,LieAlgebraModule,List)
-        (branchingRule,LieAlgebraModule,Set)
         (branchingRule,LieAlgebraModule,Matrix)
         (branchingRule,LieAlgebraModule,LieAlgebra)
     Headline
@@ -2302,7 +2312,7 @@ doc ///
         branchingRule(V,S)
     Inputs
         V:LieAlgebraModule
-	S:{List,Set,Matrix,LieAlgebra}
+	S:{List,Matrix,LieAlgebra}
     Outputs
         V':LieAlgebraModule
     Description
@@ -2332,7 +2342,7 @@ doc ///
 	   @TT "new LieAlgebra from M"@
 
 	   If M is a valid Cartan matrix, it will reorder if nedded the rows/columns of M to a standard form and then output the
-	   corresponding Lie algebra @TT "g"@. (the permutation of rows/columns is stored in @TT "g.cache#order"@).
+	   corresponding Lie algebra @TT "g"@. (the permutation of rows/columns is stored in @TT "g.cache.order"@).
 	Example
 	    M = matrix {{2, 0, -3, 0}, {0, 2, 0, -1}, {-1, 0, 2, 0}, {0, -1, 0, 2}}
 	    h := new LieAlgebra from M
