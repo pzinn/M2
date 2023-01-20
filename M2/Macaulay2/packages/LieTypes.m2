@@ -166,6 +166,7 @@ TODO:
 * semi-simple Lie algebras are possible, use ++
 * branching rule supports general semi-simple Lie algebras
 * new function subLieAlgebra
+* define a Lie algebra based on its Cartan
 
 *-
 
@@ -293,7 +294,7 @@ dualCoxeterNumber(String,ZZ) := (type,m) -> (--see Appendix 13.A, [DMS]
     if type == "G" then return 4
     )
 dualCoxeterNumber(LieAlgebra) := (cacheValue dualCoxeterNumber) ((g) -> (--see Appendix 13.A, [DMS]
-    if not isSimple g then error "Lie algebra is not simple";
+    if not isSimple g then error "Lie algebra not simple";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
     dualCoxeterNumber(type,m)	  
@@ -320,7 +321,7 @@ highestRoot(String,ZZ) := (type, m) -> (--see Appendix 13.A, [DMS]
 )
 
 highestRoot(LieAlgebra) := (cacheValue highestRoot) ((g) -> (
-    if not isSimple g then error "Lie algebra is not simple"; -- TODO maybe can do
+    if not isSimple g then error "Lie algebra not simple"; -- TODO maybe can do
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";   
     highestRoot(type,m)
@@ -538,7 +539,9 @@ cartanMatrix LieAlgebra := (cacheValue cartanMatrix) ( g -> (
 	if isSimple g then cartanMatrix (type,m) else directSum apply(type,m,cartanMatrix)
 	))
 
-cartanMatrix (String,ZZ) := (type, m) -> ( M:={};
+cartanMatrix (String,ZZ) := (type, m) -> (
+    if not isSimple(type,m) then error "not simple type";
+    M:={};
     if type=="A" then (
         return matrix apply(m, i-> apply(m, j -> if j==i-1 then -1 else if j==i then 2 else if j==i+1 then -1 else 0))
     );
@@ -1242,43 +1245,80 @@ blocks = C -> ( -- given a Cartan (or adjacency) matrix, decompose into irreduci
 	    b=b|L';
 	    scan(L',k->L=delete(k,L));
 	    j=j+1;
-	);
-    B=append(B,b);
-    );
-    apply(B, b -> (
-	    b=sort b;
-	    C^b_b ))
+	    );
+    	B=append(B,b);
+    	);
+    B
 )
+
+new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Cartan matrix
+    B:=blocks C;
+    type':=(); m':=(); L:={}; -- L is permutation of rows/columns to match normal Cartan matrix
+    scan(B, b -> (
+	    c:=C^b_b;
+	    n:=numRows c;
+	    -- first pass, covers 99% of cases
+	    t:=scan("A".."G",t->if c === (try cartanMatrix(t,n)) then break t);
+	    if t === null then (
+		-- let's try harder
+		local c';
+		t=scan("A".."G",t->(
+			c'=try cartanMatrix(t,n);
+			if c'=!=null and det c == det c' and sort sum entries c == sort sum entries c' -- fun fact: characterizes uniquely
+			then break t;
+			));
+		if t === null then error "not a sub Lie algebra";    -- should never happen with List/Set but could with Matrix
+		-- just try every permutation, damnit
+		p:=scan(permutations n,p->if c_p^p==c' then break p);
+		if p === null then error "not a sub Lie algebra";    -- should never happen with List/Set but could with Matrix
+    	    	b=b_p;
+		);
+	    type'=append(type',t); m'=append(m',n);
+	    L=L|b;
+	    ));
+    h:=directSum apply(type',m',simpleLieAlgebra); -- lazy TODO better
+    h.cache.order=L; -- lame, only needed temporarily
+    -- in principle one could conceive not permuting at all but it would require some rewrite (positiveRoots, etc)
+    assert(cartanMatrix h == C_L^L);
+    h
+    )
 
 subLieAlgebra = method ( TypicalValue => LieAlgebra )
 
+-- TODO matrix of coroots
+-- there's an annoying issue that subdiagrams of E_n & F_4 can have different ordering of labels
 subLieAlgebra (LieAlgebra, Set) := (g,S) -> subLieAlgebra(g,toList S)
 subLieAlgebra (LieAlgebra, List) := (g,S) -> (
     -- identify the sub-Dynkin diagram
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    if #S == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),cache=>new CacheTable from {ring => ZZ[Inverses=>true,MonomialOrder=>Lex]}};
     S=deepSplice S;
+    if #S == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),cache=>new CacheTable from {ring => ZZ[Inverses=>true,MonomialOrder=>Lex]}};
     S=apply(S,i->i-1);
-    S=sort S; -- we insist that S be sorted. TODO allow Dynkin diagram automorphisms?
-    -- there's an annoying issue that subdiagrams of E_n & F_4 can have different ordering of labels
-    C:=blocks((cartanMatrix g)^S_S);
-    L := transpose apply(C, c -> scan("A".."G",t->if c === (try cartanMatrix(t,numRows c)) then break {t,numRows c})); -- for now will just error if not found
-    -- TODO handle error better, issues with ordering of labels
-    directSum apply(L#0,L#1,simpleLieAlgebra)
+    C:=(cartanMatrix g)^S_S;
+    h:=new LieAlgebra from C;
+    h.cache#(subLieAlgebra,g)=S_(h.cache.order); -- store permuted labels. should it be in cache or in hash table itself? difference is for ==
+    h
+    )
+subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
+    C := transpose M * cartanMatrix g * M; -- TODO this only works for simply laced CHECK
+    h:=new LieAlgebra from C;
+    h.cache#(subLieAlgebra,g)=M_(h.cache.order); -- store permuted matrix of coroots
+    h
     )
     
+
 branchingRule = method ( TypicalValue => LieAlgebraModule )
 
-branchingRule (LieAlgebraModule, Set) := (M,S) -> branchingRule(M,toList S)
-branchingRule (LieAlgebraModule, List) := (M,S) -> (
-    h:=subLieAlgebra(M#"LieAlgebra",S);
-    -- the rest is easy
-    S=deepSplice S;
-    S=apply(S,i->i-1);
-    S=sort S;
-    LieAlgebraModuleFromWeights(applyKeys(weightDiagram M,a->a_S,plus),h)
+branchingRule (LieAlgebraModule, Matrix) :=
+branchingRule (LieAlgebraModule, Set) :=
+branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra(M#"LieAlgebra",S))
+
+branchingRule (LieAlgebraModule, LieAlgebra) := (M,h) -> ( -- here h must be a (known) subalgebra of that of M
+    g:=M#"LieAlgebra";
+    S:=try h.cache#(subLieAlgebra,g) else error "not a Lie subalgebra"; -- reorder vertices
+    f:=if class S===List then a -> a_S else a -> entries(transpose S*vector a);
+    LieAlgebraModuleFromWeights(applyKeys(weightDiagram M,f,plus),h)
     )
+
 
 beginDocumentation()
 
