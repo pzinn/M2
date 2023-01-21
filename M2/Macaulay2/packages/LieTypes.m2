@@ -42,6 +42,7 @@ export {
     "killingForm",
     "weylAlcove",
     "positiveRoots",
+    "positiveCoroots",
     "simpleRoots",
     "dynkinDiagram",
     "isSimple",
@@ -158,9 +159,8 @@ global variable names instead of the hash table contents.
 -----------------------------------------------------------------------------------------------
 * fraktur for shorthand of Lie algebras
 * semi-simple Lie algebras are possible, use ++
-* branching rule, supports general semi-simple Lie algebras
-* new function subLieAlgebra
-* define a Lie algebra based on its Cartan
+* subLieAlgebra, branchingRule, supports general semi-simple Lie algebras
+* define a Lie algebra based on its Cartan matrix
 
 *-
 
@@ -183,7 +183,7 @@ LieAlgebra.GlobalAssignHook = globalAssignFunction
 LieAlgebra.GlobalReleaseHook = globalReleaseFunction
 
 cartanMatrixQQ := (type, m) -> promote(cartanMatrix(type,m),QQ)
-characterRing := method()
+characterRing = method()
 characterRing (String,ZZ) := memoize( (type,m) -> (
     Q:=sum \ entries inverse cartanMatrixQQ(type,m);
     l:=lcm(denominator\Q);
@@ -211,40 +211,38 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     new LieAlgebra from {
 	"LieAlgebraRank"=>m,
 	"RootSystemType"=>type,
+	subLieAlgebra => hashTable { null => id_(ZZ^m) } -- any Lie algebra is a subalgebra of itself... but we can't hardcode it cause can't have a loop in an immutable HashTable... annoying
 	}
     )
 
 fraktur := hashTable { ("A",𝔞),("B",𝔟),("C",𝔠),("D",𝔡),("E",𝔢),("F",𝔣),("G",𝔤) }
+describe1 := (type,m) -> (hold fraktur#(type))_m
 describe LieAlgebra := g -> Describe (
-    if isSimple g then (hold fraktur#(g#"RootSystemType"))_(g#"LieAlgebraRank")
-     else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",(type,m) -> unhold describe simpleLieAlgebra(type,m)) -- lazy
-)
+    if isSimple g then describe1(g#"RootSystemType",g#"LieAlgebraRank")
+     else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",describe1)
+     )
+
 expression LieAlgebra := g -> (
     if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary)
-    else if isSimple g then unhold describe g
+    else unhold describe g
+-*    else if isSimple g then unhold describe g
     else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",(type,m) -> expression simpleLieAlgebra(type,m)) -- lazy
+    *-
     )
 net LieAlgebra := net @@ expression;
 texMath LieAlgebra := texMath @@ expression;
 
 LieAlgebra ++ LieAlgebra := directSum
 directSum LieAlgebra := identity
-LieAlgebra.directSum = args -> if #args == 1 then args#0 else new LieAlgebra from {
+LieAlgebra.directSum = args -> if #args == 1 then args#0 else (
+    subList := apply(args, g -> g#subLieAlgebra);
+    subs := null;
+    scan(subList, s -> subs = if subs===null then applyKeys(s,sequence) else combine(subs,s,append,directSum,identity)); -- collisions shouldn't occur
+    new LieAlgebra from {
     "RootSystemType" => join apply(args, g -> sequence g#"RootSystemType" ),
     "LieAlgebraRank" => join apply(args, g -> sequence g#"LieAlgebraRank" ),
-    if any(args,g->g#?subLieAlgebra) then (
-	-- a bit messy
-	subList := apply(args, g -> try g#subLieAlgebra else hashTable { g => id_(ZZ^(rank g)) });
-	-- any Lie algebra is a subalgebra of itself... but we can't hardcode it cause can't have a loop in an immutable HashTable TODO rethink
-	subs := null;
-	scan(subList, s -> subs = if subs===null then s else combine(subs,s,directSum,directSum,(a,b)->error"key collision"));
-	subLieAlgebra => subs
-	),
-    if any(args,g->g#?parent) then (
-	parList := apply(args, g -> try g#parent else g); -- same as above
-	parent => directSum parList
-	),
-    }
+    subLieAlgebra => applyKeys(subs,s->if all(s,h->h===null) then null else directSum apply(#args,i->if s#i===null then args#i else s#i)) -- messy; collisions shouldn't happen because identity embedding excluded
+    })
 
 rank LieAlgebra := g -> plus sequence g#"LieAlgebraRank"
 
@@ -301,9 +299,7 @@ dualCoxeterNumber(String,ZZ) := memoize((type,m) -> (--see Appendix 13.A, [DMS]
     ))
 dualCoxeterNumber(LieAlgebra) := (g) -> (--see Appendix 13.A, [DMS]
     if not isSimple g then error "Lie algebra not simple";
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    dualCoxeterNumber(type,m)
+    dualCoxeterNumber(g#"RootSystemType",g#"LieAlgebraRank")
     )
 
 
@@ -326,12 +322,17 @@ highestRoot(String,ZZ) := memoize((type, m) -> (--see Appendix 13.A, [DMS]
     if type == "G" then return {0,1}
 ))
 
-highestRoot(LieAlgebra) := (g) -> (
-    if not isSimple g then error "Lie algebra not simple"; -- TODO maybe can do
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";   
-    highestRoot(type,m)
-)
+highestRoot(Sequence,Sequence):=memoize((type,m)-> join apply(type,m,highestRoot))
+
+highestRoot(LieAlgebra) := (g) -> highestRoot(g#"RootSystemType",g#"LieAlgebraRank")
+
+split := (w,L) -> ( -- split weight of semisimple algebra according to simple parts
+    L=prepend(0,accumulate(plus,0,L)); -- why does accumulate suck
+    apply(#L-1,i->w_(toList(L#i..L#(i+1)-1)))
+    )
+unsplit = (v,L,i) -> ( -- from a weight of one summand to the whole
+    toList(sum(i,j->L#j):0) | v | toList(sum(i+1..#L-1,j->L#j):0)
+    )
 
 starInvolution = method()
 starInvolution(String,ZZ,List) := (type, m, w) ->  ( N:=#w;
@@ -343,25 +344,16 @@ starInvolution(String,ZZ,List) := (type, m, w) ->  ( N:=#w;
         return append(drop(x,{#x-2,#x-2}),w_(#w-2)));
     if type == "E" and m== 6 then return {w_5,w_1,w_4,w_3,w_2,w_0};
     )
-starInvolution(String,ZZ,Vector) := (type,m,w) -> starInvolution(type,m,entries w)
-
-split := (w,L) -> ( -- split weight of semisimple algebra according to simple parts
-    L=prepend(0,accumulate(plus,0,L)); -- why does accumulate suck
-    apply(#L-1,i->w_(toList(L#i..L#(i+1)-1)))
-    )
-unsplit = (v,L,i) -> ( -- from a weight of one summand to the whole
-    toList(sum(i,j->L#j):0) | v | toList(sum(i+1..#L-1,j->L#j):0)
-    )
-
-starInvolution(List,LieAlgebra) := (v,g) -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    if isSimple g then starInvolution(type,m,v) else (
-	v = split(v,m);
-	flatten apply(#v, i -> starInvolution(type#i,m#i,v#i)
-	))
+starInvolution(Sequence,Sequence,List) := (type,m,w) -> (
+    w = split(w,m);
+    flatten apply(#w, i -> starInvolution(type#i,m#i,w#i))
 )
-starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
+
+starInvolution(LieAlgebra,List) := (g,v) -> starInvolution(g#"RootSystemType",g#"LieAlgebraRank",v)
+starInvolution(LieAlgebra,Vector) := (g,v) -> starInvolution(g,entries v)
+
+starInvolution(Vector,LieAlgebra) :=
+starInvolution(List,LieAlgebra) := (v,g) -> starInvolution(g,v) -- for backwards compat
 
 -- shorthand notation
 scan(pairs fraktur, (let,sym) ->
@@ -371,7 +363,12 @@ scan(pairs fraktur, (let,sym) ->
 LieAlgebra#AfterPrint = g -> (
     class g,
     if isSimple g then ", simple",
-    if g#?parent then (", subalgebra of ",g#parent)
+    if #(g#subLieAlgebra)>1 then (
+	lst := nonnull keys g#subLieAlgebra; -- list of supalgebras
+	mins := select(lst, h -> not any(lst, k -> k#subLieAlgebra#?h)); -- find minimal elements
+	", subalgebra of ",
+	toSequence between(", ",mins)
+	)
  )
 
 
@@ -447,7 +444,7 @@ LieAlgebraModule ^** ZZ := (cacheValue'(0,symbol ^**)) ((M,n) -> (
     	else M**(M^**(n-1)) -- order matters for speed purposes
     ))
 
-adjointWeight := (type,m) -> (
+adjointWeight := (type,m) -> splice (
     if type == "A" then if m==1 then {2} else {1,m-2:0,1}
     else if type == "B" then if m==2 then {0,2} else {0,1,m-2:0}
     else if type == "C" then {2,m-1:0}
@@ -465,20 +462,14 @@ adjointModule LieAlgebra := g -> (
     else new LieAlgebraModule from (g, tally apply(#m, i -> unsplit(adjointWeight(type#i,m#i),m,i)))
     )
 
-starInvolution(List,LieAlgebra) := (v,g) -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    if isSimple g then starInvolution(type,m,v) else (
-	v = split(v,m);
-	flatten apply(#v, i -> starInvolution(type#i,m#i,v#i)
-	))
-)
-
 dim LieAlgebra := g -> dim adjointModule g
 
-starInvolution LieAlgebraModule := M -> new LieAlgebraModule from (
-    M#"LieAlgebra",
-    applyKeys(M#"DecompositionIntoIrreducibles", v -> starInvolution(v,M#"LieAlgebra"))
+starInvolution LieAlgebraModule := M -> (
+    g:=M#"LieAlgebra";
+    new LieAlgebraModule from (
+    	g,
+    	applyKeys(M#"DecompositionIntoIrreducibles", v -> starInvolution(g,v))
+	)
     )
 dual LieAlgebraModule := {} >> o -> lookup(starInvolution,LieAlgebraModule)
 
@@ -543,11 +534,7 @@ PZJ: actually there's so much shadowing already...
 
 cartanMatrix = method ( TypicalValue => Matrix )
 
-cartanMatrix LieAlgebra := g -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    cartanMatrix (type,m)
-    )
+cartanMatrix LieAlgebra := g -> cartanMatrix (g#"RootSystemType",g#"LieAlgebraRank")
 
 cartanMatrix(Sequence,Sequence) := memoize((type,m) -> directSum apply(type,m,cartanMatrix))
 
@@ -618,11 +605,13 @@ quadraticFormMatrix (String,ZZ) := memoize((type, m) -> ( M:={};
 
 killingForm = method(
     TypicalValue => QQ
-    )     
+    )
+killingForm(Sequence,Sequence,List,List) :=
 killingForm(String,ZZ,List,List) := (type, m, v,w) ->   (
-    (matrix{v}*quadraticFormMatrix(type,m)*matrix transpose{w})_(0,0) -- TODO render obsolete
+    (matrix{v}*quadraticFormMatrix(type,m)*matrix transpose{w})_(0,0)
 )
 killingForm(LieAlgebra,List,List) := (g,v,w) -> (matrix{v}*quadraticFormMatrix g*matrix transpose{w})_(0,0)
+killingForm(LieAlgebra,Vector,Vector) := (g,v,w) -> (transpose matrix v *quadraticFormMatrix g*w)_0
 
 
 --This function returns the weights in the Weyl alcove
@@ -658,17 +647,19 @@ weylAlcove(ZZ,LieAlgebra) := (l,g) -> weylAlcove(g,l)
 casimirScalar = method(
     TypicalValue => QQ
     )
+casimirScalar(Sequence,Sequence,List) :=
 casimirScalar(String,ZZ,List) := (type, m, w) -> (
-    rho:=apply(m,h->1/1);
+    rho:=apply(plus sequence m,h->1/1);
     killingForm(type,m,w,w) + 2*killingForm(type,m,w,rho)
 )
+
 casimirScalar(LieAlgebraModule) := (M) -> (
     if not isIrreducible M then error "Casimir scalar on irreducible modules only";
     g:=M#"LieAlgebra";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
     v:=first keys M#"DecompositionIntoIrreducibles";
-    casimirScalar(type,m,v) -- TODO semisimple
+    casimirScalar(type,m,v)
 )
 
 simpleRoots = method(
@@ -739,24 +730,23 @@ positiveRoots(String,ZZ):= (type,m) -> (
 
 positiveRoots(Sequence,Sequence):=memoize((type,m)->flatten toList apply(#m, i -> apply(positiveRoots(type#i,m#i),v->unsplit(v,m,i))))
 
-positiveRoots(LieAlgebra):=(g) -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    positiveRoots(type,m)
-    )
+positiveRoots(LieAlgebra):=(g) -> positiveRoots(g#"RootSystemType",g#"LieAlgebraRank")
 
 positiveCoroots = method(
     TypicalValue => List
 )
 
-positiveCoroots(LieAlgebra):=(g) -> ( -- memoize? TODO
-	type:=g#"RootSystemType";
-	m:=g#"LieAlgebraRank";
-	pr:=positiveRoots g;
+positiveCoroots(String,ZZ) :=
+positiveCoroots(Sequence,Sequence) := memoize((type,m)->(
+	pr:=positiveRoots(type,m);
 	if all(sequence type, t -> t==="A" or t==="D" or t==="E") then return pr;
-	apply(pr, v -> (2/killingForm(g,v,v)) * v)
-)
+	apply(pr, v -> (
+		r := 2 / killingForm(type,m,v,v);
+		apply(v, k -> lift(r*k,ZZ))
+		))
+    ))
 
+positiveCoroots(LieAlgebra):=(g) -> positiveCoroots(g#"RootSystemType",g#"LieAlgebraRank")
 
 --In the next four functions we implement Freudenthal's recursive algorithm for computing the weights in a Lie algebra module and their multiplicities
 --The function Freud computes the set of weights in a Lie algebra module without their multiplicities
@@ -906,11 +896,7 @@ character (Sequence,Sequence,List,List) := memoize((type,m,vrs,v) -> (
 	v=split(v,m);
 	product(#m,i->character(type#i,m#i,vrs#i,v#i))
 	))
-character (LieAlgebra,List) := (g,v) -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";
-    if m===() then 1_(characterRing g) else character(type,m,gens characterRing g,v) -- annoying special case, otherwise wrong ring
-    )
+character (LieAlgebra,List) := (g,v) -> if rank g == 0 then 1_(characterRing g) else character(g#"RootSystemType",g#"LieAlgebraRank",gens characterRing g,v) -- annoying special case, otherwise wrong ring
 character (LieAlgebra,Vector) := (g,v) -> character(g,entries v)
 character LieAlgebraModule := (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v)))
 
@@ -922,23 +908,25 @@ weightDiagram = method(
 weightDiagram LieAlgebraModule := (M) -> new VirtualTally from listForm character M
 weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := (g,v) -> new VirtualTally from listForm character(g,v)
 
-fac := g -> ( -- possible denominator in Weyl product formula factors TODO cache
-    lcm append(apply(positiveCoroots g, u -> numerator (killingForm(g,u,u)/2)),1) -- append for g=0
-    )
+fac := memoize((type,m) -> ( -- possible denominator in Weyl product formula factors
+    lcm append(apply(positiveCoroots(type,m), u -> numerator (killingForm(type,m,u,u)/2)),1) -- append is for g=0
+    ))
 
-qden := (g,qnum) -> ( -- TDOO cache
-    rho:=toList(rank g : 1);
-    d:=fac g;
-    product(positiveRoots g, a -> qnum lift(d*killingForm(g,rho,a),ZZ))
-    )
+qden := memoize((type,m,qnum) -> (
+    rho:=toList(plus sequence m : 1);
+    d:=fac(type,m);
+    product(positiveRoots(type,m), a -> qnum lift(d*killingForm(type,m,rho,a),ZZ))
+    ))
 
 qdim1 = (M,qnum) -> ( -- used internally by dim and qdim: Weyl product formula
     g:=M#"LieAlgebra";
-    rho:=toList(rank g : 1);
-    d:=fac g;
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    rho:=toList(plus sequence m : 1);
+    d:=fac(type,m);
     (sum(pairs M#"DecompositionIntoIrreducibles", (w,mu) ->
 	mu * product(positiveRoots g, a -> qnum lift(d*killingForm(g,w+rho,a),ZZ))
-	))//qden(g,qnum)
+	))//qden(type,m,qnum)
     )
 
 dim LieAlgebraModule := (cacheValue dim) (M -> qdim1(M,identity))
@@ -967,7 +955,7 @@ qdim LieAlgebraModule := (cacheValue qdim) (M -> qdim1(M,qnum))
 qdim (LieAlgebraModule,ZZ) := (M,l) -> (
     g:=M#"LieAlgebra";
     if not isSimple g then error "Lie algebra not simple";
-    (map(qring(l+dualCoxeterNumber g,2*fac g),R)) qdim M
+    (map(qring(l+dualCoxeterNumber g,2*fac(g#"RootSystemType",g#"LieAlgebraRank")),R)) qdim M
     )
 
 
@@ -1300,7 +1288,7 @@ lieTypeFromCartan := C -> ( -- used internally. returns (type,m,order) where ord
     )
 
 new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Cartan matrix
-    if numColumns C == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>()};
+    if numColumns C == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),subLieAlgebra=>hashTable{null=>id_(ZZ^0)}};
     (type,m,L):=lieTypeFromCartan C;
     h:=directSum apply(type,m,simpleLieAlgebra); -- lazy though avoids unsequence, worrying about rings etc
     assert(cartanMatrix h == C_L^L);
@@ -1326,17 +1314,20 @@ subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(Z
 *-
 
 subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
+    -- in the simply laced case it'd be simply transpose M * cartanMatrix g * M. in general have to work harder
     if numRows M != rank g then error "wrong size of coroots";
-    C := transpose M * cartanMatrix g * M; -- TODO this only works for simply laced CHECK
+    G := transpose M * inverse quadraticFormMatrix g * M; -- new inverse quadratic form <coroot_i|coroot_j>
+    D := diagonalMatrix apply(numColumns M,i->2/G_(i,i)); -- inverse square norm of new simple coroots
+    C := lift(D * G,ZZ);
     (type,m,L):=lieTypeFromCartan C;
     M=M_L; -- permuted matrix of coroots
-    subs:=hashTable{g=>M};
-    if g#?subLieAlgebra then subs=merge(applyValues(g#subLieAlgebra, A -> A*M),subs,last);
+    if M == id_(ZZ^(rank g)) then return g; -- not necessary but simpler
+    subs:=hashTable{null=>id_(ZZ^(plus m))};
+    subs=merge(applyValues(applyKeys(g#subLieAlgebra, k -> if k===null then g else k), A -> A*M),subs,last);
     new LieAlgebra from {
 	"LieAlgebraRank"=>unsequence m,
 	"RootSystemType"=>unsequence type,
-	subLieAlgebra=>subs,
-	parent=>g  -- parent is just for aesthetics
+	subLieAlgebra=>subs
 	}
     )
     
@@ -1348,6 +1339,7 @@ branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra
 
 branchingRule (LieAlgebraModule, LieAlgebra) := (M,h) -> ( -- here h must be a (known) subalgebra of that of M
     g:=M#"LieAlgebra";
+    if g===h then return M; -- annoying special case
     S:=try h#subLieAlgebra#g else error "not a Lie subalgebra";
     --    f:=if class S===List then a -> a_S else a -> entries(transpose S*vector a);
     f:=a -> entries(transpose S*vector a); -- lame but what we get for using Lists rather than vectors
@@ -1478,7 +1470,6 @@ TEST ///
 doc ///
     Key
         highestRoot
-	(highestRoot,String,ZZ)
 	(highestRoot,LieAlgebra)
     Headline
         returns the highest root of a simple Lie algebra
@@ -1506,19 +1497,22 @@ TEST ///
 doc ///
     Key
         positiveRoots
-	(positiveRoots,String,ZZ)
 	(positiveRoots,LieAlgebra)
+        positiveCoroots
+	(positiveCoroots,LieAlgebra)
     Headline
-        returns the positive roots of a simple Lie algebra
+        returns the positive (co)roots of a simple Lie algebra
     Usage
-        positiveRoots(g), positiveRoots("A",2)
+        positiveRoots(g), positiveCoroots(g)
     Inputs
         g:LieAlgebra
     Outputs
         t:List
     Description
         Text  
-            Let R be an irreducible root system of rank m, and choose a base of simple roots $\Delta = \{\alpha_1,...,\alpha_m\}$.  This function returns all the roots that are nonnegative linear combinations of the simple roots.    The formulas implemented here are taken from the tables following Bourbaki's {\it Lie Groups and Lie Algebras} Chapter 6.
+            Let R be an irreducible root system of rank m, and choose a base of simple roots $\Delta = \{\alpha_1,...,\alpha_m\}$.
+	    This function returns all the roots that are nonnegative linear combinations of the simple roots (expressed in the basis of fundamental weights).
+	    The formulas implemented here are taken from the tables following Bourbaki's {\it Lie Groups and Lie Algebras} Chapter 6.
 	    
 	Text       
 	    In the example below, we see that for $sl_3$, the positive roots are $\alpha_1$, $\alpha_2$, and $\alpha_1+\alpha_2$.
@@ -1550,10 +1544,6 @@ doc ///
 doc ///
     Key
         starInvolution
-	(starInvolution,List,LieAlgebra)
-	(starInvolution,Vector,LieAlgebra)
-	(starInvolution,String,ZZ,List)
-	(starInvolution,String,ZZ,Vector)
 	(starInvolution,LieAlgebraModule)
 	(dual,LieAlgebraModule)
     Headline
@@ -1584,7 +1574,7 @@ doc ///
         
 	Example
 	     g=simpleLieAlgebra("A",2)
-	     starInvolution({1,0},g)
+	     starInvolution(LL_(1,0)(g))
 ///
 
 TEST ///
@@ -1598,7 +1588,6 @@ doc ///
     Key
         killingForm
 	(killingForm,LieAlgebra,List,List)
-	(killingForm,String,ZZ,List,List)
     Headline 
         computes the scaled Killing form applied to two weights
     Usage 
@@ -1996,7 +1985,6 @@ doc ///
     Key
         casimirScalar
 	(casimirScalar,LieAlgebraModule)
-	(casimirScalar,String,ZZ,List)
     Headline
         computes the scalar by which the Casimir operator acts on an irreducible Lie algebra module
     Usage
@@ -2150,12 +2138,17 @@ doc ///
     Description
         Text
 	    Returns the module corresponding to the adjoint representation of a Lie algebra.
+        Example
+	    g=simpleLieAlgebra("A",2)
+	    adjointModule g
+	    adjointModule (g++g)
 ///
 
 TEST ///
     g=simpleLieAlgebra("A",2);
     M=irreducibleLieAlgebraModule({2,1},g);
     assert(M ** trivialModule g === M)
+    assert(dim adjointModule(g++g)==2*dim adjointModule g)
 ///
 
 doc ///
@@ -2370,10 +2363,15 @@ undocumented ( {
     (NewFromMethod,LieAlgebraModule,Sequence),
     (symbol ^,LieAlgebraModule,QQ),
     (irreducibleLieAlgebraModule,LieAlgebra,Vector), (irreducibleLieAlgebraModule,LieAlgebra,List),
-    (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
+    (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(cartanMatrix,Sequence,Sequence),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
     (dim,LieAlgebra),(rank,LieAlgebra),
-    (character,String,ZZ,List,List),
+    (character,String,ZZ,List,List),(character,Sequence,Sequence,List,List),
     (dynkinDiagram,String,ZZ,ZZ),
+    (positiveRoots,Sequence,Sequence),(positiveRoots,String,ZZ),(positiveCoroots,Sequence,Sequence),(positiveCoroots,String,ZZ),
+    (killingForm,String,ZZ,List,List),(killingForm,Sequence,Sequence,List,List),
+    (starInvolution,List,LieAlgebra),(starInvolution,Vector,LieAlgebra),(starInvolution,LieAlgebra,List),(starInvolution,LieAlgebra,Vector),(starInvolution,String,ZZ,List),(starInvolution,Sequence,Sequence,List),
+    (casimirScalar,String,ZZ,List),(casimirScalar,Sequence,Sequence,List),
+    (highestRoot,String,ZZ),(highestRoot,Sequence,Sequence),
     } | values fraktur)
 
 endPackage "LieTypes" 
