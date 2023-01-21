@@ -183,13 +183,16 @@ LieAlgebra.GlobalAssignHook = globalAssignFunction
 LieAlgebra.GlobalReleaseHook = globalReleaseFunction
 
 cartanMatrixQQ := (type, m) -> promote(cartanMatrix(type,m),QQ)
-characterRing := memoize( (type,m) -> (
+characterRing := method()
+characterRing (String,ZZ) := memoize( (type,m) -> (
     Q:=sum \ entries inverse cartanMatrixQQ(type,m);
     l:=lcm(denominator\Q);
     Q=apply(Q,q->lift(q*l,ZZ));
     x:=getSymbol "x";
     ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])
     ))
+characterRing (Sequence,Sequence) := memoize( (type,m) -> if #m == 0 then ZZ[Inverses=>true,MonomialOrder=>Lex] else tensor apply(type,m,characterRing))
+characterRing LieAlgebra := g -> characterRing(g#"RootSystemType",g#"LieAlgebraRank")
 
 simpleLieAlgebra = method(
     TypicalValue => LieAlgebra
@@ -208,8 +211,6 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     new LieAlgebra from {
 	"LieAlgebraRank"=>m,
 	"RootSystemType"=>type,
-	ring => characterRing(type,m),
-	cache => new CacheTable -- TODO remove
 	}
     )
 
@@ -226,14 +227,11 @@ expression LieAlgebra := g -> (
 net LieAlgebra := net @@ expression;
 texMath LieAlgebra := texMath @@ expression;
 
-tensor1 := memoize tensor
-
 LieAlgebra ++ LieAlgebra := directSum
 directSum LieAlgebra := identity
 LieAlgebra.directSum = args -> if #args == 1 then args#0 else new LieAlgebra from {
     "RootSystemType" => join apply(args, g -> sequence g#"RootSystemType" ),
     "LieAlgebraRank" => join apply(args, g -> sequence g#"LieAlgebraRank" ),
-    ring => tensor1 apply(args,ring),
     if any(args,g->g#?subLieAlgebra) then (
 	-- a bit messy
 	subList := apply(args, g -> try g#subLieAlgebra else hashTable { g => id_(ZZ^(rank g)) });
@@ -246,7 +244,6 @@ LieAlgebra.directSum = args -> if #args == 1 then args#0 else new LieAlgebra fro
 	parList := apply(args, g -> try g#parent else g); -- same as above
 	parent => directSum parList
 	),
-    cache=>new CacheTable -- TODO remove
     }
 
 rank LieAlgebra := g -> plus sequence g#"LieAlgebraRank"
@@ -291,7 +288,7 @@ LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 dualCoxeterNumber = method(
     TypicalValue => ZZ
     )     
-dualCoxeterNumber(String,ZZ) := (type,m) -> (--see Appendix 13.A, [DMS]
+dualCoxeterNumber(String,ZZ) := memoize((type,m) -> (--see Appendix 13.A, [DMS]
     if type == "A" then return m+1;
     if type == "B" then return 2*m-1;
     if type == "C" then return m+1;
@@ -301,19 +298,19 @@ dualCoxeterNumber(String,ZZ) := (type,m) -> (--see Appendix 13.A, [DMS]
     if type == "E" and m==8 then return 30;
     if type == "F" then return 9;
     if type == "G" then return 4
-    )
-dualCoxeterNumber(LieAlgebra) := (cacheValue dualCoxeterNumber) ((g) -> (--see Appendix 13.A, [DMS]
+    ))
+dualCoxeterNumber(LieAlgebra) := (g) -> (--see Appendix 13.A, [DMS]
     if not isSimple g then error "Lie algebra not simple";
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    dualCoxeterNumber(type,m)	  
-    ))
+    dualCoxeterNumber(type,m)
+    )
 
 
 highestRoot = method(
     TypicalValue => List
     )
-highestRoot(String,ZZ) := (type, m) -> (--see Appendix 13.A, [DMS]
+highestRoot(String,ZZ) := memoize((type, m) -> (--see Appendix 13.A, [DMS]
     if type == "A" and m==1 then return {2};
     if type == "A" and m >= 2 then return flatten {{1}, apply(m-2,i->0),{1}};
     if type == "B" and m==2 then return flatten {0,2};
@@ -327,14 +324,14 @@ highestRoot(String,ZZ) := (type, m) -> (--see Appendix 13.A, [DMS]
     if type == "E" and m==8 then return {0,0,0,0, 0,0,0,1};
     if type == "F" then return {1,0,0,0};
     if type == "G" then return {0,1}
-)
+))
 
-highestRoot(LieAlgebra) := (cacheValue highestRoot) ((g) -> (
+highestRoot(LieAlgebra) := (g) -> (
     if not isSimple g then error "Lie algebra not simple"; -- TODO maybe can do
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";   
     highestRoot(type,m)
-))
+)
 
 starInvolution = method()
 starInvolution(String,ZZ,List) := (type, m, w) ->  ( N:=#w;
@@ -365,8 +362,6 @@ starInvolution(List,LieAlgebra) := (v,g) -> (
 	))
 )
 starInvolution(Vector,LieAlgebra) := (v,g) -> starInvolution(entries v,g)
-
-ring LieAlgebra := g -> g#ring
 
 -- shorthand notation
 scan(pairs fraktur, (let,sym) ->
@@ -548,13 +543,15 @@ PZJ: actually there's so much shadowing already...
 
 cartanMatrix = method ( TypicalValue => Matrix )
 
-cartanMatrix LieAlgebra := (cacheValue cartanMatrix) ( g -> (
-    	type:=g#"RootSystemType";
-    	m:=g#"LieAlgebraRank";
-	if isSimple g then cartanMatrix (type,m) else directSum apply(type,m,cartanMatrix)
-	))
+cartanMatrix LieAlgebra := g -> (
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    cartanMatrix (type,m)
+    )
 
-cartanMatrix (String,ZZ) := (type, m) -> (
+cartanMatrix(Sequence,Sequence) := memoize((type,m) -> directSum apply(type,m,cartanMatrix))
+
+cartanMatrix (String,ZZ) := memoize((type, m) -> (
     if not isSimple(type,m) then error "not simple type";
     M:={};
     if type=="A" then (
@@ -587,7 +584,7 @@ cartanMatrix (String,ZZ) := (type, m) -> (
 	return matrix {{2, 0, -1, 0, 0, 0, 0, 0}, {0, 2, 0, -1, 0, 0, 0, 0}, {-1, 0, 2, -1, 0, 0, 0, 0}, {0, -1, -1, 2, -1, 0, 0, 0}, {0, 0, 0, -1, 2, -1, 0, 0}, {0, 0, 0, 0, -1, 2, -1, 0}, {0, 0, 0, 0, 0, -1, 2, -1}, {0, 0, 0, 0, 0, 0, -1, 2}});
     if type == "F" then return matrix({{2,-1,0,0},{-1,2,-2,0},{0,-1,2,-1},{0,0,-1,2}});
     if type == "G" then return matrix({{2,-1},{-3,2}});
-    )
+    ))
 
 
 --We code what Di Francesco, Mathieu, and Senechal call the quadratic form matrix
@@ -596,13 +593,15 @@ cartanMatrix (String,ZZ) := (type, m) -> (
 
 quadraticFormMatrix = method ( TypicalValue => Matrix )
 
-quadraticFormMatrix LieAlgebra := (cacheValue quadraticFormMatrix) ( g -> (
-    	type:=g#"RootSystemType";
-    	m:=g#"LieAlgebraRank";
-	if isSimple g then quadraticFormMatrix (type,m) else directSum apply(type,m,quadraticFormMatrix)
-	))
+quadraticFormMatrix LieAlgebra := g -> (
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    quadraticFormMatrix (type,m) 
+    )
 
-quadraticFormMatrix (String,ZZ) := memoize((type, m) -> ( M:={}; -- TODO unmeomize
+quadraticFormMatrix (Sequence,Sequence) := memoize((type,m) -> directSum apply(type,m,quadraticFormMatrix))
+
+quadraticFormMatrix (String,ZZ) := memoize((type, m) -> ( M:={};
     if type=="A" or type =="D" or type=="E" then return (cartanMatrixQQ(type,m))^-1;
     if type =="B" then (
         M=apply(m-1, i -> append(apply(m-1, j -> if j+1<=i+1 then 2*(j+1) else 2*(i+1 )),i+1));
@@ -630,7 +629,7 @@ killingForm(LieAlgebra,List,List) := (g,v,w) -> (matrix{v}*quadraticFormMatrix g
 weylAlcove = method(
     TypicalValue => List
     )     
-weylAlcove(String,ZZ,ZZ) := (type, m, l) -> ( pl:={};
+weylAlcove(String,ZZ,ZZ) := memoize((type, m, l) -> ( pl:={};
     if l==0 then return {apply(m, i -> 0)};
     if m==1 then return apply(l+1,i->{i});
     if type=="A" or type == "C" then (
@@ -647,9 +646,9 @@ weylAlcove(String,ZZ,ZZ) := (type, m, l) -> ( pl:={};
 	answer:=delete(null, apply(#pl, i -> if killingForm(type, m, pl_i, Theta) <= l then pl_i));
         return sort answer
     )
-)
+))
 
-weylAlcove(LieAlgebra,ZZ) := (cacheValue'(0,weylAlcove)) ( (g,l)-> if not isSimple g then error "Lie algebra not simple" else weylAlcove(g#"RootSystemType",g#"LieAlgebraRank",l) )
+weylAlcove(LieAlgebra,ZZ) := (g,l)-> if not isSimple g then error "Lie algebra not simple" else weylAlcove(g#"RootSystemType",g#"LieAlgebraRank",l)
 
 weylAlcove(ZZ,LieAlgebra) := (l,g) -> weylAlcove(g,l)
 
@@ -676,11 +675,11 @@ simpleRoots = method(
     TypicalValue => List
 )
   
-simpleRoots(String,ZZ) := memoize((type,m) -> ( -- TODO unmemoize, see Freud
+simpleRoots(String,ZZ) := memoize((type,m) -> (
     entries cartanMatrix(type,m)
 ))
 
-simpleRoots(LieAlgebra):=(cacheValue simpleRoots) ((g) -> entries cartanMatrix g)
+simpleRoots(LieAlgebra):=(g) -> entries cartanMatrix g
 
 
 positiveRoots = method(
@@ -738,23 +737,25 @@ positiveRoots(String,ZZ):= (type,m) -> (
     if type=="G" and m==2 then return {{-3, 2}, {-1, 1}, {0, 1}, {2, -1}, {3, -1}, {1, 0}};
 )
 
-positiveRoots(LieAlgebra):=(cacheValue positiveRoots) ((g) -> (
+positiveRoots(Sequence,Sequence):=memoize((type,m)->flatten toList apply(#m, i -> apply(positiveRoots(type#i,m#i),v->unsplit(v,m,i))))
+
+positiveRoots(LieAlgebra):=(g) -> (
     type:=g#"RootSystemType";
     m:=g#"LieAlgebraRank";
-    if isSimple g then positiveRoots(type,m) else flatten toList apply(#m, i -> apply(positiveRoots(type#i,m#i),v->unsplit(v,m,i)))
-    ))
+    positiveRoots(type,m)
+    )
 
 positiveCoroots = method(
     TypicalValue => List
 )
 
-positiveCoroots(LieAlgebra):=(cacheValue positiveCoroots) ((g) -> (
+positiveCoroots(LieAlgebra):=(g) -> ( -- memoize? TODO
 	type:=g#"RootSystemType";
 	m:=g#"LieAlgebraRank";
 	pr:=positiveRoots g;
 	if all(sequence type, t -> t==="A" or t==="D" or t==="E") then return pr;
 	apply(pr, v -> (2/killingForm(g,v,v)) * v)
-))
+)
 
 
 --In the next four functions we implement Freudenthal's recursive algorithm for computing the weights in a Lie algebra module and their multiplicities
@@ -824,11 +825,6 @@ multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
 )
 multiplicity(Vector,LieAlgebraModule) := o -> (w,M) -> multiplicity(entries w,M)
 
-character = method(
-    Options=>{Strategy=>null},
-    TypicalValue => RingElement
-    )
-
 stdVars := memoize ( (type,m,vrs) -> (
     if type == "A" then apply(m+1, i -> (if i==m then 1 else vrs_i) * (if i==0 then 1 else vrs_(i-1)^-1))
     else if type=="B" then apply(m, i -> (if i==m-1 then vrs_i^2 else vrs_i) * (if i==0 then 1 else vrs_(i-1)^-1))
@@ -896,37 +892,45 @@ characterAlgorithms#"Freudenthal" = (type,m,vrs,v) -> (
 
 -- last strategy = first choice
 scan({"Freudenthal","Weyl","JacobiTrudi","JacobiTrudi'"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
-character (String,ZZ,List,List) := o -> (type,m,vrs,v) -> runHooks(symbol character,(type,m,vrs,v),o)
-character (LieAlgebra,List) := o -> (cacheValue'(0,character)) ((g,v) -> (
-    type:=g#"RootSystemType";
-    m:=g#"LieAlgebraRank";	
-    if isSimple g then character(type,m,gens ring g,v)
-    else (
-	vrs:=split(gens ring g,m);
+
+character = method(
+    TypicalValue => RingElement
+    )
+
+character (String,ZZ,List,List) := memoize((type,m,vrs,v) -> -- should we cache vrs? TODO rethink. also put back options
+    runHooks(symbol character,(type,m,vrs,v))
+--    runHooks(symbol character,(type,m,vrs,v),Strategy=>"Freudenthal")
+    )
+character (Sequence,Sequence,List,List) := memoize((type,m,vrs,v) -> (
+	vrs=split(vrs,m);
 	v=split(v,m);
 	product(#m,i->character(type#i,m#i,vrs#i,v#i))
-	)
-    ))
-character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
-character LieAlgebraModule := o -> (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
+	))
+character (LieAlgebra,List) := (g,v) -> (
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    if m===() then 1_(characterRing g) else character(type,m,gens characterRing g,v) -- annoying special case, otherwise wrong ring
+    )
+character (LieAlgebra,Vector) := (g,v) -> character(g,entries v)
+character LieAlgebraModule := (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v)))
 
 weightDiagram = method(
-    Options=>{Strategy=>null},
+--    Options=>{Strategy=>null},
     TypicalValue=>VirtualTally
     )
 
-weightDiagram LieAlgebraModule := o -> (M) -> new VirtualTally from listForm character(M,o)
-weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v) -> new VirtualTally from listForm character(g,v,o)
+weightDiagram LieAlgebraModule := (M) -> new VirtualTally from listForm character M
+weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := (g,v) -> new VirtualTally from listForm character(g,v)
 
-fac := (cacheValue symbol fac) ( g -> ( -- possible denominator in Weyl product formula factors
-	lcm append(apply(positiveCoroots g, u -> numerator (killingForm(g,u,u)/2)),1) -- append for g=0
-	) )
+fac := g -> ( -- possible denominator in Weyl product formula factors TODO cache
+    lcm append(apply(positiveCoroots g, u -> numerator (killingForm(g,u,u)/2)),1) -- append for g=0
+    )
 
-qden := (cacheValue'(0,symbol qden)) ( (g,qnum) -> (
-	rho:=toList(rank g : 1);
-	d:=fac g;
-	product(positiveRoots g, a -> qnum lift(d*killingForm(g,rho,a),ZZ))
-	))
+qden := (g,qnum) -> ( -- TDOO cache
+    rho:=toList(rank g : 1);
+    d:=fac g;
+    product(positiveRoots g, a -> qnum lift(d*killingForm(g,rho,a),ZZ))
+    )
 
 qdim1 = (M,qnum) -> ( -- used internally by dim and qdim: Weyl product formula
     g:=M#"LieAlgebra";
@@ -971,7 +975,7 @@ LieAlgebraModuleFromWeights = method(
     TypicalValue => LieAlgebraModule
     )
 LieAlgebraModuleFromWeights(RingElement,LieAlgebra) := (c0,g) -> (
-    if ring c0 =!= ring g then error "wrong ring";
+    if ring c0 =!= characterRing g then error "wrong ring";
     c:=c0;
     --find and peel off irreducibles
     decompositionData := while c!=0 list ( (v,mu) := first listForm leadTerm c ) do (
@@ -988,7 +992,7 @@ LieAlgebraModuleFromWeights(RingElement,LieAlgebra) := (c0,g) -> (
 -- not clear which is faster
 
 LieAlgebraModuleFromWeights(VirtualTally,LieAlgebra) := (W,g) -> (
-    R := ring g;
+    R := characterRing g;
     LieAlgebraModuleFromWeights(sum(pairs W,(w,a) -> a*R_w),g)
     )
 
@@ -1266,8 +1270,8 @@ blocks = C -> ( -- given a Cartan (or adjacency) matrix, decompose into irreduci
     B
 )
 
-new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Cartan matrix
-    if numColumns C == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),cache=>new CacheTable from {ring => ZZ[Inverses=>true,MonomialOrder=>Lex],order=>{}}};
+lieTypeFromCartan := C -> ( -- used internally. returns (type,m,order) where order is permutation of rows/cols
+    -- in principle one could conceive not permuting at all but it would require some rewrite (positiveRoots, etc)
     B:=blocks C;
     type':=(); m':=(); L:={}; -- L is permutation of rows/columns to match normal Cartan matrix
     scan(B, b -> (
@@ -1292,9 +1296,13 @@ new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Ca
 	    type'=append(type',t); m'=append(m',n);
 	    L=L|b;
 	    ));
-    h:=directSum apply(type',m',simpleLieAlgebra); -- lazy though avoids unsequence, worrying about rings etc
-    h.cache.order=L; -- only needed temporarily
-    -- in principle one could conceive not permuting at all but it would require some rewrite (positiveRoots, etc)
+    (type',m',L)
+    )
+
+new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Cartan matrix
+    if numColumns C == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>()};
+    (type,m,L):=lieTypeFromCartan C;
+    h:=directSum apply(type,m,simpleLieAlgebra); -- lazy though avoids unsequence, worrying about rings etc
     assert(cartanMatrix h == C_L^L);
     h
     )
@@ -1310,7 +1318,7 @@ subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(Z
 -*
     -- identify the sub-Dynkin diagram
     S=deepSplice S;
-    if #S == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),cache=>new CacheTable from {ring => ZZ[Inverses=>true,MonomialOrder=>Lex]}};
+    if #S == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>()}
     S=apply(S,i->i-1);
     C:=(cartanMatrix g)^S_S;
     h:=new LieAlgebra from C;
@@ -1320,11 +1328,16 @@ subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(Z
 subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
     if numRows M != rank g then error "wrong size of coroots";
     C := transpose M * cartanMatrix g * M; -- TODO this only works for simply laced CHECK
-    h:=new LieAlgebra from C;
-    M=M_(h.cache.order); -- permuted matrix of coroots
+    (type,m,L):=lieTypeFromCartan C;
+    M=M_L; -- permuted matrix of coroots
     subs:=hashTable{g=>M};
     if g#?subLieAlgebra then subs=merge(applyValues(g#subLieAlgebra, A -> A*M),subs,last);
-    new LieAlgebra from merge(h,hashTable{subLieAlgebra=>subs,parent=>g},last)  -- parent is just for aesthetics
+    new LieAlgebra from {
+	"LieAlgebraRank"=>unsequence m,
+	"RootSystemType"=>unsequence type,
+	subLieAlgebra=>subs,
+	parent=>g  -- parent is just for aesthetics
+	}
     )
     
 
@@ -1753,7 +1766,7 @@ doc ///
 	(weightDiagram,LieAlgebraModule)
 	(weightDiagram,LieAlgebra,List)
 	(weightDiagram,LieAlgebra,Vector)
-	[weightDiagram,Strategy]
+--	[weightDiagram,Strategy]
     Headline
         computes the weights in a Lie algebra module and their multiplicities
     Usage
@@ -2071,7 +2084,7 @@ doc ///
 	(character,LieAlgebraModule)
 	(character,LieAlgebra,List)
 	(character,LieAlgebra,Vector)
-	[character,Strategy]
+--	[character,Strategy]
     Headline
         Computes the character of a Lie algebra module
     Usage
@@ -2342,12 +2355,11 @@ doc ///
 	   @TT "new LieAlgebra from M"@
 
 	   If M is a valid Cartan matrix, it will reorder if nedded the rows/columns of M to a standard form and then output the
-	   corresponding Lie algebra @TT "g"@. (the permutation of rows/columns is stored in @TT "g.cache.order"@).
+	   corresponding Lie algebra @TT "g"@.
 	Example
 	    M = matrix {{2, 0, -3, 0}, {0, 2, 0, -1}, {-1, 0, 2, 0}, {0, -1, 0, 2}}
 	    h := new LieAlgebra from M
 	    cartanMatrix h
-	    h.cache.order
 ///
 
 
@@ -2359,7 +2371,7 @@ undocumented ( {
     (symbol ^,LieAlgebraModule,QQ),
     (irreducibleLieAlgebraModule,LieAlgebra,Vector), (irreducibleLieAlgebraModule,LieAlgebra,List),
     (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
-    (dim,LieAlgebra),(ring,LieAlgebra),(rank,LieAlgebra),
+    (dim,LieAlgebra),(rank,LieAlgebra),
     (character,String,ZZ,List,List),
     (dynkinDiagram,String,ZZ,ZZ),
     } | values fraktur)
