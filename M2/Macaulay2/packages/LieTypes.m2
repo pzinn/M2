@@ -3,7 +3,7 @@
 newPackage(
     "LieTypes",
     Version => "0.8",
-    Date => "Jan 18, 2023",
+    Date => "Jan 22, 2023",
     Headline => "common types for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
@@ -161,6 +161,7 @@ global variable names instead of the hash table contents.
 * semi-simple Lie algebras are possible, use ++
 * subLieAlgebra, branchingRule, supports general semi-simple Lie algebras
 * define a Lie algebra based on its Cartan matrix
+* improved caching of characters
 
 *-
 
@@ -171,6 +172,15 @@ c:=(x#i).cache;
 key':=replace(i,key,x);
 if c#?key' then c#key' else c#key'=f x
 ) )
+
+-- helper functions for semisimple Lie algebras
+split := (w,L) -> ( -- split weight of semisimple algebra according to simple parts
+    L=prepend(0,accumulate(plus,0,L)); -- why does accumulate suck
+    apply(#L-1,i->w_(toList(L#i..L#(i+1)-1)))
+    )
+unsplit = (v,L,i) -> ( -- from a weight of one summand to the whole
+    toList(sum(i,j->L#j):0) | v | toList(sum(i+1..#L-1,j->L#j):0)
+    )
 
 -----------------------------------------------------------------------
 -- LieAlgebra= {
@@ -191,7 +201,13 @@ characterRing (String,ZZ) := memoize( (type,m) -> (
     x:=getSymbol "x";
     ZZ(monoid [x_1..x_m,Inverses=>true,MonomialOrder=>{Weights=>Q,Lex}])
     ))
-characterRing (Sequence,Sequence) := memoize( (type,m) -> if #m == 0 then ZZ[Inverses=>true,MonomialOrder=>Lex] else tensor apply(type,m,characterRing))
+characterRing (Sequence,Sequence) := memoize( (type,m) -> if #m == 0 then ZZ[Inverses=>true,MonomialOrder=>Lex] else ( -- tensor apply(type,m,characterRing))
+	R := tensor apply(type,m,characterRing);
+	vrs := split(gens R,m);
+	R#"maps" = apply(#m, i -> map(R,characterRing(type#i,m#i),vrs#i)); -- ideally this should be generated automatically by tensor
+	R
+	))
+
 characterRing LieAlgebra := g -> characterRing(g#"RootSystemType",g#"LieAlgebraRank")
 
 simpleLieAlgebra = method(
@@ -325,14 +341,6 @@ highestRoot(String,ZZ) := memoize((type, m) -> (--see Appendix 13.A, [DMS]
 highestRoot(Sequence,Sequence):=memoize((type,m)-> join apply(type,m,highestRoot))
 
 highestRoot(LieAlgebra) := (g) -> highestRoot(g#"RootSystemType",g#"LieAlgebraRank")
-
-split := (w,L) -> ( -- split weight of semisimple algebra according to simple parts
-    L=prepend(0,accumulate(plus,0,L)); -- why does accumulate suck
-    apply(#L-1,i->w_(toList(L#i..L#(i+1)-1)))
-    )
-unsplit = (v,L,i) -> ( -- from a weight of one summand to the whole
-    toList(sum(i,j->L#j):0) | v | toList(sum(i+1..#L-1,j->L#j):0)
-    )
 
 starInvolution = method()
 starInvolution(String,ZZ,List) := (type, m, w) ->  ( N:=#w;
@@ -815,12 +823,13 @@ multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
 )
 multiplicity(Vector,LieAlgebraModule) := o -> (w,M) -> multiplicity(entries w,M)
 
-stdVars := memoize ( (type,m,vrs) -> (
-    if type == "A" then apply(m+1, i -> (if i==m then 1 else vrs_i) * (if i==0 then 1 else vrs_(i-1)^-1))
-    else if type=="B" then apply(m, i -> (if i==m-1 then vrs_i^2 else vrs_i) * (if i==0 then 1 else vrs_(i-1)^-1))
-    else if type == "C" then apply(m, i -> vrs_i * (if i==0 then 1 else vrs_(i-1)^-1))
-    else if type == "D" then apply(m-2, i -> vrs_i*(if i==0 then 1 else vrs_(i-1)^-1)) | {vrs_(m-2)*vrs_(m-1)*vrs_(m-3)^-1,vrs_(m-1)*vrs_(m-2)^-1}
-    ))
+stdVars := memoize ( (type,m) -> (
+	vrs := gens characterRing(type,m);
+    	if type == "A" then apply(m+1, i -> (if i==m then 1 else vrs_i) * (if i==0 then 1 else vrs_(i-1)^-1))
+    	else if type=="B" then apply(m, i -> (if i==m-1 then vrs_i^2 else vrs_i) * (if i==0 then 1 else vrs_(i-1)^-1))
+    	else if type == "C" then apply(m, i -> vrs_i * (if i==0 then 1 else vrs_(i-1)^-1))
+    	else if type == "D" then apply(m-2, i -> vrs_i*(if i==0 then 1 else vrs_(i-1)^-1)) | {vrs_(m-2)*vrs_(m-1)*vrs_(m-3)^-1,vrs_(m-1)*vrs_(m-2)^-1}
+    	))
 
 characterAlgorithms := new MutableHashTable;
 -- Jacobi Trudi formulae
@@ -828,26 +837,26 @@ elemSym = memoize((L,i) -> (
     if i<0 or i>#L then 0
     else sum(subsets(L,i),product)
     ))
-characterAlgorithms#"JacobiTrudi'" = (type,m,vrs,v) -> ( -- good for high rank algebras, small weights
+characterAlgorithms#"JacobiTrudi'" = (type,m,v) -> ( -- good for high rank algebras, small weights
     if type != "A" then return;
-    z := stdVars(type,m,vrs);
+    z := stdVars(type,m);
     conj:=reverse splice apply(m,i -> v#i : i+1);
-    if #conj == 0 then 1_(ring first vrs) else det matrix table(#conj,#conj,(i,j)->elemSym(z,conj#i+j-i))
+    if #conj == 0 then 1_(characterRing(type,m)) else det matrix table(#conj,#conj,(i,j)->elemSym(z,conj#i+j-i))
     )
 completeSym = memoize((L,i) -> (
     if i<0 then 0
     else sum(compositions(#L,i),c->product(L,c,(v,k)->v^k))
     ))
-characterAlgorithms#"JacobiTrudi" = (type,m,vrs,v) -> (
+characterAlgorithms#"JacobiTrudi" = (type,m,v) -> (
     if type != "A" then return;
-    z := stdVars(type,m,vrs);
+    z := stdVars(type,m);
     pows := apply(m+1,j->sum(j..m-1,k->v#k));
     det matrix table(m+1,m+1,(i,j)->completeSym(z,pows#i+j-i))
     )
 
 -- Weyl character formula
-characterAlgorithms#"Weyl" = (type,m,vrs,v) -> ( -- good for low rank algebras
-    z := stdVars(type,m,vrs);
+characterAlgorithms#"Weyl" = (type,m,v) -> ( -- good for low rank algebras
+    z := stdVars(type,m);
     if type == "A" then (
 	pows := apply(m+1,j->sum(j..m-1,k->1+v#k));
     	num := det matrix table(m+1,m+1,(i,j)->z_i^(pows#j));
@@ -856,7 +865,7 @@ characterAlgorithms#"Weyl" = (type,m,vrs,v) -> ( -- good for low rank algebras
     else if type=="B" then (
 	pows = apply(m,j->sum(j..m-2,k->1+v#k)+(1+v#(m-1))//2);
 	par := (1+v#(m-1)) % 2; -- shift of 1/2 to avoid half-integer powers
-	num = vrs_(m-1)^(1-par)*det matrix table(m,m,(i,j)->z_i^(pows#j+par)-z_i^(-pows#j));
+	num = (last gens characterRing(type,m))^(1-par)*det matrix table(m,m,(i,j)->z_i^(pows#j+par)-z_i^(-pows#j));
     	den = product(m,i->z_i-1)*product(m,j->product(j,i->(z_i^-1 - z_j)*(1-z_i*z_j^-1))); --  type B Weyl denominator formula
 	)
     else if type == "C" then (
@@ -870,43 +879,44 @@ characterAlgorithms#"Weyl" = (type,m,vrs,v) -> ( -- good for low rank algebras
     	num1 := det matrix table(m,m,(i,j)->z_i^(pows#j+par)+z_i^(-pows#j));
 	num2 := det matrix table(m,m,(i,j)->z_i^(pows#j+par)-z_i^(-pows#j));
     	den = product(m,j->product(j,i->(z_i^-1 - z_j)*(1-z_i*z_j^-1))); --  type D Weyl denominator formula
-	num = vrs_(m-1)^(-par)*(num1+num2)//2;
+	num = (last gens characterRing(type,m))^(-par)*(num1+num2)//2;
 	)
     else return;
     num//den
 )
 
-characterAlgorithms#"Freudenthal" = (type,m,vrs,v) -> (
-    sum(toList Freud(type,m,v), w -> multiplicityOfWeightInLieAlgebraModule(type,m,v,w) * product(vrs,w,power))
+characterAlgorithms#"Freudenthal" = (type,m,v) -> (
+    R := characterRing(type,m);
+    sum(toList Freud(type,m,v), w -> multiplicityOfWeightInLieAlgebraModule(type,m,v,w) * R_w)
     )
 
 -- last strategy = first choice
 scan({"Freudenthal","Weyl","JacobiTrudi","JacobiTrudi'"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
 
 character = method(
+    Options=>{Strategy=>null},
     TypicalValue => RingElement
     )
 
-character (String,ZZ,List,List) := memoize((type,m,vrs,v) -> -- should we cache vrs? TODO rethink. also put back options
-    runHooks(symbol character,(type,m,vrs,v))
---    runHooks(symbol character,(type,m,vrs,v),Strategy=>"Freudenthal")
-    )
-character (Sequence,Sequence,List,List) := memoize((type,m,vrs,v) -> (
-	vrs=split(vrs,m);
+character1 = memoize((type,m,v,o)->runHooks(symbol character,(type,m,v),o))
+character2 = memoize((type,m,v,o) -> (
 	v=split(v,m);
-	product(#m,i->character(type#i,m#i,vrs#i,v#i))
+	R:=characterRing(type,m);
+	product(#m,i->R#"maps"#i character1(type#i,m#i,v#i,o))
 	))
-character (LieAlgebra,List) := (g,v) -> if rank g == 0 then 1_(characterRing g) else character(g#"RootSystemType",g#"LieAlgebraRank",gens characterRing g,v) -- annoying special case, otherwise wrong ring
-character (LieAlgebra,Vector) := (g,v) -> character(g,entries v)
-character LieAlgebraModule := (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v)))
+character (String,ZZ,List) := o -> (type,m,v) -> character1(type,m,v,o) -- tricky to memoize a method with options
+character (Sequence,Sequence,List) := o -> (type,m,v) -> character2(type,m,v,o) -- tricky to memoize a method with options
+character (LieAlgebra,List) := o -> (g,v) -> if rank g == 0 then 1_(characterRing g) else character(g#"RootSystemType",g#"LieAlgebraRank",v,o) -- annoying special case, otherwise wrong ring
+character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
+character LieAlgebraModule := o -> (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
 
 weightDiagram = method(
---    Options=>{Strategy=>null},
+    Options=>{Strategy=>null},
     TypicalValue=>VirtualTally
     )
 
-weightDiagram LieAlgebraModule := (M) -> new VirtualTally from listForm character M
-weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := (g,v) -> new VirtualTally from listForm character(g,v)
+weightDiagram LieAlgebraModule := o -> (M) -> new VirtualTally from listForm character(M,o)
+weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v) -> new VirtualTally from listForm character(g,v,o)
 
 fac := memoize((type,m) -> ( -- possible denominator in Weyl product formula factors
     lcm append(apply(positiveCoroots(type,m), u -> numerator (killingForm(type,m,u,u)/2)),1) -- append is for g=0
@@ -1756,7 +1766,7 @@ doc ///
 	(weightDiagram,LieAlgebraModule)
 	(weightDiagram,LieAlgebra,List)
 	(weightDiagram,LieAlgebra,Vector)
---	[weightDiagram,Strategy]
+	[weightDiagram,Strategy]
     Headline
         computes the weights in a Lie algebra module and their multiplicities
     Usage
@@ -2073,7 +2083,7 @@ doc ///
 	(character,LieAlgebraModule)
 	(character,LieAlgebra,List)
 	(character,LieAlgebra,Vector)
---	[character,Strategy]
+	[character,Strategy]
     Headline
         Computes the character of a Lie algebra module
     Usage
@@ -2349,6 +2359,30 @@ assert(branchingRule(LL_(1,0)(g),h) == LL_2(h))
 
 doc ///
     Key
+       (symbol ++,LieAlgebra,LieAlgebra)
+       (directSum,LieAlgebra)
+    Headline
+        Take the direct sum of Lie algebras
+    Description
+        Text
+	   Starting from simple Lie algebras, one can take direct sums and produce semi-simple ones:
+	Example
+	   g=simpleLieAlgebra("D",4);
+	   h=simpleLieAlgebra("G",2);
+	   g++h
+	   directSum(g,g,h)
+///
+
+TEST ///
+g=simpleLieAlgebra("A",2);
+h=simpleLieAlgebra("B",2);
+k=g++h
+M=LL_(1,2,2,1) k;
+assert(character(M,Strategy=>"Weyl")==character(M,Strategy=>"Freudenthal"))
+///
+
+doc ///
+    Key
         (NewFromMethod,LieAlgebra,Matrix)
     Headline
         Define a Lie algebra from its Cartan matrix
@@ -2374,7 +2408,7 @@ undocumented ( {
     (irreducibleLieAlgebraModule,LieAlgebra,Vector), (irreducibleLieAlgebraModule,LieAlgebra,List),
     (dynkinDiagram,String,ZZ),(cartanMatrix,String,ZZ),(cartanMatrix,Sequence,Sequence),(isSimple,String,ZZ),isSimple,(isSimple,LieAlgebra),
     (dim,LieAlgebra),(rank,LieAlgebra),
-    (character,String,ZZ,List,List),(character,Sequence,Sequence,List,List),
+    (character,String,ZZ,List),(character,Sequence,Sequence,List),
     (dynkinDiagram,String,ZZ,ZZ),
     (positiveRoots,Sequence,Sequence),(positiveRoots,String,ZZ),(positiveCoroots,Sequence,Sequence),(positiveCoroots,String,ZZ),
     (killingForm,String,ZZ,List,List),(killingForm,Sequence,Sequence,List,List),
