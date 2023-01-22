@@ -48,6 +48,7 @@ export {
     "isSimple",
     "cartanMatrix",
     "𝔞", "𝔟", "𝔠", "𝔡", "𝔢", "𝔣", "𝔤",
+    "subLieAlgebra",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
     "irreducibleLieAlgebraModule", "LL",
@@ -65,7 +66,6 @@ export {
     "character",
     "adams",
     "qdim",
-    "subLieAlgebra",
     "branchingRule"
     }
 
@@ -394,7 +394,7 @@ describe LieAlgebraModule := M -> Describe (
     dec := M#"DecompositionIntoIrreducibles";
     g := Parenthesize expression M#"LieAlgebra";
     if #dec == 0 then expression 0
-    else DirectSum apply(sort pairs dec,(v,mul) -> ((expression LL)_(toSequence v) g)^mul)
+    else DirectSum apply(sort pairs dec,(v,mul) -> ((expression LL)_(unsequence toSequence v) g)^mul)
     )
 expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then expression getAttribute(M,ReverseDictionary) else unhold describe M;
 
@@ -1588,6 +1588,7 @@ doc ///
     Key
         killingForm
 	(killingForm,LieAlgebra,List,List)
+	(killingForm,LieAlgebra,Vector,Vector)
     Headline 
         computes the scaled Killing form applied to two weights
     Usage 
@@ -2296,14 +2297,20 @@ doc ///
 	   @TT "S"@ must be a subset of vertices of the Dynkin diagram of @TT "g"@ (as labelled by @TO dynkinDiagram@);
 	   or a matrix whose columns are the simple coroots of the subalgebra expanded in the basis of simple coroots of @TT "g"@.
 	Example
-	   dynkinDiagram 𝔢_8
-	   subLieAlgebra(𝔢_8,{1,2,3,4,5,8})
+	   g=𝔢_8; dynkinDiagram g
+	   subLieAlgebra(g,{1,2,3,4,5,8})
+	   h=𝔣_4; dynkinDiagram h
+	   subLieAlgebra(h,matrix transpose{{1,0,0,0},{0,1,0,0},{0,0,1,0},-{2,3,2,1}}) -- simple coroots 1,2,3 and opposite of highest root
+    Caveat
+        If @TT "S"@ is a matrix, does not check if the map of root lattices leads to a valid Lie algebra embeddng.
 ///
 
 TEST ///
 g = simpleLieAlgebra("E",8)
 h = subLieAlgebra(g,{2,3,4,5})
-assert ( h#"LieAlgebraRank" == 4 and h#"RootSystemType" == "D" )
+assert ( h#"LieAlgebraRank" === 4 and h#"RootSystemType" === "D" )
+k = subLieAlgebra(h,{1,3,4})
+assert ( k#"LieAlgebraRank" === (1,1,1) and k#"RootSystemType" === ("A","A","A") )
 ///
 
 doc ///
@@ -2336,6 +2343,8 @@ TEST ///
 g=simpleLieAlgebra("A",2);
 M=LL_(4,2);
 assert(dim branchingRule(M,{1}) == dim M)
+h=subLieAlgebra(g,matrix vector {2,2})
+assert(branchingRule(LL_(1,0)(g),h) == LL_2(h))
 ///
 
 doc ///
