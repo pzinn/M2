@@ -161,6 +161,7 @@ global variable names instead of the hash table contents.
 * semi-simple Lie algebras are possible, use ++
 * subLieAlgebra, branchingRule, supports general semi-simple Lie algebras
 * define a Lie algebra based on its Cartan matrix
+* M @ M' for tensor product of modules over different Lie algebras
 * improved caching of characters
 
 *-
@@ -838,7 +839,7 @@ elemSym = memoize((L,i) -> (
     else sum(subsets(L,i),product)
     ))
 characterAlgorithms#"JacobiTrudi'" = (type,m,v) -> ( -- good for high rank algebras, small weights
-    if type != "A" then return;
+    if type != "A" or m<=3 then return;
     z := stdVars(type,m);
     conj:=reverse splice apply(m,i -> v#i : i+1);
     if #conj == 0 then 1_(characterRing(type,m)) else det matrix table(#conj,#conj,(i,j)->elemSym(z,conj#i+j-i))
@@ -891,7 +892,7 @@ characterAlgorithms#"Freudenthal" = (type,m,v) -> (
     )
 
 -- last strategy = first choice
-scan({"Freudenthal","Weyl","JacobiTrudi","JacobiTrudi'"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
+scan({"JacobiTrudi","Freudenthal","Weyl","JacobiTrudi'"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
 
 character = method(
     Options=>{Strategy=>null},
@@ -1016,6 +1017,11 @@ exteriorPower(ZZ,LieAlgebraModule) := o -> (cacheValue'(1,exteriorPower)) ((n,M)
     else if n==1 then M
     else (directSum apply(1..n, k -> (adams(k,M) ** exteriorPower(n-k,M))^((-1)^(k-1)) ))^(1/n)
     ))
+
+LieAlgebraModule @ LieAlgebraModule := (M,M') -> new LieAlgebraModule from (
+    M#"LieAlgebra" ++ M'#"LieAlgebra",
+    combine(M#"DecompositionIntoIrreducibles",M'#"DecompositionIntoIrreducibles",join,times,plus)
+    )
 
 ---------------------------------------------------------
 ---------------------------------------------------------
@@ -2373,11 +2379,26 @@ doc ///
 	   directSum(g,g,h)
 ///
 
+doc ///
+    Key
+       (symbol @,LieAlgebraModule,LieAlgebraModule)
+    Headline
+        Take the tensor product of modules over different Lie algebras
+    Description
+        Text
+	   Produces a module over the direct sum of the Lie algebras of the two modules.
+	Example
+	   LL_(1,2,3,4) (simpleLieAlgebra("D",4)) @ LL_(5,6) (simpleLieAlgebra("G",2))
+///
+
 TEST ///
 g=simpleLieAlgebra("A",2);
 h=simpleLieAlgebra("B",2);
 k=g++h
+A=LL_(1,2) g
+B=LL_(2,1) h
 M=LL_(1,2,2,1) k;
+assert ( M == A @ B )
 assert(character(M,Strategy=>"Weyl")==character(M,Strategy=>"Freudenthal"))
 ///
 
@@ -2390,7 +2411,7 @@ doc ///
         Text
 	   @TT "new LieAlgebra from M"@
 
-	   If M is a valid Cartan matrix, it will reorder if nedded the rows/columns of M to a standard form and then output the
+	   If M is a valid Cartan matrix, it will reorder if needed the rows/columns of M to a standard form and then output the
 	   corresponding Lie algebra @TT "g"@.
 	Example
 	    M = matrix {{2, 0, -3, 0}, {0, 2, 0, -1}, {-1, 0, 2, 0}, {0, -1, 0, 2}}
