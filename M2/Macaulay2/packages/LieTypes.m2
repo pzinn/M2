@@ -4,7 +4,7 @@ newPackage(
     "LieTypes",
     Version => "0.8",
     Date => "Jan 22, 2023",
-    Headline => "common types for Lie groups and Lie algebras",
+    Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
 	  {
@@ -137,6 +137,7 @@ global variable names instead of the hash table contents.
 * character and weightDiagram have 4 strategies, JacobiTrudi, JacobiTrudi', Weyl and Freudenthal
   (Weyl seems slower for small reps, but significantly faster for large highest weights)
 * adams, symmetricPower, exteriorPower added/exported
+* added PZJ as coauthor
 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
@@ -1144,22 +1145,13 @@ fusionProduct = method(
 -- TODO: allow for arbitrary number of args just like tensor and directSum
 
 -*
--- try to define abbreviated syntax? something like (except not very consistent: should output a fusion module)
-FusionModule := new Type of BasicList
-expression FusionModule := F -> new BinaryOperation from { symbol @, expression F#0, expression F#1 } 
-texMath FusionModule := texMath @@ expression
-net FusionModule := net @@ expression
-LieAlgebraModule @ ZZ := (V,n) -> new FusionModule from {V,n}
-FusionModule ** LieAlgebraModule := (F,W) -> fusionProduct(F#0,W,F#1)
-LieAlgebraModule ** FusionModule := (W,F) -> fusionProduct(F#0,W,F#1)
-FusionModule ** FusionModule := (F,F') -> if F#1 != F'#1 then error "modules must have same level" else fusionProduct(F#0,F'#0,F#1)
-FusionModule ^** ZZ := (F,n) -> ( -- doesn't work because of precedence
-    M := F#0;
-    if n<0 then "error nonnegative powers only";
-    if n==0 then trivialModule M#"LieAlgebra"
-    else if n==1 then M
-    else fusionProduct(M,F^**(n-1),F#1)
-)
+-- try to define abbreviated syntax? something like (except fusionProduct should output a fusion module)
+FusionModule := new Type of LieAlgebraModule
+LieAlgebraModule _ ZZ := (M,l) -> new FusionModule from merge(M,hashTable{"Level"=>l},last)
+-- expression fusionModule := -- TODO
+FusionModule ** LieAlgebraModule := (F,W) -> fusionProduct(F,W,F#"Level")
+LieAlgebraModule ** FusionModule := (W,F) -> fusionProduct(W,F,F#"Level")
+FusionModule ** FusionModule := (F,F') -> if F#"Level" != F'#"Level" then error "modules must have same level" else fusionProduct(F,F',F#"Level")
 *-
 
 fusionProduct(LieAlgebraModule,LieAlgebraModule,ZZ) := (V,W,l) -> (
@@ -2389,6 +2381,16 @@ doc ///
 	   Produces a module over the direct sum of the Lie algebras of the two modules.
 	Example
 	   LL_(1,2,3,4) (simpleLieAlgebra("D",4)) @ LL_(5,6) (simpleLieAlgebra("G",2))
+        Text
+	   A complicated way to define usual tensor product @TO (symbol **,LieAlgebraModule,LieAlgebraModule)@ would be using the diagonal embedding:
+	Example
+	   g := simpleLieAlgebra("A",1)
+	   h := g ++ g
+	   gdiag := subLieAlgebra(h,matrix {{1},{1}})
+	   M = LL_5 (g); M' = LL_2 (g);
+	   M @ M'
+	   branchingRule(oo,gdiag)
+	   M ** M'
 ///
 
 TEST ///
