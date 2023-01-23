@@ -617,10 +617,10 @@ killingForm = method(
     TypicalValue => QQ
     )
 killingForm(Sequence,Sequence,List,List) :=
-killingForm(String,ZZ,List,List) := (type, m, v,w) ->   (
+killingForm(String,ZZ,List,List) := memoize((type, m, v,w) -> (
     (matrix{v}*quadraticFormMatrix(type,m)*matrix transpose{w})_(0,0)
-)
-killingForm(String,ZZ,Vector,Vector) := (type,m,v,w) -> (transpose matrix v *quadraticFormMatrix(type,m)*w)_0
+))
+--killingForm(String,ZZ,Vector,Vector) := (type,m,v,w) -> (transpose matrix v *quadraticFormMatrix(type,m)*w)_0
 killingForm(LieAlgebra,List,List) := (g,v,w) -> (matrix{v}*quadraticFormMatrix g*matrix transpose{w})_(0,0)
 killingForm(LieAlgebra,Vector,Vector) := (g,v,w) -> (transpose matrix v *quadraticFormMatrix g*w)_0
 
@@ -809,7 +809,6 @@ multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
     posroots:=positiveRoots(type,m);
     rhs:=0;
     local w';
-    v=vector v; rho=vector rho; w=vector w; posroots=vector\posroots; -- much faster this way
     scan(posroots, a -> (
         w'=w+a;
         while member(w',Omega) do (
@@ -888,6 +887,30 @@ characterAlgorithms#"Weyl" = (type,m,v) -> ( -- good for low rank algebras
     else return;
     num//den
 )
+
+characterAlgorithms#"Freudenthal2" = (type,m,v) -> (
+    R:=characterRing(type,m);
+    rho:=toList(m:1);
+    Omega:=Freud(type,m,v);
+    mults:=new MutableHashTable from Omega;
+    posroots:=positiveRoots(type,m);
+    -- sort, removing highest weight
+    Omega=drop(apply(reverse sort apply(toList Omega,w->R_w),first @@ exponents),1);
+    scan(Omega, w -> (
+    	    rhs:=0;
+    	    scan(posroots, a -> (
+        	    w':=w+a;
+        	    while mults#?w' do (
+	    		rhs=rhs+killingForm(type,m,w',a)*mults#w';
+	    		w'=w'+a;
+	    		)));
+    	    lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
+    	    mults#w = lift(2*rhs/lhs,ZZ);
+	    ));
+    sum(pairs mults,(w,mu) -> mu * R_w) -- is there a nicer way of writing this?
+)
+
+
 
 characterAlgorithms#"Freudenthal" = (type,m,v) -> (
     R := characterRing(type,m);
