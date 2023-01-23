@@ -187,8 +187,8 @@ html Boolean :=
 html Function :=
 html FilePosition :=
 html Manipulator :=
-html Dictionary := html @@ toString
-html Type := x -> if x.?texMath then "$"|x.texMath|"$" else html toString x
+html Dictionary := x -> html TT x
+html Type := x -> if x.?texMath then "$"|x.texMath|"$" else html TT x
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
