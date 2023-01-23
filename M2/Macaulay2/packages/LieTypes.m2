@@ -620,6 +620,7 @@ killingForm(Sequence,Sequence,List,List) :=
 killingForm(String,ZZ,List,List) := (type, m, v,w) ->   (
     (matrix{v}*quadraticFormMatrix(type,m)*matrix transpose{w})_(0,0)
 )
+killingForm(String,ZZ,Vector,Vector) := (type,m,v,w) -> (transpose matrix v *quadraticFormMatrix(type,m)*w)_0
 killingForm(LieAlgebra,List,List) := (g,v,w) -> (matrix{v}*quadraticFormMatrix g*matrix transpose{w})_(0,0)
 killingForm(LieAlgebra,Vector,Vector) := (g,v,w) -> (transpose matrix v *quadraticFormMatrix g*w)_0
 
@@ -800,20 +801,21 @@ weightsAboveMu = memoize( (type,m,v,w) -> (
 -----------------------------------------------------------------------------------------------
 
 multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
-    rho:=apply(m, i -> 1);
+    rho:=toList(m:1);
     if v==w then return 1;
     Omega:=Freud(type,m,v);
     if not member(w,Omega) then return 0;
 --    L:=weightsAboveMu(type,m,v,w);
     posroots:=positiveRoots(type,m);
     rhs:=0;
-    k:=0;
-    for a from 0 to #posroots-1 do (
-        k=1;
-        while member(w+k*(posroots_a),Omega) do (
-	    rhs=rhs+killingForm(type,m,w+k*(posroots_a),posroots_a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w+k*(posroots_a));
-	    k=k+1;
-	    ));
+    local w';
+    v=vector v; rho=vector rho; w=vector w; posroots=vector\posroots; -- much faster this way
+    scan(posroots, a -> (
+        w'=w+a;
+        while member(w',Omega) do (
+	    rhs=rhs+killingForm(type,m,w',a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w');
+	    w'=w'+a;
+	    )));
     lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
     lift(2*rhs/lhs,ZZ)
 ))
@@ -2349,7 +2351,7 @@ doc ///
 
 TEST ///
 g=simpleLieAlgebra("A",2);
-M=LL_(4,2);
+M=LL_(4,2) g;
 assert(dim branchingRule(M,{1}) == dim M)
 h=subLieAlgebra(g,matrix vector {2,2})
 assert(branchingRule(LL_(1,0)(g),h) == LL_2(h))
