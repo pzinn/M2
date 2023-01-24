@@ -616,7 +616,8 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol ^ => "\\wedge",
     symbol ^^ => "\\wedge\\wedge",
     symbol <| => "\\langle",
-    symbol |> => "\\rangle"
+    symbol |> => "\\rangle",
+    symbol _* => "{}_*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     }
 
 BinaryOperation = new HeaderType of Expression -- {op,left,right}
