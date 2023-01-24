@@ -107,6 +107,7 @@ if topLevelMode === WebApp then (
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
     EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> show URL concatenate("#editor:",filename,":",toString start,":",toString startcol,"-",toString stop,":",toString stopcol))x;
+    html FilePosition := f -> html HREF concatenate("#editor:",f#0,":",toString f#1,":",toString f#2);
     -- the error hack
     oldolderror := olderror;
     olderror = args -> oldolderror apply(deepSplice sequence args, s -> replace(webAppTagsRegex," ",s));

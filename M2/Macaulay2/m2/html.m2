@@ -180,15 +180,16 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  ) | "<br/>"), "</span>")
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
 -- a few types are just strings
+simpleHtml := c -> x -> html TT {toString x,"class"=>"token "|c}
 html Command :=
+html Function :=  simpleHtml "function"
 html File :=
 html IndeterminateNumber :=
-html Boolean :=
-html Function :=
-html FilePosition :=
 html Manipulator :=
-html Dictionary := x -> html TT x
-html Type := x -> if x.?texMath then "$"|x.texMath|"$" else html TT x
+html Boolean := simpleHtml "constant"
+html FilePosition :=
+html Dictionary := simpleHtml "class-name"
+html Type := x -> if x.?texMath then "$"|x.texMath|"$" else (simpleHtml "class-name") x
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
