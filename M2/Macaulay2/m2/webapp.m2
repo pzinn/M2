@@ -118,18 +118,15 @@ if topLevelMode === WebApp then (
      );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
-    htmlLiteral = (s -> if s === null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
-    -- but should affect html Thing differently:
+    htmlLiteral2 := (s -> if s === null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
+    -- but should affect printing differently:
     htmlLiteral1 := s -> if s === null then s else (
 	depth := -1;
 	concatenate apply(separate("(?="|webAppTagsRegex|")",s), x -> (
 		if #x>0 and x#0 === webAppEndTag then depth=depth-1 else depth=depth+1;
 		if depth <= 0 then htmlLiteral0 x else x
 		)));
-    html Monoid :=
-    html RingFamily :=
-    html Ring :=
-    html Thing := htmlLiteral1 @@ (lookup(tex,Thing)); -- ugly
+    htmlLiteral = s -> if topLevelMode===WebAppPrint then htmlLiteral1 s else htmlLiteral2 s;
 )
 
 -- the texMath hack
