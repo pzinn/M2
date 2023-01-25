@@ -118,12 +118,12 @@ if topLevelMode === WebApp then (
      );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
-    htmlLiteral2 := (s -> if s === null then null else replace(webAppTagsRegex," ",s)) @@ htmlLiteral0;
+    htmlLiteral2 := (s -> if s === null then null else replace(webAppTagsRegex,"😀",s)) @@ htmlLiteral0;
     -- but should affect printing differently:
     htmlLiteral1 := s -> if s === null then s else (
-	depth := -1;
+	depth := 0;
 	concatenate apply(separate("(?="|webAppTagsRegex|")",s), x -> (
-		if #x>0 and x#0 === webAppEndTag then depth=depth-1 else depth=depth+1;
+		if #x>0 then if x#0 === webAppEndTag then depth=depth-1 else if member(x#0,webAppTags) then depth=depth+1;
 		if depth <= 0 then htmlLiteral0 x else x
 		)));
     htmlLiteral = s -> if topLevelMode===WebAppPrint then htmlLiteral1 s else htmlLiteral2 s;

@@ -162,14 +162,8 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-css := hashTable { Thing => null, Ring => null, -- should rings get color too? hmm
-    Keyword => "keyword", ScriptedFunctor => "constant", Boolean => "constant", File => "constant", IndeterminateNumber => "constant", Manipulator => "constant",
-    Command => "function", Function => "function",
-    Type => "class-name", FilePosition => "class-name", Dictionary => "class-name" }
-cssLookup := c -> if not css#?c then cssLookup parent c else if css#c =!= null then "class" => "token "|css#c  -- TODO rewrite better
-
 defaultHtml :=
-html Thing := x -> html SPAN { "$" | texMath x | "$", cssLookup class x } -- by default, we use math mode tex (as opposed to actual html)
+html Thing := x -> "$" | htmlLiteral texMath x | "$" -- by default, we use math mode tex (as opposed to actual html)
 html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
@@ -185,17 +179,18 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  then html k
 	  else html k | " : " | html v
 	  ) | "<br/>"), "</span>")
-html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds")
-simpleHtml := x -> html TT { toString x, cssLookup class x } -- a few types are just strings
+html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds", "class" => "token comment")
+-- a few types are just strings
+simpleHtml := c -> x -> html TT {toString x,"class"=>"token "|c}
 html Command :=
-html Function :=
+html Function :=  simpleHtml "function"
 html File :=
 html IndeterminateNumber :=
 html Manipulator :=
-html Boolean :=
+html Boolean := simpleHtml "constant"
 html Type :=
 html FilePosition :=
-html Dictionary := simpleHtml
+html Dictionary := simpleHtml "class-name"
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
