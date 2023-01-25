@@ -386,9 +386,9 @@ End = (M) -> Hom(M,M)
 Module#AfterPrint = M -> (
     ring M,"-module",
     if M.?generators then
-    if M.?relations then (", subquotient of ",ambient M)
+    if M.?relations then (", ",subquotient," of ",ambient M)
     else (", submodule of ",ambient M)
-    else if M.?relations then (", quotient of ",ambient M)
+    else if M.?relations then (", ",quotient," of ",ambient M)
     else if rank ambient M > 0 then
     (", free",
 	if not all(degrees M, d -> all(d, zero))

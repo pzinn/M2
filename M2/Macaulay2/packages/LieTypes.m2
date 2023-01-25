@@ -371,8 +371,8 @@ scan(pairs fraktur, (let,sym) ->
     )
 
 LieAlgebra#AfterPrint = g -> (
+    if isSimple g then "simple ",
     class g,
-    if isSimple g then ", simple",
     if #(g#subLieAlgebra)>1 then (
 	lst := nonnull keys g#subLieAlgebra; -- list of supalgebras
 	mins := select(lst, h -> not any(lst, k -> k#subLieAlgebra#?h)); -- find minimal elements
