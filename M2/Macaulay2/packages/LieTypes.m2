@@ -14,7 +14,7 @@ newPackage(
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
-    DebuggingMode => true,
+    DebuggingMode => false,
     Certification => {
 	 -- same article as for package ConformalBlocks
 	  "journal name" => "The Journal of Software for Algebra and Geometry",
@@ -303,7 +303,7 @@ LieAlgebra == LieAlgebra := (V,W)-> (V===W)
 
 dualCoxeterNumber = method(
     TypicalValue => ZZ
-    )     
+    )
 dualCoxeterNumber(String,ZZ) := memoize((type,m) -> (--see Appendix 13.A, [DMS]
     if type == "A" then return m+1;
     if type == "B" then return 2*m-1;
@@ -423,10 +423,7 @@ LieAlgebraModule_ZZ := (M,i) -> irreducibleLieAlgebraModule(M#"LieAlgebra",(sort
 LieAlgebraModule_* := M -> apply(sort keys M#"DecompositionIntoIrreducibles", v -> irreducibleLieAlgebraModule(M#"LieAlgebra",v))
 
 isIrreducible = method()
-isIrreducible LieAlgebraModule := M -> (
-    dec := M#"DecompositionIntoIrreducibles";
-    #dec == 1 and first values dec == 1
-    )
+isIrreducible LieAlgebraModule := M -> values M#"DecompositionIntoIrreducibles" == {1}
 
 LieAlgebraModule ^ ZZ :=
 LieAlgebraModule ^ QQ := (M,q) -> (
@@ -440,8 +437,9 @@ LieAlgebraModule ^ QQ := (M,q) -> (
 LieAlgebraModule#AfterPrint = M -> (
     if isIrreducible M then "irreducible "
     else if any(values M#"DecompositionIntoIrreducibles",a->a<0) then "virtual ",
-    M#"LieAlgebra",
-    " - module"
+    class M,
+    " over ",
+    M#"LieAlgebra"
  )
 
 trivialModule = method(TypicalValue => LieAlgebraModule)
