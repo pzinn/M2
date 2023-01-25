@@ -187,9 +187,10 @@ html File :=
 html IndeterminateNumber :=
 html Manipulator :=
 html Boolean := simpleHtml "constant"
+html Type :=
 html FilePosition :=
 html Dictionary := simpleHtml "class-name"
-html Type := x -> if x.?texMath then "$"|x.texMath|"$" else (simpleHtml "class-name") x
+html ScriptedFunctor := x -> if x.?texMath then html SPAN {"$"|x.texMath|"$","class"=>"token constant"} else (simpleHtml "constant") x
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
