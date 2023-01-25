@@ -162,7 +162,7 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-defaultHtml :=
+texHtml :=
 html Thing := x -> "$" | htmlLiteral texMath x | "$" -- by default, we use math mode tex (as opposed to actual html)
 html Nothing := x -> ""
 
@@ -194,7 +194,7 @@ html Dictionary := simpleHtml "class-name"
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
-html Ring := defaultHtml
+html Ring := texHtml
 
 --html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
 --html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)

@@ -110,7 +110,8 @@ if topLevelMode === WebApp then (
     html FilePosition := f -> html HREF concatenate("#editor:",f#0,":",toString f#1,":",toString f#2);
     -- the error hack
     oldolderror := olderror;
-    olderror = args -> oldolderror apply(deepSplice sequence args, s -> replace(webAppTagsRegex," ",s));
+    removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
+    olderror = args -> oldolderror apply(deepSplice sequence args, removeTags);
     -- the userSymbols hack (TEMP): by now mostly differs in "robust" stuff
     listSymbols List := x -> Describe TABLE prepend(
      apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
@@ -118,13 +119,14 @@ if topLevelMode === WebApp then (
      );
     -- redefine htmlLiteral to exclude codes
     htmlLiteral0 := htmlLiteral;
-    htmlLiteral2 := (s -> if s === null then null else replace(webAppTagsRegex,"😀",s)) @@ htmlLiteral0;
+    htmlLiteral2 := removeTags @@ htmlLiteral0;
     -- but should affect printing differently:
+    delim:=ascii {239,187,191};
     htmlLiteral1 := s -> if s === null then s else (
-	depth := 0;
-	concatenate apply(separate("(?="|webAppTagsRegex|")",s), x -> (
-		if #x>0 then if x#0 === webAppEndTag then depth=depth-1 else if member(x#0,webAppTags) then depth=depth+1;
-		if depth <= 0 then htmlLiteral0 x else x
+	depth := 0; flag := true; -- first piece of separate is before delim, so must be ignored
+	concatenate apply(separate(delim,s), x -> (
+		if flag then flag=false else if #x>0 and member(first x,webAppTags) then depth=depth+1;
+		first(if depth <= 0 then htmlLiteral2 x else x, if #x>0 and last x === webAppEndTag then depth=depth-1)
 		)));
     htmlLiteral = s -> if topLevelMode===WebAppPrint then htmlLiteral1 s else htmlLiteral2 s;
 )
@@ -137,9 +139,11 @@ texMath1 = x -> (
     	if l === null then error noMethodSingle(texMath, x, false);
     	l x
     ) else concatenate(
+    delim,
     webAppHtmlTag,
     l' x,
-    webAppEndTag
+    webAppEndTag,
+    delim
     );
     if debugLevel != 42 then xx else concatenate(
 	c:=class x;
