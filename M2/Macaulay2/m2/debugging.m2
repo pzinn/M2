@@ -139,7 +139,7 @@ show1(Sequence,Function) := show1(List,Function) := (types,pfun) -> (
 	       else install pfun v);
 --	  if hasAttribute(v,PrintNet) then v = getAttribute(v,PrintNet) else
 --	  if hasAttribute(v,PrintNames) then v = getAttribute(v,PrintNames) else
-	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
+--	  if hasAttribute(v,ReverseDictionary) then v = getAttribute(v,ReverseDictionary);
 	  if w#?v then w#v else w#v = new Descent
 	  );
      scan(types, install);
