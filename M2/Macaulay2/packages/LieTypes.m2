@@ -89,9 +89,15 @@ The functions available for LieAlgebras are:
 simpleLieAlgebra
 dualCoxeterNumber
 highestRoot
+simpleRoots
+simpleCoroots
+positiveRoots
 starInvolution
 killingForm
 weylAlcove
+cartanMatrix
+subLieAlgebra
+directSum
 
 LieAlgebraModules have two keys: LieAlgebra and DecompositionIntoIrreducibles
 The functions available for LieAlgebraModules are:
@@ -100,6 +106,8 @@ weights
 casimirScalar
 tensor product decomposition
 fusion coefficient
+branching rules
+trivial module, adjoint module
 
 Most of the lines of code below are to implement 
 * Freudenthal's formula for the multiplicity of a weight w in the irreducible g-module with highest weight v
@@ -186,8 +194,8 @@ unsplit = (v,L,i) -> ( -- from a weight of one summand to the whole
 
 -----------------------------------------------------------------------
 -- LieAlgebra= {
---   LieAlgebraRank => ZZ, dim of Cartan subalgebra
---   RootSystemType => String, type A through G
+--   LieAlgebraRank => ZZ | Sequence, dim of Cartan subalgebra
+--   RootSystemType => String | Sequence, type A through G
 --   }
 
 LieAlgebra = new Type of HashTable  
@@ -243,9 +251,6 @@ describe LieAlgebra := g -> Describe (
 expression LieAlgebra := g -> (
     if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary)
     else unhold describe g
--*    else if isSimple g then unhold describe g
-    else DirectSum apply(g#"RootSystemType",g#"LieAlgebraRank",(type,m) -> expression simpleLieAlgebra(type,m)) -- lazy
-    *-
     )
 net LieAlgebra := net @@ expression;
 texMath LieAlgebra := texMath @@ expression;
@@ -757,66 +762,12 @@ positiveCoroots(Sequence,Sequence) := memoize((type,m)->(
 
 positiveCoroots(LieAlgebra):=(g) -> positiveCoroots(g#"RootSystemType",g#"LieAlgebraRank")
 
---In the next four functions we implement Freudenthal's recursive algorithm for computing the weights in a Lie algebra module and their multiplicities
---The function Freud computes the set of weights in a Lie algebra module without their multiplicities
-Freud = memoize ((type,m,v) -> (
-    simpleroots:=simpleRoots(type,m);
-    if all(v, a -> a < 0) then return set{v};
-    answer:=set {v};
-    for i from 0 to #v-1 do
-        for j from 1 to v_i do
-            answer = answer + Freud(type,m,v-j*simpleroots_i);
-    answer
-))
-
-
---the function weightsAboveMu computes the weights above mu=w in the weight diagram of lambda=v
-weightsAboveMu = memoize( (type,m,v,w) -> (
-    Omega:=Freud(type,m,v);
-    if w==v then return {};
-    simpleroots:=simpleRoots(type,m);
-    answer:={};
-    k:=0;
-    for i from 0 to #simpleroots-1 do (
-        k=0;
-        while isSubset(set {w+k*(simpleroots_i)},Omega) do (
-            if k>0 then answer = append(answer,w+k*(simpleroots_i));
-            k=k+1;
-    ));
-    answer=unique answer;
-    alllevels:={answer};
-    for i from 0 to #answer-1 do (
-        alllevels = append(alllevels,weightsAboveMu(type,m,v,answer_i))
-    );
-    unique flatten alllevels
-))
-
 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
 -- Exported functions for Lie algebra modules 
 -----------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------
-
-multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
-    rho:=toList(m:1);
-    if v==w then return 1;
-    Omega:=Freud(type,m,v);
-    if not member(w,Omega) then return 0;
---    L:=weightsAboveMu(type,m,v,w);
-    posroots:=positiveRoots(type,m);
-    rhs:=0;
-    local w';
-    scan(posroots, a -> (
-        w'=w+a;
-        while member(w',Omega) do (
-	    rhs=rhs+killingForm(type,m,w',a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w');
-	    w'=w'+a;
-	    )));
-    lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
-    lift(2*rhs/lhs,ZZ)
-))
-
 
 multiplicity(List,LieAlgebraModule) := o -> (w,M) -> (
     W:=weightDiagram(M);
@@ -886,7 +837,69 @@ characterAlgorithms#"Weyl" = (type,m,v) -> ( -- good for low rank algebras
     num//den
 )
 
-characterAlgorithms#"Freudenthal2" = (type,m,v) -> (
+--In the next two functions we implement Freudenthal's recursive algorithm for computing the weights in a Lie algebra module and their multiplicities
+--The function Freud computes the set of weights in a Lie algebra module without their multiplicities
+Freud = memoize ((type,m,v) -> (
+    simpleroots:=simpleRoots(type,m);
+    if all(v, a -> a < 0) then return set{v};
+    answer:=set {v};
+    for i from 0 to #v-1 do
+        for j from 1 to v_i do
+            answer = answer + Freud(type,m,v-j*simpleroots_i);
+    answer
+))
+
+-*
+--the function weightsAboveMu computes the weights above mu=w in the weight diagram of lambda=v
+weightsAboveMu = memoize( (type,m,v,w) -> (
+    Omega:=Freud(type,m,v);
+    if w==v then return {};
+    simpleroots:=simpleRoots(type,m);
+    answer:={};
+    k:=0;
+    for i from 0 to #simpleroots-1 do (
+        k=0;
+        while isSubset(set {w+k*(simpleroots_i)},Omega) do (
+            if k>0 then answer = append(answer,w+k*(simpleroots_i));
+            k=k+1;
+    ));
+    answer=unique answer;
+    alllevels:={answer};
+    for i from 0 to #answer-1 do (
+        alllevels = append(alllevels,weightsAboveMu(type,m,v,answer_i))
+    );
+    unique flatten alllevels
+))
+
+
+multiplicityOfWeightInLieAlgebraModule = memoize((type,m,v,w) -> (
+    rho:=toList(m:1);
+    if v==w then return 1;
+    Omega:=Freud(type,m,v);
+    if not member(w,Omega) then return 0;
+--    L:=weightsAboveMu(type,m,v,w);
+    posroots:=positiveRoots(type,m);
+    rhs:=0;
+    local w';
+    scan(posroots, a -> (
+        w'=w+a;
+        while member(w',Omega) do (
+	    rhs=rhs+killingForm(type,m,w',a)*multiplicityOfWeightInLieAlgebraModule(type,m,v,w');
+	    w'=w'+a;
+	    )));
+    lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
+    lift(2*rhs/lhs,ZZ)
+))
+
+
+characterAlgorithms#"Freudenthal" = (type,m,v) -> (
+    R := characterRing(type,m);
+    sum(toList Freud(type,m,v), w -> multiplicityOfWeightInLieAlgebraModule(type,m,v,w) * R_w)
+    )
+*-
+
+-- this is a rewrite of commented out multiplicityOfWeightInLieAlgebraModule
+characterAlgorithms#"Freudenthal" = (type,m,v) -> (
     R:=characterRing(type,m);
     rho:=toList(m:1);
     Omega:=Freud(type,m,v);
@@ -909,11 +922,6 @@ characterAlgorithms#"Freudenthal2" = (type,m,v) -> (
 )
 
 
-
-characterAlgorithms#"Freudenthal" = (type,m,v) -> (
-    R := characterRing(type,m);
-    sum(toList Freud(type,m,v), w -> multiplicityOfWeightInLieAlgebraModule(type,m,v,w) * R_w)
-    )
 
 -- last strategy = first choice
 scan({"JacobiTrudi","Freudenthal","Weyl","JacobiTrudi'"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
