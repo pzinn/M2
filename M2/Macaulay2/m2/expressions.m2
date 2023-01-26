@@ -1307,16 +1307,14 @@ toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
 shortLength := 8
+shortStringLength := 3*shortLength
 shortMode = false
 -- used e.g. in chaincomplexes.m2
-Short = new WrapperType of Holder
-unhold Short := identity
-short = method(Dispatch => Thing, TypicalValue => Short)
+short = method(Dispatch => Thing, TypicalValue => Expression)
 short Thing := x -> short expression x
-short Holder := x -> Short unhold x
-expressionValue Short := x -> error "can't evaluate a shortened expression"
+short Holder := identity -- to avoid infinite loops
 short MatrixExpression :=
-short Table := x -> Short (
+short Table := x ->  (
     (opts,m) := matrixOpts x;
     shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
     new class x from
@@ -1324,19 +1322,18 @@ short Table := x -> Short (
 	    else m,shortRow)
     )
 short VisibleList :=
-short Expression := x -> Short { apply(if #x>shortLength then new class x from {
+short Expression := x -> apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
 	}
-    else x,short) }
-short Minus := identity
-short BinaryOperation := b -> Short BinaryOperation {b#0,short b#1,short b#2}
-short Power := p -> Short Power {short p#0,p#1}
-short String := s -> Short if #s > shortLength then first s | "..." | last s else s
-short Net := n -> Short if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
+    else x,short)
+short BinaryOperation := b -> BinaryOperation {b#0,short b#1,short b#2}
+short String := s -> if #s > shortStringLength then first s | "..." | last s else s
+short Net := n -> if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
 
-texMath Short := x -> ( -- semi-temp -- one day there'll be a texMath'
+-*
+texMath Short := x -> ( -- temp -- one day there'll be a texMath' or some other mechanism
     x = x#0;
     if class x =!= MatrixExpression and class x =!= Table then return texMath x;
     (opts,m):=matrixOpts x;
@@ -1348,7 +1345,7 @@ texMath Short := x -> ( -- semi-temp -- one day there'll be a texMath'
     newline, "\\end{smallmatrix}",
     if class x === MatrixExpression then "\\right)"
     ))
-
+*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

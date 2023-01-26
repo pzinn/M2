@@ -622,10 +622,11 @@ svg = g -> (
     )
 
 shortSize := 3.8
-short GraphicsObject := g -> (
-    if not g.?Size then return Short(g++{Size=>shortSize});
-    s := if instance(g.Size,Vector) then sqrt(g.Size_0^2+g.Size_1^2) else g.Size;
-    if s<shortSize then hold g else Short(g++{Size=>shortSize})
+short GraphicsObject := g -> hold (
+    if not g.?Size then g++{Size=>shortSize} else (
+    	s := if instance(g.Size,Vector) then sqrt(g.Size_0^2+g.Size_1^2) else g.Size;
+    	if s<shortSize then g else g++{Size=>shortSize}
+    	)
     )
 
 GraphicsObject ? GraphicsObject := (x,y) -> y.cache.Distance ? x.cache.Distance
