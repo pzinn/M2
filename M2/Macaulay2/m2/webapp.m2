@@ -118,17 +118,15 @@ if topLevelMode === WebApp then (
      apply(x, y -> apply({y,short class value y,short value y,TT symbolLocation y},s->TD {s}))
      );
     -- redefine htmlLiteral to exclude codes
+    -- except it should sometimes allow them...
     htmlLiteral0 := htmlLiteral;
-    htmlLiteral2 := removeTags @@ htmlLiteral0;
-    -- but should affect printing differently:
     delim:=ascii {239,187,191};
-    htmlLiteral1 := s -> if s === null then s else (
+    htmlLiteral = s -> if s === null then s else (
 	depth := 0; flag := true; -- first piece of separate is before delim, so must be ignored
 	concatenate apply(separate(delim,s), x -> (
 		if flag then flag=false else if #x>0 and member(first x,webAppTags) then depth=depth+1;
-		first(if depth <= 0 then htmlLiteral2 x else x, if #x>0 and last x === webAppEndTag then depth=depth-1)
+		first(if depth <= 0 then removeTags htmlLiteral0 x else x, if #x>0 and last x === webAppEndTag then depth=depth-1)
 		)));
-    htmlLiteral = s -> if topLevelMode===WebAppPrint then htmlLiteral1 s else htmlLiteral2 s;
 )
 
 -- the texMath hack
