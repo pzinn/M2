@@ -8,6 +8,5 @@
 
 o5 = $\left\{\left\{\left(2,\,0\right)\right\},\:\left\{\left(2,\,0\right)\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <tt class="token class-name">List</tt>
 i6 : 7:0

@@ -2,31 +2,26 @@
 i1 : 1:0QQ[x,y,z];
 i2 : 2:0I=ideal(x^2-y^2);
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
+o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 i3 : 3:0isPrime I
 
-o3 = <pre style="display:inline">
-false</pre>
+o3 = <tt class="token constant">false</tt>
 i4 : 4:0T=tropicalVariety(I,Prime=>false,ComputeMultiplicities=>true);
 i5 : 5:0rays T
 
 o5 = $0$
 
-o5 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o5 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{3}\,\longleftarrow \,0$
 i6 : 6:0maxCones T
 
 o6 = $\left\{\left\{\,\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <tt class="token class-name">List</tt>
 i7 : 7:0multiplicities T
 
 o7 = $\left\{2\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : <tt class="token class-name">List</tt>
 i8 : 8:0

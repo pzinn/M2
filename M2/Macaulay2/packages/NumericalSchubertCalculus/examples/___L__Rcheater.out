@@ -3,8 +3,7 @@
 i2 : 2:0n := 6;
 i3 : 3:0m := matrix{{3, 2, 4, 6}};
 
-o3 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o3 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{1}\,\longleftarrow \,{\mathbb Z}^{4}$
 i4 : 4:0t := LRtriple(n,m);
 i5 : 5:0w := wrapTriplet(t);

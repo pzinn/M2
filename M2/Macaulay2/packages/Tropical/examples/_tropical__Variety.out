@@ -2,8 +2,7 @@
 i1 : 1:0QQ[x,y];
 i2 : 2:0I=ideal(x+y+1);
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
+o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, y\right]$
 i3 : 3:0T=tropicalVariety(I);
 i4 : 4:0rays(T)
@@ -13,50 +12,42 @@ Ideal</pre><pre style="display:inline">
 0&amp;-1&amp;1
 \end{array}\!\right)$
 
-o4 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o4 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{2}\,\longleftarrow \,{\mathbb Z}^{3}$
 i5 : 5:0maxCones(T)
 
 o5 = $\left\{\left\{1\right\},\:\left\{0\right\},\:\left\{2\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <tt class="token class-name">List</tt>
 i6 : 6:0linealitySpace T
 
 o6 = $0$
 
-o6 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o6 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{2}\,\longleftarrow \,0$
 i7 : 7:0Polyhedra$fVector fan T
 
 o7 = $\left\{1,\:3\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : <tt class="token class-name">List</tt>
 i8 : 8:0multiplicities(T)
 
 o8 = $\left\{1,\:1,\:1\right\}$
 
-o8 : <pre style="display:inline">
-List</pre>
+o8 : <tt class="token class-name">List</tt>
 i9 : 9:0QQ[x,y,z,w];
 i10 : 10:0I = ideal(w+x+y+z)
 
-o10 = $<pre style="display:inline">
-ideal</pre>\left(x+y+z+w\right)$
+o10 = $<tt class="token function">ideal</tt>\left(x+y+z+w\right)$
 
-o10 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
+o10 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
 i11 : 11:0T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
 
 o11 = $<pre style="display:inline">
 T</pre>$
 
-o11 : <pre style="display:inline">
-TropicalCycle</pre>
+o11 : <tt class="token class-name">TropicalCycle</tt>
 i12 : 12:0rays(T)
 
 o12 = $\left(\!\begin{array}{cccc}
@@ -66,19 +57,16 @@ TropicalCycle</pre>
 -1&amp;-1&amp;-1&amp;3
 \end{array}\!\right)$
 
-o12 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o12 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{4}$
 i13 : 13:0maxCones(T)
 
 o13 = $\left\{\left\{0,\:1\right\},\:\left\{0,\:2\right\},\:\left\{0,\:3\right\},\:\left\{1,\:2\right\},\:\left\{1,\:3\right\},\:\left\{2,\:3\right\}\right\}$
 
-o13 : <pre style="display:inline">
-List</pre>
+o13 : <tt class="token class-name">List</tt>
 i14 : 14:0I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
 
-o14 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
+o14 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
 i15 : 15:0T= tropicalVariety(I,Prime=>false);
 i16 : 16:0rays(T)
@@ -90,21 +78,18 @@ Ideal</pre><pre style="display:inline">
 -3&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;-1&amp;3
 \end{array}\!\right)$
 
-o16 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o16 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{8}$
 i17 : 17:0maxCones(T)
 
 o17 = $\left\{\left\{0\right\},\:\left\{1,\:2\right\},\:\left\{1,\:4\right\},\:\left\{1,\:7\right\},\:\left\{2,\:3\right\},\:\left\{4,\:6\right\},\:\left\{3,\:5\right\},\:\left\{3,\:7\right\},\:\left\{5,\:6\right\},\:\left\{6,\:7\right\}\right\}$
 
-o17 : <pre style="display:inline">
-List</pre>
+o17 : <tt class="token class-name">List</tt>
 i18 : 18:0multiplicities(T)
 
 o18 = $\left\{1,\:1,\:1,\:1,\:1,\:1,\:1,\:1,\:1,\:1\right\}$
 
-o18 : <pre style="display:inline">
-List</pre>
+o18 : <tt class="token class-name">List</tt>
 i19 : 19:0linealitySpace T
 
 o19 = $\left(\!\begin{array}{c}
@@ -114,14 +99,12 @@ List</pre>
 1
 \end{array}\!\right)$
 
-o19 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o19 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
 i20 : 20:0QQ[x,y,z,w];
 i21 : 21:0I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
 
-o21 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
+o21 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
 i22 : 22:0T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
 i23 : 23:0rays(T)
@@ -133,15 +116,13 @@ Ideal</pre><pre style="display:inline">
 -3&amp;1&amp;1&amp;1&amp;3&amp;3
 \end{array}\!\right)$
 
-o23 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o23 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
 i24 : 24:0maxCones(T)
 
 o24 = $\left\{\left\{0,\:1\right\},\:\left\{0,\:2\right\},\:\left\{0,\:3\right\},\:\left\{0,\:4\right\},\:\left\{0,\:5\right\},\:\left\{2,\:3\right\},\:\left\{1,\:4\right\},\:\left\{1,\:5\right\},\:\left\{2,\:4\right\},\:\left\{3,\:5\right\},\:\left\{4,\:5\right\}\right\}$
 
-o24 : <pre style="display:inline">
-List</pre>
+o24 : <tt class="token class-name">List</tt>
 i25 : 25:0linealitySpace T
 
 o25 = $\left(\!\begin{array}{c}
@@ -151,13 +132,11 @@ List</pre>
 1
 \end{array}\!\right)$
 
-o25 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o25 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{1}$
 i26 : 26:0multiplicities(T)
 
 o26 = $\left\{\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\},\:\left\{\,\right\}\right\}$
 
-o26 : <pre style="display:inline">
-List</pre>
+o26 : <tt class="token class-name">List</tt>
 i27 : 27:0

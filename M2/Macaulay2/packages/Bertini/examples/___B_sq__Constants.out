@@ -3,8 +3,7 @@
 
 o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0makeB'InputFile(storeBM2Files,
 3:0         BertiniInputConfiguration=>{MPType=>2},
 4:0         AffVariableGroup=>{{z}},

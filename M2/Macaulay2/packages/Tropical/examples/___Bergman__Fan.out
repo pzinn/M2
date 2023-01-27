@@ -9,15 +9,13 @@
 0&amp;-1&amp;1
 \end{array}\!\right)$
 
-o3 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o3 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{3}\,\longleftarrow \,{\mathbb Z}^{3}$
 i4 : 4:0maxCones T
 
 o4 = $\left\{\left\{2\right\},\:\left\{0\right\},\:\left\{1\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <tt class="token class-name">List</tt>
 i5 : 5:0linealitySpace T
 
 o5 = $\left(\!\begin{array}{c}
@@ -26,7 +24,6 @@ List</pre>
 1
 \end{array}\!\right)$
 
-o5 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o5 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{3}\,\longleftarrow \,{\mathbb Z}^{1}$
 i6 : 6:0

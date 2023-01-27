@@ -4,19 +4,15 @@
 o1 = $<pre style="display:inline">
 F</pre>$
 
-o1 : <pre style="display:inline">
-Fan</pre>
+o1 : <tt class="token class-name">Fan</tt>
 i2 : 2:0mult = {1,2,-3,1}
 
 o2 = $\left\{1,\:2,\:-3,\:1\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
+o2 : <tt class="token class-name">List</tt>
 i3 : 3:0tropicalCycle(F, mult)
 
-o3 = $<pre style="display:inline">
-TropicalCycle</pre>\left\{\ldots 2\ldots\right\}$
+o3 = $<tt class="token class-name">TropicalCycle</tt>\left\{\ldots 2\ldots\right\}$
 
-o3 : <pre style="display:inline">
-TropicalCycle</pre>
+o3 : <tt class="token class-name">TropicalCycle</tt>
 i4 : 4:0

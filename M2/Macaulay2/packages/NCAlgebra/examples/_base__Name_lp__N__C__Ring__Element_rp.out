@@ -4,25 +4,21 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0baseName x
 
 o2 = $x$
 
-o2 : <pre style="display:inline">
-Symbol</pre>
+o2 : <tt class="token class-name">Symbol</tt>
 i3 : 3:0B = QQ{p_1..p_6}
 
 o3 = $<pre style="display:inline">
 B</pre>$
 
-o3 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o3 : <tt class="token class-name">NCPolynomialRing</tt>
 i4 : 4:0baseName p_1
 
 o4 = $p_{1}$
 
-o4 : <pre style="display:inline">
-IndexedVariable</pre>
+o4 : <tt class="token class-name">IndexedVariable</tt>
 i5 : 5:0

@@ -7,16 +7,14 @@
 \frac{9}{4}&amp;\frac{3}{4}&amp;\frac{7}{4}
 \end{array}\!\right)$
 
-o1 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o1 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i2 : 2:0(perm,LR)=LRdecomposition(A,j->-j);
 i3 : 3:0perm
 
 o3 = $\left\{0,\:1,\:2\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <tt class="token class-name">List</tt>
 i4 : 4:0P=transpose (id_(QQ^3))_perm
 
 o4 = $\left(\!\begin{array}{ccc}
@@ -25,8 +23,7 @@ List</pre>
 0&amp;0&amp;1
 \end{array}\!\right)$
 
-o4 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o4 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i5 : 5:0R=extractRightUpper(LR)
 
@@ -36,8 +33,7 @@ Matrix</pre><pre style="display:inline">
 0&amp;0&amp;\frac{47}{68}
 \end{array}\!\right)$
 
-o5 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o5 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i6 : 6:0L=extractLeftLower(LR)
 
@@ -47,11 +43,9 @@ Matrix</pre><pre style="display:inline">
 \frac{1}{2}&amp;\frac{9}{17}&amp;1
 \end{array}\!\right)$
 
-o6 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o6 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Q}^{3}\,\longleftarrow \,{\mathbb Q}^{3}$
 i7 : 7:0L*R==P*A
 
-o7 = <pre style="display:inline">
-true</pre>
+o7 = <tt class="token constant">true</tt>
 i8 : 8:0

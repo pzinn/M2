@@ -3,25 +3,22 @@
 i2 : 2:0F = {x^2-2,y^2-2};
 i3 : 3:0sols = bertiniZeroDimSolve (F)
 
-o3 = $\left\{\left\{{1.41421}-{8.88178}\cdot 10^{-16}\,\mathbf{i},\:{1.41421}-{8.88178}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{{1.41421},\:-{1.41421}\right\},\:\left\{-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i},\:{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1.41421}+{6.66134}\cdot 10^{-16}\,\mathbf{i},\:-{1.41421}+{6.66134}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{{1.41421}+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i},\:-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1.41421}+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{-{1.41421}+0\,\mathbf{i},\:-{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <tt class="token class-name">List</tt>
 i4 : 4:0S = bertiniRefineSols (100, F, sols)
 
-o4 = $\left\{\left\{-{1.41421}+{6.66134}\cdot 10^{-16}\,\mathbf{i},\:-{1.41421}+{6.66134}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i},\:{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{{1.41421}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{{1.41421}-{8.88178}\cdot 10^{-16}\,\mathbf{i},\:{1.41421}-{8.88178}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{-{1.41421}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}+{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{-{1.41421}+{6.245}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}-{6.245}\cdot 10^{-17}\,\mathbf{i}\right\},\:\left\{{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i},\:-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{{1.41421}-{5.55112}\cdot 10^{-17}\,\mathbf{i},\:{1.41421}-{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <tt class="token class-name">List</tt>
 i5 : 5:0coords = coordinates S_0
 
-o5 = $\left\{-{1.41421}+{6.66134}\cdot 10^{-16}\,\mathbf{i},\:-{1.41421}+{6.66134}\cdot 10^{-16}\,\mathbf{i}\right\}$
+o5 = $\left\{-{1.41421}+{5.55112}\cdot 10^{-17}\,\mathbf{i},\:-{1.41421}+{5.55112}\cdot 10^{-17}\,\mathbf{i}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <tt class="token class-name">List</tt>
 i6 : 6:0coords_0
 
-o6 = $-{1.41421}+{6.66134}\cdot 10^{-16}\,\mathbf{i}$
+o6 = $-{1.41421}+{5.551119999999999}\cdot 10^{-17}\,\mathbf{i}$
 
 o6 : ${\mathbb C}$<pre style="display:inline">
  (of precision </pre>$333$<pre style="display:inline">

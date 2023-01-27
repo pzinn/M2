@@ -4,6 +4,5 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0

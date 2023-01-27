@@ -3,7 +3,6 @@
 i2 : 2:0T=tropicalCycle (F,{1,2});
 i3 : 3:0isSimplicial T
 
-o3 = <pre style="display:inline">
-true</pre>
+o3 = <tt class="token constant">true</tt>
 i4 : 4:0
 5:0

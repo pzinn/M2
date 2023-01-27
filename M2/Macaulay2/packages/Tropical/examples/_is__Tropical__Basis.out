@@ -3,14 +3,11 @@
 
 o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0isTropicalBasis({x+y+z,2*x+3*y-z})
 
-o2 = <pre style="display:inline">
-false</pre>
+o2 = <tt class="token constant">false</tt>
 i3 : 3:0isTropicalBasis(flatten entries gens Grassmannian (1,4,QQ[a..l]))
 
-o3 = <pre style="display:inline">
-true</pre>
+o3 = <tt class="token constant">true</tt>
 i4 : 4:0

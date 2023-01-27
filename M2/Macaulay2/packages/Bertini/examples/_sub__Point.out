@@ -3,8 +3,7 @@
 
 o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0f=z*x+y
 
 o2 = $x\,z+y$
@@ -12,20 +11,19 @@ PolynomialRing</pre>
 o2 : $R$
 i3 : 3:0subPoint(f,{x,y},{.1,.2})
 
-o3 = ${.1}\,z+{.2}$
+o3 = $\left({.1}+0\,\mathbf{i}\right)z+{.2}+0\,\mathbf{i}$
 
 o3 : $R$
 i4 : 4:0subPoint(f,{x,y,z},{.1,.2,.3},SpecifyVariables=>{y})
 
-o4 = $x\,z+{.2}$
+o4 = $x\,z+{.2}+0\,\mathbf{i}$
 
 o4 : $R$
 i5 : 5:0R=CC_200[x,y,z]
 
 o5 = $R$
 
-o5 : <pre style="display:inline">
-PolynomialRing</pre>
+o5 : <tt class="token class-name">PolynomialRing</tt>
 i6 : 6:0f=z*x+y
 
 o6 = $x\,z+y$
@@ -33,7 +31,7 @@ PolynomialRing</pre>
 o6 : $R$
 i7 : 7:0subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
 
-o7 = ${.23}$
+o7 = ${.23}+0\,\mathbf{i}$
 
 o7 : ${\mathbb C}$<pre style="display:inline">
  (of precision </pre>$53$<pre style="display:inline">
@@ -41,7 +39,7 @@ PolynomialRing</pre>
 i8 : 8:0subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
 9:0        0,1},SubIntoCC=>true,M2Precision=>200)
 
-o8 = ${.123456789012345678901234567890123456789}$
+o8 = ${.123456789012345678901234567890123456789}+0\,\mathbf{i}$
 
 o8 : ${\mathbb C}$<pre style="display:inline">
  (of precision </pre>$200$<pre style="display:inline">

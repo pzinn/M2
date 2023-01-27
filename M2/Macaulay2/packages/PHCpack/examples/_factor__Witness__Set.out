@@ -6,14 +6,12 @@
 o4 = $<pre style="display:inline">
 w</pre>$
 
-o4 : <pre style="display:inline">
-WitnessSet</pre>
+o4 : <tt class="token class-name">WitnessSet</tt>
 i5 : 4:0L = factorWitnessSet(w)
 found 2 irreducible factors 
 
 o5 = $<pre style="display:inline">
 L</pre>$
 
-o5 : <pre style="display:inline">
-NumericalVariety</pre>
+o5 : <tt class="token class-name">NumericalVariety</tt>
 i6 : 5:0

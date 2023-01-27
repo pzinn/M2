@@ -4,8 +4,7 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0F = a^2+b^2+c^2+d^2+e^2+f^2+g^2+h^2;
 i3 : 3:0sparseCoeffs(F)
 
@@ -20,8 +19,7 @@ NCPolynomialRing</pre>
 1
 \end{array}\!\right)$
 
-o3 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o3 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Q}^{8}\,\longleftarrow \,{\mathbb Q}^{1}$
 i4 : 4:0bas = flatten entries basis(2,A);
 i5 : 5:0#bas
@@ -96,8 +94,7 @@ Matrix</pre><pre style="display:inline">
 1
 \end{array}\!\right)$
 
-o6 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o6 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Q}^{64}\,\longleftarrow \,{\mathbb Q}^{1}$
 i7 : 7:0sparseCoeffs(toList (10:F),Monomials=>bas)
 
@@ -168,7 +165,6 @@ Matrix</pre><pre style="display:inline">
 1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1
 \end{array}\!\right)$
 
-o7 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o7 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Q}^{64}\,\longleftarrow \,{\mathbb Q}^{10}$
 i8 : 8:0

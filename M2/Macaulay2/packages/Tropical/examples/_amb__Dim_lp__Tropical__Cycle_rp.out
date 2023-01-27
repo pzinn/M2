@@ -3,8 +3,7 @@
 
 o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0T=tropicalVariety(ideal(x+y+z));
 i3 : 3:0ambDim T
 

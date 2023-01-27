@@ -24,6 +24,5 @@
 -{4.19554}+{1.93172}\,\mathbf{i}&amp;-{1.11528}-{.480829}\,\mathbf{i}&amp;{.19859}+{1.24706}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <tt class="token class-name">List</tt>
 i5 : 9:0

@@ -3,14 +3,12 @@
 
 o1 = $Q$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0R = Q/ideal{a*b-c^2}
 
 o2 = $R$
 
-o2 : <pre style="display:inline">
-QuotientRing</pre>
+o2 : <tt class="token class-name">QuotientRing</tt>
 i3 : 3:0kRes = res(coker vars R, LengthLimit=>7)
 
 o3 = $\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
@@ -46,12 +44,10 @@ c&amp;0&amp;a&amp;0\\
 0&amp;c&amp;0&amp;b
 \end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}7}{R^{4}}$
 
-o3 : <pre style="display:inline">
-ChainComplex</pre>
+o3 : <tt class="token class-name">ChainComplex</tt>
 i4 : 4:0M = coker kRes.dd_5
 
-o4 = $<pre style="display:inline">
-cokernel</pre>\ \begin{array}{l}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\end{array}\left(\!\begin{array}{cccc}
+o4 = $<tt class="token function">cokernel</tt>\ \begin{array}{l}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\end{array}\left(\!\begin{array}{cccc}
 \vphantom{\left\{4\right\}}0&amp;-a&amp;0&amp;-c\\
 \vphantom{\left\{4\right\}}-b&amp;0&amp;-c&amp;0\\
 \vphantom{\left\{4\right\}}c&amp;0&amp;a&amp;0\\
@@ -60,166 +56,24 @@ cokernel</pre>\ \begin{array}{l}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\rig
 
 o4 : $R$<pre style="display:inline">
 -module</pre><pre style="display:inline">
-, quotient of </pre>$R^{4}$
+, </pre><tt class="token function">quotient</tt><pre style="display:inline">
+ of </pre>$R^{4}$
 i5 : 5:0B = endomorphismRing(M,X)
 
 o5 = $<pre style="display:inline">
 B</pre>$
 
-o5 : <pre style="display:inline">
-NCQuotientRing</pre>
+o5 : <tt class="token class-name">NCQuotientRing</tt>
 i6 : 6:0gensI = gens ideal B
 
-o6 = $\left\{<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\}$
+o6 = $\left\{<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{1},\:X_{1}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 2\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{3},\:X_{3}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <tt class="token class-name">List</tt>
 i7 : 7:0gensIMin = minimizeRelations(gensI)
 
-o7 = $\left\{<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{2},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{0},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<pre style="display:inline">
-CacheTable</pre>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<pre style="display:inline">
-HashTable</pre>\left\{\left(<pre style="display:inline">
-NCMonomial</pre>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-NCPolynomialRing</pre>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\}$
+o7 = $\left\{<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{2},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{0},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ -1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{0},\:X_{0}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\},\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{X_{2},\:X_{2}\right\},\:\textit{ring}\ \Rightarrow \ <tt class="token class-name">NCPolynomialRing</tt>\left\{\ldots 38\ldots\right\}\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : <tt class="token class-name">List</tt>
 i8 : 8:0maps = B.cache.endomorphismRingGens
 
 o8 = $\left\{\begin{array}{l}\left\{4\right\}\vphantom{0010}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0000}\\\left\{4\right\}\vphantom{0100}\end{array}\left(\!\begin{array}{cccc}
@@ -244,10 +98,8 @@ List</pre>
 \vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;1
 \end{array}\!\right)\right\}$
 
-o8 : <pre style="display:inline">
-List</pre>
+o8 : <tt class="token class-name">List</tt>
 i9 : 9:0maps_3 == maps_0*maps_2
 
-o9 = <pre style="display:inline">
-true</pre>
+o9 = <tt class="token constant">true</tt>
 i10 : 10:0

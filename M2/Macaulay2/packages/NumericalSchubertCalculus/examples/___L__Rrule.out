@@ -3,8 +3,7 @@
 i2 : 2:0n = 7;
 i3 : 3:0M = matrix{{3, 3, 6, 7},{2, 3, 5, 7}};
 
-o3 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o3 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{2}\,\longleftarrow \,{\mathbb Z}^{4}$
 i4 : 4:0LRrule(n,M)
 

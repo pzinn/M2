@@ -6,10 +6,9 @@
 i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
 i6 : 6:0S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{{1.41421}+{4.44089}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1.41421}+{4.44089}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\left\{{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1.41421}+{4.68375}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <tt class="token class-name">List</tt>
 i7 : 7:0peek S0_0
 
 o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
@@ -22,24 +21,20 @@ Point{cache => CacheTable{...13...}}<br/>      Coordinates => {1.41421}<br/></pr
 
 o12 = $\left\{1,\:1\right\}$
 
-o12 : <pre style="display:inline">
-Point</pre>
+o12 : <tt class="token class-name">Point</tt>
 i13 : 13:0sol2=    point{{ -1,1}}
 
 o13 = $\left\{-1,\:1\right\}$
 
-o13 : <pre style="display:inline">
-Point</pre>
+o13 : <tt class="token class-name">Point</tt>
 i14 : 14:0S1={sol1,sol2}--solutions to H when t=1
 
 o14 = $\left\{\left\{1,\:1\right\},\:\left\{-1,\:1\right\}\right\}$
 
-o14 : <pre style="display:inline">
-List</pre>
+o14 : <tt class="token class-name">List</tt>
 i15 : 15:0S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
 
-o15 = $\left\{\left\{1,\:{.3}+{.556776}\,\mathbf{i}\right\},\:\left\{1,\:{.3}-{.556776}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{1+0\,\mathbf{i},\:{.3}-{.556776}\,\mathbf{i}\right\},\:\left\{1+0\,\mathbf{i},\:{.3}+{.556776}\,\mathbf{i}\right\}\right\}$
 
-o15 : <pre style="display:inline">
-List</pre>
+o15 : <tt class="token class-name">List</tt>
 i16 : 16:0

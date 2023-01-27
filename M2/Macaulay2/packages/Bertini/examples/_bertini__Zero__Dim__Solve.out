@@ -3,10 +3,9 @@
 i2 : 2:0F = {x^2-1,y^2-2};
 i3 : 3:0S = bertiniZeroDimSolve F
 
-o3 = $\left\{\left\{1,\:{1.41421}\right\},\:\left\{1,\:-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1},\:{1.41421}\right\},\:\left\{-1,\:-{1.41421}\right\}\right\}$
+o3 = $\left\{\left\{1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{{1}+0\,\mathbf{i},\:-{1.41421}+0\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{-{1}+0\,\mathbf{i},\:-{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <tt class="token class-name">List</tt>
 i4 : 4:0peek S_0
 
 o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
@@ -15,14 +14,12 @@ Point{cache => CacheTable{...13...}}<br/>      Coordinates => {1, 1.41421}<br/><
 i6 : 6:0F = {x^2*(x-1)};
 i7 : 7:0S = bertiniZeroDimSolve F
 
-o7 = $\left\{\left\{1\right\},\:\left\{-{1.5654}\cdot 10^{-14}-{2.735}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
+o7 = $\left\{\left\{{1}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{7.24021}\cdot 10^{-15}+{1.38837}\cdot 10^{-14}\,\mathbf{i}\right\}\right\}$
 
-o7 : <pre style="display:inline">
-List</pre>
+o7 : <tt class="token class-name">List</tt>
 i8 : 8:0B = bertiniZeroDimSolve(F,UseRegeneration=>1)
 
-o8 = $\left\{\left\{{1}\right\}\right\}$
+o8 = $\left\{\left\{{1}+{2.22045}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
 
-o8 : <pre style="display:inline">
-List</pre>
+o8 : <tt class="token class-name">List</tt>
 i9 : 9:0

@@ -4,24 +4,20 @@
 o1 = <pre style="display:inline">
 Bertini</pre>
 
-o1 : <pre style="display:inline">
-Package</pre>
+o1 : <tt class="token class-name">Package</tt>
 i2 : 2:0R = CC[x,y]
 
 o2 = $R$
 
-o2 : <pre style="display:inline">
-PolynomialRing</pre>
+o2 : <tt class="token class-name">PolynomialRing</tt>
 i3 : 3:0F = {x^2-1,y^2-2}
 
-o3 = $\left\{x^{2}-1,\:y^{2}-{2}\right\}$
+o3 = $\left\{x^{2}-1+0\,\mathbf{i},\:y^{2}-{2}+0\,\mathbf{i}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <tt class="token class-name">List</tt>
 i4 : 4:0solns = bertiniZeroDimSolve(F)
 
-o4 = $\left\{\left\{1,\:{1.41421}\right\},\:\left\{1,\:-{1.41421}\right\},\:\left\{-1,\:{1.41421}\right\},\:\left\{-1,\:-{1.41421}\right\}\right\}$
+o4 = $\left\{\left\{{1}+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{{1}+0\,\mathbf{i},\:-{1.41421}+0\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:-{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <tt class="token class-name">List</tt>
 i5 : 5:0

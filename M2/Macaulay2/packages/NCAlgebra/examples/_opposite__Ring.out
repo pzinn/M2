@@ -3,28 +3,23 @@
 
 o1 = $R$
 
-o1 : <pre style="display:inline">
-QuotientRing</pre>
+o1 : <tt class="token class-name">QuotientRing</tt>
 i2 : 2:0A = skewPolynomialRing(R,q,{x,y,z,w})
 
 o2 = $<pre style="display:inline">
 A</pre>$
 
-o2 : <pre style="display:inline">
-NCQuotientRing</pre>
+o2 : <tt class="token class-name">NCQuotientRing</tt>
 i3 : 3:0x*y == q*y*x
 
-o3 = <pre style="display:inline">
-true</pre>
+o3 = <tt class="token constant">true</tt>
 i4 : 4:0Aop = oppositeRing A
 
 o4 = $<pre style="display:inline">
 Aop</pre>$
 
-o4 : <pre style="display:inline">
-NCQuotientRing</pre>
+o4 : <tt class="token class-name">NCQuotientRing</tt>
 i5 : 5:0y*x == q*x*y
 
-o5 = <pre style="display:inline">
-true</pre>
+o5 = <tt class="token constant">true</tt>
 i6 : 6:0

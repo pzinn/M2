@@ -3,13 +3,11 @@
 
 o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0T=tropicalVariety (ideal(x+3*y+3));
 i3 : 3:0fVector T
 
 o3 = $\left\{0,\:1,\:3\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <tt class="token class-name">List</tt>
 i4 : 4:0

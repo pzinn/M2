@@ -6,19 +6,16 @@
 o3 = $<pre style="display:inline">
 NV</pre>$
 
-o3 : <pre style="display:inline">
-NumericalVariety</pre>
+o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0pts = {{0,0,0}} --z-axis
 
 o4 = $\left\{\left\{0,\:0,\:0\right\}\right\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <tt class="token class-name">List</tt>
 i5 : 5:0bertiniComponentMemberTest(pts, NV)
 
 o5 = $\left\{\left\{<pre style="display:inline">
 (dim=1,deg=1)</pre>\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <tt class="token class-name">List</tt>
 i6 : 6:0

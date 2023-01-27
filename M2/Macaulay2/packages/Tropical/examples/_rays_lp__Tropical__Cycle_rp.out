@@ -3,12 +3,10 @@
 
 o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0I=ideal(x^2-y*z+w^2,w^3-x*y^3+z^3);
 
-o2 : <pre style="display:inline">
-Ideal</pre><pre style="display:inline">
+o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
  of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
 i3 : 3:0T=tropicalVariety I;
 i4 : 4:0rays T
@@ -20,7 +18,6 @@ Ideal</pre><pre style="display:inline">
 -6&amp;-3&amp;-1&amp;1&amp;3&amp;7
 \end{array}\!\right)$
 
-o4 : <pre style="display:inline">
-Matrix</pre><pre style="display:inline">
+o4 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
  </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
 i5 : 5:0

@@ -6,19 +6,19 @@
 i6 : 5:0F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
 o6 = $\left\{\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
-1&amp;0&amp;0&amp;0&amp;0&amp;0\\
-0&amp;1&amp;0&amp;0&amp;0&amp;0\\
-0&amp;0&amp;1&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;1&amp;0&amp;0\\
-0&amp;0&amp;0&amp;0&amp;1&amp;0\\
-0&amp;0&amp;0&amp;0&amp;0&amp;1
+1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}
 \end{array}\!\right)\right),\:\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
-0&amp;0&amp;0&amp;0&amp;0&amp;1\\
-0&amp;0&amp;0&amp;0&amp;1&amp;0\\
-0&amp;0&amp;0&amp;1&amp;0&amp;0\\
-0&amp;0&amp;1&amp;0&amp;0&amp;0\\
-0&amp;1&amp;0&amp;0&amp;0&amp;0\\
-1&amp;0&amp;0&amp;0&amp;0&amp;0
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
+1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}
 \end{array}\!\right)\right),\:\left(\left\{2,\:1\right\},\,\left(\!\begin{array}{cccccc}
 {.892712}+{.673395}\,\mathbf{i}&amp;{.0741835}+{.808694}\,\mathbf{i}&amp;{.830833}+{.538554}\,\mathbf{i}&amp;{.557119}+{.873708}\,\mathbf{i}&amp;{.0647412}+{.877846}\,\mathbf{i}&amp;{.444183}+{.644366}\,\mathbf{i}\\
 {.29398}+{.632944}\,\mathbf{i}&amp;{.362835}+{.706096}\,\mathbf{i}&amp;{.873665}+{.415912}\,\mathbf{i}&amp;{.7037}+{.681869}\,\mathbf{i}&amp;{.0340514}+{.507989}\,\mathbf{i}&amp;{.194945}+{.518585}\,\mathbf{i}\\
@@ -28,14 +28,13 @@
 {.909047}+{.314897}\,\mathbf{i}&amp;{.246268}+{.153346}\,\mathbf{i}&amp;{.223028}+{.388829}\,\mathbf{i}&amp;{.169813}+{.965004}\,\mathbf{i}&amp;{.237252}+{.116721}\,\mathbf{i}&amp;{.465736}+{.40273}\,\mathbf{i}
 \end{array}\!\right)\right)\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <tt class="token class-name">List</tt>
 i7 : 6:0G = randomSchubertProblemInstance({l1,l2,l3},k,n);
 i8 : 7:0S = solveSchubertProblem(F,k,n);
 i9 : 8:0FlagsF = F/last;
 i10 : 9:0FlagsG = G/last;
 i11 : 10:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 2.09265 seconds
+     -- used 3.22233 seconds
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -53,11 +52,10 @@ List</pre>
 {.0284784}+{.374339}\,\mathbf{i}&amp;-{.588673}+{.906394}\,\mathbf{i}&amp;-{.233277}+{.814607}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o11 : <pre style="display:inline">
-List</pre>
+o11 : <tt class="token class-name">List</tt>
 i12 : 11:0assert all(S', s-> checkIncidenceSolution(s,G))
 i13 : 12:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.27129 seconds
+     -- used 2.25873 seconds
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
@@ -75,7 +73,6 @@ List</pre>
 -{.236198}+{.0362704}\,\mathbf{i}&amp;-{.341298}-{.374585}\,\mathbf{i}&amp;{.878579}-{.176735}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o13 : <pre style="display:inline">
-List</pre>
+o13 : <tt class="token class-name">List</tt>
 i14 : 13:0assert all(S', s-> checkIncidenceSolution(s,G))
 i15 : 14:0

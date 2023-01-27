@@ -3,32 +3,27 @@
 
 o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\:x^{2}y+y^{3}+y\,z^{2}-y\right\}$
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}+\left(-1+0\,\mathbf{i}\right)x,\:x^{2}y+y^{3}+y\,z^{2}+\left(-1+0\,\mathbf{i}\right)y\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
+o2 : <tt class="token class-name">List</tt>
 i3 : 3:0NV = bertiniPosDimSolve(F)
 
 o3 = $<pre style="display:inline">
 NV</pre>$
 
-o3 : <pre style="display:inline">
-NumericalVariety</pre>
+o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0W = NV#1_0 --z-axis
 
 o4 = $<pre style="display:inline">
 W</pre>$
 
-o4 : <pre style="display:inline">
-WitnessSet</pre>
+o4 : <tt class="token class-name">WitnessSet</tt>
 i5 : 5:0bertiniSample(4, W)
 
-o5 = $\left\{\left\{0,\:-{1.084}\cdot 10^{-276}-{2.96671}\cdot 10^{-276}\,\mathbf{i},\:{.226241}+{.195915}\,\mathbf{i}\right\},\:\left\{{1.07364}\cdot 10^{-180}+{3.51913}\cdot 10^{-180}\,\mathbf{i},\:-{6.25123}\cdot 10^{-195}+{1.90716}\cdot 10^{-195}\,\mathbf{i},\:{.365536}+{.158726}\,\mathbf{i}\right\},\:\left\{0,\:0,\:{.389168}+{.172053}\,\mathbf{i}\right\},\:\left\{0,\:0,\:{.210325}+{.310341}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{{1.31241}\cdot 10^{-309}+{1.55028}\cdot 10^{-309}\,\mathbf{i},\:-{4.19949}\cdot 10^{-309}-{4.00667}\cdot 10^{-309}\,\mathbf{i},\:{.575849}+{.177958}\,\mathbf{i}\right\},\:\left\{-{1.41522}\cdot 10^{-310}+{9.75285}\cdot 10^{-312}\,\mathbf{i},\:{2.58508}\cdot 10^{-311}-{4.46439}\cdot 10^{-312}\,\mathbf{i},\:{.464769}+{.179614}\,\mathbf{i}\right\},\:\left\{-{1.44543}\cdot 10^{-313}-{2.15294}\cdot 10^{-313}\,\mathbf{i},\:-{2.15294}\cdot 10^{-313}+{1.44543}\cdot 10^{-313}\,\mathbf{i},\:{.143357}-{.503615}\,\mathbf{i}\right\},\:\left\{-{3.10137}\cdot 10^{-313}+{1.24441}\cdot 10^{-314}\,\mathbf{i},\:{6.20274}\cdot 10^{-313}-{2.48881}\cdot 10^{-314}\,\mathbf{i},\:{.401135}-{.689071}\,\mathbf{i}\right\}\right\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <tt class="token class-name">List</tt>
 i6 : 6:0

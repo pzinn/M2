@@ -3,40 +3,34 @@
 
 o1 = $R$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0S = {x+y+z-1, x^2+y^2, x+y-z-3}
 
-o2 = $\left\{x+y+z-1,\:x^{2}+y^{2},\:x+y-z-{3}\right\}$
+o2 = $\left\{x+y+z-1+0\,\mathbf{i},\:x^{2}+y^{2},\:x+y+\left(-1+0\,\mathbf{i}\right)z-{3}+0\,\mathbf{i}\right\}$
 
-o2 : <pre style="display:inline">
-List</pre>
+o2 : <tt class="token class-name">List</tt>
 i3 : 3:0L = solveSystem(S)
 
-o3 = $\left\{\left\{1-\mathbf{i},\:1+\mathbf{i},\:-1\right\},\:\left\{1+\mathbf{i},\:1-\mathbf{i},\:-1\right\}\right\}$
+o3 = $\left\{\left\{1-\mathbf{i},\:1+\mathbf{i},\:-1+0\,\mathbf{i}\right\},\:\left\{1+\mathbf{i},\:1-\mathbf{i},\:-1+0\,\mathbf{i}\right\}\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <tt class="token class-name">List</tt>
 i4 : 4:0oneSoln = L_0
 
-o4 = $\left\{1-\mathbf{i},\:1+\mathbf{i},\:-1\right\}$
+o4 = $\left\{1-\mathbf{i},\:1+\mathbf{i},\:-1+0\,\mathbf{i}\right\}$
 
-o4 : <pre style="display:inline">
-Point</pre>
+o4 : <tt class="token class-name">Point</tt>
 i5 : 5:0peek oneSoln
 
 o5 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
 Point{cache => CacheTable{...3...}   }<br/>      Coordinates => {1-ii, 1+ii, -1}<br/></pre>
 i6 : 6:0system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
 
-o6 = $\left\{-x^{2}+y,\:-x^{3}+z,\:x+y+z-1,\:x^{3}+x+y-1\right\}$
+o6 = $\left\{\left(-1+0\,\mathbf{i}\right)x^{2}+y,\:\left(-1+0\,\mathbf{i}\right)x^{3}+z,\:x+y+z-1+0\,\mathbf{i},\:x^{3}+x+y-1+0\,\mathbf{i}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <tt class="token class-name">List</tt>
 i7 : 7:0#system > numcols vars R --overdetermined system
 
-o7 = <pre style="display:inline">
-true</pre>
+o7 = <tt class="token constant">true</tt>
 i8 : 8:0solns = solveSystem(system);
 *** after parseSolutions, ring has {x, y, z} ***
 i9 : 9:0numSolns = #solns

@@ -4,31 +4,26 @@
 o1 = $<pre style="display:inline">
 A</pre>$
 
-o1 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0coefficientRing A
 
 o2 = ${\mathbb Q}$
 
-o2 : <pre style="display:inline">
-Ring</pre>
+o2 : <tt class="token class-name">Ring</tt>
 i3 : 3:0R = ZZ/101[a,b,c,d]/(ideal(a^2-b^2))
 
 o3 = $R$
 
-o3 : <pre style="display:inline">
-QuotientRing</pre>
+o3 : <tt class="token class-name">QuotientRing</tt>
 i4 : 4:0B = R{x,y,z}
 
 o4 = $<pre style="display:inline">
 B</pre>$
 
-o4 : <pre style="display:inline">
-NCPolynomialRing</pre>
+o4 : <tt class="token class-name">NCPolynomialRing</tt>
 i5 : 5:0coefficientRing B
 
 o5 = $R$
 
-o5 : <pre style="display:inline">
-QuotientRing</pre>
+o5 : <tt class="token class-name">QuotientRing</tt>
 i6 : 6:0

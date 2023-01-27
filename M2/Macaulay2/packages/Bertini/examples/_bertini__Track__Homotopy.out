@@ -6,10 +6,9 @@
 i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
 i6 : 6:0S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{-{1.41421}\right\},\:\left\{{1.41421}\right\}\right\}$
+o6 = $\left\{\left\{-{1.41421}+0\,\mathbf{i}\right\},\:\left\{{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <tt class="token class-name">List</tt>
 i7 : 7:0peek S0_0
 
 o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
@@ -22,24 +21,20 @@ Point{cache => CacheTable{...9...}}<br/>      Coordinates => {-1.41421}<br/></pr
 
 o12 = $\left\{1,\:1\right\}$
 
-o12 : <pre style="display:inline">
-Point</pre>
+o12 : <tt class="token class-name">Point</tt>
 i13 : 13:0sol2=    point{{ -1,1}}
 
 o13 = $\left\{-1,\:1\right\}$
 
-o13 : <pre style="display:inline">
-Point</pre>
+o13 : <tt class="token class-name">Point</tt>
 i14 : 14:0S1={sol1,sol2}--solutions to H when t=1
 
 o14 = $\left\{\left\{1,\:1\right\},\:\left\{-1,\:1\right\}\right\}$
 
-o14 : <pre style="display:inline">
-List</pre>
+o14 : <tt class="token class-name">List</tt>
 i15 : 15:0S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\left\{{.652581}-{.338941}\,\mathbf{i},\:{.00705985}-{.465024}\,\mathbf{i}\right\},\:\left\{{1.02579}-{2.31625}\,\mathbf{i},\:{1.59737}-{.123739}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{-{.24506}+{.795982}\,\mathbf{i},\:{.369666}+{.375238}\,\mathbf{i}\right\},\:\left\{{.287956}+{.934731}\,\mathbf{i},\:-{.434049}+{.440746}\,\mathbf{i}\right\}\right\}$
 
-o15 : <pre style="display:inline">
-List</pre>
+o15 : <tt class="token class-name">List</tt>
 i16 : 16:0

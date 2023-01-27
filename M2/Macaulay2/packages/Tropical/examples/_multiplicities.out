@@ -3,13 +3,11 @@
 
 o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
 
-o1 : <pre style="display:inline">
-PolynomialRing</pre>
+o1 : <tt class="token class-name">PolynomialRing</tt>
 i2 : 2:0V = tropicalVariety(ideal(x+y+z));
 i3 : 3:0multiplicities V
 
 o3 = $\left\{1,\:1,\:1\right\}$
 
-o3 : <pre style="display:inline">
-List</pre>
+o3 : <tt class="token class-name">List</tt>
 i4 : 4:0
