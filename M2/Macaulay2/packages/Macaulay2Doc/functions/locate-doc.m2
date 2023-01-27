@@ -20,11 +20,11 @@ Node
   Inputs
     x:{Function,Sequence,Symbol,List,ZZ}
   Outputs
-    :{Sequence,List,Nothing}
-      {\tt (filename, start,startcol, stop,stopcol, pos,poscol)}, respectively
+    :{FilePosition,List,Nothing}
+      {\tt {filename, start,startcol, stop,stopcol, pos,poscol}}, respectively
   Description
     Text
-      For a symbol interpreted function {\tt f}, returns a sequence {\tt (n,i,c,j,d,k,e)}
+      For a symbol interpreted function {\tt f}, returns a {\tt FilePosition{n,i,c,j,d,k,e}}
       describing the location of the definition in the source code:
     Tree
       :The name of the source file is {\tt n};

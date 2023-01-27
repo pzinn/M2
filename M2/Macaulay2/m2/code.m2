@@ -12,6 +12,7 @@ needs "nets.m2"
 
 getSourceLines = method(Dispatch => Thing) 
 getSourceLines Nothing := null -> null
+getSourceLines FilePosition := getSourceLines @@ toSequence -- for backwards compatibility
 getSourceLines Sequence := x -> (
      (filename,start,startcol,stop,stopcol,pos,poscol) -> if filename =!= "stdio" then (
 	  wp := set characters " \t\r);";
@@ -100,6 +101,7 @@ editMethod String := filename -> (
 	  editor, " ", filename))
 EDIT = method(Dispatch => Thing)
 EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
+EDIT FilePosition := EDIT @@ toSequence
 EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
      editor := getViewer("EDITOR", "emacs");
      if 0 != chkrun concatenate(

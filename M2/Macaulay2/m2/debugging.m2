@@ -3,11 +3,6 @@
 needs "nets.m2"
 needs "methods.m2"
 
-symbolLocation = s -> (
-     t := locate s;
-     if t =!= null then t#0 | ":" | toString t#1| ":" | toString (t#2+1) | "-" | toString t#3| ":" | toString (t#4+1)
-     else "")
-
 processArgs := args -> concatenate (
      args = sequence args;
      apply(args, x -> 
@@ -15,7 +10,7 @@ processArgs := args -> concatenate (
 	  else if class x === Symbol then ("'", toString x, "'")
 	  else silentRobustString(40,3,x)
 	  ),
-     apply(args, x -> if class x === Symbol then ("\n", symbolLocation x, ": here is the first use of '",toString x, "'") else "")
+     apply(args, x -> if class x === Symbol then ("\n", locate x, ": here is the first use of '",toString x, "'") else "")
      )
 olderror = error
 error = args -> (
@@ -196,7 +191,7 @@ listSymbols Dictionary := d -> listSymbols values d
 listSymbols List := x -> (
      netList(Boxes=>false, HorizontalSpace => 1, prepend(
 	  {"symbol" || "------","", "class" || "-----", "", "value" || "-----", "location of symbol" || "------------------"},
-	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, symbolLocation s}))))
+	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, locate s}))))
 
 listLocalSymbols = Command(f -> listSymbols localSymbols f)
 

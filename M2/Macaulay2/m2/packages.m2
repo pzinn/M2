@@ -406,7 +406,7 @@ export List   := v -> (
 	    if instance(sym, Option) then (
 		nam = sym#0;
 		if class nam =!= String then error("expected a string: ", nam);
-		if pd#?nam then error("symbol intended as exported synonym already used internally: ", format nam, "\n", symbolLocation pd#nam, ": it was used here");
+		if pd#?nam then error("symbol intended as exported synonym already used internally: ", format nam, "\n", locate pd#nam, ": it was used here");
 		if class sym#1 =!= String then error("expected a string: ", nam);
 		sym = getGlobalSymbol(pd, sym#1))
 	    else if instance(sym, String) then (

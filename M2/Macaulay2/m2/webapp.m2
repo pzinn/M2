@@ -104,8 +104,8 @@ if topLevelMode === WebApp then (
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
-    EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> show URL concatenate("#editor:",filename,":",toString start,":",toString startcol,"-",toString stop,":",toString stopcol))x;
-    html FilePosition := f -> html HREF concatenate("#editor:",f#0,":",toString f#1,":",toString f#2);
+    EDIT FilePosition := f -> show URL ("#editor:"|toString f);
+    html FilePosition := f -> (f=toString f; html HREF ("#editor:"|f,f));
     -- the error hack
     oldolderror := olderror;
     removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
@@ -113,7 +113,7 @@ if topLevelMode === WebApp then (
     -- the userSymbols hack (TEMP): by now mostly differs in "robust" stuff
     listSymbols List := x -> Describe TABLE prepend(
      apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
-     apply(x, y -> apply({y,short class value y,short value y,TT symbolLocation y},s->TD {s}))
+     apply(x, y -> apply({y,short class value y,short value y,locate y},s->TD {s}))
      );
     -- redefine htmlLiteral to exclude codes
     -- except it should sometimes allow them...
