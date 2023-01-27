@@ -162,7 +162,7 @@ html TO2  := x -> (
 -- html'ing non Hypertext
 ----------------------------------------------------------------------------
 
-texHtml :=
+texHtml =
 html Thing := x -> "$" | htmlLiteral texMath x | "$" -- by default, we use math mode tex (as opposed to actual html)
 html Nothing := x -> ""
 
@@ -181,7 +181,7 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  ) | "<br/>"), "</span>")
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds", "class" => "token comment")
 -- a few types are just strings
-simpleHtml := c -> x -> html TT {toString x,"class"=>"token "|c}
+simpleHtml = c -> x -> html TT {toString x,"class"=>"token "|c}
 html Command :=
 html Function :=  simpleHtml "function"
 html File :=

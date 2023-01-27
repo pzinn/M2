@@ -7,7 +7,7 @@ needs "varieties.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,14,21,(17,36),(36,18)),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,14,21),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -16,12 +16,10 @@ webAppTags := apply((17,18,19,20,28,29,30,14,21,(17,36),(36,18)),ascii);
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
 	webAppPromptTag,      -- input/output prompt
-	webAppPositionTag,    -- code position (row:col)
-	webAppTexTag,         -- effectively deprecated, ~ <span class='M2Html'> $
-	webAppTexEndTag       -- effectively deprecated, ~ $ </span>
+	webAppPositionTag     -- code position (row:col)
 	)=webAppTags;
 
-webAppTagsRegex := concatenate("[",drop(webAppTags,-2),"]")
+webAppTagsRegex := concatenate("[",webAppTags,"]")
 
 -- output routines for WebApp mode
 
@@ -130,16 +128,32 @@ if topLevelMode === WebApp then (
 )
 
 -- the texMath hack
+-*
+-- that stuff doesn't really work: the size of delims isn't quite right, and it still goes back and forth between tex and html too often
+BareList := new Type of BasicList
+html BareList := v -> demark(", ",apply(toList v,html)) -- the key point: we're redefining html BareList to force it to switch back
+texMath BareList := L -> if #L > 0 then demark_",\\," apply(toList L, texMath) else "\\," -- won't ever be used directly because of prev line
+texMath VisibleList := v -> "\\left\\{"|texMath (new BareList from v)|"\\right\\}" --TEMP but that's the idea
+texMath Sequence := v -> "\\left("|texMath (new BareList from v)|"\\right)" --TEMP but that's the idea
+*-
+-- htmlMaybe is html except if it goes thru tex
+htmlMaybe = method(Dispatch=>Thing)
+htmlMaybe Expression :=
+htmlMaybe Nothing := x -> null
+htmlMaybe Thing := x -> ( -- default test
+    l := lookup(html, class x);
+    if l =!= texHtml then l x else null
+    )
 texMath1 = x -> (
-    l' := lookup(html,class x);
-    xx := if l' === Thing#html or instance(x,Expression) or instance(x,Nothing) then (
+    h := htmlMaybe x;
+    xx := if h === null then (
     	l := lookup(texMath,class x);
     	if l === null then error noMethodSingle(texMath, x, false);
     	l x
     ) else concatenate(
     delim,
     webAppHtmlTag,
-    l' x,
+    h,
     webAppEndTag,
     delim
     );
