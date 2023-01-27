@@ -52,7 +52,7 @@ export isspace    (c:char):bool := (chartype(c) & SPACE    ) != 0;
 export isnewline  (c:char):bool := (chartype(c) & NEWLINE  ) != 0;
 export isquote    (c:char):bool := (chartype(c) & QUOTE    ) != 0;
 
-export isalnum  (s:string):bool := (
+export isvalidsymbol  (s:string):bool := (
      if int(uchar(s.0)) == 226 && length(s) == 3 then return true; -- ugly unicode math symbol hack
      if !isalpha(s.0) then return false;
      foreach c in s do if !isalnum(c) then return false;
