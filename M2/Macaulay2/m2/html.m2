@@ -181,9 +181,16 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  ) | "<br/>"), "</span>")
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds", "class" => "token comment")
 -- a few types are just strings
-simpleHtml = c -> x -> html TT {toString x,"class"=>"token "|c}
-html Command :=
-html Function :=  simpleHtml "function"
+simpleHtml = c -> x -> html TT {toString x,"class"=>"token "|c} -- why is toString needed here?
+html Command := simpleHtml "function"
+html Function := f -> html TT splice {
+    if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
+	t := locate f;
+	if t === null then "-*Function*-"
+	else ("-*Function[", SPAN t, "]*-") -- a bit hacky to avoid TT policy of toString
+	),
+    "class"=>"token function"
+    }
 html File :=
 html IndeterminateNumber :=
 html Manipulator :=

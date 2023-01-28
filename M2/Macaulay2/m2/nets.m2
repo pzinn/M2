@@ -44,7 +44,8 @@ toExternalString Function := f -> (
      if hasAttribute(f,ReverseDictionary) then return toString getAttribute(f,ReverseDictionary);
      t := locate f;
      if t === null then error "can't convert anonymous function to external string"
-     else error("can't convert anonymous function (",t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4,") to external string")
+--     else error("can't convert anonymous function (",t#0, ":", toString t#1| ":", toString t#2, "-", toString t#3| ":", toString t#4,") to external string")
+     else error("can't convert anonymous function (",toString t,") to external string")
      )
 
 net Function := toString Function := f -> (
