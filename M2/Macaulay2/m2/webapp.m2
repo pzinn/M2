@@ -104,6 +104,7 @@ if topLevelMode === WebApp then (
     -- the show hack
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
+    editMethod Sequence := args -> EDIT locate args;
     EDIT FilePosition := f -> show URL ("#editor:"|toString f);
     html FilePosition := f -> (f=toString f; html HREF ("#editor:"|f,f));
     -- the error hack
