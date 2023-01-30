@@ -386,10 +386,10 @@ isUndocumented   = tag -> ( d := fetchRawDocumentation tag; d =!= null and d#?"u
 hasDocumentation = key -> null =!= fetchAnyRawDocumentation makeDocumentTag(key, Package => null)
 
 -- TODO: is it possible to expand to (filename, start,startcol, stop,stopcol, pos,poscol)?
-locate DocumentTag := tag -> (
+locate DocumentTag := tag -> new FilePosition from (
     if (rawdoc := fetchAnyRawDocumentation tag) =!= null
-    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum")
-    else (currentFileName, currentRowNumber()))
+    then (minimizeFilename rawdoc#"filename", rawdoc#"linenum",0)
+    else (currentFileName, currentRowNumber(), currentColumnNumber()))
 
 -----------------------------------------------------------------------------
 -- helpers for the document function

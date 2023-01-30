@@ -182,12 +182,17 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds", "class" => "token comment")
 -- a few types are just strings
 simpleHtml = c -> x -> html TT {x,"class"=>"token "|c}
-html Command := simpleHtml "function"
-html Function := f -> html TT splice {
+html Pseudocode :=
+html CompiledFunctionBody := simpleHtml "function"
+html Command :=
+html FunctionBody :=
+html Function := f -> html TT deepSplice {
     if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
-	t := locate f;
-	if t === null then "-*Function*-"
-	else ("-*Function[", SPAN t, "]*-") -- a bit hacky to avoid TT policy of toString
+	t := locate if instance(f,Command) then f#0 else f;
+	"-*",
+	SPAN class f,
+	if t =!= null then ("[", SPAN t, "]"),
+	"*-"
 	),
     "class"=>"token function"
     }

@@ -715,17 +715,18 @@ toString FilePosition :=
 net FilePosition := p -> concatenate(
     p#0,":",toString p#1,":",toString p#2,
     if #p>3 then ("-",toString p#3,":",toString p#4),
-    if #p>5 and (p#5 != p#1 or p#6 != p#2) then (" (",toString p#5,":",toString p#6,")")
+--    if #p>5 then (" (",toString p#5,":",toString p#6,")")
     )
--- defined in d/actors4.d
-locate' = locate -- TODO: why does (net, FunctionBody) in nets.m2 need locate'?
+
+locate' = locate -- defined in d/actors4.d
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)
-locate Nothing    :=
-locate Function   :=
-locate Pseudocode :=
-locate Sequence   :=
-locate Symbol     := FilePosition => x -> if (x':=locate' x) =!= null then new FilePosition from x'
-locate List       := List     => x -> apply(x, locate)
+locate Nothing     :=
+locate FunctionBody:=
+locate Function    :=
+locate Pseudocode  :=
+locate Sequence    :=
+locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new FilePosition from x'
+locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
 -- registerFinalizer
