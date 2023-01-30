@@ -10,6 +10,7 @@ Node
    (locate, Sequence)
    (locate, Pseudocode)
    (locate, Function)
+   (locate, FunctionBody)
    (locate, Nothing)
    (locate, List)
    (locate, ZZ)
@@ -44,6 +45,7 @@ Node
       locate methods resolution
       methods doc
       locate 0
+      peek oo
     Text
       If the function {\tt f} is compiled, or if {\tt f} is @TO "null"@,
       then a location is not available and @TO "null"@ is returned.

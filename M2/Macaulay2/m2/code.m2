@@ -114,13 +114,13 @@ EDIT Sequence := x -> ((filename,start,startcol,stop,stopcol,pos,poscol) -> (
 editMethod Command := c -> editMethod c#0
 editMethod Function := args -> EDIT locate args
 editMethod Sequence := args -> (
-     if args === () then (
-	 editor := getViewer("EDITOR", "emacs");
-     	 chkrun concatenate(
-	     if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
-	     editor)
-	 )
-     else EDIT locate args
+    if args === () then (
+	editor := getViewer("EDITOR", "emacs");
+	chkrun concatenate(
+	    if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
+	    editor)
+	)
+    else EDIT locate args
      )
 editMethod ZZ := i -> editMethod previousMethodsFound#i
 edit = Command editMethod
