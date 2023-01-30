@@ -133,6 +133,7 @@ scan({net, info},
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
+	parser' INDENT :=
 	parser' TABLE :=
 	parser' MENU :=
 	parser' DL :=
@@ -154,6 +155,9 @@ scan({net, info},
 		BK -> ());
 	    -- Stack the pieces vertically
 	    stack x);
+	parser INDENT := x -> ( -- INDENT is like DIV but with extra |s on the left
+	    n := parser DIV toList x;
+	    "| "^(height n, depth n) | n )
 	))
 
 Hop := (op,filler) -> x -> (

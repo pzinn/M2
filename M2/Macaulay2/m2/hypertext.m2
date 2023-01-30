@@ -173,6 +173,7 @@ MENU       = new IntermediateMarkUpType of HypertextContainer -- e.g. help sum
 TO         = new IntermediateMarkUpType of Hypertext
 TO2        = new IntermediateMarkUpType of Hypertext
 TOH        = new IntermediateMarkUpType of Hypertext
+INDENT     = new IntermediateMarkUpType of HypertextContainer -- temporary: one day, once format.m2 sorted out, we can simply have INDENT = x -> append(DIV x, "class" => "indent")
 
 -----------------------------------------------------------------------------
 -- LATER

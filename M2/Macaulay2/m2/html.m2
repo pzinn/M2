@@ -147,6 +147,8 @@ html HREF := x -> (
 
 html MENU := x -> html redoMENU x
 
+html INDENT := x -> html DIV append(toList x, "style"=>"border-left:3px solid;padding:10px" ) -- indent
+
 html TO   := x -> html TO2{tag := x#0, format tag | if x#?1 then x#1 else ""}
 html TO2  := x -> (
     tag := getPrimaryTag fixup x#0;
