@@ -550,7 +550,7 @@ getSourceCode :=  val         -> DIV {"class" => "waystouse",
     fixup DIV {SUBSECTION "Code", PRE M2CODE demark_newline unstack stack apply(enlist val, m -> (
 		f := lookup m; if f === null then error("SourceCode: ", toString m, ": not a method");
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-		reproduciblePaths toString c))}}
+		reproduciblePaths toString net c))}}
 getSubnodes := val -> (
     val = nonnull enlist val;
     if #val == 0 then error "encountered empty Subnodes list"
