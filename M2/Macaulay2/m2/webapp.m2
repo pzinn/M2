@@ -110,11 +110,6 @@ if topLevelMode === WebApp then (
     oldolderror := olderror;
     removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
     olderror = args -> oldolderror apply(deepSplice sequence args, removeTags);
-    -- the userSymbols hack (TEMP): by now mostly differs in "robust" stuff
-    listSymbols List := x -> Describe TABLE prepend(
-     apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
-     apply(x, y -> apply({y,short class value y,short value y,locate y},s->TD {s}))
-     );
     -- redefine htmlLiteral to exclude codes
     -- except it should sometimes allow them...
     htmlLiteral0 := htmlLiteral;

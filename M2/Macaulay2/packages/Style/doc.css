@@ -86,6 +86,11 @@ dl.element {
   margin: 0px;
 }
 
+div.indent {
+    border-left:3px solid;
+    padding:10px;
+}
+
 /*
 
  Local Variables:

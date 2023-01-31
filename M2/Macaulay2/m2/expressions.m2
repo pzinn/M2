@@ -1324,8 +1324,19 @@ short Expression := x -> apply(if #x>shortLength then new class x from {
 	}
     else x,short)
 short BinaryOperation := b -> BinaryOperation {b#0,short b#1,short b#2}
-short String := s -> if #s > shortStringLength then first s | "..." | last s else s
-short Net := n -> if #n > shortLength then stack {short first n,".",".",".",short last n} else (stack apply(unstack n,short))^(height n-1)
+short String := s -> if #s > shortStringLength then substring(s,0,shortStringLength) | "..." | last s else s -- too radical, keep shortLength chars
+short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
+short HashTable := H -> hold ( if #H <= shortLength then H else (
+    s := sortByName pairs H;
+    new class H from append(apply(shortLength,i->s#i),s#shortLength#0=>"...")
+    ))
+short MutableHashTable := expression
+
+
+Abbreviate = new WrapperType of Holder -- only used once, for listSymbols
+net Abbreviate := y -> silentRobustNet(55,4,3,y#0)
+html Abbreviate := y -> html short y#0
+
 
 -*
 texMath Short := x -> ( -- temp -- one day there'll be a texMath' or some other mechanism

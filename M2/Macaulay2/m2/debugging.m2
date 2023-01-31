@@ -182,16 +182,13 @@ localSymbols(Type,Pseudocode) := (X,f) -> select2(X,localSymbols f)
 
 localSymbols Type := X -> select2(X,localSymbols ())
 
-robust := y -> silentRobustNet(55,4,3,y)
-abbreviate := x -> (
-     if instance(x, Function) and match("^-\\*Function.*\\*-$", toString x) then "..."
-     else robust x)
 listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
-listSymbols List := x -> (
-     netList(Boxes=>false, HorizontalSpace => 1, prepend(
-	  {"symbol" || "------","", "class" || "-----", "", "value" || "-----", "location of symbol" || "------------------"},
-	  apply (x, s -> {toString s,":", robust class value s, "--", abbreviate value s, locate s}))))
+listSymbols List := x -> Describe TABLE prepend(
+    apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
+    apply(x, y -> apply({y,Abbreviate class value y,Abbreviate value y,locate y},s->TD {s}))
+    );
+
 
 listLocalSymbols = Command(f -> listSymbols localSymbols f)
 

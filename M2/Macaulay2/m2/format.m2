@@ -155,7 +155,7 @@ scan({net, info},
 		BK -> ());
 	    -- Stack the pieces vertically
 	    stack x);
-	parser INDENT := x -> ( -- INDENT is like DIV but with extra |s on the left
+	parser INDENT := x -> ( -- INDENT is like DIV but with extra |s on the left. sadly, can't be absorbed into DIV because of non-recursivity of this parser
 	    n := parser DIV toList x;
 	    "| "^(height n, depth n) | n )
 	))
