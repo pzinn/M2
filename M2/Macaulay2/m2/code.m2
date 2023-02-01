@@ -35,8 +35,8 @@ getSourceLines FilePosition := x -> (
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
 	  DIV {
-	      x, ": --source code", BR{}, -- for HTML, neither BR nor hold is needed; to avoid extra line breaks in Net conversion (sadly fails validation)
-	      hold PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
+	      x, ": --source code", -- for HTML, following "DIV hold" not needed; to avoid extra line breaks in Net conversion
+	      DIV hold PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
 	       }
 	  ))
 
@@ -44,7 +44,7 @@ limit := 4
 
 codeFunction := (f,depth) -> (
      if depth <= limit then (
-	  if locate f === null then concatenate("function ", toString f, ": source code not available")
+	  if locate f === null then DIV{"function ", f, ": source code not available"}
 	  else (
 	      syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
 	      DIV flatten {
@@ -55,7 +55,7 @@ codeFunction := (f,depth) -> (
 		      codeHelper#(functionBody f) f,
 		      (comment,val) -> INDENT {
 			  comment, BR{},
-			  if instance(val, Function) then codeFunction(val,depth+1) else expression val -- expression for OptionTable or Option
+			  if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
 			  })
 	      }
 	  )
@@ -81,7 +81,7 @@ code Sequence   := s -> (
 	    and store#key.HookAlgorithms#?strategy
 	    then store#key.HookAlgorithms#strategy));
     if func =!= null or (func = lookup key) =!= null
-    then DIV {"-- code for method: "          | formatDocumentTag key, code func }
+    then DIV {"-- code for method: " | formatDocumentTag key, code func }
     else "-- no method function found: " | formatDocumentTag key)
 code Function   := f -> codeFunction(f, 0)
 code Command    := C -> code C#0
