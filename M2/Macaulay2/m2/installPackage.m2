@@ -608,7 +608,6 @@ installPackage String := opts -> pkg -> (
 installPackage Package := opts -> pkg -> (
     tallyInstalledPackages();
     verboseLog := if opts.Verbose or debugLevel > 0 then printerr else identity;
-
     use pkg;
     -- TODO: make this more functional
     chkdoc = opts.CheckDocumentation;			    -- oops, this will have a lingering effect...

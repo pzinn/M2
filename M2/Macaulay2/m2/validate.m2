@@ -28,7 +28,7 @@ noqname := (tag, x) -> (
 -- see content.m2
 chk := (p, x) -> (
     c := class x;
-    if c === Option or c === LITERAL then return;
+    if not instance(c,Hypertext) or c === LITERAL then return;
     if not c.?qname then return noqname(c, x);
     if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
     then flagError("element of type ", toString p, " may not contain an element of type ", toString c))
@@ -103,6 +103,8 @@ fixup MarkUpType  := z -> (
 fixup HREF        := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
 fixup String      := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s)
 
+fixup Holder := -- TEMP
+fixup FilePosition :=
 fixup Option      :=
 fixup BR          :=
 fixup HR          :=

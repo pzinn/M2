@@ -71,7 +71,7 @@ net  SCRIPT  :=
 info SCRIPT  := x -> ""
 
 info String  := identity
-info Nothing := net
+info Thing := net
 
 -*
  spacing between lines and paragraphs:

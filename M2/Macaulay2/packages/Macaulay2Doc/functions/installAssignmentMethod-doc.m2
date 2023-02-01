@@ -56,7 +56,7 @@ document {
 	  x_c
      ///,
      "The source code explains how it works, behind the scenes.",
-     PRE ("    " | code {(symbol _,Symbol,Thing),((symbol _,symbol =),Symbol,Thing)}),
+     INDENT code {(symbol _,Symbol,Thing),((symbol _,symbol =),Symbol,Thing)},
      EXAMPLE lines ///
 	  peek x
      ///,

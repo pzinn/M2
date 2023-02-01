@@ -35,7 +35,7 @@ getSourceLines FilePosition := x -> (
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
 	  DIV {
-	      x, ": --source code", BR{}, -- for HTML, neither BR nor hold is needed; to avoid extra line breaks in Net conversion
+	      x, ": --source code", BR{}, -- for HTML, neither BR nor hold is needed; to avoid extra line breaks in Net conversion (sadly fails validation)
 	      hold PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
 	       }
 	  ))
@@ -55,7 +55,7 @@ codeFunction := (f,depth) -> (
 		      codeHelper#(functionBody f) f,
 		      (comment,val) -> INDENT {
 			  comment, BR{},
-			  if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
+			  if instance(val, Function) then codeFunction(val,depth+1) else expression val -- expression for OptionTable or Option
 			  })
 	      }
 	  )
