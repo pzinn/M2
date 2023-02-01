@@ -459,7 +459,12 @@ installHTML := (pkg, installPrefix, installLayout, verboseLog, rawDocumentationC
 -- helper functions for installPackage
 -----------------------------------------------------------------------------
 
-reproduciblePaths = outstr -> (
+reproduciblePaths = method(Dispatch=>Thing)
+reproduciblePaths Hypertext := l -> apply(l,x -> if not instance(x,String) then reproduciblePaths x else x)
+reproduciblePaths FilePosition := x -> new FilePosition from replace(0,reproduciblePaths first x,toList x)
+reproduciblePaths Option :=
+reproduciblePaths Thing := identity
+reproduciblePaths String := outstr -> (
      if topSrcdir === null then return outstr;
      srcdir := regexQuote toAbsolutePath topSrcdir;
      prefixdir := regexQuote prefixDirectory;

@@ -44,11 +44,12 @@ limit := 4
 
 codeFunction := (f,depth) -> (
      if depth <= limit then (
-	  if locate f === null then DIV{"function ", f, ": source code not available"}
+	 l := locate f;
+	  if l === null then DIV{"function ", f, ": source code not available"}
 	  else (
 	      syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
 	      DIV flatten {
-		  getSourceLines locate f,
+		  getSourceLines l,
 	       	  if #syms > 0 then INDENT listSymbols syms,
 	       	  if codeHelper#?(functionBody f)
 	       	  then apply(

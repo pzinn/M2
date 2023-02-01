@@ -121,7 +121,7 @@ toExternalString DocumentTag := tag -> (
 	if instance(tag.Key, Symbol) then toString tag.Key else tag.Key, tag.Format, tag.Package})
 
 new DocumentTag from BasicList := (T, t) -> (
-    new DocumentTag from new HashTable from {
+    new HashTable from {
 	Key                => t#0,
 	Format             => t#1,
 	symbol Package     => t#2,
@@ -547,10 +547,10 @@ getHeadline   := (val, key)   -> (
     title)
 getSubsection := (val, title) -> fixup DIV { SUBSECTION title, val }
 getSourceCode :=  val         -> DIV {"class" => "waystouse",
-    fixup DIV {SUBSECTION "Code", PRE M2CODE demark_newline unstack stack apply(enlist val, m -> (
+    fixup DIV {SUBSECTION "Code", DIV apply(enlist val, m -> (
 		f := lookup m; if f === null then error("SourceCode: ", toString m, ": not a method");
 		c := code f;   if c === null then error("SourceCode: ", toString m, ": code for method not found");
-		reproduciblePaths toString net c))}}
+		reproduciblePaths c))}}
 getSubnodes := val -> (
     val = nonnull enlist val;
     if #val == 0 then error "encountered empty Subnodes list"

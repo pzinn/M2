@@ -89,7 +89,7 @@ validate COMMENT    := x -> (
 -----------------------------------------------------------------------------
 
 fixup = method(Dispatch => Thing)
-fixup Thing       := z -> error("unrecognizable item ", toString z, " of class ", toString class z, " encountered while processing documentation node ", toString currentHelpTag)
+fixup Thing       := identity -- TEMP put something more reasonable here (LITERAL html?) -- z -> error("unrecognizable item ", toString z, " of class ", toString class z, " encountered while processing documentation node ", toString currentHelpTag)
 fixup List        := z -> fixup toSequence z
 fixup Nothing     := z -> () -- this will get removed by splice later
 fixup Sequence    :=
@@ -103,8 +103,6 @@ fixup MarkUpType  := z -> (
 fixup HREF        := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
 fixup String      := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s)
 
-fixup Holder := -- TEMP
-fixup FilePosition :=
 fixup Option      :=
 fixup BR          :=
 fixup HR          :=
