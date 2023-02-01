@@ -198,6 +198,7 @@ html Function := f -> html TT deepSplice {
 	),
     "class"=>"token function"
     }
+html Package :=
 html File :=
 html IndeterminateNumber :=
 html Manipulator :=
