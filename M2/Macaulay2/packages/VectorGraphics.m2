@@ -748,7 +748,8 @@ new SVG from GraphicsObject := (S,g) -> (
     ss
     )
 
-html GraphicsObject := g -> html SVG g;
+hypertext GraphicsObject := g -> SVG g
+html GraphicsObject := html @@ hypertext
 
 -- tex output
 tikzscale := 1; -- not thread-safe

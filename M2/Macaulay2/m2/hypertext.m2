@@ -364,6 +364,14 @@ style Hypertext := true >> o -> x -> (
     append(x,"style"=>str)
     )
 
+-- hijacked "hypertext"
+hypertext = method(Dispatch => Thing)
+-*
+hypertext Hypertext := fixup
+hypertext Sequence  :=
+hypertext List      := x -> fixup DIV x
+*-
+
 -- what's below may be too much for PR
 toString MarkUpType := X -> (
     if hasAnAttribute X then (

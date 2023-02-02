@@ -183,12 +183,12 @@ html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:
 	  ) | "<br/>"), "</span>")
 html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds", "class" => "token comment")
 -- a few types are just strings
-simpleHtml = c -> x -> html TT {x,"class"=>"token "|c}
-html Pseudocode :=
-html CompiledFunctionBody := simpleHtml "function"
-html Command :=
-html FunctionBody :=
-html Function := f -> html TT deepSplice {
+TTc = c -> x -> TT {toString x,"class"=>"token "|c}
+hypertext Pseudocode :=
+hypertext CompiledFunctionBody := TTc "function"
+hypertext Command :=
+hypertext FunctionBody :=
+hypertext Function := f -> TT deepSplice {
     if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
 	t := locate if instance(f,Command) then f#0 else f;
 	"-*",
@@ -198,19 +198,28 @@ html Function := f -> html TT deepSplice {
 	),
     "class"=>"token function"
     }
-html Package :=
-html File :=
-html IndeterminateNumber :=
-html Manipulator :=
-html Boolean := simpleHtml "constant"
-html Type :=
-html FilePosition :=
-html Dictionary := simpleHtml "class-name"
+hypertext Package :=
+hypertext File :=
+hypertext IndeterminateNumber :=
+hypertext Manipulator :=
+hypertext Boolean := TTc "constant"
+hypertext Type :=
+hypertext FilePosition :=
+hypertext Dictionary := TTc "class-name"
+scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
 -- except not these descendants
 html Monoid :=
 html RingFamily :=
 html Ring := texHtml
+--
+hypertext String :=
+hypertext Hypertext := identity
 
+hypertext Monoid :=
+hypertext RingFamily :=
+hypertext Ring :=
+hypertext Thing := x -> try toExternalString x else format toString x -- TEMP? maybe just for Symbol, use toString?
+hypertext Holder := x -> hypertext x#0 -- TEMP? due to silly hold hack for line breaking issues
 --html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
 --html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)
 

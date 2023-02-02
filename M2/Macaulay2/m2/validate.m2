@@ -28,7 +28,7 @@ noqname := (tag, x) -> (
 -- see content.m2
 chk := (p, x) -> (
     c := class x;
-    if not instance(c,Hypertext) or c === LITERAL then return;
+    if c === Option or c === OptionTable or c === LITERAL then return;
     if not c.?qname then return noqname(c, x);
     if not validContent#(p.qname)#?(c.qname) and c.qname =!= "comment"
     then flagError("element of type ", toString p, " may not contain an element of type ", toString c))
@@ -41,7 +41,7 @@ validate = method()
 validate(Type, BasicList) := (T, x) -> (
     haderror = false;
     if not T.?qname then return noqname(T, x);
-    if not validContent#?(T.qname) then error("internal error: valid content for qname ", toString T, " not recorded yet");
+    if not validContent#?(T.qname) then	error("internal error: valid content for qname ", toString T, " not recorded yet");
     scan(x, e -> chk(T, e));
     if haderror then error("validation failed: ", x))
 
@@ -89,7 +89,7 @@ validate COMMENT    := x -> (
 -----------------------------------------------------------------------------
 
 fixup = method(Dispatch => Thing)
-fixup Thing       := identity -- TEMP put something more reasonable here (hypertext?) -- z -> error("unrecognizable item ", toString z, " of class ", toString class z, " encountered while processing documentation node ", toString currentHelpTag)
+fixup Thing       := x -> (x = hypertext x; fixup x) -- z -> error("unrecognizable item ", toString z, " of class ", toString class z, " encountered while processing documentation node ", toString currentHelpTag)
 fixup List        := z -> fixup toSequence z
 fixup Nothing     := z -> () -- this will get removed by splice later
 fixup Sequence    :=
@@ -103,6 +103,7 @@ fixup MarkUpType  := z -> (
 fixup HREF        := x -> if #x == 2 then HREF{x#0, fixup x#1} else x
 fixup String      := s -> demark_" " separate("[ \t]*\r?\n[ \t]*", s)
 
+fixup OptionTable :=
 fixup Option      :=
 fixup BR          :=
 fixup HR          :=
@@ -118,11 +119,6 @@ fixup TO          :=
 fixup TO2         :=
 fixup TOH         := identity
 
--- TODO: move this
-hypertext = method(Dispatch => Thing)
-hypertext Hypertext := fixup
-hypertext Sequence  :=
-hypertext List      := x -> fixup DIV x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
