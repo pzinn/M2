@@ -57,10 +57,11 @@ Nothing#{WebApp,Print} = identity
 protect WebAppPrint
 
 printFunc := Thing#{WebApp,print} = x -> (
+    errorFlag:=false;
     topLevelMode=WebAppPrint;
-    y := html if shortMode then short x else x; -- we compute the html now (in case it produces an error)
+    try y := html if shortMode then short x else x else errorFlag=true;  -- we compute the html now (in case it produces an error)
     topLevelMode=WebApp;
-    if class y =!= String then error "invalid html output";
+    if errorFlag or class y =!= String then error "invalid html output";
     << webAppHtmlTag | y | webAppEndTag << endl;
     )
 
