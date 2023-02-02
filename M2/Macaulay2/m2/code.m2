@@ -256,7 +256,7 @@ debuggerHook = entering -> (
      if entering then (
 	  pushvar(symbol inDebugger, true);
 	  c := code current;
-	  if c =!= null then << c << endl;
+	  if c =!= null then print c;
 	  )
      else (
 	  popvar symbol inDebugger;

@@ -1328,7 +1328,7 @@ short String := s -> if #s > shortStringLength then substring(s,0,shortStringLen
 short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
 short HashTable := H -> hold ( if #H <= shortLength then H else (
     s := sortByName pairs H;
-    new class H from append(apply(shortLength,i->s#i),s#shortLength#0=>"...")
+    new class H from append(apply(shortLength,i->s#i),s#shortLength#0=>cdots)
     ))
 short MutableHashTable := expression
 

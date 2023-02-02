@@ -106,7 +106,7 @@ if topLevelMode === WebApp then (
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
     EDIT FilePosition := f -> show URL ("#editor:"|toString f);
-    hypertext FilePosition := f -> (f=toString f; HREF ("#editor:"|f,f));
+    hypertext FilePosition := f -> (f=toString f; TT HREF ("#editor:"|f,f));
     -- the error hack
     oldolderror := olderror;
     removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
