@@ -48,6 +48,7 @@ export {
 	"?",
 	"@",
 	"@@",
+	"Abbreviate",
 	"Acknowledgement",
 	"AdditionalPaths",
 	"Adjacent",

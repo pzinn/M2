@@ -89,7 +89,7 @@ validate COMMENT    := x -> (
 -----------------------------------------------------------------------------
 
 fixup = method(Dispatch => Thing)
-fixup Thing       := identity -- TEMP put something more reasonable here (LITERAL html?) -- z -> error("unrecognizable item ", toString z, " of class ", toString class z, " encountered while processing documentation node ", toString currentHelpTag)
+fixup Thing       := identity -- TEMP put something more reasonable here (hypertext?) -- z -> error("unrecognizable item ", toString z, " of class ", toString class z, " encountered while processing documentation node ", toString currentHelpTag)
 fixup List        := z -> fixup toSequence z
 fixup Nothing     := z -> () -- this will get removed by splice later
 fixup Sequence    :=

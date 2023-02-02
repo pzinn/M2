@@ -568,6 +568,22 @@ getErrors = fn -> (
     if m =!= null then substring(m#0, err) else get("!tail " | fn)
     )
 
+toExternalStringMaybe = method(Dispatch=>Thing,TypicalValue=>String)
+toExternalStringMaybe DocumentTag := -- because of weird hack
+toExternalStringMaybe MutableHashTable :=
+toExternalStringMaybe Thing := x -> try toExternalString x else format toString x
+toExternalStringMaybe HashTable := s -> (
+     concatenate (
+	  "new ", toExternalStringMaybe class s,
+	  if parent s =!= Nothing then (" of ", toExternalStringMaybe parent s),
+	  " from {",
+	  if # s > 0
+	  then demark(", ", apply(pairs s, (k,v) -> toExternalStringMaybe k | " => " | toExternalStringMaybe v) )
+	  else "",
+	  "}"))
+toExternalStringMaybe Hypertext := s -> concatenate {toExternalStringMaybe class s, "{", demark_"," apply(toList s,toExternalStringMaybe), "}"}
+
+
 -----------------------------------------------------------------------------
 -- installPackage
 -----------------------------------------------------------------------------
@@ -692,7 +708,7 @@ installPackage Package := opts -> pkg -> (
 	scan(nodes, tag -> (
 		fkey := format tag;
 		if rawDoc#?fkey then (
-		    v := evaluateWithPackage(getpkg "Text", rawDoc#fkey, toExternalString);
+		    v := evaluateWithPackage(getpkg "Text", rawDoc#fkey, toExternalStringMaybe);
 		    if rawdocDatabase#?fkey
 		    then if rawdocDatabase#fkey === v then rawDocumentationCache#fkey = true else rawdocDatabase#fkey = v
 		    else (
@@ -750,7 +766,6 @@ installPackage Package := opts -> pkg -> (
 	    toString numDocumentationErrors, " errors(s) occurred in processing documentation for package ", toString pkg);
 
 	if pkg#?rawKeyDB and isOpen pkg#rawKeyDB then close pkg#rawKeyDB;
-
 	shield ( moveFile(rawdbnametmp, rawdbname, Verbose => debugLevel > 1); );
 
 	pkg#rawKeyDB = openDatabase rawdbname;
