@@ -45,6 +45,10 @@ texLiteralPairs := splice {
     "↗" => "\\(\\nearrow\\)",
     "↘" => "\\(\\searrow\\)",
     "↙" => "\\(\\swarrow\\)"
+    -- greek letters below are only in math mode. kept in case it could be useful somewhere else
+    -- "Α" => "\\Alpha", "Β" => "\\Beta", "Ε" => "\\Epsilon", "Ζ" => "\\Zeta", "Η" => "\\Eta", "Ι" => "\\Iota", "Κ" => "\\Kappa", "Μ" => "\\Mu", "Ν" => "\\Nu", "Ο" => "\\Omicron", "Ρ" => "\\Rho", "Τ" => "\\Tau", "Χ" => "\\Chi",
+    -- "Γ" => "\\Gamma", "Δ" => "\\Delta", "Θ" => "\\Theta", "Λ" => "\\Lambda", "Ξ" => "\\Xi", "Π" => "\\Pi", "Σ" => "\\Sigma", "Υ" => "\\Upsilon", "Φ" => "\\Phi", "Ψ" => "\\Psi", "Ω" => "\\Omega",
+    -- "ϱ" => "\\varrho", "ϵ" => "\\epsilon", "π" => "\\pi", "ρ" => "\\rho", "ς" => "\\varsigma", "σ" => "\\sigma", "τ" => "\\tau", "υ" => "\\upsilon", "φ" => "\\varphi", "χ" => "\\chi", "ψ" => "\\psi", "ω" => "\\omega", "ϑ" => "\\vartheta", "α" => "\\alpha", "β" => "\\beta", "γ" => "\\gamma", "ϕ" => "\\phi", "δ" => "\\delta", "ε" => "\\varepsilon", "ϖ" => "\\varpi", "ζ" => "\\zeta", "η" => "\\eta", "θ" => "\\theta", "ι" => "\\iota", "κ" => "\\kappa", "λ" => "\\lambda", "μ" => "\\mu", "ν" => "\\nu", "ξ" => "\\xi", "ο" => "\\omicron"
     }
 texLiteralTable := hashTable texLiteralPairs
 
