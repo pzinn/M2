@@ -356,13 +356,28 @@ style = method(Options => true)
 style Hypertext := true >> o -> x -> (
     str := concatenate apply(keys o, key -> if class key === String then key|":"|toString o#key|";");
     if str === "" then return x;
-    i := position(toList x, y -> class y === Option and y#0 === "style");
-    if i=!=null then (
-	str = concatenate(x#i#1, if #x#i#1>0 and last x#i#1 =!= ";" then ";",str);
-	x = drop(x,{i,i});
+    (ops,arg) := override(options class x,toSequence x);
+    if ops#"style" =!= null then (
+	str0 := ops#"style";
+	str = concatenate(str0, if #str0>0 and last str0 =!= ";" then ";",str);
+    	i := position(toList x, y -> class y === Option and y#0 === "style");
+    	if i=!=null then x = drop(x,{i,i});
 	);
     append(x,"style"=>str)
     )
+
+htmlClass = method()
+htmlClass Hypertext := x -> (
+    (ops,arg) := override(options class x,toSequence x);
+    if ops#"class" =!= null then separate(" ",ops#"class") else {}
+    )
+htmlClass(Hypertext,List) := (x,c) -> (
+    c = unique(htmlClass x | c);
+    i := position(toList x, y -> class y === Option and y#0 === "class");
+    if i=!=null then x = drop(x,{i,i});
+    append(x,"class"=>demark_" " c)
+    )
+htmlClass(Hypertext,String) := (x,s) -> htmlClass(x,{s})
 
 -- hijacked "hypertext"
 hypertext = method(Dispatch => Thing)

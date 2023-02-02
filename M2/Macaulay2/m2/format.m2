@@ -234,10 +234,9 @@ info HREF := x -> (
      )
 
 net TABLE :=  x -> (
-     (op,ag) := override(options TABLE, toSequence x);
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => op#"class" === "examples", HorizontalSpace => 2, noopts \ toList \ toList sequence ag);
+     r := netList(Boxes => member("examples",htmlClass x), HorizontalSpace => 2, noopts \ toList \ toList sequence x);
      printWidth = save;
      r)
 info TABLE := x -> (
