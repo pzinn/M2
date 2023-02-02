@@ -169,20 +169,22 @@ html Thing := x -> "$" | htmlLiteral texMath x | "$" -- by default, we use math 
 html Nothing := x -> ""
 
 -- text stuff: we use html instead of tex, much faster (and better spacing)
+-- TODO: rewrite next 2 using hypertext, just like the ones after, once PRE spacing/line break issues are fixed
 html Net := n -> concatenate("<pre style=\"display:inline-table;text-align:left;vertical-align:",
     toString(if #n>0 then 100*(height n-1) else 0), "%\">\n", -- the % is relative to line-height
     apply(unstack n, x-> htmlLiteral x | "<br/>"), "</pre>")
 html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral x,
     if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
     "</pre>")
-html Descent := x -> concatenate("<span style=\"display:inline-table;text-align:left\">\n", apply(sortByName pairs x,
+-- a few types are just strings
+hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-align:left", -- TODO move style to CSS
+    deepSplice apply(sortByName pairs x,
      (k,v) -> (
 	  if #v === 0
-	  then html k
-	  else html k | " : " | html v
-	  ) | "<br/>"), "</span>")
-html Time := x -> html x#1 | html DIV ("-- ", toString x#0, " seconds", "class" => "token comment")
--- a few types are just strings
+	  then k
+	  else (k, " : ", v)
+	  , BR{})))
+hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
 TTc = c -> x -> TT {toString x,"class"=>"token "|c}
 hypertext Pseudocode :=
 hypertext CompiledFunctionBody := TTc "function"
@@ -211,10 +213,10 @@ scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
 html Monoid :=
 html RingFamily :=
 html Ring := texHtml
---
+-- what's below is for fixup purposes
 hypertext String :=
 hypertext Hypertext := identity
-
+--
 hypertext Monoid :=
 hypertext RingFamily :=
 hypertext Ring :=
