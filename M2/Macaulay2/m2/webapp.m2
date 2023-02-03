@@ -102,11 +102,12 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
-    -- the show hack
+    -- the show, edit hacks
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
     EDIT FilePosition := f -> show URL ("#editor:"|toString f);
     hypertext FilePosition := f -> (f=toString f; TT HREF ("#editor:"|f,f));
+    editMethod String := s -> show URL ("#editor:"|s);
     -- the error hack
     oldolderror := olderror;
     removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
