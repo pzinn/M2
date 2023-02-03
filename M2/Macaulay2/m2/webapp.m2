@@ -105,9 +105,10 @@ if topLevelMode === WebApp then (
     -- the show, edit hacks
     showURL := lookup(show,URL);
     show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
-    EDIT FilePosition := f -> show URL ("#editor:"|toString f);
-    hypertext FilePosition := f -> (f=toString f; TT HREF ("#editor:"|f,f));
-    editMethod String := s -> show URL ("#editor:"|s);
+    editURL := f -> URL ("/#editor:"|toString f); -- note / in URL, needed in case called outside main frame
+    editMethod String :=
+    EDIT FilePosition := f -> show editURL f;
+    hypertext FilePosition := f -> TT HREF {editURL f,toString f};
     -- the error hack
     oldolderror := olderror;
     removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);

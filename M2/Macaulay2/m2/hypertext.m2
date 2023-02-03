@@ -24,7 +24,7 @@ HypertextContainer.synonym = "markup list container"
 toString         Hypertext := s -> concatenate(toString class s, toString         toList s)
 toExternalString Hypertext := s -> concatenate(toString class s, toExternalString toList s)
 
-new Hypertext from VisibleList := (M,x) -> x
+new Hypertext from VisibleList := (M,x) -> x -- why is that needed? it's the default
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
 
@@ -68,6 +68,8 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  stderr << "--                      result        = " << r << endl;
 	  );
      r)
+
+toURL URL := first -- a way to provide exact URLs with no editing. should toURL produce a URL, in which case it'd be identity here?
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations
@@ -238,7 +240,7 @@ new TO2  from List      :=
 new TO2  from Sequence  := (TO2, x) -> { makeDocumentTag x#0, concatenate drop(toSequence x,1) }
 new TOH  from List      := (TOH, x) -> { makeDocumentTag x#0 }
 new HREF from List      := (HREF, x) -> (
-    url := if x#?0 and (instance(x#0, String) or instance(x#0, Sequence) and #x#0 === 2 and all(x#0, y -> instance(y, String)))
+    url := if x#?0 and (instance(x#0, String) or instance(x#0,URL) or instance(x#0, Sequence) and #x#0 === 2 and all(x#0, y -> instance(y, String)))
     then x#0 else error "HREF expected URL to be a string or a sequence of 2 strings";
     if x#?1 then prepend(url, drop(x, 1)) else {url})
 
