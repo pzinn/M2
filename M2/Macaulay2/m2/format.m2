@@ -133,6 +133,7 @@ scan({net, info},
 	parser' BR     := x -> ("", BK);
 	-- and rendering for types that inherit from HypertextContainer, but
 	-- have special rendering rules which would lost with toSequence
+	parser' PRE := -- HACK -- might need to rethink
 	parser' INDENT :=
 	parser' TABLE :=
 	parser' MENU :=

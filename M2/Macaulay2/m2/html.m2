@@ -208,6 +208,8 @@ hypertext Boolean := TTc "constant"
 hypertext Type :=
 hypertext FilePosition :=
 hypertext Dictionary := TTc "class-name"
+--hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
+--hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
 scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
 -- except not these descendants
 html Monoid :=
@@ -221,9 +223,6 @@ hypertext Monoid :=
 hypertext RingFamily :=
 hypertext Ring :=
 hypertext Thing := x -> try toExternalString x else format toString x -- TEMP? maybe just for Symbol, use toString?
-hypertext Holder := x -> hypertext x#0 -- TEMP? due to silly hold hack for line breaking issues
---html VerticalList         := x -> html UL apply(x, y -> new LI from hold y)
---html NumberedVerticalList := x -> html OL apply(x, y -> new LI from hold y)
 
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser
