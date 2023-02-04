@@ -5,7 +5,6 @@
 
 needs "debugging.m2" -- for Descent
 needs "format.m2"
-needs "packages.m2" -- for Package
 needs "system.m2" -- for getViewer
 
 getStyleFile := fn -> locateCorePackageFileRelative("Style",

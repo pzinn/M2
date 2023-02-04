@@ -4,6 +4,8 @@
 needs "regex.m2" -- for toLower
 needs "lists.m2" -- for all
 needs "methods.m2"
+needs "packages.m2" -- for Package
+needs "monoids.m2" -- for Monoid etc
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors

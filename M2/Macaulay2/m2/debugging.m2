@@ -186,7 +186,7 @@ listSymbols = method()
 listSymbols Dictionary := d -> listSymbols values d
 listSymbols List := x -> TABLE prepend(
     apply({"symbol", "class", "value", "location of symbol"},s->TH {s}),
-    apply(x, y -> apply({y,Abbreviate class value y,Abbreviate value y,locate y},s->TD {s}))
+    apply(x, y -> apply({y,Abbreviate {class value y},Abbreviate {value y},locate y},s->TD {s}))
     );
 
 
