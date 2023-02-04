@@ -3,7 +3,6 @@
 -- html output
 -----------------------------------------------------------------------------
 
-needs "debugging.m2" -- for Descent
 needs "format.m2"
 needs "system.m2" -- for getViewer
 

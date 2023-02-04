@@ -237,7 +237,7 @@ info HREF := x -> (
 net TABLE :=  x -> (
      save := printWidth;
      printWidth = printWidth - 2;
-     r := netList(Boxes => member("examples",htmlClass x), HorizontalSpace => 2, noopts \ toList \ toList sequence x);
+     r := netList(Boxes => member("examples",htmlClass x), HorizontalSpace => 2, noopts \ toList \ noopts toList x);
      printWidth = save;
      r)
 info TABLE := x -> (
