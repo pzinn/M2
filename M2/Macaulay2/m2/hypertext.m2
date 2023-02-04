@@ -384,6 +384,50 @@ htmlClass(Hypertext,List) := (x,c) -> (
 htmlClass(Hypertext,String) := (x,s) -> htmlClass(x,{s})
 
 hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
+hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-align:left", -- TODO move style to CSS
+    deepSplice apply(sortByName pairs x,
+     (k,v) -> (
+	  if #v === 0
+	  then k
+	  else (k, " : ", v)
+	  , BR{})))
+hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
+TTc = c -> x -> TT {toString x,"class"=>"token "|c}
+hypertext Pseudocode :=
+hypertext CompiledFunctionBody := TTc "function"
+hypertext Command :=
+hypertext FunctionBody :=
+hypertext Function := f -> TT deepSplice {
+    if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
+	t := locate if instance(f,Command) then f#0 else f;
+	"-*",
+	SPAN class f,
+	if t =!= null then ("[", SPAN t, "]"),
+	"*-"
+	),
+    "class"=>"token function"
+    }
+hypertext Package :=
+hypertext File :=
+hypertext IndeterminateNumber :=
+hypertext Manipulator :=
+hypertext Boolean := TTc "constant"
+hypertext Type :=
+hypertext FilePosition :=
+hypertext Dictionary := TTc "class-name"
+--hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
+--hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
+
+scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
+hypertext Hypertext := identity -- this must come *after* sacnning
+-- what's below is for fixup purposes
+hypertext String :=
+hypertext Hypertext := identity
+--
+hypertext Monoid :=
+hypertext RingFamily :=
+hypertext Ring :=
+hypertext Thing := x -> try toExternalString x else format toString x -- TEMP? maybe just for Symbol, use toString?
 
 -- what's below may be too much for PR
 toString MarkUpType := X -> (

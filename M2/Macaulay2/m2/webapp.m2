@@ -140,7 +140,7 @@ htmlMaybe Expression :=
 htmlMaybe Nothing := x -> null
 htmlMaybe Thing := x -> ( -- default test
     l := lookup(html, class x);
-    if l =!= texHtml then l x else null
+    if l =!= lookup(html,Thing) then l x else null
     )
 texMath1 = x -> (
     h := htmlMaybe x;
