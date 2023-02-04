@@ -35,7 +35,7 @@ getSourceLines FilePosition := x -> (
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  while stop >= start and file#(stop-1) === "" do stop = stop-1;
 	  DIV {
-	      x, ": --source code",
+	      x, ": --source code:",
 	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
 	      }
 	  ))

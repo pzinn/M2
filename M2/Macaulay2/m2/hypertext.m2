@@ -28,6 +28,8 @@ new Hypertext from VisibleList := (M,x) -> x -- why is that needed? it's the def
 new Hypertext from Thing  := (M,x) -> {x}
 new Hypertext from Net    := (M,x) -> {toString x}
 
+Hypertext#AfterPrint = x -> null
+
 -----------------------------------------------------------------------------
 -- URL type declaration and constructor
 -----------------------------------------------------------------------------
@@ -381,13 +383,7 @@ htmlClass(Hypertext,List) := (x,c) -> (
     )
 htmlClass(Hypertext,String) := (x,s) -> htmlClass(x,{s})
 
--- hijacked "hypertext"
-hypertext = method(Dispatch => Thing)
--*
-hypertext Hypertext := fixup
-hypertext Sequence  :=
-hypertext List      := x -> fixup DIV x
-*-
+hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
 
 -- what's below may be too much for PR
 toString MarkUpType := X -> (
