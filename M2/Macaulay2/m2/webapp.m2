@@ -130,7 +130,7 @@ if topLevelMode === WebApp then (
 isSimpleHypertext := c -> if c === Hypertext then true else if c === HypertextParagraph or c === HypertextContainer or c === Thing then false else isSimpleHypertext parent c
 -- TODO simplify, of course using inheritance. also break as soon as failure rather than going thru all args
 html VisibleList := s -> ( -- even BasicList?
-    backupFlag := tempFlag; tempFlag=true;
+    backupFlag := htmlTexFlag; htmlTexFlag=true;
     delims := lookup("delimiters",class s); if delims === null then return;
     r := apply(s, x -> (
 	    while instance(x,Holder) do x = x#0;
@@ -142,7 +142,7 @@ html VisibleList := s -> ( -- even BasicList?
 	    	if r' =!= null then LITERAL r'
 	    	)
 	    else hypertext x));
-    tempFlag=backupFlag;
+    htmlTexFlag=backupFlag;
     if all(r, x -> isSimpleHypertext class x) then -- really, it's either LITERAL or TT
     concatenate (
 	"$",delims#0,"$",
@@ -153,9 +153,9 @@ html VisibleList := s -> ( -- even BasicList?
 html VerticalList := htmlTex -- for now TODO maybe html?
 
 texMath1 = x -> (
-    tempFlag=false; -- we prevent tex output temporarily
+    htmlTexFlag=false; -- we prevent tex output temporarily
     h := html x;
-    tempFlag=true;
+    htmlTexFlag=true;
     xx := if h === null then (
     	l := lookup(texMath,class x); -- normal tex output
     	if l === null then error noMethodSingle(texMath, x, false);
