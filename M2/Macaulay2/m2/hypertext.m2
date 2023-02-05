@@ -417,13 +417,13 @@ hypertext Boolean := TTc "constant"
 hypertext Type :=
 hypertext FilePosition :=
 hypertext Dictionary := TTc "class-name"
+hypertext String := TTc "token string"
 --hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
 --hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
 
 scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
 hypertext Hypertext := identity -- this must come *after* sacnning
 -- what's below is for fixup purposes
-hypertext String :=
 hypertext Hypertext := identity
 --
 hypertext Monoid :=
