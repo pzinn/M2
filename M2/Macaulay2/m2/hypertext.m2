@@ -3,9 +3,7 @@
 
 needs "regex.m2" -- for toLower
 needs "lists.m2" -- for all
-needs "methods.m2"
-needs "packages.m2" -- for Package
-needs "monoids.m2" -- for Monoid etc
+needs "code.m2"
 
 -----------------------------------------------------------------------------
 -- Hypertext type declarations and basic constructors
@@ -409,7 +407,6 @@ hypertext Function := f -> TT deepSplice {
 	),
     "class"=>"token function"
     }
-hypertext Package :=
 hypertext File :=
 hypertext IndeterminateNumber :=
 hypertext Manipulator :=
@@ -421,14 +418,9 @@ hypertext String := TTc "token string"
 --hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
 --hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
 
-scan(methods hypertext, (h,t) -> html t := html @@ hypertext);
+scan(methods hypertext, (h,t) -> html t := html @@ hypertext)
 hypertext Hypertext := identity -- this must come *after* sacnning
 -- what's below is for fixup purposes
-hypertext Hypertext := identity
---
-hypertext Monoid :=
-hypertext RingFamily :=
-hypertext Ring :=
 hypertext Thing := x -> try toExternalString x else format toString x -- TEMP? maybe just for Symbol, use toString?
 
 -- what's below may be too much for PR

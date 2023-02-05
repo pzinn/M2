@@ -739,3 +739,7 @@ tensor(Monoid, Monoid) := Monoid => monoidTensorDefaults >> opts0 -> (M, N) -> (
      newMonoid setMonoidOptions opts)
 
 -----------------------------------------------------------------------------
+-- what's below is for fixup purposes
+hypertext Monoid :=
+hypertext RingFamily :=
+hypertext Ring := lookup(hypertext,Thing)
