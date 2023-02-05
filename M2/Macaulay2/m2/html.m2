@@ -173,6 +173,9 @@ html String := x -> concatenate("<pre style=\"display:inline\">\n", htmlLiteral 
     if #x>0 and last x === "\n" then "\n" else "", -- fix for html ignoring trailing \n
     "</pre>")
 *-
+-- semi-hacky: can't use hypertext cause $...$ not allowed in its output
+html HashTable := H -> if H.?texMath or not hasAttribute(H,ReverseDictionary) then (lookup(html,Thing)) H else html (TTc "constant") getAttribute(H,ReverseDictionary)
+
 html Monoid :=
 html RingFamily :=
 html Ring :=

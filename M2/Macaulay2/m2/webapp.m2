@@ -126,15 +126,11 @@ if topLevelMode === WebApp then (
 )
 
 -- the texMath hack
--*
--- that stuff doesn't really work: the size of delims isn't quite right, and it still goes back and forth between tex and html too often
-BareList := new Type of BasicList
-html BareList := v -> demark(", ",apply(toList v,html)) -- the key point: we're redefining html BareList to force it to switch back
-texMath BareList := L -> if #L > 0 then demark_",\\," apply(toList L, texMath) else "\\," -- won't ever be used directly because of prev line
-texMath VisibleList := v -> "\\left\\{"|texMath (new BareList from v)|"\\right\\}" --TEMP but that's the idea
-texMath Sequence := v -> "\\left("|texMath (new BareList from v)|"\\right)" --TEMP but that's the idea
-*-
 -- htmlMaybe is html except if it goes thru tex
+List#"delimiters" = ("{","}") -- TODO move to latex.m2 and use there
+Sequence#"delimiters" = ("(",")")
+Array#"delimiters" = ("[","]")
+
 htmlMaybe = method(Dispatch=>Thing)
 htmlMaybe Expression :=
 htmlMaybe Nothing := x -> null
@@ -142,6 +138,40 @@ htmlMaybe Thing := x -> ( -- default test
     l := lookup(html, class x);
     if l =!= lookup(html,Thing) then l x else null
     )
+-- basically, at this stage, we have to go thru every type which is silly
+htmlMaybe Monoid :=
+htmlMaybe RingFamily :=
+htmlMaybe Ring := x -> null
+htmlMaybe Descent :=
+htmlMaybe Type := html
+htmlMaybe HashTable := H -> if H.?texMath or not hasAttribute(H,ReverseDictionary) then null else html (TTc "constant") getAttribute(H,ReverseDictionary)
+-- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
+isSimpleHypertext := c -> if c === Hypertext then true else if c === HypertextParagraph or c === HypertextContainer or c === Thing then false else isSimpleHypertext parent c
+-- TODO simplify, of course using inheritance
+htmlMaybe VisibleList := s -> ( -- even BasicList?
+    delims := lookup("delimiters",class s); if delims === null then return;
+    r := apply(s, x -> (
+	    while instance(x,Holder) do x = x#0;
+	    if instance(x,Symbol) or (instance(x,Number) and (class x =!= QQ or denominator x == 1)) then SPAN html x
+	    else if instance(x,Ring) then (if x.?texMath or hasAttribute(x,ReverseDictionary) then SPAN html x else null)
+	    else if instance(x,HashTable) and not instance(x,Type) then (if x.?texMath then SPAN html x else if hasAttribute(x,ReverseDictionary) then (TTc "constant") getAttribute(x,ReverseDictionary) else null) -- silly ... use inheritance
+	    else if instance(x,VisibleList) then (
+	    	r' := htmlMaybe x;
+	    	if r' =!= null then LITERAL r'
+	    	)
+	    else hypertext x));
+    if all(r, x -> isSimpleHypertext class x) then
+    concatenate (
+	delims#0, -- TODO KaTeX it once stabilized
+	demark_", " apply(toList r,html),
+	delims#1
+	) else null
+)
+html VisibleList := s -> ( -- lame, should be automatic somehow
+    h := htmlMaybe s;
+    if h === null then (lookup(html,Thing)) s else h
+    )
+
 texMath1 = x -> (
     h := htmlMaybe x;
     xx := if h === null then (
