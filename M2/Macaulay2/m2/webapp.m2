@@ -126,13 +126,9 @@ if topLevelMode === WebApp then (
 )
 
 -- the texMath hack
-List#"delimiters" = ("{","}") -- TODO move to latex.m2 and use there
-Sequence#"delimiters" = ("(",")")
-Array#"delimiters" = ("[","]")
-
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
 isSimpleHypertext := c -> if c === Hypertext then true else if c === HypertextParagraph or c === HypertextContainer or c === Thing then false else isSimpleHypertext parent c
--- TODO simplify, of course using inheritance
+-- TODO simplify, of course using inheritance. also break as soon as failure rather than going thru all args
 html VisibleList := s -> ( -- even BasicList?
     backupFlag := tempFlag; tempFlag=true;
     delims := lookup("delimiters",class s); if delims === null then return;
@@ -149,9 +145,9 @@ html VisibleList := s -> ( -- even BasicList?
     tempFlag=backupFlag;
     if all(r, x -> isSimpleHypertext class x) then -- really, it's either LITERAL or TT
     concatenate (
-	delims#0, -- TODO KaTeX it once stabilized
+	"$",delims#0,"$",
 	demark_", " apply(toList r,html),
-	delims#1
+	"$",delims#1,"$"
 	) else htmlTex s
 )
 html VerticalList := htmlTex -- for now TODO maybe html?
@@ -161,10 +157,10 @@ texMath1 = x -> (
     h := html x;
     tempFlag=true;
     xx := if h === null then (
-    	l := lookup(texMath,class x);
+    	l := lookup(texMath,class x); -- normal tex output
     	if l === null then error noMethodSingle(texMath, x, false);
     	l x
-    ) else concatenate(
+    ) else concatenate( -- switch back to html
     delim,
     webAppHtmlTag,
     h,

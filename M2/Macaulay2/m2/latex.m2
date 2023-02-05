@@ -121,12 +121,18 @@ texMath VerticalList := s -> concatenate(
 texMath NumberedVerticalList := s -> concatenate(
     "\\left\\{\\begin{aligned}", demark("\\\\", apply(#s, i -> i | ".\\quad&" | texMath s#i)), "\\end{aligned}\\right\\}")
 
-texMathVisibleList := (op, L, delim, cl) -> concatenate("\\left", op, if #L > 0 then demark_delim apply(toList L, texMath) else "\\,", "\\right", cl)
-texMath AngleBarList := L -> texMathVisibleList("<", L, ",\\,", ">")
-texMath Array        := L -> texMathVisibleList("[", L, ",\\,", "]")
-texMath Sequence     := L -> texMathVisibleList("(", L, ",\\,", ")")
-texMath VisibleList  := L -> texMathVisibleList("\\{", L, ",\\:", "\\}")
-texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList("\\{", L, ",\\,", "\\}"))
+BasicList#"delimiters" = ("\\{","\\}")
+Sequence#"delimiters" = ("(",")")
+Array#"delimiters" = ("[","]")
+AngleBarList#"delimiters" = ("<",">")
+
+texMathVisibleList :=
+texMath VisibleList := L -> (
+        delims := lookup("delimiters",class L);
+ 	concatenate("\\left", delims#0, if #L > 0 then demark_",\\," apply(toList L, texMath) else "\\,", "\\right", delims#1)
+	)
+texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList L)
+
 texMathMutable :=
 texMath MutableList  := L -> concatenate(texMath class L, "\\left\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\right\\}")
 
