@@ -107,7 +107,8 @@ if topLevelMode === WebApp then (
     editURL := f -> URL ("#editor:"|toString f);
     editMethod String :=
     EDIT FilePosition := f -> show editURL f;
-    fixup FilePosition := lookup(hypertext,FilePosition); -- shouldn't change that (say, in doc)
+--    fixup FilePosition := lookup(hypertext,FilePosition); -- shouldn't change that (say, in doc)
+    fixup FilePosition := f -> TT HREF { f#0, toString f }; -- let's try this
     hypertext FilePosition := f -> TT HREF {editURL f,toString f};
     -- the error hack
     oldolderror := olderror;
