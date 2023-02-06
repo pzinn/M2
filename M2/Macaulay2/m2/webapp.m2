@@ -125,33 +125,42 @@ if topLevelMode === WebApp then (
 		)));
 )
 
--- the texMath hack
--- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
+-- the html VisibleList hack
 isSimpleHypertext := c -> if c === Hypertext then true else if c === HypertextParagraph or c === HypertextContainer or c === Thing then false else isSimpleHypertext parent c
--- TODO simplify, of course using inheritance. also break as soon as failure rather than going thru all args
-html VisibleList := s -> ( -- even BasicList?
+-- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
+htmlInList := method(Dispatch=>Thing)
+htmlInList Holder := x -> htmlInList x#0
+htmlInList Type :=
+htmlInList Number :=
+htmlInList Symbol := html
+htmlInList QQ := x -> if denominator x == 1 then html x
+htmlInList HashTable :=
+htmlInList Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then html x
+htmlInList Thing := x -> ( h := hypertext x; if isSimpleHypertext class h then html h)  -- really, it's just TT
+htmlInList VerticalList := s -> null
+htmlInList VisibleList := s-> (
+    backupFlag := htmlTexFlag; htmlTexFlag=false;
+    first(html s, htmlTexFlag=backupFlag)
+    )
+html VisibleList := s -> (
+    if lookup(texMath,class s) =!= texMathVisibleList then return htmlTex s;
     backupFlag := htmlTexFlag; htmlTexFlag=true;
-    delims := lookup("delimiters",class s); if delims === null then return;
-    r := apply(s, x -> (
-	    while instance(x,Holder) do x = x#0;
-	    if instance(x,Symbol) or (instance(x,Number) and (class x =!= QQ or denominator x == 1)) then LITERAL html x
-	    else if instance(x,Ring) then (if x.?texMath or hasAttribute(x,ReverseDictionary) then LITERAL html x else null)
-	    else if instance(x,HashTable) and not instance(x,Type) then (if x.?texMath then LITERAL html x else if hasAttribute(x,ReverseDictionary) then (TTc "constant") getAttribute(x,ReverseDictionary) else null) -- silly ... use inheritance
-	    else if instance(x,VisibleList) then (
-	    	r' := html x;
-	    	if r' =!= null then LITERAL r'
-	    	)
-	    else hypertext x));
+    delims := lookup("delimiters",class s);
+    r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
     htmlTexFlag=backupFlag;
-    if all(r, x -> isSimpleHypertext class x) then -- really, it's either LITERAL or TT
-    concatenate (
-	"$",delims#0,"$",
-	demark_", " apply(toList r,html),
-	"$",delims#1,"$"
-	) else htmlTex s
-)
+    if r =!= null then (
+    	concatenate (
+	    "$",delims#0,
+    	    demark(",\\,",apply(r,a->if #a<=2 then "$"|a|"$" else (
+	    		if first a==="$" then a=substring(a,1) else a="$"|a;
+	    		if last a==="$" then substring(a,0,#a-1) else a|"$"
+	    		))),
+	    delims#1,"$"
+	    )) else htmlTex s
+    )
 html VerticalList := htmlTex -- for now TODO maybe html?
 
+-- the texMath hack
 texMath1 = x -> (
     htmlTexFlag=false; -- we prevent tex output temporarily
     h := html x;
