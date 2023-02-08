@@ -17,7 +17,7 @@ S</pre>$
 o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
-o4 = $\left\{\begin{aligned}&amp;\left\{{5.61328}\cdot 10^{-74}-{3.06229}\cdot 10^{-74}\,\mathbf{i},\:-{3.96395}\cdot 10^{-74}-{4.87709}\cdot 10^{-75}\,\mathbf{i},\:-{.0102821}-{.0767103}\,\mathbf{i}\right\}\end{aligned}\right\}$
+o4 = $\left\{\begin{aligned}&amp;\left\{-{8.7092}\cdot 10^{-67}+{1.21392}\cdot 10^{-66}\,\mathbf{i},\:{1.38467}\cdot 10^{-66}-{6.66716}\cdot 10^{-67}\,\mathbf{i},\:{.458678}+{.517339}\,\mathbf{i}\right\}\end{aligned}\right\}$
 
 o4 : <tt class="token class-name">VerticalList</tt>
 i5 : 5:0S#1 --first specify dimension
@@ -29,7 +29,7 @@ S</pre>$
 i6 : 6:0peek oo_0 --then list position
 
 o6 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-WitnessSet{cache => CacheTable{...3...}                                                                          }<br/>           Points => {{5.61328e-74-3.06229e-74*ii, -3.96395e-74-4.87709e-75*ii, -.0102821-.0767103*ii}}<br/>           Slice => |  - .554475 - 1.90942*ii  .288653 - 1.60814*ii  2.5785 + .11846*ii  .0174253 + .199015*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
+WitnessSet{cache => CacheTable{...3...}                                                                           }<br/>           Points => {{-8.7092e-67+1.21392e-66*ii, 1.38467e-66-6.66716e-67*ii, .458678+.517339*ii}}<br/>           Slice => |  .185855 + 1.00009*ii  - .611961 + 1.11357*ii  .954515 + 2.04067*ii  .617906 - 1.42982*ii  |<br/>                              |   3      2      2      |<br/>           Equations => {-3}  |  x  + x*y  + x*z  - x  |<br/>                              |                        |<br/>                              |    2     3      2      |<br/>                        {-3}  |   x y + y  + y*z  - y  |<br/></pre>
 i7 : 7:0PD=primaryDecomposition( ideal F)
 
 o7 = $\left\{<tt class="token function">ideal</tt>\left(x^{2}+y^{2}+z^{2}-1\right),\:<tt class="token function">ideal</tt>{}\left(y,\,x\right)\right\}$

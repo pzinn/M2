@@ -6,7 +6,7 @@
 i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
 i6 : 6:0S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{1.41421}+{4.68375}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\left\{{1.41421}+0\,\mathbf{i}\right\},\:\left\{-{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
 o6 : <tt class="token class-name">List</tt>
 i7 : 7:0peek S0_0

@@ -34,7 +34,7 @@ Point{cache => CacheTable{...9...}}<br/>      Coordinates => {-1.41421}<br/></pr
 o14 : <tt class="token class-name">List</tt>
 i15 : 15:0S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\left\{-{.24506}+{.795982}\,\mathbf{i},\:{.369666}+{.375238}\,\mathbf{i}\right\},\:\left\{{.287956}+{.934731}\,\mathbf{i},\:-{.434049}+{.440746}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{-{.524631}+{.73359}\,\mathbf{i},\:{.251057}+{.512179}\,\mathbf{i}\right\},\:\left\{{.150885}+{.715957}\,\mathbf{i},\:-{.353362}+{.298796}\,\mathbf{i}\right\}\right\}$
 
 o15 : <tt class="token class-name">List</tt>
 i16 : 16:0

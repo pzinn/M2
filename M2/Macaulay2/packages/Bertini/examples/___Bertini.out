@@ -1,8 +1,7 @@
 -- -*- M2-comint -*- hash: -226670168
 i1 : 1:0needsPackage("Bertini", Configuration=>{"BERTINIexecutable"=>"/folder/subfolder/bertini"})
 
-o1 = <pre style="display:inline">
-Bertini</pre>
+o1 = <tt class="token constant">Bertini</tt>
 
 o1 : <tt class="token class-name">Package</tt>
 i2 : 2:0R = CC[x,y]
@@ -17,7 +16,7 @@ Bertini</pre>
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0solns = bertiniZeroDimSolve(F)
 
-o4 = $\left\{\left\{{1}+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{{1}+0\,\mathbf{i},\:-{1.41421}+0\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:-{1.41421}+0\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{{1}+0\,\mathbf{i},\:-{1.41421}+{1.19349}\cdot 10^{-15}\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:-{1.41421}+{8.88178}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
 
 o4 : <tt class="token class-name">List</tt>
 i5 : 5:0

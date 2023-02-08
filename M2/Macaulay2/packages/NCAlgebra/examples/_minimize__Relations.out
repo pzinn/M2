@@ -11,58 +11,58 @@
 o2 : <tt class="token class-name">QuotientRing</tt>
 i3 : 3:0kRes = res(coker vars R, LengthLimit=>7)
 
-o3 = $\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
+o3 = $\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\!\begin{array}{cccc}
 a&amp;b&amp;c&amp;d
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}1}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
-0&amp;0&amp;-d&amp;0&amp;-c&amp;b&amp;0\\
-0&amp;-d&amp;0&amp;-c&amp;0&amp;0&amp;a\\
--d&amp;0&amp;0&amp;b&amp;a&amp;d&amp;d\\
-c&amp;b&amp;a&amp;0&amp;0&amp;0&amp;0
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}2}{R^{7}}\,\xleftarrow{\left(\begin{smallmatrix}
-b&amp;a&amp;d&amp;d&amp;0&amp;0&amp;a&amp;b\\
--c&amp;0&amp;a&amp;0&amp;0&amp;0&amp;0&amp;-c\\
-0&amp;-c&amp;0&amp;b&amp;0&amp;0&amp;-c&amp;0\\
-d&amp;0&amp;0&amp;0&amp;a&amp;0&amp;0&amp;0\\
-0&amp;d&amp;0&amp;0&amp;0&amp;b&amp;0&amp;0\\
-0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;a&amp;0\\
-0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;b
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}3}{R^{8}}\,\xleftarrow{\left(\begin{smallmatrix}
--a&amp;0&amp;0&amp;0&amp;-c&amp;0&amp;0&amp;0\\
-0&amp;-b&amp;0&amp;0&amp;0&amp;-c&amp;0&amp;0\\
--c&amp;0&amp;-b&amp;0&amp;0&amp;0&amp;0&amp;c\\
-0&amp;-c&amp;0&amp;-a&amp;0&amp;0&amp;c&amp;0\\
-d&amp;0&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
-0&amp;d&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
-0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;b&amp;0\\
-0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;a
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}4}{R^{8}}\,\xleftarrow{\left(\begin{smallmatrix}
-b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
-0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
--c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;0&amp;c\\
-0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;c&amp;0\\
-d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
-0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
-0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;a&amp;0\\
-0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;b
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}5}{R^{8}}\,\xleftarrow{\left(\begin{smallmatrix}
-0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
-b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
--c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;c&amp;0\\
-0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;0&amp;c\\
-d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
-0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
-0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;b&amp;0\\
-0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;a
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}6}{R^{8}}\,\xleftarrow{\left(\begin{smallmatrix}
-0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
-b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
--c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;0&amp;c\\
-0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;c&amp;0\\
-d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
-0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
-0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;a&amp;0\\
-0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;b
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}7}{R^{8}}$
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}1}{R^{4}}\,\xleftarrow{\begin{array}{l}\left\{1\right\}\vphantom{00-d0-cb0}\\\left\{1\right\}\vphantom{0-d0-c00a}\\\left\{1\right\}\vphantom{-d00badd}\\\left\{1\right\}\vphantom{cba0000}\end{array}\left(\!\begin{array}{ccccccc}
+\vphantom{\left\{1\right\}}0&amp;0&amp;-d&amp;0&amp;-c&amp;b&amp;0\\
+\vphantom{\left\{1\right\}}0&amp;-d&amp;0&amp;-c&amp;0&amp;0&amp;a\\
+\vphantom{\left\{1\right\}}-d&amp;0&amp;0&amp;b&amp;a&amp;d&amp;d\\
+\vphantom{\left\{1\right\}}c&amp;b&amp;a&amp;0&amp;0&amp;0&amp;0
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}2}{R^{7}}\,\xleftarrow{\begin{array}{l}\left\{2\right\}\vphantom{badd00ab}\\\left\{2\right\}\vphantom{-c0a0000-c}\\\left\{2\right\}\vphantom{0-c0b00-c0}\\\left\{2\right\}\vphantom{d000a000}\\\left\{2\right\}\vphantom{0d000b00}\\\left\{2\right\}\vphantom{000d0ca0}\\\left\{2\right\}\vphantom{00d0c00b}\end{array}\left(\!\begin{array}{cccccccc}
+\vphantom{\left\{2\right\}}b&amp;a&amp;d&amp;d&amp;0&amp;0&amp;a&amp;b\\
+\vphantom{\left\{2\right\}}-c&amp;0&amp;a&amp;0&amp;0&amp;0&amp;0&amp;-c\\
+\vphantom{\left\{2\right\}}0&amp;-c&amp;0&amp;b&amp;0&amp;0&amp;-c&amp;0\\
+\vphantom{\left\{2\right\}}d&amp;0&amp;0&amp;0&amp;a&amp;0&amp;0&amp;0\\
+\vphantom{\left\{2\right\}}0&amp;d&amp;0&amp;0&amp;0&amp;b&amp;0&amp;0\\
+\vphantom{\left\{2\right\}}0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;a&amp;0\\
+\vphantom{\left\{2\right\}}0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;b
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}3}{R^{8}}\,\xleftarrow{\begin{array}{l}\left\{3\right\}\vphantom{-a000-c000}\\\left\{3\right\}\vphantom{0-b000-c00}\\\left\{3\right\}\vphantom{-c0-b0000c}\\\left\{3\right\}\vphantom{0-c0-a00c0}\\\left\{3\right\}\vphantom{d000-b000}\\\left\{3\right\}\vphantom{0d000-a00}\\\left\{3\right\}\vphantom{000d0cb0}\\\left\{3\right\}\vphantom{00d0c00a}\end{array}\left(\!\begin{array}{cccccccc}
+\vphantom{\left\{3\right\}}-a&amp;0&amp;0&amp;0&amp;-c&amp;0&amp;0&amp;0\\
+\vphantom{\left\{3\right\}}0&amp;-b&amp;0&amp;0&amp;0&amp;-c&amp;0&amp;0\\
+\vphantom{\left\{3\right\}}-c&amp;0&amp;-b&amp;0&amp;0&amp;0&amp;0&amp;c\\
+\vphantom{\left\{3\right\}}0&amp;-c&amp;0&amp;-a&amp;0&amp;0&amp;c&amp;0\\
+\vphantom{\left\{3\right\}}d&amp;0&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+\vphantom{\left\{3\right\}}0&amp;d&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+\vphantom{\left\{3\right\}}0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;b&amp;0\\
+\vphantom{\left\{3\right\}}0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;a
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}4}{R^{8}}\,\xleftarrow{\begin{array}{l}\left\{4\right\}\vphantom{b0000c00}\\\left\{4\right\}\vphantom{0a00c000}\\\left\{4\right\}\vphantom{-c00-a000c}\\\left\{4\right\}\vphantom{0-c-b000c0}\\\left\{4\right\}\vphantom{d0000-a00}\\\left\{4\right\}\vphantom{0d00-b000}\\\left\{4\right\}\vphantom{00d0c0a0}\\\left\{4\right\}\vphantom{000d0c0b}\end{array}\left(\!\begin{array}{cccccccc}
+\vphantom{\left\{4\right\}}b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}-c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;0&amp;c\\
+\vphantom{\left\{4\right\}}0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;c&amp;0\\
+\vphantom{\left\{4\right\}}d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;a&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;b
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}5}{R^{8}}\,\xleftarrow{\begin{array}{l}\left\{5\right\}\vphantom{0a00c000}\\\left\{5\right\}\vphantom{b0000c00}\\\left\{5\right\}\vphantom{-c00-a00c0}\\\left\{5\right\}\vphantom{0-c-b0000c}\\\left\{5\right\}\vphantom{d0000-a00}\\\left\{5\right\}\vphantom{0d00-b000}\\\left\{5\right\}\vphantom{000d0cb0}\\\left\{5\right\}\vphantom{00d0c00a}\end{array}\left(\!\begin{array}{cccccccc}
+\vphantom{\left\{5\right\}}0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
+\vphantom{\left\{5\right\}}b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
+\vphantom{\left\{5\right\}}-c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;c&amp;0\\
+\vphantom{\left\{5\right\}}0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;0&amp;c\\
+\vphantom{\left\{5\right\}}d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+\vphantom{\left\{5\right\}}0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+\vphantom{\left\{5\right\}}0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;b&amp;0\\
+\vphantom{\left\{5\right\}}0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;0&amp;a
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}6}{R^{8}}\,\xleftarrow{\begin{array}{l}\left\{6\right\}\vphantom{0a00c000}\\\left\{6\right\}\vphantom{b0000c00}\\\left\{6\right\}\vphantom{-c00-a000c}\\\left\{6\right\}\vphantom{0-c-b000c0}\\\left\{6\right\}\vphantom{d0000-a00}\\\left\{6\right\}\vphantom{0d00-b000}\\\left\{6\right\}\vphantom{00d0c0a0}\\\left\{6\right\}\vphantom{000d0c0b}\end{array}\left(\!\begin{array}{cccccccc}
+\vphantom{\left\{6\right\}}0&amp;a&amp;0&amp;0&amp;c&amp;0&amp;0&amp;0\\
+\vphantom{\left\{6\right\}}b&amp;0&amp;0&amp;0&amp;0&amp;c&amp;0&amp;0\\
+\vphantom{\left\{6\right\}}-c&amp;0&amp;0&amp;-a&amp;0&amp;0&amp;0&amp;c\\
+\vphantom{\left\{6\right\}}0&amp;-c&amp;-b&amp;0&amp;0&amp;0&amp;c&amp;0\\
+\vphantom{\left\{6\right\}}d&amp;0&amp;0&amp;0&amp;0&amp;-a&amp;0&amp;0\\
+\vphantom{\left\{6\right\}}0&amp;d&amp;0&amp;0&amp;-b&amp;0&amp;0&amp;0\\
+\vphantom{\left\{6\right\}}0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;a&amp;0\\
+\vphantom{\left\{6\right\}}0&amp;0&amp;0&amp;d&amp;0&amp;c&amp;0&amp;b
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}7}{R^{8}}$
 
 o3 : <tt class="token class-name">ChainComplex</tt>
 i4 : 4:0M = coker kRes.dd_5

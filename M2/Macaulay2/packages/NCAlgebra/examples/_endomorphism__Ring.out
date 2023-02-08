@@ -11,38 +11,38 @@
 o2 : <tt class="token class-name">QuotientRing</tt>
 i3 : 3:0kRes = res(coker vars R, LengthLimit=>7)
 
-o3 = $\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
+o3 = $\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\!\begin{array}{ccc}
 a&amp;b&amp;c
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}1}{R^{3}}\,\xleftarrow{\left(\begin{smallmatrix}
-0&amp;-c&amp;b&amp;0\\
--c&amp;0&amp;0&amp;a\\
-b&amp;a&amp;-c&amp;-c
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}2}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
-a&amp;0&amp;0&amp;c\\
-0&amp;b&amp;c&amp;0\\
-0&amp;c&amp;a&amp;0\\
-c&amp;0&amp;0&amp;b
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}3}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
--b&amp;0&amp;0&amp;-c\\
-0&amp;-a&amp;-c&amp;0\\
-0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}4}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
-0&amp;-a&amp;0&amp;-c\\
--b&amp;0&amp;-c&amp;0\\
-c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}5}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
-0&amp;-a&amp;-c&amp;0\\
--b&amp;0&amp;0&amp;-c\\
-0&amp;c&amp;b&amp;0\\
-c&amp;0&amp;0&amp;a
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}6}{R^{4}}\,\xleftarrow{\left(\begin{smallmatrix}
-0&amp;-a&amp;0&amp;-c\\
--b&amp;0&amp;-c&amp;0\\
-c&amp;0&amp;a&amp;0\\
-0&amp;c&amp;0&amp;b
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}7}{R^{4}}$
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}1}{R^{3}}\,\xleftarrow{\begin{array}{l}\left\{1\right\}\vphantom{0-cb0}\\\left\{1\right\}\vphantom{-c00a}\\\left\{1\right\}\vphantom{ba-c-c}\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{1\right\}}0&amp;-c&amp;b&amp;0\\
+\vphantom{\left\{1\right\}}-c&amp;0&amp;0&amp;a\\
+\vphantom{\left\{1\right\}}b&amp;a&amp;-c&amp;-c
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}2}{R^{4}}\,\xleftarrow{\begin{array}{l}\left\{2\right\}\vphantom{a00c}\\\left\{2\right\}\vphantom{0bc0}\\\left\{2\right\}\vphantom{0ca0}\\\left\{2\right\}\vphantom{c00b}\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{2\right\}}a&amp;0&amp;0&amp;c\\
+\vphantom{\left\{2\right\}}0&amp;b&amp;c&amp;0\\
+\vphantom{\left\{2\right\}}0&amp;c&amp;a&amp;0\\
+\vphantom{\left\{2\right\}}c&amp;0&amp;0&amp;b
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}3}{R^{4}}\,\xleftarrow{\begin{array}{l}\left\{3\right\}\vphantom{-b00-c}\\\left\{3\right\}\vphantom{0-a-c0}\\\left\{3\right\}\vphantom{0cb0}\\\left\{3\right\}\vphantom{c00a}\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{3\right\}}-b&amp;0&amp;0&amp;-c\\
+\vphantom{\left\{3\right\}}0&amp;-a&amp;-c&amp;0\\
+\vphantom{\left\{3\right\}}0&amp;c&amp;b&amp;0\\
+\vphantom{\left\{3\right\}}c&amp;0&amp;0&amp;a
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}4}{R^{4}}\,\xleftarrow{\begin{array}{l}\left\{4\right\}\vphantom{0-a0-c}\\\left\{4\right\}\vphantom{-b0-c0}\\\left\{4\right\}\vphantom{c0a0}\\\left\{4\right\}\vphantom{0c0b}\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{4\right\}}0&amp;-a&amp;0&amp;-c\\
+\vphantom{\left\{4\right\}}-b&amp;0&amp;-c&amp;0\\
+\vphantom{\left\{4\right\}}c&amp;0&amp;a&amp;0\\
+\vphantom{\left\{4\right\}}0&amp;c&amp;0&amp;b
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}5}{R^{4}}\,\xleftarrow{\begin{array}{l}\left\{5\right\}\vphantom{0-a-c0}\\\left\{5\right\}\vphantom{-b00-c}\\\left\{5\right\}\vphantom{0cb0}\\\left\{5\right\}\vphantom{c00a}\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{5\right\}}0&amp;-a&amp;-c&amp;0\\
+\vphantom{\left\{5\right\}}-b&amp;0&amp;0&amp;-c\\
+\vphantom{\left\{5\right\}}0&amp;c&amp;b&amp;0\\
+\vphantom{\left\{5\right\}}c&amp;0&amp;0&amp;a
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}6}{R^{4}}\,\xleftarrow{\begin{array}{l}\left\{6\right\}\vphantom{0-a0-c}\\\left\{6\right\}\vphantom{-b0-c0}\\\left\{6\right\}\vphantom{c0a0}\\\left\{6\right\}\vphantom{0c0b}\end{array}\left(\!\begin{array}{cccc}
+\vphantom{\left\{6\right\}}0&amp;-a&amp;0&amp;-c\\
+\vphantom{\left\{6\right\}}-b&amp;0&amp;-c&amp;0\\
+\vphantom{\left\{6\right\}}c&amp;0&amp;a&amp;0\\
+\vphantom{\left\{6\right\}}0&amp;c&amp;0&amp;b
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}7}{R^{4}}$
 
 o3 : <tt class="token class-name">ChainComplex</tt>
 i4 : 4:0M = coker kRes.dd_5
