@@ -1563,12 +1563,12 @@ lookat(p:Position):void := (
      else if locatedCode.minline == int(p.line) && locatedCode.mincol > int(p.column) then (
 	  locatedCode.mincol = int(p.column);
 	  );
-     if locatedCode.maxline < int(p.line) then (
-	  locatedCode.maxline = int(p.line);
-	  locatedCode.maxcol = int(p.column);
+     if locatedCode.maxline < int(p.line2) then (
+	  locatedCode.maxline = int(p.line2);
+	  locatedCode.maxcol = int(p.column2);
 	  )
-     else if locatedCode.maxline == int(p.line) && locatedCode.maxcol < int(p.column) then (
-	  locatedCode.maxcol = int(p.column);
+     else if locatedCode.maxline == int(p.line2) && locatedCode.maxcol < int(p.column2) then (
+	  locatedCode.maxcol = int(p.column2);
 	  );
      );
 locate(x:Token):void := lookat(position(x));
@@ -1648,7 +1648,7 @@ locate(e:Expr):Expr := (
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)),
+		    toExpr(int(p.line2)),toExpr(int(p.column2)),
 		    toExpr(int(p.line)),toExpr(int(p.column))
 		    )))
      is c:CodeClosure do (

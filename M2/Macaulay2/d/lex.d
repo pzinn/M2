@@ -96,7 +96,7 @@ recognize(file:PosFile):(null or Word) := (
 	  );
      when last
      is null do (
-	  p := position(file);
+          p := position(file);
 	  getc(file);
 	  printErrorMessage(p,"invalid character" );
 	  (null or Word)(NULL))
@@ -111,7 +111,7 @@ getstringslashes(o:PosFile):(null or Word) := (		    -- /// ... ///
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
      getc(o);		  -- pass '/'
-     pos := position(o);
+--     pos := position(o);
      tokenbuf << '\"';					    -- "
      while true do (
 	  ch := getc(o);
@@ -278,6 +278,8 @@ export errorToken := Token(Word("-*error token*-",TCnone,0,newParseinfo()),
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
+     dummyPosition.line,
+     dummyPosition.column,
      dummyPosition.loadDepth,
      globalDictionary,			    -- should replace this by dummyDictionary, I think
      dummySymbol,false);
@@ -300,17 +302,17 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  line := file.line;
 	  column := file.column;
 	  ch := peek(file);
-     	  if iseof(ch) then return Token(wordEOF,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline)
+     	  if iseof(ch) then return Token(wordEOF,file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline)
      	  else if iserror(ch) then return errorToken
 	  else if ch == int('\n') then (
 	       getc(file);
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,
-		    file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+		    file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode except 226) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       decimal := true;
@@ -383,33 +385,33 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       c = peek(file);
 	       if isalpha(c) then printWarningMessage(position(file),"character '"+char(c)+"' immediately following number");
 	       s := takestring(tokenbuf);
-	       return Token(Word(s,typecode,0, parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline)) 
+	       return Token(Word(s,typecode,0, parseWORD),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline)) 
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
 	       when getstringslashes(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return errorToken
 		    )
-	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       is word:Word do return Token(word,file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if isquote(ch) then (
 	       when getstring(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return errorToken
 		    )
-	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       is word:Word do return Token(word,file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else if ch == 226 then ( -- unicode math symbols
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
 	  else (
 	       when recognize(file)
 	       is null do (
 		    empty(tokenbuf);
 		    return errorToken
 		    )
-	       is word:Word do return Token(word,file.filename, line, column, loadDepth,globalDictionary,dummySymbol,sawNewline))));
+	       is word:Word do return Token(word,file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))));
 export gettoken(file:PosFile,obeylines:bool):Token := (
      sawNewline := false;
      while true do (

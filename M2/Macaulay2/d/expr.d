@@ -211,6 +211,8 @@ export dummyToken   := Token(
      dummyPosition.filename,
      dummyPosition.line,
      dummyPosition.column,
+     dummyPosition.line,
+     dummyPosition.column,
      dummyPosition.loadDepth,
      Macaulay2Dictionary,dummySymbol,false);
 
