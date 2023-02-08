@@ -368,8 +368,10 @@ export convert(e:ParseTree):Code := (
 	       	    convert(b.rhs),treePosition(e)))
 	  )
      is a:Arrow do Code(functionCode(
-	       a.Operator,		  -- just for display purposes!
-	       convert(a.rhs),a.desc,nextHash()))
+	       a.Operator,		  -- just for display purposes! TODO retire
+	       convert(a.rhs),a.desc,nextHash(),
+	       treePosition(a.rhs) -- why not treePosition(a) itself? not clear
+	       ))
      is u:Unary do (
 	  if u.Operator.word == CommaW
 	  then Code(sequenceCode(makeCodeSequence(e,CommaW),treePosition(e)))

@@ -502,33 +502,119 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
 
 export treePosition(e:ParseTree):Position := (
-     while true do (
 	  when e
-	  is dummy do return dummyPosition
-	  is token:Token do return position(token)
-	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do return position(binary.Operator)
-	  is a:Arrow do return position(a.Operator)
-	  is unary:Unary do return position(unary.Operator)
-	  is postfix:Postfix do return position(postfix.Operator)
-	  is a:Quote do return position(a.Operator)
-	  is a:GlobalQuote do return position(a.Operator)
-	  is a:ThreadQuote do return position(a.Operator)
-	  is a:LocalQuote do return position(a.Operator)
-	  is ee:Parentheses do return position(ee.left)
-	  is ee:EmptyParentheses do return position(ee.left)
-     	  is i:IfThen do return position(i.ifToken)
-	  is i:TryThenElse do return position(i.tryToken)
-	  is i:TryElse do return position(i.tryToken)
-	  is i:Try do return position(i.tryToken)
-	  is i:Catch do return position(i.catchToken)
-     	  is i:IfThenElse do return position(i.ifToken)
-     	  is w:For do return position(w.forToken)
-     	  is w:WhileDo do return position(w.whileToken)
-     	  is w:WhileList do return position(w.whileToken)
-     	  is w:WhileListDo do return position(w.whileToken)
-	  is n:New do return position(n.newtoken)
-	  )
+	  is dummy do dummyPosition
+	  is token:Token do position(token)
+	  is adjacent:Adjacent do (
+	      p:=treePosition(adjacent.lhs);
+	      q:=treePosition(adjacent.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is binary:Binary do (
+	      p:=treePosition(binary.lhs);
+	      q:=treePosition(binary.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is arrow:Arrow do (
+	      p:=treePosition(arrow.lhs);
+	      q:=treePosition(arrow.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is unary:Unary do (
+	      p:=position(unary.Operator);
+	      q:=treePosition(unary.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is postfix:Postfix do (
+	      p:=treePosition(postfix.lhs);
+	      q:=position(postfix.Operator);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is quote:Quote do (
+	      p:=position(quote.Operator);
+	      q:=position(quote.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is quote:GlobalQuote do (
+	      p:=position(quote.Operator);
+	      q:=position(quote.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is quote:ThreadQuote do (
+	      p:=position(quote.Operator);
+	      q:=position(quote.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is quote:LocalQuote do (
+	      p:=position(quote.Operator);
+	      q:=position(quote.rhs);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is ee:Parentheses do (
+	      p:=position(ee.left);
+	      q:=position(ee.right);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is ee:EmptyParentheses do (
+	      p:=position(ee.left);
+	      q:=position(ee.right);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:IfThen do (
+	      p:=position(i.ifToken);
+	      q:=treePosition(i.thenclause);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:IfThenElse do (
+	      p:=position(i.ifToken);
+	      q:=treePosition(i.elseClause);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:Try do (
+	      p:=position(i.tryToken);
+	      q:=treePosition(i.primary);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:TryElse do (
+	      p:=position(i.tryToken);
+	      q:=treePosition(i.alternate);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:TryThenElse do (
+	      p:=position(i.tryToken);
+	      q:=treePosition(i.alternate);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:Catch do (
+	      p:=position(i.catchToken);
+	      q:=treePosition(i.primary);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:For do (
+	      p:=position(i.forToken);
+	      q:=treePosition(i.doClause);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:WhileDo do (
+	      p:=position(i.whileToken);
+	      q:=treePosition(i.doClause);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:WhileList do (
+	      p:=position(i.whileToken);
+	      q:=treePosition(i.listClause);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is i:WhileListDo do (
+	      p:=position(i.whileToken);
+	      q:=treePosition(i.doClause);
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
+	  is n:New do (
+	      p:=position(n.newtoken);
+	      q:=treePosition(n.newinitializer); -- TODO what if it's not there???
+	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
+	      )
      );
 
 size(x:Token):int := Ccode(int,"sizeof(*",x,")");

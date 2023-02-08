@@ -246,10 +246,11 @@ export functionDescription := {
      };
 export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := {+
-     arrow:Token,			  -- just for display purposes
+     arrow:Token,			  -- just for display purposes TODO remove
      body:Code, 
      desc:functionDescription,
-     hash:int
+     hash:int,
+     position:Position
      };
 export Code := (
      nullCode or realCode or stringCode or integerCode 
