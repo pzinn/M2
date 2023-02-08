@@ -12,7 +12,7 @@ export codePosition(c:Code):Position := (
      is f:catchCode do f.position
      is f:Error do f.position
      is f:forCode do f.position
-     is f:functionCode do f.position -- TEMP
+     is f:functionCode do f.position
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
      is f:globalSymbolClosureCode do f.position
