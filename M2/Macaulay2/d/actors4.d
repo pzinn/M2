@@ -1603,7 +1603,7 @@ locate(e:Code):void := (
      is v:parallelAssignmentCode do (lookat(v.position); locate(v.rhs);)
      is v:realCode do lookat(v.position)
      is v:sequenceCode do foreach c in v.x do locate(c)
-     is v:stringCode do nothing
+     is v:stringCode do lookat(v.position)
      is v:ternaryCode do ( lookat(v.position); locate(v.arg1); locate(v.arg2); locate(v.arg3);)
      is v:tryCode do ( lookat(v.position); locate(v.code); locate(v.thenClause); locate(v.elseClause); )
      is v:catchCode do ( lookat(v.position); locate(v.code); )
