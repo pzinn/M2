@@ -684,13 +684,8 @@ markdown = method(Dispatch => Thing, TypicalValue => String)
 mathML = method(Dispatch => Thing, TypicalValue => String)
 tex = method(Dispatch => Thing, TypicalValue => String)
 --
-texFlag=false;
 if topLevelMode =!= WebApp then texMath = method(Dispatch => Thing, TypicalValue => String) else (
-    texMath = new MethodFunctionSingle from (x -> if texFlag then texMath1 x else (
-    	    l := lookup(texMath,class x);
-    	    if l === null then error noMethodSingle(texMath, x, false);
-    	    l x
-    	    ));
+    texMath = new MethodFunctionSingle from (x -> texMath1 x); -- will be defined later
     typicalValues#texMath = String;
     )
 -- 
