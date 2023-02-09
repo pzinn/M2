@@ -377,8 +377,9 @@ export convert(e:ParseTree):Code := (
 	  )
      is a:Arrow do Code(functionCode(
 	       a.Operator,		  -- just for display purposes!
-	       c:=convert(a.rhs),a.desc,nextHash(),
-	       combinePosition(position(a.Operator),codePosition(c))
+	       convert(a.rhs),a.desc,nextHash(),
+	       -- combinePosition(position(a.Operator),codePosition(c))
+	       treePosition(e) -- the only way to ensure we get everything including l.h.s. and parentheses of r.h.s., sadly
 	       ))
      is u:Unary do (
 	  if u.Operator.word == CommaW

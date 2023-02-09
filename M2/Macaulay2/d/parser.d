@@ -500,7 +500,7 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  if newinitializer == errorTree then return errorTree;
 	  );
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
-
+-- rewrite using combine
 export treePosition(e:ParseTree):Position := (
 	  when e
 	  is dummy do dummyPosition
