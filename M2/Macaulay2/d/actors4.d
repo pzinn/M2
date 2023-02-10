@@ -1564,30 +1564,19 @@ locate(e:Expr):Expr := (
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line2)),toExpr(int(p.column2)),
-		    toExpr(int(p.line)),toExpr(int(p.column))
-		    )))
-     is c:CodeClosure do (
-     p:=codePosition(c.code);
-	  if p == dummyPosition -- TODO avoid repeat
-	  then nullE
-	  else Expr(
-	       Sequence(
-		    toExpr(verifyMinimizeFilename(p.filename)),
-		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line2)),toExpr(int(p.column2)),
+		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)),
 		    toExpr(int(p.line)),toExpr(int(p.column))
 		    )))
      is s:SpecialExpr do locate(s.e)
-     is f:functionCode do ( -- TODO avoid repeat
-          p:=f.position;
+     is f:functionCode do (
+          p:=f.location;
 	  Expr(
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line)),toExpr(int(p.column)),
 		    toExpr(int(p.line2)),toExpr(int(p.column2)),
-		    toExpr(int(p.line)),toExpr(int(p.column))
-			)))
+		    toExpr(int(p.line3)),toExpr(int(p.column3))
+                    )))
      is f:FunctionClosure do locate (Expr(f.model))
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2

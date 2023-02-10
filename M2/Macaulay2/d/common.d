@@ -12,7 +12,7 @@ export codePosition(c:Code):Position := (
      is f:catchCode do f.position
      is f:Error do f.position
      is f:forCode do f.position
-     is f:functionCode do f.position
+     is f:functionCode do ( l:=f.location; Position(l.filename,l.line,l.column,l.loadDepth) )
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
      is f:globalSymbolClosureCode do f.position
@@ -222,7 +222,7 @@ export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when w
      if p.loadDepth >= errorDepth then printError(e);
      Expr(e));
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
-     printErrorMessageE(position(c),message));
+     printErrorMessageE(leftPosition(c),message));
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
 export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then if err.value == dummyExpr then nullE else err.value else z else z;

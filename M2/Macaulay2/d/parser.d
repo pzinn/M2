@@ -228,7 +228,7 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      	       token = gettoken(file,obeylines);
 	       token.word.parse.funs.unary(token,file,prec,obeylines)
 	       )
-     	  else ParseTree(dummy(position(token)))
+     	  else ParseTree(dummy(leftPosition(token)))
 	  );
      if ret == errorTree then (
 	  if isatty(file) then flush(file) else skip(file,prec));
@@ -500,121 +500,93 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  if newinitializer == errorTree then return errorTree;
 	  );
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
--- rewrite using combine
+
 export treePosition(e:ParseTree):Position := (
+     while true do (
 	  when e
-	  is dummy do dummyPosition
-	  is token:Token do position(token)
-	  is adjacent:Adjacent do (
-	      p:=treePosition(adjacent.lhs);
-	      q:=treePosition(adjacent.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is binary:Binary do (
-	      p:=treePosition(binary.lhs);
-	      q:=treePosition(binary.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is arrow:Arrow do (
-	      p:=treePosition(arrow.lhs);
-	      q:=treePosition(arrow.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is unary:Unary do (
-	      p:=position(unary.Operator);
-	      q:=treePosition(unary.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is postfix:Postfix do (
-	      p:=treePosition(postfix.lhs);
-	      q:=position(postfix.Operator);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is quote:Quote do (
-	      p:=position(quote.Operator);
-	      q:=position(quote.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is quote:GlobalQuote do (
-	      p:=position(quote.Operator);
-	      q:=position(quote.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is quote:ThreadQuote do (
-	      p:=position(quote.Operator);
-	      q:=position(quote.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is quote:LocalQuote do (
-	      p:=position(quote.Operator);
-	      q:=position(quote.rhs);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is ee:Parentheses do (
-	      p:=position(ee.left);
-	      q:=position(ee.right);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is ee:EmptyParentheses do (
-	      p:=position(ee.left);
-	      q:=position(ee.right);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:IfThen do (
-	      p:=position(i.ifToken);
-	      q:=treePosition(i.thenclause);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:IfThenElse do (
-	      p:=position(i.ifToken);
-	      q:=treePosition(i.elseClause);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:Try do (
-	      p:=position(i.tryToken);
-	      q:=treePosition(i.primary);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:TryElse do (
-	      p:=position(i.tryToken);
-	      q:=treePosition(i.alternate);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:TryThenElse do (
-	      p:=position(i.tryToken);
-	      q:=treePosition(i.alternate);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:Catch do (
-	      p:=position(i.catchToken);
-	      q:=treePosition(i.primary);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:For do (
-	      p:=position(i.forToken);
-	      q:=treePosition(i.doClause);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:WhileDo do (
-	      p:=position(i.whileToken);
-	      q:=treePosition(i.doClause);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:WhileList do (
-	      p:=position(i.whileToken);
-	      q:=treePosition(i.listClause);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is i:WhileListDo do (
-	      p:=position(i.whileToken);
-	      q:=treePosition(i.doClause);
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
-	  is n:New do (
-	      p:=position(n.newtoken);
-	      q:=treePosition(n.newinitializer); -- TODO what if it's not there???
-	      Position(p.filename,p.line,p.column,q.line2,q.column2,p.loadDepth)
-	      )
+	  is dummy do return dummyPosition
+	  is token:Token do return leftPosition(token)
+	  is adjacent:Adjacent do e = adjacent.lhs
+	  is binary:Binary do return leftPosition(binary.Operator) --
+	  is a:Arrow do return leftPosition(a.Operator) --
+	  is unary:Unary do return leftPosition(unary.Operator)
+	  is postfix:Postfix do return leftPosition(postfix.Operator) --
+	  is a:Quote do return leftPosition(a.Operator)
+	  is a:GlobalQuote do return leftPosition(a.Operator)
+	  is a:ThreadQuote do return leftPosition(a.Operator)
+	  is a:LocalQuote do return leftPosition(a.Operator)
+	  is ee:Parentheses do return leftPosition(ee.left)
+	  is ee:EmptyParentheses do return leftPosition(ee.left)
+     	  is i:IfThen do return leftPosition(i.ifToken)
+	  is i:TryThenElse do return leftPosition(i.tryToken)
+	  is i:TryElse do return leftPosition(i.tryToken)
+	  is i:Try do return leftPosition(i.tryToken)
+	  is i:Catch do return leftPosition(i.catchToken)
+     	  is i:IfThenElse do return leftPosition(i.ifToken)
+     	  is w:For do return leftPosition(w.forToken)
+     	  is w:WhileDo do return leftPosition(w.whileToken)
+     	  is w:WhileList do return leftPosition(w.whileToken)
+     	  is w:WhileListDo do return leftPosition(w.whileToken)
+	  is n:New do return leftPosition(n.newtoken)
+	  )
+     );
+export leftPosition(e:ParseTree):Position := ( -- almost the same really as treePosition -- merge?
+     while true do (
+	  when e
+	  is dummy do return dummyPosition
+	  is token:Token do return leftPosition(token)
+	  is adjacent:Adjacent do e = adjacent.lhs
+	  is binary:Binary do e = binary.lhs
+	  is a:Arrow do e = a.lhs
+	  is unary:Unary do return leftPosition(unary.Operator)
+	  is postfix:Postfix do e = postfix.lhs
+	  is a:Quote do return leftPosition(a.Operator)
+	  is a:GlobalQuote do return leftPosition(a.Operator)
+	  is a:ThreadQuote do return leftPosition(a.Operator)
+	  is a:LocalQuote do return leftPosition(a.Operator)
+	  is ee:Parentheses do return leftPosition(ee.left)
+	  is ee:EmptyParentheses do return leftPosition(ee.left)
+     	  is i:IfThen do return leftPosition(i.ifToken)
+	  is i:TryThenElse do return leftPosition(i.tryToken)
+	  is i:TryElse do return leftPosition(i.tryToken)
+	  is i:Try do return leftPosition(i.tryToken)
+	  is i:Catch do return leftPosition(i.catchToken)
+     	  is i:IfThenElse do return leftPosition(i.ifToken)
+     	  is w:For do return leftPosition(w.forToken)
+     	  is w:WhileDo do return leftPosition(w.whileToken)
+     	  is w:WhileList do return leftPosition(w.whileToken)
+     	  is w:WhileListDo do return leftPosition(w.whileToken)
+	  is n:New do return leftPosition(n.newtoken)
+	  )
+     );
+export rightPosition(e:ParseTree):Position := (
+     while true do (
+	  when e
+	  is dummy do return dummyPosition
+	  is token:Token do return rightPosition(token)
+	  is adjacent:Adjacent do e = adjacent.rhs
+	  is binary:Binary do e = binary.rhs
+	  is a:Arrow do e = a.rhs
+	  is unary:Unary do e = unary.rhs
+	  is postfix:Postfix do return rightPosition(postfix.Operator)
+	  is a:Quote do return rightPosition(a.rhs)
+	  is a:GlobalQuote do return rightPosition(a.rhs)
+	  is a:ThreadQuote do return rightPosition(a.rhs)
+	  is a:LocalQuote do return rightPosition(a.rhs)
+	  is ee:Parentheses do return rightPosition(ee.right)
+	  is ee:EmptyParentheses do return rightPosition(ee.right)
+     	  is i:IfThen do e = i.thenClause
+	  is i:TryThenElse do e = i.alternate
+	  is i:TryElse do e = i.alternate
+	  is i:Try do e = i.primary
+	  is i:Catch do e = i.primary
+     	  is i:IfThenElse do e = i.elseClause
+     	  is w:For do e = w.doClause
+     	  is w:WhileDo do e = w.doClause
+     	  is w:WhileList do e = w.listClause
+     	  is w:WhileListDo do e = w.doClause
+	  is n:New do e = n.newinitializer -- CHECK -- what if not initializer?
+	  )
      );
 
 size(x:Token):int := Ccode(int,"sizeof(*",x,")");
@@ -635,8 +607,8 @@ export size(e:ParseTree):int := (
      is x:LocalQuote do Ccode(int,"sizeof(*",x,")") + size(x.rhs) + size(x.Operator)
      is x:Parentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right) + size(x.contents)
      is x:EmptyParentheses do Ccode(int,"sizeof(*",x,")") + size(x.left) + size(x.right)
-     is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause)
-     is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenclause) + size(x.elseClause)
+     is x:IfThen do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause)
+     is x:IfThenElse do Ccode(int,"sizeof(*",x,")") + size(x.ifToken) + size(x.predicate) + size(x.thenClause) + size(x.elseClause)
      is x:TryThenElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.thenToken) + size(x.sequel) + size(x.elseToken) + size(x.alternate)
      is x:TryElse do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.elseToken) + size(x.alternate)
      is x:Try do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)
