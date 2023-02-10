@@ -15,12 +15,12 @@ limit := 4
 
 codeFunction := (f,depth) -> (
     if depth <= limit then (
-	l := locate f;
-	if l === null then DIV{"function ", f, ": source code not available"}
+	c := code locate f;
+	if c === null then DIV{"function ", f, ": source code not available"}
 	else (
 	    syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
 	    DIV flatten {
-		code l,
+		c,
 		if #syms > 0 then INDENT listSymbols syms,
 		if codeHelper#?(functionBody f)
 		then apply(
@@ -74,10 +74,15 @@ code Sequence   := s -> (
     if func =!= null or (func = lookup key) =!= null
     then DIV {"-- code for method: " | formatDocumentTag key, code func }
     else "-- no method function found: " | formatDocumentTag key)
-code Function   := f -> codeFunction(f, 0)
+code Function   := f -> DIV { codeFunction(f, 0), (lookup(code,Thing)) f }
 code Command    := C -> code C#0
 code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
+code Thing      := x -> if hasAttribute(x,ReverseDictionary) then (
+    x = getAttribute(x,ReverseDictionary);
+    c := code locate x;
+    if c =!= null then DIV { "-- ", symbol symbol, " ", x, c }
+    )
 
 -----------------------------------------------------------------------------
 -- edit
