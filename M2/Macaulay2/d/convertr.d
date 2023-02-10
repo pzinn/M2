@@ -1,6 +1,5 @@
 --		Copyright 1994 by Daniel R. Grayson
 use binding;
-use common;
 
 dummyMultaryFun(c:CodeSequence):Expr := (
      error("dummy multary function called");

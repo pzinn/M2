@@ -501,36 +501,7 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  );
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
 
-export treePosition(e:ParseTree):Position := (
-     while true do (
-	  when e
-	  is dummy do return dummyPosition
-	  is token:Token do return leftPosition(token)
-	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do return leftPosition(binary.Operator) --
-	  is a:Arrow do return leftPosition(a.Operator) --
-	  is unary:Unary do return leftPosition(unary.Operator)
-	  is postfix:Postfix do return leftPosition(postfix.Operator) --
-	  is a:Quote do return leftPosition(a.Operator)
-	  is a:GlobalQuote do return leftPosition(a.Operator)
-	  is a:ThreadQuote do return leftPosition(a.Operator)
-	  is a:LocalQuote do return leftPosition(a.Operator)
-	  is ee:Parentheses do return leftPosition(ee.left)
-	  is ee:EmptyParentheses do return leftPosition(ee.left)
-     	  is i:IfThen do return leftPosition(i.ifToken)
-	  is i:TryThenElse do return leftPosition(i.tryToken)
-	  is i:TryElse do return leftPosition(i.tryToken)
-	  is i:Try do return leftPosition(i.tryToken)
-	  is i:Catch do return leftPosition(i.catchToken)
-     	  is i:IfThenElse do return leftPosition(i.ifToken)
-     	  is w:For do return leftPosition(w.forToken)
-     	  is w:WhileDo do return leftPosition(w.whileToken)
-     	  is w:WhileList do return leftPosition(w.whileToken)
-     	  is w:WhileListDo do return leftPosition(w.whileToken)
-	  is n:New do return leftPosition(n.newtoken)
-	  )
-     );
-export leftPosition(e:ParseTree):Position := ( -- almost the same really as treePosition -- merge?
+export leftPosition(e:ParseTree):Position := (
      while true do (
 	  when e
 	  is dummy do return dummyPosition

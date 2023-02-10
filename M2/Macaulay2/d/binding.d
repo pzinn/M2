@@ -388,7 +388,7 @@ export makeSymbol(t:Token):Symbol := (
      e);
 export makeErrorTree(e:ParseTree,message:string):void := (
      HadError = true;
-     printErrorMessage(treePosition(e),message);
+     printErrorMessage(leftPosition(e),message);
      );
 export makeErrorTree(e:Token,message:string):void := (
      HadError = true;

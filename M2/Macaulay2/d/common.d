@@ -12,7 +12,7 @@ export codePosition(c:Code):Position := (
      is f:catchCode do f.position
      is f:Error do f.position
      is f:forCode do f.position
-     is f:functionCode do ( l:=f.location; Position(l.filename,l.line,l.column,l.loadDepth) )
+     is f:functionCode do ( l:=f.location; Position(l.filename,l.line3,l.column3,l.loadDepth) )
      is f:globalAssignmentCode do f.position
      is f:globalMemoryReferenceCode do f.position
      is f:globalSymbolClosureCode do f.position
