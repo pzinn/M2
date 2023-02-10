@@ -500,7 +500,7 @@ setup(SlashSlashS,quotientC);
 BackslashBackslashFun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BackslashBackslashS);
 setup(BackslashBackslashS,BackslashBackslashFun);
 
-adjacentFun(lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codePosition(rhs))));
+adjacentFun(lhs:Code,rhs:Code):Expr := eval(Code(adjacentCode(lhs,rhs,codeLocation(rhs))));
 setup(AdjacentS,adjacentFun);
 BinaryPowerMethod(x:Expr,y:Expr):Expr := (
      when y is i0:ZZcell do (

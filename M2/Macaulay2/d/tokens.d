@@ -77,8 +77,9 @@ export printError(err:Error):Error := (
      then printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
      err.printed = true;
      err);
-export leftPosition(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
-export rightPosition(t:Token):Position := Position(t.filename,t.line2,t.column2,t.loadDepth);
+export location(t:Token):Location := Location(t.filename,t.line,t.column,t.line2,t.column2,t.line,t.column,t.loadDepth);
+export leftPosition(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth); -- TODO retire
+export rightPosition(t:Token):Position := Position(t.filename,t.line2,t.column2,t.loadDepth); -- TODO retire
 export printErrorMessage(t:Token,message:string):void := printErrorMessage(leftPosition(t),message);
 export printWarningMessage(t:Token,message:string):void := printWarningMessage(leftPosition(t),message);
 

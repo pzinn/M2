@@ -158,45 +158,45 @@ export ParseTree := (
 export localSymbolClosureCode := {+
      nestingDepth:int,
      symbol:Symbol,
-     position:Position
+     location:Location
      };
 export globalSymbolClosureCode := {+
      symbol:Symbol,
-     position:Position
+     location:Location
      };
 export threadSymbolClosureCode := {+
      symbol:Symbol,
-     position:Position,
+     location:Location,
      x:void						    -- just to distinguish it
      };
 export localMemoryReferenceCode := {+
      nestingDepth:int,
      frameindex:int,
-     position:Position
+     location:Location
      };
 export globalMemoryReferenceCode := {+
      frameindex:int,
-     position:Position
+     location:Location
      };
 export threadMemoryReferenceCode := {+
      frameindex:int,
-     position:Position,
+     location:Location,
      x:void						    -- just to distinguish it
      };
 export localAssignmentCode := {+
      nestingDepth:int,
      frameindex:int,
      rhs:Code,
-     position:Position
+     location:Location
      };
 export globalAssignmentCode := {+
      lhs:Symbol,
      rhs:Code,
-     position:Position
+     location:Location
      };
-export ifCode := {+ predicate:Code, thenClause:Code, elseClause:Code, position:Position };
-export tryCode := {+ code:Code, thenClause:Code, elseClause:Code, position:Position };
-export catchCode := {+ code:Code, position:Position };
+export ifCode := {+ predicate:Code, thenClause:Code, elseClause:Code, location:Location };
+export tryCode := {+ code:Code, thenClause:Code, elseClause:Code, location:Location };
+export catchCode := {+ code:Code, location:Location };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {+
@@ -204,34 +204,34 @@ export parallelAssignmentCode := {+
      frameindex:array(int),
      lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
      rhs:Code,
-     position:Position};
+     location:Location};
 
 export nullCode := {+};
-export realCode := {+x:RR,position:Position};
-export integerCode := {+x:ZZ,position:Position};
-export stringCode := {+x:string,position:Position};
-export unaryCode := {+f:unop,rhs:Code,position:Position};
-export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
-export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
-export whileDoCode := {+predicate:Code,doClause:Code,position:Position};
-export whileListCode := {+predicate:Code,listClause:Code,position:Position};
-export whileListDoCode := {+predicate:Code,listClause:Code,doClause:Code,position:Position};
+export realCode := {+x:RR,location:Location};
+export integerCode := {+x:ZZ,location:Location};
+export stringCode := {+x:string,location:Location};
+export unaryCode := {+f:unop,rhs:Code,location:Location};
+export binaryCode := {+f:binop,lhs:Code,rhs:Code,location:Location};
+export adjacentCode := {+lhs:Code,rhs:Code,location:Location};
+export whileDoCode := {+predicate:Code,doClause:Code,location:Location};
+export whileListCode := {+predicate:Code,listClause:Code,location:Location};
+export whileListDoCode := {+predicate:Code,listClause:Code,doClause:Code,location:Location};
 
-export ternaryCode := {+f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
+export ternaryCode := {+f:ternop,arg1:Code,arg2:Code,arg3:Code,location:Location};
 
-export newOfFromCode := {+newClause:Code,ofClause:Code,fromClause:Code,position:Position};
-export newFromCode   := {+newClause:Code,fromClause:Code,position:Position};
-export newOfCode     := {+newClause:Code,ofClause:Code,position:Position};
-export newCode       := {+newClause:Code,position:Position};
+export newOfFromCode := {+newClause:Code,ofClause:Code,fromClause:Code,location:Location};
+export newFromCode   := {+newClause:Code,fromClause:Code,location:Location};
+export newOfCode     := {+newClause:Code,ofClause:Code,location:Location};
+export newCode       := {+newClause:Code,location:Location};
 
 export CodeSequence     := tarray(Code);
-export sequenceCode     := {+x:CodeSequence, position:Position};
-export listCode         := {+y:CodeSequence, position:Position};
-export arrayCode        := {+z:CodeSequence, position:Position};
-export angleBarListCode := {+t:CodeSequence, position:Position};
-export semiCode         := {+w:CodeSequence, position:Position};
-export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
-export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
+export sequenceCode     := {+x:CodeSequence, location:Location};
+export listCode         := {+y:CodeSequence, location:Location};
+export arrayCode        := {+z:CodeSequence, location:Location};
+export angleBarListCode := {+t:CodeSequence, location:Location};
+export semiCode         := {+w:CodeSequence, location:Location};
+export multaryCode      := {+f:multop, args:CodeSequence, location:Location};
+export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, location:Location} ;
 
 export newLocalFrameCode := {+
      frameID:int,
@@ -247,7 +247,7 @@ export functionDescription := {
 export dummyDesc := functionDescription(-1,0,0,false);
 export functionCode := {+
      arrow:Token,			  -- just for display purposes
-     body:Code, 
+     body:Code,
      desc:functionDescription,
      hash:int,
      location:Location

@@ -1550,34 +1550,39 @@ precision(e:Expr):Expr := (
 setupfun("precision0",precision);
 
 -- locate:
-locate(e:Expr):Expr := (
-     when e
-     is Nothing do nullE
-     is Sequence do locate(lookupfun(e))
-     is CompiledFunction do nullE
-     is CompiledFunctionClosure do nullE
-     is s:SymbolClosure do (
-	  p := s.symbol.position;
+locateCode(c:Code):Expr := (
+          p:=codeLocation(c);
+	  if p == dummyLocation
+	  then nullE
+	  else Expr(
+	       Sequence(
+		    toExpr(verifyMinimizeFilename(p.filename)),
+		    toExpr(int(p.line1)),toExpr(int(p.column1)),
+		    toExpr(int(p.line2)),toExpr(int(p.column2)),
+		    toExpr(int(p.line3)),toExpr(int(p.column3))
+                    )));
+locateSymbol(s:Symbol):Expr := (
+          p:=s.position;
 	  if p == dummyPosition
 	  then nullE
 	  else Expr(
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.symbol.word.name)),
+		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.word.name)),
 		    toExpr(int(p.line)),toExpr(int(p.column))
-		    )))
+		    )));
+locate(e:Expr):Expr := (
+     when e
+     is Nothing do nullE
+     is Sequence do locate(lookupfun(e))
+     is CompiledFunction do nullE
+     is CompiledFunctionClosure do nullE
+     is s:SymbolClosure do locateSymbol(s.symbol)
+     is c:CodeClosure do locateCode(c.code)
      is s:SpecialExpr do locate(s.e)
-     is f:functionCode do (
-          p:=f.location;
-	  Expr(
-	       Sequence(
-		    toExpr(verifyMinimizeFilename(p.filename)),
-		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line2)),toExpr(int(p.column2)),
-		    toExpr(int(p.line3)),toExpr(int(p.column3))
-                    )))
-     is f:FunctionClosure do locate (Expr(f.model))
+     is f:functionCode do locateCode(Code(f))
+     is f:FunctionClosure do locateCode(Code(f.model))
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 
