@@ -44,53 +44,9 @@ export codeLocation(c:Code):Location := (
      is f:whileListDoCode do f.location
      );
 
-export codePosition(c:Code):Position := (
-     l:=codeLocation(c);
-     Position(l.filename,l.line3,l.column3,l.loadDepth)
-     );
+export position(l:Location):Position := Position(l.filename,l.line3,l.column3,l.loadDepth);
 
-export setLocation(c:Code,l:Location):void := (
-     when c
-     is f:adjacentCode do f.location=l
-     is f:arrayCode do f.location=l
-     is f:angleBarListCode do f.location=l
-     is f:binaryCode do f.location=l
-     is f:catchCode do f.location=l
-     is f:Error do nothing
-     is f:forCode do f.location=l
-     is f:functionCode do f.location=l
-     is f:globalAssignmentCode do f.location=l
-     is f:globalMemoryReferenceCode do f.location=l
-     is f:globalSymbolClosureCode do f.location=l
-     is f:ifCode do f.location=l
-     is f:integerCode do f.location=l
-     is f:listCode do f.location=l
-     is f:localAssignmentCode do f.location=l
-     is f:localMemoryReferenceCode do f.location=l
-     is f:localSymbolClosureCode do f.location=l
-     is f:multaryCode do f.location=l
-     is f:newCode do f.location=l
-     is f:newFromCode do f.location=l
-     is f:newLocalFrameCode do setLocation(f.body,l)
-     is f:newOfCode do f.location=l
-     is f:newOfFromCode do f.location=l
-     is f:nullCode do nothing
-     is f:parallelAssignmentCode do f.location=l
-     is f:realCode do f.location=l
-     is f:semiCode do f.location=l
-     is f:sequenceCode do f.location=l
-     is f:stringCode do f.location=l
-     is f:ternaryCode do f.location=l
-     is f:threadMemoryReferenceCode do f.location=l
-     is f:threadSymbolClosureCode do f.location=l
-     is f:tryCode do f.location=l
-     is f:unaryCode do f.location=l
-     is f:whileDoCode do f.location=l
-     is f:whileListCode do f.location=l
-     is f:whileListDoCode do f.location=l
-     );
-
-
+export codePosition(c:Code):Position := position(codeLocation(c));
 
 export pos(c:Code):void := (					    -- for use in the debugger
      stdIO << codePosition(c) << endl;

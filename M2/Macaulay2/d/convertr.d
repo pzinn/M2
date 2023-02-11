@@ -25,14 +25,15 @@ export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
 -- TODO sort out this mess
-combineLocation(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,b.line3,b.column3,a.loadDepth);
+combineLocation(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,b.line3,b.column3,a.loadDepth); -- combine with emphasis on right
+combineLocation(a:Position,b:Location):Location := Location(a.filename,a.line,a.column,b.line2,b.column2,b.line3,b.column3,a.loadDepth); -- combine with emphasis on right
+combineLocation1(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,a.line3,a.column3,a.loadDepth); -- combine with emphasis on left
 combineLocation(a:Location,b:Location,c:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,c.line3,c.column3,a.loadDepth);
-combineLocation(a:Position,b:Location,c:Location):Location := Location(a.filename,a.line,a.column,b.line2,b.column2,c.line3,c.column3,a.loadDepth);
-combineLocation1(a:Location,b:Location,c:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,c.line1,c.column1,a.loadDepth);
-combineLocation1(a:Position,b:Location,c:Location):Location := Location(a.filename,a.line,a.column,b.line2,b.column2,c.line1,c.column1,a.loadDepth);
-combineLocation2(a:Location,b:Location,c:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,c.line2,c.column2,a.loadDepth);
+combineLocationAdjacent(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,a.line2,a.column2,a.loadDepth);
 
+convert0(e:ParseTree):Code;
 convert(e:ParseTree):Code;
+unseq(c:Code):Code;
 CodeSequenceLength(e:ParseTree,separator:Word):int := (
      i := 0;
      while true do (
@@ -120,9 +121,9 @@ nestingDepth(frameID:int,d:Dictionary):int := (
      n);
 
 tokenAssignment(t:Token,p:ParseTree):Code := (
-     c:=convert(p);
-     l:=codeLocation(c);
-     l=combineLocation(location(t),l,l);
+     c:=convert0(p);
+     l:=combineLocation(location(t),codeLocation(c));
+     c=unseq(c);
      if t.entry.frameID == 0
      then Code(globalAssignmentCode(t.entry,c,l))
      else Code(localAssignmentCode(nestingDepth(t.entry.frameID,t.dictionary),t.entry.frameindex,c,l))
@@ -138,30 +139,38 @@ parallelAssignment(par:Parentheses,rhs:ParseTree,d:Dictionary):Code := (
 	       nd,
 	       fr,
 	       symbols,
-	       c:=convert(rhs),
-	       combineLocation(location(par.left),codeLocation(c),codeLocation(c)) -- TODO might need adjusting
+	       unseq(c:=convert0(rhs)),
+	       combineLocation(location(par.left),codeLocation(c))
 	       ))
      );
 
-export convert(e:ParseTree):Code := (
+export unseq(c:Code):Code := (
+     when c
+     is s:sequenceCode do (
+     if length(s.x)==1 then s.x.0 else c
+     )
+     else c
+     );
+
+export convert0(e:ParseTree):Code := (
      when e
      is w:For do Code(
 	  forCode(
 	       convert(w.inClause), convert(w.fromClause), convert(w.toClause),
 	       convert(w.whenClause), convert(w.listClause), 
-	       c:=convert(w.doClause),
+	       unseq(c:=convert0(w.doClause)),
 	       w.dictionary.frameID,
 	       w.dictionary.framesize,
-	       combineLocation(location(w.forToken),codeLocation(c),codeLocation(c)) -- TODO might need adjusting same for all 3rd args of combineLocation
+	       combineLocation(location(w.forToken),codeLocation(c))
 	  ))
-     is w:WhileDo do Code(whileDoCode(convert(w.predicate),c:=convert(w.doClause),combineLocation(location(w.whileToken),codeLocation(c),codeLocation(c))))
-     is w:WhileList do Code(whileListCode(convert(w.predicate),c:=convert(w.listClause),combineLocation(location(w.whileToken),codeLocation(c),codeLocation(c))))
-     is w:WhileListDo do Code(whileListDoCode(convert(w.predicate),convert(w.listClause),c:=convert(w.doClause),combineLocation(location(w.whileToken),codeLocation(c),codeLocation(c))))
+     is w:WhileDo do Code(whileDoCode(convert(w.predicate),unseq(c:=convert0(w.doClause)),combineLocation(location(w.whileToken),codeLocation(c))))
+     is w:WhileList do Code(whileListCode(convert(w.predicate),unseq(c:=convert0(w.listClause)),combineLocation(location(w.whileToken),codeLocation(c))))
+     is w:WhileListDo do Code(whileListDoCode(convert(w.predicate),convert(w.listClause),c:=convert(w.doClause),combineLocation(location(w.whileToken),codeLocation(c))))
      is n:New do (
 	  if n.newparent == dummyTree
 	  then if n.newinitializer == dummyTree
-	       then Code(newCode(c:=convert(n.newclass),combineLocation(location(n.newtoken),codeLocation(c),codeLocation(c))))
-	       else Code(newFromCode(convert(n.newclass),c:=convert(n.newinitializer),combineLocation(location(n.newtoken),codeLocation(c),codeLocation(c))))
+	       then Code(newCode(c:=convert(n.newclass),combineLocation(location(n.newtoken),codeLocation(c))))
+	       else Code(newFromCode(convert(n.newclass),c:=convert(n.newinitializer),combineLocation(location(n.newtoken),codeLocation(c))))
 	  else if n.newinitializer == dummyTree
 	       then Code(newOfCode(convert(n.newclass),c:=convert(n.newparent),combineLocation(location(n.newtoken),codeLocation(c))))
 	       else Code(newOfFromCode(convert(n.newclass),convert(n.newparent),c:=convert(n.newinitializer),combineLocation(location(n.newtoken),codeLocation(c)))))
@@ -189,9 +198,9 @@ export convert(e:ParseTree):Code := (
 	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,location(token)))
 	       )
 	  )
-     is a:Adjacent do Code(adjacentCode(c:=convert(a.lhs),cc:=convert(a.rhs),combineLocation2(codeLocation(c),codeLocation(cc),codeLocation(c))))
+     is a:Adjacent do Code(adjacentCode(c:=convert(a.lhs),cc:=convert(a.rhs),combineLocationAdjacent(codeLocation(c),codeLocation(cc))))
      is p:EmptyParentheses do (
-          pp:=combineLocation(location(p.left),location(p.right),location(p.left));
+          pp:=combineLocation1(location(p.left),location(p.right));
 	  if p.left.word == leftparen then Code(sequenceCode(CodeSequence(),pp))
 	  else if p.left.word == leftbrace then Code(listCode(CodeSequence(),pp))
 	  else if p.left.word == leftbracket then Code(arrayCode(CodeSequence(),pp))
@@ -199,12 +208,9 @@ export convert(e:ParseTree):Code := (
 	  else dummyCode			  -- should not happen
 	  )
      is p:Parentheses do (
-          pp:=combineLocation(location(p.left),location(p.right),location(p.left));
-	  if p.left.word == leftparen then (
-	     c:=convert(p.contents);
-	     setLocation(c,pp); -- not quite -- fix location better
-	     c
-	     )
+          pp:=combineLocation1(location(p.left),location(p.right));
+	  if p.left.word == leftparen
+	  then Code(sequenceCode(makeCodeSequence(p.contents,CommaW),pp))
 	  else if p.left.word == leftbrace 
 	  then Code(listCode(makeCodeSequence(p.contents,CommaW),pp))
 	  else 
@@ -240,9 +246,9 @@ export convert(e:ParseTree):Code := (
 	       else dummyCode		  -- should not occur
 	       )
 	  else if b.Operator.word == CommaW
-	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocation(codeLocation(s.0),codeLocation(s.(length(s)-1)),codeLocation(s.0))))
+	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocation1(codeLocation(s.0),codeLocation(s.(length(s)-1)))))
 	  else if b.Operator.word == SemicolonW
-	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocation(codeLocation(s.0),codeLocation(s.(length(s)-1)),codeLocation(s.0))))
+	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocation1(codeLocation(s.0),codeLocation(s.(length(s)-1)))))
 	  else if b.Operator.word == EqualW
 	  then (
 	       when b.lhs
@@ -392,15 +398,15 @@ export convert(e:ParseTree):Code := (
      	       p:=leftPosition(a.lhs); -- ~ treePosition
 	       Code(functionCode(
 	       a.Operator,		  -- just for display purposes!
-	       c:=convert(a.rhs),a.desc,nextHash(),
-	       combineLocation1(p,codeLocation(c),codeLocation(c))
+	       unseq(c:=convert0(a.rhs)),a.desc,nextHash(),
+	       combineLocation(p,codeLocation(c))
 	       )))
      is u:Unary do (
 	  if u.Operator.word == CommaW
-	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocation(location(u.Operator),codeLocation(s.(length(s)-1)))))
+	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocation1(location(u.Operator),codeLocation(s.(length(s)-1)))))
 	  else if u.Operator.word == SemicolonW
-	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocation(location(u.Operator),codeLocation(s.(length(s)-1)))))
-	  else Code(unaryCode(u.Operator.entry.unary,c:=convert(u.rhs),combineLocation(location(u.Operator),codeLocation(c),location(u.Operator)))))
+	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocation1(location(u.Operator),codeLocation(s.(length(s)-1)))))
+	  else Code(unaryCode(u.Operator.entry.unary,c:=convert(u.rhs),combineLocation1(location(u.Operator),codeLocation(c)))))
      is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
@@ -435,6 +441,9 @@ export convert(e:ParseTree):Code := (
      is u:Postfix do Code(unaryCode(u.Operator.entry.postfix,c:=convert(u.lhs),combineLocation(codeLocation(c),location(u.Operator))))
      is d:dummy do dummyCode
      );
+
+export convert(e:ParseTree):Code := unseq(convert0(e));
+
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d convertr.o "
