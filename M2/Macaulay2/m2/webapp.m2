@@ -150,6 +150,7 @@ html VisibleList := s -> (
     if r =!= null then (
     	concatenate (
 	    "$",delims#0,
+	    if #s===0 then "\\," else
     	    demark(",\\,",apply(r,a->if #a<=2 then "$"|a|"$" else (
 	    		if first a==="$" then a=substring(a,1) else a="$"|a;
 	    		if last a==="$" then substring(a,0,#a-1) else a|"$"
@@ -164,11 +165,8 @@ texMath1 = x -> (
     htmlTexFlag=false; -- we prevent tex output temporarily
     h := html x;
     htmlTexFlag=true;
-    xx := if h === null then (
-    	l := lookup(texMath,class x); -- normal tex output
-    	if l === null then error noMethodSingle(texMath, x, false);
-    	l x
-    ) else concatenate( -- switch back to html
+    xx := if h === null then texMath0 x
+    else concatenate( -- switch back to html
     delim,
     webAppHtmlTag,
     h,
