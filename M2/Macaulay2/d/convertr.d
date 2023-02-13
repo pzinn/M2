@@ -27,7 +27,7 @@ export UnaryInstallValueFun := dummyTernaryFun;
 -- TODO sort out this mess
 combineLocation(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,b.line3,b.column3,a.loadDepth); -- combine with emphasis on right
 combineLocation(a:Position,b:Location):Location := Location(a.filename,a.line,a.column,b.line2,b.column2,b.line3,b.column3,a.loadDepth); -- combine with emphasis on right
-combineLocation1(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,a.line3,a.column3,a.loadDepth); -- combine with emphasis on left
+combineLocationLeft(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,a.line3,a.column3,a.loadDepth); -- combine with emphasis on left
 combineLocation(a:Location,b:Location,c:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,c.line3,c.column3,a.loadDepth);
 combineLocationAdjacent(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,a.line2,a.column2,a.loadDepth);
 
@@ -165,17 +165,17 @@ export convert0(e:ParseTree):Code := (
 	  ))
      is w:WhileDo do Code(whileDoCode(convert(w.predicate),unseq(c:=convert0(w.doClause)),combineLocation(location(w.whileToken),codeLocation(c))))
      is w:WhileList do Code(whileListCode(convert(w.predicate),unseq(c:=convert0(w.listClause)),combineLocation(location(w.whileToken),codeLocation(c))))
-     is w:WhileListDo do Code(whileListDoCode(convert(w.predicate),convert(w.listClause),c:=convert(w.doClause),combineLocation(location(w.whileToken),codeLocation(c))))
+     is w:WhileListDo do Code(whileListDoCode(convert(w.predicate),convert(w.listClause),unseq(c:=convert0(w.doClause)),combineLocation(location(w.whileToken),codeLocation(c))))
      is n:New do (
 	  if n.newparent == dummyTree
 	  then if n.newinitializer == dummyTree
-	       then Code(newCode(c:=convert(n.newclass),combineLocation(location(n.newtoken),codeLocation(c))))
-	       else Code(newFromCode(convert(n.newclass),c:=convert(n.newinitializer),combineLocation(location(n.newtoken),codeLocation(c))))
+	       then Code(newCode(unseq(c:=convert0(n.newclass)),combineLocation(location(n.newtoken),codeLocation(c))))
+	       else Code(newFromCode(convert(n.newclass),unseq(c:=convert0(n.newinitializer)),combineLocation(location(n.newtoken),codeLocation(c))))
 	  else if n.newinitializer == dummyTree
-	       then Code(newOfCode(convert(n.newclass),c:=convert(n.newparent),combineLocation(location(n.newtoken),codeLocation(c))))
-	       else Code(newOfFromCode(convert(n.newclass),convert(n.newparent),c:=convert(n.newinitializer),combineLocation(location(n.newtoken),codeLocation(c)))))
-     is i:IfThen do Code(ifCode(convert(i.predicate),c:=convert(i.thenClause),NullCode,combineLocation(location(i.ifToken),codeLocation(c))))
-     is i:IfThenElse do Code(ifCode(convert(i.predicate),convert(i.thenClause),c:=convert(i.elseClause),combineLocation(location(i.ifToken),codeLocation(c))))
+	       then Code(newOfCode(convert(n.newclass),unseq(c:=convert0(n.newparent)),combineLocation(location(n.newtoken),codeLocation(c))))
+	       else Code(newOfFromCode(convert(n.newclass),convert(n.newparent),unseq(c:=convert0(n.newinitializer)),combineLocation(location(n.newtoken),codeLocation(c)))))
+     is i:IfThen do Code(ifCode(convert(i.predicate),unseq(c:=convert0(i.thenClause)),NullCode,combineLocation(location(i.ifToken),codeLocation(c))))
+     is i:IfThenElse do Code(ifCode(convert(i.predicate),convert(i.thenClause),unseq(c:=convert0(i.elseClause)),combineLocation(location(i.ifToken),codeLocation(c))))
      is token:Token do (
 	  var := token.entry;
 	  wrd := token.word;
@@ -198,9 +198,9 @@ export convert0(e:ParseTree):Code := (
 	       else Code(localMemoryReferenceCode(nestingDepth(var.frameID,token.dictionary),var.frameindex,location(token)))
 	       )
 	  )
-     is a:Adjacent do Code(adjacentCode(c:=convert(a.lhs),cc:=convert(a.rhs),combineLocationAdjacent(codeLocation(c),codeLocation(cc))))
+     is a:Adjacent do Code(adjacentCode(unseq(c:=convert0(a.lhs)),unseq(cc:=convert0(a.rhs)),combineLocationAdjacent(codeLocation(c),codeLocation(cc))))
      is p:EmptyParentheses do (
-          pp:=combineLocation1(location(p.left),location(p.right));
+          pp:=combineLocationLeft(location(p.left),location(p.right));
 	  if p.left.word == leftparen then Code(sequenceCode(CodeSequence(),pp))
 	  else if p.left.word == leftbrace then Code(listCode(CodeSequence(),pp))
 	  else if p.left.word == leftbracket then Code(arrayCode(CodeSequence(),pp))
@@ -208,7 +208,7 @@ export convert0(e:ParseTree):Code := (
 	  else dummyCode			  -- should not happen
 	  )
      is p:Parentheses do (
-          pp:=combineLocation1(location(p.left),location(p.right));
+          pp:=combineLocationLeft(location(p.left),location(p.right));
 	  if p.left.word == leftparen
 	  then Code(sequenceCode(makeCodeSequence(p.contents,CommaW),pp))
 	  else if p.left.word == leftbrace 
@@ -235,7 +235,7 @@ export convert0(e:ParseTree):Code := (
 		    then (
 	       		 Code(binaryCode(
 			 	   b.Operator.entry.binary,
-			 	   c:=convert(b.lhs),
+			 	   unseq(c:=convert0(b.lhs)),
 	       	    	 	   Code(globalSymbolClosureCode(var,p)),
 			 	   combineLocation(codeLocation(c),p,location(b.Operator))
 				   )
@@ -246,9 +246,9 @@ export convert0(e:ParseTree):Code := (
 	       else dummyCode		  -- should not occur
 	       )
 	  else if b.Operator.word == CommaW
-	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocation1(codeLocation(s.0),codeLocation(s.(length(s)-1)))))
+	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocationLeft(codeLocation(s.0),codeLocation(s.(length(s)-1)))))
 	  else if b.Operator.word == SemicolonW
-	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocation1(codeLocation(s.0),codeLocation(s.(length(s)-1)))))
+	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocationLeft(codeLocation(s.0),codeLocation(s.(length(s)-1)))))
 	  else if b.Operator.word == EqualW
 	  then (
 	       when b.lhs
@@ -258,28 +258,28 @@ export convert0(e:ParseTree):Code := (
 			      InstallValueFun,
 			      CodeSequence(
 			      	   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyLocation)),
-			      	   c:=convert(a.lhs),
+			      	   unseq(c:=convert0(a.lhs)),
 			      	   convert(a.rhs),
-			      	   cc:=convert(b.rhs)),
+			      	   unseq(cc:=convert0(b.rhs))),
 			      combineLocation(codeLocation(c),codeLocation(cc),location(b.Operator)))))
 	       is u:Unary do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,p:=location(u.Operator))),
 			 convert(u.rhs),
-			 cc:=convert(b.rhs),
+			 unseq(cc:=convert0(b.rhs)),
 			 combineLocation(p,codeLocation(cc),location(b.Operator))))
 	       is u:Postfix do Code(
 		    ternaryCode(
 			 UnaryInstallValueFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,location(u.Operator))),
-			 c:=convert(u.lhs),
-			 cc:=convert(b.rhs),
+			 unseq(c:=convert0(u.lhs)),
+			 unseq(cc:=convert0(b.rhs)),
 			 combineLocation(codeLocation(c),codeLocation(cc),location(b.Operator))))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
 		    then Code(ternaryCode( AssignElemFun, c1:=convert(c.lhs),
-			      convert(c.rhs), c2:=convert(b.rhs), combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
+			      convert(c.rhs), unseq(c2:=convert0(b.rhs)), combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 		    else if c.Operator.entry == DotS.symbol
 		    then (
 			 when c.rhs
@@ -288,7 +288,7 @@ export convert0(e:ParseTree):Code := (
 				   AssignElemFun,
 				   c1:=convert(c.lhs),
 			 	   Code(globalSymbolClosureCode(crhs.entry,location(crhs))),
-				   c2:=convert(b.rhs),
+				   unseq(c2:=convert0(b.rhs)),
 				   combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 			 else dummyCode --should not happen
 			 )
@@ -298,7 +298,7 @@ export convert0(e:ParseTree):Code := (
 				   Code(globalSymbolClosureCode(c.Operator.entry,location(c.Operator))), 
 				   c1:=convert(c.lhs),
 				   convert(c.rhs),
-				   c2:=convert(b.rhs)),
+				   unseq(c2:=convert0(b.rhs))),
 			      combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator)))))
 	       is t:Token do tokenAssignment(t,b.rhs)
 	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
@@ -313,20 +313,20 @@ export convert0(e:ParseTree):Code := (
 		    then Code(binaryCode(
 			      AssignNewFun,
 			      convert(n.newclass),
-			      c:=convert(b.rhs), 
+			      unseq(c:=convert0(b.rhs)), 
 			      combineLocation(location(n.newtoken),codeLocation(c),location(b.Operator))))
 		    else Code(ternaryCode(
 			      AssignNewFromFun,
 			      convert(n.newclass),
 			      convert(n.newinitializer),
-			      c:=convert(b.rhs),
+			      unseq(c:=convert0(b.rhs)),
 			      combineLocation(location(n.newtoken),codeLocation(c),location(b.Operator))))
      	       	    else if n.newinitializer == dummyTree 
 		    then Code(ternaryCode(
 			      AssignNewOfFun,
 			      convert(n.newclass),
 			      convert(n.newparent),
-			      c:=convert(b.rhs),
+			      unseq(c:=convert0(b.rhs)),
 			      combineLocation(location(n.newtoken),codeLocation(c),location(b.Operator))))
 		    else Code(multaryCode(
 			      AssignNewOfFromFun,
@@ -334,37 +334,37 @@ export convert0(e:ParseTree):Code := (
 				   convert(n.newclass),
 				   convert(n.newparent),
 				   convert(n.newinitializer),
-				   c:=convert(b.rhs)),
+				   unseq(c:=convert0(b.rhs))),
 			      combineLocation(location(n.newtoken),codeLocation(c),location(b.Operator)))))
 	       is a:Adjacent do (
 		    Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence(
 			      	   Code(globalSymbolClosureCode(AdjacentS.symbol,dummyLocation)),
-			      	   c:=convert(a.lhs),
+			      	   unseq(c:=convert0(a.lhs)),
 			      	   convert(a.rhs),
-			      	   cc:=convert(b.rhs)),
+			      	   unseq(cc:=convert0(b.rhs))),
 			      combineLocation(codeLocation(c),codeLocation(cc),location(b.Operator)))))
 	       is u:Unary do Code(ternaryCode(
 			 UnaryInstallMethodFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,p:=location(u.Operator))),
-			 convert(u.rhs), c:=convert(b.rhs), combineLocation(p,codeLocation(c),location(b.Operator))))
+			 convert(u.rhs), unseq(c:=convert0(b.rhs)), combineLocation(p,codeLocation(c),location(b.Operator))))
 	       is u:Postfix do Code(ternaryCode(
 			 UnaryInstallMethodFun,
 			 Code(globalSymbolClosureCode(u.Operator.entry,location(u.Operator))),
-			 c:=convert(u.lhs), cc:=convert(b.rhs), combineLocation(codeLocation(c),codeLocation(cc),location(b.Operator))))
+			 unseq(c:=convert0(u.lhs)), unseq(cc:=convert0(b.rhs)), combineLocation(codeLocation(c),codeLocation(cc),location(b.Operator))))
 	       is c:Binary do (
 		    if c.Operator.entry == SharpS.symbol
 		    then Code(ternaryCode( AssignElemFun, c1:=convert(c.lhs),
-			      convert(c.rhs), c2:=convert(b.rhs), combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
+			      convert(c.rhs), unseq(c2:=convert0(b.rhs)), combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 		    else if c.Operator.entry == UnderscoreS.symbol
 		    then Code(multaryCode(
 			      InstallMethodFun,
 			      CodeSequence( 
 			      	   Code(globalSymbolClosureCode(UnderscoreS.symbol,dummyLocation)),
-				   c1:=convert(c.lhs),
+				   unseq(c1:=convert0(c.lhs)),
 				   convert(c.rhs),
-			      	   c2:=convert(b.rhs)),
+			      	   unseq(c2:=convert0(b.rhs))),
 			      combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 		    else if c.Operator.entry == DotS.symbol
 		    then (
@@ -372,9 +372,9 @@ export convert0(e:ParseTree):Code := (
 			 is crhs:Token do
 			 Code(ternaryCode(
 				   AssignElemFun,
-				   c1:=convert(c.lhs),
+				   unseq(c1:=convert0(c.lhs)),
 			 	   Code(globalSymbolClosureCode(crhs.entry,location(crhs))),
-				   c2:=convert(b.rhs),
+				   unseq(c2:=convert0(b.rhs)),
 				   combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 			 else dummyCode --should not happen
 			 )
@@ -382,17 +382,17 @@ export convert0(e:ParseTree):Code := (
 			      InstallMethodFun,
 			      CodeSequence(
 			 	   Code(globalSymbolClosureCode(c.Operator.entry,location(c.Operator))),
-				   c1:=convert(c.lhs),
+				   unseq(c1:=convert0(c.lhs)),
 				   convert(c.rhs),
-				   c2:=convert(b.rhs)),
+				   unseq(c2:=convert0(b.rhs))),
 			      combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 	       )
 	       is t:Token do tokenAssignment(t,b.rhs)
 	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
 	       else dummyCode		  -- should not happen
 	       )
-	  else Code(binaryCode(b.Operator.entry.binary,c1:=convert(b.lhs),
-	       	    c2:=convert(b.rhs),combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
+	  else Code(binaryCode(b.Operator.entry.binary,unseq(c1:=convert0(b.lhs)),
+	       	    unseq(c2:=convert0(b.rhs)),combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 	  )
      is a:Arrow do (
      	       p:=leftPosition(a.lhs); -- ~ treePosition
@@ -403,10 +403,10 @@ export convert0(e:ParseTree):Code := (
 	       )))
      is u:Unary do (
 	  if u.Operator.word == CommaW
-	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocation1(location(u.Operator),codeLocation(s.(length(s)-1)))))
+	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocationLeft(location(u.Operator),codeLocation(s.(length(s)-1)))))
 	  else if u.Operator.word == SemicolonW
-	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocation1(location(u.Operator),codeLocation(s.(length(s)-1)))))
-	  else Code(unaryCode(u.Operator.entry.unary,c:=convert(u.rhs),combineLocation1(location(u.Operator),codeLocation(c)))))
+	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocationLeft(location(u.Operator),codeLocation(s.(length(s)-1)))))
+	  else Code(unaryCode(u.Operator.entry.unary,unseq(c:=convert0(u.rhs)),combineLocationLeft(location(u.Operator),codeLocation(c)))))
      is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
@@ -434,11 +434,11 @@ export convert0(e:ParseTree):Code := (
 	  p := combineLocation(location(q.Operator),location(token)); -- TODO check
 	  nd := nestingDepth(sym.frameID,token.dictionary);
 	  Code(localSymbolClosureCode(nd,sym,p)))
-     is i:TryThenElse do Code(tryCode(convert(i.primary),convert(i.sequel),c:=convert(i.alternate),combineLocation(location(i.tryToken),codeLocation(c))))
-     is i:TryElse do Code(tryCode(convert(i.primary),NullCode,c:=convert(i.alternate),combineLocation(location(i.tryToken),codeLocation(c))))
-     is i:Try do Code(tryCode(c:=convert(i.primary),NullCode,NullCode,combineLocation(location(i.tryToken),codeLocation(c))))
-     is i:Catch do Code(catchCode(c:=convert(i.primary),combineLocation(location(i.catchToken),codeLocation(c))))
-     is u:Postfix do Code(unaryCode(u.Operator.entry.postfix,c:=convert(u.lhs),combineLocation(codeLocation(c),location(u.Operator))))
+     is i:TryThenElse do Code(tryCode(convert(i.primary),convert(i.sequel),unseq(c:=convert0(i.alternate)),combineLocation(location(i.tryToken),codeLocation(c))))
+     is i:TryElse do Code(tryCode(convert(i.primary),NullCode,unseq(c:=convert0(i.alternate)),combineLocation(location(i.tryToken),codeLocation(c))))
+     is i:Try do Code(tryCode(unseq(c:=convert0(i.primary)),NullCode,NullCode,combineLocation(location(i.tryToken),codeLocation(c))))
+     is i:Catch do Code(catchCode(unseq(c:=convert0(i.primary)),combineLocation(location(i.catchToken),codeLocation(c))))
+     is u:Postfix do Code(unaryCode(u.Operator.entry.postfix,unseq(c:=convert0(u.lhs)),combineLocation(codeLocation(c),location(u.Operator))))
      is d:dummy do dummyCode
      );
 
