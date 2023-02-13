@@ -117,11 +117,9 @@ if topLevelMode === WebApp then (
     htmlLiteral0 := htmlLiteral;
     delim:=ascii {239,187,191};
     htmlLiteral = s -> if s === null then s else (
-	depth := 0; flag := true; -- first piece of separate is before delim, so must be ignored
-	concatenate apply(separate(delim,s), x -> (
-		if flag then flag=false else if #x>0 and member(first x,webAppTags) then depth=depth+1;
-		first(if depth <= 0 then removeTags htmlLiteral0 x else x, if #x>0 and last x === webAppEndTag then depth=depth-1)
-		)));
+	s=separate(delim,s);
+	concatenate apply(#s, i -> if even i then removeTags htmlLiteral0 s#i else s#i)
+	)
 )
 
 -- the html VisibleList hack
