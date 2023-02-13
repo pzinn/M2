@@ -139,38 +139,34 @@ htmlInList VisibleList := s-> (
     backupFlag := htmlTexFlag; htmlTexFlag=false;
     first(html s, htmlTexFlag=backupFlag)
     )
+htmlTexFlag = true
 html VisibleList := s -> (
     if lookup(texMath,class s) =!= texMathVisibleList then return htmlTex s;
-    backupFlag := htmlTexFlag; htmlTexFlag=true;
     delims := lookup("delimiters",class s);
     r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
-    htmlTexFlag=backupFlag;
     if r =!= null then (
-    	concatenate (
-	    "$",delims#0,
+	flag:=false;
+    	ss:=concatenate (
+	    "$",
+	    delims#0,
 	    if #s===0 then "\\," else
-    	    demark(",\\,",apply(r,a->if #a<=2 then "$"|a|"$" else (
-	    		if first a==="$" then a=substring(a,1) else a="$"|a;
-	    		if last a==="$" then substring(a,0,#a-1) else a|"$"
+    	    demark(",\\,",apply(r,a->if #a<=2 then (flag=true; "$"|a|"$") else (
+	    		if first a==="$" then a=substring(a,1) else (flag=true;a="$"|a);
+	    		if last a==="$" then substring(a,0,#a-1) else (flag=true;a|"$")
 	    		))),
-	    delims#1,"$"
-	    )) else htmlTex s
+	    delims#1,
+	    "$");
+	    if flag then delim|delim|ss else ss -- semi TEMP -- to make sure we switch to html if inside tex
+	) else if htmlTexFlag then htmlTex s
     )
 html VerticalList := htmlTex -- for now TODO maybe html?
 
 -- the texMath hack
 texMath1 = x -> (
-    htmlTexFlag=false; -- we prevent tex output temporarily
     h := html x;
-    htmlTexFlag=true;
-    xx := if h === null then texMath0 x
-    else concatenate( -- switch back to html
-    delim,
-    webAppHtmlTag,
-    h,
-    webAppEndTag,
-    delim
-    );
+    xx := if #h>2 and h#0=="$" and h#(#h-1)=="$"
+    then delim|substring(h,1,#h-2)|delim
+    else delim|webAppHtmlTag|h|webAppEndTag|delim; -- switch back to html
     if debugLevel != 42 then xx else concatenate(
 	c:=class x;
 	"\\underset{\\tiny ",

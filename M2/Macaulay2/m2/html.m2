@@ -166,12 +166,11 @@ html TO2  := x -> (
 
 html Nothing := x -> ""
 
-htmlTexFlag = true
 htmlTex =
 html Monoid :=
 html RingFamily :=
 html Ring :=
-html Thing := x -> if htmlTexFlag then "$" | htmlLiteral texMath0 x | "$" else null -- by default, we use math mode tex (as opposed to actual html)
+html Thing := x -> "$" | htmlLiteral texMath0 x | "$" -- by default, we use math mode tex (as opposed to actual html)
 
 -- semi-hacky: can't use hypertext cause $...$ not allowed in its output
 html HashTable := H -> if H.?texMath or not hasAttribute(H,ReverseDictionary) then htmlTex H else html (TTc "constant") getAttribute(H,ReverseDictionary)
