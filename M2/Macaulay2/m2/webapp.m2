@@ -125,13 +125,13 @@ if topLevelMode === WebApp then (
 -- the html VisibleList hack
 isSimpleHypertext := c -> if c === Hypertext then true else if c === HypertextParagraph or c === HypertextContainer or c === Thing then false else isSimpleHypertext parent c
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
-htmlInList := method(Dispatch=>Thing)
+htmlInList = method(Dispatch=>Thing)
 htmlInList Holder := x -> htmlInList x#0
 htmlInList Type :=
 htmlInList Number :=
 htmlInList Symbol := html
 htmlInList QQ := x -> if denominator x == 1 then html x
-htmlInList HashTable :=
+htmlInList ScriptedFunctor := -- or HashTable? but that creates problems with say VG types that have reverse dictionaries
 htmlInList Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then html x
 htmlInList Thing := x -> ( h := hypertext x; if isSimpleHypertext class h then html h)  -- really, it's just TT
 htmlInList VerticalList := s -> null
