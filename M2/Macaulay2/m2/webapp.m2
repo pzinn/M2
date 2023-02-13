@@ -141,7 +141,7 @@ htmlInList VisibleList := s-> (
     )
 htmlTexFlag = true
 html VisibleList := s -> (
-    if lookup(texMath,class s) =!= texMathVisibleList then return htmlTex s;
+    if lookup(texMath,class s) =!= texMathVisibleList or debugLevel === 42 then return htmlTex s;
     delims := lookup("delimiters",class s);
     r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
     if r =!= null then (
@@ -164,10 +164,16 @@ html VerticalList := htmlTex -- for now TODO maybe html?
 -- the texMath hack
 texMath1 = x -> (
     h := html x;
-    xx := if #h>2 and h#0=="$" and h#(#h-1)=="$"
+    if #h>2 and h#0=="$" and h#(#h-1)=="$"
     then delim|substring(h,1,#h-2)|delim
-    else delim|webAppHtmlTag|h|webAppEndTag|delim; -- switch back to html
-    if debugLevel != 42 then xx else concatenate(
+    else delim|webAppHtmlTag|h|webAppEndTag|delim -- switch back to html
+)
+
+texMath0 = x -> (
+    l := lookup(texMath,class x); -- normal tex output
+    if l === null then error noMethodSingle(texMath, x, false);
+    xx := l x;
+    if debugLevel =!= 42 then xx else concatenate(
 	c:=class x;
 	"\\underset{\\tiny ",
     	if c.?texMath then c.texMath else "\\texttt{"|toString c|"}",
@@ -176,3 +182,5 @@ texMath1 = x -> (
     	"$}}"
 	)
 )
+
+html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0 -- silly

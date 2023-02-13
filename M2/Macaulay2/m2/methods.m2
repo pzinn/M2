@@ -688,11 +688,6 @@ if topLevelMode =!= WebApp then texMath = method(Dispatch => Thing, TypicalValue
     texMath = new MethodFunctionSingle from (x -> texMath1 x); -- will be defined later
     typicalValues#texMath = String;
     )
-texMath0 = x -> (
-    l := lookup(texMath,class x); -- normal tex output
-    if l === null then error noMethodSingle(texMath, x, false);
-    l x
-)
 -- 
 info = method(Dispatch => Thing, TypicalValue => String)
 -- TODO: move this here: net = method(Dispatch => Thing, TypicalValue => String)
