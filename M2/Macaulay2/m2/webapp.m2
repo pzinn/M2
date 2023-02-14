@@ -119,7 +119,16 @@ if topLevelMode === WebApp then (
     htmlLiteral = s -> if s === null then s else (
 	s=separate(delim,s);
 	concatenate apply(#s, i -> if even i then removeTags htmlLiteral0 s#i else s#i)
-	)
+	);
+    -- misc
+    html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0; -- silly
+    -- colored tex
+    col := (c,f) -> ( x -> ///\htmlClass{token /// | c | ///}{/// | f x | ///}///);
+    texMath RingFamily :=
+    texMath Ring := col("class-name",lookup(texMath,HashTable));
+    texMath ScriptedFunctor := col("constant",lookup(texMath,HashTable));
+    t:=col("keyword",texVariable @@ toString);
+    texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else t x
 )
 
 -- the html VisibleList hack
@@ -195,5 +204,3 @@ texMath0 = x -> (
     	"$}}"
 	)
 )
-
-html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0 -- silly

@@ -417,8 +417,8 @@ hypertext FilePosition :=
 hypertext Dictionary := TTc "class-name"
 hypertext String := TTc "string"
 hypertext Net := n -> PRE { toString n, BR{}, "class"=>"token string", "style" => "display:inline-table;vertical-align:"|toString(if #n>0 then 100*(height n-1) else 0)|"%" }
-hypertext VerticalList         := x -> UL apply(x, y -> new LI from hold y)
-hypertext NumberedVerticalList := x -> OL apply(x, y -> new LI from hold y)
+hypertext VerticalList         := x -> UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
+hypertext NumberedVerticalList := x -> OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 
 -- what's below is for fixup purposes
 hypertext Thing := x -> try toExternalString x else format toString x -- TEMP? maybe just for Symbol, use toString?
