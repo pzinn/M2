@@ -150,43 +150,41 @@ htmlInList VisibleList := s-> (
     first(html s, htmlTexFlag=backupFlag)
     )
 htmlTexFlag = true -- false means only one-line is allowed
+pureTexFlag = true -- means only tex, nothing else
 html Option := s -> (
     if debugLevel === 42 then return htmlTex s;
     r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
-    if r =!= null then (
-	flag:=false;
-    	ss:=concatenate (
-	    if #(r#0)<=2 or last r#0!="$" then (flag=true; r#0|"$\\ ") else substring(r#0,0,#(r#0)-1),
-	    "\\ \\Rightarrow\\ ",
-	    if #(r#1)<=2 or first r#1!="$" then (flag=true; "\\ $"|r#1) else substring(r#1,1)
-	    );
-	    if flag then delim|delim|ss else ss -- semi TEMP -- to make sure we switch to html if inside tex
+    if r =!= null then concatenate (
+	if #(r#0)<=2 or last r#0!="$" then (pureTexFlag=false; r#0|"$\\ ") else substring(r#0,0,#(r#0)-1),
+	"\\ \\Rightarrow\\ ",
+	if #(r#1)<=2 or first r#1!="$" then (pureTexFlag=false; "\\ $"|r#1) else substring(r#1,1)
 	) else if htmlTexFlag then htmlTex s
     )
 html VisibleList := s -> (
     if lookup(texMath,class s) =!= texMathVisibleList or debugLevel === 42 then return htmlTex s;
     delims := lookup("delimiters",class s);
     r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
-    if r =!= null then (
-	flag:=false;
-    	ss:=concatenate (
-	    "$",
-	    delims#0,
-	    if #s===0 then "\\," else
-    	    demark(",\\,",apply(r,a->if #a<=2 then (flag=true; "$"|a|"$") else (
-	    		if first a==="$" then a=substring(a,1) else (flag=true;a="$"|a);
-	    		if last a==="$" then substring(a,0,#a-1) else (flag=true;a|"$")
-	    		))),
-	    delims#1,
-	    "$");
-	    if flag then delim|delim|ss else ss -- semi TEMP -- to make sure we switch to html if inside tex
+    if r =!= null then 
+    concatenate (
+	"$",
+	delims#0,
+	if #s===0 then "\\," else
+	demark(",\\,",apply(r,a->(
+		    if #a<=2 then (pureTexFlag=false; "$"|a|"$") else (
+	    		if first a==="$" then a=substring(a,1) else (pureTexFlag=false; a="$"|a);
+	    		if last a==="$" then a=substring(a,0,#a-1) else (pureTexFlag=false;a=a|"$");
+			a
+	    		)))),
+	delims#1,
+	"$"
 	) else if htmlTexFlag then htmlTex s
     )
 
 -- the texMath hack
 texMath1 = x -> (
+    pureTexFlag=true;
     h := html x;
-    if #h>2 and h#0=="$" and h#(#h-1)=="$"
+    if #h>2 and h#0=="$" and h#(#h-1)=="$" and pureTexFlag
     then delim|substring(h,1,#h-2)|delim
     else delim|webAppHtmlTag|h|webAppEndTag|delim -- switch back to html
 )
