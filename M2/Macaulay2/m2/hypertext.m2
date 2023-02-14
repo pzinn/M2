@@ -345,14 +345,14 @@ htmlAttr = htmlGlobalAttr | {
 
 scan({BR, HR, PARA, PRE, HEADER1, HEADER2, HEADER3, HEADER4, HEADER5, HEADER6,
 	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, LI, CODE,
-	DL, DT, DD, OL, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
+	DL, DT, DD, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
 addAttribute(LABEL,  htmlAttr | {"for", "from"})
 addAttribute(ANCHOR, htmlAttr | {"href", "rel", "target", "type"})
 addAttribute(TD,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(TH,     htmlAttr | {"colspan", "headers", "rowspan"})
 addAttribute(IMG,    htmlAttr | {"alt", "src", "srcset", "width", "height",
 	"sizes", "crossorigin", "longdesc", "referrerpolicy", "ismap", "usemap"})
-
+addAttribute(OL, htmlAttr | {"start"=>"0", "reversed", "type"})
 M2CODE = method()
 M2CODE Thing := x -> prepend("class" => "language-macaulay2", CODE x)
 

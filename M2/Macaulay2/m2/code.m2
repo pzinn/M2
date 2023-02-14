@@ -81,7 +81,7 @@ code ZZ         := i -> code previousMethodsFound#i
 code Thing      := x -> if hasAttribute(x,ReverseDictionary) then (
     x = getAttribute(x,ReverseDictionary);
     c := code locate x;
-    if c =!= null then DIV { "-- ", symbol symbol, " ", x, c }
+    if c =!= null then DIV { symbol symbol, " ", x, c }
     )
 
 -----------------------------------------------------------------------------
