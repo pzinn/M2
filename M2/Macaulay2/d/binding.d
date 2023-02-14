@@ -383,12 +383,12 @@ export StopIterationE := Expr(StopIterationS);
 
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
-     e := makeSymbol(t.word,leftPosition(t),t.dictionary);
+     e := makeSymbol(t.word,position(t),t.dictionary);
      t.entry = e;
      e);
 export makeErrorTree(e:ParseTree,message:string):void := (
      HadError = true;
-     printErrorMessage(leftPosition(e),message);
+     printErrorMessage(treePosition(e),message);
      );
 export makeErrorTree(e:Token,message:string):void := (
      HadError = true;
@@ -461,7 +461,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
 
 		    locallyCreated := t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0;
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
-		    t.entry = makeSymbol(t.word,leftPosition(t),globalDictionary,thread,locallyCreated);
+		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread,locallyCreated);
 		    )
 	       else (
 	       	    printErrorMessage(t,"undefined symbol " + t.word.name);

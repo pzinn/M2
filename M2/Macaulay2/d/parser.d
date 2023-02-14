@@ -228,7 +228,7 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      	       token = gettoken(file,obeylines);
 	       token.word.parse.funs.unary(token,file,prec,obeylines)
 	       )
-     	  else ParseTree(dummy(leftPosition(token)))
+     	  else ParseTree(dummy(position(token)))
 	  );
      if ret == errorTree then (
 	  if isatty(file) then flush(file) else skip(file,prec));
@@ -501,62 +501,33 @@ export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	  );
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
 
-export leftPosition(e:ParseTree):Position := (
+export treePosition(e:ParseTree):Position := (
      while true do (
 	  when e
 	  is dummy do return dummyPosition
-	  is token:Token do return leftPosition(token)
+	  is token:Token do return position(token)
 	  is adjacent:Adjacent do e = adjacent.lhs
-	  is binary:Binary do e = binary.lhs
-	  is a:Arrow do e = a.lhs
-	  is unary:Unary do return leftPosition(unary.Operator)
-	  is postfix:Postfix do e = postfix.lhs
-	  is a:Quote do return leftPosition(a.Operator)
-	  is a:GlobalQuote do return leftPosition(a.Operator)
-	  is a:ThreadQuote do return leftPosition(a.Operator)
-	  is a:LocalQuote do return leftPosition(a.Operator)
-	  is ee:Parentheses do return leftPosition(ee.left)
-	  is ee:EmptyParentheses do return leftPosition(ee.left)
-     	  is i:IfThen do return leftPosition(i.ifToken)
-	  is i:TryThenElse do return leftPosition(i.tryToken)
-	  is i:TryElse do return leftPosition(i.tryToken)
-	  is i:Try do return leftPosition(i.tryToken)
-	  is i:Catch do return leftPosition(i.catchToken)
-     	  is i:IfThenElse do return leftPosition(i.ifToken)
-     	  is w:For do return leftPosition(w.forToken)
-     	  is w:WhileDo do return leftPosition(w.whileToken)
-     	  is w:WhileList do return leftPosition(w.whileToken)
-     	  is w:WhileListDo do return leftPosition(w.whileToken)
-	  is n:New do return leftPosition(n.newtoken)
-	  )
-     );
-export rightPosition(e:ParseTree):Position := (
-     while true do (
-	  when e
-	  is dummy do return dummyPosition
-	  is token:Token do return rightPosition(token)
-	  is adjacent:Adjacent do e = adjacent.rhs
-	  is binary:Binary do e = binary.rhs
-	  is a:Arrow do e = a.rhs
-	  is unary:Unary do e = unary.rhs
-	  is postfix:Postfix do return rightPosition(postfix.Operator)
-	  is a:Quote do return rightPosition(a.rhs)
-	  is a:GlobalQuote do return rightPosition(a.rhs)
-	  is a:ThreadQuote do return rightPosition(a.rhs)
-	  is a:LocalQuote do return rightPosition(a.rhs)
-	  is ee:Parentheses do return rightPosition(ee.right)
-	  is ee:EmptyParentheses do return rightPosition(ee.right)
-     	  is i:IfThen do e = i.thenClause
-	  is i:TryThenElse do e = i.alternate
-	  is i:TryElse do e = i.alternate
-	  is i:Try do e = i.primary
-	  is i:Catch do e = i.primary
-     	  is i:IfThenElse do e = i.elseClause
-     	  is w:For do e = w.doClause
-     	  is w:WhileDo do e = w.doClause
-     	  is w:WhileList do e = w.listClause
-     	  is w:WhileListDo do e = w.doClause
-	  is n:New do e = n.newinitializer -- CHECK -- what if not initializer?
+	  is binary:Binary do return position(binary.Operator)
+	  is a:Arrow do return position(a.Operator)
+	  is unary:Unary do return position(unary.Operator)
+	  is postfix:Postfix do return position(postfix.Operator)
+	  is a:Quote do return position(a.Operator)
+	  is a:GlobalQuote do return position(a.Operator)
+	  is a:ThreadQuote do return position(a.Operator)
+	  is a:LocalQuote do return position(a.Operator)
+	  is ee:Parentheses do return position(ee.left)
+	  is ee:EmptyParentheses do return position(ee.left)
+     	  is i:IfThen do return position(i.ifToken)
+	  is i:TryThenElse do return position(i.tryToken)
+	  is i:TryElse do return position(i.tryToken)
+	  is i:Try do return position(i.tryToken)
+	  is i:Catch do return position(i.catchToken)
+     	  is i:IfThenElse do return position(i.ifToken)
+     	  is w:For do return position(w.forToken)
+     	  is w:WhileDo do return position(w.whileToken)
+     	  is w:WhileList do return position(w.whileToken)
+     	  is w:WhileListDo do return position(w.whileToken)
+	  is n:New do return position(n.newtoken)
 	  )
      );
 

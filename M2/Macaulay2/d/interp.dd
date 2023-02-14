@@ -113,21 +113,21 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  else (
 	       t := u.word;
 	       if t == wordEOF then (
-		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << leftPosition(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- EOF token, returning: " << position(u) << endl;
 		    return if returnLastvalue then lastvalue else nullE;
 		    )
 	       else if t == NewlineW then (
-		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << leftPosition(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- newline token, discarding: " << position(u) << endl;
 		    gettoken(file,true);
 		    )
 	       else if t == wordEOC then (
-		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << leftPosition(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- end-of-cell token, discarding: " << position(u) << endl;
 		    gettoken(file,true);
 		    )
 	       else (
 	  	    previousLineNumber = lineNumber;
 		    promptWanted = true;
-		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << leftPosition(u) << endl;
+		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << position(u) << endl;
 		    parsed := parse(file,SemicolonW.parse.precedence,true);
 		    if parsed == errorTree then (
 			 if test(interruptedFlag) then (
@@ -161,7 +161,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
 			      printErrorMessage(s,msg);
-			      if stopIfError || returnIfError then return Expr(Error(leftPosition(s),msg,nullE,false,dummyFrame));
+			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
 			      )
 			 else (
 			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred

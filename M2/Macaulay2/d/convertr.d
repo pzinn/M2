@@ -29,6 +29,7 @@ combineLocation(a:Location,b:Location):Location := Location(a.filename,a.line1,a
 combineLocation(a:Position,b:Location):Location := Location(a.filename,a.line,a.column,b.line2,b.column2,b.line3,b.column3,a.loadDepth); -- combine with emphasis on right
 combineLocationLeft(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,a.line3,a.column3,a.loadDepth); -- combine with emphasis on left
 combineLocation(a:Location,b:Location,c:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,c.line3,c.column3,a.loadDepth);
+combineLocation(a:Position,b:Location,c:Position):Location := Location(a.filename,a.line,a.column,b.line2,b.column2,c.line,c.column,a.loadDepth);
 combineLocationAdjacent(a:Location,b:Location):Location := Location(a.filename,a.line1,a.column1,b.line2,b.column2,a.line2,a.column2,a.loadDepth);
 
 convert0(e:ParseTree):Code;
@@ -395,11 +396,10 @@ export convert0(e:ParseTree):Code := (
 	       	    unseq(c2:=convert0(b.rhs)),combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 	  )
      is a:Arrow do (
-     	       p:=leftPosition(a.lhs); -- ~ treePosition
+     	       p:=treePosition(a.lhs);
 	       Code(functionCode(
-	       a.Operator,		  -- just for display purposes!
 	       unseq(c:=convert0(a.rhs)),a.desc,nextHash(),
-	       combineLocation(p,codeLocation(c))
+	       combineLocation(p,codeLocation(c),position(a.Operator))
 	       )))
      is u:Unary do (
 	  if u.Operator.word == CommaW

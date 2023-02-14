@@ -78,10 +78,9 @@ export printError(err:Error):Error := (
      err.printed = true;
      err);
 export location(t:Token):Location := Location(t.filename,t.line,t.column,t.line2,t.column2,t.line,t.column,t.loadDepth);
-export leftPosition(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth); -- TODO retire
-export rightPosition(t:Token):Position := Position(t.filename,t.line2,t.column2,t.loadDepth); -- TODO retire
-export printErrorMessage(t:Token,message:string):void := printErrorMessage(leftPosition(t),message);
-export printWarningMessage(t:Token,message:string):void := printWarningMessage(leftPosition(t),message);
+export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
+export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
+export printWarningMessage(t:Token,message:string):void := printWarningMessage(position(t),message);
 
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
