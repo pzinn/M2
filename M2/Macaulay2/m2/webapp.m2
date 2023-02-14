@@ -135,11 +135,25 @@ htmlInList ScriptedFunctor := -- or HashTable? but that creates problems with sa
 htmlInList Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then html x
 htmlInList Thing := x -> ( h := hypertext x; if isSimpleHypertext class h then html h)  -- really, it's just TT
 htmlInList VerticalList := s -> null
+htmlInList Option :=
 htmlInList VisibleList := s-> (
     backupFlag := htmlTexFlag; htmlTexFlag=false;
     first(html s, htmlTexFlag=backupFlag)
     )
-htmlTexFlag = true
+htmlTexFlag = true -- false means only one-line is allowed
+html Option := s -> (
+    if debugLevel === 42 then return htmlTex s;
+    r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
+    if r =!= null then (
+	flag:=false;
+    	ss:=concatenate (
+	    if #(r#0)<=2 or last r#0!="$" then (flag=true; r#0|"$\\ ") else substring(r#0,0,#(r#0)-1),
+	    "\\ \\Rightarrow\\ ",
+	    if #(r#1)<=2 or first r#1!="$" then (flag=true; "\\ $"|r#1) else substring(r#1,1)
+	    );
+	    if flag then delim|delim|ss else ss -- semi TEMP -- to make sure we switch to html if inside tex
+	) else if htmlTexFlag then htmlTex s
+    )
 html VisibleList := s -> (
     if lookup(texMath,class s) =!= texMathVisibleList or debugLevel === 42 then return htmlTex s;
     delims := lookup("delimiters",class s);
@@ -159,7 +173,6 @@ html VisibleList := s -> (
 	    if flag then delim|delim|ss else ss -- semi TEMP -- to make sure we switch to html if inside tex
 	) else if htmlTexFlag then htmlTex s
     )
-html VerticalList := htmlTex -- for now TODO maybe html?
 
 -- the texMath hack
 texMath1 = x -> (

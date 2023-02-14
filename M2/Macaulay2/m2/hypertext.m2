@@ -248,7 +248,7 @@ new HREF from List      := (HREF, x) -> (
     if x#?1 then prepend(url, drop(x, 1)) else {url})
 
 new OL from VisibleList :=
-new UL from VisibleList := (T, x) -> (
+new UL from VisibleList := (T, x) -> if #x===0 then {null} else ( -- TEMP fix for #2777
     apply(nonnull x, e -> (
 	    if class e === TO then LI{TOH{e#0}}
 	    else if instance(e, LI) or instance(e,Option) then e
@@ -395,7 +395,6 @@ hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-al
 	  , BR{})))
 hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
 TTc = c -> x -> TT {toString x,"class"=>"token "|c}
-hypertext Pseudocode :=
 hypertext CompiledFunctionBody := TTc "function"
 hypertext Command :=
 hypertext FunctionBody :=
