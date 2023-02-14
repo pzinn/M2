@@ -621,7 +621,6 @@ export {
 	"difference",
 	"dim",
 	"directSum",
-	"disassemble",
 	"dismiss",
 	"divideByVariable",
 	"do",

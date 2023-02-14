@@ -964,8 +964,8 @@ document { Key => Pseudocode,
      Headline => "the class of pseudocodes",
      "The Macaulay2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
      step, the evaluator is considering a pseudocode item.  These pseudocode items are normally not available to the user, but
-     the internal function ", TO "disassemble", " can display their contents, the function ", TO "pseudocode", " can convert
-     a function closure to pseudocode, the function ", TO "value", " can evaluate it (bindings of values to local symbols
+     the internal function ", TO "pseudocode", " can convert
+     a function closure to pseudocode and display their contents, the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
      and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
      }
@@ -974,30 +974,18 @@ document { Key => pseudocode,
      Usage => "pseudocode f",
      Inputs => { "f" => FunctionClosure },
      Outputs => { Pseudocode => { "the pseudocode of the function ", TT "f"} },
-     SeeAlso => { disassemble },
      EXAMPLE lines ///
 	  pseudocode resolution
-	  disassemble oo
-     ///
-     }
-document { Key => disassemble,
-     Headline => "disassemble pseudocode or a function",
-     Usage => "disassemble c",
-     Inputs => { "c" => Pseudocode },
-     Outputs => { String => {"the disassembled form of ", TT "c"} },
-     SeeAlso => { pseudocode },
-     EXAMPLE lines ///
-     disassemble res
      ///,
      PARA {
-	  "It may be useful to disassemble code during debugging, as in the following demonstration."
+	  "It may be useful to look at code during debugging, as in the following demonstration."
 	  },
      EXAMPLE lines ///
      load "Macaulay2Doc/demo1.m2"
      code g
      g 2
      code current
-     disassemble current
+     current
      ///
      }
 document { Key => "current",
@@ -1010,7 +998,6 @@ document { Key => "current",
      code g
      g 2
      code current
-     disassemble current
      value current
      x = 11
      value current

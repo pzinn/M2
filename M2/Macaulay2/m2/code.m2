@@ -258,6 +258,29 @@ debuggerHook = entering -> (
 	  )
      )
 
+-- disassemble
+fmtCode = method(Dispatch=>Thing)
+fmtCode List := l -> new VerticalList from apply(l,fmtCode)
+fmtCode Sequence := s -> RowExpression between(" ",apply(s,fmtCode))
+fmtCode Thing := identity
+
+expression Pseudocode := x -> hold fmtCode disassemble x -- not quite but good enough for now TODO correctly
+html Pseudocode := html @@ expression
+net Pseudocode := net @@ expression
+texMath Pseudocode := texMath @@ expression
+tex Pseudocode := tex @@ expression
+toString Pseudocode := toString @@ expression
+
+Pseudocode _ ZZ := (x,i) -> (
+    x=last disassemble x;
+    if class x =!= List then error "no such member";
+--    while true do if class x === Sequence then x=last x else if class x === Pseudocode then x=disassemble x else break;
+    x=x#i;
+    if class x === Sequence then x=last x;
+    x
+    )
+
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

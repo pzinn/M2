@@ -50,7 +50,7 @@ document {
      code f
      f 0
      return
-     disassemble current
+     current
      step(-3)
      step
      step
