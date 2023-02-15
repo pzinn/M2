@@ -60,8 +60,8 @@ set(DLIST
   parser.d
   binding.d
   basic.d
-  convertr.d
   common.d
+  convertr.d
   util.d
   struct.d
   classes.dd
