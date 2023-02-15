@@ -710,6 +710,17 @@ registerFinalizer' = registerFinalizer
 registerFinalizer = method()
 registerFinalizer(Thing, String) := registerFinalizer'
 
+-- mode dependent behavior
+ModeDependentFunctionClosure = new Type of FunctionClosure
+mode = method()
+mode Function := f -> mode { null => f }
+mode Option := x -> mode new MutableHashTable from {x}
+mode List :=
+mode HashTable := x -> mode new MutableHashTable from x
+mode MutableHashTable := H -> new ModeDependentFunctionClosure from ( x -> (if H#?topLevelMode then H#topLevelMode else H#null) x )
+modes = method()
+modes ModeDependentFunctionClosure := f -> (frame f)#0
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

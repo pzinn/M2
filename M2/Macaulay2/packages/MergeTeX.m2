@@ -123,7 +123,7 @@ printFunc := x -> (
     y
     )
 
-Thing#{TeX,print} = x -> (printFunc x;)
+(modes print)#TeX = x -> (printFunc x;)
 
 on := () -> concatenate(escapeChar,"\\underline{\\tt ",interpreterDepth:"o", toString lineNumber,"}",escapeChar)
 
