@@ -165,7 +165,7 @@ VerticalList.Wrap = x -> x
 
 NumberedVerticalList = new SelfInitializingType of VerticalList
 NumberedVerticalList.synonym = "numbered vertical list"
-net NumberedVerticalList := x -> if #x === 0 then "{}" else embrace stack apply(#x,i -> net (i => x#i));
+net NumberedVerticalList := x -> if #x === 0 then "{}" else embrace stack apply(#x,i -> net i | " => " | net x#i);
 
 net Array := x -> horizontalJoin deepSplice (
      "[",
