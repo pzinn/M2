@@ -185,11 +185,11 @@ show Hypertext := x -> (
     addEndFunction( () -> if fileExists fn then removeFile fn );
     fn << html HTML { defaultHEAD "Macaulay2 Output", BODY {x}} << endl << close;
     show new URL from replace(" ", "%20", rootURI | realpath fn)) -- TODO: urlEncode might need to replace more characters
-show URL := url -> (
+show URL := mode ( url -> (
     cmd := { getViewer("WWWBROWSER", "firefox"), url#0 }; -- TODO: silence browser messages, perhaps with "> /dev/null"
     if fork() == 0 then (
         setGroupID(0,0);
         try exec cmd;
         stderr << "exec failed: " << toExternalString cmd << endl;
         exit 1);
-    sleep 1;) -- let the browser print errors before the next M2 prompt
+    sleep 1;)) -- let the browser print errors before the next M2 prompt

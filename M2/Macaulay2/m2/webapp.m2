@@ -97,16 +97,14 @@ if topLevelMode === WebApp then (
     processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
-    -- the show, edit hacks
-    showURL := lookup(show,URL);
-    show URL := url -> if topLevelMode === WebApp then (<< webAppUrlTag | url#0 | webAppEndTag;) else showURL url;
-    editURL := f -> URL ("#editor:"|toString f);
+    -- the edit hack
+    editURL := f -> URL ("#editor:"|toString f); -- TODO rewrite the edit mess using mode
     editMethod String :=
     EDIT FilePosition := f -> show editURL f;
 --    fixup FilePosition := lookup(hypertext,FilePosition); -- shouldn't change that (say, in doc)
     fixup FilePosition := f -> TT HREF { f#0, toString f }; -- let's try this
     hypertext FilePosition := f -> TT HREF {editURL f,toString f};
-    -- the error hack
+    -- the error hack (TEMP)
     oldolderror := olderror;
     removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
     olderror = args -> oldolderror apply(deepSplice sequence args, removeTags);
@@ -128,6 +126,9 @@ if topLevelMode === WebApp then (
 --    t:=col("keyword",texVariable @@ toString);
 --    texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else t x
 )
+
+-- show
+(modes(lookup(show,URL)))#WebApp = url -> (<< webAppUrlTag | url#0 | webAppEndTag;);
 
 -- the html VisibleList hack
 isSimpleHypertext := c -> if c === Hypertext then true else if c === HypertextParagraph or c === HypertextContainer or c === Thing then false else isSimpleHypertext parent c
