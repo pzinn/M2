@@ -21,8 +21,8 @@ currentPosFile  := dummyPosFile;
 currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
 update(err:Error,prefix:string,f:Code):Error := (
      if !err.printed
-     then printErrorMessage0(f,prefix + ": " + err.message)
-     else printErrorMessage0(f,prefix + ": --backtrace update-- ")
+     then printErrorMessage0(codePosition(f),prefix + ": " + err.message)
+     else printErrorMessage0(codePosition(f),prefix + ": --backtrace update-- ")
      );
 previousLineNumber := -1;
 
@@ -92,8 +92,9 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       );
 	  u := peektoken(file,true);
 	  interruptPending = false; determineExceptionFlag();
-	  if u == errorToken || test(interruptedFlag) then (
+	  if u.word.typecode == TCerror || test(interruptedFlag) then (
 	       gettoken(file,true);
+	       printError(Error(Position(u.filename,u.line,u.column,u.loadDepth),u.word.name,nullE,false,dummyFrame));
 	       if test(interruptedFlag) then (
 		    if debugLevel == 123 then stderr <<  "-- token read interrupted" << endl;
 		    clearFileError(file);
@@ -129,7 +130,9 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    promptWanted = true;
 		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << position(u) << endl;
 		    parsed := parse(file,SemicolonW.parse.precedence,true);
-		    if parsed == errorTree then (
+		    when parsed is
+		    e:ErrorTree do (
+		       foreach err in e do printErrorMessage(err.position,err.message);
 			 if test(interruptedFlag) then (
 		    	      if debugLevel == 123 then stderr <<  "-- parsing interrupted" << endl;
 		    	      clearFileError(file);
@@ -160,12 +163,12 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC || s.word == wordEOF)
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
-			      printErrorMessage(s,msg);
+			      printErrorMessage(position(s),msg);
 			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
 			      )
 			 else (
-			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
-			      then (
+			      when localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
+			      is null do (
 				   -- result of BeforeEval is ignored unless error:
 				   -- BeforeEval method is independent of mode
 				   f := convert(parsed); -- convert to runnable code
@@ -189,7 +192,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     lastvalue = nullE;
 					     )
 					else (
-					     if !err.printed then printErrorMessage(err);
+					     if !err.printed then printError(err);
 					     if stopIfError || returnIfError then return lastvalue;
 					     );
 					lasterrmsg = err;
@@ -243,8 +246,9 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     )
 					)
 				   )
-			      else (
+			      is e:ErrorTree do (
 				   -- an error occurred in localBind
+				   foreach err in e do printErrorMessage(err.position,err.message);
 				   if isatty(file) 
 				   then flush(file)
 				   else return (
@@ -287,7 +291,7 @@ readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      when hook is x:List do foreach f in x.v do (
 	  r := applyEE(f,haderror);
 	  when r is err:Error do (
-	       if lastexiterror != dummyError && !lastexiterror.printed then printErrorMessage(lastexiterror); -- or else it gets bumped
+	       if lastexiterror != dummyError && !lastexiterror.printed then printError(lastexiterror); -- or else it gets bumped
 	       lastexiterror = err;
 	       ) else nothing
 	  )

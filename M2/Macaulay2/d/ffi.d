@@ -593,7 +593,7 @@ ffiClosureFunction(cif:Pointer "ffi_cif *", ret:voidPointer,
     do Ccode(void, "memcpy(",
 	endianAdjust(ret, Ccode(voidPointer, "((ffi_cif *)", cif, ")->rtype")),
 	", ", ptr.v, ", ", cif, "->rtype->size)")
-    is err:Error do printErrorMessage(err)
+    is err:Error do (printError(err);)
     else nothing);
 
 ffiClosureFinalizer(ptr:voidPointer, closure:voidPointer):void := (

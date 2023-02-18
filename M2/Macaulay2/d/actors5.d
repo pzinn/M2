@@ -1665,6 +1665,7 @@ gbTraceS := dummySymbol;
 numTBBThreadsS := dummySymbol;
 numericalAlgebraicGeometryTraceS := dummySymbol;
 debuggerHookS := dummySymbol;
+errorPrintS := dummySymbol;
 lineNumberS := dummySymbol;
 allowableThreadsS := dummySymbol;
 loadDepthS := dummySymbol;
@@ -1711,6 +1712,7 @@ syms := SymbolSequence(
      (  numTBBThreadsS = setupvar("numTBBThreads",toExpr(numTBBThreads));  numTBBThreadsS  ),
      (  numericalAlgebraicGeometryTraceS = setupvar("numericalAlgebraicGeometryTrace",toExpr(numericalAlgebraicGeometryTrace));  numericalAlgebraicGeometryTraceS  ),
      (  debuggerHookS = setupvar("debuggerHook",debuggerHook);  debuggerHookS  ),
+     (  errorPrintS = setupvar("errorPrint",errorPrint);  errorPrintS  ),
      (  lineNumberS = setupvar("lineNumber",toExpr(lineNumber));  lineNumberS  ),
      (  allowableThreadsS = setupvar("allowableThreads",toExpr(Ccode( int, " getAllowableThreads() " )));  allowableThreadsS  ),
      (  loadDepthS = setupvarThread("loadDepth",toExpr(loadDepth));  loadDepthS  ),
@@ -1784,6 +1786,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 	  if sym === topLevelModeS then (topLevelMode = s.1; e)
 	  else if ancestor(Class(s.1),functionClass) then (
 	       if sym === debuggerHookS then (debuggerHook = s.1; e)
+	       else if sym === errorPrintS then (errorPrint = s.1; e)
 	       else buildErrorPacket(msg))
 	  else when s.1
 	  is Nothing do (

@@ -147,35 +147,37 @@ export peektoken(file:TokenFile,obeylines:bool):Token := (
 --What is this?   It doesn't appear to be used anywhere
 level := 0;
 --Empty Parsetree to represent error
-export errorTree := ParseTree(dummy(dummyPosition));
 skip(file:TokenFile,prec:int):void := (
      while peektoken(file,false).word.parse.precedence > prec 
      do gettoken(file,false)
      );
+export errorTree(t:Token):ParseTree := ParseTree(ErrorTree(ErrorTree1(position(t),t.word.name)));
 accumulate(e:ParseTree,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     if e == errorTree then return errorTree;
+     when e is
+     err:ErrorTree do return e
+     else (
      ret := e;
      while true do (
 	  token := peektoken(file,obeylines);
-	  if token == errorToken then (
+	  if token.word.typecode == TCerror then (
 	       gettoken(file,obeylines);
-	       ret = errorTree;
+	       ret = errorTree(token);
 	       break;
 	       );
 	  if token.word.parse.precedence <= prec then break;
 	  gettoken(file,obeylines);
 	  ret = token.word.parse.funs.binary(ret,token,file,prec,obeylines);
-	  if ret == errorTree then break;
+	  when ret
+	  is err:ErrorTree do break
+	  else nothing; -- CHECK
 	  );
      ret
-     );
+     ));
 export errorunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     printErrorMessage(token1,"syntax error at '" + token1.word.name + "'");
-     errorTree
+     ParseTree(ErrorTree(ErrorTree1(position(token1),"syntax error at '" + token1.word.name + "'")))
      );
 export errorbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int,obeylines:bool):ParseTree := (
-     printErrorMessage(token2,"syntax error at '" + token2.word.name + "'");
-     errorTree
+     ParseTree(ErrorTree(ErrorTree1(position(token2),"syntax error at '" + token2.word.name + "'")))
      );
 export defaultunary(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      accumulate(ParseTree(token1),file,prec,obeylines)
@@ -185,44 +187,50 @@ parse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
 nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree;
 export unaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret := parse(file,max(prec,token1.word.parse.unaryStrength),obeylines);
-     if ret == errorTree then ret
+     when ret is
+     err:ErrorTree do return ret
      else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
 export nunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      ret := nparse(file,token1.word.parse.unaryStrength,obeylines);
-     if ret == errorTree then ret
+     when ret is
+     err:ErrorTree do return ret
      else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines));
 export nnunaryop(token1:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      if token1.word.parse.precedence <= prec
      then errorunary(token1,file,prec,obeylines)
      else (
 	  ret := nparse(file,token1.word.parse.unaryStrength,obeylines);
-	  if ret == errorTree then ret
+	  when ret is
+     	  err:ErrorTree do return ret
 	  else accumulate(ParseTree(Unary(token1,ret)),file,prec,obeylines)));
 export defaultbinary(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      if token2.followsNewline then (
-     	  printErrorMessage(token2,"missing semicolon or comma on previous line?");
-     	  errorTree)
+          ParseTree(ErrorTree(ErrorTree1(position(token2),"missing semicolon or comma on previous line?")))
+	  )
      else (
      	  ret := token2.word.parse.funs.unary(token2,file,precSpace-1,obeylines);
-     	  if ret == errorTree then ret else ParseTree(Adjacent(lhs,ret))));
+	  when ret is
+     	  err:ErrorTree do ret
+     	  else ParseTree(Adjacent(lhs,ret))));
 export postfixop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      accumulate(ParseTree(Postfix(lhs,token2)),file,prec,obeylines));
 export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     if prec == nopr then return errorTree;		    -- shouldn't ever happen
+     if prec == nopr then return ErrorTree();		    -- shouldn't ever happen
      token := gettoken(file,false);
-     if token == errorToken then return errorTree;
+     if token.word.typecode == TCerror then return errorTree(token);
      ret := token.word.parse.funs.unary(token,file,prec,obeylines);
-     if ret == errorTree then (
-	  if isatty(file) || file.posFile.file.fulllines then flush(file) else skip(file,prec));
+     when ret is
+     err:ErrorTree do if isatty(file) || file.posFile.file.fulllines then flush(file) else skip(file,prec)
+     else nothing;
      ret
      );
 export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     if prec == nopr then return errorTree;		    -- shouldn't ever happen
+     if prec == nopr then return ErrorTree();		    -- shouldn't ever happen
      token := peektoken(file,obeylines);
-     if token == errorToken then return errorTree;
+     if token.word.typecode == TCerror then return errorTree(token);
      ret := (
-	  if token == errorToken
-	  then errorTree
+	  if token.word.typecode == TCerror
+	  then errorTree(token)
 	  else if token.word.parse.precedence > prec
      	  then (
      	       token = gettoken(file,obeylines);
@@ -230,20 +238,26 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
 	       )
      	  else ParseTree(dummy(position(token)))
 	  );
-     if ret == errorTree then (
-	  if isatty(file) then flush(file) else skip(file,prec));
+     when ret is
+     err:ErrorTree do if isatty(file) then flush(file) else skip(file,prec)
+     else nothing;
      ret
      );
 export binaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      ret := parse(file,token2.word.parse.binaryStrength,obeylines);
-     if ret == errorTree then ret 
+     when ret is
+     err:ErrorTree do ret
      else ParseTree(Binary(lhs, token2, ret)));
 export nbinaryop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      ret := nparse(file,token2.word.parse.binaryStrength,obeylines);
-     if ret == errorTree then ret else ParseTree(Binary(lhs, token2, ret)));
+     when ret is
+     err:ErrorTree do ret
+     else ParseTree(Binary(lhs, token2, ret)));
 export arrowop(lhs:ParseTree, token2:Token, file:TokenFile, prec:int, obeylines:bool):ParseTree := (
      e := parse(file,token2.word.parse.binaryStrength,obeylines);
-     if e == errorTree then e else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
+     when e is
+     err:ErrorTree do e
+     else ParseTree(Arrow(lhs, token2, e, dummyDesc)));
 MatchPair := {left:string, right:string, next:(null or MatchPair)};
 
 matchList := (null or MatchPair)(NULL);
@@ -290,46 +304,59 @@ export unaryparen(left:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
      then accumulate(ParseTree(EmptyParentheses(left,gettoken(file,false))),file,prec,obeylines)
      else (
 	  e := parse(file,left.word.parse.unaryStrength,false);
-	  if e == errorTree then return e;
+     	  when e is
+     	  err:ErrorTree do return e
+     	  else nothing;
 	  right := gettoken(file,false);
 	  if rightparen == right.word.name
 	  then accumulate(ParseTree(Parentheses(left,e,right)),file,prec,obeylines)
 	  else (
-	       printErrorMessage(right, "expected \"" + rightparen + "\"");
-	       printErrorMessage(left," ... to match this");
-	       errorTree)));
+	       	  ParseTree(ErrorTree(ErrorTree1(position(right),"expected \"" + rightparen + "\""),
+	  	  ErrorTree1(position(left)," ... to match this")))
+		  )
+     ));
 export unarywhile(whileToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,whileToken.word.parse.unaryStrength,false);
-     if predicate == errorTree then return errorTree;
+     when predicate
+     is err:ErrorTree do return predicate
+     else nothing;
      token2 := gettoken(file,false);
-     if token2 == errorToken then return errorTree;
+     if token2.word.typecode == TCerror then return errorTree(token2);
      if token2.word == doW then (
 	  doClause := parse(file,doW.parse.unaryStrength,obeylines);
-	  if doClause == errorTree then return errorTree;
+     	  when doClause
+     	  is err:ErrorTree do return doClause
+     	  else nothing;
 	  r := ParseTree(WhileDo(whileToken,predicate,token2,doClause));
 	  accumulate(r,file,prec,obeylines))
      else if token2.word == listW then (
 	  listClause := parse(file,listW.parse.unaryStrength,obeylines);
-	  if listClause == errorTree then return errorTree;
+	  when listClause
+     	  is err:ErrorTree do return listClause
+     	  else nothing;
 	  if peektoken(file,obeylines).word == doW then (
 	       doToken := gettoken(file,obeylines);
-	       if doToken == errorToken then return errorTree;
+	       if doToken.word.typecode == TCerror then return errorTree(doToken);
 	       doClause := parse(file,doW.parse.unaryStrength,obeylines);
-	       if doClause == errorTree then return errorTree;
+	       when doClause
+     	       is err:ErrorTree do return doClause
+	       else nothing;
 	       ret := ParseTree(WhileListDo(whileToken,predicate,token2,listClause,doToken,doClause));
 	       accumulate(ret,file,prec,obeylines))
 	  else (
 	       ret := ParseTree(WhileList(whileToken,predicate,token2,listClause));
 	       accumulate(ret,file,prec,obeylines)))
      else (
-	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");
-	  printErrorMessage(whileToken," ... to match this 'while'");
-	  errorTree));
+     	  ParseTree(ErrorTree(ErrorTree1(position(token2),"syntax error : expected 'do' or 'list'"),
+	  ErrorTree1(position(whileToken)," ... to match this 'while'")))
+));
 
 --Handle parsing a file following a for token
 export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      var := parse(file,forToken.word.parse.unaryStrength,false);
-     if var == errorTree then return errorTree;
+     when var
+     is err:ErrorTree do return var
+     else nothing;
      inClause := dummyTree;
      fromClause := dummyTree;
      toClause := dummyTree;
@@ -339,13 +366,15 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
      --get the next token
      token2 := gettoken(file,false);
      --if there is an error, return
-     if token2 == errorToken then return errorTree;
+     if token2.word.typecode == TCerror then return errorTree(token2);
      --if it is an "in" token
      if token2.word == inW then (
           --parse the part following the in token to become the in clause
 	  inClause = parse(file,inW.parse.unaryStrength,false);
 	  --on error return
-	  if inClause == errorTree then return errorTree;
+	  when inClause
+     	  is err:ErrorTree do return inClause
+	  else nothing;
 	  --otherwise get the next token
 	  token2 = gettoken(file,false);
 	  )
@@ -353,42 +382,54 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
           --otherwise check to see if we have a from/to case
 	  if token2.word == fromW then (
 	       fromClause = parse(file,fromW.parse.unaryStrength,false);
-	       if fromClause == errorTree then return errorTree;
+	       when fromClause
+     	       is err:ErrorTree do return fromClause
+	       else nothing;
 	       token2 = gettoken(file,false);
 	       );
 	  if token2.word == toW then (
 	       toClause = parse(file,toW.parse.unaryStrength,false);
-	       if toClause == errorTree then return errorTree;
+	       when toClause
+     	       is err:ErrorTree do return toClause
+	       else nothing;
 	       token2 = gettoken(file,false);
 	       );
 	  );
      --handle when clause
      if token2.word == whenW then (
 	  whenClause = parse(file,whenW.parse.unaryStrength,false);
-	  if whenClause == errorTree then return errorTree;
+	  when whenClause
+     	  is err:ErrorTree do return whenClause
+	  else nothing;
      	  token2 = gettoken(file,false);
 	  );
      --this part should be followed by either a do clause or a list and then a do clause
      if token2.word == doW then (
 	  doClause = parse(file,doW.parse.unaryStrength,obeylines);
-	  if doClause == errorTree then return errorTree;
+	  when doClause
+     	  is err:ErrorTree do return doClause
+	  else nothing;
 	  r := ParseTree(For( forToken, var, inClause, fromClause, toClause, whenClause, listClause,doClause, dummyDictionary ));
 	  accumulate(r,file,prec,obeylines))
      else if token2.word == listW then (
 	  listClause = parse(file,listW.parse.unaryStrength,obeylines);
-	  if listClause == errorTree then return errorTree;
+	  when listClause
+     	  is err:ErrorTree do return listClause
+	  else nothing;
 	  if peektoken(file,obeylines).word == doW then (
 	       gettoken(file,obeylines);
 	       doClause = parse(file,doW.parse.unaryStrength,obeylines);
-	       if doClause == errorTree then return errorTree;
+	       when doClause
+     	       is err:ErrorTree do return doClause
+	       else nothing;
 	       );
 	  r := ParseTree(For(forToken, var, inClause, fromClause, toClause,whenClause, listClause, doClause, dummyDictionary));
 	  accumulate(r,file,prec,obeylines))
      --if there is no do clause then it is an error
      else (
-	  printErrorMessage(token2,"syntax error : expected 'do' or 'list'");
-	  printErrorMessage(forToken," ... to match this 'for'");
-	  errorTree));
+     	  ParseTree(ErrorTree(ErrorTree1(position(token2),"syntax error : expected 'do' or 'list'"),
+	  ErrorTree1(position(forToken)," ... to match this 'for'")))
+     ));
 
 -- unstringToken(q:Token):Token := (
 --      if q.word.typecode == TCstring 
@@ -406,44 +447,47 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 
 export unarysymbol(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
-     if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode == TCerror then return errorTree(arg);
+     if arg.word.typecode != TCid then return ErrorTree(ErrorTree1(position(arg), "syntax error: " + arg.word.name));
      r := ParseTree(Quote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryglobal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
-     if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode == TCerror then return errorTree(arg);
+     if arg.word.typecode != TCid then return ErrorTree(ErrorTree1(position(arg), "syntax error: " + arg.word.name));
      r := ParseTree(GlobalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unarythread(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
-     if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode == TCerror then return errorTree(arg);
+     if arg.word.typecode != TCid then return ErrorTree(ErrorTree1(position(arg), "syntax error: " + arg.word.name));
      r := ParseTree(ThreadQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unarylocal(quotetoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      arg := gettoken(file,false);
-     if arg == errorToken then return errorTree;
-     if arg.word.typecode != TCid then ( printErrorMessage(arg, "syntax error: " + arg.word.name); return errorTree; );
+     if arg.word.typecode == TCerror then return errorTree(arg);
+     if arg.word.typecode != TCid then ErrorTree(ErrorTree1(position(arg), "syntax error: " + arg.word.name));
      r := ParseTree(LocalQuote(quotetoken,arg));
      accumulate(r,file,prec,obeylines));
 export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      predicate := parse(file,ifToken.word.parse.unaryStrength,false);
-     if predicate == errorTree then return predicate;
+     when predicate
+     is err:ErrorTree do return predicate
+     else nothing;
      thenToken := gettoken(file,false);
-     if thenToken == errorToken then return errorTree;
-     if thenToken.word != thenW then (
-	  printErrorMessage(thenToken,"syntax error : expected 'then'");
-	  printErrorMessage(ifToken," ... to match this 'if'");
-	  return errorTree);
+     if thenToken.word.typecode == TCerror then return errorTree(thenToken);
+     if thenToken.word != thenW then return ParseTree(ErrorTree(ErrorTree1(position(thenToken),"syntax error : expected 'then'"),
+	  	  ErrorTree1(position(ifToken)," ... to match this")));
      thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
-     if thenClause == errorTree then return errorTree;
+     when thenClause
+     is err:ErrorTree do return thenClause
+     else nothing;
      if peektoken(file,obeylines).word == elseW then (
      	  elseToken := gettoken(file,obeylines);
-	  if elseToken == errorToken then return errorTree;
-	  elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
-     	  if elseClause == errorTree then return errorTree;
+     	  elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
+     	  when elseClause
+	  is err:ErrorTree do return elseClause
+     	  else nothing;
 	  ret := ParseTree(IfThenElse(ifToken,predicate,thenClause,elseClause));
 	  accumulate(ret,file,prec,obeylines))
      else (
@@ -452,52 +496,63 @@ export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
      );
 export unarytry(tryToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      primary := parse(file,tryToken.word.parse.unaryStrength,obeylines);
-     if primary == errorTree then return primary;
+     when primary
+     is err:ErrorTree do return primary
+     else nothing;
      if peektoken(file,obeylines).word == elseW then (
 	  elseToken := gettoken(file,false);
-	  if elseToken == errorToken then return errorTree;
-	  if elseToken.word != elseW then (
-	       printErrorMessage(elseToken,"syntax error : expected 'else'");
-	       printErrorMessage(tryToken," ... to match this 'try'");
-	       return errorTree);
+	  if elseToken.word.typecode == TCerror then return errorTree(elseToken);
+	  if elseToken.word != elseW then return ParseTree(ErrorTree(ErrorTree1(position(elseToken),"syntax error : expected 'else'"),
+	          ErrorTree1(position(tryToken)," ... to match this 'try'")));
 	  elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
-	  if elseClause == errorTree then return errorTree;
+	  when elseClause
+	  is err:ErrorTree do return elseClause
+	  else nothing;
 	  accumulate(ParseTree(TryElse(tryToken,primary,elseToken,elseClause)),file,prec,obeylines))
      else if peektoken(file,obeylines).word == thenW then (
 	  thenToken := gettoken(file,false);
-	  if thenToken == errorToken then return errorTree;
+	  if thenToken.word.typecode == TCerror then return errorTree(thenToken);
 	  thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
-	  if thenClause == errorTree then return errorTree;
+	  when thenClause
+	  is err:ErrorTree do return thenClause
+	  else nothing;
 	  if peektoken(file,obeylines).word == elseW then (
 	       elseToken := gettoken(file,false);
-	       if elseToken == errorToken then return errorTree;
+	       if elseToken.word.typecode == TCerror then return errorTree(elseToken);
 	       elseClause := parse(file,elseW.parse.unaryStrength,obeylines);
-	       if elseClause == errorTree then return errorTree;
+	       when elseClause
+	       is err:ErrorTree do return elseClause
+	       else nothing;
 	       accumulate(ParseTree(TryThenElse(tryToken,primary,thenToken,thenClause,elseToken,elseClause)),file,prec,obeylines))
-	  else (
-	       printErrorMessage(tryToken,"syntax error : expected 'else' to match this 'try'");
-	       errorTree))
+	  else ParseTree(ErrorTree(ErrorTree1(position(tryToken),"syntax error : expected 'else' to match this 'try'"))))
      else accumulate(ParseTree(Try(tryToken,primary)),file,prec,obeylines));
 export unarycatch(catchToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      primary := parse(file,catchToken.word.parse.unaryStrength,obeylines);
-     if primary == errorTree then return primary;
-     accumulate(ParseTree(Catch(catchToken,primary)),file,prec,obeylines));
+     when primary
+     is err:ErrorTree do return primary
+     else accumulate(ParseTree(Catch(catchToken,primary)),file,prec,obeylines));
 export unarynew(newtoken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      newclass := parse(file,newtoken.word.parse.unaryStrength,obeylines);
-     if newclass == errorTree then return errorTree;
+     when newclass
+     is err:ErrorTree do return newclass
+     else nothing;
      ofToken := dummyToken;
      newparent := dummyTree;
      if peektoken(file,obeylines).word == ofW then (
 	  ofToken = gettoken(file,obeylines);
 	  newparent = parse(file,ofW.parse.unaryStrength,obeylines);
-	  if newparent == errorTree then return errorTree;
+	  when newparent
+	  is err:ErrorTree do return newparent
+	  else nothing;
 	  );
      fromToken := dummyToken;
      newinitializer := dummyTree;
      if peektoken(file,obeylines).word == fromW then (
 	  fromToken = gettoken(file,obeylines);
 	  newinitializer = parse(file,fromW.parse.unaryStrength,obeylines);
-	  if newinitializer == errorTree then return errorTree;
+	  when newinitializer
+	  is err:ErrorTree do return newinitializer
+	  else nothing;
 	  );
      accumulate(ParseTree(New(newtoken,newclass,newparent,newinitializer)),file,prec,obeylines));
 
@@ -505,6 +560,7 @@ export treePosition(e:ParseTree):Position := (
      while true do (
 	  when e
 	  is dummy do return dummyPosition
+	  is e:ErrorTree do return if length(e)>0 then (e.0).position else dummyPosition
 	  is token:Token do return position(token)
 	  is adjacent:Adjacent do e = adjacent.lhs
 	  is binary:Binary do return position(binary.Operator)
@@ -537,6 +593,7 @@ export size(e:ParseTree):int := (
      Ccode(int,"sizeof(",e,")") +
      when e
      is x:dummy do Ccode(int,"sizeof(*",x,")") + Ccode(int,"sizeof(*",x.position,")")
+     is x:ErrorTree do 0 -- TEMP
      is x:Token do size(x)
      is x:Adjacent do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs)
      is x:Binary do Ccode(int,"sizeof(*",x,")") + size(x.lhs) + size(x.rhs) + size(x.Operator)

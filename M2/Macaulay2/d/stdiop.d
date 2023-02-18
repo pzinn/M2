@@ -124,24 +124,6 @@ cleanscreen():void := (
 	  )
      );
 
-printMessage(position:Position,message:string):void := (
-     if !SuppressErrors then (
-     	  cleanscreen();
-	  stdError << position;
-	  if recursionDepth > 0 then stdError << "[" << recursionDepth << "]:";
-     	  -- gettid() is not there in Solaris
-	  -- tid := gettid();
-	  -- if tid != -1 && tid != getpid() then stdError << "<" << gettid() << ">:";
-	  stdError << " " << message << endl;
-	  );
-     );
-export printErrorMessage(position:Position,message:string):void := (
-     printMessage(position, if message.0 == '-' then message else "error: "+message)
-     );
-export printWarningMessage(position:Position,message:string):void := printMessage(position,"warning: "+message);
-export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
-     printErrorMessage(Position(filename,line,column,ushort(0)), message);
-     );
 export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Position do o << w;
 export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
 export copy(p:Position):Position := Position(p.filename, p.line, p.column, loadDepth);

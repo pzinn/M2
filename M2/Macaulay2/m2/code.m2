@@ -250,8 +250,9 @@ addStartFunction(() -> inDebugger = false)
 debuggerHook = entering -> (
      if entering then (
 	  pushvar(symbol inDebugger, true);
+     	  print SPAN{"--entering debugger (type help to see debugger commands)","class"=>"M2Error"}; -- used to be position here ~ locate current
 	  c := code current;
-	  if c =!= null then print c;
+	  if c =!= null then print append(c,"class"=>"M2Error");
 	  )
      else (
 	  popvar symbol inDebugger;
@@ -279,6 +280,7 @@ Pseudocode _ ZZ := (x,i) -> (
     if class x === Sequence then x=last x;
     x
     )
+
 
 
 -- Local Variables:

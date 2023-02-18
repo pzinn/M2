@@ -27,6 +27,14 @@ export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 
+export errorPrint := nullE;
+printErrorMessageE(p:Position,message:string):Expr;
+printErrorMessage(p:Position,message:string):Expr;
+WrongNumArgs(c:Code,wanted:int,got:int):Expr;
+export printErrorMessageE(c:Code,message:string):Expr := printErrorMessageE(codePosition(c),message);
+export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
+     printErrorMessageE(position(c),message));
+
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -1232,6 +1240,35 @@ steppingFurther(c:Code):bool := steppingFlag && (
 	  microStepCount >= 0)
      else false);
 
+export printError(err:Error):Error := (
+     if !(SuppressErrors||(err.printed && err.position.filename === "stdio"))
+     then (
+     when applyEE(errorPrint,Expr(Sequence(Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth)),toExpr(err.message))))
+     is e:Error do ( stdError << err.position << " " << err.message <<endl; )
+     else nothing
+     );
+     err.printed=true;
+     err
+);
+export printErrorMessage0(p:Position,message:string):Error := ( -- for use when we have no code
+     e := Error(p,message,nullE,false,dummyFrame);
+     if p.loadDepth >= errorDepth then printError(e);
+     e);
+export printErrorMessageE(p:Position,message:string):Expr := Expr(printErrorMessage0(p,message)); -- for use when we have no code
+export printErrorMessage(p:Position,message:string):Expr := ( -- for use when we have no code
+     e := Error(p,message,nullE,false,dummyFrame);
+     printError(e);
+     Expr(e));
+export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
+     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
+	  + (if wanted == 1 then "" else "s") + ", but got "
+	  + tostring(got)));
+export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
+     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
+	  + (if wanted == 1 then "" else "s") + ", but got "
+	  + tostring(got)));
+
+
 handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  if SuppressErrors then return e;
@@ -1257,7 +1294,7 @@ handleError(c:Code,e:Expr):Expr := (
 	       if !err.printed || backtrace && localFrame != oldReportFrame then (
 		    if debuggingMode && !stopIfError && (! (p.filename === "stdio")) then (
 			 if !err.printed then printError(err);
-			 printErrorMessage(err.position,"--entering debugger (type help to see debugger commands)");
+--			 printErrorMessage(err.position,"--entering debugger (type help to see debugger commands)"); -- moved to debuggerHook
 			 z := debuggerFun(localFrame,c);
 			 -- printErrorMessage(err.position,"--leaving debugger");
 			 when z is z:Error do (
@@ -1282,7 +1319,7 @@ handleError(c:Code,e:Expr):Expr := (
 			      else e)
 			 else e)
 		    else (
-			 printError(err);
+		         printError(err);
 			 e))
 	       else e)
 	  else (

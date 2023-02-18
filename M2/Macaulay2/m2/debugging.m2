@@ -3,14 +3,17 @@
 needs "nets.m2"
 needs "methods.m2"
 
+postError := {}; -- a bit hacky
 processArgs := args -> concatenate (
      args = sequence args;
      apply(args, x -> 
 	  if class x === String then x
-	  else if class x === Symbol then ("'", toString x, "'")
+	  else if class x === Symbol then (
+     	      postError=append(postError,DIV {locate x, ": here is the first use of ",x});
+	      ("'", toString x, "'")
+	      )
 	  else silentRobustString(40,3,x)
 	  ),
-     apply(args, x -> if class x === Symbol then ("\n", toString locate x, ": here is the first use of '",toString x, "'") else "")
      )
 olderror = error
 
@@ -242,7 +245,8 @@ FilePosition.synonym = "file position"
 toString FilePosition :=
 net FilePosition := p -> concatenate(
     p#0,":",toString p#1,":",toString p#2,
-    if #p>3 then ("-",toString p#3,":",toString p#4),
+    if #p==4 then (":(",toString p#3,")")
+    else if #p>=5 then ("-",toString p#3,":",toString p#4)
 --    if #p>5 then (" (",toString p#5,":",toString p#6,")")
     )
 
@@ -256,6 +260,15 @@ locate Sequence    :=
 locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new FilePosition from x'
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
+
+errorPrint = (pos,msg) -> (
+    pos = new FilePosition from pos;
+    print PRE{SPAN {pos,"class"=>"M2ErrorLocation"},": ",if msg#0!="-" then "error: ",msg,"class"=>"M2Error"};
+    if #postError>0 then {
+	print DIV append(postError,"class"=>"M2Error");
+	postError={};
+	}
+    )
 
 
 

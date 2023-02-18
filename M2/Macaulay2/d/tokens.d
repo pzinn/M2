@@ -21,11 +21,6 @@ export isatty(f:TokenFile):bool := isatty(f.posFile);
 
 -- Expr Functions
 
-export printErrorMessage(err:Error):void := (
-     printErrorMessage(err.position,err.message);
-     err.printed = true;
-     );
-
 export getLocalDictionary(frameID:int):Dictionary := (
      p := allDictionaries;
      while (
@@ -65,23 +60,8 @@ export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
 (threadLocal export debuggingMode := false) = true;
 
-export printIfError(e:Expr):void := (
-     when e is err:Error do (
-	  printErrorMessage(err.position,err.message);
-	  err.printed = true;
-	  )
-     else nothing;
-     );
-export printError(err:Error):Error := (
-     if !(err.printed && err.position.filename === "stdio")
-     then printErrorMessage(err.position, if err.printed then "--back trace--" else err.message);
-     err.printed = true;
-     err);
 export location(t:Token):Location := Location(t.filename,t.line,t.column,t.line2,t.column2,t.line,t.column,t.loadDepth);
 export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
-export printErrorMessage(t:Token,message:string):void := printErrorMessage(position(t),message);
-export printWarningMessage(t:Token,message:string):void := printWarningMessage(position(t),message);
-
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame

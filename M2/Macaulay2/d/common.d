@@ -10,7 +10,7 @@ export codeLocation(c:Code):Location := (
      is f:angleBarListCode do f.location
      is f:binaryCode do f.location
      is f:catchCode do f.location
-     is f:Error do ( p:=f.position; Location(p.filename,p.line,p.column,p.line,p.column,p.line,p.column,p.loadDepth) ) -- TEMP rethink
+     is f:Error do ( p:=f.position; Location(p.filename,p.line,p.column,p.line,p.column,p.line,p.column,p.loadDepth) )
      is f:forCode do f.location
      is f:functionCode do f.location
      is f:globalAssignmentCode do f.location
@@ -211,34 +211,10 @@ export setupconst(name:string,value:Expr):Symbol := (
 setup(commaS,dummyBinaryFun);
 
 threadLocal export errorDepth := ushort(0);
-export printErrorMessage0(c:Code,message:string):Error := (
-     p := codePosition(c);
-     e := Error(p,message,nullE,false,dummyFrame);
-     if p.loadDepth >= errorDepth then printError(e);
-     e);
-export printErrorMessageE(c:Code,message:string):Expr := (
-     p := codePosition(c);
-     e := Error(p,message,nullE,false,dummyFrame);
-     if p.loadDepth >= errorDepth then printError(e);
-     Expr(e));
-export printErrorMessageE(p:Position,message:string):Expr := ( -- for use when we have no code
-     e := Error(p,message,nullE,false,dummyFrame);
-     if p.loadDepth >= errorDepth then printError(e);
-     Expr(e));
-export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
-     printErrorMessageE(position(c),message));
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
 export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then if err.value == dummyExpr then nullE else err.value else z else z;
 
-export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
-     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
-	  + (if wanted == 1 then "" else "s") + ", but got "
-	  + tostring(got)));
-export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
-     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
-	  + (if wanted == 1 then "" else "s") + ", but got "
-	  + tostring(got)));
 
 -----------------------------------------------------------------------------
 

@@ -440,6 +440,7 @@ export convert0(e:ParseTree):Code := (
      is i:Catch do Code(catchCode(unseq(c:=convert0(i.primary)),combineLocation(location(i.catchToken),codeLocation(c))))
      is u:Postfix do Code(unaryCode(u.Operator.entry.postfix,unseq(c:=convert0(u.lhs)),combineLocation(codeLocation(c),location(u.Operator))))
      is d:dummy do dummyCode
+     is e:ErrorTree do dummyCode
      );
 
 export convert(e:ParseTree):Code := unseq(convert0(e));
