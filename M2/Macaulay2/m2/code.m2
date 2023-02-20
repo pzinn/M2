@@ -95,9 +95,8 @@ editMethod String := filename -> (
      chkrun concatenate(
 	  if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	  editor, " ", filename))
-EDIT = method(Dispatch => Thing)
-EDIT Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
-EDIT FilePosition := x -> (
+editMethod Nothing := arg -> (stderr << "--warning: source code not available" << endl;)
+editMethod FilePosition := x -> (
      filename := x#0; start := x#1;
      editor := getViewer("EDITOR", "emacs");
      if 0 != chkrun concatenate(
@@ -108,7 +107,7 @@ EDIT FilePosition := x -> (
 	  filename
 	  ) then error "command returned error code")
 editMethod Command := c -> editMethod c#0
-editMethod Function := args -> EDIT locate args
+editMethod Function := args -> editMethod locate args
 editMethod Sequence := args -> (
     if args === () then (
 	editor := getViewer("EDITOR", "emacs");
@@ -116,7 +115,7 @@ editMethod Sequence := args -> (
 	    if getenv "DISPLAY" != "" and editor != "emacs" then "xterm -e ",
 	    editor)
 	)
-    else EDIT locate args
+    else editMethod locate args
      )
 editMethod ZZ := i -> editMethod previousMethodsFound#i
 edit = Command editMethod

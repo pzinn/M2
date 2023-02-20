@@ -60,6 +60,16 @@ Nothing#{WebApp,Print} = identity
     << webAppHtmlTag | y | webAppEndTag << endl;
     )
 
+(modes errorPrint)#WebApp = (pos,msg) -> (
+    pos = new FilePosition from pos;
+    print PRE{SPAN {pos,"class"=>"M2ErrorLocation"},": ",if msg#0!="-" then "error: ",msg,"class"=>"M2Error"};
+    if #postError>0 then {
+	print DIV append(postError,"class"=>"M2Error");
+	postError={};
+	}
+    )
+
+
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 
 Thing#{WebApp,Print} = x -> (
@@ -100,7 +110,7 @@ if topLevelMode === WebApp then (
     -- the edit hack
     editURL := f -> URL ("#editor:"|toString f); -- TODO rewrite the edit mess using mode
     editMethod String :=
-    EDIT FilePosition := f -> show editURL f;
+    editMethod FilePosition := f -> show editURL f;
 --    fixup FilePosition := lookup(hypertext,FilePosition); -- shouldn't change that (say, in doc)
     fixup FilePosition := f -> TT HREF { f#0, toString f }; -- let's try this
     hypertext FilePosition := f -> TT HREF {editURL f,toString f};

@@ -3,7 +3,7 @@
 needs "nets.m2"
 needs "methods.m2"
 
-postError := {}; -- a bit hacky
+postError = {}; -- a bit hacky
 processArgs := args -> concatenate (
      args = sequence args;
      apply(args, x -> 
@@ -238,8 +238,6 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
-currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
-
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
 toString FilePosition :=
@@ -249,6 +247,7 @@ net FilePosition := p -> concatenate(
     else if #p>=5 then ("-",toString p#3,":",toString p#4)
 --    if #p>5 then (" (",toString p#5,":",toString p#6,")")
     )
+currentPosition = () -> new FilePosition from { currentFileName, currentRowNumber(), currentColumnNumber() }
 
 locate' = locate -- defined in d/actors4.d
 locate = method(Dispatch => Thing, TypicalValue => FilePosition)
@@ -261,16 +260,15 @@ locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new 
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
-errorPrint = (pos,msg) -> (
+-----------------------------------------------------------------------------
+print =  mode ( x -> (<< x << endl;) )
+errorPrint = mode ( (pos,msg) -> (
     pos = new FilePosition from pos;
-    print PRE{SPAN {pos,"class"=>"M2ErrorLocation"},": ",if msg#0!="-" then "error: ",msg,"class"=>"M2Error"};
-    if #postError>0 then {
-	print DIV append(postError,"class"=>"M2Error");
-	postError={};
-	}
-    )
-
-
+    stderr << pos << ": " << (if msg#0!="-" then "error: "|msg else msg) << endl;
+    for e in postError do stderr << e << endl;
+    postError={};
+    stderr << flush;
+    ) )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

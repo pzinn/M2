@@ -721,6 +721,7 @@ mode MutableHashTable := H -> new ModeDependentFunctionClosure from ( x -> (if H
 modes = method()
 modes ModeDependentFunctionClosure := f -> (frame f)#0
 
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
