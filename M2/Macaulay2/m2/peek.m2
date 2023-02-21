@@ -6,73 +6,66 @@ needs "methods.m2"
 
 peek' = method(TypicalValue => Net)
 
-peek'(ZZ,ZZ) := (depth,n) -> toString n
-peek'(ZZ,Nothing) := (depth,s) -> "null"
-peek'(ZZ,Symbol) := (depth,s) -> toString s
-peek'(ZZ,Thing) := (depth,s) -> net s
+peek'(ZZ,Nothing) := (depth,s) -> SPAN "null"
+peek'(ZZ,Thing) := (depth,s) -> SPAN s
 
-peek'(ZZ,BasicList) := (depth,s) -> (
-     if depth === 0 then net s
-     else horizontalJoin(
-	  net class s,
-	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(depth-1,value))), "}" ) )
+peek'(ZZ,VerticalList) :=
+peek'(ZZ,BasicList) := (depth,s) -> SPAN (
+    if depth === 0 then hold s -- hold because of Option
+    else {
+	class s,
+	apply(toList s, value -> peek'(depth-1,value))
+      	}
+    )
 
-peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> (
-     if depth === 0 then net s
-     else horizontalJoin(
-	  net class s,
-	  "{", horizontalJoin between (", ", apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))), "}" ) )
+peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> SPAN (
+    if depth === 0 then s
+    else {
+	class s,
+	apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))
+	}
+    )
 
-peek'(ZZ,List) := (depth,s) -> (
-     if depth === 0 then net s
-     else horizontalJoin(
-	  "{", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), "}" ) )
-peek'(ZZ, String) := (depth,s) -> if depth === 0 then s else format s
+peek'(ZZ,List) := (depth,s) -> SPAN (
+    if depth === 0 then { s }
+    else { apply(toList s, value -> peek'(depth,value)) }
+    )
+peek'(ZZ, String) := (depth,s) -> SPAN hold ( if depth === 0 then s else format s )
 
 formatNet := n -> (stack ((s -> substring(s,1,#s-2)) \ format \ unstack n))^(height n - 1)
-peek'(ZZ,Net) := (depth,s) -> if depth === 0 then s else netList({{formatNet s}}, Boxes => true)
-peek'(ZZ,Sequence) := (depth,s) -> (
-     if depth === 0 then net s
-     else horizontalJoin(
-	  if #s === 0
-	  then "()"
-	  else if #s === 1 
-	  then ("1 : (", peek'(depth,s#0), ")")
-	  else ("(", horizontalJoin between (", ", apply(s, value -> peek'(depth,value))), ")" )))
+peek'(ZZ,Net) := (depth,s) -> SPAN hold ( if depth === 0 then s else netList({{formatNet s}}, Boxes => true) )
+peek'(ZZ,Sequence) := (depth,s) -> SPAN (
+    if depth === 0 then hold s -- hold because hypertext content gets spliced when html'ed
+    else if #s === 1 then {"1 : (", peek'(depth,s#0), ")"}
+    else hold apply(s, value -> peek'(depth,value))
+    )
 
-precOption := precedence ( 1 => 2 )
-
-peek'(ZZ,HashTable) := (depth,s) -> (
-     if depth === 0 
-     then net s
-     else horizontalJoin(
-	  net class s,
-	  if parent s =!= Nothing 
-	  then horizontalJoin(" of ", net parent s)
-	  else "",
-	  "{",
-	  stack sort apply(
-	       pairs s,
-	       (key,value) -> horizontalJoin splice (
-		    if precedence key < precOption
-		    then ("(",peek'(depth-1,key),")")
-		    else peek'(depth-1,key),
-		    " => ",
-		    if precedence value < precOption
-		    then ("(",peek'(depth-1,value),")")
-		    else peek'(depth-1,value))),
-	  "}"
-	  ))
+peek'(ZZ,HashTable) := (depth,s) -> SPAN (
+    if depth === 0 then hold s -- hold because of OptionTable
+    else splice nonnull {
+	class s,
+	if parent s =!= Nothing then (" of ", parent s),
+	VerticalList apply(
+	    sortByName pairs s,
+	    (key,value) -> RowExpression (
+		peek'(depth-1,key),
+		" ", symbol =>," ",
+		peek'(depth-1,value)
+		)
+	    )
+	}
+    )
 
 peek'(ZZ,Dictionary) := (depth,d) -> (
-     if depth === 0 then net d
-     else horizontalJoin(
-	  toString class d, "{", 
-	  stack apply(sort pairs d, (lhs,rhs) -> horizontalJoin splice (peek lhs," => ",peek'(depth-1,rhs))),
-	  "}"))
+    if depth === 0 then SPAN d
+    else SPAN {
+	class d,
+	VerticalList apply(sort pairs d, (lhs,rhs) -> RowExpression { peek lhs," ",symbol =>," ",peek'(depth-1,rhs) } )
+	}
+    )
 
 peek = s -> peek'(1,s)
-typicalValues#peek = Net
+typicalValues#peek = Hypertext
 
 ops = new MutableHashTable
 
