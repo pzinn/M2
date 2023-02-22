@@ -420,10 +420,10 @@ Ideal.synonym = "ideal"
 ideal = method(Dispatch => Thing, TypicalValue => Ideal)
 
 expression Ideal := (I) -> (expression ideal) unsequence apply(toSequence first entries generators I, expression)
-net Ideal := (I) -> net expression I
-toString Ideal := (I) -> toString expression I
+net Ideal := net @@ expression
+toString Ideal := toString @@ expression
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
-texMath Ideal := (I) -> texMath expression I
+texMath Ideal := texMath @@ expression
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

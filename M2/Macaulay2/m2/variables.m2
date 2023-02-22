@@ -36,13 +36,13 @@ IndexedVariableTable.GlobalReleaseHook = (X,x) -> (
      if x#?symbol$ and x#symbol$ === X then remove(x,symbol$);
      )
 expression IndexedVariable := x -> (expression x#0) _ (expression x#1)
-net IndexedVariable := v -> net expression v
-toString IndexedVariable := v -> toString expression v
-texMath IndexedVariable := v -> texMath expression v
+net IndexedVariable := net @@ expression
+toString IndexedVariable := toString @@ expression
+texMath IndexedVariable := texMath @@ expression
 expression IndexedVariableTable := x -> if x#?symbol$ then expression x#symbol$ else expression "-*an indexed variable table*-"
 net IndexedVariableTable := net @@ expression
 toString IndexedVariableTable := toString @@ expression
-texMath IndexedVariableTable := x -> texMath expression x
+texMath IndexedVariableTable := texMath @@ expression
 
 IndexedVariable ? IndexedVariable := (x,y) -> toSequence x ? toSequence y
 Symbol ? IndexedVariable := (x,y) -> if x === (y#0) then symbol > else x ? (y#0)

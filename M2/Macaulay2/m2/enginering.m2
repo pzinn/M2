@@ -238,7 +238,7 @@ reduce := (r,s) -> (
      (a,b))
 
 expression EngineRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else expression toString R.RawRing -- should never be used
-texMath EngineRing := R -> texMath expression R
+texMath EngineRing := texMath @@ expression
 toString EngineRing := toString @@ expression
 net EngineRing := net @@ expression
 
@@ -422,10 +422,10 @@ ZZ ? RingElement := (m,y) -> m_(class y) ? y
 
 RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
-toString RingElement := x -> toString expression x
-toExternalString RingElement := x -> toExternalFormat expression x
-net RingElement := x -> net expression x
-texMath RingElement := x -> texMath expression x
+toString RingElement := toString @@ expression
+toExternalString RingElement := toExternalFormat @@ expression
+net RingElement := net @@ expression
+texMath RingElement := texMath @@ expression
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 

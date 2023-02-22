@@ -1255,7 +1255,7 @@ Boolean#AfterPrint = nullf
 -- extra stuff
 expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, unhold expression z#1 }
 net Option := net @@ expression
-texMath Option := x -> texMath expression x
+texMath Option := texMath @@ expression
 toString Option := toString @@ expression
 
 SheafExpression = new WrapperType of Expression;
@@ -1280,7 +1280,7 @@ expressionValue MapExpression := x -> map toSequence apply(x,expressionValue)
 expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
-texMath Set := x -> texMath expression x
+texMath Set := texMath @@ expression
 
 -- shortening expressions
 Dots = new Type of Symbol
