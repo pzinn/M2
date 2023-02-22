@@ -83,7 +83,7 @@ InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Pri
 
 htmlAfterPrint :=  x -> (
     << endl << on() | " : ";
-    if class x === Sequence then x = RowExpression deepSplice { x };
+    if class x === Sequence then x = SPAN deepSplice { x };
     printFunc x;
     )
 
@@ -142,43 +142,51 @@ if topLevelMode === WebApp then (
 -- show
 (modes(lookup(show,URL)))#WebApp = url -> (<< webAppUrlTag | url#0 | webAppEndTag;);
 
--- the html VisibleList hack
+-- the html hack
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
-htmlInList = method(Dispatch=>Thing)
-htmlInList Holder := x -> htmlInList x#0
-htmlInList Type :=
-htmlInList Number :=
-htmlInList Symbol :=
-htmlInList ScriptedFunctor :=
-htmlInList MutableList := html
-htmlInList QQ := x -> if denominator x == 1 then html x
-htmlInList Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then html x
-htmlInList Hypertext := html
-htmlInList HypertextContainer :=
-htmlInList HypertextParagraph :=
-htmlInList VerticalList := s -> null
-htmlInList Thing := htmlInList @@ hypertext
 htmlTexFlag = true -- false means only one-line is allowed, i.e., allows to not duplicate html -> htmlInList
 pureTexFlag = true -- means only tex, nothing else
-html Option := s -> ( -- might want to go thru expression? in principle could do for any BinaryOperation except not so useful
-    if debugLevel === 42 then return htmlTex s;
-    f := if htmlTexFlag then html else htmlInList;
-    s = apply(s,expression);
-    s = {if rightPrecedence s#0 < lprec symbol => then sequence s#0 else s#0,
-     	if precedence s#1 <= rprec symbol => then sequence s#1 else s#1};
-    r := apply(s, x -> ( h := f x; if h =!= null then h else break));
-    if r =!= null then concatenate (
-	if #(r#0)<=2 or last r#0!="$" then (pureTexFlag=false; r#0|"$\\ ") else substring(r#0,0,#(r#0)-1),
-	"\\ \\Rightarrow\\ ",
-	if #(r#1)<=2 or first r#1!="$" then (pureTexFlag=false; "\\ $"|r#1) else substring(r#1,1)
+htmlQQ:=lookup(html,QQ)
+html QQ := x -> if htmlTexFlag or denominator x == 1 then htmlQQ x
+htmlRing:=lookup(html,Ring)
+html Ring := x -> if htmlTexFlag or x.?texMath or hasAttribute(x,ReverseDictionary) then htmlRing x
+scan({HypertextContainer,HypertextParagraph,VerticalList}, t->(
+	h:=lookup(html,t);
+	html t := s -> if htmlTexFlag then h s;
+	));
+html2 := (fun,args,lprec,rprec,sep,supp) -> (
+    if rightPrecedence fun < lprec then ( fun = sequence fun; if supp then sep="{}"; );
+    if precedence args <= rprec then ( args = sequence args; if supp then sep="{}"; );
+    fun = html fun; if fun === null then return;
+    args = html args; if args === null then return;
+    concatenate (
+	if #fun<=2 or last fun!="$" then (pureTexFlag=false; fun|"$") else substring(fun,0,#fun-1),
+	sep,
+	if #args<=2 or first args!="$" then (pureTexFlag=false; "$"|args) else substring(args,1)
 	)
+    )
+
+html Adjacent := html FunctionApplication := m -> (
+    if debugLevel === 42 then return htmlTex m;
+    if m#0 === sqrt or instance(m#0,Divide) then return if htmlTexFlag then htmlTex m;
+    -- TODO fix spacing
+    html2(m#0,m#1,precedence m,precedence m,
+	if instance(m#1,Array) then sep:="\\mathopen{}"
+    	else if instance(m#1,VisibleList) then sep="{}"
+    	else sep = "\\ ",true)
+    )
+html BinaryOperation := b -> (
+    if debugLevel === 42 then return htmlTex b;
+    html2(b#1,b#2,lprec b#0,rprec b#0,if spacedOps#?(b#0) then "\\ "|texMath b#0|"\\ " else texMath b#0,false)
     )
 htmlVisibleList :=
 html VisibleList := s -> (
     if debugLevel === 42 then return htmlTex s;
     if lookup(texMath,class s) =!= texMathVisibleList then return if htmlTexFlag then htmlTex s;
     delims := lookup("delimiters",class s);
-    r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
+    backupFlag := htmlTexFlag; htmlTexFlag=false;
+    r := apply(s, x -> ( h := html x; if h =!= null then h else break));
+    htmlTexFlag=backupFlag;
     if r =!= null then 
     concatenate (
 	"$",
@@ -214,13 +222,6 @@ html ScriptedFunctor := H -> (
     else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
     else htmlMutable H
     )
-scan({HashTable,BasicList,VisibleList,Option},t ->(
-	h:=lookup(html,t);
-	htmlInList t := s -> (
-    	    if lookup(html,class s) =!= h then return;
-    	    backupFlag := htmlTexFlag; htmlTexFlag=false;
-    	    first(h s, htmlTexFlag=backupFlag)
-    	    )))
 
 -- the texMath hack
 texMath1 = x -> (

@@ -86,7 +86,7 @@ operatorFunctions := new HashTable from {
      symbol ^^ => ((x,y) -> x ^^ y)
      }
 
-spacedOps := set { symbol =>, symbol and, symbol or, symbol xor, symbol ++, symbol == } -- some operators need extra space around them
+spacedOps = set { symbol =>, symbol and, symbol or, symbol xor, symbol ++, symbol == } -- some operators need extra space around them
 spacedToString := s -> if spacedOps#?s then " "|toString s|" " else toString s
 
 HeaderType = new Type of Type
@@ -1257,6 +1257,7 @@ expression Option := z -> BinaryOperation { symbol =>, unhold expression z#0, un
 net Option := net @@ expression
 texMath Option := texMath @@ expression
 toString Option := toString @@ expression
+html Option := html @@ expression
 
 SheafExpression = new WrapperType of Expression;
 toString'(Function, SheafExpression) := (fmt,x) -> toString'(fmt,new FunctionApplication from { sheaf, x#0 })
@@ -1281,6 +1282,7 @@ expression Set := x -> Adjacent {set, expression (sortByName keys x)}
 toString Set := toString @@ expression
 net Set := net @@ expression
 texMath Set := texMath @@ expression
+html Set := html @@ expression
 
 -- shortening expressions
 Dots = new Type of Symbol
