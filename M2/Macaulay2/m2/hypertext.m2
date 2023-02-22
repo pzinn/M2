@@ -416,7 +416,11 @@ hypertext Type :=
 hypertext FilePosition :=
 hypertext Dictionary := TTc "class-name"
 hypertext String := TTc "string"
-hypertext Net := n -> PRE { toString n, BR{}, "class"=>"token string", "style" => "display:inline-table;vertical-align:"|toString(if #n>0 then 100*(height n-1) else 0)|"%" }
+hypertext Net := n -> PRE {
+    toString n, BR{},
+    "class"=>"token string",
+    if #n>0 and height n!=1 then "style" => "vertical-align:"|toString(100*(height n-1))|"%"
+    }
 hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net

@@ -143,25 +143,23 @@ if topLevelMode === WebApp then (
 (modes(lookup(show,URL)))#WebApp = url -> (<< webAppUrlTag | url#0 | webAppEndTag;);
 
 -- the html VisibleList hack
-isSimpleHypertext := c -> if c === Hypertext then true else if c === HypertextParagraph or c === HypertextContainer or c === Thing then false else isSimpleHypertext parent c
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
 htmlInList = method(Dispatch=>Thing)
 htmlInList Holder := x -> htmlInList x#0
 htmlInList Type :=
 htmlInList Number :=
 htmlInList Symbol :=
+htmlInList ScriptedFunctor :=
 htmlInList MutableList := html
 htmlInList QQ := x -> if denominator x == 1 then html x
 htmlInList Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then html x
-htmlInList Thing := x -> ( h := hypertext x; if isSimpleHypertext class h then html h)
+htmlInList Hypertext := html
+htmlInList HypertextContainer :=
+htmlInList HypertextParagraph :=
 htmlInList VerticalList := s -> null
+htmlInList Thing := htmlInList @@ hypertext
 htmlTexFlag = true -- false means only one-line is allowed, i.e., allows to not duplicate html -> htmlInList
 pureTexFlag = true -- means only tex, nothing else
-htmlInList HashTable :=
-htmlInList BasicList := s-> (
-    backupFlag := htmlTexFlag; htmlTexFlag=false;
-    first(html s, htmlTexFlag=backupFlag)
-    )
 html Option := s -> ( -- might want to go thru expression? in principle could do for any BinaryOperation except not so useful
     if debugLevel === 42 then return htmlTex s;
     f := if htmlTexFlag then html else htmlInList;
@@ -177,7 +175,8 @@ html Option := s -> ( -- might want to go thru expression? in principle could do
     )
 htmlVisibleList :=
 html VisibleList := s -> (
-    if lookup(texMath,class s) =!= texMathVisibleList or debugLevel === 42 then return htmlTex s;
+    if debugLevel === 42 then return htmlTex s;
+    if lookup(texMath,class s) =!= texMathVisibleList then return if htmlTexFlag then htmlTex s;
     delims := lookup("delimiters",class s);
     r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
     if r =!= null then 
@@ -196,14 +195,15 @@ html VisibleList := s -> (
 	) else if htmlTexFlag then htmlTex s
     )
 html BasicList := s -> (
-    if lookup(texMath,class s) =!= lookup(texMath,BasicList) or debugLevel === 42 then (if htmlTexFlag then htmlTex s)
+    if debugLevel === 42 then htmlTex s
+    else if lookup(texMath,class s) =!= lookup(texMath,BasicList) then (if htmlTexFlag then htmlTex s)
     else concatenate(html class s,htmlVisibleList toList s)
     )
 htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\}$")
 html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
--- semi-hacky: can't use hypertext cause $...$ not allowed in its output
 html HashTable := H -> (
-    if lookup(texMath,class H) =!= lookup(texMath,HashTable) or H.?texMath or debugLevel===42 then (if htmlTexFlag then htmlTex H)
+    if debugLevel === 42 then htmlTex H
+    else if lookup(texMath,class H) =!= lookup(texMath,HashTable) or H.?texMath then (if htmlTexFlag then htmlTex H)
     else if mutable H then htmlMutable H
     else (
 	h:=htmlVisibleList apply(sortByName pairs H, p -> new Option from p);
@@ -214,6 +214,13 @@ html ScriptedFunctor := H -> (
     else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
     else htmlMutable H
     )
+scan({HashTable,BasicList,VisibleList,Option},t ->(
+	h:=lookup(html,t);
+	htmlInList t := s -> (
+    	    if lookup(html,class s) =!= h then return;
+    	    backupFlag := htmlTexFlag; htmlTexFlag=false;
+    	    first(h s, htmlTexFlag=backupFlag)
+    	    )))
 
 -- the texMath hack
 texMath1 = x -> (
