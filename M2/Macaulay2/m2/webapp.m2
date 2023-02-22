@@ -149,28 +149,33 @@ htmlInList = method(Dispatch=>Thing)
 htmlInList Holder := x -> htmlInList x#0
 htmlInList Type :=
 htmlInList Number :=
-htmlInList Symbol := html
+htmlInList Symbol :=
+htmlInList MutableList := html
 htmlInList QQ := x -> if denominator x == 1 then html x
-htmlInList ScriptedFunctor := -- or HashTable? but that creates problems with say VG types that have reverse dictionaries
 htmlInList Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then html x
-htmlInList Thing := x -> ( h := hypertext x; if isSimpleHypertext class h then html h)  -- really, it's just TT
+htmlInList Thing := x -> ( h := hypertext x; if isSimpleHypertext class h then html h)
 htmlInList VerticalList := s -> null
-htmlInList Option :=
-htmlInList VisibleList := s-> (
+htmlTexFlag = true -- false means only one-line is allowed, i.e., allows to not duplicate html -> htmlInList
+pureTexFlag = true -- means only tex, nothing else
+htmlInList HashTable :=
+htmlInList BasicList := s-> (
     backupFlag := htmlTexFlag; htmlTexFlag=false;
     first(html s, htmlTexFlag=backupFlag)
     )
-htmlTexFlag = true -- false means only one-line is allowed
-pureTexFlag = true -- means only tex, nothing else
-html Option := s -> (
+html Option := s -> ( -- might want to go thru expression? in principle could do for any BinaryOperation except not so useful
     if debugLevel === 42 then return htmlTex s;
-    r := apply(s, x -> ( h := htmlInList x; if h =!= null then h else break));
+    f := if htmlTexFlag then html else htmlInList;
+    s = apply(s,expression);
+    s = {if rightPrecedence s#0 < lprec symbol => then sequence s#0 else s#0,
+     	if precedence s#1 <= rprec symbol => then sequence s#1 else s#1};
+    r := apply(s, x -> ( h := f x; if h =!= null then h else break));
     if r =!= null then concatenate (
 	if #(r#0)<=2 or last r#0!="$" then (pureTexFlag=false; r#0|"$\\ ") else substring(r#0,0,#(r#0)-1),
 	"\\ \\Rightarrow\\ ",
 	if #(r#1)<=2 or first r#1!="$" then (pureTexFlag=false; "\\ $"|r#1) else substring(r#1,1)
-	) else if htmlTexFlag then htmlTex s
+	)
     )
+htmlVisibleList :=
 html VisibleList := s -> (
     if lookup(texMath,class s) =!= texMathVisibleList or debugLevel === 42 then return htmlTex s;
     delims := lookup("delimiters",class s);
@@ -189,6 +194,25 @@ html VisibleList := s -> (
 	delims#1,
 	"$"
 	) else if htmlTexFlag then htmlTex s
+    )
+html BasicList := s -> (
+    if lookup(texMath,class s) =!= lookup(texMath,BasicList) or debugLevel === 42 then (if htmlTexFlag then htmlTex s)
+    else concatenate(html class s,htmlVisibleList toList s)
+    )
+htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\}$")
+html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
+-- semi-hacky: can't use hypertext cause $...$ not allowed in its output
+html HashTable := H -> (
+    if lookup(texMath,class H) =!= lookup(texMath,HashTable) or H.?texMath or debugLevel===42 then (if htmlTexFlag then htmlTex H)
+    else if mutable H then htmlMutable H
+    else (
+	h:=htmlVisibleList apply(sortByName pairs H, p -> new Option from p);
+	if h =!= null then concatenate(html class H,h)
+    ))
+html ScriptedFunctor := H -> (
+    if H.?texMath or debugLevel===42 then htmlTex H
+    else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
+    else htmlMutable H
     )
 
 -- the texMath hack

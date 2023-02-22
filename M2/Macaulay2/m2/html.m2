@@ -172,8 +172,6 @@ html RingFamily :=
 html Ring :=
 html Thing := x -> "$" | htmlLiteral texMath0 x | "$" -- by default, we use math mode tex (as opposed to actual html)
 
--- semi-hacky: can't use hypertext cause $...$ not allowed in its output
-html HashTable := H -> if H.?texMath or not hasAttribute(H,ReverseDictionary) then htmlTex H else html (TTc "constant") getAttribute(H,ReverseDictionary)
 
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser

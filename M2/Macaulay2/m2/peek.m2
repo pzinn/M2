@@ -18,7 +18,7 @@ peek'(ZZ,BasicList) := (depth,s) -> SPAN (
       	}
     )
 
-peek'(ZZ,HypertextParagraph) := peek'(ZZ,Hypertext) := (depth,s) -> SPAN (
+peek'(ZZ,Hypertext) := (depth,s) -> SPAN (
     if depth === 0 then s
     else {
 	class s,
