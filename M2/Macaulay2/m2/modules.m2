@@ -220,7 +220,6 @@ expression Module := M -> (
 toString Module := toString @@ expression
 net Module := net @@ expression
 texMath Module := texMath @@ expression
-html Module := html @@ expression
 
 describe Module := M -> Describe (
      if M.?relations

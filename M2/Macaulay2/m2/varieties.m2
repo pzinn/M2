@@ -23,7 +23,6 @@ toString Variety := toString @@ expression
 toExternalString Variety := toString @@ describe
 net Variety := net @@ expression
 texMath Variety := texMath @@ expression
-html Variety := html @@ expression
 expression Variety := (X) -> if hasAttribute(X,ReverseDictionary) then expression getAttribute(X,ReverseDictionary) else (describe X)#0
 describe AffineVariety := (X) -> Describe (expression Spec) (expression X.ring)
 describe ProjectiveVariety := (X) -> Describe (expression Proj) (expression X.ring)

@@ -126,8 +126,6 @@ if topLevelMode === WebApp then (
 	s=separate(delim,s);
 	concatenate apply(#s, i -> if even i then removeTags htmlLiteral0 s#i else s#i)
 	);
-    -- misc
-    html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0; -- silly
     -- colored tex
     col := (c,f) -> ( x -> ///\htmlClass{token /// | c | ///}{/// | f x | ///}///);
     texMath RingFamily :=
@@ -144,12 +142,14 @@ if topLevelMode === WebApp then (
 
 -- the html hack
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
+htmlTex1 = x -> (
+    xx := expression x;
+    if instance(xx,Holder) then (if htmlTexFlag then htmlTex x) else html xx
+    )
 htmlTexFlag = true -- false means only one-line is allowed, i.e., allows to not duplicate html -> htmlInList
 pureTexFlag = true -- means only tex, nothing else
-htmlQQ:=lookup(html,QQ)
-html QQ := x -> if htmlTexFlag or denominator x == 1 then htmlQQ x
-htmlRing:=lookup(html,Ring)
-html Ring := x -> if htmlTexFlag or x.?texMath or hasAttribute(x,ReverseDictionary) then htmlRing x
+html QQ := x -> if htmlTexFlag or denominator x == 1 then htmlTex x
+html Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then htmlTex x else htmlTex1 x
 scan({HypertextContainer,HypertextParagraph,VerticalList,Net}, t->(
 	h:=lookup(html,t);
 	html t := s -> if htmlTexFlag then h s;
@@ -165,11 +165,11 @@ html2 := (fun,args,lprec,rprec,sep,supp) -> (
 	if #args<=2 or first args!="$" then (pureTexFlag=false; "$"|args) else substring(args,1)
 	)
     )
-
+html Expression := x -> if debugLevel === 42 or htmlTexFlag then htmlTex x
+html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0;
 html Adjacent := html FunctionApplication := m -> (
     if debugLevel === 42 then return htmlTex m;
     if m#0 === sqrt or instance(m#0,Divide) then return if htmlTexFlag then htmlTex m;
-    -- TODO fix spacing
     html2(m#0,m#1,precedence m,precedence m,
 	if instance(m#1,Array) then sep:="\\mathopen{}"
     	else if instance(m#1,VisibleList) then sep="{}"
@@ -177,21 +177,21 @@ html Adjacent := html FunctionApplication := m -> (
     )
 html BinaryOperation := b -> (
     if debugLevel === 42 then return htmlTex b;
-    html2(b#1,b#2,lprec b#0,rprec b#0,if spacedOps#?(b#0) then "\\ "|texMath b#0|"\\ " else texMath b#0,false)
+    html2(b#1,b#2,lprec b#0,rprec b#0,if spacedOps#?(b#0) then "\\ "|htmlLiteral texMath b#0|"\\ " else htmlLiteral texMath b#0,false)
     )
 htmlVisibleList :=
 html VisibleList := s -> (
     if debugLevel === 42 then return htmlTex s;
-    if lookup(texMath,class s) =!= texMathVisibleList then return if htmlTexFlag then htmlTex s;
+    if lookup(texMath,class s) =!= texMathVisibleList then return htmlTex1 s;
     delims := lookup("delimiters",class s);
     backupFlag := htmlTexFlag; htmlTexFlag=false;
-    r := apply(s, x -> ( h := html x; if h =!= null then h else break));
+    r := apply(s, x -> if (h := html x) =!= null then h else break);
     htmlTexFlag=backupFlag;
     if r =!= null then 
     concatenate (
 	"$",
 	delims#0,
-	if #s===0 then "\\," else
+	if #s===0 or (#s===1 and s#0 === null) then "\\," else
 	demark(",\\,",apply(r,a->(
 		    if #a<=2 then (pureTexFlag=false; "$"|a|"$") else (
 	    		if first a==="$" then a=substring(a,1) else (pureTexFlag=false; a="$"|a);
@@ -204,14 +204,14 @@ html VisibleList := s -> (
     )
 html BasicList := s -> (
     if debugLevel === 42 then htmlTex s
-    else if lookup(texMath,class s) =!= lookup(texMath,BasicList) then (if htmlTexFlag then htmlTex s)
+    else if lookup(texMath,class s) =!= lookup(texMath,BasicList) then htmlTex1 s
     else concatenate(html class s,htmlVisibleList toList s)
     )
 htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\}$")
 html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
 html HashTable := H -> (
     if debugLevel === 42 then htmlTex H
-    else if lookup(texMath,class H) =!= lookup(texMath,HashTable) or H.?texMath then (if htmlTexFlag then htmlTex H)
+    else if lookup(texMath,class H) =!= lookup(texMath,HashTable) or H.?texMath then htmlTex1 H
     else if mutable H then htmlMutable H
     else (
 	h:=htmlVisibleList apply(sortByName pairs H, p -> new Option from p);

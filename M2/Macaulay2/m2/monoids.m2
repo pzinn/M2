@@ -330,7 +330,6 @@ toExternalString Monoid := toString @@ describe
 toString Monoid := toString @@ expression
 net      Monoid :=      net @@ expression
 texMath  Monoid :=  texMath @@ expression
-html     Monoid :=     html @@ expression;
 
 Monoid#AfterPrint = M -> (
     class M,

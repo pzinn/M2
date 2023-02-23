@@ -424,7 +424,6 @@ net Ideal := net @@ expression
 toString Ideal := toString @@ expression
 toExternalString Ideal := (I) -> "ideal " | toExternalString generators I
 texMath Ideal := texMath @@ expression
-html Ideal := html @@ expression
 
 isIdeal Ideal := I -> true
 isHomogeneous Ideal := (I) -> isHomogeneous generators I

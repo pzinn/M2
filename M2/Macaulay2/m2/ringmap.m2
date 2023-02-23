@@ -41,7 +41,6 @@ toExternalString RingMap := toString @@ describe
 toString RingMap := toString @@ expression
 net      RingMap :=      net @@ expression
 texMath  RingMap :=  texMath @@ expression
-html     RingMap :=     html @@ expression
 
 RingMap#AfterPrint =
 RingMap#AfterNoPrint = f -> (

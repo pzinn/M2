@@ -95,6 +95,7 @@ html Hypertext := x -> (
 	(op, ct) := override(options T, toSequence x);
 	scanPairs(op, (key, val) -> if val =!= null then attr = " " | key | "=" | format val | attr);
 	sequence ct) else x;
+    cont = apply(cont, y -> if (h:=html1 y) =!= null then h else break); if cont === null then return; -- hack
     pushIndentLevel 1;
     (head, prefix, suffix, tail) := (
 	if instance(x, HypertextContainer) then (concatenate(indentLevel:"  "), newline, concatenate(indentLevel:"  "), newline) else
@@ -102,7 +103,7 @@ html Hypertext := x -> (
     popIndentLevel(1, if #cont == 0
 	then concatenate(head, "<", qname, attr, "/>", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
-	    apply(cont, html1), suffix, "</", qname, ">", tail)))
+	    cont, suffix, "</", qname, ">", tail)))
 
 -----------------------------------------------------------------------------
 -- Exceptional (html, MarkUpType) methods
@@ -171,7 +172,6 @@ html Monoid :=
 html RingFamily :=
 html Ring :=
 html Thing := x -> "$" | htmlLiteral texMath0 x | "$" -- by default, we use math mode tex (as opposed to actual html)
-
 
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser
