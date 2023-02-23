@@ -418,8 +418,8 @@ hypertext Dictionary := TTc "class-name"
 hypertext String := TTc "string"
 hypertext Net := n -> PRE {
     toString n, BR{},
-    "class"=>"token string",
-    if #n>0 and height n!=1 then "style" => "vertical-align:"|toString(100*(height n-1))|"%"
+    "class"=>"token net",
+    if #n>0 and depth n!=0 then "style" => "vertical-align:"|toString(-100*depth n)|"%"
     }
 hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")

@@ -150,7 +150,7 @@ htmlQQ:=lookup(html,QQ)
 html QQ := x -> if htmlTexFlag or denominator x == 1 then htmlQQ x
 htmlRing:=lookup(html,Ring)
 html Ring := x -> if htmlTexFlag or x.?texMath or hasAttribute(x,ReverseDictionary) then htmlRing x
-scan({HypertextContainer,HypertextParagraph,VerticalList}, t->(
+scan({HypertextContainer,HypertextParagraph,VerticalList,Net}, t->(
 	h:=lookup(html,t);
 	html t := s -> if htmlTexFlag then h s;
 	));
