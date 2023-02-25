@@ -26,9 +26,8 @@ slpMULTIsum = 2; --"MULTIsum";
 slpPRODUCT = 3; --"PRODUCT";
 slpDET = 4; --"DET";
 
-
-CONST = symbol CONST;
-INPUT = symbol INPUT;
+CONST := symbol CONST;
+INPUT := symbol INPUT;
 protect CONST
 protect INPUT
 
