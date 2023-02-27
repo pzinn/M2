@@ -1,11 +1,11 @@
 -- -*- M2-comint -*- hash: -1238512147
 i1 : 1:0A = QQ{x,y,z}
 
-o1 = $<pre style="display:inline">
-A</pre>$
+o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 
 o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0numgens A
 
 o2 = $3$
 i3 : 3:0
+

@@ -3,15 +3,14 @@
 i3 : 2:0(w,ns) = topWitnessSet(f,1);
 i4 : 3:0w
 
-o4 = $<pre style="display:inline">
-w</pre>$
+o4 = $<tt class="token string">w</tt>$
 
 o4 : <tt class="token class-name">WitnessSet</tt>
 i5 : 4:0L = factorWitnessSet(w)
 found 2 irreducible factors 
 
-o5 = $<pre style="display:inline">
-L</pre>$
+o5 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 1\ldots\}$
 
 o5 : <tt class="token class-name">NumericalVariety</tt>
 i6 : 5:0
+

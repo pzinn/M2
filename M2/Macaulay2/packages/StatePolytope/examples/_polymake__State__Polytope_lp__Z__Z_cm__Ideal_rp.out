@@ -2,11 +2,11 @@
 i1 : 1:0R = QQ[a..d];
 i2 : 2:0I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 
-o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>$R$
+o2 : <span><tt class="token class-name">Ideal</tt> of $R$</span>
 i3 : 3:0polymakeStatePolytope(3,I)
 
-o3 = $\left\{\left\{9,\:6,\:6,\:9\right\},\:\left\{6,\:12,\:3,\:9\right\},\:\left\{4,\:14,\:5,\:7\right\},\:\left\{3,\:14,\:8,\:5\right\},\:\left\{9,\:3,\:12,\:6\right\},\:\left\{7,\:5,\:14,\:4\right\},\:\left\{5,\:8,\:14,\:3\right\},\:\left\{3,\:12,\:12,\:3\right\}\right\}$
+o3 = $\{\{9,\,6,\,6,\,9\},\,\{6,\,12,\,3,\,9\},\,\{4,\,14,\,5,\,7\},\,\{3,\,14,\,8,\,5\},\,\{9,\,3,\,12,\,6\},\,\{7,\,5,\,14,\,4\},\,\{5,\,8,\,14,\,3\},\,\{3,\,12,\,12,\,3\}\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0
+

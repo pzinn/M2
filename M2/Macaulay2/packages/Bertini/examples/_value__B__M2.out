@@ -3,50 +3,37 @@
 
 o1 = ${.0122}+{.00004}\,\mathbf{i}$
 
-o1 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
-)</pre>
+o1 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $53$)</span>
 i2 : 2:0valueBM2("1.22 4e-5")
 
 o2 = ${1.22}+{.00004}\,\mathbf{i}$
 
-o2 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
-)</pre>
+o2 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $53$)</span>
 i3 : 3:0valueBM2("1.22 4")
 
 o3 = ${1.22}+{4}\,\mathbf{i}$
 
-o3 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
-)</pre>
+o3 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $53$)</span>
 i4 : 4:0valueBM2("1.22e+2 4 ")
 
 o4 = ${122}+{4}\,\mathbf{i}$
 
-o4 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
-)</pre>
+o4 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $53$)</span>
 i5 : 5:0n1=valueBM2("1.11",M2Precision=>52)
 
 o5 = ${1.11}$
 
-o5 : ${\mathbb R}$<pre style="display:inline">
- (of precision </pre>$52$<pre style="display:inline">
-)</pre>
+o5 : <span>$\htmlClass{token class-name}{{\mathbb R}}$ (of precision $52$)</span>
 i6 : 6:0n2=valueBM2("1.11",M2Precision=>300)
 
 o6 = ${1.11}$
 
-o6 : ${\mathbb R}$<pre style="display:inline">
- (of precision </pre>$300$<pre style="display:inline">
-)</pre>
+o6 : <span>$\htmlClass{token class-name}{{\mathbb R}}$ (of precision $300$)</span>
 i7 : 7:0toExternalString n1
 
-o7 = <pre style="display:inline">
-.11099999999999999p52e1</pre>
+o7 = <tt class="token string">.11099999999999999p52e1</tt>
 i8 : 8:0toExternalString n2
 
-o8 = <pre style="display:inline">
-.11100000000000000000000000000000000000000000000000000000000000000000000000000000000000000003p300e1</pre>
+o8 = <tt class="token string">.11100000000000000000000000000000000000000000000000000000000000000000000000000000000000000003p300e1</tt>
 i9 : 9:0
+

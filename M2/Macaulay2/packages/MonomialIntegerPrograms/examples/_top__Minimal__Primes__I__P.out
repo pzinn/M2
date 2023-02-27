@@ -2,29 +2,22 @@
 i1 : 1:0R = QQ[x,y,z,w,v];
 i2 : 2:0I = monomialIdeal(y^12, x*y^3, z*w^3, z*v*y^10, z*x^10, v*z^10, w*v^10, y*v*x*z*w);
 
-o2 : <pre style="display:inline">
-MonomialIdeal</pre><pre style="display:inline">
- of </pre>$R$
+o2 : <span><tt class="token class-name">MonomialIdeal</tt> of $R$</span>
 i3 : 3:0ScipPrintLevel = 0;
 i4 : 4:0minimalPrimes(I)
 
-o4 = $\left\{<pre style="display:inline">
-monomialIdeal</pre>{}\left(y,\,z,\,w\right),\:<pre style="display:inline">
-monomialIdeal</pre>{}\left(y,\,z,\,v\right),\:<pre style="display:inline">
-monomialIdeal</pre>{}\left(x,\,y,\,w,\,v\right)\right\}$
+o4 = $\{$<tt class="token function">monomialIdeal</tt>${}(y,\,z,\,w),\,$<tt class="token function">monomialIdeal</tt>${}(y,\,z,\,v),\,$<tt class="token function">monomialIdeal</tt>${}(x,\,y,\,w,\,v)\}$
 
-o4 : <pre style="display:inline">
-List</pre>
+o4 : <tt class="token class-name">List</tt>
 i5 : 5:0apply(oo, p -> dim p)
 
-o5 = $\left\{2,\:2,\:1\right\}$
+o5 = $\{2,\,2,\,1\}$
 
-o5 : <pre style="display:inline">
-List</pre>
+o5 : <tt class="token class-name">List</tt>
 i6 : 6:0topMinimalPrimesIP(I)
 
-o6 = $\left\{\,\right\}$
+o6 = $\{\,\}$
 
-o6 : <pre style="display:inline">
-List</pre>
+o6 : <tt class="token class-name">List</tt>
 i7 : 7:0
+

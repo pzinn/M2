@@ -1,37 +1,38 @@
 -- -*- M2-comint -*- hash: 1364290900
 i1 : 1:0QQ[x_1,x_2,x_3,x_4]
 
-o1 = ${\mathbb Q}\mathopen{}\left[x_{1}\,{.}{.}\, x_{4}\right]$
+o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x_{1}\,{.}{.}\, x_{4}\right]$
 
-o1 : <tt class="token class-name">PolynomialRing</tt>
+o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i2 : 2:0L={x_1+x_2+x_3+x_4,x_1*x_2+x_2*x_3+x_3*x_4+x_4*x_1,x_1*x_2*x_3+x_2*x_3*x_4+x_3*x_4*x_1+x_4*x_1*x_2,x_1*x_2*x_3*x_4-1}
 
-o2 = $\left\{x_{1}+x_{2}+x_{3}+x_{4},\:x_{1}x_{2}+x_{2}x_{3}+x_{1}x_{4}+x_{3}x_{4},\:x_{1}x_{2}x_{3}+x_{1}x_{2}x_{4}+x_{1}x_{3}x_{4}+x_{2}x_{3}x_{4},\:x_{1}x_{2}x_{3}x_{4}-1\right\}$
+o2 = $\left\{x_{1}+x_{2}+x_{3}+x_{4},\,x_{1}x_{2}+x_{2}x_{3}+x_{1}x_{4}+x_{3}x_{4},\,x_{1}x_{2}x_{3}+x_{1}x_{2}x_{4}+x_{1}x_{3}x_{4}+x_{2}x_{3}x_{4},\,x_{1}x_{2}x_{3}x_{4}-1\right\}$
 
 o2 : <tt class="token class-name">List</tt>
 i3 : 3:0tropicalPrevariety L
 
-o3 = $<tt class="token class-name">Fan</tt>\left\{\ldots 1\ldots\right\}$
+o3 = <tt class="token class-name">Fan</tt>$\{\ldots 1\ldots\}$
 
 o3 : <tt class="token class-name">Fan</tt>
 i4 : 4:0QQ[x_0,x_1]
 
-o4 = ${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
+o4 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
 
-o4 : <tt class="token class-name">PolynomialRing</tt>
+o4 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i5 : 5:0tropicalPrevariety({x_0+x_1+1}, {{1,0}})
 
-o5 = $<tt class="token class-name">Fan</tt>\left\{\ldots 1\ldots\right\}$
+o5 = <tt class="token class-name">Fan</tt>$\{\ldots 1\ldots\}$
 
 o5 : <tt class="token class-name">Fan</tt>
 i6 : 6:0QQ[x_0,x_1]
 
-o6 = ${\mathbb Q}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
+o6 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x_{0}\,{.}{.}\, x_{1}\right]$
 
-o6 : <tt class="token class-name">PolynomialRing</tt>
+o6 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i7 : 7:0tropicalPrevariety({x_0+x_1+1,x_0+x_1},Strategy => "gfan")
 
-o7 = $<tt class="token class-name">Fan</tt>\left\{\ldots 1\ldots\right\}$
+o7 = <tt class="token class-name">Fan</tt>$\{\ldots 1\ldots\}$
 
 o7 : <tt class="token class-name">Fan</tt>
 i8 : 8:0
+

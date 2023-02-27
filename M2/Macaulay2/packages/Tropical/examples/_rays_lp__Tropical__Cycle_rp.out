@@ -1,13 +1,12 @@
 -- -*- M2-comint -*- hash: -1556992540
 i1 : 1:0QQ[x,y,z,w]
 
-o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
+o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
 
-o1 : <tt class="token class-name">PolynomialRing</tt>
+o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i2 : 2:0I=ideal(x^2-y*z+w^2,w^3-x*y^3+z^3);
 
-o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
+o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$</span>
 i3 : 3:0T=tropicalVariety I;
 i4 : 4:0rays T
 
@@ -18,6 +17,6 @@
 -6&amp;-3&amp;-1&amp;1&amp;3&amp;7
 \end{array}\!\right)$
 
-o4 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
- </pre>${\mathbb Z}^{4}\,\longleftarrow \,{\mathbb Z}^{6}$
+o4 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{4}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{6}$</span>
 i5 : 5:0
+

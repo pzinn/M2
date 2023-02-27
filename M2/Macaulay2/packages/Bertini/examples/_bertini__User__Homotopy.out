@@ -6,35 +6,41 @@
 i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
 i6 : 6:0S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{{1.41421}+0\,\mathbf{i}\right\},\:\left\{-{1.41421}+0\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\left\{{1.41421}+{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
 o6 : <tt class="token class-name">List</tt>
 i7 : 7:0peek S0_0
 
-o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{cache => CacheTable{...13...}}<br/>      Coordinates => {1.41421}<br/></pre>
+o7 = <span><tt class="token class-name">Point</tt><ul style="display:inline-table">
+<li>
+<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 13\ldots\}$</span></li>
+<li>
+<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{{1.41421}+{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\}$</span></li>
+</ul>
+</span>
 i8 : 8:0R=CC[x,y,t,a]; -- include the path variable in the ring
 i9 : 9:0f1=(x^2-y^2);
 i10 : 10:0f2=(2*x^2-3*x*y+5*y^2);
 i11 : 11:0H = { f1*a + f2*(1-a)}; --H is a list of polynomials in x,y,t
 i12 : 12:0sol1=    point{{1,1}}--{{x,y}} coordinates
 
-o12 = $\left\{1,\:1\right\}$
+o12 = $\{1,\,1\}$
 
 o12 : <tt class="token class-name">Point</tt>
 i13 : 13:0sol2=    point{{ -1,1}}
 
-o13 = $\left\{-1,\:1\right\}$
+o13 = $\{-1,\,1\}$
 
 o13 : <tt class="token class-name">Point</tt>
 i14 : 14:0S1={sol1,sol2}--solutions to H when t=1
 
-o14 = $\left\{\left\{1,\:1\right\},\:\left\{-1,\:1\right\}\right\}$
+o14 = $\left\{\{1,\,1\},\,\{-1,\,1\}\right\}$
 
 o14 : <tt class="token class-name">List</tt>
 i15 : 15:0S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
 
-o15 = $\left\{\left\{1+0\,\mathbf{i},\:{.3}-{.556776}\,\mathbf{i}\right\},\:\left\{1+0\,\mathbf{i},\:{.3}+{.556776}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\left\{1+0\,\mathbf{i},\,{.3}+{.556776}\,\mathbf{i}\right\},\,\left\{1+0\,\mathbf{i},\,{.3}-{.556776}\,\mathbf{i}\right\}\right\}$
 
 o15 : <tt class="token class-name">List</tt>
 i16 : 16:0
+

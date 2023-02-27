@@ -2,7 +2,8 @@
 i1 : 1:0writeParameterFile(storeBM2Files,{1,2},NameParameterFile=>"final_parameters");
 i2 : 2:0importParameterFile(storeBM2Files)
 
-o2 = $\left\{1+0\,\mathbf{i},\:{2}+0\,\mathbf{i}\right\}$
+o2 = $\left\{1+0\,\mathbf{i},\,{2}+0\,\mathbf{i}\right\}$
 
 o2 : <tt class="token class-name">List</tt>
 i3 : 3:0
+

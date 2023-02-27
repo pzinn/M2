@@ -6,23 +6,21 @@
 i2 : 5:0runBertini(storeBM2Files)
 i3 : 6:0thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{\left\{-{.203212}-{.408918}\,\mathbf{i},\:{3.36999}\cdot 10^{-17}+{5.94331}\cdot 10^{-17}\,\mathbf{i},\:-{.14399}-{1.08985}\,\mathbf{i}\right\},\:\left\{-{1.64112}+{.0455886}\,\mathbf{i},\:{.639419}-{1.21365}\,\mathbf{i},\:-{.770209}-{1.10469}\,\mathbf{i}\right\},\:\left\{{.701802}+{.296212}\,\mathbf{i},\:-{1.03639}+{.122712}\,\mathbf{i},\:{.116796}-{.69099}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{-{.00341539}+{.0216794}\,\mathbf{i},\,-{4.11724}\cdot 10^{-18}-{5.78414}\cdot 10^{-18}\,\mathbf{i},\,-{.823393}+{.567896}\,\mathbf{i}\right\},\,\left\{{.589327}+{.810354}\,\mathbf{i},\,{.986299}+{.00986222}\,\mathbf{i},\,-{.826976}+{.589244}\,\mathbf{i}\right\},\,\left\{-{.548854}-{.75174}\,\mathbf{i},\,-{.945409}-{.0380969}\,\mathbf{i},\,-{.819338}+{.54753}\,\mathbf{i}\right\}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 7:0witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
-<pre style="display:inline">
-1</pre>
-<pre style="display:inline">
-1</pre>
-<pre style="display:inline">
-1</pre>
+<tt class="token string">1</tt>
+<tt class="token string">1</tt>
+<tt class="token string">1</tt>
 
-o4 = $\left\{\,\right\}$
+o4 = $\{\,\}$
 
 o4 : <tt class="token class-name">List</tt>
 i5 : 8:0sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{\left\{-{.203212}-{.408918}\,\mathbf{i},\:{3.36999}\cdot 10^{-17}+{5.94331}\cdot 10^{-17}\,\mathbf{i},\:-{.14399}-{1.08985}\,\mathbf{i}\right\}\right\},\:\left\{\left\{-{1.64112}+{.0455886}\,\mathbf{i},\:{.639419}-{1.21365}\,\mathbf{i},\:-{.770209}-{1.10469}\,\mathbf{i}\right\},\:\left\{{.701802}+{.296212}\,\mathbf{i},\:-{1.03639}+{.122712}\,\mathbf{i},\:{.116796}-{.69099}\,\mathbf{i}\right\}\right\}\right\}$
+o5 = $\left\{\left\{\left\{-{.00341539}+{.0216794}\,\mathbf{i},\,-{4.11724}\cdot 10^{-18}-{5.78414}\cdot 10^{-18}\,\mathbf{i},\,-{.823393}+{.567896}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{.589327}+{.810354}\,\mathbf{i},\,{.986299}+{.00986222}\,\mathbf{i},\,-{.826976}+{.589244}\,\mathbf{i}\right\},\,\left\{-{.548854}-{.75174}\,\mathbf{i},\,-{.945409}-{.0380969}\,\mathbf{i},\,-{.819338}+{.54753}\,\mathbf{i}\right\}\right\}\right\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 9:0
+

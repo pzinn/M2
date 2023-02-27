@@ -1,28 +1,18 @@
 -- -*- M2-comint -*- hash: 206822173
 i1 : 1:0A = QQ{x,y,z,w}
 
-o1 = $<pre style="display:inline">
-A</pre>$
+o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 
 o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0f = x^2+y^2+2*z^3
 
-o2 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:z,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 2\right\}\right)\right\}$
+o2 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 2\right\}$\right)\right\}$
 
-o2 : $<pre style="display:inline">
-A</pre>$
+o2 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 i3 : 3:0coeff = leadTerm f
 
-o3 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:z,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 2\right\}\right)\right\}$
+o3 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 2\right\}$\right)\right\}$
 
-o3 : $<pre style="display:inline">
-A</pre>$
+o3 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 i4 : 4:0
+

@@ -6,7 +6,8 @@
 i4 : 5:0makeMembershipFile(storeBM2Files,NameSolutionsFile=>"sample_solutions_file")
 i5 : 6:0theIM=importIncidenceMatrix(storeBM2Files)
 
-o5 = $\left\{\left\{\left(2,\,0\right)\right\},\:\left\{\left(2,\,0\right)\right\}\right\}$
+o5 = $\{\{(2,\,0)\},\,\{(2,\,0)\}\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 7:0
+

@@ -3,27 +3,36 @@
 i2 : 2:0sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : 3:0describe ring ideal sys
 
-o3 = $<tt class="token function">frac</tt>\left({\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,\textit{Degrees}\ \Rightarrow \ \left\{3:1\right\},\,\textit{Heft}\ \Rightarrow \ \left\{1\right\}\right]\right)$
+o3 = <tt class="token function">frac</tt>${}\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,\textit{Degrees}\ \Rightarrow \ \left\{3:1\right\},\,\textit{Heft}\ \Rightarrow \ \{1\}\right]\right)$
 i4 : 4:0convertedSys = toLaurentPolynomial(sys,w);
 i5 : 5:0printWidth = 300;
 i6 : 6:0toString convertedSys
 
-o6 = <pre style="display:inline">
-{y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}</pre>
+o6 = <tt class="token string">{y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}</tt>
 i7 : 7:0ring ideal convertedSys
 
-o7 = ${\mathbb Q}{}\left\{x\,{.}{.}\, z,\:w_{0}\right\}$
+o7 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\, z,\,w_{0}\right\}$
 
-o7 : <tt class="token class-name">PolynomialRing</tt>
+o7 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i8 : 8:0describe oo
 
-o8 = ${\mathbb Q}{}\left\{x\,{.}{.}\, z,\:w_{0},\:\textit{Degrees}\ \Rightarrow \ \left\{4:1\right\},\:\textit{MonomialOrder}\ \Rightarrow \ \left\{\begin{aligned}&amp;\textit{Weights}\ \Rightarrow \ \left\{4:-1\right\}\\&amp;\textit{MonomialSize}\ \Rightarrow \ 32\\&amp;\textit{GroupRevLex}\ \Rightarrow \ 4\\&amp;\textit{Position}\ \Rightarrow \ \textit{Up}\end{aligned}\right\},\:\textit{Inverses}\ \Rightarrow \ <tt class="token constant">true</tt>,\:\textit{Local}\ \Rightarrow \ <tt class="token constant">true</tt>,\:\textit{Global}\ \Rightarrow \ <tt class="token constant">false</tt>\right\}$
+o8 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\, z,\,w_{0},\,\textit{Degrees}\ \Rightarrow \ \left\{4:1\right\},\,$\textit{MonomialOrder}\ \Rightarrow \ $<ul style="display:inline-table">
+<li>
+$\textit{Weights}\ \Rightarrow \ \left\{4:-1\right\}$</li>
+<li>
+$\textit{MonomialSize}\ \Rightarrow \ 32$</li>
+<li>
+$\textit{GroupRevLex}\ \Rightarrow \ 4$</li>
+<li>
+$\textit{Position}\ \Rightarrow \ \textit{Up}$</li>
+</ul>
+,\,$\textit{Inverses}\ \Rightarrow \ $<tt class="token constant">true</tt>,\,$\textit{Local}\ \Rightarrow \ $<tt class="token constant">true</tt>,\,$\textit{Global}\ \Rightarrow \ $<tt class="token constant">false</tt>\right\}$
 i9 : 9:0P = QQ[x,y,z];
 i10 : 10:0f = (x*y + z^2*y) / y
 
 o10 = $z^{2}+x$
 
-o10 : $<tt class="token function">frac</tt>\ P$
+o10 : <tt class="token function">frac</tt>$\ P$
 i11 : 11:0liftable(f,P)
 
 o11 = <tt class="token constant">true</tt>
@@ -33,3 +42,4 @@
 
 o12 : $P$
 i13 : 13:0
+

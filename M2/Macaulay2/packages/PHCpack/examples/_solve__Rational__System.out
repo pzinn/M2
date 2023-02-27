@@ -3,11 +3,17 @@
 i2 : 2:0system = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : 3:0sols = solveRationalSystem(system)
 
-o3 = $\left\{\left\{{.543689}+0\,\mathbf{i},\:{.295598}+0\,\mathbf{i},\:{.160713}+0\,\mathbf{i}\right\},\:\left\{-{.771845}-{1.11514}\,\mathbf{i},\:-{.647799}+{1.72143}\,\mathbf{i},\:{2.41964}-{.606291}\,\mathbf{i}\right\},\:\left\{-{.771845}+{1.11514}\,\mathbf{i},\:-{.647799}-{1.72143}\,\mathbf{i},\:{2.41964}+{.606291}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{{.543689}+0\,\mathbf{i},\,{.295598}+0\,\mathbf{i},\,{.160713}+0\,\mathbf{i}\right\},\,\left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\},\,\left\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\right\}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0peek first sols
 
-o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{cache => CacheTable{...3...}              }<br/>      Coordinates => {.543689, .295598, .160713}<br/></pre>
+o4 = <span><tt class="token class-name">Point</tt><ul style="display:inline-table">
+<li>
+<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 3\ldots\}$</span></li>
+<li>
+<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{{.543689}+0\,\mathbf{i},\,{.295598}+0\,\mathbf{i},\,{.160713}+0\,\mathbf{i}\right\}$</span></li>
+</ul>
+</span>
 i5 : 5:0
+

@@ -1,18 +1,18 @@
 -- -*- M2-comint -*- hash: 1583900858
 i1 : 1:0A = QQ{a,b,c,d}
 
-o1 = $<pre style="display:inline">
-A</pre>$
+o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 
 o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0M = ncMatrix {{a,b,c,d},{b,c,d,a}}
 
-o2 = $<tt class="token class-name">NCMatrix</tt>\left\{\ldots 6\ldots\right\}$
+o2 = <tt class="token class-name">NCMatrix</tt>$\{\ldots 6\ldots\}$
 
 o2 : <tt class="token class-name">NCMatrix</tt>
 i3 : 3:0N = M || 2*M || -3*M
 
-o3 = $<tt class="token class-name">NCMatrix</tt>\left\{\ldots 6\ldots\right\}$
+o3 = <tt class="token class-name">NCMatrix</tt>$\{\ldots 6\ldots\}$
 
 o3 : <tt class="token class-name">NCMatrix</tt>
 i4 : 4:0
+

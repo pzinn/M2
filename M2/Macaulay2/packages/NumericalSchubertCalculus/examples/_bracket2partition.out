@@ -3,19 +3,20 @@
 i2 : 2:0n = 4;
 i3 : 3:0bracket2partition(b,n)
 
-o3 = $\left\{2,\:1\right\}$
+o3 = $\{2,\,1\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0n = 6;
 i5 : 5:0bracket2partition(b,n)
 
-o5 = $\left\{4,\:3\right\}$
+o5 = $\{4,\,3\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 6:0b = {2,4,6};
 i7 : 7:0bracket2partition(b,n)
 
-o7 = $\left\{2,\:1,\:0\right\}$
+o7 = $\{2,\,1,\,0\}$
 
 o7 : <tt class="token class-name">List</tt>
 i8 : 8:0
+

@@ -9,11 +9,10 @@
 0&amp;-1&amp;1
 \end{array}\!\right)$
 
-o3 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
- </pre>${\mathbb Z}^{3}\,\longleftarrow \,{\mathbb Z}^{3}$
+o3 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{3}$</span>
 i4 : 4:0maxCones T
 
-o4 = $\left\{\left\{2\right\},\:\left\{0\right\},\:\left\{1\right\}\right\}$
+o4 = $\{\{2\},\,\{0\},\,\{1\}\}$
 
 o4 : <tt class="token class-name">List</tt>
 i5 : 5:0linealitySpace T
@@ -24,6 +23,6 @@
 1
 \end{array}\!\right)$
 
-o5 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
- </pre>${\mathbb Z}^{3}\,\longleftarrow \,{\mathbb Z}^{1}$
+o5 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{1}$</span>
 i6 : 6:0
+

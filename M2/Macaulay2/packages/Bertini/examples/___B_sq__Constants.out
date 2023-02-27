@@ -3,10 +3,11 @@
 
 o1 = $R$
 
-o1 : <tt class="token class-name">PolynomialRing</tt>
+o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i2 : 2:0makeB'InputFile(storeBM2Files,
 3:0         BertiniInputConfiguration=>{MPType=>2},
 4:0         AffVariableGroup=>{{z}},
 5:0          B'Constants=>{a=>2,b=>3+2*ii,c=>3/2},
 6:0           B'Polynomials=>{a*z^2+b*z+c});
 i3 : 7:0
+

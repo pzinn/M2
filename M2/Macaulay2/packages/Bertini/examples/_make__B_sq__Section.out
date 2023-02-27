@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: -524747189
 i1 : 1:0s=makeB'Section({x,y,z})
 
-o1 = $<tt class="token class-name">B'Section</tt>\left\{\ldots 2\ldots\right\}$
+o1 = <tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}$
 
 o1 : <tt class="token class-name">B'Section</tt>
 i2 : 2:0class s
@@ -16,12 +16,12 @@
 o3 : <tt class="token class-name">FunctionClosure</tt>
 i4 : 4:0sReal=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRealCoefficientGenerator)
 
-o4 = $<tt class="token class-name">B'Section</tt>\left\{\ldots 2\ldots\right\}$
+o4 = <tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}$
 
 o4 : <tt class="token class-name">B'Section</tt>
 i5 : 5:0sReal#B'NumberCoefficients
 
-o5 = $\left\{{.0741835},\:{.808694},\:{.362835}\right\}$
+o5 = $\{{.0741835},\,{.808694},\,{.362835}\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 6:0randomRationalCoefficientGenerator=()->random(QQ)
@@ -31,60 +31,63 @@
 o6 : <tt class="token class-name">FunctionClosure</tt>
 i7 : 7:0sRational=makeB'Section({x,y,z},RandomCoefficientGenerator=>randomRationalCoefficientGenerator)
 
-o7 = $<tt class="token class-name">B'Section</tt>\left\{\ldots 2\ldots\right\}$
+o7 = <tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}$
 
 o7 : <tt class="token class-name">B'Section</tt>
 i8 : 8:0sRational#B'NumberCoefficients
 
-o8 = $\left\{\frac{7}{10},\:\frac{1}{2},\:\frac{7}{10}\right\}$
+o8 = $\left\{\frac{7}{10},\,\frac{1}{2},\,\frac{7}{10}\right\}$
 
 o8 : <tt class="token class-name">List</tt>
 i9 : 9:0affineSection=makeB'Section({x,y,z,1})
 
-o9 = $<tt class="token class-name">B'Section</tt>\left\{\ldots 2\ldots\right\}$
+o9 = <tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}$
 
 o9 : <tt class="token class-name">B'Section</tt>
 i10 : 10:0X={x,y,z}
 
-o10 = $\left\{x,\:y,\:z\right\}$
+o10 = $\{x,\,y,\,z\}$
 
 o10 : <tt class="token class-name">List</tt>
 i11 : 11:0P={1,2,3}
 
-o11 = $\left\{1,\:2,\:3\right\}$
+o11 = $\{1,\,2,\,3\}$
 
 o11 : <tt class="token class-name">List</tt>
 i12 : 12:0affineContainingPoint=makeB'Section({x,y,z},ContainsPoint=>P)
 
-o12 = $<tt class="token class-name">B'Section</tt>\left\{\ldots 3\ldots\right\}$
+o12 = <tt class="token class-name">B'Section</tt>$\{\ldots 3\ldots\}$
 
 o12 : <tt class="token class-name">B'Section</tt>
 i13 : 13:0r= affineContainingPoint#B'SectionString
 
-o13 = <pre style="display:inline">
-(1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))</pre>
+o13 = <tt class="token string">(1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))</tt>
 i14 : 14:0print r
-<pre style="display:inline">
-(1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))</pre>
+<tt class="token string">(1.18921+.849539*ii)*(x-(1)*(1))+(-.542371+.307137*ii)*(y-(1)*(2))+(1.36945+.015633*ii)*(z-(1)*(3))</tt>
 i15 : 15:0rHomogeSection= makeB'Section({x,y,z},ContainsPoint=>P,B'Homogenization=>"x+y+z")
 
-o15 = $<tt class="token class-name">B'Section</tt>\left\{\ldots 3\ldots\right\}$
+o15 = <tt class="token class-name">B'Section</tt>$\{\ldots 3\ldots\}$
 
 o15 : <tt class="token class-name">B'Section</tt>
 i16 : 16:0peek rHomogeSection
 
-o16 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-B'Section{B'Homogenization => x+y+z                                                                                                         }<br/>          B'NumberCoefficients => {.534614-.175945*ii, .426704-.97539*ii, -.478803+.0416008*ii}<br/>          B'SectionString => (.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))<br/></pre>
+o16 = <span><tt class="token class-name">B'Section</tt><ul style="display:inline-table">
+<li>
+<span>$B'Homogenization$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token string">x+y+z</tt></span></li>
+<li>
+<span>$B'NumberCoefficients$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{{.534614}-{.175945}\,\mathbf{i},\,{.426704}-{.97539}\,\mathbf{i},\,-{.478803}+{.0416008}\,\mathbf{i}\right\}$</span></li>
+<li>
+<span>$B'SectionString$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token string">(.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))</tt></span></li>
+</ul>
+</span>
 i17 : 17:0print rHomogeSection#B'SectionString
-<pre style="display:inline">
-(.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))</pre>
+<tt class="token string">(.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))</tt>
 i18 : 18:0f="y^3-x*y+1"
 
-o18 = <pre style="display:inline">
-y^3-x*y+1</pre>
+o18 = <tt class="token string">y^3-x*y+1</tt>
 i19 : 19:0s1=makeB'Section({x,y,1})
 
-o19 = $<tt class="token class-name">B'Section</tt>\left\{\ldots 2\ldots\right\}$
+o19 = <tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}$
 
 o19 : <tt class="token class-name">B'Section</tt>
 i20 : 20:0makeB'InputFile(storeBM2Files,
@@ -95,3 +98,4 @@ y^3-x*y+1</pre>
 
 o22 = <tt class="token constant">true</tt>
 i23 : 25:0
+

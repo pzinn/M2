@@ -1,17 +1,17 @@
 -- -*- M2-comint -*- hash: 2026254485
 i1 : 1:0QQ[x,y,z,w,t]
 
-o1 = ${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w,\,t\right]$
+o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,w,\,t\right]$
 
-o1 : <tt class="token class-name">PolynomialRing</tt>
+o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i2 : 2:0I=ideal(x^2-y*z+w^2,w^3-y^3*x+z^3,t-w+x);
 
-o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z,\,w,\,t\right]$
+o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,w,\,t\right]$</span>
 i3 : 3:0T=tropicalVariety I;
 i4 : 4:0cones(2,T)
 
-o4 = $\left\{\left\{0,\:1\right\},\:\left\{0,\:2\right\},\:\left\{0,\:3\right\},\:\left\{0,\:6\right\},\:\left\{1,\:4\right\},\:\left\{1,\:5\right\},\:\left\{2,\:4\right\},\:\left\{2,\:5\right\},\:\left\{3,\:4\right\},\:\left\{3,\:5\right\},\:\left\{4,\:6\right\},\:\left\{5,\:6\right\}\right\}$
+o4 = $\{\{0,\,1\},\,\{0,\,2\},\,\{0,\,3\},\,\{0,\,6\},\,\{1,\,4\},\,\{1,\,5\},\,\{2,\,4\},\,\{2,\,5\},\,\{3,\,4\},\,\{3,\,5\},\,\{4,\,6\},\,\{5,\,6\}\}$
 
 o4 : <tt class="token class-name">List</tt>
 i5 : 5:0
+

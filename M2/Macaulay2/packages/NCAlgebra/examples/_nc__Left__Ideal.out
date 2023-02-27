@@ -1,62 +1,28 @@
 -- -*- M2-comint -*- hash: -1082585404
 i1 : 1:0A = QQ{x,y,z}
 
-o1 = $<pre style="display:inline">
-A</pre>$
+o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 
 o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0p = y*z + z*y - x^2
 
-o2 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
+o2 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\}$
 
-o2 : $<pre style="display:inline">
-A</pre>$
+o2 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 i3 : 3:0q = x*z + z*x - y^2
 
-o3 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
+o3 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\}$
 
-o3 : $<pre style="display:inline">
-A</pre>$
+o3 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 i4 : 4:0r = z^2 - x*y - y*x
 
-o4 = $<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}$
+o4 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\}$
 
-o4 : $<pre style="display:inline">
-A</pre>$
+o4 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 i5 : 5:0I = ncLeftIdeal{p,q,r}
 
-o5 = $<tt class="token class-name">NCLeftIdeal</tt>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\,\right\}\right),\:\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\},\:<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{x,\:y\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{y,\:x\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ -1,\:\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{z,\:z\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 1\right\}\right)\right\}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}$
+o5 = <tt class="token class-name">NCLeftIdeal</tt>$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\,\})$,\,\textit{generators}\ \Rightarrow \ \left\{\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\},\,\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\},\,\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\}\right\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$
 
 o5 : <tt class="token class-name">NCLeftIdeal</tt>
 i6 : 6:0
+

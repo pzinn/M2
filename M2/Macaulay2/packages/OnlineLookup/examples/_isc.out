@@ -1,34 +1,23 @@
 -- -*- M2-comint -*- hash: 674672945
 i1 : 1:0isc (sqrt 2*pi)
 
-o1 = <ol>
-  <li>
+o1 = <ol start="0">
+<li>
 <span>Mixed constants with 5 operations
-4442882938158366 = <span data-m2code="2*pi/sqrt(2)">$2\frac{\pi}{\sqrt{2}}$</span></span>  </li>
-  <li>
+4442882938158366 = <span data-m2code="2*pi/sqrt(2)">$2\frac{\pi}{\sqrt{2}}$</span></span></li>
+<li>
 <span>Beta(a,b), a and b elements of F24: GAMMA function
-4442882938158366 = <span data-m2code="Beta(1/4,3/4)">$<pre style="display:inline">
-Beta</pre>{}\left(\frac{1}{4},\,\frac{3}{4}\right)$</span></span>  </li>
-  <li>
+4442882938158366 = <span data-m2code="Beta(1/4,3/4)"><tt class="token function">Beta</tt>${}\left(\frac{1}{4},\,\frac{3}{4}\right)$</span></span></li>
+<li>
 <span>Mixed constants, 2 with elementary transforms.
-4442882938158366 = <span data-m2code="Gamma(1/4)*Gamma(3/4)">$<pre style="display:inline">
-Gamma</pre>\left(\frac{1}{4}\right)\ <pre style="display:inline">
-Gamma</pre>\left(\frac{3}{4}\right)$</span></span>  </li>
-  <li>
+4442882938158366 = <span data-m2code="Gamma(1/4)*Gamma(3/4)">$<tt class="token function">Gamma</tt>${}\left(\frac{1}{4}\right)$\ <tt class="token function">Gamma</tt>${}\left(\frac{3}{4}\right)$$</span></span></li>
+<li>
 <span>Mixed constants with 5 operations
-4442882938158366 = <span data-m2code="Gamma(1/6)/sqrt(2)*Gamma(5/6)">$\frac{<pre style="display:inline">
-Gamma</pre>\left(\frac{1}{6}\right)}{\sqrt{2}\ <pre style="display:inline">
-Gamma</pre>\left(\frac{5}{6}\right)}$</span></span>  </li>
-  <li>
+4442882938158366 = <span data-m2code="Gamma(1/6)/sqrt(2)*Gamma(5/6)">$\frac{<tt class="token function">Gamma</tt>${}\left(\frac{1}{6}\right)$}{\sqrt{2}}<tt class="token function">Gamma</tt>${}\left(\frac{5}{6}\right)$$</span></span></li>
+<li>
 <span>Dirichlet constants, sums of Digamma function with rat. arguments.
-4442882938158366 = <span data-m2code="-Digamma(1/4)-Digamma(3/8)+Digamma(5/8)+Digamma(3/4)">$-<pre style="display:inline">
-Digamma</pre>\left(\frac{1}{4}\right)-<pre style="display:inline">
-Digamma</pre>\left(\frac{3}{8}\right)+<pre style="display:inline">
-Digamma</pre>\left(\frac{5}{8}\right)+<pre style="display:inline">
-Digamma</pre>\left(\frac{3}{4}\right)$</span></span>  </li>
+4442882938158366 = <span data-m2code="-Digamma(1/4)-Digamma(3/8)+Digamma(5/8)+Digamma(3/4)">$$-<tt class="token function">Digamma</tt>${}\left(\frac{1}{4}\right)$$$-<tt class="token function">Digamma</tt>${}\left(\frac{3}{8}\right)$$+<tt class="token function">Digamma</tt>${}\left(\frac{5}{8}\right)$+<tt class="token function">Digamma</tt>${}\left(\frac{3}{4}\right)$$</span></span></li>
 </ol>
 
-
-o1 : <pre style="display:inline">
-OL</pre>
 i2 : 2:0
+

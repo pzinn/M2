@@ -8,15 +8,16 @@
 
 o2 = $R$
 
-o2 : <tt class="token class-name">PolynomialRing</tt>
+o2 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i3 : 3:0F = {x^2-1,y^2-2}
 
-o3 = $\left\{x^{2}-1+0\,\mathbf{i},\:y^{2}-{2}+0\,\mathbf{i}\right\}$
+o3 = $\left\{x^{2}-1+0\,\mathbf{i},\,y^{2}-{2}+0\,\mathbf{i}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0solns = bertiniZeroDimSolve(F)
 
-o4 = $\left\{\left\{1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{{1}+0\,\mathbf{i},\:-{1.41421}+{1.19349}\cdot 10^{-15}\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:{1.41421}+0\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:-{1.41421}+{8.88178}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\left\{{1}+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\right\},\,\left\{1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
 o4 : <tt class="token class-name">List</tt>
 i5 : 5:0
+

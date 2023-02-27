@@ -3,27 +3,26 @@
 
 o1 = $R$
 
-o1 : <tt class="token class-name">PolynomialRing</tt>
+o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i2 : 2:0F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}+\left(-1+0\,\mathbf{i}\right)x,\:x^{2}y+y^{3}+y\,z^{2}+\left(-1+0\,\mathbf{i}\right)y\right\}$
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}+\left(-1+0\,\mathbf{i}\right)x,\,x^{2}y+y^{3}+y\,z^{2}+\left(-1+0\,\mathbf{i}\right)y\right\}$
 
 o2 : <tt class="token class-name">List</tt>
 i3 : 3:0NV = bertiniPosDimSolve(F)
 
-o3 = $<pre style="display:inline">
-NV</pre>$
+o3 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 4\ldots\}$
 
 o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0W = NV#1_0 --z-axis
 
-o4 = $<pre style="display:inline">
-W</pre>$
+o4 = $<tt class="token string">W</tt>$
 
 o4 : <tt class="token class-name">WitnessSet</tt>
 i5 : 5:0bertiniSample(4, W)
 
-o5 = $\left\{\left\{-{2.30189}\cdot 10^{-20}-{4.8349}\cdot 10^{-20}\,\mathbf{i},\:{6.42182}\cdot 10^{-178}-{4.62674}\cdot 10^{-178}\,\mathbf{i},\:-{.347882}+{.576006}\,\mathbf{i}\right\},\:\left\{-{2.12265}\cdot 10^{-20}-{3.42277}\cdot 10^{-21}\,\mathbf{i},\:-{1.86628}\cdot 10^{-21}+{2.08427}\cdot 10^{-20}\,\mathbf{i},\:-{.302162}+{.021108}\,\mathbf{i}\right\},\:\left\{{1.2921}\cdot 10^{-20}-{1.43581}\cdot 10^{-20}\,\mathbf{i},\:{8.11366}\cdot 10^{-179}-{1.85225}\cdot 10^{-177}\,\mathbf{i},\:-{.359056}+{.572299}\,\mathbf{i}\right\},\:\left\{-{1.80897}\cdot 10^{-20}+{3.51934}\cdot 10^{-20}\,\mathbf{i},\:{4.43041}\cdot 10^{-20}+{5.26892}\cdot 10^{-21}\,\mathbf{i},\:-{.412661}+{.0605035}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{-{2.4936}\cdot 10^{-314}-{5.81943}\cdot 10^{-314}\,\mathbf{i},\,0\,\mathbf{i},\,{.0266911}+{.229847}\,\mathbf{i}\right\},\,\left\{{1.16621}\cdot 10^{-315}-{1.39498}\cdot 10^{-315}\,\mathbf{i},\,{5.71483}\cdot 10^{-144}+{6.3981}\cdot 10^{-143}\,\mathbf{i},\,{.0653712}+{.205879}\,\mathbf{i}\right\},\,\left\{0\,\mathbf{i},\,0\,\mathbf{i},\,{.110595}+{.161478}\,\mathbf{i}\right\},\,\left\{0\,\mathbf{i},\,0\,\mathbf{i},\,{.0686554}-{.184656}\,\mathbf{i}\right\}\right\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 6:0
+

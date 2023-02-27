@@ -3,23 +3,29 @@
 i2 : 2:0F = {x^2-1,y^2-2};
 i3 : 3:0S = bertiniZeroDimSolve F
 
-o3 = $\left\{\left\{1+0\,\mathbf{i},\:{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{1+0\,\mathbf{i},\:-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:{1.41421}-{1.94289}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-1+0\,\mathbf{i},\:-{1.41421}-{1.66533}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\right\},\,\left\{{1}+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\right\}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0peek S_0
 
-o4 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{cache => CacheTable{...13...}}<br/>      Coordinates => {1, 1.41421}<br/></pre>
+o4 = <span><tt class="token class-name">Point</tt><ul style="display:inline-table">
+<li>
+<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 13\ldots\}$</span></li>
+<li>
+<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\right\}$</span></li>
+</ul>
+</span>
 i5 : 5:0R = CC[x];
 i6 : 6:0F = {x^2*(x-1)};
 i7 : 7:0S = bertiniZeroDimSolve F
 
-o7 = $\left\{\left\{{1}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\right\},\:\left\{-{3.407}\cdot 10^{-14}+{1.09586}\cdot 10^{-14}\,\mathbf{i}\right\}\right\}$
+o7 = $\left\{\left\{{1}-{7.21645}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{{3.7916}\cdot 10^{-14}-{3.21432}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
 
 o7 : <tt class="token class-name">List</tt>
 i8 : 8:0B = bertiniZeroDimSolve(F,UseRegeneration=>1)
 
-o8 = $\left\{\left\{{1}-{9.4369}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o8 = $\left\{\left\{{1}+{1.66533}\cdot 10^{-15}\,\mathbf{i}\right\}\right\}$
 
 o8 : <tt class="token class-name">List</tt>
 i9 : 9:0
+

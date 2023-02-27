@@ -3,7 +3,7 @@
 
 o1 = $R$
 
-o1 : <tt class="token class-name">PolynomialRing</tt>
+o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i2 : 2:0theDir = temporaryFileName();
 i3 : 3:0makeDirectory theDir
 i4 : 4:0makeB'InputFile(theDir,
@@ -14,7 +14,7 @@
 
 o5 = $R$
 
-o5 : <tt class="token class-name">PolynomialRing</tt>
+o5 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i6 : 9:0makeB'InputFile(theDir,
 10:0        BertiniInputConfiguration=>{MPType=>2},
 11:0    AffVariableGroup=>{{x1,x2},{y}},
@@ -28,7 +28,7 @@
 
 o7 = $R$
 
-o7 : <tt class="token class-name">PolynomialRing</tt>
+o7 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i8 : 19:0makeB'InputFile(theDir,
 20:0         BertiniInputConfiguration=>{MPype=>2},
 21:0     AffVariableGroup=>{{x1,x2},{y}},
@@ -36,3 +36,4 @@
 23:0           B'Functions=>{
 24:0              {X,x1+x2+1}});
 i9 : 25:0
+

@@ -3,8 +3,7 @@
 i2 : 2:0R=K[y_0..y_2];
 i3 : 3:0I=ideal(y_0*y_2-y_1^2+y_2^2);
 
-o3 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>$R$
+o3 : <span><tt class="token class-name">Ideal</tt> of $R$</span>
 i4 : 4:0rParametrizeConic(I)
 
 o4 = $\left(\!\begin{array}{c}
@@ -13,6 +12,6 @@ t_{0}^{2}-t_{1}^{2}\\
 -t_{0}^{2}
 \end{array}\!\right)$
 
-o4 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
- </pre>$\left({\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{3}\,\longleftarrow \,\left({\mathbb Q}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{1}$
+o4 : <span><tt class="token class-name">Matrix</tt> $\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{3}\,\longleftarrow \,\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{1}$</span>
 i5 : 5:0
+

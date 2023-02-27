@@ -2,11 +2,11 @@
 i1 : 1:0R = QQ[a,b];
 i2 : 2:0I = ideal(a^2+b^2,a*b);
 
-o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>$R$
+o2 : <span><tt class="token class-name">Ideal</tt> of $R$</span>
 i3 : 3:0initialIdeals(I)  
 
-o3 = $\left\{\left\{a\,b,\:a^{2},\:b^{3}\right\},\:\left\{a^{3},\:a\,b,\:b^{2}\right\}\right\}$
+o3 = $\left\{\left\{a\,b,\,a^{2},\,b^{3}\right\},\,\left\{a^{3},\,a\,b,\,b^{2}\right\}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0
+

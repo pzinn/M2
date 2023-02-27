@@ -1,8 +1,7 @@
 -- -*- M2-comint -*- hash: -435513168
 i1 : 1:0A = QQ{x,y,z,w}
 
-o1 = $<pre style="display:inline">
-A</pre>$
+o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 
 o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0baseName x
@@ -12,8 +11,7 @@ A</pre>$
 o2 : <tt class="token class-name">Symbol</tt>
 i3 : 3:0B = QQ{p_1..p_6}
 
-o3 = $<pre style="display:inline">
-B</pre>$
+o3 = $\htmlClass{token class-name}{<tt class="token string">B</tt>}$
 
 o3 : <tt class="token class-name">NCPolynomialRing</tt>
 i4 : 4:0baseName p_1
@@ -22,3 +20,4 @@ B</pre>$
 
 o4 : <tt class="token class-name">IndexedVariable</tt>
 i5 : 5:0
+

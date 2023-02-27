@@ -2,8 +2,7 @@
 i1 : 1:0QQ[x,y,z];
 i2 : 2:0I=ideal(x^2-y^2);
 
-o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>${\mathbb Q}\mathopen{}\left[x\,{.}{.}\, z\right]$
+o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$</span>
 i3 : 3:0isPrime I
 
 o3 = <tt class="token constant">false</tt>
@@ -12,16 +11,16 @@
 
 o5 = $0$
 
-o5 : <tt class="token class-name">Matrix</tt><pre style="display:inline">
- </pre>${\mathbb Z}^{3}\,\longleftarrow \,0$
+o5 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,0$</span>
 i6 : 6:0maxCones T
 
-o6 = $\left\{\left\{\,\right\}\right\}$
+o6 = $\{\{\,\}\}$
 
 o6 : <tt class="token class-name">List</tt>
 i7 : 7:0multiplicities T
 
-o7 = $\left\{2\right\}$
+o7 = $\{2\}$
 
 o7 : <tt class="token class-name">List</tt>
 i8 : 8:0
+

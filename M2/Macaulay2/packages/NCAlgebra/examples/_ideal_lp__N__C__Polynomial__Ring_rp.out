@@ -1,17 +1,13 @@
 -- -*- M2-comint -*- hash: -1277604553
 i1 : 1:0A = QQ{x,y}
 
-o1 = $<pre style="display:inline">
-A</pre>$
+o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
 
 o1 : <tt class="token class-name">NCPolynomialRing</tt>
 i2 : 2:0ideal A
 
-o2 = $<tt class="token class-name">NCIdeal</tt>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\,\right\}\right),\:\textit{generators}\ \Rightarrow \ \left\{<pre style="display:inline">
-A</pre>\left\{\textit{cache}\ \Rightarrow \ \left(<tt class="token class-name">CacheTable</tt>\left\{\ldots 1\ldots\right\}\right),\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>,\:\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>\left\{\left(<tt class="token class-name">NCMonomial</tt>\left\{\textit{monList}\ \Rightarrow \ \left\{\,\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}\right)\ \Rightarrow \ 0\right\}\right)\right\}\right\},\:\textit{ring}\ \Rightarrow \ <pre style="display:inline">
-A</pre>\right\}$
+o2 = <tt class="token class-name">NCIdeal</tt>$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\,\})$,\,\textit{generators}\ \Rightarrow \ \left\{\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{\,\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 0\right\}$\right)\right\}\right\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$
 
 o2 : <tt class="token class-name">NCIdeal</tt>
 i3 : 3:0
+

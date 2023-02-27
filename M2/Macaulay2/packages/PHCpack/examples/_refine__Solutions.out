@@ -4,24 +4,21 @@
 
 o4 = ${1.73205080756888}+0\,\mathbf{i}$
 
-o4 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$53$<pre style="display:inline">
-)</pre>
+o4 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $53$)</span>
 i5 : 3:0newRoots = refineSolutions(S,ourRoots,64)
 
-o5 = $\left\{\left\{{.57735}+0\,\mathbf{i},\:{1.73205}+0\,\mathbf{i}\right\},\:\left\{-{.57735}+0\,\mathbf{i},\:-{1.73205}+0\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\left\{{.57735}+0\,\mathbf{i},\,{1.73205}+0\,\mathbf{i}\right\},\,\left\{-{.57735}+0\,\mathbf{i},\,-{1.73205}+0\,\mathbf{i}\right\}\right\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 4:0newRoots#0 -- recall that solutions are of type Point
 
-o6 = $\left\{{.57735}+0\,\mathbf{i},\:{1.73205}+0\,\mathbf{i}\right\}$
+o6 = $\left\{{.57735}+0\,\mathbf{i},\,{1.73205}+0\,\mathbf{i}\right\}$
 
 o6 : <tt class="token class-name">Point</tt>
 i7 : 5:0r1 = newRoots#0#Coordinates#1
 
 o7 = ${1.73205080756887735414922460641658082304678611432812598193257967}+0\,\mathbf{i}$
 
-o7 : ${\mathbb C}$<pre style="display:inline">
- (of precision </pre>$213$<pre style="display:inline">
-)</pre>
+o7 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $213$)</span>
 i8 : 6:0
+

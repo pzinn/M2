@@ -2,16 +2,15 @@
 i1 : 1:0R = QQ[a..d];
 i2 : 2:0I = ideal(a*c-b^2,a*d-b*c,b*d-c^2);
 
-o2 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>$R$
+o2 : <span><tt class="token class-name">Ideal</tt> of $R$</span>
 i3 : 3:0isStable(3,I)
 
 o3 = <tt class="token constant">true</tt>
 i4 : 4:0I = ideal(a^2,b^2,b*c);
 
-o4 : <tt class="token class-name">Ideal</tt><pre style="display:inline">
- of </pre>$R$
+o4 : <span><tt class="token class-name">Ideal</tt> of $R$</span>
 i5 : 5:0isStable(3,I) 
 
 o5 = <tt class="token constant">false</tt>
 i6 : 6:0
+

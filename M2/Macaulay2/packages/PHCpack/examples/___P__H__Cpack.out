@@ -3,35 +3,41 @@
 
 o1 = $R$
 
-o1 : <tt class="token class-name">PolynomialRing</tt>
+o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i2 : 2:0system = {y-x^2,z-x^3,x+y+z-1}
 
-o2 = $\left\{\left(-1+0\,\mathbf{i}\right)x^{2}+y,\:\left(-1+0\,\mathbf{i}\right)x^{3}+z,\:x+y+z-1+0\,\mathbf{i}\right\}$
+o2 = $\left\{\left(-1+0\,\mathbf{i}\right)x^{2}+y,\,\left(-1+0\,\mathbf{i}\right)x^{3}+z,\,x+y+z-1+0\,\mathbf{i}\right\}$
 
 o2 : <tt class="token class-name">List</tt>
 i3 : 3:0solns = solveSystem(system)
 
-o3 = $\left\{\left\{-{.771845}-{1.11514}\,\mathbf{i},\:-{.647799}+{1.72143}\,\mathbf{i},\:{2.41964}-{.606291}\,\mathbf{i}\right\},\:\left\{{.543689}+0\,\mathbf{i},\:{.295598}+0\,\mathbf{i},\:{.160713}+0\,\mathbf{i}\right\},\:\left\{-{.771845}+{1.11514}\,\mathbf{i},\:-{.647799}-{1.72143}\,\mathbf{i},\:{2.41964}+{.606291}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\},\,\left\{{.543689}+0\,\mathbf{i},\,{.295598}+0\,\mathbf{i},\,{.160713}+0\,\mathbf{i}\right\},\,\left\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\right\}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0numSolns = #solns
 
 o4 = $3$
 i5 : 5:0solns/print
-$\left\{-{.771845}-{1.11514}\,\mathbf{i},\:-{.647799}+{1.72143}\,\mathbf{i},\:{2.41964}-{.606291}\,\mathbf{i}\right\}$
-$\left\{{.543689}+0\,\mathbf{i},\:{.295598}+0\,\mathbf{i},\:{.160713}+0\,\mathbf{i}\right\}$
-$\left\{-{.771845}+{1.11514}\,\mathbf{i},\:-{.647799}-{1.72143}\,\mathbf{i},\:{2.41964}+{.606291}\,\mathbf{i}\right\}$
+$\left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\}$
+$\left\{{.543689}+0\,\mathbf{i},\,{.295598}+0\,\mathbf{i},\,{.160713}+0\,\mathbf{i}\right\}$
+$\left\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\right\}$
 
-o5 = $\left\{,\:,\:\right\}$
+o5 = $\{$$,\,$$,\,$$\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 6:0oneSoln = solns_0
 
-o6 = $\left\{-{.771845}-{1.11514}\,\mathbf{i},\:-{.647799}+{1.72143}\,\mathbf{i},\:{2.41964}-{.606291}\,\mathbf{i}\right\}$
+o6 = $\left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\}$
 
 o6 : <tt class="token class-name">Point</tt>
 i7 : 7:0peek oneSoln
 
-o7 = <pre style="display:inline-table;text-align:left;vertical-align:0%">
-Point{cache => CacheTable{...3...}                                                 }<br/>      Coordinates => {-.771845-1.11514*ii, -.647799+1.72143*ii, 2.41964-.606291*ii}<br/></pre>
+o7 = <span><tt class="token class-name">Point</tt><ul style="display:inline-table">
+<li>
+<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 3\ldots\}$</span></li>
+<li>
+<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\right\}$</span></li>
+</ul>
+</span>
 i8 : 8:0
+
