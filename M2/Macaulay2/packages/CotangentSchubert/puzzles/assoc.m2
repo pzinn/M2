@@ -1,8 +1,6 @@
 puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/puzzles/";
 debug VectorGraphics
 -- move to appropriate files
-INPUT = new MarkUpType of HypertextParagraph
-addAttribute(INPUT,htmlAttr|{"type"})
 svgUse = new MarkUpType of HypertextParagraph
 svgUse.qname="use"
 addAttribute(svgUse,svgAttr|{"xlink:href","x","y","data-col","data-typ"})
