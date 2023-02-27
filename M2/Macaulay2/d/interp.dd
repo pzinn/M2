@@ -94,7 +94,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	  interruptPending = false; determineExceptionFlag();
 	  if u.word.typecode == TCerror || test(interruptedFlag) then (
 	       gettoken(file,true);
-	       printError(Error(Position(u.filename,u.line,u.column,u.loadDepth),u.word.name,nullE,false,dummyFrame));
 	       if test(interruptedFlag) then (
 		    if debugLevel == 123 then stderr <<  "-- token read interrupted" << endl;
 		    clearFileError(file);
@@ -105,6 +104,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    )
 	       else (
 		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
+--		    printError(Error(Position(u.filename,u.line,u.column,u.loadDepth),u.word.name,nullE,false,dummyFrame));
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
@@ -132,7 +132,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    parsed := parse(file,SemicolonW.parse.precedence,true);
 		    when parsed is
 		    e:ErrorTree do (
-		       foreach err in e do printErrorMessage(err.position,err.message);
 			 if test(interruptedFlag) then (
 		    	      if debugLevel == 123 then stderr <<  "-- parsing interrupted" << endl;
 		    	      clearFileError(file);
@@ -143,6 +142,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      )
 			 else (
 		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
+		       	      foreach err in e do printErrorMessage(err.position,err.message);
 			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
 			      );
