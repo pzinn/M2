@@ -262,9 +262,9 @@ protect symbol locate
 
 -----------------------------------------------------------------------------
 print =  mode ( x -> (<< x << endl;) )
-errorPrint = mode ( (pos,msg) -> (
-    pos = new FilePosition from pos;
-    stderr << pos << ": " << (if msg#0!="-" then "error: "|msg else msg) << endl;
+errorPrint = mode ( () -> (
+    pos := new FilePosition from errorPosition;
+    stderr << pos << ": " << (if #errorMessage==0 then "error" else if errorMessage#0!="-" then "error: "|errorMessage else errorMessage) << endl;
     for e in postError do stderr << e << endl;
     postError={};
     stderr << flush;

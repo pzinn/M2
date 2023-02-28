@@ -27,6 +27,9 @@ export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 
+-- error stuff
+errorPosition := setupvar("errorPosition",nullE);
+errorMessage := setupvar("errorMessage",nullE);
 export errorPrint := nullE;
 printErrorMessageE(p:Position,message:string):Expr;
 printErrorMessage(p:Position,message:string):Expr;
@@ -1243,8 +1246,13 @@ steppingFurther(c:Code):bool := steppingFlag && (
 export printError(err:Error):Error := (
      if !(SuppressErrors||(err.printed && err.position.filename === "stdio"))
      then (
-     when applyEE(errorPrint,Expr(Sequence(Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth)),toExpr(err.message))))
-     is e:Error do ( stdError << err.position << " " << err.message <<endl; )
+     	setGlobalVariable(errorMessage,toExpr(err.message));
+        setGlobalVariable(errorPosition,Expr(Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth))));
+     when applyEE(errorPrint,Expr(Sequence()))
+     is e:Error do (
+         if debugLevel == 123 then stdError << "errorPrint error: " << e.position << " " << e.message <<endl;
+	 stdError << err.position << " " << err.message <<endl;
+	 )
      else nothing
      );
      err.printed=true;
@@ -1271,8 +1279,9 @@ export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
 
 handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
-	  if SuppressErrors then return e;
-	  if err.message == returnMessage
+	  p := codePosition(c);
+	  if SuppressErrors
+	  || err.message == returnMessage
 	  || err.message == continueMessage || err.message == continueMessageWithArg
 	  || err.message == stepMessage || err.message == stepMessageWithArg
 	  || err.message == breakMessage
@@ -1281,10 +1290,9 @@ handleError(c:Code,e:Expr):Expr := (
 	  then (
 	       -- an error message that is really being used to transfer control must be passed up the line
 	       -- the position is plugged in just in case it's unhandled
-	       if err.position == dummyPosition then err.position = codePosition(c);
+	       if err.position == dummyPosition then err.position = p;
 	       return e;
 	       );
-	  p := codePosition(c);
 	  clearAllFlags();
 	  clearAlarm();
 	  if p.loadDepth >= errorDepth && !err.position === p then (
@@ -1430,7 +1438,11 @@ export evalraw(c:Code):Expr := (
 			 err.message == continueMessage || err.message == continueMessageWithArg || 
 			 err.message == unwindMessage || err.message == throwMessage
 			 then p
-			 else eval(c.elseClause))
+			 else (
+			    setGlobalVariable(errorMessage,toExpr(err.message));
+        		    setGlobalVariable(errorPosition,Expr(Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth))));
+			    eval(c.elseClause)
+			 ))
 		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
 	  is c:catchCode do (
 	       p := eval(c.code);

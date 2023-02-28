@@ -60,9 +60,9 @@ Nothing#{WebApp,Print} = identity
     << webAppHtmlTag | y | webAppEndTag << endl;
     )
 
-(modes errorPrint)#WebApp = (pos,msg) -> (
-    pos = new FilePosition from pos;
-    print PRE{SPAN {pos,"class"=>"M2ErrorLocation"},": ",if msg#0!="-" then "error: ",msg,"class"=>"M2Error"};
+(modes errorPrint)#WebApp = () -> (
+    pos := new FilePosition from errorPosition;
+    print PRE{SPAN {pos,"class"=>"M2ErrorLocation"},": ",if #errorMessage==0 then "error" else if errorMessage#0!="-" then "error: ",errorMessage,"class"=>"M2Error"};
     if #postError>0 then {
 	print DIV append(postError,"class"=>"M2Error");
 	postError={};
@@ -100,6 +100,7 @@ Thing#{WebApp,AfterNoPrint} = x -> (
     if s =!= null then htmlAfterPrint s
     )
 
+removeWebAppTags = s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
 if topLevelMode === WebApp then (
     compactMatrixForm = false;
     extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
@@ -114,17 +115,13 @@ if topLevelMode === WebApp then (
 --    fixup FilePosition := lookup(hypertext,FilePosition); -- shouldn't change that (say, in doc)
     fixup FilePosition := f -> TT HREF { f#0, toString f }; -- let's try this
     hypertext FilePosition := f -> TT HREF {editURL f,toString f};
-    -- the error hack (TEMP)
-    oldolderror := olderror;
-    removeTags := s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
-    olderror = args -> oldolderror apply(deepSplice sequence args, removeTags);
     -- redefine htmlLiteral to exclude codes
     -- except it should sometimes allow them...
     htmlLiteral0 := htmlLiteral;
     delim:=ascii {239,187,191};
     htmlLiteral = s -> if s === null then s else (
 	s=separate(delim,s);
-	concatenate apply(#s, i -> if even i then removeTags htmlLiteral0 s#i else s#i)
+	concatenate apply(#s, i -> if even i then removeWebAppTags htmlLiteral0 s#i else s#i)
 	);
     -- colored tex
     col := (c,f) -> ( x -> ///\htmlClass{token /// | c | ///}{/// | f x | ///}///);

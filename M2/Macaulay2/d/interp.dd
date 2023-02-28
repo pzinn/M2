@@ -104,7 +104,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    )
 	       else (
 		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
---		    printError(Error(Position(u.filename,u.line,u.column,u.loadDepth),u.word.name,nullE,false,dummyFrame));
+		    printError(Error(Position(u.filename,u.line,u.column,u.loadDepth),u.word.name,nullE,false,dummyFrame));
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
