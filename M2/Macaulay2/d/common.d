@@ -52,9 +52,17 @@ export pos(c:Code):void := (					    -- for use in the debugger
      stdIO << codePosition(c) << endl;
      );
 
+export tostringerror(e:Expr):string := (
+     when e
+     is s:stringCell do s.v
+     is s:SymbolClosure do concatenate(array(string)("'",s.symbol.word.name,"'"))
+     is s:Sequence do concatenate(new array(string) len length(s) do foreach x in s do provide tostringerror(x))
+     else ""
+);
+
 export tostring(c:Code):string := (
      when c
-     is x:Error do concatenate(array(string)( "(error \"", x.message, "\")"))
+     is x:Error do concatenate(array(string)( "(error \"", tostringerror(x.message), "\")"))
      is x:semiCode do concatenate(array(string)( "(semi ", between(" ",new array(string) len length(x.w) do foreach s in x.w do provide tostring(s)), ")"))
      is x:arrayCode do concatenate(array(string)( "(array ", between(" ",new array(string) len length(x.z) do foreach s in x.z do provide tostring(s)), ")"))
      is x:angleBarListCode do concatenate(array(string)( "(angleBarList ", between(" ",new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))

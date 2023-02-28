@@ -31,12 +31,18 @@ export joinIteratorsS := setupvar("joinIterators", nullE);
 errorPosition := setupvar("errorPosition",nullE);
 errorMessage := setupvar("errorMessage",nullE);
 export errorPrint := nullE;
-printErrorMessageE(p:Position,message:string):Expr;
-printErrorMessage(p:Position,message:string):Expr;
+export isEmptySequenceE(e:Expr):bool := (
+    when e
+    is s:Sequence do if length(s) == 0 then true else false
+    else false
+    );
+printErrorMessageE(p:Position,message:Expr):Expr;
+printErrorMessage(p:Position,message:string):Expr; -- ???
 WrongNumArgs(c:Code,wanted:int,got:int):Expr;
-export printErrorMessageE(c:Code,message:string):Expr := printErrorMessageE(codePosition(c),message);
+export printErrorMessageE(c:Code,message:string):Expr := printErrorMessageE(codePosition(c),toExpr(message));
+export printErrorMessageE(c:Code,message:Expr):Expr := printErrorMessageE(codePosition(c),message);
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
-     printErrorMessageE(position(c),message));
+     printErrorMessageE(position(c),toExpr(message)));
 
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
@@ -48,7 +54,7 @@ export evalAllButTail(c:Code):Code := while true do c = (
 	  else if p == True then i.thenClause
 	  else if p == False then i.elseClause
 	  else (
-	       return Code(Error(codePosition(i.predicate),"expected true or false",nullE,false,dummyFrame));
+	       return Code(Error(codePosition(i.predicate),toExpr("expected true or false"),nullE,false,dummyFrame));
 	       dummyCode))
      is v:semiCode do (
 	  w := v.w;
@@ -1178,11 +1184,7 @@ localAssignment(nestingDepth:int,frameindex:int,newvalue:Expr):Expr := ( -- fram
      newvalue);
 
 globalAssignment(frameindex:int,t:Symbol,newvalue:Expr):Expr := ( -- frameID = 0
-     if t.Protected then return (
-	  if t.position != dummyPosition
-	  then buildErrorPacket("assignment to protected global variable '" + t.word.name + "', originally defined at " + tostring(t.position))
-	  else buildErrorPacket("assignment to protected built-in global variable '" + t.word.name + "'")
-	  );
+     if t.Protected then return buildErrorPacket(Expr(Sequence(toExpr("assignment to protected global variable "), Expr(SymbolClosure(globalFrame,t)))));
      vals := (if t.thread then enlargeThreadFrame() else globalFrame).values;
      r := globalAssignmentHook(t,vals.frameindex,newvalue);
      when r is Error do return r else nothing;
@@ -1205,7 +1207,7 @@ parallelAssignmentFun(x:parallelAssignmentCode):Expr := (
      nestingDepth := x.nestingDepth;
      frameindex := x.frameindex;
      nlhs := length(frameindex);
-     foreach sym in syms do if sym.Protected then return buildErrorPacket("assignment to protected variable '" + sym.word.name + "'");
+     foreach sym in syms do if sym.Protected then return buildErrorPacket(Expr(Sequence(toExpr("assignment to protected global variable "), Expr(SymbolClosure(globalFrame,sym)))));
      value := eval(x.rhs);
      when value 
      is Error do return value 
@@ -1246,24 +1248,29 @@ steppingFurther(c:Code):bool := steppingFlag && (
 export printError(err:Error):Error := (
      if !(SuppressErrors||(err.printed && err.position.filename === "stdio"))
      then (
-     	setGlobalVariable(errorMessage,toExpr(err.message));
+     	if !isEmptySequenceE(err.message) then setGlobalVariable(errorMessage,err.message);
         setGlobalVariable(errorPosition,Expr(Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth))));
      when applyEE(errorPrint,Expr(Sequence()))
      is e:Error do (
-         if debugLevel == 123 then stdError << "errorPrint error: " << e.position << " " << e.message <<endl;
-	 stdError << err.position << " " << err.message <<endl;
+         if debugLevel == 123 then stdError << e.position << " errorPrint error: " << tostringerror(e.message) <<endl;
+	  stdError << err.position << " error: " << tostringerror(err.message) <<endl;
 	 )
      else nothing
      );
      err.printed=true;
      err
 );
-export printErrorMessage0(p:Position,message:string):Error := ( -- for use when we have no code
+export printErrorMessage0(p:Position,message:Expr):Error := ( -- for use when we have no code
      e := Error(p,message,nullE,false,dummyFrame);
      if p.loadDepth >= errorDepth then printError(e);
      e);
-export printErrorMessageE(p:Position,message:string):Expr := Expr(printErrorMessage0(p,message)); -- for use when we have no code
+export printErrorMessage0(p:Position,message:string):Error := printErrorMessage0(p,toExpr(message));
+export printErrorMessageE(p:Position,message:Expr):Expr := Expr(printErrorMessage0(p,message)); -- for use when we have no code
 export printErrorMessage(p:Position,message:string):Expr := ( -- for use when we have no code
+     e := Error(p,toExpr(message),nullE,false,dummyFrame);
+     printError(e);
+     Expr(e));
+export printErrorMessage(p:Position,message:Expr):Expr := ( -- for use when we have no code
      e := Error(p,message,nullE,false,dummyFrame);
      printError(e);
      Expr(e));
@@ -1439,10 +1446,15 @@ export evalraw(c:Code):Expr := (
 			 err.message == unwindMessage || err.message == throwMessage
 			 then p
 			 else (
-			    setGlobalVariable(errorMessage,toExpr(err.message));
+			    oldErrorMessage:=getGlobalVariable(errorMessage);
+	       		    oldErrorPosition:=getGlobalVariable(errorPosition);
+			    if !isEmptySequenceE(err.message) then setGlobalVariable(errorMessage,err.message);
         		    setGlobalVariable(errorPosition,Expr(Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth))));
-			    eval(c.elseClause)
-			 ))
+			    ev:=eval(c.elseClause);
+			    setGlobalVariable(errorMessage,oldErrorMessage);
+        		    setGlobalVariable(errorPosition,oldErrorPosition);
+			    ev
+			    ))
 		    else if c.thenClause == NullCode then p else eval(c.thenClause)))
 	  is c:catchCode do (
 	       p := eval(c.code);

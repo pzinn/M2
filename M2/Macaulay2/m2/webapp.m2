@@ -62,11 +62,8 @@ Nothing#{WebApp,Print} = identity
 
 (modes errorPrint)#WebApp = () -> (
     pos := new FilePosition from errorPosition;
-    print PRE{SPAN {pos,"class"=>"M2ErrorLocation"},": ",if #errorMessage==0 then "error" else if errorMessage#0!="-" then "error: ",errorMessage,"class"=>"M2Error"};
-    if #postError>0 then {
-	print DIV append(postError,"class"=>"M2Error");
-	postError={};
-	}
+    addErr := class errorMessage =!= String or substring(errorMessage,0,2) =!= "--";
+    print SPAN splice {SPAN{pos,"class"=>"M2ErrorLocation"},": ",if addErr then "error: ",processError errorMessage,"class"=>"M2Error"};
     )
 
 

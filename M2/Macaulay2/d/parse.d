@@ -326,7 +326,7 @@ export List := {+
 
 export Error := {+
      position:Position,
-     message:string,
+     message:Expr,
      value:Expr,					    -- we put dummyExpr here for "break;", or put x here for "break x;"
      printed:bool,
      frame:Frame

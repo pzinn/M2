@@ -3,28 +3,13 @@
 needs "nets.m2"
 needs "methods.m2"
 
-postError = {}; -- a bit hacky
-processArgs := args -> concatenate (
-     args = sequence args;
-     apply(args, x -> 
-	  if class x === String then x
-	  else if class x === Symbol then (
-     	      postError=append(postError,DIV {locate x, ": here is the first use of ",x});
-	      ("'", toString x, "'")
-	      )
-	  else silentRobustString(40,3,x)
-	  ),
+processError = args -> nonnull deepSplice (
+     args = sequence args,
+     apply(args, x -> if class x === Symbol then DIV {locate x, ": here is the first use of ",x}) -- TODO maybe not for std mode...
      )
-olderror = error
-
-error = args -> (
-     -- this is the body of the "error" function, which prints out error messages
-     olderror processArgs args)
-protect symbol error
-
 
 warningMessage0 = (args,deb) -> (
-     args = processArgs args;
+     args = processError args;
      h := hash args % 10000;
      if debugWarningHashcode === h
      then error args
@@ -263,10 +248,11 @@ protect symbol locate
 -----------------------------------------------------------------------------
 print =  mode ( x -> (<< x << endl;) )
 errorPrint = mode ( () -> (
-    pos := new FilePosition from errorPosition;
-    stderr << pos << ": " << (if #errorMessage==0 then "error" else if errorMessage#0!="-" then "error: "|errorMessage else errorMessage) << endl;
-    for e in postError do stderr << e << endl;
-    postError={};
+    pos := new FilePosition from errorPosition; -- TODO test for dummyPosition
+    addErr := class errorMessage =!= String or substring(errorMessage,0,2) =!= "--";
+    stderr << pos << ": ";
+    if addErr then stderr << "error: ";
+    stderr << (concatenate apply(processError errorMessage, x -> if class x === String then x else if class x === Symbol then "'"|toString x|"'" else silentRobustString(40,3,x))) << endl;
     stderr << flush;
     ) )
 

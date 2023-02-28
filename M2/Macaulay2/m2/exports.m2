@@ -647,6 +647,8 @@ export {
 	"erf",
 	"erfc",
 	"error",
+	"errorMessage",
+	"errorPosition",
 	"euler",
 	"eulers",
 	"even",

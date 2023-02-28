@@ -330,7 +330,8 @@ export pointerClass := newbasictype();
 
 
 --Error Handling 
-export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
+export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,Expr(stringCell(message)),nullE,false,dummyFrame));
+export buildErrorPacket(e:Expr):Expr := Expr(Error(dummyPosition,e,nullE,false,dummyFrame));
 export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
 
 export quoteit(name:string):string := "'" + name + "'";

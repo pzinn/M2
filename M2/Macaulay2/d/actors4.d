@@ -611,12 +611,8 @@ stringcatfun(e:Expr):Expr := (
      else WrongArg("a sequence or list of strings, integers, or symbols"));
 setupfun("concatenate",stringcatfun);
 
-errorfun(e:Expr):Expr := (
-     e = stringcatfun(e);
-     when e
-     is s:stringCell do buildErrorPacket(s.v)
-     else buildErrorPacket("expects a string or sequence of strings as its argument"));
-setupfun("error",errorfun).Protected = false;		    -- this will be replaced by a toplevel function that calls this one
+errorfun(e:Expr):Expr := buildErrorPacket(e);
+setupfun("error",errorfun);
 
 mingleseq(a:Sequence):Expr := (
      n := length(a);
@@ -1142,10 +1138,10 @@ join(a:Sequence):Expr := (
 	      is b:Sequence do (
 		  newlen = newlen + length(b);
 		  a.i = b)
-	      is err:Error do return buildErrorPacket(
+	      is err:Error do return buildErrorPacket(Expr(Sequence(toExpr(
 		  "while converting argument " + tostring(i + 1) +
-		  " to a sequence, the following error occurred: " +
-		  err.message)
+		  " to a sequence, the following error occurred: "),
+		  err.message)))
 	      else return buildErrorPacket(
 		  "unknown error converting argument " + tostring(i + 1) +
 		  " to a sequence")));

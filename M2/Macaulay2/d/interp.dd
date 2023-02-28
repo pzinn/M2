@@ -8,7 +8,7 @@ use actors5;
 
 import dirname(s:string):string;
 
-dummyError := Error(dummyPosition,"dummy error message",nullE,false,dummyFrame);
+dummyError := Error(dummyPosition,Expr(stringCell("dummy error message")),nullE,false,dummyFrame);
 
 export setupargv():void := (
      setupconst("commandLine",toExpr(argv));
@@ -21,8 +21,8 @@ currentPosFile  := dummyPosFile;
 currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
 update(err:Error,prefix:string,f:Code):Error := (
      if !err.printed
-     then printErrorMessage0(codePosition(f),prefix + ": " + err.message)
-     else printErrorMessage0(codePosition(f),prefix + ": --backtrace update-- ")
+     then printErrorMessage0(codePosition(f),Expr(Sequence(toExpr(prefix + ": "), err.message)))
+     else printErrorMessage0(codePosition(f),toExpr(prefix + ": --backtrace update-- "))
      );
 previousLineNumber := -1;
 
@@ -104,7 +104,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    )
 	       else (
 		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
-		    printError(Error(Position(u.filename,u.line,u.column,u.loadDepth),u.word.name,nullE,false,dummyFrame));
+		    printError(Error(Position(u.filename,u.line,u.column,u.loadDepth),toExpr(u.word.name),nullE,false,dummyFrame));
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
@@ -164,7 +164,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
 			      printErrorMessage(position(s),msg);
-			      if stopIfError || returnIfError then return Expr(Error(position(s),msg,nullE,false,dummyFrame));
+			      if stopIfError || returnIfError then return Expr(Error(position(s),toExpr(msg),nullE,false,dummyFrame));
 			      )
 			 else (
 			      when localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
@@ -587,7 +587,7 @@ interruptExit := 2;					    -- see also M2lib.c
 failedExitExit := 3;
 
 Exit(err:Error):void := exit(
-     if err.message === interruptMessage then interruptExit
+     if err.message == interruptMessage then interruptExit
      else errorExit
      );
 

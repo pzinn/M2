@@ -36,17 +36,17 @@ export localDictionaryClosure(f:Frame):DictionaryClosure := DictionaryClosure(no
 
 -- debugging
 
-export returnMessage := "unhandled return command";
-export continueMessage := "unhandled continue command";
-export continueMessageWithArg := "unhandled continue command, with argument";
-export stepMessage := "unhandled step command";
-export stepMessageWithArg := "unhandled step command, with argument";
-export breakMessage := "unhandled break command";
-export throwMessage := "unhandled throw command";
-export unwindMessage := "unhandled unwind command";
-export interruptMessage := "interrupted";
-export alarmMessage := "alarm occurred";
-export steppingMessage := "--stepping limit reached";
+export returnMessage := Expr(stringCell("unhandled return command"));
+export continueMessage := Expr(stringCell("unhandled continue command"));
+export continueMessageWithArg := Expr(stringCell("unhandled continue command, with argument"));
+export stepMessage := Expr(stringCell("unhandled step command"));
+export stepMessageWithArg := Expr(stringCell("unhandled step command, with argument"));
+export breakMessage := Expr(stringCell("unhandled break command"));
+export throwMessage := Expr(stringCell("unhandled throw command"));
+export unwindMessage := Expr(stringCell("unhandled unwind command"));
+export interruptMessage := Expr(stringCell("interrupted"));
+export alarmMessage := Expr(stringCell("alarm occurred"));
+export steppingMessage := Expr(stringCell("--stepping limit reached"));
 --export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 --export buildErrorPacket(pos:Position,message:string):Expr := Expr(Error(pos,message,nullE,false,dummyFrame));
 --export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
