@@ -18,17 +18,17 @@ protect superscript
 ScriptedFunctor ^ Thing := (G,i) -> (
      if G#?superscript 
      then G#superscript i
-     else error("no method for ", toString G, "^", toString i)
+     else error("no method for ", G, "^", i)
      )
 ScriptedFunctor _ Thing := (G,i) -> (
      if G#?subscript 
      then G#subscript i
-     else error("no method for ", toString G, "_", toString i)
+     else error("no method for ", G, "_", i)
      )
 ScriptedFunctor Thing := (G,X) -> (
      if G#?argument
      then G#argument X
-     else error("no method for ", toString G, " ", toString X)
+     else error("no method for ", G, " ", X)
      )
 
 args := method()
@@ -42,7 +42,7 @@ id = new ScriptedFunctor from {
 	  (x) -> (
 	       r := lookup(id,class x);
 	       if r =!= null then r x
-	       else error ("no method 'id_' found for item of class ", toString class x)))
+	       else error ("no method 'id_' found for item of class ", class x)))
      }
 
 HH = new ScriptedFunctor from {

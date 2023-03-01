@@ -120,7 +120,7 @@ value Expression := expressionValue
 assert Expression := v -> (
     val := value v;
     if not instance(val, Boolean) then error "assert: expected true or false";
-    if not val then error toString("assertion failed:" || net v | " is false")
+    if not val then error ("assertion failed:\n ", v , " is false")
 )
 
 nullf = x -> null

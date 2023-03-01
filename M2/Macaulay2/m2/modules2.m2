@@ -363,11 +363,11 @@ Module / Sequence := Module / List := Module => (M,v) -> (
      then M / image matrix v
      else if all(v, w -> class w === R)
      then M / (ideal v * M)
-     else error("expected a list of elements of ", toString M, " or of ", toString R)
+     else error("expected a list of elements of ", M, " or of ", R)
      )
 Module / Vector := Module => (M,v) -> (
      if class v =!= M 
-     then error("expected ", toString v, " to be an element of ", toString M);
+     then error("expected ", v, " to be an element of ", M);
      M / image matrix {v})
 
 -----------------------------------------------------------------------------

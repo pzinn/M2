@@ -121,7 +121,7 @@ graphRing RingMap := QuotientRing => opts -> (f) -> ( I := graphIdeal(f,opts); (
 -- Copyright 2006 by Daniel R. Grayson
 
 coerce = method(Dispatch=>{Thing,Type})	-- this might be generally useful to the user, as the mathematical analogue of new...from...
-coerce(Thing,Thing) := (x,Y) -> if instance(x,Y) then x else error("no method for coercing result to type ", toString Y)
+coerce(Thing,Thing) := (x,Y) -> if instance(x,Y) then x else error("no method for coercing result to type ", Y)
 coerce(Ideal,Ring) := quotient @@ first
 coerce(Thing,Nothing) := (x,Nothing) -> null		    -- avoid using this one, to save time earlier
 coerce(Ring,Ideal) := (R,Ideal) -> ideal R		    -- avoid using this one, to save time earlier

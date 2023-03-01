@@ -281,8 +281,8 @@ taylor := (f,g) -> f RingElement := x -> (
     try promote(f lift(x,RR),ring x)
     else try promote(f lift(x,CC),ring x)
     else (
-	n := try nilp x else error (toString f | ": expected an algebra over QQ"); -- by now this is incorrect; e.g., ZZ/p allowed
-	if n === infinity then error (toString f | ": undefined");
+	n := try nilp x else error (f, ": expected an algebra over QQ"); -- by now this is incorrect; e.g., ZZ/p allowed
+	if n === infinity then error (f, ": undefined");
 	g(x,n)
 	)
     )

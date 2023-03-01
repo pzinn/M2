@@ -82,7 +82,7 @@ poincare Ideal  := I -> poincare comodule I
 poincare Module := M -> (
     computation := (cacheValue symbol poincare) (M -> runHooks((poincare, Module), M));
     if (P := computation M) =!= null then return P;
-    error("no applicable strategy for computing poincare over ", toString ring M))
+    error("no applicable strategy for computing poincare over ", ring M))
 
 addHook((poincare, Module), Strategy => Default, M -> (
 	new degreesRing M from rawHilbert raw leadTerm gb -* presentation cokernel ?? *- presentation M))
@@ -110,7 +110,7 @@ degree Ideal  := I -> degree comodule I
 degree Module := M -> (
     computation := (cacheValue symbol degree) (M -> runHooks((degree, Module), M));
     if (d := computation M) =!= null then return d;
-    error("no applicable strategy for computing degree of modules over ", toString ring M))
+    error("no applicable strategy for computing degree of modules over ", ring M))
 
 addHook((degree, Module), Strategy => Default, M -> (
 	R := ring M;
@@ -134,7 +134,7 @@ multidegree Ideal  := I -> multidegree comodule I
 multidegree Module := M -> (
     computation := (cacheValue symbol multidegree) (M -> runHooks((multidegree, Module), M));
     if (d := computation M) =!= null then return d;
-    error("no applicable strategy for computing multidegree of modules over ", toString ring M))
+    error("no applicable strategy for computing multidegree of modules over ", ring M))
 
 addHook((multidegree, Module), Strategy => Default, M -> (
     A := degreesRing M;
@@ -146,7 +146,7 @@ addHook((multidegree, Module), Strategy => Default, M -> (
 length Module := ZZ => M -> (
     computation := (cacheValue symbol length) (M -> runHooks((length, Module), M));
     if (n := computation M) =!= null then return n;
-    error("no applicable strategy for computing length of modules over ", toString ring M))
+    error("no applicable strategy for computing length of modules over ", ring M))
 
 addHook((length, Module), Strategy => Default, M -> (
     if not isHomogeneous M then notImplemented();
@@ -213,7 +213,7 @@ hilbertPolynomial Ideal  := opts -> I -> hilbertPolynomial(comodule I, opts)
 hilbertPolynomial Module := opts -> M -> (
     HP := runHooks((hilbertPolynomial, Module), (opts, M));
     if HP =!= null then return HP;
-    error("no applicable strategy for computing Hilbert polynomial over ", toString ring M))
+    error("no applicable strategy for computing Hilbert polynomial over ", ring M))
 
 addHook((hilbertPolynomial, Module), Strategy => Default, (opts, M) -> (
     R := ring M;
@@ -322,7 +322,7 @@ hilbertSeries Module := opts -> M -> (
     else error "hilbertSeries: option Order expected infinity or an integer";
     -- computing the Hilbert series
     ser = runHooks((hilbertSeries, Module), (opts, M));
-    if ser === null   then error("no applicable strategy for computing Hilbert series over ", toString R);
+    if ser === null   then error("no applicable strategy for computing Hilbert series over ", R);
     -- returning the appropriate format
     if ord < infinity then last M.cache#approxKey else
     if opts.Reduce    then M.cache#reducedKey else M.cache#exactKey)
@@ -374,7 +374,7 @@ hilbertFunction(List, Module) := (L, M) -> (
     --
     HF := runHooks((hilbertFunction, List, Module), (L, M));
     if HF =!= null then return HF;
-    error("no applicable strategy for computing Hilbert function over ", toString R))
+    error("no applicable strategy for computing Hilbert function over ", R))
 
 addHook((hilbertFunction, List, Module), Strategy => Default, (L, M) -> (
     h := heft ring M;

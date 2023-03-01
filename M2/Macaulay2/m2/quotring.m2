@@ -41,7 +41,7 @@ isWeylAlgebra     QuotientRing := R -> isWeylAlgebra     ambient R
 
 Ring / Module := QuotientRing => (R,I) -> (
      if ambient I != R^1 or I.?relations
-     then error ("expected ", toString I, " to be an ideal of ", toString R);
+     then error ("expected ", I, " to be an ideal of ", R);
      R / ideal I)
 
 savedQuotients = new MutableHashTable

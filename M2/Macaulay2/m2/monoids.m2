@@ -467,7 +467,7 @@ makeVars = (n, var) -> toList(
 
 -- check that the objects serving as variables have an assignment method
 -- TODO: why is (symbol <-, T) and not (symbol <-, T, Thing) the right method sequence for assignment?
-checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!= null then sym else error()
+checkSymbol = sym -> if instance(sym, Symbol) or lookup(symbol <-, class sym) =!= null then sym else error ""
 
 -- turns {x, y, z, y} into {x, y_0, z, y_1}
 -- adding 'toString' in a few places will eliminate more duplications
@@ -617,7 +617,7 @@ monoidSymbol  = (M, x) -> ( b := try baseName x;
     if M.indexSymbols#?b  then M.indexSymbols#b     else
     if M.?indexStrings
     and M.indexStrings#?x then M.indexSymbols#x     else
-    error("expected an index, symbol, or name of variable of the ring or monoid: ", toString x))
+    error("expected an index, symbol, or name of variable of the ring or monoid: ", x))
 
 -- also used in Elimination
 monoidIndices = (M, v) -> apply(v, monoidIndex_M)
@@ -625,7 +625,7 @@ monoidIndex   = (M, x) -> ( b := try baseName x;
     if instance(x, ZZ)    then x else
     if instance(x, List)  then monoidIndices(M, x) else
     if M.index#?b         then M.index#b else
-    error("expected an integer or variable of the ring or monoid: ", toString x))
+    error("expected an integer or variable of the ring or monoid: ", x))
 
 -----------------------------------------------------------------------------
 

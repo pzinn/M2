@@ -28,7 +28,7 @@ promote(QQ,RingElement) := (r,S) -> (
      a := promote(numerator r,S);
      b := promote(denominator r,S);
      if a % b == 0 then a // b
-     else error ("promotion of this rational number to the ring ", toString S, " not possible"))
+     else error ("promotion of this rational number to the ring ", S, " not possible"))
 
 --- new lift and promote, version 3
 basicLift = opts -> (r,Brawring,Bclass) -> (

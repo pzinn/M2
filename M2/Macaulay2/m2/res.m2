@@ -303,7 +303,7 @@ resolution Module := ChainComplex => opts -> M -> (
     C := (cacheComputation(opts, container)) computation;
 
     if C =!= null then C else if strategy === null
-    then error("no applicable strategy for resolving over ", toString R)
+    then error("no applicable strategy for resolving over ", R)
     else error("assumptions for resolution strategy ", toString strategy, " are not met"))
 
 resolution Ideal := ChainComplex => opts -> I -> resolution(

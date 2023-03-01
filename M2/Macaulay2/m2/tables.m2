@@ -18,7 +18,7 @@ transpose List := List => m -> (
      then pack(# m,mingle m)
      else if # m === 0
           then {}
-	  else error ("expected ", toString m, " to be a table"))
+	  else error ("expected ", m, " to be a table"))
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

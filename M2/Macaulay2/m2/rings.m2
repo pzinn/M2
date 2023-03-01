@@ -22,11 +22,11 @@ ZZ == Ring := (i,R) -> R == i
 dim Ring := R -> (
      if R.?dim then R.dim
      else if isField R then 0
-     else error("dimension of ring ", toString R, " unknown"))
+     else error("dimension of ring ", R, " unknown"))
 
 char Ring := R -> (
      if R.?char then R.char 
-     else error("characteristic of ", toString R, " unknown"))
+     else error("characteristic of ", R, " unknown"))
 
 baseRing = method()
 baseRing Ring := R -> if R.?baseRings then last R.baseRings

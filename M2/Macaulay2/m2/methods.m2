@@ -257,7 +257,7 @@ options Function := f -> if oftab#?(fb := functionBody f) then oftab#fb f
 
 setupMethods := (args, symbols) -> (
      scan(symbols, n -> (
-	  if value' n =!= n then error concatenate("symbol ",toString n," redefined");
+	  if value' n =!= n then error ("symbol ",n," redefined");
 	  f := method args;
 	  globalAssignFunction(n,f);
 	  n <- f;
@@ -702,7 +702,7 @@ storefuns #toString = (x,e) -> (
      if not instance(e,String) then error "expected a string";
      setAttribute(x,PrintNames,e))
 Function Thing = (f,x,e) -> (
-     if not storefuns#?f then error("no method for storing values of function ", toString f);
+     if not storefuns#?f then error("no method for storing values of function ", f);
      storefuns#f (x,e))
 
 -- registerFinalizer

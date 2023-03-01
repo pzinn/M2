@@ -4,11 +4,11 @@ needs "methods.m2"
 
 autoload = method()
 autoload(Symbol,String) := (sym,filename) -> (
-     if value sym =!= sym then error ("symbol ", toString sym, " already has a value");
+     if value sym =!= sym then error ("symbol ", sym, " already has a value");
      sym <- f := x -> (
 	  load filename;
 	  if f === value sym 
-	  then error("symbol '", toString sym, "' didn't acquire a new value in file '", filename, "'");
+	  then error("symbol ", sym, " didn't acquire a new value in file '", filename, "'");
 	  (value sym) x
 	  );
      )

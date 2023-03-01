@@ -43,27 +43,27 @@ lastp := 2
 
 unpack := (S) -> (			  -- a quotient ring
      if class S =!= QuotientRing
-     then error("expected ",toString S," to be a quotient ring");
+     then error("expected ",S," to be a quotient ring");
      R := ultimate(ambient, S);			  -- original poly ring
      if R === ZZ then (
 	  if isField S then (
 	       R = S[local t];
 	       S = R/t;
 	       )
-     	  else error("expected ",toString S," to be a field")
+     	  else error("expected ",S," to be a field")
 	  );
      if class R =!= PolynomialRing
      or numgens R =!= 1
-     then error("expected ",toString R," to be a polynomial ring in one variable");
+     then error("expected ",R," to be a polynomial ring in one variable");
      if degreeLength R =!= 1
-     then error("expected ",toString R," to be a simply graded polynomial ring");
+     then error("expected ",R," to be a simply graded polynomial ring");
      p := char R;
      if coefficientRing R =!= ZZ/p or (p =!= lastp and not isPrime p)
-     then error("expected ",toString R," to be a polynomial ring over a finite prime field");
+     then error("expected ",R," to be a polynomial ring over a finite prime field");
      lastp = p;
      I := presentation S;			  -- a Matrix, sigh
      if rank source I =!= 1
-     then error("expected ",toString S," to be a quotient ring by a principal ideal");
+     then error("expected ",S," to be a quotient ring by a principal ideal");
      f := I_(0,0);
      n := first degree f;
      (R,p,n,f))
@@ -151,7 +151,7 @@ GF(ZZ) := GaloisField => opts -> (q) -> (
 GF(Ring) := GaloisField => opts -> (S) -> (
      (R,p,n,f) := unpack S;
      if not isPrime f
-     then error("expected ",toString S," to be a quotient ring by an irreducible polynomial");
+     then error("expected ",S," to be a quotient ring by an irreducible polynomial");
      primitiveElement := opts.PrimitiveElement;
      if primitiveElement === FindOne then (
 	  t := S_0;
