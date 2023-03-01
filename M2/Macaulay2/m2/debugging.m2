@@ -5,7 +5,7 @@ needs "methods.m2"
 
 processError = args -> nonnull deepSplice (
      args = sequence args,
-     apply(args, x -> if class x === Symbol then DIV {locate x, ": here is the first use of ",x}) -- TODO maybe not for std mode...
+     apply(args, x -> if class x === Symbol and (l:=locate x) =!= null then ("\n", l, ": here is the first use of ",x))
      )
 
 warningMessage0 = (args,deb) -> (

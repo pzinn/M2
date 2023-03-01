@@ -156,7 +156,7 @@ document {
      things that can be converted to strings and concatenated) is printed.
      Execution of the code is interrupted, and control is returned
      to top level. Here is an explicit example showing how this command is used:",
-     PRE///exampleCode = p -> (
+     PRE M2CODE///exampleCode = p -> (
      if not isPrime p
      then error "expected a prime integer";
      if p == 2
@@ -168,6 +168,9 @@ document {
 	  number printed out with the error message will have more
 	  significance, but currently it is the location in the code of
 	  the error expression itself."
+	  },
+     PARA {
+	  "The last error message and position can be accessed with ", TO "errorMessage", " and ", TO "errorPosition", " respectively."
 	  },
      PARA {
 	  "If the error message begins with a hyphen, then the word \"error\" will not be
@@ -217,6 +220,10 @@ document {
      A single pair is a position, two form a range. The last pair is the central point of interest in that range."
      }
 
+document {
+     Key => {symbol errorMessage, symbol errorPosition},
+     Headline => "message and position of the last error"
+     }
 
 document {
      Key => {profile,(profile, Function),(profile, String, Function)},
