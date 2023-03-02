@@ -1652,7 +1652,7 @@ assigntofun(lhs:Code,rhs:Code):Expr := (
 		if lookup1Q(globalAssignmentHooks, symbody) then (
 		    vals := (if sym.thread then enlargeThreadFrame() else globalFrame).values;
 		    globalAssignment(sym.frameindex, sym, right))
-		else if sym.Protected then buildErrorPacket("assignment to protected variable '" + sym.word.name + "'")
+		else if sym.Protected then buildErrorPacket(Expr(Sequence(toExpr("assignment to protected global variable "), Expr(SymbolClosure(globalFrame,sym)))))
 		else (
 		    enlargeThreadFrame(); -- TODO: what does this do?
 		    s.frame.values.(sym.frameindex) = right;
