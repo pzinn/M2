@@ -18,15 +18,24 @@ needs "option.m2"
 -- see lists.m2
 all' := (L, p) -> not any(L, x -> not p x)
 
-noMethErr := M -> concatenate("no method found for applying ", silentRobustString(45, 3, M), " to:");
-printArgs := (i, arg, out) -> horizontalJoin("     argument ", i, " :  ",
-    (if out then silentRobustNet else silentRobustNetWithClass)(60, 5, 3, arg));
-
-noMethodSingle = (M, args, outputs) -> toString stack     (  noMethErr M, printArgs(" ", args, outputs) )
-noMethod       = (M, args, outputs) -> toString stack join( {noMethErr M},
-    if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
-	i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
-    else {   printArgs(" ",            args,   false) }) -- TODO: do better here, in what way?
+if topLevelMode =!= WebApp then (
+    noMethErr := M -> concatenate("no method found for applying ", silentRobustString(45, 3, M), " to:");
+    printArgs := (i, arg, out) -> horizontalJoin("     argument ", i, " :  ",
+    	(if out then silentRobustNet else silentRobustNetWithClass)(60, 5, 3, arg));
+    noMethodSingle = (M, args, outputs) -> toString stack     (  noMethErr M, printArgs(" ", args, outputs) );
+    noMethod       = (M, args, outputs) -> toString stack join( {noMethErr M},
+    	if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
+	    i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
+    	else {   printArgs(" ",            args,   false) }); -- TODO: do better here, in what way?
+    ) else ( -- TODO merge with normal ones
+    noMethErr = M -> ("no method found for applying ", M, " to:",BR{});
+    printArgs = (i, arg, out) -> ( p := ("     argument ", i, " :  ",short arg); if out then p else p | (" of class ", class arg) );
+    noMethodSingle = (M, args, outputs) ->      join(  noMethErr M, sequence printArgs(" ", args, outputs) );
+    noMethod       = (M, args, outputs) ->  join( noMethErr M,
+    	if class args === Sequence and 0 < #args and #args <= 4 then sequence UL apply(#args,
+	    i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
+    	else printArgs(" ",            args,   false) ); -- TODO: do better here, in what way?
+    )
 
 -- TODO: what is this for exactly?
 badClass := meth -> (i, args) -> (

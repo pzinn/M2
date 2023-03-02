@@ -3,10 +3,13 @@
 needs "nets.m2"
 needs "methods.m2"
 
-processError = args -> nonnull deepSplice (
-     args = sequence args,
-     apply(args, x -> if class x === Symbol and (l:=locate x) =!= null then ("\n", l, ": here is the first use of ",x))
-     )
+processError = args -> (
+    args1 := sequence args;
+    recScan := x -> if instance(x,VisibleList) or instance(x,Expression) or instance(x,Hypertext) then scan(toList x,recScan) else if class x === Symbol and (l:=locate x) =!= null then args1 = args1 | ("\n", l, ": here is the first use of ",x);
+    recScan args;
+    args1
+    )
+
 
 warningMessage0 = (args,deb) -> (
      args = processError args;
@@ -225,6 +228,7 @@ generateAssertions List := y -> (
 
 FilePosition = new Type of BasicList
 FilePosition.synonym = "file position"
+toExternalString FilePosition :=
 toString FilePosition :=
 net FilePosition := p -> concatenate(
     p#0,":",toString p#1,":",toString p#2,
