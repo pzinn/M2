@@ -1550,24 +1550,24 @@ locateCode(c:Code):Expr := (
           p:=codeLocation(c);
 	  if p == dummyLocation
 	  then nullE
-	  else Expr(
+	  else Expr(sethash(List(filePositionClass,
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line1)),toExpr(int(p.column1)),
 		    toExpr(int(p.line2)),toExpr(int(p.column2)),
-		    toExpr(int(p.line3)),toExpr(int(p.column3))
-                    )));
+		    toExpr(int(p.line3)),toExpr(int(p.column3))),
+	       0,false),false)));
 locateSymbol(s:Symbol):Expr := (
           p:=s.position;
 	  if p == dummyPosition
 	  then nullE
-	  else Expr(
+	  else Expr(sethash(List(filePositionClass,
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line)),toExpr(int(p.column)),
 		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.word.name)),
-		    toExpr(int(p.line)),toExpr(int(p.column))
-		    )));
+		    toExpr(int(p.line)),toExpr(int(p.column))),
+	       0,false),false)));
 locate(e:Expr):Expr := (
      when e
      is Nothing do nullE

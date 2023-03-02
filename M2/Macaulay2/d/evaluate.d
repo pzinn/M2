@@ -27,6 +27,10 @@ export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 
+-- TODO move elsewhere
+export filePositionClass := newHashTable(typeClass,basicListClass);
+setupconst("FilePosition",Expr(filePositionClass));
+
 -- error stuff
 errorPosition := setupvar("errorPosition",nullE);
 errorMessage := setupvar("errorMessage",nullE);
@@ -1249,7 +1253,9 @@ export printError(err:Error):Error := (
      if !(SuppressErrors||(err.printed && err.position.filename === "stdio"))
      then (
      	if !isEmptySequenceE(err.message) then setGlobalVariable(errorMessage,err.message);
-        setGlobalVariable(errorPosition,Expr(Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth))));
+        setGlobalVariable(errorPosition,Expr(sethash(List(filePositionClass,
+	Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth)),
+	0,false),false)));
      when applyEE(errorPrint,Expr(Sequence()))
      is e:Error do (
          if debugLevel == 123 then stdError << e.position << " errorPrint error: " << tostringerror(e.message) <<endl;

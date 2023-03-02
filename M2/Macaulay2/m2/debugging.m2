@@ -226,7 +226,7 @@ generateAssertions List := y -> (
 	       else lin
 	       )))^-1
 
-FilePosition = new Type of BasicList
+-- FilePosition = new Type of BasicList -- defined in d
 FilePosition.synonym = "file position"
 toExternalString FilePosition :=
 toString FilePosition :=
@@ -245,17 +245,15 @@ locate FunctionBody:=
 locate Function    :=
 locate Pseudocode  :=
 locate Sequence    :=
-locate Symbol      := FilePosition => x -> if (x':=locate' x) =!= null then new FilePosition from x'
+locate Symbol      := FilePosition => locate'
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
 -----------------------------------------------------------------------------
 print =  mode ( x -> (<< x << endl;) )
 errorPrint = mode ( () -> (
-    pos := new FilePosition from errorPosition; -- TODO test for dummyPosition
-    addErr := class errorMessage =!= String or substring(errorMessage,0,2) =!= "--";
-    stderr << pos << ": ";
-    if addErr then stderr << "error: ";
+    if errorPosition#1 > 0 then stderr << errorPosition << ": ";
+    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then stderr << "error: ";
     stderr << (concatenate apply(processError errorMessage, x -> if class x === String then x else if class x === Symbol then "'"|toString x|"'" else silentRobustString(40,3,x))) << endl;
     stderr << flush;
     ) )

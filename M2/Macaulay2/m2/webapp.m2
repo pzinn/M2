@@ -62,15 +62,19 @@ Nothing#{WebApp,Print} = identity
 
 convBR := s -> between(BR{},separate s) -- needed because many error messages use \n
 (modes errorPrint)#WebApp = () -> (
-    pos := new FilePosition from errorPosition;
     msg := processError errorMessage;
     msg = flatten apply(#msg, i -> if class msg#i === String then (
 	    c := convBR msg#i;
 	    if i>0 and #c>=2 and c#0 === "" and instance(msg#(i-1),HypertextContainer) then drop(c,2) else c -- hacky
 	    )
 	else {msg#i});
-    addErr := class errorMessage =!= String or substring(errorMessage,0,2) =!= "--";
-    print SPAN ({"class"=>"M2Error",SPAN{pos,"class"=>"M2ErrorLocation"},": ",if addErr then "error: "} | msg);
+    print SPAN (
+	{
+	    "class"=>"M2Error",
+	    if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
+	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: "
+	    }
+	| msg);
     )
 
 
