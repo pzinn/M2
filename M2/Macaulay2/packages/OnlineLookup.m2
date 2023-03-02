@@ -26,7 +26,6 @@ urlEncode = method()
 urlEncode Nothing := identity
 urlEncode String := s -> concatenate toList apply(s, c -> if percentEncoding#?c then percentEncoding#c else c)
 
-oeisHTTP := "http://oeis.org";
 oeisHTTPS := "https://oeis.org";
 
 tryWWW = url -> try last splitWWW getWWW url else (
@@ -39,7 +38,7 @@ oeis = method(TypicalValue => OL,
     Options => {Limit => 100, Position => 0})
 oeis VisibleList := o -> L -> oeis (demark(",",toString\L),o)
 oeis String := o -> search -> (
-    url:=oeisHTTP|"/search?q="|urlEncode search|"&fmt=text&start="|o.Position|"&n="|o.Limit; -- limit the number of results
+    url:=oeisHTTPS|"/search?q="|urlEncode search|"&fmt=text&start="|o.Position|"&n="|o.Limit; -- limit the number of results
     www :=  tryWWW url;
     ans := select("(?<=^%N ).*$",www);    
     OL apply(ans, line -> LI(
