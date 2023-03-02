@@ -131,7 +131,7 @@ if topLevelMode === WebApp then (
     col := (c,f) -> ( x -> ///\htmlClass{token /// | c | ///}{/// | f x | ///}///);
     texMath RingFamily :=
     texMath Ring := col("class-name",lookup(texMath,HashTable));
-    texMath ScriptedFunctor := col("constant",lookup(texMath,HashTable));
+    texMath HashTable := col("constant",lookup(texMath,HashTable));
 --    t:=col("keyword",texVariable @@ toString);
 --    texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else t x
     --
@@ -212,17 +212,13 @@ html BasicList := s -> (
 htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\}$")
 html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
 html HashTable := H -> (
-    if debugLevel === 42 then htmlTex H
-    else if lookup(texMath,class H) =!= lookup(texMath,HashTable) or H.?texMath then htmlTex1 H
+    if debugLevel === 42 or H.?texMath then htmlTex H
+    else if lookup(texMath,class H) =!= lookup(texMath,HashTable) then htmlTex1 H
+    else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
     else if mutable H then htmlMutable H
     else concatenate(html class H,
 	htmlVisibleList apply(sortByName pairs H, p -> new Option from p)
     ))
-html ScriptedFunctor := H -> (
-    if H.?texMath or debugLevel===42 then htmlTex H
-    else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
-    else htmlMutable H
-    )
 
 -- the texMath hack
 texMath1 = x -> (
