@@ -4,10 +4,13 @@ needs "nets.m2"
 needs "methods.m2"
 
 processError = args -> (
-    args1 := sequence args;
-    recScan := x -> if instance(x,VisibleList) or instance(x,Expression) or instance(x,Hypertext) then scan(toList x,recScan) else if class x === Symbol and (l:=locate x) =!= null then args1 = args1 | ("\n", l, ": here is the first use of ",x);
+    syms := new MutableHashTable;
+    recScan := x -> (
+	if instance(x,VisibleList) or instance(x,Expression) or instance(x,Hypertext) then scan(toList x,recScan)
+    	else if class x === Symbol and not syms#?x and (l:=locate x) =!= null then syms#x=l;
+	);
     recScan args;
-    args1
+    sequence args | join apply(toSequence pairs syms,(s,l) -> ("\n", l, ": here is the first use of ",s))
     )
 
 
