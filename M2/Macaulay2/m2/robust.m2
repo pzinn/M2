@@ -134,7 +134,7 @@ if topLevelMode =!= WebApp then (
 			    error toString stack(line1,commentGuard line2)));
 		    ))))
     	) else (
-	ofc := x -> (short x," (of class ",class x,")");
+	ofc := x -> (hold short x," (of class ",class x,")");
 	scan(flexibleBinaryOperators, op -> (
 		if not Thing#?((op,symbol =),Thing,Thing) then (
 	    	    undocumented' ((op,symbol =),Thing,Thing);
