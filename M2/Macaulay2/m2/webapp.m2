@@ -139,7 +139,7 @@ if topLevelMode === WebApp then (
 --    t:=col("keyword",texVariable @@ toString);
 --    texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else t x
     --
-    addEndFunction(()-> (<< webAppCellEndTag << webAppCellEndTag <<webAppCellTag << webAppCellTag << endl;));
+--    addEndFunction(()-> (<< webAppCellEndTag << webAppCellEndTag <<webAppCellTag << webAppCellTag << endl;));
     )
 
 -- show
