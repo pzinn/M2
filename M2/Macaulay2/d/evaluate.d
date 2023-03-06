@@ -1258,8 +1258,8 @@ export printError(err:Error):Error := (
 	0,false),false)));
      when applyEE(errorPrint,Expr(Sequence()))
      is e:Error do (
-         if debugLevel == 123 then stdError << e.position << " errorPrint error: " << tostringerror(e.message) <<endl;
-	  stdError << err.position << " error: " << tostringerror(err.message) <<endl;
+         if debugLevel == 123 then stderr << e.position << " errorPrint error: " << tostringerror(e.message) <<endl;
+	  stderr << err.position << " error: " << tostringerror(err.message) <<endl;
 	 )
      else nothing
      );

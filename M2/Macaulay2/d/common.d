@@ -57,6 +57,7 @@ export tostringerror(e:Expr):string := (
      is s:stringCell do s.v
      is s:SymbolClosure do concatenate(array(string)("'",s.symbol.word.name,"'"))
      is s:Sequence do concatenate(new array(string) len length(s) do foreach x in s do provide tostringerror(x))
+     is l:List do tostringerror(Expr(l.v))
      else ""
 );
 
