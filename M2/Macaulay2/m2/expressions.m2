@@ -730,6 +730,7 @@ returns = t -> x -> t
 	   precedence Superscript := returns prec symbol ^
 		 precedence Power := x -> if x#1 === 1 then precedence x#0 else prec symbol ^
 		    precedence ZZ := x -> if x>=0 then strength1 symbol symbol else prec symbol -
+	precedence InfiniteNumber :=
 		    precedence RR :=
 	      precedence Function :=
 	          precedence Type :=
@@ -743,7 +744,6 @@ returns = t -> x -> t
 		precedence String :=
 	    precedence Expression := returns strength1 symbol symbol
 	        precedence Holder := x -> precedence x#0
-	      precedence Describe := x -> precedence x#0
 --	       precedence Holder2 := x -> precedence x#0
        precedence BinaryOperation := x -> lprec x#0
   rightPrecedence BinaryOperation := x -> rprec x#0
