@@ -436,6 +436,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  when lookup(t.word,t.dictionary)
      	  is entry:Symbol do (
 	       t.entry = entry;
+	       if entry.position == tempPosition then entry.position = position(t);
 	       if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
 	       if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
 	       )

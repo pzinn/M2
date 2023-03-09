@@ -1505,7 +1505,7 @@ getglobalsym(d:Dictionary,s:string):Expr := (
      is null do (
           if !isvalidsymbol(s) then return buildErrorPacket("invalid symbol");
 	  if d.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,d);
+	  t := makeSymbol(w,tempPosition,d);
 	  globalFrame.values.(t.frameindex)));
 
 getglobalsym(s:string):Expr := (
@@ -1514,7 +1514,7 @@ getglobalsym(s:string):Expr := (
      is x:Symbol do Expr(SymbolClosure(if x.thread then threadFrame else globalFrame,x))
      is null do (
 	  if globalDictionary.Protected then return buildErrorPacket("attempted to create symbol in protected dictionary");
-	  t := makeSymbol(w,dummyPosition,globalDictionary);
+	  t := makeSymbol(w,tempPosition,globalDictionary);
 	  globalFrame.values.(t.frameindex)));
 
 getGlobalSymbol(e:Expr):Expr := (
