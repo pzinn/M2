@@ -136,10 +136,10 @@ if topLevelMode === WebApp then (
     texMath RingFamily :=
     texMath Ring := col("class-name",lookup(texMath,HashTable));
     texMath HashTable := col("constant",lookup(texMath,HashTable));
---    t:=col("keyword",texVariable @@ toString);
---    texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else t x
+    t:=col("keyword",texVariable @@ toString);
+    texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else t x
     --
---    addEndFunction(()-> (<< webAppCellEndTag << webAppCellEndTag <<webAppCellTag << webAppCellTag << endl;));
+    --    addEndFunction(()-> (<< webAppCellEndTag << webAppCellEndTag <<webAppCellTag << webAppCellTag << endl;));
     )
 
 -- show

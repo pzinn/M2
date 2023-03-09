@@ -3,17 +3,6 @@
 needs "nets.m2"
 needs "methods.m2"
 
-processError = args -> (
-    syms := new MutableHashTable;
-    recScan := x -> (
-	if instance(x,VisibleList) or instance(x,Expression) or instance(x,Hypertext) then scan(toList x,recScan)
-    	else if class x === Symbol and not syms#?x and (l:=locate x) =!= null then syms#x=l;
-	);
-    recScan args;
-    sequence args | join apply(toSequence pairs syms,(s,l) -> ("\n", l, ": here is the first use of ",s))
-    )
-
-
 warningMessage0 = (args,deb) -> (
      args = processError args;
      h := hash args % 10000;
@@ -252,14 +241,6 @@ locate Symbol      := FilePosition => locate'
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
------------------------------------------------------------------------------
-print =  mode ( x -> (<< x << endl;) )
-errorPrint = mode ( () -> (
-    if errorPosition#1 > 0 then stderr << errorPosition << ": ";
-    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then stderr << "error: ";
-    stderr << (concatenate apply(processError errorMessage, x -> if class x === String then x else if class x === Symbol then "'"|toString x|"'" else silentRobustString(40,3,x))) << endl;
-    stderr << flush;
-    ) )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
