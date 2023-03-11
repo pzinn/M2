@@ -7,7 +7,8 @@ needs "run.m2"
 -----------------------------------------------------------------------------
 
 sourceFileStamp = (filename, linenum) -> concatenate(
-    "--", toAbsolutePath filename, ":", toString linenum, ": location of test code")
+    pos := new FilePosition from (toAbsolutePath filename, linenum, 1);
+    concatenate("--", toString pos, ": location of test code"));
 
 -----------------------------------------------------------------------------
 -- TestInput
@@ -91,6 +92,7 @@ tests Package := pkg -> (
     previousMethodsFound = new HashTable from pkg#"test inputs"
     )
 tests String := pkg -> tests needsPackage(pkg, LoadDocumentation => true)
+tests(ZZ, Package) := tests(ZZ, String) := (i, pkg) -> (tests pkg)#i
 
 check = method(Options => {UserMode => null, Verbose => false})
 check String  :=
