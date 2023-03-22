@@ -128,10 +128,12 @@ fixNewLines := method()
 fixNewLines Hypertext :=
 fixNewLines Nothing :=
 fixNewLines Option := identity
-fixNewLines Thing := x -> replace("\r\n","\n",toString x)
--- non HTML types should *not* be KaTeX-ified inside these tags:
+fixNewLines Thing := x -> replace("\r\n","\n",toString x) -- toString prevents LaTeX being inserted...
+-- ... since non HTML types should *not* be KaTeX-ified inside these tags:
 html PRE :=
 html TT :=
+html SAMP :=
+html KBD :=
 html CODE := (lookup(html, Hypertext)) @@ (x -> apply(x,fixNewLines))
 
 html CDATA   := x -> concatenate("<![CDATA[", x ,"]]>", newline)
