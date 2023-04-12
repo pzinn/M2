@@ -59,13 +59,13 @@ mergeTeX = { Path => null } >> o -> s -> (
 		substring(r#3,x) -- code
 		) else (
 		substring(r#4,x) | outputLanguage | substring(r#5,x) | "\n",
-		try get substring(r#6,x) else if o.Path =!= null then try get (o.Path | substring(r#6,x)) else ""
+		try get substring(r#6,x) else try get (o.Path | substring(r#6,x)) else "-- file not found\n"
 	       )
 	   ));
     outputs = new MutableHashTable;
     saveMode := topLevelMode; -- not thread-safe
     topLevelMode = TeX;
-    s = capture apply(codes, x -> codeComment | x#1);
+    s = try capture apply(codes, x -> codeComment | x#1) else ( topLevelMode = saveMode; error() ); -- error should never happen
     topLevelMode = saveMode;
 --    if o.Path =!= null then path = oldPath;
     if s#0 then print ("warning: running the code produced an error: "|s#1);

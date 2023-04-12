@@ -225,7 +225,7 @@ html HashTable := H -> (
     ))
 
 -- the texMath hack
-texMath1 = x -> (
+texMath1 = x -> if topLevelMode =!= WebApp then texMath0 x else (
     pureTexFlag=true;
     h := html x;
     if #h>2 and h#0=="$" and h#(#h-1)=="$" and pureTexFlag
