@@ -124,7 +124,7 @@ texMath NumberedVerticalList := s -> concatenate(
 BasicList#"delimiters" = ("\\{","\\}")
 Sequence#"delimiters" = ("(",")")
 Array#"delimiters" = ("[","]")
-AngleBarList#"delimiters" = ("\\langle","\\rangle")
+AngleBarList#"delimiters" = ("\\langle ","\\rangle ")
 
 texMathVisibleList =
 texMath VisibleList := L -> (
