@@ -203,7 +203,7 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
     - F := x -> fraction(-numerator x, denominator x);
     F ^ ZZ := (x,n) -> if n>=0 then fraction( (numerator x)^n, (denominator x)^n ) else fraction( (denominator x)^-n, (numerator x)^-n );
     -- F == F := (x,y) -> numerator x == numerator y and denominator x == denominator y; -- only if really unique which is hopefully the case
-    F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer
+    F == F := (x,y) -> numerator x * denominator y == numerator y * denominator x; -- safer, cf Hilbert series
     F#0 = new F from { 0_R, 1_R };
     F#1 = new F from { 1_R, 1_R };
     if R.?generators then F.generators = apply(R.generators, r -> promote(r,F));
@@ -211,6 +211,7 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
     if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
     if (last R.baseRings).?frac then promote((last R.baseRings).frac,F) := (x,F) -> new F from {factor numerator x,factor denominator x};
     if not OldFactor then factor F := opts1 -> identity;
+    reduceHilbert F := f -> fraction (f#0,f#1); -- just reduce, really, but only Hilbert series are not reduced
     R.frac=F
     )
 
@@ -284,6 +285,13 @@ if ((options Factor).Configuration#"DegreesRings") then (
     degreesRing List := PolynomialRing => memoize(
      	hft -> if #hft === 0 then dR0 else factor (ZZ degreesMonoid hft));
     degreesRing ZZ := PolynomialRing => memoize( n -> if n == 0 then dR0 else factor(ZZ degreesMonoid n));
+    -- hilbert Series
+    oldHilb := lookup(hilbertSeries,Module);
+    hilbertSeries Module := opts -> M -> (
+	h := (oldHilb opts) M;
+	num := h#0; den := value h#1;
+	new frac class num from {num,den}
+	)
 )
 
 -- not directly related: fraction field of Laurent polynomial ring
