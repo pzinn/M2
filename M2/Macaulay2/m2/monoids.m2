@@ -311,7 +311,7 @@ isDefault = (opts, key) -> (opts#key === monoidDefaults#key
 monoidParts = M -> (
     opts := M.Options;
     G := if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions;
-    D := runLengthEncode if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / (deg -> VerticalList deg);
+    D := runLengthEncode if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / (deg -> if deg === {} then () else vector deg);
     L := nonnull splice ( G, if not isDefault(opts, Degrees) then Degrees => D,
 	apply(( DegreeGroup, Heft, Join, MonomialOrder, WeylAlgebra, SkewCommutative, Inverses, Local, Global ),
 	    key -> if opts#?key and not isDefault(opts, key) then key => rle opts#key)))
