@@ -142,12 +142,7 @@ BOLD       = new MarkUpType of Hypertext
 STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
-TT         = new MarkUpType of Hypertext -- not supported in HMTL5
--- TT replacements
-SAMP        = new MarkUpType of Hypertext
-KBD         = new MarkUpType of Hypertext
-VAR         = new MarkUpType of Hypertext
-
+TT         = new MarkUpType of Hypertext
 
 -- Lists
 OL         = new MarkUpType of HypertextContainer
@@ -354,7 +349,7 @@ htmlAttr = htmlGlobalAttr | {
     }
 
 scan({BR, HR, PARA, PRE, HEADER1, HEADER2, HEADER3, HEADER4, HEADER5, HEADER6,
-	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, SAMP, KBD, VAR, LI, CODE,
+	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, LI, CODE,
 	DL, DT, DD, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
 addAttribute(LABEL,  htmlAttr | {"for", "from"})
 addAttribute(ANCHOR, htmlAttr | {"href", "rel", "target", "type"})
@@ -411,11 +406,11 @@ hypertext Descent := x -> SPAN prepend( "style" => "display:inline-table;text-al
 	  else (k, " : ", v)
 	  , BR{})))
 hypertext Time := x -> DIV { x#1, DIV ("-- ", toString x#0, " seconds", "class" => "token comment") }
-SAMPc = c -> x -> SAMP {toString x,"class"=>"token "|c}
-hypertext CompiledFunctionBody := SAMPc "function"
+TTc = c -> x -> TT {toString x,"class"=>"token "|c}
+hypertext CompiledFunctionBody := TTc "function"
 hypertext Command :=
 hypertext FunctionBody :=
-hypertext Function := f -> SAMP deepSplice {
+hypertext Function := f -> TT deepSplice {
     if hasAttribute(f,ReverseDictionary) then toString getAttribute(f,ReverseDictionary) else (
 	t := locate if instance(f,Command) then f#0 else f;
 	"-*",
@@ -428,11 +423,11 @@ hypertext Function := f -> SAMP deepSplice {
 hypertext File :=
 hypertext IndeterminateNumber :=
 hypertext Manipulator :=
-hypertext Boolean := SAMPc "constant"
+hypertext Boolean := TTc "constant"
 hypertext Type :=
 hypertext FilePosition :=
-hypertext Dictionary := SAMPc "class-name"
-hypertext String := SAMPc "string"
+hypertext Dictionary := TTc "class-name"
+hypertext String := TTc "string"
 hypertext Net := n -> PRE {
     toString n, BR{},
     "class"=>"token net",

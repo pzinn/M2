@@ -115,7 +115,7 @@ toString Package := pkg -> if pkg#?"pkgname" then pkg#"pkgname" else "-*package*
 texMath  Package := pkg -> texMath toString pkg
 options  Package := pkg -> pkg.Options
 methods  Package := memoize(pkg -> select(methods(), m -> package m === pkg))
-hypertext Package := SAMPc "constant"
+hypertext Package := TTc "constant"
 
 -- TODO: should this go elsewhere?
 toString Dictionary := dict -> (

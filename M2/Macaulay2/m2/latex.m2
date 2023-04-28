@@ -201,12 +201,8 @@ tex DL := x -> concatenate(apply(noopts x, tex))
 tex DT := x -> concatenate(newpara, apply(x, tex))
 tex DD := x -> concatenate(newpara, apply(x, tex))
 
-tex   SAMP :=
-tex    KBD :=
 tex     TT := x -> concatenate ( VERBATIM, texExtraLiteral concatenate x, ENDVERBATIM )
-texMath SAMP :=
-texMath KBD  :=
-texMath TT   := x -> concatenate apply(x, texMath) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
+texMath TT := x -> concatenate apply(x, texMath) -- can't use \begingroup and \parindent in math mode (at least not in mathjax)
 
 tex     TABLE := x -> concatenate applyTable(noopts x, tex)
 
