@@ -201,7 +201,7 @@ net  UL := ULop net
 
 OLop := op -> x -> (
      (o, ct) := override(options class x, toSequence x);
-     shft := if o#?"start" and class o#"start" === String and all(characters o#"start",c->c>="0" and c<="9") then value o#"start" else 1;
+     shft := try value o#"start" else 1;
      s := "000. ";
      printWidth = printWidth - #s;
      r := stack apply(#ct, i -> pad(3,toString (i+shft)) | ". " | op ct#i);

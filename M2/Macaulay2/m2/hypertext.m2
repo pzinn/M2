@@ -262,16 +262,16 @@ new HREF from List      := (HREF, x) -> (
 new OL from VisibleList :=
 new UL from VisibleList := (T, x) -> apply(nonnull x, e -> (
 	if class e === TO then LI{TOH{e#0}}
-	else if instance(e, LI) or instance(e,Option) then e
+	else if instance(e, LI) or instance(e,Option) or instance(e,OptionTable) then e
 	else LI e))
 
 -- Written by P. Zinn-Justin
 new TABLE from VisibleList := (T,x) -> (
     apply(nonnull x, e -> (
-           if instance(e, TR) or instance(e, Option) then e else TR e)))
+           if instance(e, TR) or instance(e, Option) or instance(e,OptionTable) then e else TR e)))
 new TR from VisibleList := (T,x) -> (
     apply(nonnull x, e -> (
-           if instance(e, TD) or instance(e, Option) then e else TD e)))
+           if instance(e, TD) or instance(e, Option) or instance(e,OptionTable) then e else TD e)))
 
 -- the main idea of these comparisons is so sorting will sort by the way things will print:
 TO  ? TO  :=
