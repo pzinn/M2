@@ -731,6 +731,7 @@ returns = t -> x -> t
 	   precedence Superscript := returns prec symbol ^
 		 precedence Power := x -> if x#1 === 1 then precedence x#0 else prec symbol ^
 		    precedence ZZ := x -> if x>=0 then strength1 symbol symbol else prec symbol -
+	       precedence Nothing :=
 	precedence InfiniteNumber :=
 		    precedence RR :=
 	      precedence Function :=

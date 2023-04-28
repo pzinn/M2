@@ -131,6 +131,7 @@ if topLevelMode === WebApp then (
 	s=separate(delim,s);
 	concatenate apply(#s, i -> if even i then removeWebAppTags htmlLiteral0 s#i else s#i)
 	);
+    html1 String:=htmlLiteral; -- ugh
     -- colored tex
     col := (c,f) -> ( x -> ///\htmlClass{token /// | c | ///}{/// | f x | ///}///);
     texMath RingFamily :=
@@ -197,7 +198,7 @@ html VisibleList := s -> (
     concatenate (
 	"$",
 	delims#0,
-	if #s===0 or (#s===1 and s#0 === null) then "\\," else
+	if #s===0 then "\\," else
 	demark(",\\,",apply(r,a->(
 		    if #a<=2 then (pureTexFlag=false; "$"|a|"$") else (
 	    		if first a==="$" then a=substring(a,1) else (pureTexFlag=false; a="$"|a);
