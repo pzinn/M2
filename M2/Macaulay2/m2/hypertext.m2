@@ -423,6 +423,7 @@ hypertext Function := f -> TT deepSplice {
 hypertext File :=
 hypertext IndeterminateNumber :=
 hypertext Manipulator :=
+hypertext Nothing :=
 hypertext Boolean := TTc "constant"
 hypertext Type :=
 hypertext FilePosition :=
