@@ -1559,7 +1559,7 @@ locateCode(c:Code):Expr := (
 	       0,false),false)));
 locateSymbol(s:Symbol):Expr := (
           p:=s.position;
-	  if p == dummyPosition
+	  if p == dummyPosition || p == tempPosition
 	  then nullE
 	  else Expr(sethash(List(filePositionClass,
 	       Sequence(
