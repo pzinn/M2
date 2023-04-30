@@ -399,7 +399,7 @@ is3d Matrix := m -> m^{2,3} != matrix {{0,0,1.,0},{0,0,0,1.}} or m_2 != vector {
 -- a bit messy: a 2d translation / rotation looks like {{c,-s,0,x},{s,c,0,y},{0,0,1,0},{0,0,1,0}}
 is3d List := l -> any(l,is3d)
 is3d' = g -> (g.cache.?Is3d and g.cache.Is3d) or (g.?AnimMatrix and is3d g.AnimMatrix) or (g.?TransformMatrix and is3d g.TransformMatrix)
-is3d GraphicsObject := g -> g.cache.Is3d = is3d'
+is3d GraphicsObject := g -> g.cache.Is3d = is3d' g
 is3d Ellipse := g -> g.cache.Is3d = is3d' g or is3d g.Center
 is3d Circle := g -> g.cache.Is3d = is3d' g or is3d g.Center or is3d g.Radius
 is3d GraphicsText := g -> g.cache.Is3d = is3d' g or is3d g.RefPoint
