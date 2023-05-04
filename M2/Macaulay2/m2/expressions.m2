@@ -1309,8 +1309,10 @@ short Table := x ->  (
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
 	    else m,shortRow)
     )
-short VisibleList :=
-short Expression := x -> apply(if #x>shortLength then new class x from {
+--short VisibleList :=
+--short Expression :=
+-- riskier option: might break something internal
+short BasicList := x -> apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
