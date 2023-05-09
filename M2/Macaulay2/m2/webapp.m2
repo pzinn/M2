@@ -171,6 +171,21 @@ html2 := (fun,args,lprec,rprec,sep,supp) -> (
 	if #args<=2 or first args!="$" then (pureTexFlag=false; "$"|args) else substring(args,1)
 	)
     )
+html RowExpression := s -> (
+    if debugLevel === 42 then return htmlTex s;
+    r := apply(s, x -> try html x else break);
+    if r =!= null then (
+	r=new MutableList from r;
+	scan(#r-1,i->(
+	    	if last r#i =!= "$" or first r#(i+1) =!= "$" then pureTexFlag=false else (
+		    r#i=substring(r#i,0,#(r#i)-1);
+		    r#(i+1)=substring(r#(i+1),1);
+		    )
+	    	));
+    	concatenate r   
+    	)
+    else if oneLineFlag then htmlTex s else error "not one line"
+    )
 html Expression := x -> if debugLevel === 42 or oneLineFlag then htmlTex x  else error "not one line"
 html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0;
 html Adjacent := html FunctionApplication := m -> (
