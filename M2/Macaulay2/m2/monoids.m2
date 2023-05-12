@@ -311,7 +311,7 @@ isDefault = (opts, key) -> (opts#key === monoidDefaults#key
 monoidParts = M -> (
     opts := M.Options;
     G := if M.?generatorExpressions then toSequence runLengthEncode M.generatorExpressions;
-    D := runLengthEncode if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / (deg -> if deg === {} then () else vector deg);
+    D := runLengthEncode if opts.DegreeRank === 0 then opts.Degrees else if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / vector;
     L := nonnull splice ( G, if not isDefault(opts, Degrees) then Degrees => D,
 	apply(( DegreeGroup, Heft, Join, MonomialOrder, WeylAlgebra, SkewCommutative, Inverses, Local, Global ),
 	    key -> if opts#?key and not isDefault(opts, key) then key => rle opts#key)))
@@ -416,8 +416,9 @@ findHeft List := opts -> degs -> (
 -----------------------------------------------------------------------------
 
 processHeft = (degrk, degs, group, heftvec, inverses) -> (
-     if inverses then return null;
+    if inverses then return null;
     if heftvec =!= null then (
+     	heftvec = splice heftvec;
 	if not isListOfIntegers heftvec then error "expected Heft option to be a list of integers";
 	if #heftvec > degrk then error("expected Heft option to be of length at most the degree rank (", degrk, ")");
 	if #heftvec < degrk then heftvec = join(heftvec, degrk - #heftvec : 0));
@@ -447,11 +448,11 @@ processDegrees = (degs, degrk, group, nvars) -> (
 	degs = entries transpose matrix degs);
     -- sanity checks
     if instance(degs, List) then (
-	degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else spliceInside d);
+	degs = apply(spliceInside degs, d -> if class d === ZZ then {d} else if instance(d,Vector) then entries d else spliceInside d);
 	degrk = if degrk =!= null then degrk else if degs#?0 then #degs#0 else 1; -- so that degreeLength monoid[] = 1
 	group = if group =!= null then group else ZZ^degrk;
 	if not #degs === nvars                          then error "expected as many degrees as there are variables";
-	if not isListOfListsOfIntegers degs             then error "expected each degree to be an integer or list of integers";
+	if not isListOfListsOfIntegers degs             then error "expected each degree to be an integer or list of integers or vectors";
 	if degs#?0 and unique(length \ degs) != {degrk} then error("expected all degrees to have length ", degrk);
 	if degrk != rank ambient group                  then error "expected all degrees to be in the degree group";
 	(degs, degrk, group))

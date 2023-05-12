@@ -1298,7 +1298,8 @@ shortStringLength := 3*shortLength
 shortMode = false
 -- used e.g. in chaincomplexes.m2
 short = method(Dispatch => Thing, TypicalValue => Expression)
-short Thing := x -> short expression x
+short RingElement :=
+short Thing := short @@ expression
 short Holder := identity -- to avoid infinite loops
 short MatrixExpression :=
 short Table := x ->  (
@@ -1310,7 +1311,7 @@ short Table := x ->  (
     )
 --short VisibleList :=
 --short Expression :=
--- riskier option: might break something internal
+-- riskier option: might break something internal (see RingElement above)
 short BasicList := x -> apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
@@ -1333,22 +1334,6 @@ short Set := H -> hold ( if #H <= shortLength then H else (
 Abbreviate = new WrapperType of Holder -- only used once, for listSymbols
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)
 html Abbreviate := y -> html short y#0
-
-
--*
-texMath Short := x -> ( -- temp -- one day there'll be a texMath' or some other mechanism
-    x = x#0;
-    if class x =!= MatrixExpression and class x =!= Table then return texMath x;
-    (opts,m):=matrixOpts x;
-    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
-    concatenate(
-    if class x === MatrixExpression then "\\left(",
-    "\\begin{smallmatrix}", newline,
-    between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
-    newline, "\\end{smallmatrix}",
-    if class x === MatrixExpression then "\\right)"
-    ))
-*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
