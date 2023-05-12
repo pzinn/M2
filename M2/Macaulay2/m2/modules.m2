@@ -77,10 +77,10 @@ Vector _ ZZ := (v,i) -> (ambient v#0)_(i,0)
 entries Vector := v -> entries ambient v#0 / first
 norm Vector := v -> norm v#0
 expression Vector := v -> VectorExpression apply(flatten entries super v#0,expression)
-net Vector := net @@ expression
+net Vector := v -> net expression v
 toExternalString Vector :=
-toString Vector := toString @@ expression
-texMath Vector := texMath @@ expression
+toString Vector := v -> toString expression v
+texMath Vector := v -> texMath expression v
 --html Vector := v -> html expression v
 ring Vector := v -> ring class v
 module Vector := v -> target v#0
@@ -110,9 +110,9 @@ numeric(ZZ,Vector) := (prec,v) -> (
      if F === ZZ or F === QQ then return promote(v,RR_prec);
      error "expected vector of numbers"
      )
-lift(Vector,InexactNumber) := 
+lift(Vector,InexactNumber) :=
 lift(Vector,InexactNumber') :=
-lift(Vector,RingElement) := 
+lift(Vector,RingElement) :=
 lift(Vector,Number) := Vector => o -> (v,S) -> vector (lift(v#0,S))
 
 - Vector := Vector => v -> new class v from {-v#0}
@@ -217,9 +217,9 @@ expression Module := M -> (
 	 new Superscript from {unhold expression ring M, if n =!= 0 then unhold expression n else moduleZERO }
      )
  )
-toString Module := toString @@ expression
-net Module := net @@ expression
-texMath Module := texMath @@ expression
+toString Module := M -> toString expression M
+net Module := M -> net expression M
+texMath Module := M -> texMath expression M
 
 describe Module := M -> Describe (
      if M.?relations

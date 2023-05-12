@@ -608,7 +608,6 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol } => "\\} ",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
---    symbol SPACE => "\\texttt{SPACE}",
     symbol # => "\\#",
     symbol #? => "\\#?",
     symbol % => "\\%",
