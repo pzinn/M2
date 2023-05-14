@@ -552,6 +552,7 @@ matrixOpts := m -> ( -- helper function
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
+    if #m === 0 then return map(ZZ^0,ZZ^0,0); -- not great but best one can do
     m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
     -- TODO: keep track of blocks too
     if opts.Degrees === null then m else (
@@ -566,7 +567,7 @@ toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
-expressionValue VectorExpression := x -> vector apply(toList x,expressionValue)
+expressionValue VectorExpression := x -> if #x===0 then vector(map(ZZ^0,ZZ^1,0)) else vector apply(toList x,expressionValue)
 toString'(Function,VectorExpression) := (fmt,v) -> concatenate(
      "vector {",
      between(", ",apply(toList v,fmt)),
@@ -1180,12 +1181,13 @@ texMath MatrixExpression := x -> (
 	)
 )
 
-texMath VectorExpression := v -> (
-    concatenate(
+texMath VectorExpression := x -> (
+    if all(x,i->class i===ZeroExpression) then "0"
+    else concatenate(
 	"\\left(",
 	"\\!\\begin{array}{c}",
 	newline,
-	between(///\\///,apply(toList v,texMath)),
+	between(///\\///,apply(toList x,texMath)),
 	"\\end{array}\\!",
 	"\\right)"
 	)
