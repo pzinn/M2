@@ -235,7 +235,7 @@ html HashTable := H -> (
     if debugLevel === 42 or H.?texMath then htmlTex H
     else if lookup(texMath,class H) =!= lookup(texMath,HashTable) then htmlTex1 H
     else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
-    else if mutable H then htmlMutable H
+    else if isMutable H then htmlMutable H
     else concatenate(html class H,
 	htmlVisibleList apply(sortByName pairs H, p -> new Option from p)
     ))
