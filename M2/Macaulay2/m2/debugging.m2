@@ -141,7 +141,7 @@ typicalValues#frame = MutableList
 
 select2 := (type,syms) -> apply(
      sort apply(
-	  select(syms, sym -> mutable sym and instance(value sym,type) and value sym =!= sym),
+	  select(syms, sym -> isMutable sym and instance(value sym,type) and value sym =!= sym),
 	  symb -> (hash symb, symb)
 	  ),
      (h,s) -> s)
@@ -194,7 +194,7 @@ generateAssertions String := s -> generateAssertions select(lines s, x -> not ma
 generateAssertions List := y -> (
      nogens := {PolynomialRing, QuotientRing,Function};
      good := t -> (
-	  not mutable t
+	  not isMutable t
 	  and
 	  all(nogens, X -> not instance(t,X))
 	  );
