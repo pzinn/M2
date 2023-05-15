@@ -11,22 +11,22 @@
 o2 : <tt class="token class-name">List</tt>
 i3 : 3:0L = solveSystem(S)
 
-o3 = $\left\{\left\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\right\},\,\left\{1+\mathbf{i},\,1-\mathbf{i},\,-1+0\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\},\,\{1+\mathbf{i},\,1-\mathbf{i},\,-1+0\,\mathbf{i}\}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0oneSoln = L_0
 
-o4 = $\left\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\right\}$
+o4 = $\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\}$
 
 o4 : <tt class="token class-name">Point</tt>
 i5 : 5:0peek oneSoln
 
-o5 = <span><tt class="token class-name">Point</tt><ul style="display:inline-table">
-<li>
-<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 3\ldots\}$</span></li>
-<li>
-<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\right\}$</span></li>
-</ul>
+o5 = <span><tt class="token class-name">Point</tt>  <ul style="display:inline-table">
+    <li>
+<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 3\ldots\}$</span>    </li>
+    <li>
+<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\}$</span>    </li>
+  </ul>
 </span>
 i6 : 6:0system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
 
@@ -42,4 +42,3 @@
 
 o9 = $3$
 i10 : 10:0
-

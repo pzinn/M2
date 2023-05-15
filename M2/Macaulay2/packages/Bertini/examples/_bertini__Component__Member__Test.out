@@ -3,7 +3,7 @@
 i2 : 2:0F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
 i3 : 3:0NV = bertiniPosDimSolve(F)
 
-o3 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 4\ldots\}$
+o3 = <tt class="token constant">NV</tt>
 
 o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0pts = {{0,0,0}} --z-axis
@@ -17,4 +17,3 @@
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 6:0
-

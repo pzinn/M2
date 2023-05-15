@@ -1,12 +1,11 @@
 -- -*- M2-comint -*- hash: -211311793
 i1 : 1:0v = versionNumber(null)
 
-o1 = $($<tt class="token string">2.4.78</tt>$,\,$<tt class="token string">2020-06-30</tt>$)$
+o1 = $($<tt class="token string">2.4.85</tt>$,\,$<tt class="token string">2020-06-30</tt>$)$
 
 o1 : <tt class="token class-name">Sequence</tt>
 i2 : 2:0print v_0
-<tt class="token string">2.4.78</tt>
+<tt class="token string">2.4.85</tt>
 i3 : 3:0print v_1
 <tt class="token string">2020-06-30</tt>
 i4 : 4:0
-

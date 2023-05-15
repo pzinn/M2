@@ -30,4 +30,3 @@
 
 o8 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{5}$</span>
 i9 : 9:0
-

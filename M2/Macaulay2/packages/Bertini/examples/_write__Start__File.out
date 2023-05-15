@@ -6,4 +6,3 @@
 o1 : <tt class="token class-name">List</tt>
 i2 : 2:0writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
 i3 : 3:0
-

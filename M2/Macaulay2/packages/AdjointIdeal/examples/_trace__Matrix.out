@@ -73,4 +73,3 @@
 
 o21 : <span><tt class="token class-name">Matrix</tt> $\left(<tt class="token function">frac</tt>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{6}\,\longleftarrow \,\left(<tt class="token function">frac</tt>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{6}$</span>
 i22 : 22:0
-

@@ -11,14 +11,14 @@
 o2 : <tt class="token class-name">List</tt>
 i3 : 3:0S = bertiniPosDimSolve F
 
-o3 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 4\ldots\}$
+o3 = <tt class="token constant">S</tt>
 
 o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
 o4 = <ul style="display:inline-table">
-<li>
-$\left\{{6.38451}\cdot 10^{-68}+{3.43346}\cdot 10^{-69}\,\mathbf{i},\,-{7.63805}\cdot 10^{-68}-{1.46044}\cdot 10^{-68}\,\mathbf{i},\,-{.314977}-{.184146}\,\mathbf{i}\right\}$</li>
+  <li>
+$\{{2.04055}\cdot 10^{-69}+{1.00348}\cdot 10^{-69}\,\mathbf{i},\,{2.08004}\cdot 10^{-69}-{1.28308}\cdot 10^{-69}\,\mathbf{i},\,{.144949}-{.330289}\,\mathbf{i}\}$  </li>
 </ul>
 
 
@@ -30,27 +30,27 @@ $\left\{{6.38451}\cdot 10^{-68}+{3.43346}\cdot 10^{-69}\,\mathbf{i},\,-{7.63805}
 o5 : <tt class="token class-name">List</tt>
 i6 : 6:0peek oo_0 --then list position
 
-o6 = <span><tt class="token class-name">WitnessSet</tt><ul style="display:inline-table">
-<li>
-<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 3\ldots\}$</span></li>
-<li>
-<span>$\textit{Equations}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$<pre class="token net" style="vertical-align:-300%">      |   3      2      2      |
+o6 = <span><tt class="token class-name">WitnessSet</tt>  <ul style="display:inline-table">
+    <li>
+<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 3\ldots\}$</span>    </li>
+    <li>
+<span>$\textit{Equations}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$        <pre class="token net" style="vertical-align:-300%">      |   3      2      2      |
 {-3}  |  x  + x*y  + x*z  - x  |
       |                        |
       |    2     3      2      |
 {-3}  |   x y + y  + y*z  - y  |<br/></pre>
-$</span></li>
-<li>
-<span>$\textit{Points}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><ul style="display:inline-table">
-<li>
-$\left\{{6.38451}\cdot 10^{-68}+{3.43346}\cdot 10^{-69}\,\mathbf{i},\,-{7.63805}\cdot 10^{-68}-{1.46044}\cdot 10^{-68}\,\mathbf{i},\,-{.314977}-{.184146}\,\mathbf{i}\right\}$</li>
-</ul>
-</span></li>
-<li>
+$</span>    </li>
+    <li>
+<span>$\textit{Points}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>        <ul style="display:inline-table">
+          <li>
+$\{{2.04055}\cdot 10^{-69}+{1.00348}\cdot 10^{-69}\,\mathbf{i},\,{2.08004}\cdot 10^{-69}-{1.28308}\cdot 10^{-69}\,\mathbf{i},\,{.144949}-{.330289}\,\mathbf{i}\}$          </li>
+        </ul>
+</span>    </li>
+    <li>
 <span>$\textit{Slice}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left(\!\begin{array}{cccc}
--{2.14213}+{1.19843}\,\mathbf{i}&amp;-{1.28332}-{.201154}\,\mathbf{i}&amp;-{2.97976}+{.133066}\,\mathbf{i}&amp;-{.963057}-{.506797}\,\mathbf{i}
-\end{array}\!\right)$</span></li>
-</ul>
+-{.681226}-{1.19186}\,\mathbf{i}&amp;-{.27176}-{.387413}\,\mathbf{i}&amp;-{1.39682}-{.687612}\,\mathbf{i}&amp;{.429579}-{.361685}\,\mathbf{i}
+\end{array}\!\right)$</span>    </li>
+  </ul>
 </span>
 i7 : 7:0PD=primaryDecomposition( ideal F)
 
@@ -70,4 +70,3 @@ $\left\{{6.38451}\cdot 10^{-68}+{3.43346}\cdot 10^{-69}\,\mathbf{i},\,-{7.63805}
 
 o11 = $1$
 i12 : 12:0
-

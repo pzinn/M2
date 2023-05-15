@@ -16,8 +16,7 @@
 o3 : <tt class="token class-name">List</tt>
 i4 : 4:0solns = bertiniZeroDimSolve(F)
 
-o4 = $\left\{\left\{{1}+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\right\},\,\left\{1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\right\}\right\}$
+o4 = $\left\{\{1+0\,\mathbf{i},\,{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,{1.41421}+{8.16014}\cdot 10^{-15}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,-{1.41421}+{4.44089}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
 
 o4 : <tt class="token class-name">List</tt>
 i5 : 5:0
-

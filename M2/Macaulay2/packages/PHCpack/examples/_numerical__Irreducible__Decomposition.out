@@ -4,7 +4,7 @@
 i3 : 3:0V=numericalIrreducibleDecomposition(system)
 found 6 irreducible factors 
 
-o3 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 1\ldots\}$
+o3 = <tt class="token constant">V</tt>
 
 o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0WitSets=V#5; --witness sets are accessed by dimension
@@ -16,7 +16,7 @@ found 6 irreducible factors
 i8 : 8:0system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 i9 : 9:0PD=primaryDecomposition(ideal(system))
 
-o9 = $\left\{<tt class="token function">ideal</tt>${}\left(\textit{x13},\,\textit{x23},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}\right)$,\,<tt class="token function">ideal</tt>${}\left(\textit{x12},\,\textit{x22},\,\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}\right)$,\,<tt class="token function">ideal</tt>${}\left(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\,\textit{x21}\,\textit{x14}-\textit{x11}\,\textit{x24},\,\textit{x22}\,\textit{x14}-\textit{x12}\,\textit{x24},\,\textit{x12}\,\textit{x23}-\textit{x22}\,\textit{x13},\,\textit{x11}\,\textit{x23}-\textit{x21}\,\textit{x13},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}\right)$\right\}$
+o9 = $\{$<tt class="token function">ideal</tt>${}(\textit{x13},\,\textit{x23},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}),\,$<tt class="token function">ideal</tt>${}(\textit{x12},\,\textit{x22},\,\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}),\,$<tt class="token function">ideal</tt>${}(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\,\textit{x21}\,\textit{x14}-\textit{x11}\,\textit{x24},\,\textit{x22}\,\textit{x14}-\textit{x12}\,\textit{x24},\,\textit{x12}\,\textit{x23}-\textit{x22}\,\textit{x13},\,\textit{x11}\,\textit{x23}-\textit{x21}\,\textit{x13},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12})\}$
 
 o9 : <tt class="token class-name">List</tt>
 i10 : 10:0for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)
@@ -24,4 +24,3 @@ found 6 irreducible factors
 <tt class="token string">dim =5  degree=2</tt>
 <tt class="token string">dim =5  degree=4</tt>
 i11 : 11:0
-

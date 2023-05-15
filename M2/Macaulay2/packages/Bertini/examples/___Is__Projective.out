@@ -3,4 +3,3 @@
 i2 : 2:0f = {(x^2+y^2-z^2)*(z-x),(x^2+y^2-z^2)*(z+y)};
 i3 : 3:0bertiniPosDimSolve(f,IsProjective=>1);
 i4 : 4:0
-

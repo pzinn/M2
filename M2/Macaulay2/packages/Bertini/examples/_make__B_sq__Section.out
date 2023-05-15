@@ -71,14 +71,14 @@
 o15 : <tt class="token class-name">B'Section</tt>
 i16 : 16:0peek rHomogeSection
 
-o16 = <span><tt class="token class-name">B'Section</tt><ul style="display:inline-table">
-<li>
-<span>$B'Homogenization$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token string">x+y+z</tt></span></li>
-<li>
-<span>$B'NumberCoefficients$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{{.534614}-{.175945}\,\mathbf{i},\,{.426704}-{.97539}\,\mathbf{i},\,-{.478803}+{.0416008}\,\mathbf{i}\right\}$</span></li>
-<li>
-<span>$B'SectionString$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token string">(.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))</tt></span></li>
-</ul>
+o16 = <span><tt class="token class-name">B'Section</tt>  <ul style="display:inline-table">
+    <li>
+<span>$B'Homogenization$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token string">x+y+z</tt></span>    </li>
+    <li>
+<span>$B'NumberCoefficients$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{{.534614}-{.175945}\,\mathbf{i},\,{.426704}-{.97539}\,\mathbf{i},\,-{.478803}+{.0416008}\,\mathbf{i}\}$</span>    </li>
+    <li>
+<span>$B'SectionString$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token string">(.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))</tt></span>    </li>
+  </ul>
 </span>
 i17 : 17:0print rHomogeSection#B'SectionString
 <tt class="token string">(.534614-.175945*ii)*(x-(x+y+z)*(1))+(.426704-.97539*ii)*(y-(x+y+z)*(2))+(-.478803+.0416008*ii)*(z-(x+y+z)*(3))</tt>
@@ -98,4 +98,3 @@
 
 o22 = <tt class="token constant">true</tt>
 i23 : 25:0
-

@@ -16,16 +16,16 @@
 o3 : <tt class="token class-name">B'Slice</tt>
 i4 : 4:0peek xySlice
 
-o4 = <span><tt class="token class-name">B'Slice</tt><ul style="display:inline-table">
-<li>
-<span>$B'NumberCoefficients$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{\left\{{1.49144}+{.713846}\,\mathbf{i},\,-{.840113}+{1.1986}\,\mathbf{i}\right\},\,\left\{{.014842}+{1.23548}\,\mathbf{i},\,-{.214468}+{.911293}\,\mathbf{i},\,-{.486176}+{.400577}\,\mathbf{i}\right\}\right\}$</span></li>
-<li>
-<span>$B'SectionString$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{$<tt class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</tt>$,\,$<tt class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</tt>$\}$</span></li>
-<li>
-<span>$ListB'Sections$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{$<tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\},\,$<tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}\}$</span></li>
-<li>
-<span>$NameB'Slice$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>null</span></li>
-</ul>
+o4 = <span><tt class="token class-name">B'Slice</tt>  <ul style="display:inline-table">
+    <li>
+<span>$B'NumberCoefficients$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{\{{1.49144}+{.713846}\,\mathbf{i},\,-{.840113}+{1.1986}\,\mathbf{i}\},\,\{{.014842}+{1.23548}\,\mathbf{i},\,-{.214468}+{.911293}\,\mathbf{i},\,-{.486176}+{.400577}\,\mathbf{i}\}\}$</span>    </li>
+    <li>
+<span>$B'SectionString$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{$<tt class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</tt>$,\,$<tt class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</tt>$\}$</span>    </li>
+    <li>
+<span>$ListB'Sections$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{$<tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\},\,$<tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}\}$</span>    </li>
+    <li>
+<span>$NameB'Slice$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>null</span>    </li>
+  </ul>
 </span>
 i5 : 5:0for i in  xySlice#B'SectionString do print i
 <tt class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</tt>
@@ -85,4 +85,3 @@
 
 o23 = $1$
 i24 : 30:0
-

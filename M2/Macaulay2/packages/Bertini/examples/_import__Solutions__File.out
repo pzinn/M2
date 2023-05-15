@@ -10,18 +10,17 @@
 i3 : 5:0runBertini(storeBM2Files)
 i4 : 6:0importSolutionsFile(storeBM2Files)
 
-o4 = $\left\{\left\{1+0\,\mathbf{i},\,{1}+{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{{1}+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,{1}-{2.77556}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
+o4 = $\{\{1+0\,\mathbf{i},\,1-{1.9984}\cdot 10^{-15}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,{1}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\}\}$
 
 o4 : <tt class="token class-name">List</tt>
 i5 : 7:0importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
 
-o5 = $\left\{\left\{1+0\,\mathbf{i},\,{1}+{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,{1}-{2.77556}\cdot 10^{-16}\,\mathbf{i}\right\}\right\}$
+o5 = $\{\{1+0\,\mathbf{i},\,1-{1.9984}\cdot 10^{-15}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,{1}+0\,\mathbf{i}\}\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 8:0importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)
 
-o6 = $\left\{\left\{1+0\,\mathbf{i},\,{1}+{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{{1}+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,{1}-{2.77556}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\right\},\,\left\{-1+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\right\}\right\}$
+o6 = $\{\{1+0\,\mathbf{i},\,1-{1.9984}\cdot 10^{-15}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,{1}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\}\}$
 
 o6 : <tt class="token class-name">List</tt>
 i7 : 9:0
-

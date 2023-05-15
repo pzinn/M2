@@ -9,8 +9,7 @@
 i5 : 4:0L = factorWitnessSet(w)
 found 2 irreducible factors 
 
-o5 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 1\ldots\}$
+o5 = <tt class="token constant">L</tt>
 
 o5 : <tt class="token class-name">NumericalVariety</tt>
 i6 : 5:0
-

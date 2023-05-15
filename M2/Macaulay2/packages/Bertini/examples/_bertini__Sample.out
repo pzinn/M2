@@ -11,7 +11,7 @@
 o2 : <tt class="token class-name">List</tt>
 i3 : 3:0NV = bertiniPosDimSolve(F)
 
-o3 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 4\ldots\}$
+o3 = <tt class="token constant">NV</tt>
 
 o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0W = NV#1_0 --z-axis
@@ -21,8 +21,7 @@
 o4 : <tt class="token class-name">WitnessSet</tt>
 i5 : 5:0bertiniSample(4, W)
 
-o5 = $\left\{\left\{-{2.4936}\cdot 10^{-314}-{5.81943}\cdot 10^{-314}\,\mathbf{i},\,0\,\mathbf{i},\,{.0266911}+{.229847}\,\mathbf{i}\right\},\,\left\{{1.16621}\cdot 10^{-315}-{1.39498}\cdot 10^{-315}\,\mathbf{i},\,{5.71483}\cdot 10^{-144}+{6.3981}\cdot 10^{-143}\,\mathbf{i},\,{.0653712}+{.205879}\,\mathbf{i}\right\},\,\left\{0\,\mathbf{i},\,0\,\mathbf{i},\,{.110595}+{.161478}\,\mathbf{i}\right\},\,\left\{0\,\mathbf{i},\,0\,\mathbf{i},\,{.0686554}-{.184656}\,\mathbf{i}\right\}\right\}$
+o5 = $\left\{\{{7.85466}\cdot 10^{-174}-{2.28057}\cdot 10^{-174}\,\mathbf{i},\,-{7.56572}\cdot 10^{-21}+{2.94781}\cdot 10^{-22}\,\mathbf{i},\,-{.77011}+{.0771045}\,\mathbf{i}\},\,\{-{1.34486}\cdot 10^{-194}-{7.54153}\cdot 10^{-195}\,\mathbf{i},\,-{4.33707}\cdot 10^{-20}-{6.69366}\cdot 10^{-20}\,\mathbf{i},\,-{.387948}-{.610608}\,\mathbf{i}\},\,\{{1.15176}\cdot 10^{-224}-{1.40782}\cdot 10^{-225}\,\mathbf{i},\,-{2.77757}\cdot 10^{-21}-{3.81954}\cdot 10^{-20}\,\mathbf{i},\,-{.704644}-{.615109}\,\mathbf{i}\},\,\{{7.76374}\cdot 10^{-204}-{5.09759}\cdot 10^{-204}\,\mathbf{i},\,-{1.68899}\cdot 10^{-20}+{1.12294}\cdot 10^{-20}\,\mathbf{i},\,-{.17543}-{.131551}\,\mathbf{i}\}\right\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 6:0
-

@@ -6,7 +6,7 @@
 i2 : 5:0runBertini(storeBM2Files)
 i3 : 6:0thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{\left\{-{.00341539}+{.0216794}\,\mathbf{i},\,-{4.11724}\cdot 10^{-18}-{5.78414}\cdot 10^{-18}\,\mathbf{i},\,-{.823393}+{.567896}\,\mathbf{i}\right\},\,\left\{{.589327}+{.810354}\,\mathbf{i},\,{.986299}+{.00986222}\,\mathbf{i},\,-{.826976}+{.589244}\,\mathbf{i}\right\},\,\left\{-{.548854}-{.75174}\,\mathbf{i},\,-{.945409}-{.0380969}\,\mathbf{i},\,-{.819338}+{.54753}\,\mathbf{i}\right\}\right\}$
+o3 = $\left\{\{{.00128328}-{.00563831}\,\mathbf{i},\,-{3.70751}\cdot 10^{-19}+{2.74775}\cdot 10^{-18}\,\mathbf{i},\,-{.673075}-{.739597}\,\mathbf{i}\},\,\{-{.751604}+{.471621}\,\mathbf{i},\,-{.87698}+{.159674}\,\mathbf{i},\,-{.6733}-{.734447}\,\mathbf{i}\},\,\{{.760602}-{.47981}\,\mathbf{i},\,{.881782}-{.154398}\,\mathbf{i},\,-{.672814}-{.744767}\,\mathbf{i}\}\right\}$
 
 o3 : <tt class="token class-name">List</tt>
 i4 : 7:0witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
@@ -19,8 +19,7 @@
 o4 : <tt class="token class-name">List</tt>
 i5 : 8:0sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{\left\{-{.00341539}+{.0216794}\,\mathbf{i},\,-{4.11724}\cdot 10^{-18}-{5.78414}\cdot 10^{-18}\,\mathbf{i},\,-{.823393}+{.567896}\,\mathbf{i}\right\}\right\},\,\left\{\left\{{.589327}+{.810354}\,\mathbf{i},\,{.986299}+{.00986222}\,\mathbf{i},\,-{.826976}+{.589244}\,\mathbf{i}\right\},\,\left\{-{.548854}-{.75174}\,\mathbf{i},\,-{.945409}-{.0380969}\,\mathbf{i},\,-{.819338}+{.54753}\,\mathbf{i}\right\}\right\}\right\}$
+o5 = $\left\{\left\{\{{.00128328}-{.00563831}\,\mathbf{i},\,-{3.70751}\cdot 10^{-19}+{2.74775}\cdot 10^{-18}\,\mathbf{i},\,-{.673075}-{.739597}\,\mathbf{i}\}\right\},\,\left\{\{-{.751604}+{.471621}\,\mathbf{i},\,-{.87698}+{.159674}\,\mathbf{i},\,-{.6733}-{.734447}\,\mathbf{i}\},\,\{{.760602}-{.47981}\,\mathbf{i},\,{.881782}-{.154398}\,\mathbf{i},\,-{.672814}-{.744767}\,\mathbf{i}\}\right\}\right\}$
 
 o5 : <tt class="token class-name">List</tt>
 i6 : 9:0
-

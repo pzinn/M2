@@ -3,7 +3,7 @@
 i2 : 2:0sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : 3:0describe ring ideal sys
 
-o3 = <tt class="token function">frac</tt>${}\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,\textit{Degrees}\ \Rightarrow \ \left\{3:1\right\},\,\textit{Heft}\ \Rightarrow \ \{1\}\right]\right)$
+o3 = <tt class="token function">frac</tt>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\, z,\,\textit{Degrees}\ \Rightarrow \ \{3\htmlClass{token keyword}{:}1\},\,\textit{Heft}\ \Rightarrow \ \{1\}])$
 i4 : 4:0convertedSys = toLaurentPolynomial(sys,w);
 i5 : 5:0printWidth = 300;
 i6 : 6:0toString convertedSys
@@ -16,15 +16,15 @@
 o7 : <span><tt class="token class-name">PolynomialRing</tt></span>
 i8 : 8:0describe oo
 
-o8 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\, z,\,w_{0},\,\textit{Degrees}\ \Rightarrow \ \left\{4:1\right\},\,$\textit{MonomialOrder}\ \Rightarrow \ $<ul style="display:inline-table">
-<li>
-$\textit{Weights}\ \Rightarrow \ \left\{4:-1\right\}$</li>
-<li>
-$\textit{MonomialSize}\ \Rightarrow \ 32$</li>
-<li>
-$\textit{GroupRevLex}\ \Rightarrow \ 4$</li>
-<li>
-$\textit{Position}\ \Rightarrow \ \textit{Up}$</li>
+o8 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\, z,\,w_{0},\,\textit{Degrees}\ \Rightarrow \ \{4\htmlClass{token keyword}{:}1\},\,$\textit{MonomialOrder}\ \Rightarrow \ $<ul style="display:inline-table">
+  <li>
+$\textit{Weights}\ \Rightarrow \ \{4\htmlClass{token keyword}{:}-1\}$  </li>
+  <li>
+$\textit{MonomialSize}\ \Rightarrow \ 32$  </li>
+  <li>
+$\textit{GroupRevLex}\ \Rightarrow \ 4$  </li>
+  <li>
+$\textit{Position}\ \Rightarrow \ \textit{Up}$  </li>
 </ul>
 ,\,$\textit{Inverses}\ \Rightarrow \ $<tt class="token constant">true</tt>,\,$\textit{Local}\ \Rightarrow \ $<tt class="token constant">true</tt>,\,$\textit{Global}\ \Rightarrow \ $<tt class="token constant">false</tt>\right\}$
 i9 : 9:0P = QQ[x,y,z];
@@ -42,4 +42,3 @@ $\textit{Position}\ \Rightarrow \ \textit{Up}$</li>
 
 o12 : $P$
 i13 : 13:0
-

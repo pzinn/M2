@@ -3,7 +3,7 @@
 i2 : 2:0L = { z*(x+y), z*(x-y) };
 i3 : 3:0WitSets = cascade(L)
 
-o3 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 2\ldots\}$
+o3 = <tt class="token constant">WitSets</tt>
 
 o3 : <tt class="token class-name">NumericalVariety</tt>
 i4 : 4:0W=first WitSets#2
@@ -24,8 +24,8 @@
 i6 : 6:0W#Points
 
 o6 = <ul style="display:inline-table">
-<li>
-$\left\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\cdot 10^{-32}+{7.65273}\cdot 10^{-33}\,\mathbf{i},\,-{2.28184}\cdot 10^{-32}-{4.87389}\cdot 10^{-33}\,\mathbf{i},\,-{1.6382}\cdot 10^{-32}+{1.66152}\cdot 10^{-32}\,\mathbf{i}\right\}$</li>
+  <li>
+$\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\cdot 10^{-32}+{7.65273}\cdot 10^{-33}\,\mathbf{i},\,-{2.28184}\cdot 10^{-32}-{4.87389}\cdot 10^{-33}\,\mathbf{i},\,-{1.6382}\cdot 10^{-32}+{1.66152}\cdot 10^{-32}\,\mathbf{i}\}$  </li>
 </ul>
 
 
@@ -39,4 +39,3 @@ $\left\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21
 
 o7 : <span><tt class="token class-name">Matrix</tt> ${\mathbb C}_{53}^{2}\,\longleftarrow \,{\mathbb C}_{53}^{6}$</span>
 i8 : 8:0
-

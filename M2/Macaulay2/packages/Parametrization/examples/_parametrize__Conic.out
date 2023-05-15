@@ -17,4 +17,3 @@ t_{0}^{8}-t_{1}^{8}
 
 o5 : <span><tt class="token class-name">Matrix</tt> $\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{3}\,\longleftarrow \,\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[t_{0}\,{.}{.}\, t_{1}\right]\right)^{1}$</span>
 i6 : 6:0
-

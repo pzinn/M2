@@ -6,17 +6,17 @@
 i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
 i6 : 6:0S0 = bertiniUserHomotopy (t,{a=>t}, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\left\{{1.41421}+{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\},\,\left\{-{1.41421}+0\,\mathbf{i}\right\}\right\}$
+o6 = $\left\{\{{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i}\},\,\{-{1.41421}+0\,\mathbf{i}\}\right\}$
 
 o6 : <tt class="token class-name">List</tt>
 i7 : 7:0peek S0_0
 
-o7 = <span><tt class="token class-name">Point</tt><ul style="display:inline-table">
-<li>
-<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 13\ldots\}$</span></li>
-<li>
-<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left\{{1.41421}+{5.55112}\cdot 10^{-16}\,\mathbf{i}\right\}$</span></li>
-</ul>
+o7 = <span><tt class="token class-name">Point</tt>  <ul style="display:inline-table">
+    <li>
+<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 13\ldots\}$</span>    </li>
+    <li>
+<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i}\}$</span>    </li>
+  </ul>
 </span>
 i8 : 8:0R=CC[x,y,t,a]; -- include the path variable in the ring
 i9 : 9:0f1=(x^2-y^2);
@@ -39,8 +39,7 @@
 o14 : <tt class="token class-name">List</tt>
 i15 : 15:0S0=bertiniUserHomotopy(t,{a=>t}, H, S1, HomVariableGroup=>{x,y}) --solutions to H when t=0
 
-o15 = $\left\{\left\{1+0\,\mathbf{i},\,{.3}+{.556776}\,\mathbf{i}\right\},\,\left\{1+0\,\mathbf{i},\,{.3}-{.556776}\,\mathbf{i}\right\}\right\}$
+o15 = $\left\{\{1+0\,\mathbf{i},\,{.3}-{.556776}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,{.3}+{.556776}\,\mathbf{i}\}\right\}$
 
 o15 : <tt class="token class-name">List</tt>
 i16 : 16:0
-
