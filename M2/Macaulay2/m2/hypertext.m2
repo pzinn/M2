@@ -462,6 +462,10 @@ texMath MarkUpType := X -> (
     concatenate apply({class X, " of ", parent X, if X.?qname then " <"|X.qname|">"}, texMath)
     )
 
+short Hypertext := x -> (
+    (ops,arg) := override(options class x,toSequence x);
+    append(new class x from short arg,ops)
+    )
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

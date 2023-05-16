@@ -68,6 +68,7 @@ convBR := s -> between(BR{},separate s) -- needed because many error messages us
 	    if i>0 and #c>=2 and c#0 === "" and instance(msg#(i-1),HypertextContainer) then drop(c,2) else c -- hacky
 	    )
 	else {msg#i});
+    s := shortMode; shortMode=false;
     print SPAN (
 	{
 	    "class"=>"M2Error",
@@ -75,6 +76,7 @@ convBR := s -> between(BR{},separate s) -- needed because many error messages us
 	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: "
 	    }
 	| msg);
+    shortMode=s;
     )
 
 

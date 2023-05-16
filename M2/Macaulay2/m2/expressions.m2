@@ -1300,7 +1300,6 @@ shortStringLength := 3*shortLength
 shortMode = false
 -- used e.g. in chaincomplexes.m2
 short = method(Dispatch => Thing, TypicalValue => Expression)
-short RingElement :=
 short Thing := short @@ expression
 short Holder := identity -- to avoid infinite loops
 short MatrixExpression :=
@@ -1311,31 +1310,40 @@ short Table := x ->  (
 	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
 	    else m,shortRow)
     )
---short VisibleList :=
---short Expression :=
--- riskier option: might break something internal (see RingElement above)
-short BasicList := x -> apply(if #x>shortLength then new class x from {
+shortList := short VisibleList :=
+short Expression := x -> apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
 	}
     else x,short)
+-- tentative -- potentially dangerous for custom classes
+short BasicList := x -> (
+    e := expression x;
+    if instance(e,Holder) then shortList x else short e
+    )
 short BinaryOperation := b -> BinaryOperation {b#0,short b#1,short b#2}
 short String := s -> if #s > shortStringLength then substring(s,0,shortStringLength) | "..." | last s else s -- too radical, keep shortLength chars
 short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
-short HashTable := H -> hold ( if #H <= shortLength then H else (
-    s := sortByName pairs H;
-    new class H from append(take(s,shortLength),s#shortLength#0=>cdots)
-    ))
+-- tentative -- potentially dangerous for custom classes
+short HashTable := H -> (
+    e := expression H;
+    if not instance(e,Holder) then short e else hold (
+	if #H <= shortLength then H else (
+    	    s := sortByName pairs H;
+    	    new class H from append(take(s,shortLength),s#shortLength#0=>cdots)
+    	    ))
+    )
 short MutableHashTable := expression
 short Set := H -> hold ( if #H <= shortLength then H else (
 	s := sort keys H;
 	new class H from append(take(s,shortLength),RowExpression{s#shortLength,ldots})
 	))
 
-Abbreviate = new WrapperType of Holder -- only used once, for listSymbols
+Abbreviate = new WrapperType of Holder -- used for listSymbols and error messages
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)
-html Abbreviate := y -> html short y#0
+--html Abbreviate := y -> html short y#0
+html Abbreviate := y -> try html short y#0 else html y#0 -- short is known to cause problems in output routines...
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
