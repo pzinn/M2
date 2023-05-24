@@ -139,8 +139,8 @@ if topLevelMode === WebApp then (
     texMath RingFamily :=
     texMath Ring := col("class-name",lookup(texMath,HashTable));
     texMath HashTable := col("constant",lookup(texMath,HashTable));
-    t:=col("keyword",texVariable @@ toString);
-    texMath Keyword := x -> if keywordTexMath#?x then keywordTexMath#x else t x
+--    t:=col("keyword",texVariable @@ toString);
+--    texMath Keyword := x -> t if keywordTexMath#?x then keywordTexMath#x else x
     --
     --    addEndFunction(()-> (<< webAppCellEndTag << webAppCellEndTag <<webAppCellTag << webAppCellTag << endl;));
     )
@@ -150,17 +150,17 @@ if topLevelMode === WebApp then (
 
 -- the html hack
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
-oneLineFlag = true -- false means only one-line is allowed, otherwise error
+multiLineFlag = true -- false means only one-line is allowed, otherwise error
 pureTexFlag = true -- means only tex, nothing else
 htmlTex1 = x -> (
     xx := expression x;
-    if instance(xx,Holder) then (if oneLineFlag then htmlTex x else error "not one line") else html xx
+    if instance(xx,Holder) then (if multiLineFlag then htmlTex x else error "not one line") else html xx
     )
-html QQ := x -> if oneLineFlag or denominator x == 1 then htmlTex x else error "not one line"
+html QQ := x -> if multiLineFlag or denominator x == 1 then htmlTex x else error "not one line"
 html Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then htmlTex x else htmlTex1 x
 scan({HypertextContainer,HypertextParagraph,VerticalList,Net}, t->(
 	h:=lookup(html,t);
-	html t := s -> if oneLineFlag then h s  else error "not one line";
+	html t := s -> if multiLineFlag then h s  else error "not one line";
 	));
 html2 := (fun,args,lprec,rprec,sep,supp) -> (
     if rightPrecedence fun < lprec then ( fun = sequence fun; if supp then sep="{}"; );
@@ -186,13 +186,13 @@ html RowExpression := s -> (
 	    	));
     	concatenate r   
     	)
-    else if oneLineFlag then htmlTex s else error "not one line"
+    else if multiLineFlag then htmlTex s else error "not one line"
     )
-html Expression := x -> if debugLevel === 42 or oneLineFlag then htmlTex x  else error "not one line"
+html Expression := x -> if debugLevel === 42 or multiLineFlag then htmlTex x else error "not one line"
 html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0;
 html Adjacent := html FunctionApplication := m -> (
     if debugLevel === 42 then return htmlTex m;
-    if m#0 === sqrt or instance(m#0,Divide) then return if oneLineFlag then htmlTex m  else error "not one line";
+    if m#0 === sqrt or instance(m#0,Divide) then return if multiLineFlag then htmlTex m  else error "not one line";
     html2(m#0,m#1,precedence m,precedence m,
 	if instance(m#1,Array) then sep:="\\mathopen{}"
     	else if instance(m#1,VisibleList) then sep="{}"
@@ -203,33 +203,31 @@ html BinaryOperation := b -> (
     html2(b#1,b#2,lprec b#0,rprec b#0,if spacedOps#?(b#0) then "\\ "|htmlLiteral texMath b#0|"\\ " else htmlLiteral texMath b#0,false)
     )
 html Product := html Sum := html Minus := html Constant := htmlTex
-htmlVisibleList :=
-html VisibleList := s -> (
-    if debugLevel === 42 then return htmlTex s;
-    if lookup(texMath,class s) =!= texMathVisibleList then return htmlTex1 s;
-    delims := lookup("delimiters",class s);
-    backupFlag := oneLineFlag; oneLineFlag=false;
-    r := apply(s, x -> try html x else break);
-    oneLineFlag=backupFlag;
-    if r =!= null then 
-    concatenate (
-	"$",
-	delims#0,
-	if #s===0 then "\\," else
-	demark(",\\,",apply(r,a->(
-		    if #a<=2 then (pureTexFlag=false; "$"|a|"$") else (
-	    		if first a==="$" then a=substring(a,1) else (pureTexFlag=false; a="$"|a);
-	    		if last a==="$" then a=substring(a,0,#a-1) else (pureTexFlag=false;a=a|"$");
-			a
-	    		)))),
-	delims#1,
-	"$"
-	) else if oneLineFlag then htmlTex s else error "not one line"
-    )
+htmlList :=
 html BasicList := s -> (
-    if debugLevel === 42 then htmlTex s
-    else if lookup(texMath,class s) =!= lookup(texMath,BasicList) then htmlTex1 s
-    else concatenate(html class s,htmlVisibleList toList s)
+    if debugLevel === 42 then return htmlTex s;
+    l:=lookup(texMath,class s);
+    if l =!= texMathVisibleList and l =!= texMathBasicList then return htmlTex1 s;
+    delims := lookup("delimiters",class s);
+    backupFlag := multiLineFlag; multiLineFlag=false;
+    r := apply(toList s, x -> try html x else break);
+    multiLineFlag=backupFlag;
+    concatenate (
+	if not instance(s,VisibleList) then html class s,
+	if r =!= null then (
+	    "$",
+	    texMath0 delims#0,
+	    if #s===0 then "\\," else
+	    demark(",\\,",apply(r,a->(
+		    	if #a<=2 then (pureTexFlag=false; "$"|a|"$") else (
+	    		    if first a==="$" then a=substring(a,1) else (pureTexFlag=false; a="$"|a);
+	    		    if last a==="$" then a=substring(a,0,#a-1) else (pureTexFlag=false;a=a|"$");
+			    a
+	    		    )))),
+	    texMath0 delims#1,
+	    "$"
+	    ) else if multiLineFlag then "$"|htmlLiteral texMathVisibleList s|"$" else error "not one line"
+	)
     )
 htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\}$")
 html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
@@ -239,7 +237,7 @@ html HashTable := H -> (
     else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
     else if isMutable H then htmlMutable H
     else concatenate(html class H,
-	htmlVisibleList apply(sortByName pairs H, p -> new Option from p)
+	htmlList apply(sortByName pairs H, p -> new Option from p)
     ))
 
 -- the texMath hack

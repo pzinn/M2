@@ -121,16 +121,24 @@ texMath VerticalList := s -> concatenate(
 texMath NumberedVerticalList := s -> concatenate(
     "\\left\\{\\begin{aligned}", demark("\\\\", apply(#s, i -> i | ".\\quad&" | texMath s#i)), "\\end{aligned}\\right\\}")
 
-BasicList#"delimiters" = ("\\{","\\}")
-Sequence#"delimiters" = ("(",")")
-Array#"delimiters" = ("[","]")
-AngleBarList#"delimiters" = ("\\langle ","\\rangle ")
+BasicList#"delimiters" = (symbol {,symbol })
+Sequence#"delimiters" = (symbol (,symbol ))
+Array#"delimiters" = (symbol [,symbol ])
+AngleBarList#"delimiters" = (symbol <|,symbol |>)
+
+texMathLeft = s -> "\\left" | (lookup(texMath,Symbol)) s
+texMathRight = s -> "\\right" | (lookup(texMath,Symbol)) s
 
 texMathVisibleList =
 texMath VisibleList := L -> (
         delims := lookup("delimiters",class L);
- 	concatenate("\\left", delims#0, if #L > 0 then demark_",\\," apply(toList L, texMath) else "\\,", "\\right", delims#1)
+ 	concatenate(
+	    texMathLeft delims#0,
+	    if #L > 0 then demark_",\\," apply(toList L, texMath) else "\\,",
+	    texMathRight delims#1
+	    )
 	)
+texMathBasicList =
 texMath BasicList    := L -> concatenate(texMath class L, texMathVisibleList L)
 
 texMathMutable :=
