@@ -238,6 +238,7 @@ locate Function    :=
 locate Pseudocode  :=
 locate Sequence    :=
 locate Symbol      := FilePosition => locate'
+locate Command := FilePosition => C -> locate'(C#0)
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 

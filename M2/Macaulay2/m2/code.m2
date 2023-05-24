@@ -75,13 +75,16 @@ code Sequence   := s -> (
     then DIV {"-- code for method: " | formatDocumentTag key, code func }
     else "-- no method function found: " | formatDocumentTag key)
 code Function   := f -> DIV { codeFunction(f, 0), (lookup(code,Thing)) f }
-code Command    := C -> code C#0
+code Command   := f -> DIV { codeFunction(f#0, 0), (lookup(code,Thing)) f }
 code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
 code Thing      := x -> if hasAttribute(x,ReverseDictionary) then (
     x = getAttribute(x,ReverseDictionary);
-    c := code locate x;
-    if c =!= null then DIV { symbol symbol, " ", x, c }
+    l := locate x;
+    if l =!= null then (
+    	c := code l;
+    	DIV { symbol symbol, " ", x, if c=!=null then c else DIV {l} }
+    	)
     )
 
 -----------------------------------------------------------------------------
