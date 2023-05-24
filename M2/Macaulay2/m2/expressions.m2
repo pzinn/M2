@@ -585,8 +585,8 @@ toString'(Function, Table) := (fmt,m) -> concatenate(
 -- TODO: move this to latex.m2
 keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol |- => "\\vdash ",
-    symbol .. => "\\,{.}{.}\\, ",
-    symbol ..< => "\\,{.}{.}{<}\\, ",
+    symbol .. => "\\,{.}{.}\\,",
+    symbol ..< => "\\,{.}{.}{<}\\,",
     symbol <= => "\\le ",
     symbol >= => "\\ge ",
     symbol => => "\\Rightarrow ",
@@ -604,19 +604,19 @@ keywordTexMath = new HashTable from { -- both unary and binary keywords
     symbol >> => "\\gg ",
     symbol ~ => "\\sim ",
     symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-    symbol _ => "\\_ ",
-    symbol { => "\\{ ",
-    symbol } => "\\} ",
+    symbol _ => "\\_",
+    symbol { => "\\{",
+    symbol } => "\\}",
     symbol \ => "\\backslash ",
     symbol \\ => "\\backslash\\backslash ",
     symbol # => "\\#",
     symbol #? => "\\#?",
     symbol % => "\\%",
     symbol & => "\\&",
-    symbol ^ => "\\wedge",
-    symbol ^^ => "\\wedge\\wedge",
-    symbol <| => "\\langle",
-    symbol |> => "\\rangle",
+    symbol ^ => "\\wedge ",
+    symbol ^^ => "\\wedge\\wedge ",
+    symbol <| => "\\langle ",
+    symbol |> => "\\rangle ",
     symbol _* => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol ^* => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     }
