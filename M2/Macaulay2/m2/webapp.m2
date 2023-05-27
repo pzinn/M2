@@ -115,8 +115,8 @@ if topLevelMode === WebApp then (
     editMethod String :=
     editMethod FilePosition := f -> show editURL f;
 --    fixup FilePosition := lookup(hypertext,FilePosition); -- shouldn't change that (say, in doc)
-    fixup FilePosition := f -> TT HREF { f#0, toString f }; -- let's try this
-    hypertext FilePosition := f -> TT HREF {editURL f,toString f};
+    fixup FilePosition := f -> SAMP HREF { f#0, toString f }; -- let's try this
+    hypertext FilePosition := f -> SAMP HREF {editURL f,toString f};
     -- redefine htmlLiteral to exclude codes
     -- except it should sometimes allow them...
     htmlLiteral0 := htmlLiteral;
@@ -226,7 +226,7 @@ html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
 html HashTable := H -> (
     if debugLevel === 42 or H.?texMath then htmlTex H
     else if lookup(texMath,class H) =!= lookup(texMath,HashTable) then htmlTex1 H
-    else if hasAttribute(H,ReverseDictionary) then html (TTc "constant") getAttribute(H,ReverseDictionary)
+    else if hasAttribute(H,ReverseDictionary) then html (SAMPc "constant") getAttribute(H,ReverseDictionary)
     else if isMutable H then htmlMutable H
     else concatenate(html class H,
 	htmlList apply(sortByName pairs H, p -> new Option from p)
