@@ -2,32 +2,32 @@
 i1 : 1:0writeParameterFile(storeBM2Files,{2,3,5,7});
 i2 : 2:0fileExists(storeBM2Files|"/final_parameters")
 
-o2 = <tt class="token constant">true</tt>
+o2 = <samp class="token constant">true</samp>
 i3 : 3:0moveB'File(storeBM2Files,"final_parameters","start_parameters")
 i4 : 4:0fileExists(storeBM2Files|"/final_parameters")
 
-o4 = <tt class="token constant">false</tt>
+o4 = <samp class="token constant">false</samp>
 i5 : 5:0fileExists(storeBM2Files|"/start_parameters")
 
-o5 = <tt class="token constant">true</tt>
+o5 = <samp class="token constant">true</samp>
 i6 : 6:0moveB'File(storeBM2Files,"start_parameters","backup",CopyB'File=>true)
 i7 : 7:0fileExists(storeBM2Files|"/start_parameters")
 
-o7 = <tt class="token constant">true</tt>
+o7 = <samp class="token constant">true</samp>
 i8 : 8:0fileExists(storeBM2Files|"/backup")
 
-o8 = <tt class="token constant">true</tt>
+o8 = <samp class="token constant">true</samp>
 i9 : 9:0Dir1 = temporaryFileName();
 i10 : 10:0makeDirectory Dir1
 i11 : 11:0writeParameterFile(storeBM2Files,{2,3,5,7});
 i12 : 12:0moveB'File(storeBM2Files,"final_parameters","start_parameters",MoveToDirectory=>Dir1)
 i13 : 13:0fileExists(Dir1|"/start_parameters")
 
-o13 = <tt class="token constant">true</tt>
+o13 = <samp class="token constant">true</samp>
 i14 : 14:0makeDirectory (storeBM2Files|"/Dir2")
 i15 : 15:0writeParameterFile(storeBM2Files,{2,3,5,7});
 i16 : 16:0moveB'File(storeBM2Files,"final_parameters","start_parameters",SubFolder=>"Dir2")
 i17 : 17:0fileExists(storeBM2Files|"/Dir2/start_parameters")
 
-o17 = <tt class="token constant">true</tt>
+o17 = <samp class="token constant">true</samp>
 i18 : 18:0

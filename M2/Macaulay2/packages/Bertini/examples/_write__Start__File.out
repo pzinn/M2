@@ -3,6 +3,6 @@
 
 o1 = $\{\{1,\,0\},\,\{3,\,4\}\}$
 
-o1 : <tt class="token class-name">List</tt>
+o1 : <samp class="token class-name">List</samp>
 i2 : 2:0writeStartFile(storeBM2Files,coordinatesOfTwoPnts);
 i3 : 3:0

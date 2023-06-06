@@ -3,7 +3,7 @@
 
 o1 = $R$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0f=z*x+y
 
 o2 = $x\,z+y$
@@ -23,7 +23,7 @@
 
 o5 = $R$
 
-o5 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o5 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i6 : 6:0f=z*x+y
 
 o6 = $x\,z+y$

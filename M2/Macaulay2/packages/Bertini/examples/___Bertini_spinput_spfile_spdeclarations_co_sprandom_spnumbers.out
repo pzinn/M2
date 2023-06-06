@@ -3,7 +3,7 @@
 
 o1 = $R$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0makeB'InputFile(storeBM2Files,
 3:0         AffVariableGroup=>{{x,y}},
 4:0         RandomReal=>{c1,c2},--c1=.1212, c2=.4132 may be written to the input file.
@@ -12,7 +12,7 @@
 
 o3 = $R$
 
-o3 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o3 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i4 : 7:0makeB'InputFile(storeBM2Files,
 8:0         AffVariableGroup=>{{x,y}},
 9:0         RandomComplex=>{c1,c2},--c1=.1212+ii*.1344, c2=.4132-ii*.2144 are written to the input file.

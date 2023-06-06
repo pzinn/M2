@@ -3,22 +3,21 @@
 
 o1 = $R$
 
-o1 : <tt class="token class-name">QuotientRing</tt>
+o1 : <samp class="token class-name">QuotientRing</samp>
 i2 : 2:0A = skewPolynomialRing(R,q,{x,y,z,w})
 
-o2 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o2 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
-o2 : <tt class="token class-name">NCQuotientRing</tt>
+o2 : <samp class="token class-name">NCQuotientRing</samp>
 i3 : 3:0x*y == q*y*x
 
-o3 = <tt class="token constant">true</tt>
+o3 = <samp class="token constant">true</samp>
 i4 : 4:0Aop = oppositeRing A
 
-o4 = $\htmlClass{token class-name}{<tt class="token string">Aop</tt>}$
+o4 = $\htmlClass{token class-name}{<samp class="token string">Aop</samp>}$
 
-o4 : <tt class="token class-name">NCQuotientRing</tt>
+o4 : <samp class="token class-name">NCQuotientRing</samp>
 i5 : 5:0y*x == q*x*y
 
-o5 = <tt class="token constant">true</tt>
+o5 = <samp class="token constant">true</samp>
 i6 : 6:0
-

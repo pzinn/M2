@@ -3,12 +3,12 @@
 i2 : 2:0R=K[v,u,z];
 i3 : 3:0I=ideal(v^8-u^3*(z+u)^5);
 
-o3 : <span><tt class="token class-name">Ideal</tt> of $R$</span>
+o3 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
 i4 : 4:0T=K[t_0,t_1]
 
 o4 = $T$
 
-o4 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o4 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i5 : 5:0phi=matrix {{t_0^3*t_1^5}, {-t_0^8}, {t_0^8-t_1^8}}
 
 o5 = $\left(\!\begin{array}{c}
@@ -17,8 +17,8 @@ t_{0}^{3}t_{1}^{5}\\
 t_{0}^{8}-t_{1}^{8}
 \end{array}\!\right)$
 
-o5 : <span><tt class="token class-name">Matrix</tt> $T^{3}\,\longleftarrow \,T^{1}$</span>
+o5 : <span><samp class="token class-name">Matrix</samp> $T^{3}\,\longleftarrow \,T^{1}$</span>
 i6 : 6:0testParametrization(I,phi)
 
-o6 = <tt class="token constant">true</tt>
+o6 = <samp class="token constant">true</samp>
 i7 : 7:0

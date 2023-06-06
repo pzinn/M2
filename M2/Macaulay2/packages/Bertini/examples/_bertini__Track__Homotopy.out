@@ -8,14 +8,14 @@
 
 o6 = $\left\{\{-{1.41421}+0\,\mathbf{i}\},\,\{{1.41421}+0\,\mathbf{i}\}\right\}$
 
-o6 : <tt class="token class-name">List</tt>
+o6 : <samp class="token class-name">List</samp>
 i7 : 7:0peek S0_0
 
-o7 = <span><tt class="token class-name">Point</tt>  <ul style="display:inline-table">
+o7 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 9\ldots\}$</span>    </li>
+<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 9\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{-{1.41421}+0\,\mathbf{i}\}$</span>    </li>
+<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.41421}+0\,\mathbf{i}\}$</span>    </li>
   </ul>
 </span>
 i8 : 8:0R=CC[x,y,t]; -- include the path variable in the ring
@@ -26,20 +26,20 @@
 
 o12 = $\{1,\,1\}$
 
-o12 : <tt class="token class-name">Point</tt>
+o12 : <samp class="token class-name">Point</samp>
 i13 : 13:0sol2=    point{{ -1,1}}
 
 o13 = $\{-1,\,1\}$
 
-o13 : <tt class="token class-name">Point</tt>
+o13 : <samp class="token class-name">Point</samp>
 i14 : 14:0S1={sol1,sol2}--solutions to H when t=1
 
 o14 = $\left\{\{1,\,1\},\,\{-1,\,1\}\right\}$
 
-o14 : <tt class="token class-name">List</tt>
+o14 : <samp class="token class-name">List</samp>
 i15 : 15:0S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\{-{.241786}+{.758094}\,\mathbf{i},\,{.349553}+{.362049}\,\mathbf{i}\},\,\{{.231659}+{.874773}\,\mathbf{i},\,-{.417555}+{.391414}\,\mathbf{i}\}\right\}$
+o15 = $\left\{\{-{.520168}+{.757879}\,\mathbf{i},\,-{.57802}-{.0622532}\,\mathbf{i}\},\,\{{2.46638}+{1.94644}\,\mathbf{i},\,{1.82365}-{.789292}\,\mathbf{i}\}\right\}$
 
-o15 : <tt class="token class-name">List</tt>
+o15 : <samp class="token class-name">List</samp>
 i16 : 16:0

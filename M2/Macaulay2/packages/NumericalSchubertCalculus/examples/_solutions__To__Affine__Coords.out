@@ -28,7 +28,7 @@
 {.732358}&amp;{.0595849}&amp;{.831802}&amp;{.53632}&amp;{.942865}&amp;{.522285}
 \end{array}\!\right)\right)\right\}$
 
-o1 : <tt class="token class-name">List</tt>
+o1 : <samp class="token class-name">List</samp>
 i2 : 6:0S = solveSchubertProblem(Pblm, 3,6)
 
 o2 = $\left\{\left(\!\begin{array}{ccc}
@@ -47,7 +47,7 @@
 {.141356}+{3.18264}\cdot 10^{-16}\,\mathbf{i}&amp;{.394186}+{5.71773}\cdot 10^{-16}\,\mathbf{i}&amp;-{.0692081}-{1.35788}\cdot 10^{-16}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o2 : <tt class="token class-name">List</tt>
+o2 : <samp class="token class-name">List</samp>
 i3 : 7:0solutionsToAffineCoords S
 
 o3 = $\left\{\left(\!\begin{array}{ccc}
@@ -66,5 +66,5 @@
 0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 8:0

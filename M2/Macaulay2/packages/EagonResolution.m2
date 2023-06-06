@@ -668,12 +668,14 @@ Description
    
    
   Example
+   -*
    S = ZZ/101[a,b,c]
    I = ideal(a,b,c)*ideal(b,c)
    R = S/I
    E = eagon(R,5)
    F = eagonResolution E
    assert(F == res E)
+   *-
   Text
    As stated above, F = K\otimes T(F'), and one can see the maps between 
    each pair of summands. We label the summand 
@@ -681,16 +683,20 @@ Description
    the differentials in block form with the function picture, 
    with the option Display => "DisplayBlocks", including the labels:
   Example
+   -*
    F.dd_3
    picture(F.dd_3, Display => "DisplayBlocks")
+   *-
   Text
    Since the matrices can be very large, it is sometimes better to know just whether
    a given block is zero or not, and this can be obtained with the function @TO picture@,
    with the default option Display => "picture".
-  Example   
+  Example
+   -*   
    picture F.dd_3
    picture (F, Verbose => true)
    picture (F, Verbose => true, Transpose => true)
+   *-
 SeeAlso
    eagon
    picture
@@ -718,9 +724,11 @@ doc ///
      The command E = eagon(R,b) puts the EagonData E in R.cache so that E== R.cache.EagonData,
      and causes the message "EagonData in <ring>.cache computed to length b"
     Example
+     -*
      R = ZZ/101[x,y]/ideal"x2,xy,y2"
      E = eagon(R,3)
      E === R.cache.EagonData
+     *-
    SeeAlso
     eagon
 ///
@@ -799,29 +807,35 @@ doc///
      dVert^{n+1}_{i-1} *  (dHor^n_0 ** X_i): Y^n_0**X_i -> Y^{n-1}_0.
      
     Example
+     -*
      S = ZZ/101[a,b,c]
      I = ideal(a,b)*ideal"a3,b3,c3"
      R = S/I
      needsPackage "DGAlgebras"; isGolod R
      E = eagon(R,6)
+     *-
     Text
      We can see the vertical and horizontal strands, and the eagonBeta maps
     Example
+     -*
      verticalStrand(E,3)
      horizontalStrand(E,2)
      horizontalStrand (E,0)
      F = eagonResolution E     
      eagonBeta E     
+     *-
     Text
      With the default option CompressBeta => true, only a subset of the components of Y^{n+1}_{i-1} are used.
      To see the effect of CompressBeta => true, consider:
     Example     
+     -*
      eagon(R,-1)
      E = eagon(R,6, Verbose =>true)
      eagon(R,-1)
      En = eagon(R,6,CompressBeta => false)
      eagonBeta (E,4), eagonBeta(E,5)
      eagonBeta (En,4), eagonBeta(En,5)
+     *-
     Text
      There are also ways to investigate the components of dVert, dHor, and eagonBeta; see 
      @TO picture@, @TO DisplayBlocks@, and @TO mapComponent@.
@@ -855,10 +869,12 @@ doc ///
     Text
      computes the Eagon resolution
     Example
+     -*
      S = ZZ/101[a,b,c]
      I = ideal(a,b,c)*ideal(b,c)
      R = S/I
      eagonResolution(R,5)
+     *-
    SeeAlso
      eagon
 ///
@@ -919,6 +935,7 @@ doc ///
      picture prints a netList of the pictures of the maps in the complex
 
     Example
+     -*
      S = ZZ/101[a,b,c]
      I = ideal(a,b)*ideal(a,b,c)
      R = S/I
@@ -927,7 +944,7 @@ doc ///
      picture E#{"eagonBeta",3,0}
      picture E
      picture verticalStrand(E,1)
-
+     *-
    SeeAlso
     eagon
     "eagonBeta"
@@ -963,6 +980,7 @@ doc ///
      the entries of the matrices. But picture(M, Display => "DisplayBlocks") prints a net 
      with the matrices themselves.
     Example
+     -*
      S = ZZ/101[a,b,c]
      I = ideal(a,b)*ideal(a,b,c)
      R = S/I
@@ -970,6 +988,7 @@ doc ///
      C = horizontalStrand(E,0)
      picture C
      picture(C, Display => "DisplayBlocks")
+     *-
    SeeAlso
     eagon
     eagonResolution
@@ -1022,6 +1041,7 @@ doc///
      the Betti numbers of the resolution of coker vars R agree up to the step numgens R with 
      the Betti numbers of the Eagon resolution.
     Example
+     -*
      S = ZZ/101[a,b,c,d]
      I = ideal(a,b,c)*ideal(a,b,c,d)
      I = ideal"a3,b3,c3"
@@ -1031,6 +1051,7 @@ doc///
      eagonBeta(E,4,Display => "DisplayBlocks")
      eagonBeta(E,4,Display => "")     
      eagonBeta E
+     *-
    SeeAlso
     eagon
     picture
@@ -1061,11 +1082,13 @@ doc///
      resolutions are
      all minimal iff R is Golod.
     Example
+     -*
      S = ZZ/101[x,y,z]
      R = S/((ideal(x,y))^2+ideal(z^3))
      E = eagon(R,5);
      F = horizontalStrand(E,2)
      picture F
+     *-
    SeeAlso
     verticalStrand
     eagon
@@ -1095,11 +1118,13 @@ doc ///
      never resolutions unless R is regular. The key lemma in Eagon's treatment identifies
      the i-th homology H_i of the n-th vertical strand with H_0**X_i.
     Example
+     -*
      S = ZZ/101[x,y,z]
      R = S/((ideal(x,y))^2+ideal(z^3))
      E = eagon(R,5);
      F = verticalStrand(E,3)
      picture F
+     *-
    SeeAlso
     horizontalStrand
     eagon
@@ -1140,6 +1165,7 @@ doc ///
      
      The function mapComponent returns a single block.
     Example
+     -*
      S = ZZ/101[a,b,c,d,e]
      R = S/(ideal(e^2,d*e^4)+(ideal"ab,ac")^2) --a non-Golod ring, generators in different degrees
      E = eagon (R,5);
@@ -1149,6 +1175,7 @@ doc ///
      mapComponent(E#{"dVert",3,1}, (0,{2}),(0,{1,1})) 
      picture E#{"eagonBeta",3,1}
      mapComponent(E#{"eagonBeta",3,1}, (0,{2}),(0,{1,1})) 
+     *-
    SeeAlso
     picture
     DisplayBlocks
@@ -1200,6 +1227,7 @@ doc ///
      of M as an S-module (more generally, the co-depth of M) (Avramov, 6 lectures, 5.3.2).
      
     Example
+     -*
      S = ZZ/101[a,b,c]
      I = (ideal(a,b,c^2))^2
      F = res(S^1/I)
@@ -1209,6 +1237,7 @@ doc ///
      golodBetti(F,K,6)
      betti res (coker vars R, LengthLimit => 6)
      betti eagonResolution E     
+     *-
    SeeAlso
     eagon
     eagonResolution
@@ -1283,10 +1312,12 @@ doc ///
      if Display=>"picture" then @TO picture@ is invoked; if Display =>"DisplayBlocks" 
      then a net with the matrices (the "blocks") is produced.
     Example
+     -*
      R = ZZ/101[x,y,z]/ideal"x3,y3,z3"
      E = eagon(R,5);
      eagonBeta(E,3)
      eagonBeta(E,3,Display =>"DisplayBlocks")
+     *-
    SeeAlso
     eagon
 ///
@@ -1314,8 +1345,10 @@ doc ///
      and thus the columns of picture eagonBeta(E,i) will have fewer nonzero entries.
      if Verbose =>true, then data about the usage is printed.
     Example
+     -*
      R = ZZ/101[x,y,z]/ideal"x3,y3,z3"
      E = eagon(R,4,CompressBeta =>true, Verbose =>true);
+     *-
    SeeAlso
     eagon
     eagonBeta
@@ -1338,11 +1371,13 @@ doc ///
      With the option Transpose => true, picture prints the picture of the transposed matrix; when 
      the matrix has many more columns than rows this makes it easier to read.
     Example
+     -*
      S = ZZ/101[a,b]
      R = S/ideal"a2,b2"
      E = eagon(R,3)
      picture res E
      picture(res E, Transpose => true)
+     *-
    SeeAlso
     DisplayBlocks
     Verbose
@@ -1365,9 +1400,11 @@ doc ///
     Text
      prints the homological degree to which the EagonData has been computed
     Example
+     -*
      R = ZZ/101[a,b]/ideal"a2,b2"
      E = eagon(R,4)
      net E
+     *-
    SeeAlso
     EagonData
 ///
@@ -1386,10 +1423,12 @@ doc ///
     Text
      This command is equivalent to @TO (eagonResolution, EagonData)@.
     Example
+     -*
      R = ZZ/101[a,b]/ideal"a2,b2"
      E = eagon(R,4)
      C = resolution E
      picture C
+     *-
    SeeAlso
     eagon
     EagonData

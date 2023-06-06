@@ -4,16 +4,16 @@
 
 o3 = $\left\{\{1+0\,\mathbf{i},\,1+0\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-1+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,1+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-1+0\,\mathbf{i}\}\right\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 3:0opts = new OptionTable from {BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}}
 
-o4 = <tt class="token class-name">OptionTable</tt>$\{\textit{BertiniInputConfiguration}\ \Rightarrow \ \{\textit{RandomSeed}\ \Rightarrow \ 0,\,\textit{TrackTolBeforeEG}\ \Rightarrow \ {.000001},\,\textit{FinalTol}\ \Rightarrow \ 10^{-100}\}\}$
+o4 = <samp class="token class-name">OptionTable</samp>$\{\textit{BertiniInputConfiguration}\ \Rightarrow \ \{\textit{RandomSeed}\ \Rightarrow \ 0,\,\textit{TrackTolBeforeEG}\ \Rightarrow \ {.000001},\,\textit{FinalTol}\ \Rightarrow \ 10^{-100}\}\}$
 
-o4 : <tt class="token class-name">OptionTable</tt>
+o4 : <samp class="token class-name">OptionTable</samp>
 i5 : 4:0G = {x^2+y^2-1};
 i6 : 5:0bertiniPosDimSolve(G,opts)
 
-o6 = <tt class="token class-name">NumericalVariety</tt>$\{\ldots 3\ldots\}$
+o6 = <samp class="token class-name">NumericalVariety</samp>$\{\ldots 3\ldots\}$
 
-o6 : <tt class="token class-name">NumericalVariety</tt>
+o6 : <samp class="token class-name">NumericalVariety</samp>
 i7 : 6:0

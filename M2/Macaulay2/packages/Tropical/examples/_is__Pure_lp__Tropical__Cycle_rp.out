@@ -3,6 +3,5 @@
 i2 : 2:0T=tropicalCycle (F,{1,2});
 i3 : 3:0isPure T
 
-o3 = <tt class="token constant">false</tt>
+o3 = <samp class="token constant">false</samp>
 i4 : 4:0
-

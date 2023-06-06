@@ -31,8 +31,8 @@
 o6 : <span>$\htmlClass{token class-name}{{\mathbb R}}$ (of precision $300$)</span>
 i7 : 7:0toExternalString n1
 
-o7 = <tt class="token string">.11099999999999999p52e1</tt>
+o7 = <samp class="token string">.11099999999999999p52e1</samp>
 i8 : 8:0toExternalString n2
 
-o8 = <tt class="token string">.11100000000000000000000000000000000000000000000000000000000000000000000000000000000000000003p300e1</tt>
+o8 = <samp class="token string">.11100000000000000000000000000000000000000000000000000000000000000000000000000000000000000003p300e1</samp>
 i9 : 9:0

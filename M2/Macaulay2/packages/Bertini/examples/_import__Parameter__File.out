@@ -4,5 +4,5 @@
 
 o2 = $\{1+0\,\mathbf{i},\,{2}+0\,\mathbf{i}\}$
 
-o2 : <tt class="token class-name">List</tt>
+o2 : <samp class="token class-name">List</samp>
 i3 : 3:0

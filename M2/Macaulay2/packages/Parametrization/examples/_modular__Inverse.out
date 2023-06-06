@@ -7,7 +7,7 @@
 o2 = $13$
 i3 : 3:0modularInverse(4,16)
 
-o3 = <tt class="token constant">false</tt>
+o3 = <samp class="token constant">false</samp>
 i4 : 4:0modularInverse(1234567,12345678)
 
 o4 = $10\,802\,467$

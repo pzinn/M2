@@ -2,7 +2,7 @@
 i1 : 1:0QQ[x,y,z];
 i2 : 2:0I=ideal(x-y);
 
-o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$</span>
+o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$</span>
 i3 : 3:0T=tropicalVariety I;
 i4 : 4:0L=linealitySpace T
 
@@ -12,6 +12,5 @@
 0&amp;1
 \end{array}\!\right)$
 
-o4 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{2}$</span>
+o4 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{2}$</span>
 i5 : 5:0
-

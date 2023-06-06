@@ -8,5 +8,5 @@
 
 o5 = $\{\{(2,\,0)\},\,\{(2,\,0)\}\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 7:0

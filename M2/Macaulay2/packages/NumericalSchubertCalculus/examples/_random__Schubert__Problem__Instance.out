@@ -23,7 +23,7 @@
 -{.939129}+{.343564}\,\mathbf{i}&amp;-{.616052}-{.787706}\,\mathbf{i}&amp;{.339065}+{.940763}\,\mathbf{i}&amp;-{.99319}-{.116506}\,\mathbf{i}
 \end{array}\!\right)\right)\right\}$
 
-o1 : <tt class="token class-name">List</tt>
+o1 : <samp class="token class-name">List</samp>
 i2 : 2:0randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
 
 o2 = $\left\{\left(\{2,\,4\},\,\left(\!\begin{array}{cccc}
@@ -48,5 +48,5 @@
 -{.129853}+{.991533}\,\mathbf{i}&amp;{.889567}+{.456804}\,\mathbf{i}&amp;-{.872433}-{.488734}\,\mathbf{i}&amp;-{.636591}-{.771201}\,\mathbf{i}
 \end{array}\!\right)\right)\right\}$
 
-o2 : <tt class="token class-name">List</tt>
+o2 : <samp class="token class-name">List</samp>
 i3 : 3:0

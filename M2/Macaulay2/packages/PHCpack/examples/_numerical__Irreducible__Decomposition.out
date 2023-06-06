@@ -4,23 +4,23 @@
 i3 : 3:0V=numericalIrreducibleDecomposition(system)
 found 6 irreducible factors 
 
-o3 = <tt class="token constant">V</tt>
+o3 = <samp class="token constant">V</samp>
 
-o3 : <tt class="token class-name">NumericalVariety</tt>
+o3 : <samp class="token class-name">NumericalVariety</samp>
 i4 : 4:0WitSets=V#5; --witness sets are accessed by dimension
 i5 : 5:0w=first WitSets;
 i6 : 6:0w.cache.IsIrreducible
 
-o6 = <tt class="token constant">true</tt>
+o6 = <samp class="token constant">true</samp>
 i7 : 7:0R=QQ[x11,x22,x21,x12,x23,x13,x14,x24];
 i8 : 8:0system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 i9 : 9:0PD=primaryDecomposition(ideal(system))
 
-o9 = $\{$<tt class="token function">ideal</tt>${}(\textit{x13},\,\textit{x23},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}),\,$<tt class="token function">ideal</tt>${}(\textit{x12},\,\textit{x22},\,\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}),\,$<tt class="token function">ideal</tt>${}(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\,\textit{x21}\,\textit{x14}-\textit{x11}\,\textit{x24},\,\textit{x22}\,\textit{x14}-\textit{x12}\,\textit{x24},\,\textit{x12}\,\textit{x23}-\textit{x22}\,\textit{x13},\,\textit{x11}\,\textit{x23}-\textit{x21}\,\textit{x13},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12})\}$
+o9 = $\{$<samp class="token function">ideal</samp>${}(\textit{x13},\,\textit{x23},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}),\,$<samp class="token function">ideal</samp>${}(\textit{x12},\,\textit{x22},\,\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}),\,$<samp class="token function">ideal</samp>${}(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\,\textit{x21}\,\textit{x14}-\textit{x11}\,\textit{x24},\,\textit{x22}\,\textit{x14}-\textit{x12}\,\textit{x24},\,\textit{x12}\,\textit{x23}-\textit{x22}\,\textit{x13},\,\textit{x11}\,\textit{x23}-\textit{x21}\,\textit{x13},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12})\}$
 
-o9 : <tt class="token class-name">List</tt>
+o9 : <samp class="token class-name">List</samp>
 i10 : 10:0for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)
-<tt class="token string">dim =5  degree=2</tt>
-<tt class="token string">dim =5  degree=2</tt>
-<tt class="token string">dim =5  degree=4</tt>
+<samp class="token string">dim =5  degree=2</samp>
+<samp class="token string">dim =5  degree=2</samp>
+<samp class="token string">dim =5  degree=4</samp>
 i11 : 11:0

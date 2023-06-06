@@ -6,5 +6,5 @@ found 4 irreducible factors
 i4 : 4:0W = first V#4;
 i5 : 5:0isWitnessSetMember(W, point{{0,0,0,0,0,0}})
 
-o5 = <tt class="token constant">true</tt>
+o5 = <samp class="token constant">true</samp>
 i6 : 6:0

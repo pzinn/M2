@@ -1,18 +1,17 @@
 -- -*- M2-comint -*- hash: 206822173
 i1 : 1:0A = QQ{x,y,z,w}
 
-o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
-o1 : <tt class="token class-name">NCPolynomialRing</tt>
+o1 : <samp class="token class-name">NCPolynomialRing</samp>
 i2 : 2:0f = x^2+y^2+2*z^3
 
-o2 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 2\right\}$\right)\right\}$
+o2 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\textit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\textit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{x,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{y,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 2\})\}$
 
-o2 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o2 : $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 i3 : 3:0coeff = leadTerm f
 
-o3 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 2\right\}$\right)\right\}$
+o3 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\textit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\textit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 2\})\}$
 
-o3 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o3 : $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 i4 : 4:0
-

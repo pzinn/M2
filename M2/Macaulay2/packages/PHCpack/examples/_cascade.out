@@ -3,24 +3,22 @@
 i2 : 2:0L = { z*(x+y), z*(x-y) };
 i3 : 3:0WitSets = cascade(L)
 
-o3 = <tt class="token constant">WitSets</tt>
+o3 = <samp class="token constant">WitSets</samp>
 
-o3 : <tt class="token class-name">NumericalVariety</tt>
+o3 : <samp class="token class-name">NumericalVariety</samp>
 i4 : 4:0W=first WitSets#2
 
-o4 = $<tt class="token string">W</tt>$
+o4 = $<samp class="token string">W</samp>$
 
-o4 : <tt class="token class-name">WitnessSet</tt>
+o4 : <samp class="token class-name">WitnessSet</samp>
 i5 : 5:0W#Equations
 
-o5 = $<pre class="token net" style="vertical-align:-400%">{-2}  |  (- .380139 + .924929*ii)zz1 + (.547606 + .836736*ii)zz2 + (- 1 + 0*ii)x*z + (- 1 + 0*ii)y*z  |
-      |                                                                                               |
-{-2}  |         (.45571 - .890128*ii)zz1 + (- .663772 - .747935*ii)zz2 + (- 1 + 0*ii)x*z + y*z        |
-      |                                                                                               |
-{-1}  |                          (- 1 + 0*ii)zz1 + (.537862 + .843033*ii)zz2                          |<br/></pre>
+o5 = $<pre class="token net" style="vertical-align:-200%">{-2} | (-.380139+.924929ii)zz1+(.547606+.836736ii)zz2+(-1+0ii)xz+(-1+0ii)yz |
+{-2} | (.45571-.890128ii)zz1+(-.663772-.747935ii)zz2+(-1+0ii)xz+yz          |
+{-1} | (-1+0ii)zz1+(.537862+.843033ii)zz2                                   |<br></pre>
 $
 
-o5 : <tt class="token class-name">PolySystem</tt>
+o5 : <samp class="token class-name">PolySystem</samp>
 i6 : 6:0W#Points
 
 o6 = <ul style="display:inline-table">
@@ -29,7 +27,7 @@ $\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\
 </ul>
 
 
-o6 : <tt class="token class-name">VerticalList</tt>
+o6 : <samp class="token class-name">VerticalList</samp>
 i7 : 7:0W#Slice
 
 o7 = $\left(\!\begin{array}{cccccc}
@@ -37,5 +35,5 @@ $\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\
 -{.759495}+{.650513}\,\mathbf{i}&amp;-{.89022}-{.45553}\,\mathbf{i}&amp;-{.972487}+{.232959}\,\mathbf{i}&amp;-{.595572}-{.803302}\,\mathbf{i}&amp;-{.236638}-{.971598}\,\mathbf{i}&amp;{.871298}-{.490754}\,\mathbf{i}
 \end{array}\!\right)$
 
-o7 : <span><tt class="token class-name">Matrix</tt> ${\mathbb C}_{53}^{2}\,\longleftarrow \,{\mathbb C}_{53}^{6}$</span>
+o7 : <span><samp class="token class-name">Matrix</samp> ${\mathbb C}_{53}^{2}\,\longleftarrow \,{\mathbb C}_{53}^{6}$</span>
 i8 : 8:0

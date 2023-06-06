@@ -2,16 +2,15 @@
 i1 : 1:0QQ[x,y,z];
 i2 : 2:0I = ideal(x^2+y^2+z^2-1);
 
-o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$</span>
+o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$</span>
 i3 : 3:0T1 = tropicalVariety(I);
 i4 : 4:0J = ideal(x*y+y*z+x*z+1);
 
-o4 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$</span>
+o4 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$</span>
 i5 : 5:0T2 = tropicalVariety(J);
 i6 : 6:0V = tropicalVariety(I+J);
 i7 : 7:0W2 =  stableIntersection(T1,T2,Strategy=>"gfan");
 i8 : 8:0V#"Fan" == W2
 
-o8 = <tt class="token constant">true</tt>
+o8 = <samp class="token constant">true</samp>
 i9 : 9:0
-

@@ -1,17 +1,16 @@
 -- -*- M2-comint -*- hash: -641498553
 i1 : 1:0QQ[x,y,z,w]
 
-o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$
+o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,w]$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0I=ideal(x^2-y*z+w^2,w^3-x*y^3+z^3);
 
-o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z,\,w\right]$</span>
+o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,w]$</span>
 i3 : 3:0T=tropicalVariety I;
 i4 : 4:0maxCones T
 
 o4 = $\{\{0,\,1\},\,\{0,\,2\},\,\{0,\,5\},\,\{1,\,3\},\,\{2,\,3\},\,\{1,\,4\},\,\{2,\,4\},\,\{3,\,5\},\,\{4,\,5\}\}$
 
-o4 : <tt class="token class-name">List</tt>
+o4 : <samp class="token class-name">List</samp>
 i5 : 5:0
-

@@ -1,14 +1,13 @@
 -- -*- M2-comint -*- hash: 1397472778
 i1 : 1:0QQ[x,y,z]
 
-o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$
+o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0isTropicalBasis({x+y+z,2*x+3*y-z})
 
-o2 = <tt class="token constant">false</tt>
+o2 = <samp class="token constant">false</samp>
 i3 : 3:0isTropicalBasis(flatten entries gens Grassmannian (1,4,QQ[a..l]))
 
-o3 = <tt class="token constant">true</tt>
+o3 = <samp class="token constant">true</samp>
 i4 : 4:0
-

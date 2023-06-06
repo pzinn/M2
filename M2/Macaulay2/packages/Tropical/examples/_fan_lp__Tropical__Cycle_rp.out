@@ -1,50 +1,49 @@
 -- -*- M2-comint -*- hash: -139759152
 i1 : 1:0QQ[x,y,z]
 
-o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$
+o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0T=tropicalVariety (ideal(x+3*y+3));
 i3 : 3:0fan T
 
-o3 = <tt class="token class-name">Fan</tt>$\{\ldots 1\ldots\}$
+o3 = <samp class="token class-name">Fan</samp>$\{\ldots 1\ldots\}$
 
-o3 : <tt class="token class-name">Fan</tt>
+o3 : <samp class="token class-name">Fan</samp>
 i4 : 4:0peek o3#cache
 
-o4 = <span><tt class="token class-name">CacheTable</tt><ul style="display:inline-table">
-<li>
-<span>$\textit{computedDimension}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$2$</span></li>
-<li>
-<span>$\textit{computedFVector}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{0,\,1,\,3\}$</span></li>
-<li>
-<span>$\textit{computedLinealityBasis}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left(\!\begin{array}{c}
+o4 = <span><samp class="token class-name">CacheTable</samp>  <ul style="display:inline-table">
+    <li>
+<span>$\textit{computedDimension}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$2$</span>    </li>
+    <li>
+<span>$\textit{computedFVector}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{0,\,1,\,3\}$</span>    </li>
+    <li>
+<span>$\textit{computedLinealityBasis}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{c}
 0\\
 0\\
 1
-\end{array}\!\right)$</span></li>
-<li>
-<span>$\textit{generatingObjects}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{\{0\},\,\{1\},\,\{2\}\}$</span></li>
-<li>
-<span>$\textit{inputCones}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{\{2\},\,\{0\},\,\{1\}\}$</span></li>
-<li>
-<span>$\textit{inputRays}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left(\!\begin{array}{ccc}
+\end{array}\!\right)$</span>    </li>
+    <li>
+<span>$\textit{generatingObjects}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{\{0\},\,\{1\},\,\{2\}\}$</span>    </li>
+    <li>
+<span>$\textit{inputCones}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{\{2\},\,\{0\},\,\{1\}\}$</span>    </li>
+    <li>
+<span>$\textit{inputRays}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{ccc}
 3&amp;0&amp;-3\\
 0&amp;3&amp;-3\\
 1&amp;1&amp;-2
-\end{array}\!\right)$</span></li>
-<li>
-<span>$\textit{pure}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token constant">true</tt></span></li>
-<li>
-<span><tt class="token function">rays</tt></span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\left(\!\begin{array}{ccc}
+\end{array}\!\right)$</span>    </li>
+    <li>
+<span>$\textit{pure}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token constant">true</samp></span>    </li>
+    <li>
+<span><samp class="token function">rays</samp></span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{ccc}
 -3&amp;3&amp;0\\
 -3&amp;0&amp;3\\
 -2&amp;1&amp;1
-\end{array}\!\right)$</span></li>
-<li>
-<span>$\textit{simplicial}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token constant">true</tt></span></li>
-</ul>
+\end{array}\!\right)$</span>    </li>
+    <li>
+<span>$\textit{simplicial}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token constant">true</samp></span>    </li>
+  </ul>
 </span>
 i5 : 5:0
 6:0
-

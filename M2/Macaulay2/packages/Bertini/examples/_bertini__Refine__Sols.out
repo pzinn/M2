@@ -3,22 +3,22 @@
 i2 : 2:0F = {x^2-2,y^2-2};
 i3 : 3:0sols = bertiniZeroDimSolve (F)
 
-o3 = $\left\{\{{1.41421}+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\},\,\{{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{3.33067}\cdot 10^{-16}\,\mathbf{i}\},\,\{-{1.41421}+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\},\,\{-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
+o3 = $\left\{\{{1.41421}+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\},\,\{{1.41421}-{6.55032}\cdot 10^{-15}\,\mathbf{i},\,-{1.41421}+{6.55032}\cdot 10^{-15}\,\mathbf{i}\},\,\{-{1.41421}+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\},\,\{-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 4:0S = bertiniRefineSols (100, F, sols)
 
-o4 = $\left\{\{-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\},\,\{-{1.41421}+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\},\,\{{1.41421}-{3.33067}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{3.33067}\cdot 10^{-16}\,\mathbf{i}\},\,\{{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i},\,{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
+o4 = $\left\{\{-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\},\,\{-{1.41421}-{2.08167}\cdot 10^{-17}\,\mathbf{i},\,{1.41421}+{2.08167}\cdot 10^{-17}\,\mathbf{i}\},\,\{{1.41421}-{6.55032}\cdot 10^{-15}\,\mathbf{i},\,-{1.41421}+{6.55032}\cdot 10^{-15}\,\mathbf{i}\},\,\{{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i},\,{1.41421}-{1.11022}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
 
-o4 : <tt class="token class-name">List</tt>
+o4 : <samp class="token class-name">List</samp>
 i5 : 5:0coords = coordinates S_0
 
-o5 = $\{-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\}$
+o5 = $\{-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i},\,-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 6:0coords_0
 
-o6 = $-{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}$
+o6 = $-{1.41421}-{2.22045}\cdot 10^{-16}\,\mathbf{i}$
 
 o6 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $333$)</span>
 i7 : 7:0

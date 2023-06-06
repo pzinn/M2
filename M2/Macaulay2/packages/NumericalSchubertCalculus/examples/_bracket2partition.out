@@ -5,17 +5,17 @@
 
 o3 = $\{2,\,1\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 4:0n = 6;
 i5 : 5:0bracket2partition(b,n)
 
 o5 = $\{4,\,3\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 6:0b = {2,4,6};
 i7 : 7:0bracket2partition(b,n)
 
 o7 = $\{2,\,1,\,0\}$
 
-o7 : <tt class="token class-name">List</tt>
+o7 : <samp class="token class-name">List</samp>
 i8 : 8:0

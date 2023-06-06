@@ -3,25 +3,25 @@
 
 o1 = $R$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
 o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}+\left(-1+0\,\mathbf{i}\right)x,\,x^{2}y+y^{3}+y\,z^{2}+\left(-1+0\,\mathbf{i}\right)y\right\}$
 
-o2 : <tt class="token class-name">List</tt>
+o2 : <samp class="token class-name">List</samp>
 i3 : 3:0NV = bertiniPosDimSolve(F)
 
-o3 = <tt class="token constant">NV</tt>
+o3 = <samp class="token constant">NV</samp>
 
-o3 : <tt class="token class-name">NumericalVariety</tt>
+o3 : <samp class="token class-name">NumericalVariety</samp>
 i4 : 4:0W = NV#1_0 --z-axis
 
-o4 = $<tt class="token string">W</tt>$
+o4 = $<samp class="token string">W</samp>$
 
-o4 : <tt class="token class-name">WitnessSet</tt>
+o4 : <samp class="token class-name">WitnessSet</samp>
 i5 : 5:0bertiniSample(4, W)
 
-o5 = $\left\{\{{7.85466}\cdot 10^{-174}-{2.28057}\cdot 10^{-174}\,\mathbf{i},\,-{7.56572}\cdot 10^{-21}+{2.94781}\cdot 10^{-22}\,\mathbf{i},\,-{.77011}+{.0771045}\,\mathbf{i}\},\,\{-{1.34486}\cdot 10^{-194}-{7.54153}\cdot 10^{-195}\,\mathbf{i},\,-{4.33707}\cdot 10^{-20}-{6.69366}\cdot 10^{-20}\,\mathbf{i},\,-{.387948}-{.610608}\,\mathbf{i}\},\,\{{1.15176}\cdot 10^{-224}-{1.40782}\cdot 10^{-225}\,\mathbf{i},\,-{2.77757}\cdot 10^{-21}-{3.81954}\cdot 10^{-20}\,\mathbf{i},\,-{.704644}-{.615109}\,\mathbf{i}\},\,\{{7.76374}\cdot 10^{-204}-{5.09759}\cdot 10^{-204}\,\mathbf{i},\,-{1.68899}\cdot 10^{-20}+{1.12294}\cdot 10^{-20}\,\mathbf{i},\,-{.17543}-{.131551}\,\mathbf{i}\}\right\}$
+o5 = $\left\{\{-{2.40658}\cdot 10^{-20}+{7.18177}\cdot 10^{-20}\,\mathbf{i},\,{1.10084}\cdot 10^{-19}+{5.1704}\cdot 10^{-20}\,\mathbf{i},\,{.269536}+{.366762}\,\mathbf{i}\},\,\{-{1.15578}\cdot 10^{-20}-{8.5455}\cdot 10^{-21}\,\mathbf{i},\,{1.83759}\cdot 10^{-20}-{3.28516}\cdot 10^{-20}\,\mathbf{i},\,{.14397}+{.237242}\,\mathbf{i}\},\,\{-{8.40054}\cdot 10^{-21}+{1.66059}\cdot 10^{-20}\,\mathbf{i},\,{2.0479}\cdot 10^{-20}-{4.78748}\cdot 10^{-20}\,\mathbf{i},\,-{.196413}+{.157795}\,\mathbf{i}\},\,\{-{4.19949}\cdot 10^{-20}-{2.09272}\cdot 10^{-19}\,\mathbf{i},\,{2.42822}\cdot 10^{-19}-{2.12682}\cdot 10^{-19}\,\mathbf{i},\,-{.517449}+{.360964}\,\mathbf{i}\}\right\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 6:0

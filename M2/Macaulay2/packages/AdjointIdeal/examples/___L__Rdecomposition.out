@@ -7,13 +7,13 @@
 \frac{9}{4}&amp;\frac{3}{4}&amp;\frac{7}{4}
 \end{array}\!\right)$
 
-o1 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
+o1 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
 i2 : 2:0(perm,LR)=LRdecomposition(A,j->-j);
 i3 : 3:0perm
 
 o3 = $\{0,\,1,\,2\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 4:0P=transpose (id_(QQ^3))_perm
 
 o4 = $\left(\!\begin{array}{ccc}
@@ -22,7 +22,7 @@
 0&amp;0&amp;1
 \end{array}\!\right)$
 
-o4 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
+o4 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
 i5 : 5:0R=extractRightUpper(LR)
 
 o5 = $\left(\!\begin{array}{ccc}
@@ -31,7 +31,7 @@
 0&amp;0&amp;\frac{47}{68}
 \end{array}\!\right)$
 
-o5 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
+o5 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
 i6 : 6:0L=extractLeftLower(LR)
 
 o6 = $\left(\!\begin{array}{ccc}
@@ -40,8 +40,8 @@
 \frac{1}{2}&amp;\frac{9}{17}&amp;1
 \end{array}\!\right)$
 
-o6 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
+o6 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
 i7 : 7:0L*R==P*A
 
-o7 = <tt class="token constant">true</tt>
+o7 = <samp class="token constant">true</samp>
 i8 : 8:0

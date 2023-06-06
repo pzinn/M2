@@ -1,45 +1,44 @@
 -- -*- M2-comint -*- hash: 611435285
 i1 : 1:0A=QQ{x,y,z}
 
-o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
-o1 : <tt class="token class-name">NCPolynomialRing</tt>
+o1 : <samp class="token class-name">NCPolynomialRing</samp>
 i2 : 2:0w=x^3-y^2
 
-o2 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{x,\,x,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{y,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>}\right\}$\right)\ \Rightarrow \ -1\right\}$\right)\right\}$
+o2 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\textit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\textit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{x,\,x,\,x\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{y,\,y\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ -1\})\}$
 
-o2 : $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o2 : $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 i3 : 3:0isHomogeneous w
 
-o3 = <tt class="token constant">false</tt>
+o3 = <samp class="token constant">false</samp>
 i4 : 4:0setWeights(A, {2,3,1})
 
-o4 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o4 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
-o4 : <tt class="token class-name">NCPolynomialRing</tt>
+o4 : <samp class="token class-name">NCPolynomialRing</samp>
 i5 : 5:0isHomogeneous w
 
-o5 = <tt class="token constant">true</tt>
+o5 = <samp class="token constant">true</samp>
 i6 : 6:0C = QQ{a,b,c}
 
-o6 = $\htmlClass{token class-name}{<tt class="token string">C</tt>}$
+o6 = $\htmlClass{token class-name}{<samp class="token string">C</samp>}$
 
-o6 : <tt class="token class-name">NCPolynomialRing</tt>
+o6 : <samp class="token class-name">NCPolynomialRing</samp>
 i7 : 7:0g = ncMap(C,A,{a^3,b^2,a+b,a-b})
 
-o7 = <tt class="token class-name">NCRingMap</tt>$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\,\})$,\,$\textit{Derivation}\ \Rightarrow \ $<tt class="token constant">false</tt>,\,\textit{functionHash}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{x\ \Rightarrow \ \left(\htmlClass{token class-name}{<tt class="token string">C</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{a,\,a,\,a\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\}\right),\,y\ \Rightarrow \ \left(\htmlClass{token class-name}{<tt class="token string">C</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{b,\,b\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\}\right),\,z\ \Rightarrow \ \left(\htmlClass{token class-name}{<tt class="token string">C</tt>}$$\left\{$\textit{cache}\ \Rightarrow \ ($<tt class="token class-name">CacheTable</tt>$\{\ldots 1\ldots\})$,\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>},\,\textit{terms}\ \Rightarrow \ \left(<tt class="token class-name">HashTable</tt>$\left\{\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{a\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>}\right\}$\right)\ \Rightarrow \ 1,\,\left(<tt class="token class-name">NCMonomial</tt>$\left\{\textit{monList}\ \Rightarrow \ \{b\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>}\right\}$\right)\ \Rightarrow \ 1\right\}$\right)\right\}\right)\right\}$\right),\,\textit{source}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">A</tt>},\,\textit{target}\ \Rightarrow \ \htmlClass{token class-name}{<tt class="token string">C</tt>}\right\}$
+o7 = <samp class="token class-name">NCRingMap</samp>$\{\textit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\textit{Derivation}\ \Rightarrow \ $<samp class="token constant">false</samp>$,\,\textit{functionHash}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{x\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">C</samp>}$$\{\textit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>},\,\textit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{a,\,a,\,a\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1\})\}),\,y\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">C</samp>}$$\{\textit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>},\,\textit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{b,\,b\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1\})\}),\,z\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">C</samp>}$$\{\textit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>},\,\textit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{a\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\textit{monList}\ \Rightarrow \ \{b\},\,\textit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1\})\})\}),\,\textit{source}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\textit{target}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\}$
 
-o7 : <tt class="token class-name">NCRingMap</tt>
+o7 : <samp class="token class-name">NCRingMap</samp>
 i8 : 8:0isHomogeneous g
 
-o8 = <tt class="token constant">false</tt>
+o8 = <samp class="token constant">false</samp>
 i9 : 9:0setWeights(A,{3,2,1,1})
 
-o9 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o9 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
-o9 : <tt class="token class-name">NCPolynomialRing</tt>
+o9 : <samp class="token class-name">NCPolynomialRing</samp>
 i10 : 10:0isHomogeneous g
 
-o10 = <tt class="token constant">true</tt>
+o10 = <samp class="token constant">true</samp>
 i11 : 11:0
-

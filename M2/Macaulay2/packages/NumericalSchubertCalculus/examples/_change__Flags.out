@@ -28,13 +28,13 @@
 {.909047}+{.314897}\,\mathbf{i}&amp;{.246268}+{.153346}\,\mathbf{i}&amp;{.223028}+{.388829}\,\mathbf{i}&amp;{.169813}+{.965004}\,\mathbf{i}&amp;{.237252}+{.116721}\,\mathbf{i}&amp;{.465736}+{.40273}\,\mathbf{i}
 \end{array}\!\right)\right)\right\}$
 
-o6 : <tt class="token class-name">List</tt>
+o6 : <samp class="token class-name">List</samp>
 i7 : 6:0G = randomSchubertProblemInstance({l1,l2,l3},k,n);
 i8 : 7:0S = solveSchubertProblem(F,k,n);
 i9 : 8:0FlagsF = F/last;
 i10 : 9:0FlagsG = G/last;
 i11 : 10:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 3.28011 seconds
+     -- used 3.1906 seconds
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -52,10 +52,10 @@
 {.0284784}+{.374339}\,\mathbf{i}&amp;-{.588673}+{.906394}\,\mathbf{i}&amp;-{.233277}+{.814607}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o11 : <tt class="token class-name">List</tt>
+o11 : <samp class="token class-name">List</samp>
 i12 : 11:0assert all(S', s-> checkIncidenceSolution(s,G))
 i13 : 12:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.80145 seconds
+     -- used 1.67198 seconds
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
@@ -73,6 +73,6 @@
 -{.236198}+{.0362704}\,\mathbf{i}&amp;-{.341298}-{.374585}\,\mathbf{i}&amp;{.878579}-{.176735}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o13 : <tt class="token class-name">List</tt>
+o13 : <samp class="token class-name">List</samp>
 i14 : 13:0assert all(S', s-> checkIncidenceSolution(s,G))
 i15 : 14:0

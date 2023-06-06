@@ -14,10 +14,10 @@
 $\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\}$
 $\{{.742585}-{.425943}\,\mathbf{i},\,{.270685}+{1.00715}\,\mathbf{i}\}$
 
-o4 = $\{$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$,\,$<tt class="token constant">null</tt>$\}$
+o4 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
-o4 : <tt class="token class-name">List</tt>
+o4 : <samp class="token class-name">List</samp>
 i5 : 5:0isCoordinateZero(fSols_0,1,1.0e-10)
 
-o5 = <tt class="token constant">true</tt>
+o5 = <samp class="token constant">true</samp>
 i6 : 6:0

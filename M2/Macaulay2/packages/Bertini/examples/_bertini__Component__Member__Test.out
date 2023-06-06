@@ -3,17 +3,17 @@
 i2 : 2:0F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y};
 i3 : 3:0NV = bertiniPosDimSolve(F)
 
-o3 = <tt class="token constant">NV</tt>
+o3 = <samp class="token constant">NV</samp>
 
-o3 : <tt class="token class-name">NumericalVariety</tt>
+o3 : <samp class="token class-name">NumericalVariety</samp>
 i4 : 4:0pts = {{0,0,0}} --z-axis
 
 o4 = $\{\{0,\,0,\,0\}\}$
 
-o4 : <tt class="token class-name">List</tt>
+o4 : <samp class="token class-name">List</samp>
 i5 : 5:0bertiniComponentMemberTest(pts, NV)
 
-o5 = $\left\{\left\{<tt class="token string">(dim=1,deg=1)</tt>\right\}\right\}$
+o5 = $\left\{\left\{<samp class="token string">(dim=1,deg=1)</samp>\right\}\right\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 6:0

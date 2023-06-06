@@ -3,7 +3,7 @@
 i2 : 2:0f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 i3 : 3:0I=ideal f;
 
-o3 : <span><tt class="token class-name">Ideal</tt> of $R$</span>
+o3 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
 i4 : 4:0dim I
 -- warning: experimental computation over inexact field begun
 --          results not reliable (one warning given per session)
@@ -19,16 +19,16 @@
 
 o7 = $(8,\,10)$
 
-o7 : <tt class="token class-name">Sequence</tt>
+o7 : <samp class="token class-name">Sequence</samp>
 i8 : 8:0(mv,q,qsols) = mixedVolume(f,StartSystem=>true);
 i9 : 9:0q --let's take a look at the start system:
 
 o9 = $\left\{\left(-{.205377}-{.978683}\,\mathbf{i}\right)x^{3}y^{5}+\left({.943327}-{.331864}\,\mathbf{i}\right)x^{2}y,\,\left({.673112}+{.739541}\,\mathbf{i}\right)x^{2}-{.911067}-{.412259}\,\mathbf{i}\right\}$
 
-o9 : <tt class="token class-name">List</tt>
+o9 : <samp class="token class-name">List</samp>
 i10 : 10:0qsols --and its solutions:
 
 o10 = $\left\{\{{.979319}-{.202321}\,\mathbf{i},\,{.930645}-{.365923}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,{.916812}+{.399319}\,\mathbf{i}\},\,\{{.979319}-{.202321}\,\mathbf{i},\,{.365923}+{.930645}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,-{.399319}+{.916812}\,\mathbf{i}\},\,\{{.979319}-{.202321}\,\mathbf{i},\,-{.930645}+{.365923}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,-{.916812}-{.399319}\,\mathbf{i}\},\,\{{.979319}-{.202321}\,\mathbf{i},\,-{.365923}-{.930645}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,{.399319}-{.916812}\,\mathbf{i}\}\right\}$
 
-o10 : <tt class="token class-name">List</tt>
+o10 : <samp class="token class-name">List</samp>
 i11 : 11:0

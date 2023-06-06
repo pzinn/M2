@@ -1,29 +1,28 @@
 -- -*- M2-comint -*- hash: -599996858
 i1 : 1:0QQ[x,y,z]
 
-o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$
+o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0V = tropicalVariety(ideal(x+y+z))
 
-o2 = <tt class="token class-name">TropicalCycle</tt>$\{\ldots 2\ldots\}$
+o2 = <samp class="token constant">V</samp>
 
-o2 : <tt class="token class-name">TropicalCycle</tt>
+o2 : <samp class="token class-name">TropicalCycle</samp>
 i3 : 3:0isBalanced V
 
-o3 = <tt class="token constant">true</tt>
+o3 = <samp class="token constant">true</samp>
 i4 : 4:0F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
 
-o4 = <tt class="token class-name">Fan</tt>$\{\ldots 1\ldots\}$
+o4 = <samp class="token constant">F</samp>
 
-o4 : <tt class="token class-name">Fan</tt>
+o4 : <samp class="token class-name">Fan</samp>
 i5 : 5:0mult = {1,2,-3,1}
 
 o5 = $\{1,\,2,\,-3,\,1\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 6:0isBalanced (tropicalCycle(F, mult))
 
-o6 = <tt class="token constant">false</tt>
+o6 = <samp class="token constant">false</samp>
 i7 : 7:0
-

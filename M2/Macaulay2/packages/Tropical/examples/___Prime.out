@@ -2,14 +2,13 @@
 i1 : 1:0QQ[x,y,z];
 i2 : 2:0I=ideal(x^2+y^2-2*x*y);
 
-o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, z\right]$</span>
+o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$</span>
 i3 : 3:0isPrime I
 
-o3 = <tt class="token constant">false</tt>
+o3 = <samp class="token constant">false</samp>
 i4 : 4:0T=tropicalVariety(I,Prime=>false)
 
-o4 = <tt class="token class-name">TropicalCycle</tt>$\{\ldots 2\ldots\}$
+o4 = <samp class="token constant">T</samp>
 
-o4 : <tt class="token class-name">TropicalCycle</tt>
+o4 : <samp class="token class-name">TropicalCycle</samp>
 i5 : 5:0
-

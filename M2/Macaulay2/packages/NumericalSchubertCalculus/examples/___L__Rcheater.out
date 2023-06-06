@@ -3,7 +3,7 @@
 i2 : 2:0n := 6;
 i3 : 3:0m := matrix{{3, 2, 4, 6}};
 
-o3 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{1}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{4}$</span>
+o3 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{1}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{4}$</span>
 i4 : 4:0t := LRtriple(n,m);
 i5 : 5:0w := wrapTriplet(t);
 i6 : 6:0

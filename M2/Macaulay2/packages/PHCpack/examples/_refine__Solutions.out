@@ -9,12 +9,12 @@
 
 o5 = $\left\{\{{.57735}+0\,\mathbf{i},\,{1.73205}+0\,\mathbf{i}\},\,\{-{.57735}+0\,\mathbf{i},\,-{1.73205}+0\,\mathbf{i}\}\right\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 4:0newRoots#0 -- recall that solutions are of type Point
 
 o6 = $\{{.57735}+0\,\mathbf{i},\,{1.73205}+0\,\mathbf{i}\}$
 
-o6 : <tt class="token class-name">Point</tt>
+o6 : <samp class="token class-name">Point</samp>
 i7 : 5:0r1 = newRoots#0#Coordinates#1
 
 o7 = ${1.73205080756887735414922460641658082304678611432812598193257967}+0\,\mathbf{i}$

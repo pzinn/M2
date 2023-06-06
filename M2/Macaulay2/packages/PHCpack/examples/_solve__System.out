@@ -3,39 +3,39 @@
 
 o1 = $R$
 
-o1 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0S = {x+y+z-1, x^2+y^2, x+y-z-3}
 
 o2 = $\left\{x+y+z-1+0\,\mathbf{i},\,x^{2}+y^{2},\,x+y+\left(-1+0\,\mathbf{i}\right)z-{3}+0\,\mathbf{i}\right\}$
 
-o2 : <tt class="token class-name">List</tt>
+o2 : <samp class="token class-name">List</samp>
 i3 : 3:0L = solveSystem(S)
 
 o3 = $\left\{\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\},\,\{1+\mathbf{i},\,1-\mathbf{i},\,-1+0\,\mathbf{i}\}\right\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 4:0oneSoln = L_0
 
 o4 = $\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\}$
 
-o4 : <tt class="token class-name">Point</tt>
+o4 : <samp class="token class-name">Point</samp>
 i5 : 5:0peek oneSoln
 
-o5 = <span><tt class="token class-name">Point</tt>  <ul style="display:inline-table">
+o5 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 3\ldots\}$</span>    </li>
+<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\}$</span>    </li>
+<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{1-\mathbf{i},\,1+\mathbf{i},\,-1+0\,\mathbf{i}\}$</span>    </li>
   </ul>
 </span>
 i6 : 6:0system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
 
 o6 = $\left\{\left(-1+0\,\mathbf{i}\right)x^{2}+y,\,\left(-1+0\,\mathbf{i}\right)x^{3}+z,\,x+y+z-1+0\,\mathbf{i},\,x^{3}+x+y-1+0\,\mathbf{i}\right\}$
 
-o6 : <tt class="token class-name">List</tt>
+o6 : <samp class="token class-name">List</samp>
 i7 : 7:0#system > numcols vars R --overdetermined system
 
-o7 = <tt class="token constant">true</tt>
+o7 = <samp class="token constant">true</samp>
 i8 : 8:0solns = solveSystem(system);
 *** after parseSolutions, ring has {x, y, z} ***
 i9 : 9:0numSolns = #solns

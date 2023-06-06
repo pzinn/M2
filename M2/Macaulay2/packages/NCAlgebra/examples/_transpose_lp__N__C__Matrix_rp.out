@@ -1,23 +1,22 @@
 -- -*- M2-comint -*- hash: 1579963153
 i1 : 1:0A = QQ{a,b,c,d}
 
-o1 = $\htmlClass{token class-name}{<tt class="token string">A</tt>}$
+o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
-o1 : <tt class="token class-name">NCPolynomialRing</tt>
+o1 : <samp class="token class-name">NCPolynomialRing</samp>
 i2 : 2:0M = ncMatrix {{a,b,c,d},{b,c,d,a}}
 
-o2 = <tt class="token class-name">NCMatrix</tt>$\{\ldots 6\ldots\}$
+o2 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
-o2 : <tt class="token class-name">NCMatrix</tt>
+o2 : <samp class="token class-name">NCMatrix</samp>
 i3 : 3:0N = M || 2*M || -3*M
 
-o3 = <tt class="token class-name">NCMatrix</tt>$\{\ldots 6\ldots\}$
+o3 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
-o3 : <tt class="token class-name">NCMatrix</tt>
+o3 : <samp class="token class-name">NCMatrix</samp>
 i4 : 4:0transpose N
 
-o4 = <tt class="token class-name">NCMatrix</tt>$\{\ldots 6\ldots\}$
+o4 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
-o4 : <tt class="token class-name">NCMatrix</tt>
+o4 : <samp class="token class-name">NCMatrix</samp>
 i5 : 5:0
-

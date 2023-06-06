@@ -4,56 +4,55 @@
 
 o3 = $\{\,\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 3:0bettiTablesWithHilbertFunction(L, R, Count => true) --tallies distinct ideals giving each table
 
-o4 = <tt class="token class-name">Tally</tt>$\{\,\}$
+o4 = <samp class="token class-name">Tally</samp>$\{\,\}$
 
-o4 : <tt class="token class-name">Tally</tt>
+o4 : <samp class="token class-name">Tally</samp>
 i5 : 4:0bettiTablesWithHilbertFunction(L, R, FirstBetti => 5) --only returns tables whose first total betti number is 5
 
 o5 = $\{\,\}$
 
-o5 : <tt class="token class-name">List</tt>
+o5 : <samp class="token class-name">List</samp>
 i6 : 5:0bettiTablesWithHilbertFunction(L, R, GradedBettis => {0, 0, 2, 2, 1}) --only returns tables whose first graded betti numbers match a given sequence
 
 o6 = $\{\,\}$
 
-o6 : <tt class="token class-name">List</tt>
+o6 : <samp class="token class-name">List</samp>
 i7 : 6:0bettiTablesWithHilbertFunction(L, R, BoundGenerators => 3)
 
 o7 = $\{\,\}$
 
-o7 : <tt class="token class-name">List</tt>
+o7 : <samp class="token class-name">List</samp>
 i8 : 7:0bettiTablesWithHilbertFunction(L, R, BoundGenerators => 3, Count => true)
 
-o8 = <tt class="token class-name">Tally</tt>$\{\,\}$
+o8 = <samp class="token class-name">Tally</samp>$\{\,\}$
 
-o8 : <tt class="token class-name">Tally</tt>
+o8 : <samp class="token class-name">Tally</samp>
 i9 : 8:0S = QQ[a..f]
 
 o9 = $S$
 
-o9 : <span><tt class="token class-name">PolynomialRing</tt></span>
+o9 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i10 : 9:0bettiTablesWithHilbertFunction({1, 6, 19, 45, 86}, S, SquareFree => true)
 
 o10 = $\{\,\}$
 
-o10 : <tt class="token class-name">List</tt>
+o10 : <samp class="token class-name">List</samp>
 i11 : 10:0bettiTablesWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5, Count => true)
 
-o11 = <tt class="token class-name">Tally</tt>$\{\,\}$
+o11 = <samp class="token class-name">Tally</samp>$\{\,\}$
 
-o11 : <tt class="token class-name">Tally</tt>
+o11 : <samp class="token class-name">Tally</samp>
 i12 : 11:0bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
 
 o12 = $\{\,\}$
 
-o12 : <tt class="token class-name">List</tt>
+o12 : <samp class="token class-name">List</samp>
 i13 : 12:0bettiTablesWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
 
 o13 = $\{\,\}$
 
-o13 : <tt class="token class-name">List</tt>
+o13 : <samp class="token class-name">List</samp>
 i14 : 13:0
-

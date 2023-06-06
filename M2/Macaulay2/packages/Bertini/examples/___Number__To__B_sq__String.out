@@ -1,13 +1,13 @@
 -- -*- M2-comint -*- hash: 1570067667
 i1 : 1:0NumberToB'String(2+5*ii)
 
-o1 = <tt class="token string">.2e1 .5e1</tt>
+o1 = <samp class="token string">.2e1 .5e1</samp>
 i2 : 2:0NumberToB'String(1/3,M2Precision=>16)
-<tt class="token string">Warning: rational numbers will be converted to floating point.</tt>
+<samp class="token string">Warning: rational numbers will be converted to floating point.</samp>
 
-o2 = <tt class="token string">.33333333333333331e0 .0e0</tt>
+o2 = <samp class="token string">.33333333333333331e0 .0e0</samp>
 i3 : 3:0NumberToB'String(1/3,M2Precision=>128)
-<tt class="token string">Warning: rational numbers will be converted to floating point.</tt>
+<samp class="token string">Warning: rational numbers will be converted to floating point.</samp>
 
-o3 = <tt class="token string">.3333333333333333333333333333333333333338e0 .0e0</tt>
+o3 = <samp class="token string">.3333333333333333333333333333333333333338e0 .0e0</samp>
 i4 : 4:0

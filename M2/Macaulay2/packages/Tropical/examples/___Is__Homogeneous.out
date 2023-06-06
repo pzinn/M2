@@ -2,11 +2,10 @@
 i1 : 1:0QQ[x,y];
 i2 : 2:0I=ideal(x+y+1);
 
-o2 : <span><tt class="token class-name">Ideal</tt> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x\,{.}{.}\, y\right]$</span>
+o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,y]$</span>
 i3 : 3:0T=tropicalVariety (I,IsHomogeneous=>false)
 
-o3 = <tt class="token class-name">TropicalCycle</tt>$\{\ldots 2\ldots\}$
+o3 = <samp class="token constant">T</samp>
 
-o3 : <tt class="token class-name">TropicalCycle</tt>
+o3 : <samp class="token class-name">TropicalCycle</samp>
 i4 : 4:0
-

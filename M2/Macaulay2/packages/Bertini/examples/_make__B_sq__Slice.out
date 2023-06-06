@@ -3,66 +3,66 @@
 
 o1 = $\{1,\,1\}$
 
-o1 : <tt class="token class-name">List</tt>
+o1 : <samp class="token class-name">List</samp>
 i2 : 2:0variableGroups={{x0,x1},{y0,y1,y2}}
 
 o2 = $\{\{\textit{x0},\,\textit{x1}\},\,\{\textit{y0},\,\textit{y1},\,\textit{y2}\}\}$
 
-o2 : <tt class="token class-name">List</tt>
+o2 : <samp class="token class-name">List</samp>
 i3 : 3:0xySlice=makeB'Slice(sliceType,variableGroups)
 
-o3 = <tt class="token class-name">B'Slice</tt>$\{\ldots 4\ldots\}$
+o3 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
-o3 : <tt class="token class-name">B'Slice</tt>
+o3 : <samp class="token class-name">B'Slice</samp>
 i4 : 4:0peek xySlice
 
-o4 = <span><tt class="token class-name">B'Slice</tt>  <ul style="display:inline-table">
+o4 = <span><samp class="token class-name">B'Slice</samp>  <ul style="display:inline-table">
     <li>
-<span>$B'NumberCoefficients$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{\{{1.49144}+{.713846}\,\mathbf{i},\,-{.840113}+{1.1986}\,\mathbf{i}\},\,\{{.014842}+{1.23548}\,\mathbf{i},\,-{.214468}+{.911293}\,\mathbf{i},\,-{.486176}+{.400577}\,\mathbf{i}\}\}$</span>    </li>
+<span>$B'NumberCoefficients$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{\{{1.49144}+{.713846}\,\mathbf{i},\,-{.840113}+{1.1986}\,\mathbf{i}\},\,\{{.014842}+{1.23548}\,\mathbf{i},\,-{.214468}+{.911293}\,\mathbf{i},\,-{.486176}+{.400577}\,\mathbf{i}\}\}$</span>    </li>
     <li>
-<span>$B'SectionString$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{$<tt class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</tt>$,\,$<tt class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</tt>$\}$</span>    </li>
+<span>$B'SectionString$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{$<samp class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</samp>$,\,$<samp class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</samp>$\}$</span>    </li>
     <li>
-<span>$ListB'Sections$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{$<tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\},\,$<tt class="token class-name">B'Section</tt>$\{\ldots 2\ldots\}\}$</span>    </li>
+<span>$ListB'Sections$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{$<samp class="token class-name">B'Section</samp>$\{\ldots 2\ldots\},\,$<samp class="token class-name">B'Section</samp>$\{\ldots 2\ldots\}\}$</span>    </li>
     <li>
-<span>$NameB'Slice$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>null</span>    </li>
+<span>$NameB'Slice$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>null</span>    </li>
   </ul>
 </span>
 i5 : 5:0for i in  xySlice#B'SectionString do print i
-<tt class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</tt>
-<tt class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</tt>
+<samp class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</samp>
+<samp class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</samp>
 i6 : 6:0aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
 i7 : 7:0aSlice#NameB'Slice
 
-o7 = $\{$<tt class="token string">f0</tt>$,\,$<tt class="token string">f1</tt>$,\,$<tt class="token string">f2</tt>$\}$
+o7 = $\{$<samp class="token string">f0</samp>$,\,$<samp class="token string">f1</samp>$,\,$<samp class="token string">f2</samp>$\}$
 
-o7 : <tt class="token class-name">List</tt>
+o7 : <samp class="token class-name">List</samp>
 i8 : 8:0makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"});
 i9 : 9:0f1="x0*y0+x1*y0+x2*y2"
 
-o9 = <tt class="token string">x0*y0+x1*y0+x2*y2</tt>
+o9 = <samp class="token string">x0*y0+x1*y0+x2*y2</samp>
 i10 : 10:0f2="x0*y0^2+x1*y1*y2+x2*y0*y2"
 
-o10 = <tt class="token string">x0*y0^2+x1*y1*y2+x2*y0*y2</tt>
+o10 = <samp class="token string">x0*y0^2+x1*y1*y2+x2*y0*y2</samp>
 i11 : 11:0variableGroups={{x0,x1,x2},{y0,y1,y2}}
 
 o11 = $\{\{\textit{x0},\,\textit{x1},\,\textit{x2}\},\,\{\textit{y0},\,\textit{y1},\,\textit{y2}\}\}$
 
-o11 : <tt class="token class-name">List</tt>
+o11 : <samp class="token class-name">List</samp>
 i12 : 12:0xxSlice=makeB'Slice({2,0},variableGroups)
 
-o12 = <tt class="token class-name">B'Slice</tt>$\{\ldots 4\ldots\}$
+o12 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
-o12 : <tt class="token class-name">B'Slice</tt>
+o12 : <samp class="token class-name">B'Slice</samp>
 i13 : 13:0xySlice=makeB'Slice({1,1},variableGroups)
 
-o13 = <tt class="token class-name">B'Slice</tt>$\{\ldots 4\ldots\}$
+o13 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
-o13 : <tt class="token class-name">B'Slice</tt>
+o13 : <samp class="token class-name">B'Slice</samp>
 i14 : 14:0yySlice=makeB'Slice({0,2},variableGroups)
 
-o14 = <tt class="token class-name">B'Slice</tt>$\{\ldots 4\ldots\}$
+o14 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
-o14 : <tt class="token class-name">B'Slice</tt>
+o14 : <samp class="token class-name">B'Slice</samp>
 i15 : 15:0makeB'InputFile(storeBM2Files,
 16:0    HomVariableGroup=>variableGroups,
 17:0    B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections);

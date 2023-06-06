@@ -3,28 +3,28 @@
 i2 : 2:0F = {x^2-1,y^2-2};
 i3 : 3:0S = bertiniZeroDimSolve F
 
-o3 = $\left\{\{1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\}\right\}$
+o3 = $\left\{\{1+0\,\mathbf{i},\,{1.41421}-{3.9968}\cdot 10^{-15}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{1.41421}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,{1.41421}+{2.22045}\cdot 10^{-16}\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-{1.41421}+{3.9968}\cdot 10^{-15}\,\mathbf{i}\}\right\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 4:0peek S_0
 
-o4 = <span><tt class="token class-name">Point</tt>  <ul style="display:inline-table">
+o4 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span><tt class="token class-name">CacheTable</tt>$\{\ldots 13\ldots\}$</span>    </li>
+<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 13\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><tt class="token string"> </tt>$\Rightarrow $<tt class="token string"> </tt><span>$\{1+0\,\mathbf{i},\,{1.41421}+0\,\mathbf{i}\}$</span>    </li>
+<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{1+0\,\mathbf{i},\,{1.41421}-{3.9968}\cdot 10^{-15}\,\mathbf{i}\}$</span>    </li>
   </ul>
 </span>
 i5 : 5:0R = CC[x];
 i6 : 6:0F = {x^2*(x-1)};
 i7 : 7:0S = bertiniZeroDimSolve F
 
-o7 = $\left\{\{1+0\,\mathbf{i}\},\,\{-{3.71995}\cdot 10^{-15}-{4.26613}\cdot 10^{-15}\,\mathbf{i}\}\right\}$
+o7 = $\left\{\{1+{2.22045}\cdot 10^{-16}\,\mathbf{i}\},\,\{-{3.31537}\cdot 10^{-15}-{1.32266}\cdot 10^{-14}\,\mathbf{i}\}\right\}$
 
-o7 : <tt class="token class-name">List</tt>
+o7 : <samp class="token class-name">List</samp>
 i8 : 8:0B = bertiniZeroDimSolve(F,UseRegeneration=>1)
 
-o8 = $\left\{\{{1}+{7.21645}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
+o8 = $\left\{\{1+{2.77556}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
 
-o8 : <tt class="token class-name">List</tt>
+o8 : <samp class="token class-name">List</samp>
 i9 : 9:0

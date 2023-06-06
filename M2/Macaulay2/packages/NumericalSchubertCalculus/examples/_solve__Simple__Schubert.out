@@ -54,5 +54,5 @@
 {.689695}-{.590038}\,\mathbf{i}&amp;{.157157}+{.310587}\,\mathbf{i}&amp;{.453721}+{.129014}\,\mathbf{i}
 \end{array}\!\right)\right\}$
 
-o4 : <tt class="token class-name">List</tt>
+o4 : <samp class="token class-name">List</samp>
 i5 : 11:0

@@ -5,7 +5,7 @@
 
 o3 = $\{\{2,\,2\},\,\{2,\,2\},\,\{2,\,2\},\,\{1\},\,\{1\},\,\{1\},\,\{1\}\}$
 
-o3 : <tt class="token class-name">List</tt>
+o3 : <samp class="token class-name">List</samp>
 i4 : 4:0NSC2phc(SchubProbP,k,n)
 
 o4 = $\left(\!\begin{array}{ccccc}
@@ -13,14 +13,14 @@
 4&amp;4&amp;6&amp;7&amp;8
 \end{array}\!\right)$
 
-o4 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{5}$</span>
+o4 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{5}$</span>
 i5 : 5:0k=4;
 i6 : 6:0n = 8;
 i7 : 7:0SchubProbB = {{3,4,7,8},{3,4,7,8},{3,4,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8},{4,6,7,8}}
 
 o7 = $\{\{3,\,4,\,7,\,8\},\,\{3,\,4,\,7,\,8\},\,\{3,\,4,\,7,\,8\},\,\{4,\,6,\,7,\,8\},\,\{4,\,6,\,7,\,8\},\,\{4,\,6,\,7,\,8\},\,\{4,\,6,\,7,\,8\}\}$
 
-o7 : <tt class="token class-name">List</tt>
+o7 : <samp class="token class-name">List</samp>
 i8 : 8:0NSC2phc(SchubProbB,4,8)
 
 o8 = $\left(\!\begin{array}{ccccc}
@@ -28,5 +28,5 @@
 4&amp;4&amp;6&amp;7&amp;8
 \end{array}\!\right)$
 
-o8 : <span><tt class="token class-name">Matrix</tt> $\htmlClass{token class-name}{{\mathbb Z}}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{5}$</span>
+o8 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{5}$</span>
 i9 : 9:0
