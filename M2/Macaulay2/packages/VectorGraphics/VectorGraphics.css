@@ -71,10 +71,10 @@ absolute sounds bad but actually it's not really absolute since it's in svg unit
 }
 
 
-.M2Svg > .gfxauto {
+.M2Svg + .gfxauto {
     visibility: hidden;
 }
 
-.M2Svg:hover > .gfxauto {
+.M2Svg + .gfxauto:hover, .M2Svg:hover + .gfxauto {
     visibility: visible;
 }

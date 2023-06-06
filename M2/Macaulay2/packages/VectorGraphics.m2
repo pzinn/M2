@@ -730,25 +730,42 @@ new SVG from GraphicsObject := (S,g) -> (
     ss = append(ss,main);
     defsList = unique ( defsList | g.cache.Filter );
     if #defsList>0 then ss=append(ss,svgDefs defsList);
-    -- then autorotate button
-    if animated g then (
-	sizex := rr_0*min(0.5,1.5/g.cache.Size_0); sizey := rr_1*min(0.5,1.5/g.cache.Size_1); -- can't be larger than half the pic; default = 1.5em
-	ss = append(ss,
-	(svgElement GraphicsList) {
-	    "transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
-	    "class" => "gfxauto",
-	    "onclick" => "gfxToggleRotation(event)",
-	    (svgElement Circle) { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
-	    (svgElement Polygon) { "class" => "gfxautoplay", "points" => "0.3,0.25 0.8,0.5 0.3,0.75", "style" => "stroke:none; fill:black" },
-	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.3", "y1" => "0.25", "x2" => "0.3", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
-	    (svgElement Line) { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
-	    animate {"onbegin"=>"gfxToggleRotation(event, "| toString(not g.?AnimStart or g.AnimStart)|")"} -- start animation unless AnimStart false
-	    }
-	));
     ss
     )
 
-hypertext GraphicsObject := g -> SVG g
+hypertext GraphicsObject := g -> (
+    ss:=SVG g;
+    -- then autorotate button
+    if animated g then (
+	-*
+	sizex := rr_0*min(0.5,1.5/g.cache.Size_0); sizey := rr_1*min(0.5,1.5/g.cache.Size_1); -- can't be larger than half the pic; default = 1.5em
+	ss = append(ss,
+	    (svgElement GraphicsList) {
+	    	"transform" => "translate("|toString(r#0_0)|" "|toString(r#0_1)|") scale("|toString sizex|" "|toString sizey|")",
+	    	"class" => "gfxauto",
+	    	"onclick" => "gfxToggleRotation(event)",
+	    	(svgElement Circle) { "cx" => "0.5", "cy" => "0.5", "r" => "0.45", "style" => "fill:white; stroke:black; stroke-width:0.05" },
+	    	(svgElement Polygon) { "class" => "gfxautoplay", "points" => "0.3,0.25 0.8,0.5 0.3,0.75", "style" => "stroke:none; fill:black" },
+	    	(svgElement Line) { "class" => "gfxautostop", "x1" => "0.3", "y1" => "0.25", "x2" => "0.3", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
+	    	(svgElement Line) { "class" => "gfxautostop", "x1" => "0.7", "y1" => "0.25", "x2" => "0.7", "y2" => "0.75", "style" => "stroke:black; stroke-width:0.15" },
+	    	animate {"onbegin"=>"gfxToggleRotation(event, "| toString(not g.?AnimStart or g.AnimStart)|")"} -- start animation unless AnimStart false
+	    	}
+	    ));    *-
+    tag := graphicsId();
+    tag1 := graphicsId();
+    cmd := "gfxToggleRotation('"|toString tag|"','"|toString tag1|"',";
+    ss = append(ss, "id" => tag);
+    ss = append(ss, animate {"onbegin"=>cmd|toString(not g.?AnimStart or g.AnimStart)|")"}); -- start animation unless AnimStart false
+    ss = SPAN{ss,SPAN{
+	    SPAN{"play_circle","class"=>"material-icons gfxautoplay"},
+	    SPAN{"pause_circle","class"=>"material-icons gfxautostop","style"=>"position:absolute;top:0px;left:0px"},
+	    "id" => tag1,
+	    "class"=>"gfxauto",
+	    "onclick" => cmd|")",
+	    "style"=>"position:relative;display:inline-block;vertical-align:top"}}
+    );
+ss
+)
 html GraphicsObject := html @@ hypertext
 
 -- tex output

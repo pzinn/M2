@@ -12,12 +12,12 @@ function gfxInitData(el) {
 }
 
 // auto-rotation button
-window.gfxToggleRotation = function(event,flag) {
+window.gfxToggleRotation = function(svgid,elid,flag) {
     //    this.blur();
-    var el = event.currentTarget;
-    var svgel = el.ownerSVGElement;
-    while (!el.classList.contains("gfxauto")) el=el.parentElement;
-    if (el.svgel) return; // shouldn't happen
+    var el = document.getElementById(elid);
+    //    var svgel = el.ownerSVGElement;
+    var svgel = document.getElementById(svgid);
+//    if (el.svgel) return; // shouldn't happen
     if (!svgel.gfxdata) gfxInitData(svgel);
     if (!el.ondblclick) el.ondblclick= function(event) { event.stopPropagation(); }; // weak
     
