@@ -54,10 +54,14 @@ Thing#{WebApp,BeforePrint} = identity
 
 Nothing#{WebApp,Print} = identity
 
+webAppPrintFlag = false
+
 (modes print)#WebApp = printFunc := x -> (
+    webAppPrintFlag = true;
     y := try html if shortMode then short x else x;  -- we compute the html now (in case it produces an error)
     if class y =!= String then error "invalid html output";
     << webAppHtmlTag | y | webAppEndTag << endl;
+    webAppPrintFlag = false;
     )
 
 (modes errorPrint)#WebApp = () -> (
@@ -231,7 +235,7 @@ html HashTable := H -> (
     ))
 
 -- the texMath hack
-texMath1 = x -> if topLevelMode =!= WebApp then texMath0 x else (
+texMath1 = x -> if not webAppPrintFlag then texMath0 x else (
     pureTexFlag=true;
     h := html x;
     if #h>2 and h#0=="$" and h#(#h-1)=="$" and pureTexFlag
