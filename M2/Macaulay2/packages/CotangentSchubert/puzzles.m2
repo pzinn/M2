@@ -36,8 +36,8 @@ myload "generic.m2";
 myload "generic-equiv.m2";
 myload "assoc.m2";
 
-Kstyle = "fill"=>"LightPink";
-equivstyle = "fill"=>"LightGray";
+Kstyle = "fill"=>"pink";
+equivstyle = "fill"=>"orange";
 
 curPuzzleOpts := null;
 tiles := o -> (
@@ -109,7 +109,8 @@ vgFontSize = n -> 1.7/(4.+n)
 vgTextOpts := s -> { "dominant-baseline" => "middle", "text-anchor" => "middle", FontSize => vgFontSize (width s), "stroke" => "none", "fill" => "black", "font-family" => "helvetica" };
 vgOpts := k -> { Size => k*puzzleSize, TransformMatrix => matrix{{-.5,.5,0,0},{-.5*sqrt 3,-.5*sqrt 3,0,0},{0,0,1,0},{0,0,0,1}}, "stroke-width" => 0.02, "fill" => "white" }
 
-cols:={"red","green","blue","yellow","magenta","cyan","orange","black"};
+--cols:={"red","green","blue","yellow","magenta","cyan","orange","black"};
+cols:={"yellow","green","cyan","blue","violet","red","orange","black","black","black"};
 strk:=0.01*puzzleSize;
 
 vg = p -> gList toSequence (
@@ -120,7 +121,8 @@ vg = p -> gList toSequence (
 		c := try p#(i,j,2) else break;
                 deepSplice {
                     local kk;
-                    adj := (dir,a,x,y) -> (
+                    adj := if instance(p.Separation,QQ) then (dir,a,x,y) -> [x,y] else (dir,a,x,y) -> (
+			a=replace("[↗↘]","",a);
                         r := regex(kk,a);
                         if r === null then return a; -- shouldn't happen
                         r=#a-1-r#0#0*2; cf:=0.08/#a;
@@ -129,11 +131,11 @@ vg = p -> gList toSequence (
                         else [x+cf*r,y-cf*r]
                         );
                     if c != "" then (
-			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#(i,j,upTriStyle));
+			opts := {{[i+1,j],[i,j],[i,j+1]}}; if p#?(i,j,upTriStyle) then opts=append(opts,p#(i,j,upTriStyle)) else opts=append(opts,"fill"=>"lightgray");
                         Polygon opts,
                         if (i+j<n-1) then (
 			    opts = {{[i+1,j],[i,j+1],[i+1,j+1]}};
-			    if p#?(i,j,downTriStyle) then opts=append(opts,p#(i,j,downTriStyle));
+			    if p#?(i,j,downTriStyle) then opts=append(opts,p#(i,j,downTriStyle)) else opts=append(opts,"fill"=>"lightgray");
 			    Polygon opts
 			    ),
                         if p#Paths then (
@@ -172,7 +174,7 @@ vg = p -> gList toSequence (
                             )
                         ) else (
 			opts = {{[i+1,j],[i,j],[i,j+1],[i+1,j+1]}};
-			if p#?(i,j,rhombusStyle) then opts=append(opts,p#(i,j,rhombusStyle));
+			if p#?(i,j,rhombusStyle) then opts=append(opts,p#(i,j,rhombusStyle)) else opts=append(opts,"fill"=>"lightgray");
                         Polygon opts,
                         if p#Paths then (
                             aa = p#(i+1,j,0);
