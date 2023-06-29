@@ -57,11 +57,12 @@ Nothing#{WebApp,Print} = identity
 webAppPrintFlag = false
 
 (modes print)#WebApp = printFunc := x -> (
+    backupFlag := webAppPrintFlag;
     webAppPrintFlag = true;
     y := try html if shortMode then short x else x;  -- we compute the html now (in case it produces an error)
     if class y =!= String then error "invalid html output";
     << webAppHtmlTag | y | webAppEndTag << endl;
-    webAppPrintFlag = false;
+    webAppPrintFlag = backupFlag;
     )
 
 (modes errorPrint)#WebApp = () -> (
