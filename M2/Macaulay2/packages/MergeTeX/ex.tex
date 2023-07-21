@@ -68,6 +68,15 @@ Circle{"fill"=>"red"}
 "some weird spacing  and string style"
 \end{lstlisting}
 
+\section{Preventing output}
+This code shouldn't be processed:
+\begin{lstlisting}[language=Macaulay2noparse]
+f = i -> (
+           print i;
+           i+1
+         )
+\end{lstlisting}
+
 \section{Help}
 \begin{lstlisting}[language=Macaulay2]
 help cohomology

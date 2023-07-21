@@ -26,15 +26,15 @@ some basic examples:
 `\underline{\tt o2}` = `$\left(x-y\right)\left(x^{2}+x\,y+y^{2}\right)$`
 `\underline{\tt o2}` : `$\texttt{Expression}$ of class $\texttt{Product}$`
 `\underline{\tt i3}` : res coker vars R
-`\underline{\tt o3}` = `$\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\begin{smallmatrix}
+`\underline{\tt o3}` = `$\underset{\vphantom{\Big|}0}{R^{1}}\,\xleftarrow{\left(\!\begin{array}{cc}
 x&y
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}1}{R^{2}}\,\xleftarrow{\left(\begin{smallmatrix}
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}1}{R^{2}}\,\xleftarrow{\left(\!\begin{array}{c}
 -y\\
 x
-\end{smallmatrix}\right)}\,\underset{\vphantom{\Big|}2}{R^{1}}\,\xleftarrow{0}\,\underset{\vphantom{\Big|}3}{0}$`
+\end{array}\!\right)}\,\underset{\vphantom{\Big|}2}{R^{1}}\,\xleftarrow{0}\,\underset{\vphantom{\Big|}3}{0}$`
 `\underline{\tt o3}` : `$\texttt{ChainComplex}$`
 `\underline{\tt i4}` : OO_(Proj(R/(x^3-y^3)))^{1,2}
-`\underline{\tt o4}` = `${\mathcal O}_{\texttt{Proj}\left(\frac{R}{x^{3}-y^{3}}\right)}^{1}\left(1\right)\ \oplus \ {\mathcal O}_{\texttt{Proj}\left(\frac{R}{x^{3}-y^{3}}\right)}^{1}\left(2\right)$`
+`\underline{\tt o4}` = `${{\mathcal O}_{\texttt{Proj}\left(\frac{R}{x^{3}-y^{3}}\right)}^{1}\left(1\right)}\oplus {{\mathcal O}_{\texttt{Proj}\left(\frac{R}{x^{3}-y^{3}}\right)}^{1}\left(2\right)}$`
 `\underline{\tt o4}` : `coherent sheaf on $\texttt{Proj}\left(\frac{R}{x^{3}-y^{3}}\right)$, free`
 `\underline{\tt i5}` : matrix {{1,2},{3,4}}
 `\underline{\tt o5}` = `$\left(\!\begin{array}{cc}
@@ -64,7 +64,7 @@ strings and nets:
 hoho!@{\char 35}{\char 36}{\char 37}{\char 94}{\char 38}*(\end{tabular}`
 `\underline{\tt i10}` : {oo,ooo}
 `\underline{\tt o10}` = `$\left\{\begin{array}{l}\texttt{haha123456789}\\
-\texttt{hoho!@{\char 35}{\char 36}{\char 37}{\char 94}{\char 38}*(}\end{array},\:\texttt{hehe}\right\}$`
+\texttt{hoho!@{\char 35}{\char 36}{\char 37}{\char 94}{\char 38}*(}\end{array},\,\texttt{hehe}\right\}$`
 `\underline{\tt o10}` : `$\texttt{List}$`
 \end{lstlisting}
 printing:
@@ -134,6 +134,15 @@ packages that have a {\tt tex} output will work:
 `\underline{\tt o18}` = `\ttfamily some weird spacing  and string style`
 \end{lstlisting}
 
+\section{Preventing output}
+This code shouldn't be processed:
+\begin{lstlisting}[language=Macaulay2noparse]
+f = i -> (
+           print i;
+           i+1
+         )
+\end{lstlisting}
+
 \section{Help}
 \begin{lstlisting}[language=Macaulay2output]
 `\underline{\tt i19}` : help cohomology
@@ -194,7 +203,6 @@ For the programmer\endgroup
 \par \smallskip%
 
 \par The object \begingroup\tt cohomology\endgroup{} is a \begingroup\tt method\ function\ with\ options\endgroup{}.`
-`\underline{\tt o19}` : `$\texttt{DIV}$`
 \end{lstlisting}
 
 \section{Tricky examples}

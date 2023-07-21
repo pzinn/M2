@@ -131,7 +131,7 @@ if topLevelMode === WebApp then (
 	);
     html1 String:=htmlLiteral; -- ugh
     -- colored tex
-    col := (c,f) -> ( x -> ///\htmlClass{token /// | c | ///}{/// | f x | ///}///);
+    col := (c,f) -> ( x -> if webAppPrintFlag then ///\htmlClass{token /// | c | ///}{/// | f x | ///}/// else f x );
     texMath RingFamily :=
     texMath Ring := col("class-name",lookup(texMath,HashTable));
     texMath HashTable := col("constant",lookup(texMath,HashTable));
