@@ -113,7 +113,7 @@ vgOpts := k -> { Size => k*puzzleSize, TransformMatrix => matrix{{-.5,.5,0,0},{-
 cols:={"yellow","green","cyan","blue","violet","red","orange","black","black","black"};
 strk:=0.01*puzzleSize;
 
-vg = p -> gList toSequence (
+vg = p -> gList toSequence ( -- should it be cached?
     n:=p.Length;
     flatten apply(n, i -> flatten apply(n-i, j -> (
                 a := try p#(i,j,0) else break;

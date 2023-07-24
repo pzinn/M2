@@ -1,4 +1,5 @@
 puzzleDir := CotangentSchubert#"source directory"|"CotangentSchubert/puzzles/";
+puzzleSize := (options CotangentSchubert).Configuration#"PuzzleSize"
 debug VectorGraphics
 -- move to appropriate files
 svgUse = new MarkUpType of HypertextParagraph
@@ -81,13 +82,14 @@ hypertext DoublePuzzle := A -> (
             )); -- note the i/j inversion to facilitate motion
     -- x from -n to n-1, y from 0 to 2n-1
     Sid:=graphicsId();
+    sz:=toString(puzzleSize*n)|"em";
     -- add style and a switch
     SPAN{
 	STYLE get (puzzleDir|"assoc.css"),
     	SVG {"xmlns"=>"http://www.w3.org/2000/svg",
     	    "id" => Sid,
 	    "class" => "M2Svg",
-    	    "style"=>"width:40em;height:40em;stroke:black;stroke-width:0.01",
+    	    "style"=>"width:"|sz|";height:"|sz|";stroke:black;stroke-width:0.01",
     	    "viewBox"=>toString(-n-1)|" -1 "|toString(2*n+1)|" "|toString(2*n+1),
     	    lst1,lst2,defs,
     	    "onclick"=>get (puzzleDir|"assoc.js")}, -- , "class" => "labels"
@@ -101,10 +103,11 @@ mir := p -> ( n:=p.Length; applyKeys(p, a -> if class a =!= Sequence then a else
 
 net DoublePuzzle := A -> (
     (P1,P2) := toSequence A;
-    stack(unstack net P1 | drop(apply(reverse unstack net mir P2,flp),1))
+    stack(unstack net P1 | apply(drop(reverse unstack net mir P2,1),flp))
     )
 
-doublePuzzle = false >> o -> (a,b,c,d) -> (
+puzzleOpts := opts ++ {Generic => true, Steps => null, Ktheory' => false, Separation => null};
+doublePuzzle = puzzleOpts >> o -> (a,b,c,d) -> (
     P := puzzle(a,b,o); -- Equivariant should be false!
     flatten apply(P,p->apply(puzzle(c,d,reverse bottom p,o),q->DoublePuzzle(p,q)))
     )
