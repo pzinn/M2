@@ -31,7 +31,10 @@ chS := hashTable { "0" => 3, "1" => 0, "10" => 1 } -- hcol S side
 cvN := hashTable { "0" => 2, "1" => 3, "10" => 1 } -- hcol S side
 cvS := hashTable { "0" => 0, "1" => 1, "10" => 3 } -- hcol S side
 --
-assoc = (P1,P2) -> ( -- TODO maybe should create a class rather than returning a SPAN?
+DoublePuzzle = new SelfInitializingType of BasicList
+html DoublePuzzle := html @@ hypertext
+hypertext DoublePuzzle := A -> (
+    (P1,P2) := toSequence A;
     n:=P1#Length;
     if P2#Length != n or P1#Steps != 1 or P2#Steps !=1 then error "wrong puzzles";
     hcol := table(n+1,n,(i,j)->if i+j<n then chN#(P1#(i,j,0)) else chS#(P2#(n-i,n-1-j,0)));
@@ -80,9 +83,10 @@ assoc = (P1,P2) -> ( -- TODO maybe should create a class rather than returning a
     Sid:=graphicsId();
     -- add style and a switch
     SPAN{
-    	STYLE get (puzzleDir|"assoc.css"),
+	STYLE get (puzzleDir|"assoc.css"),
     	SVG {"xmlns"=>"http://www.w3.org/2000/svg",
     	    "id" => Sid,
+	    "class" => "M2Svg",
     	    "style"=>"width:40em;height:40em;stroke:black;stroke-width:0.01",
     	    "viewBox"=>toString(-n-1)|" -1 "|toString(2*n+1)|" "|toString(2*n+1),
     	    lst1,lst2,defs,
@@ -92,7 +96,17 @@ assoc = (P1,P2) -> ( -- TODO maybe should create a class rather than returning a
     	}
     )
 
-doublePuzzle = false >> o -> (a,b,c,d) -> ( -- to be fed into assoc. could it be absorbed into puzzle? issue of direction of reading
-    P := puzzle(a,b,o); -- Equivariant should be false!
-    flatten apply(P,p->apply(puzzle(c,d,reverse bottom p,o),q->(p,q)))
+flp := s -> replace("X","\\\\",replace("\\\\","/",replace("/","X",s)))
+mir := p -> ( n:=p.Length; applyKeys(p, a -> if class a =!= Sequence then a else (a#1,a#0,(4-a#2)%3)) )
+
+net DoublePuzzle := A -> (
+    (P1,P2) := toSequence A;
+    stack(unstack net P1 | drop(apply(reverse unstack net mir P2,flp),1))
     )
+
+doublePuzzle = false >> o -> (a,b,c,d) -> (
+    P := puzzle(a,b,o); -- Equivariant should be false!
+    flatten apply(P,p->apply(puzzle(c,d,reverse bottom p,o),q->DoublePuzzle(p,q)))
+    )
+
+-- if topLevelMode === WebApp then print STYLE get (puzzleDir|"assoc.css")
