@@ -51,7 +51,7 @@ export {
     "subLieAlgebra",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
-    "irreducibleLieAlgebraModule", "LL",
+    "irreducibleLieAlgebraModule", "LL", "ω",
 --    "isIsomorphic",
     "casimirScalar",
     "weightDiagram",
@@ -402,7 +402,19 @@ LieAlgebra#AfterPrint = g -> (
 LieAlgebraModule = new Type of HashTable 
 LieAlgebraModule.GlobalAssignHook = globalAssignFunction
 LieAlgebraModule.GlobalReleaseHook = globalReleaseFunction
-LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(try toList w else {w},g) }
+ωsub := i -> Subscript{symbol ω,i};
+ω=new ScriptedFunctor from { subscript => ωsub }
+parseWt = (w,r) -> (
+    if instance(w,VisibleList) and #w === r then toList w
+    else if class w === ZZ^r then w
+    else if instance(w,ZZ) and r==1 then {w}
+    else if instance(w,Expression) then (
+        ω.subscript = i -> apply(r,j->if j+1==i then 1 else 0 );
+        first(value w,ω.subscript=ωsub)
+        )
+    else error "invalid weight"
+    )
+LL = new ScriptedFunctor from { subscript => w -> g -> irreducibleLieAlgebraModule(parseWt(w,rank g),g) }
 LL.texMath = ///{\mathcal L}///
 
 describe LieAlgebraModule := M -> Describe (
