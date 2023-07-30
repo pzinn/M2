@@ -170,9 +170,9 @@ export getc(o:PosFile):int := (
 	  o.line = o.line + 1;
 	  o.column = ushort(0);
 	  )
-     else if c == int('\t') then (
-	  o.column = ushort(((int(o.column)+8)/8)*8);
-	  )
+--     else if c == int('\t') then (
+--	  o.column = ushort(((int(o.column)+8)/8)*8);
+--	  )
      else (
 	  o.column = o.column + 1;
 	  );

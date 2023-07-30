@@ -24,7 +24,7 @@ if topLevelMode =!= WebApp then (
     	(if out then silentRobustNet else silentRobustNetWithClass)(60, 5, 3, arg));
     noMethodSingle = (M, args, outputs) -> toString stack     (  noMethErr M, printArgs(" ", args, outputs) );
     noMethod       = (M, args, outputs) -> toString stack join( {noMethErr M},
-    	if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
+   	if class args === Sequence and 0 < #args and #args <= 4 then apply(#args,
 	    i -> printArgs(toString (i+1), args#i, if outputs#?i then outputs#i else false))
     	else {   printArgs(" ",            args,   false) }); -- TODO: do better here, in what way?
     ) else ( -- TODO merge with normal ones
