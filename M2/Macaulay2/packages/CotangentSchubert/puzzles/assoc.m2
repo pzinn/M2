@@ -93,8 +93,8 @@ hypertext DoublePuzzle := A -> (
     	    "viewBox"=>toString(-n-1)|" -1 "|toString(2*n+1)|" "|toString(2*n+1),
     	    lst1,lst2,defs,
     	    "onclick"=>get (puzzleDir|"assoc.js")}, -- , "class" => "labels"
-    	INPUT{"type"=>"checkbox","id"=>"labels","onclick"=>Sid|".classList.toggle('labels')"},
-    	LABEL{"for"=>"labels","Labels"}
+    	INPUT{"type"=>"checkbox","id"=>Sid|"toggle","onclick"=>Sid|".classList.toggle('labels')"},
+    	LABEL{"for"=>Sid|"toggle","Labels"}
     	}
     )
 
