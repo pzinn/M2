@@ -147,6 +147,9 @@ if topLevelMode === WebApp then (
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
 multiLineFlag = true -- false means only one-line is allowed, otherwise error
 pureTexFlag = true -- means only tex, nothing else
+
+--debugHack = msg -> ( << msg << " (multiLineFlag=" << toString multiLineFlag << " pureTexFlag=" << toString pureTexFlag << ")" << endl; )
+
 htmlTex1 = x -> (
     xx := expression x;
     if instance(xx,Holder) then (if multiLineFlag then htmlTex x else error "not one line") else html xx
@@ -199,13 +202,13 @@ html BinaryOperation := b -> (
     )
 html Product := html Sum := html Minus := html Constant := htmlTex
 htmlList :=
-html BasicList := s -> (
+html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
     if debugLevel === 42 then return htmlTex s;
     l:=lookup(texMath,class s);
     if l =!= texMathVisibleList and l =!= texMathBasicList then return htmlTex1 s;
     delims := lookup("delimiters",class s);
     backupFlag := multiLineFlag; multiLineFlag=false;
-    r := apply(toList s, x -> try html x else break);
+    r := apply(toList s, x -> try html x else break); -- debugHack ("middle of htmlList " | toString s);
     multiLineFlag=backupFlag;
     concatenate (
 	if not instance(s,VisibleList) then html class s,
@@ -220,8 +223,9 @@ html BasicList := s -> (
 			    a
 	    		    )))),
 	    texMath0 delims#1,
-	    "$"
-	    ) else if multiLineFlag then "$"|htmlLiteral texMathVisibleList s|"$" else error "not one line"
+	    "$" -- , debugHack ("end1 of htmlList " | toString s)
+	    ) else if multiLineFlag then (  -- debugHack ("end2 of htmlList " | toString s);
+	    "$"|htmlLiteral texMathVisibleList s|"$" ) else error "not one line"
 	)
     )
 htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|#L|"\\ldots" else "\\,", "\\}$")
@@ -237,11 +241,15 @@ html HashTable := H -> (
 
 -- the texMath hack
 texMath1 = x -> if not webAppPrintFlag then texMath0 x else (
+    -- debugHack ("start of texMath1 "|toString x);
+    backupFlag:=pureTexFlag;
     pureTexFlag=true;
     h := html x;
-    if #h>2 and h#0=="$" and h#(#h-1)=="$" and pureTexFlag
+    -- debugHack ("middle of texMath1 "|toString x);
+    first(if #h>2 and h#0=="$" and h#(#h-1)=="$" and pureTexFlag
     then delim|substring(h,1,#h-2)|delim
     else delim|webAppHtmlTag|h|webAppEndTag|delim -- switch back to html
+    ,pureTexFlag=backupFlag)
 )
 
 texMath0 = x -> (
