@@ -446,6 +446,8 @@ scan(assocList, opClass -> (
 	if opClass#?unit then (
 	    installMethod(opClass#operator,Expression,opClass#unit,(x,y) -> x);
 	    installMethod(opClass#operator,opClass#unit,Expression,(x,y) -> y);
+	    installMethod(opClass#operator,opClass,opClass#unit,(x,y) -> x);
+	    installMethod(opClass#operator,opClass#unit,opClass,(x,y) -> y);
 	    )
 ))
        - ZeroExpression     := identity
