@@ -1248,7 +1248,7 @@ expression Thing :=
 expression Symbol :=
 expression Function :=
 expression Boolean :=
-expression Type := x -> new Holder from { x }
+expression Type := hold
 
 -----------------------------------------------------------------------------
 
@@ -1313,7 +1313,7 @@ short Table := x ->  (
 	    else m,shortRow)
     )
 shortList := short VisibleList :=
-short Expression := x -> apply(if #x>shortLength then new class x from {
+short Expression := x -> hold apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
@@ -1321,24 +1321,24 @@ short Expression := x -> apply(if #x>shortLength then new class x from {
     else x,short)
 -- tentative -- potentially dangerous for custom classes
 short BasicList := x -> (
-    e := expression x;
-    if instance(e,Holder) then shortList x else short e
+    l := lookup(expression,class x);
+    if l === hold then shortList x else short expression x
     )
 short BinaryOperation := b -> BinaryOperation {b#0,short b#1,short b#2}
 short String := s -> if #s > shortStringLength then substring(s,0,shortStringLength) | "..." | last s else s -- too radical, keep shortLength chars
 short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
 -- tentative -- potentially dangerous for custom classes
 short HashTable := H -> (
-    e := expression H;
-    if not instance(e,Holder) then short e else hold (
+    l := lookup(expression,class H);
+    if l =!= hold then short expression H else hold (
 	if #H <= shortLength then H else (
-    	    s := sortByName pairs H;
+    	    s := -* sortByName *- pairs H; -- sorting may be slow
     	    new class H from append(take(s,shortLength),s#shortLength#0=>cdots)
     	    ))
     )
 short MutableHashTable := expression
 short Set := H -> hold ( if #H <= shortLength then H else (
-	s := sort keys H;
+	s := -* sort *- keys H; -- sorting may be slow
 	new class H from append(take(s,shortLength),RowExpression{s#shortLength,ldots})
 	))
 
