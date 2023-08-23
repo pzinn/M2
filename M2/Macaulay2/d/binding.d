@@ -263,6 +263,7 @@ bumpPrecedence();
      export QuestionS := makeKeyword(unarybinaryright("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
+     export BelongsS := makeKeyword(binaryright("∈"));
 -- operations on terms that yield terms:
 bumpPrecedence();
      export BarBarS := makeKeyword(binaryleft("||"));
@@ -465,7 +466,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS);
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS, BelongsS);
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, 
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
