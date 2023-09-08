@@ -450,6 +450,8 @@ scan(assocList, opClass -> (
 	    installMethod(opClass#operator,opClass#unit,opClass,(x,y) -> y);
 	    )
 ))
+ZeroExpression * Expression := (x,y) -> x
+Expression * ZeroExpression := (x,y) -> y
        - ZeroExpression     := identity
 	   - Minus          := x -> expression x#0
            - Expression     := x -> new Minus from {x}
