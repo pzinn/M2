@@ -2,7 +2,7 @@
 -- put bindings to variables before the forward references, for safety
 use hashtables;
 use convertr;
-export globalAssignmentHooks := newHashTable(mutableHashTableClass,nothingClass);
+export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
 export evalSequenceHadError := false;
 export evalSequenceErrorMessage := nullE;
@@ -28,7 +28,7 @@ export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 
 -- TODO move elsewhere
-export filePositionClass := newHashTable(typeClass,basicListClass);
+export filePositionClass := newHashTableWithHash(typeClass,basicListClass);
 setupconst("FilePosition",Expr(filePositionClass));
 
 -- error stuff
@@ -1413,7 +1413,7 @@ export evalraw(c:Code):Expr := (
      	       	    else binarymethod(left,b.rhs,AdjacentS))
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
-	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m,nextHash()))
+	  is m:functionCode do return Expr(FunctionClosure(noRecycle(localFrame),m,123456789)) -- tentative
 	  is r:localMemoryReferenceCode do (
 	       f := localFrame;
 	       nd := r.nestingDepth;
