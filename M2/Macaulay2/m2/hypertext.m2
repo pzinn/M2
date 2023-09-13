@@ -468,7 +468,7 @@ texMath MarkUpType := X -> (
 
 short Hypertext := x -> (
     (ops,arg) := override(options class x,toSequence x);
-    append(new class x from short arg,ops)
+    append(new class x from apply(arg,x->if class x===String then x else short x),ops)
     )
 
 -- Local Variables:

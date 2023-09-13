@@ -1342,6 +1342,9 @@ short MutableHashTable := expression
 short Set := H -> hold ( if #H <= shortLength then applyKeys(H,short) else (
 	new class H from append(apply(take(keys H,shortLength),short),ldots)
 	))
+-- a few types shouldn't be affected by short
+short FilePosition := hold
+short Nothing := identity
 
 Abbreviate = new WrapperType of Holder -- used for listSymbols and error messages
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)

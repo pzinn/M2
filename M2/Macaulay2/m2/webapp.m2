@@ -68,7 +68,7 @@ webAppPrintFlag = false
 (modes errorPrint)#WebApp = () -> (
     msg := processError errorMessage;
     s := shortMode; shortMode=false;
-    print SPAN ((
+    print Abbreviate SPAN ((
 	    "class"=>"M2Error",
 	    if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
 	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: "
