@@ -1333,15 +1333,14 @@ short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#
 short HashTable := H -> (
     l := lookup(expression,class H);
     if l =!= hold then short expression H else hold (
-	if #H <= shortLength then H else (
-    	    s := -* sortByName *- pairs H; -- sorting may be slow
-    	    new class H from append(take(s,shortLength),s#shortLength#0=>cdots)
+	if #H <= shortLength then applyPairs(H,(k,v)->(short k,short v)) else (
+	    s := -* sortByName *- pairs H; -- sorting may be slow
+    	    new class H from append(applyTable(take(s,shortLength),short),short s#shortLength#0=>cdots)
     	    ))
     )
 short MutableHashTable := expression
-short Set := H -> hold ( if #H <= shortLength then H else (
-	s := -* sort *- keys H; -- sorting may be slow
-	new class H from append(take(s,shortLength),RowExpression{s#shortLength,ldots})
+short Set := H -> hold ( if #H <= shortLength then applyKeys(H,short) else (
+	new class H from append(apply(take(keys H,shortLength),short),ldots)
 	))
 
 Abbreviate = new WrapperType of Holder -- used for listSymbols and error messages
