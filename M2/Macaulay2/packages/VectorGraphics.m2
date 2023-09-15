@@ -884,7 +884,7 @@ tex svgElement Path := x -> concatenate(
     (op,ct,st) := ovr x;
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
-    " svg[scale="|jsString tikzscale|"cm] {",
+    " svg[xscale="|jsString tikzscale|"cm,yscale="|jsString (-tikzscale)|"cm] {",
     op#"d",
     "};\n"
     )
