@@ -1084,19 +1084,12 @@ html Product := v -> (
      )
 *-
 
-texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else (
+texMath Superscript :=
+texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else if v#1 === moduleZERO then "0" else (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
-    concatenate(x,"^{",y,"}") -- no braces around x
-    )
-
-texMath Superscript := v -> if v#1 === moduleZERO then "0" else (
-    p := precedence v;
-    x := texMath v#0;
-    y := texMath v#1;
-    if precedence v#0 <  p then x = "\\left(" | x | "\\right)";
+    if precedence v#0 <  p or class v#0 === Power or class v#0 === Superscript then x = "\\left(" | x | "\\right)"; -- precedence or double superscript
     concatenate(x,"^{",y,"}") -- no braces around x
     )
 
