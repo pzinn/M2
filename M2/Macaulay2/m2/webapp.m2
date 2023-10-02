@@ -65,10 +65,26 @@ webAppPrintFlag = false
     webAppPrintFlag = backupFlag;
     )
 
+
 (modes errorPrint)#WebApp = () -> (
-    msg := processError errorMessage;
     s := shortMode; shortMode=false;
-    print Abbreviate SPAN ((
+    syms := new MutableHashTable;
+    recScan := x -> (
+	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then (
+	    x=apply(x,recScan);
+	    if #x>8 then new class x from { -- simplified short
+		first x,
+		if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
+		last x
+		}
+	    else x
+	    )
+    	else if class x === Symbol and not syms#?x and (l:=locate x) =!= null then ( syms#x=l; x)
+	else if class x === String or class x === Option or class x === OptionTable then x
+	else try short x else x
+	);
+    msg := sequence recScan errorMessage | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s));
+    print SPAN ((
 	    "class"=>"M2Error",
 	    if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
 	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: "

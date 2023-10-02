@@ -29,7 +29,7 @@ if topLevelMode =!= WebApp then (
     	else {   printArgs(" ",            args,   false) }); -- TODO: do better here, in what way?
     ) else ( -- TODO merge with normal ones
     noMethErr = M -> ("no method found for applying ", M, " to argument(s):",BR{});
-    printArgs = (arg, out) -> if out then arg else (arg, " of class ", class arg);
+    printArgs = (arg, out) -> if out then hold arg else (hold arg, " of class ", class arg);
     noMethodSingle = (M, args, outputs) ->      join(  noMethErr M, sequence printArgs(args, outputs) );
     noMethod       = (M, args, outputs) ->  join( noMethErr M,
     	if class args === Sequence and 0 < #args and #args <= 4 then sequence OL prepend("start"=>"1",apply(#args,
