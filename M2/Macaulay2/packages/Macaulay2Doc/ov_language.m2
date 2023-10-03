@@ -750,7 +750,7 @@ document {
      "The behavior of interrupts (other than alarms) is unaffected.",
      EXAMPLE "apply(-3..3,i->try 1/i else infinity)",
      "The error message can be found in ", TO "errorMessage", ", which can be used to catch errors of a particular type, see the example below.",
-     PRE M2CODE ///scan({1,0,"x"},i -> print (try 1/i else if errorMessage == "division by zero" then infinity else error()))///
+     PRE M2CODE ///scan({1,0,"x"},i -> print (try 1/i else if errorMessage === "division by zero" then infinity else error()))///
      }
 
 document {
