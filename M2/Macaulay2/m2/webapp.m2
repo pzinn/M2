@@ -72,7 +72,7 @@ webAppPrintFlag = false
     recScan := x -> (
 	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then (
 	    x=apply(x,recScan);
-	    if #x>8 then new class x from { -- simplified short
+	    if #x>8 then new class x from { -- simplified short -- TEMP solution
 		first x,
 		if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 		last x
@@ -81,7 +81,7 @@ webAppPrintFlag = false
 	    )
     	else if class x === Symbol and not syms#?x and (l:=locate x) =!= null then ( syms#x=l; x)
 	else if class x === String or class x === Option or class x === OptionTable then x
-	else try short x else x
+	else Abbreviate x
 	);
     msg := sequence recScan errorMessage | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s));
     print SPAN ((
