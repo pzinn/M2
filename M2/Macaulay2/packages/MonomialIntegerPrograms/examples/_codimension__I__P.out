@@ -12,3 +12,4 @@
 o5 : <span><samp class="token class-name">MonomialIdeal</samp> of $R$</span>
 i6 : 6:0codimensionIP(J)
 i7 : 7:0
+

@@ -6,7 +6,7 @@
 i2 : 5:0runBertini(storeBM2Files)
 i3 : 6:0thePoints=importMainDataFile(storeBM2Files)
 
-o3 = $\left\{\{-{.0600602}-{.0187692}\,\mathbf{i},\,{2.14649}\cdot 10^{-20}+{7.24949}\cdot 10^{-18}\,\mathbf{i},\,{.416515}-{.911304}\,\mathbf{i}\},\,\{-{2.11718}+{1.01144}\,\mathbf{i},\,{1.37375}+{1.83984}\,\mathbf{i},\,{.368539}-{1.04759}\,\mathbf{i}\},\,\{{1.92291}-{1.10043}\,\mathbf{i},\,-{1.41126}-{1.75795}\,\mathbf{i},\,{.46828}-{.779233}\,\mathbf{i}\}\right\}$
+o3 = $\left\{\{{.133174}-{.0848408}\,\mathbf{i},\,-{1.70997}\cdot 10^{-17}-{3.64663}\cdot 10^{-17}\,\mathbf{i},\,-{1.01225}+{.0171162}\,\mathbf{i}\},\,\{{.0310591}+{.0547905}\,\mathbf{i},\,{.168164}+{.0302869}\,\mathbf{i},\,-{.987281}+{.00688245}\,\mathbf{i}\},\,\{-{.0340879}+{.317347}\,\mathbf{i},\,{.429499}-{.0254226}\,\mathbf{i},\,-{.957204}-{.0227085}\,\mathbf{i}\}\right\}$
 
 o3 : <samp class="token class-name">List</samp>
 i4 : 7:0witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
@@ -19,7 +19,8 @@
 o4 : <samp class="token class-name">List</samp>
 i5 : 8:0sortMainDataComponents(thePoints)
 
-o5 = $\left\{\left\{\{-{.0600602}-{.0187692}\,\mathbf{i},\,{2.14649}\cdot 10^{-20}+{7.24949}\cdot 10^{-18}\,\mathbf{i},\,{.416515}-{.911304}\,\mathbf{i}\}\right\},\,\left\{\{-{2.11718}+{1.01144}\,\mathbf{i},\,{1.37375}+{1.83984}\,\mathbf{i},\,{.368539}-{1.04759}\,\mathbf{i}\},\,\{{1.92291}-{1.10043}\,\mathbf{i},\,-{1.41126}-{1.75795}\,\mathbf{i},\,{.46828}-{.779233}\,\mathbf{i}\}\right\}\right\}$
+o5 = $\left\{\left\{\{{.133174}-{.0848408}\,\mathbf{i},\,-{1.70997}\cdot 10^{-17}-{3.64663}\cdot 10^{-17}\,\mathbf{i},\,-{1.01225}+{.0171162}\,\mathbf{i}\}\right\},\,\left\{\{{.0310591}+{.0547905}\,\mathbf{i},\,{.168164}+{.0302869}\,\mathbf{i},\,-{.987281}+{.00688245}\,\mathbf{i}\},\,\{-{.0340879}+{.317347}\,\mathbf{i},\,{.429499}-{.0254226}\,\mathbf{i},\,-{.957204}-{.0227085}\,\mathbf{i}\}\right\}\right\}$
 
 o5 : <samp class="token class-name">List</samp>
 i6 : 9:0
+

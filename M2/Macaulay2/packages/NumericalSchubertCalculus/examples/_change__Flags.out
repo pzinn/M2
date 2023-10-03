@@ -6,19 +6,19 @@
 i6 : 5:0F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
 
 o6 = $\left\{\left(\{2,\,1\},\,\left(\!\begin{array}{cccccc}
-1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}
+1&amp;0&amp;0&amp;0&amp;0&amp;0\\
+0&amp;1&amp;0&amp;0&amp;0&amp;0\\
+0&amp;0&amp;1&amp;0&amp;0&amp;0\\
+0&amp;0&amp;0&amp;1&amp;0&amp;0\\
+0&amp;0&amp;0&amp;0&amp;1&amp;0\\
+0&amp;0&amp;0&amp;0&amp;0&amp;1
 \end{array}\!\right)\right),\,\left(\{2,\,1\},\,\left(\!\begin{array}{cccccc}
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-0\,\mathbf{i}&amp;1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}\\
-1+0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}&amp;0\,\mathbf{i}
+0&amp;0&amp;0&amp;0&amp;0&amp;1\\
+0&amp;0&amp;0&amp;0&amp;1&amp;0\\
+0&amp;0&amp;0&amp;1&amp;0&amp;0\\
+0&amp;0&amp;1&amp;0&amp;0&amp;0\\
+0&amp;1&amp;0&amp;0&amp;0&amp;0\\
+1&amp;0&amp;0&amp;0&amp;0&amp;0
 \end{array}\!\right)\right),\,\left(\{2,\,1\},\,\left(\!\begin{array}{cccccc}
 {.892712}+{.673395}\,\mathbf{i}&amp;{.0741835}+{.808694}\,\mathbf{i}&amp;{.830833}+{.538554}\,\mathbf{i}&amp;{.557119}+{.873708}\,\mathbf{i}&amp;{.0647412}+{.877846}\,\mathbf{i}&amp;{.444183}+{.644366}\,\mathbf{i}\\
 {.29398}+{.632944}\,\mathbf{i}&amp;{.362835}+{.706096}\,\mathbf{i}&amp;{.873665}+{.415912}\,\mathbf{i}&amp;{.7037}+{.681869}\,\mathbf{i}&amp;{.0340514}+{.507989}\,\mathbf{i}&amp;{.194945}+{.518585}\,\mathbf{i}\\
@@ -34,7 +34,7 @@
 i9 : 8:0FlagsF = F/last;
 i10 : 9:0FlagsG = G/last;
 i11 : 10:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
-     -- used 3.1906 seconds
+     -- used 3.01898 seconds
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -55,7 +55,7 @@
 o11 : <samp class="token class-name">List</samp>
 i12 : 11:0assert all(S', s-> checkIncidenceSolution(s,G))
 i13 : 12:0time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
-     -- used 1.67198 seconds
+     -- used 1.64256 seconds
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
@@ -76,3 +76,4 @@
 o13 : <samp class="token class-name">List</samp>
 i14 : 13:0assert all(S', s-> checkIncidenceSolution(s,G))
 i15 : 14:0
+

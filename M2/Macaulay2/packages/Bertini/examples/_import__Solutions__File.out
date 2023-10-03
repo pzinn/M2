@@ -10,17 +10,18 @@
 i3 : 5:0runBertini(storeBM2Files)
 i4 : 6:0importSolutionsFile(storeBM2Files)
 
-o4 = $\{\{1+0\,\mathbf{i},\,1+0\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,{1}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\}\}$
+o4 = $\{\{{1},\,{1}\},\,\{1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1,\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-1,\,1\},\,\{-{1},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-1,\,-{.5}-{.866025}\,\mathbf{i}\}\}$
 
 o4 : <samp class="token class-name">List</samp>
 i5 : 7:0importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
 
-o5 = $\{\{1+0\,\mathbf{i},\,1+0\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,{1}+0\,\mathbf{i}\}\}$
+o5 = $\{\{{1},\,{1}\},\,\{-1,\,1\}\}$
 
 o5 : <samp class="token class-name">List</samp>
 i6 : 8:0importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)
 
-o6 = $\{\{1+0\,\mathbf{i},\,1+0\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,{1}+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-{1}+0\,\mathbf{i},\,-{.5}-{.866025}\,\mathbf{i}\}\}$
+o6 = $\{\{{1},\,{1}\},\,\{1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1,\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-1,\,1\},\,\{-{1},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-1,\,-{.5}-{.866025}\,\mathbf{i}\}\}$
 
 o6 : <samp class="token class-name">List</samp>
 i7 : 9:0
+

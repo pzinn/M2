@@ -7,7 +7,7 @@
 i2 : 2:0T=tropicalVariety (ideal(x+3*y+3));
 i3 : 3:0fan T
 
-o3 = <samp class="token class-name">Fan</samp>$\{\ldots 1\ldots\}$
+o3 = <samp class="token class-name">Fan</samp>$\{\ldots ﻿1﻿\ldots\}$
 
 o3 : <samp class="token class-name">Fan</samp>
 i4 : 4:0peek o3#cache
@@ -47,3 +47,4 @@
 </span>
 i5 : 5:0
 6:0
+

@@ -73,3 +73,4 @@
 
 o21 : <span><samp class="token class-name">Matrix</samp> $\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{6}\,\longleftarrow \,\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{6}$</span>
 i22 : 22:0
+

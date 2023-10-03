@@ -18,7 +18,7 @@
 
 o4 = <ul style="display:inline-table">
   <li>
-$\{-{7.08407}\cdot 10^{-74}-{5.51796}\cdot 10^{-74}\,\mathbf{i},\,-{7.49157}\cdot 10^{-74}+{5.18768}\cdot 10^{-74}\,\mathbf{i},\,{.394874}-{.480558}\,\mathbf{i}\}$  </li>
+$\{-{4.15626}\cdot 10^{-74}-{3.29235}\cdot 10^{-73}\,\mathbf{i},\,-{7.92155}\cdot 10^{-76}+{3.22486}\cdot 10^{-73}\,\mathbf{i},\,{.0503881}+{.251514}\,\mathbf{i}\}$  </li>
 </ul>
 
 
@@ -32,7 +32,7 @@ $\{-{7.08407}\cdot 10^{-74}-{5.51796}\cdot 10^{-74}\,\mathbf{i},\,-{7.49157}\cdo
 
 o6 = <span><samp class="token class-name">WitnessSet</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span>    </li>
+<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
     <li>
 <span>$\textit{Equations}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$        <pre class="token net" style="vertical-align:-100%">{-3} | x3+xy2+xz2-x |
 {-3} | x2y+y3+yz2-y |<br></pre>
@@ -40,12 +40,12 @@ $\{-{7.08407}\cdot 10^{-74}-{5.51796}\cdot 10^{-74}\,\mathbf{i},\,-{7.49157}\cdo
     <li>
 <span>$\textit{Points}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>        <ul style="display:inline-table">
           <li>
-$\{-{7.08407}\cdot 10^{-74}-{5.51796}\cdot 10^{-74}\,\mathbf{i},\,-{7.49157}\cdot 10^{-74}+{5.18768}\cdot 10^{-74}\,\mathbf{i},\,{.394874}-{.480558}\,\mathbf{i}\}$          </li>
+$\{-{4.15626}\cdot 10^{-74}-{3.29235}\cdot 10^{-73}\,\mathbf{i},\,-{7.92155}\cdot 10^{-76}+{3.22486}\cdot 10^{-73}\,\mathbf{i},\,{.0503881}+{.251514}\,\mathbf{i}\}$          </li>
         </ul>
 </span>    </li>
     <li>
 <span>$\textit{Slice}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{cccc}
-{.651697}-{.433692}\,\mathbf{i}&amp;-{.499383}+{.460718}\,\mathbf{i}&amp;-{.11155}+{1.31906}\,\mathbf{i}&amp;-{.589838}-{.57447}\,\mathbf{i}
+-{1.40947}-{1.8903}\,\mathbf{i}&amp;{2.73583}+{.590423}\,\mathbf{i}&amp;{3.76289}+{.42091}\,\mathbf{i}&amp;-{.0837397}-{.96763}\,\mathbf{i}
 \end{array}\!\right)$</span>    </li>
   </ul>
 </span>
@@ -67,3 +67,4 @@ $\{-{7.08407}\cdot 10^{-74}-{5.51796}\cdot 10^{-74}\,\mathbf{i},\,-{7.49157}\cdo
 
 o11 = $1$
 i12 : 12:0
+

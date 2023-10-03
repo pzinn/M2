@@ -6,16 +6,16 @@
 i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
 i6 : 6:0S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
 
-o6 = $\left\{\{-{1.41421}+0\,\mathbf{i}\},\,\{{1.41421}+0\,\mathbf{i}\}\right\}$
+o6 = $\left\{\{-{1.41421}\},\,\{{1.41421}\}\right\}$
 
 o6 : <samp class="token class-name">List</samp>
 i7 : 7:0peek S0_0
 
 o7 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 9\ldots\}$</span>    </li>
+<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿9﻿\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.41421}+0\,\mathbf{i}\}$</span>    </li>
+<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.41421}\}$</span>    </li>
   </ul>
 </span>
 i8 : 8:0R=CC[x,y,t]; -- include the path variable in the ring
@@ -39,7 +39,8 @@
 o14 : <samp class="token class-name">List</samp>
 i15 : 15:0S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\{-{.520168}+{.757879}\,\mathbf{i},\,-{.57802}-{.0622532}\,\mathbf{i}\},\,\{{2.46638}+{1.94644}\,\mathbf{i},\,{1.82365}-{.789292}\,\mathbf{i}\}\right\}$
+o15 = $\left\{\{-{.797195}+{1.15696}\,\mathbf{i},\,-{.883324}-{.0967728}\,\mathbf{i}\},\,\{-{.730586}-{.0392258}\,\mathbf{i},\,-{.241016}+{.395005}\,\mathbf{i}\}\right\}$
 
 o15 : <samp class="token class-name">List</samp>
 i16 : 16:0
+

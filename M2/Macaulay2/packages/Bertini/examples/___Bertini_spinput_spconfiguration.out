@@ -2,7 +2,7 @@
 i1 : 1:0CC[x,y]; F = {x^2-1,y^2-1};
 i3 : 2:0bertiniZeroDimSolve(F,BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100})
 
-o3 = $\left\{\{1+0\,\mathbf{i},\,1+0\,\mathbf{i}\},\,\{1+0\,\mathbf{i},\,-1+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,1+0\,\mathbf{i}\},\,\{-1+0\,\mathbf{i},\,-1+0\,\mathbf{i}\}\right\}$
+o3 = $\left\{\{1,\,1\},\,\{1,\,-1\},\,\{-1,\,1\},\,\{-1,\,-1\}\right\}$
 
 o3 : <samp class="token class-name">List</samp>
 i4 : 3:0opts = new OptionTable from {BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}}
@@ -13,7 +13,8 @@
 i5 : 4:0G = {x^2+y^2-1};
 i6 : 5:0bertiniPosDimSolve(G,opts)
 
-o6 = <samp class="token class-name">NumericalVariety</samp>$\{\ldots 3\ldots\}$
+o6 = <samp class="token class-name">NumericalVariety</samp>$\{\ldots ﻿3﻿\ldots\}$
 
 o6 : <samp class="token class-name">NumericalVariety</samp>
 i7 : 6:0
+

@@ -6,7 +6,7 @@
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
 i2 : 2:0M = ncMatrix {{a,b,c,d},{b,c,d,a}}
 
-o2 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
+o2 = <samp class="token class-name">NCMatrix</samp>$\{\ldots ﻿6﻿\ldots\}$
 
 o2 : <samp class="token class-name">NCMatrix</samp>
 i3 : 3:0ring M
@@ -15,3 +15,4 @@
 
 o3 : <samp class="token class-name">NCPolynomialRing</samp>
 i4 : 4:0
+

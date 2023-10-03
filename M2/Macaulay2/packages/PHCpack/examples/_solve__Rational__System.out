@@ -3,16 +3,17 @@
 i2 : 2:0system = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : 3:0sols = solveRationalSystem(system)
 
-o3 = $\left\{\{{.543689}+0\,\mathbf{i},\,{.295598}+0\,\mathbf{i},\,{.160713}+0\,\mathbf{i}\},\,\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\},\,\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\}\right\}$
+o3 = $\left\{\{{.543689},\,{.295598},\,{.160713}\},\,\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\},\,\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\}\right\}$
 
 o3 : <samp class="token class-name">List</samp>
 i4 : 4:0peek first sols
 
 o4 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span>    </li>
+<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{{.543689}+0\,\mathbf{i},\,{.295598}+0\,\mathbf{i},\,{.160713}+0\,\mathbf{i}\}$</span>    </li>
+<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{{.543689},\,{.295598},\,{.160713}\}$</span>    </li>
   </ul>
 </span>
 i5 : 5:0
+

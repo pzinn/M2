@@ -11,7 +11,7 @@
 o2 : <samp class="token class-name">List</samp>
 i3 : 3:0tropicalPrevariety L
 
-o3 = <samp class="token class-name">Fan</samp>$\{\ldots 1\ldots\}$
+o3 = <samp class="token class-name">Fan</samp>$\{\ldots ﻿1﻿\ldots\}$
 
 o3 : <samp class="token class-name">Fan</samp>
 i4 : 4:0QQ[x_0,x_1]
@@ -21,7 +21,7 @@
 o4 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i5 : 5:0tropicalPrevariety({x_0+x_1+1}, {{1,0}})
 
-o5 = <samp class="token class-name">Fan</samp>$\{\ldots 1\ldots\}$
+o5 = <samp class="token class-name">Fan</samp>$\{\ldots ﻿1﻿\ldots\}$
 
 o5 : <samp class="token class-name">Fan</samp>
 i6 : 6:0QQ[x_0,x_1]
@@ -31,7 +31,8 @@
 o6 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i7 : 7:0tropicalPrevariety({x_0+x_1+1,x_0+x_1},Strategy => "gfan")
 
-o7 = <samp class="token class-name">Fan</samp>$\{\ldots 1\ldots\}$
+o7 = <samp class="token class-name">Fan</samp>$\{\ldots ﻿1﻿\ldots\}$
 
 o7 : <samp class="token class-name">Fan</samp>
 i8 : 8:0
+

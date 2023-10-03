@@ -6,7 +6,7 @@
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : 2:0F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
-o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}+\left(-1+0\,\mathbf{i}\right)x,\,x^{2}y+y^{3}+y\,z^{2}+\left(-1+0\,\mathbf{i}\right)y\right\}$
+o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
 o2 : <samp class="token class-name">List</samp>
 i3 : 3:0NV = bertiniPosDimSolve(F)
@@ -21,7 +21,8 @@
 o4 : <samp class="token class-name">WitnessSet</samp>
 i5 : 5:0bertiniSample(4, W)
 
-o5 = $\left\{\{-{2.40658}\cdot 10^{-20}+{7.18177}\cdot 10^{-20}\,\mathbf{i},\,{1.10084}\cdot 10^{-19}+{5.1704}\cdot 10^{-20}\,\mathbf{i},\,{.269536}+{.366762}\,\mathbf{i}\},\,\{-{1.15578}\cdot 10^{-20}-{8.5455}\cdot 10^{-21}\,\mathbf{i},\,{1.83759}\cdot 10^{-20}-{3.28516}\cdot 10^{-20}\,\mathbf{i},\,{.14397}+{.237242}\,\mathbf{i}\},\,\{-{8.40054}\cdot 10^{-21}+{1.66059}\cdot 10^{-20}\,\mathbf{i},\,{2.0479}\cdot 10^{-20}-{4.78748}\cdot 10^{-20}\,\mathbf{i},\,-{.196413}+{.157795}\,\mathbf{i}\},\,\{-{4.19949}\cdot 10^{-20}-{2.09272}\cdot 10^{-19}\,\mathbf{i},\,{2.42822}\cdot 10^{-19}-{2.12682}\cdot 10^{-19}\,\mathbf{i},\,-{.517449}+{.360964}\,\mathbf{i}\}\right\}$
+o5 = $\left\{\{0,\,0,\,-{.164304}-{.293284}\,\mathbf{i}\},\,\{-{7.16395}\cdot 10^{-322}+{9.98013}\cdot 10^{-322}\,\mathbf{i},\,0,\,-{.360717}-{.00308812}\,\mathbf{i}\},\,\{0,\,0,\,{.0631348}+{.529962}\,\mathbf{i}\},\,\{0,\,0,\,-{.137874}+{.474417}\,\mathbf{i}\}\right\}$
 
 o5 : <samp class="token class-name">List</samp>
 i6 : 6:0
+

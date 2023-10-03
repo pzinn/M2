@@ -20,3 +20,4 @@ x_{0}&amp;-x_{3}&amp;x_{6}
 
 o6 : <span><samp class="token class-name">Matrix</samp> $\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x_{0}\,{.}{.}\,x_{6}\right]\right)^{1}\,\longleftarrow \,\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x_{0}\,{.}{.}\,x_{6}\right]\right)^{3}$</span>
 i7 : 7:0
+

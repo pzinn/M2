@@ -11,7 +11,7 @@
 o2 : <samp class="token class-name">List</samp>
 i3 : 3:0xySlice=makeB'Slice(sliceType,variableGroups)
 
-o3 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
+o3 = <samp class="token class-name">B'Slice</samp>$\{\ldots ﻿4﻿\ldots\}$
 
 o3 : <samp class="token class-name">B'Slice</samp>
 i4 : 4:0peek xySlice
@@ -22,7 +22,7 @@
     <li>
 <span>$B'SectionString$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{$<samp class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</samp>$,\,$<samp class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</samp>$\}$</span>    </li>
     <li>
-<span>$ListB'Sections$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{$<samp class="token class-name">B'Section</samp>$\{\ldots 2\ldots\},\,$<samp class="token class-name">B'Section</samp>$\{\ldots 2\ldots\}\}$</span>    </li>
+<span>$ListB'Sections$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{$<samp class="token class-name">B'Section</samp>$\{\ldots ﻿2﻿\ldots\},\,$<samp class="token class-name">B'Section</samp>$\{\ldots ﻿2﻿\ldots\}\}$</span>    </li>
     <li>
 <span>$NameB'Slice$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>null</span>    </li>
   </ul>
@@ -50,17 +50,17 @@
 o11 : <samp class="token class-name">List</samp>
 i12 : 12:0xxSlice=makeB'Slice({2,0},variableGroups)
 
-o12 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
+o12 = <samp class="token class-name">B'Slice</samp>$\{\ldots ﻿4﻿\ldots\}$
 
 o12 : <samp class="token class-name">B'Slice</samp>
 i13 : 13:0xySlice=makeB'Slice({1,1},variableGroups)
 
-o13 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
+o13 = <samp class="token class-name">B'Slice</samp>$\{\ldots ﻿4﻿\ldots\}$
 
 o13 : <samp class="token class-name">B'Slice</samp>
 i14 : 14:0yySlice=makeB'Slice({0,2},variableGroups)
 
-o14 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
+o14 = <samp class="token class-name">B'Slice</samp>$\{\ldots ﻿4﻿\ldots\}$
 
 o14 : <samp class="token class-name">B'Slice</samp>
 i15 : 15:0makeB'InputFile(storeBM2Files,
@@ -85,3 +85,4 @@
 
 o23 = $1$
 i24 : 30:0
+

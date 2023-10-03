@@ -7,3 +7,4 @@
 i4 : 4:0t := LRtriple(n,m);
 i5 : 5:0w := wrapTriplet(t);
 i6 : 6:0
+

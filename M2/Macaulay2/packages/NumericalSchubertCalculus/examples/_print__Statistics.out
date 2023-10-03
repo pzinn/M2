@@ -38,5 +38,6 @@
 # moves of type {2, 0, 0} = 3
 # moves of type {2, 1, 0} = 1
 # moves of type {2, 2, 0} = 12
-tracking time = .24411
+tracking time = .145058
 i7 : 11:0
+

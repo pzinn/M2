@@ -43,3 +43,4 @@ t_{0}^{8}-t_{1}^{8}
 
 o11 : <span><samp class="token class-name">Matrix</samp> $\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[t_{0}\,{.}{.}\,t_{1}\right]\right)^{3}\,\longleftarrow \,\left(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[t_{0}\,{.}{.}\,t_{1}\right]\right)^{1}$</span>
 i12 : 12:0
+

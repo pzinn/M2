@@ -11,7 +11,8 @@
 o2 : <samp class="token class-name">List</samp>
 i3 : 3:0tropicalCycle(F, mult)
 
-o3 = <samp class="token class-name">TropicalCycle</samp>$\{\ldots 2\ldots\}$
+o3 = <samp class="token class-name">TropicalCycle</samp>$\{\ldots ﻿2﻿\ldots\}$
 
 o3 : <samp class="token class-name">TropicalCycle</samp>
 i4 : 4:0
+

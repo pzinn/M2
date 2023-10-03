@@ -13,9 +13,9 @@
 o4 : <samp class="token class-name">WitnessSet</samp>
 i5 : 5:0W#Equations
 
-o5 = $<pre class="token net" style="vertical-align:-200%">{-2} | (-.380139+.924929ii)zz1+(.547606+.836736ii)zz2+(-1+0ii)xz+(-1+0ii)yz |
-{-2} | (.45571-.890128ii)zz1+(-.663772-.747935ii)zz2+(-1+0ii)xz+yz          |
-{-1} | (-1+0ii)zz1+(.537862+.843033ii)zz2                                   |<br></pre>
+o5 = $<pre class="token net" style="vertical-align:-200%">{-2} | (-.380139+.924929ii)zz1+(.547606+.836736ii)zz2-xz-yz |
+{-2} | (.45571-.890128ii)zz1+(-.663772-.747935ii)zz2-xz+yz  |
+{-1} | -zz1+(.537862+.843033ii)zz2                          |<br></pre>
 $
 
 o5 : <samp class="token class-name">PolySystem</samp>
@@ -37,3 +37,4 @@ $\{{.148619}-{.161802}\,\mathbf{i},\,{.45886}-{1.03272}\,\mathbf{i},\,{3.21921}\
 
 o7 : <span><samp class="token class-name">Matrix</samp> ${\mathbb C}_{53}^{2}\,\longleftarrow \,{\mathbb C}_{53}^{6}$</span>
 i8 : 8:0
+

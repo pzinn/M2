@@ -14,7 +14,7 @@
 o5 = $3$
 i6 : 6:0toString equations(w)
 
-o6 = <samp class="token string">{x^2+(-1+0*ii)*y+(.380139-.924929*ii)*zz1, x^3+(-1+0*ii)*z+(-.45571+.890128*ii)*zz1, zz1}</samp>
+o6 = <samp class="token string">{x^2-y+(.380139-.924929*ii)*zz1, x^3-z+(-.45571+.890128*ii)*zz1, zz1}</samp>
 i7 : 7:0toString slice(w)
 
 o7 = <samp class="token string">{(-.205377-.978683*ii)*x+(.943327-.331864*ii)*y+(.673112+.739541*ii)*z+(-.911067-.412259*ii)*zz1-.883724+.468009*ii}</samp>
@@ -23,7 +23,7 @@
 o8 = <samp class="token string">VerticalList{new Point from {Coordinates => {-.064406+1.00899*ii, -1.0139-.129969*ii, .196438-1.01464*ii, 5.3111e-34-2.32871e-33*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {-1.16558-.143085*ii, 1.3381+.333554*ii, -1.51194-.580247*ii, -2.36625e-32+2.72991e-32*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {.840447+.055110*ii, .703315+.092635*ii, .585994+.116614*ii, -1.00052e-32-9.34768e-33*ii}, cache => CacheTable{...3...}}}</samp>
 i9 : 9:0R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
-o10 = $\left\{x^{3}+\left(-{2}+0\,\mathbf{i}\right)x^{2}+\left(-1+0\,\mathbf{i}\right)x\,y+\left({2}+0\,\mathbf{i}\right)y,\,x^{3}y+\left(-{2}+0\,\mathbf{i}\right)x^{3}+\left(-1+0\,\mathbf{i}\right)y\,z+\left({2}+0\,\mathbf{i}\right)z,\,x\,y\,z+\left(-{2}+0\,\mathbf{i}\right)x\,y+\left(-1+0\,\mathbf{i}\right)z^{2}+\left({2}+0\,\mathbf{i}\right)z\right\}$
+o10 = $\left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\,x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\,x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}$
 
 o10 : <samp class="token class-name">List</samp>
 i11 : 10:0(w,ns) = topWitnessSet(f,1);
@@ -37,3 +37,4 @@
 
 o14 = $10$
 i15 : 14:0
+
