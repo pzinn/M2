@@ -127,7 +127,8 @@ removeWebAppTags = s -> if s === null then null else replace(webAppTagsRegex,"ðŸ
 if topLevelMode === WebApp then (
     extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
     -- the help hack: if started in WebApp mode, help is compiled in it as well
-    processExamplesLoop ExampleItem := (x->new LITERAL from extractStr x) @@ (lookup(processExamplesLoop,ExampleItem));
+    processExtra := x -> ( xx := extractStr x; if #xx>0 and first xx === webAppCellTag and last xx =!= webAppCellEndTag then xx=xx|webAppCellEndTag; new LITERAL from xx);
+    processExamplesLoop ExampleItem := processExtra @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
     -- the edit hack
