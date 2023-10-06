@@ -34,6 +34,7 @@ recordPosition = () -> if currentFileName == "stdio" then ( -- for now only stdi
     )
 
 ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
+    webAppPrintFlag = false;
     webAppCellEndTag, -- close previous cell
     webAppCellTag,
     webAppPromptTag,
@@ -46,6 +47,7 @@ ZZ#{WebApp,InputPrompt} = lineno -> concatenate(
 )
 
 ZZ#{WebApp,InputContinuationPrompt} = lineno -> concatenate(
+    webAppPrintFlag = false;
     webAppInputContdTag,
     recordPosition()
     )
