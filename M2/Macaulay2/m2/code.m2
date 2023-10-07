@@ -16,22 +16,19 @@ limit := 4
 codeFunction := (f,depth) -> (
     if depth <= limit then (
 	c := code locate f;
-	if c === null then DIV{"function ", f, ": source code not available"}
-	else (
-	    syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
-	    DIV flatten {
-		c,
-		if #syms > 0 then INDENT listSymbols syms,
-		if codeHelper#?(functionBody f)
-		then apply(
-		    codeHelper#(functionBody f) f,
-		    (comment,val) -> INDENT {
-			comment, BR{},
-			if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
-			})
-	      	}
-	    )
-      	)
+	syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
+	DIV flatten {
+	    if c =!= null then c else SPAN{"function ", f, ": source code not available"},
+	    if #syms > 0 then INDENT listSymbols syms,
+	    if codeHelper#?(functionBody f)
+	    then apply(
+		codeHelper#(functionBody f) f,
+		(comment,val) -> INDENT {
+		    comment, BR{},
+		    if instance(val, Function) then codeFunction(val,depth+1) else hold val -- hold for OptionTable or Option
+		    })
+	    }
+	)
     )
 
 -- stores previously listed methods, hooks, or tests to be used by (code, ZZ)
@@ -58,7 +55,6 @@ code FilePosition := x -> (
 	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
 	      }
 	  ))
-code Symbol     :=
 code Pseudocode := s -> code locate s
 code Sequence   := s -> (
     key := select(s, x -> not instance(x, Option));
@@ -78,8 +74,8 @@ code Function   := f -> DIV { codeFunction(f, 0), (lookup(code,Thing)) f }
 code Command   := f -> DIV { codeFunction(f#0, 0), (lookup(code,Thing)) f }
 code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
-code Thing      := x -> if hasAttribute(x,ReverseDictionary) then (
-    x = getAttribute(x,ReverseDictionary);
+code Thing      := x -> if hasAttribute(x,ReverseDictionary) then code getAttribute(x,ReverseDictionary)
+code Symbol     := x -> (
     l := locate x;
     if l =!= null then (
     	c := code l;
