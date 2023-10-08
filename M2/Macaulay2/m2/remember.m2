@@ -48,7 +48,7 @@ storefuns #toString = (x,e) -> (
 Function Thing = (f,x,e) -> if functionBody f === memoizedFunctionBody then (
     values := (frame f)#2;
     assert instance(values, MutableHashTable);
-    values#x=e;
+    values#x=e
     ) else (
     if not storefuns#?f then error("no method for storing values of function ", f);
     storefuns#f (x,e)
