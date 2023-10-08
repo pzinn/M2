@@ -182,7 +182,7 @@ getstring(o:PosFile):Word := (
 	       else (
 		    empty(tokenbuf);
 		    while true do (ch2 := getc(o); if ch2 == EOF || ch2 == ERROR || ch2 == int('\n') then
-		    	       return Word("expected " + tostring(hexcoming) + "more hex digits(s)",TCerror,0,newParseinfo()););
+		    	       return Word("expected " + tostring(hexcoming) + " more hex digits(s)",TCerror,0,newParseinfo()););
 		    )
 	       )
 	  else if escaped

@@ -1250,6 +1250,7 @@ steppingFurther(c:Code):bool := steppingFlag && (
      else false);
 
 export printError(err:Error):Error := (
+     recursionDepth=0;
      if !(SuppressErrors||(err.printed && err.position.filename === "stdio"))
      then (
      	if !isEmptySequenceE(err.message) then setGlobalVariable(errorMessage,err.message);
