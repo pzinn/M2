@@ -15,10 +15,11 @@ limit := 4
 
 codeFunction := (f,depth) -> (
     if depth <= limit then (
-	c := code locate f;
+	l := locate f;
+	c := code l;
 	syms := flatten \\ sortByHash \ values \ drop(localDictionaries f,-1);
 	DIV flatten {
-	    if c =!= null then c else SPAN{"function ", f, ": source code not available"},
+	    if c =!= null then c else SPAN{"function ", f, ": ",if l =!= null and hasAttribute(f,ReverseDictionary) then l else ""," source code not available"},
 	    if #syms > 0 then INDENT listSymbols syms,
 	    if codeHelper#?(functionBody f)
 	    then apply(
@@ -75,11 +76,11 @@ code Command   := f -> DIV { codeFunction(f#0, 0), (lookup(code,Thing)) f }
 code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
 code Thing      := x -> if hasAttribute(x,ReverseDictionary) then code getAttribute(x,ReverseDictionary)
-code Symbol     := x -> (
+code Symbol     := x -> ( -- that's not really code... rethink
     l := locate x;
     if l =!= null then (
     	c := code l;
-    	DIV { symbol symbol, " ", x, if c=!=null then c else DIV {l} }
+	DIV { symbol symbol, " ", x, ": ", if c=!=null then c else l }
     	)
     )
 
