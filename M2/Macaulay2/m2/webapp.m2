@@ -192,7 +192,7 @@ html2 := (fun,args,lprec,rprec,sep,supp) -> (
     )
 html RowExpression := s -> (
     if debugLevel === 42 then return htmlTex s;
-    r := apply(s, x -> try html x else break);
+    r := apply(s, x -> try html x else if errorMessage === "not one line" then break else error errorMessage);
     if r =!= null then (
 	r=new MutableList from r;
 	scan(#r-1,i->(
@@ -227,7 +227,7 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
     if l =!= texMathVisibleList and l =!= texMathBasicList then return htmlTex1 s;
     delims := lookup("delimiters",class s);
     backupFlag := multiLineFlag; multiLineFlag=false;
-    r := apply(toList s, x -> try html x else break); -- debugHack ("middle of htmlList " | toString s);
+    r := apply(toList s, x -> try html x else if errorMessage === "not one line" then break else error errorMessage); -- debugHack ("middle of htmlList " | toString s);
     multiLineFlag=backupFlag;
     concatenate (
 	if not instance(s,VisibleList) then html class s,

@@ -1142,6 +1142,7 @@ texMath SparseMonomialVectorExpression := v -> (
      )
 
 texMath Table := m -> (
+    if any(m, x-> not instance(x,VisibleList)) then m = apply(m, x -> {x});
     if m#?0 then concatenate(
 	"\\begin{array}{", #m#0: "c", "}", newline,
 	between(///\\/// | newline, apply(toList m, row -> between("&",apply(row,texMath)))),
@@ -1343,7 +1344,7 @@ short Nothing := identity
 Abbreviate = new WrapperType of Holder -- used for listSymbols and error messages
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)
 --html Abbreviate := y -> html short y#0
-html Abbreviate := y -> try html short y#0 else html y#0 -- don't use "try" with normal html because it uses it internally -- eww
+html Abbreviate := y -> try html short y#0 else try html y#0 else try html net y else "&lt;cannot print&gt;"
 -- short is known to cause problems in output routines... also Abbreviate is used in error message so no error can occur
 
 -- Local Variables:
