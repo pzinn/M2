@@ -83,7 +83,7 @@ webAppPrintFlag = false
 	    )
     	else if class x === Symbol and not syms#?x and (l:=locate x) =!= null then ( syms#x=l; x)
 	else if class x === String or class x === Option or class x === OptionTable then x
-	else Abbreviate x
+	else Abbreviate {x}
 	);
     msg := sequence recScan errorMessage | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s));
     print SPAN ((
@@ -164,20 +164,23 @@ if topLevelMode === WebApp then (
 
 -- the html hack
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
-multiLineFlag = true -- false means only one-line is allowed, otherwise error
+multiLineFlag = true -- false means only one-line is allowed, otherwise error flag
+multiLineErrorFlag = false
 pureTexFlag = true -- means only tex, nothing else
 
 --debugHack = msg -> ( << msg << " (multiLineFlag=" << toString multiLineFlag << " pureTexFlag=" << toString pureTexFlag << ")" << endl; )
 
+notOneLine := () -> ( multiLineErrorFlag=true; "")
+
 htmlTex1 = x -> (
     xx := expression x;
-    if instance(xx,Holder) then (if multiLineFlag then htmlTex x else error "not one line") else html xx
+    if instance(xx,Holder) then (if multiLineFlag then htmlTex x else notOneLine()) else html xx
     )
-html QQ := x -> if multiLineFlag or denominator x == 1 then htmlTex x else error "not one line"
+html QQ := x -> if multiLineFlag or denominator x == 1 then htmlTex x else notOneLine()
 html Ring := x -> if x.?texMath or hasAttribute(x,ReverseDictionary) then htmlTex x else htmlTex1 x
 scan({HypertextContainer,HypertextParagraph,VerticalList,Net}, t->(
 	h:=lookup(html,t);
-	html t := s -> if multiLineFlag then h s  else error "not one line";
+	html t := s -> if multiLineFlag then h s  else notOneLine();
 	));
 html2 := (fun,args,lprec,rprec,sep,supp) -> (
     if rightPrecedence fun < lprec then ( fun = sequence fun; if supp then sep="{}"; );
@@ -192,8 +195,10 @@ html2 := (fun,args,lprec,rprec,sep,supp) -> (
     )
 html RowExpression := s -> (
     if debugLevel === 42 then return htmlTex s;
-    r := apply(s, x -> try html x else if errorMessage === "not one line" then break else error errorMessage);
-    if r =!= null then (
+    multiLineErrorFlag = false;
+    -- r := apply(s, html); -- should stop as soon as flag is true
+    r := for i to #s-1 when not multiLineErrorFlag list html s#i;
+    if not multiLineErrorFlag then (
 	r=new MutableList from r;
 	scan(#r-1,i->(
 	    	if last r#i =!= "$" or first r#(i+1) =!= "$" then pureTexFlag=false else (
@@ -203,13 +208,13 @@ html RowExpression := s -> (
 	    	));
     	concatenate r   
     	)
-    else if multiLineFlag then htmlTex s else error "not one line"
+    else if multiLineFlag then htmlTex s else notOneLine()
     )
-html Expression := x -> if debugLevel === 42 or multiLineFlag then htmlTex x else error "not one line"
+html Expression := x -> if debugLevel === 42 or multiLineFlag then htmlTex x else notOneLine()
 html Holder := x -> if debugLevel === 42 then htmlTex x else html x#0;
 html Adjacent := html FunctionApplication := m -> (
     if debugLevel === 42 then return htmlTex m;
-    if m#0 === sqrt or instance(m#0,Divide) then return if multiLineFlag then htmlTex m  else error "not one line";
+    if m#0 === sqrt or instance(m#0,Divide) then return if multiLineFlag then htmlTex m  else notOneLine();
     html2(m#0,m#1,precedence m,precedence m,
 	if instance(m#1,Array) then sep:="\\mathopen{}"
     	else if instance(m#1,VisibleList) then sep="{}"
@@ -227,11 +232,13 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
     if l =!= texMathVisibleList and l =!= texMathBasicList then return htmlTex1 s;
     delims := lookup("delimiters",class s);
     backupFlag := multiLineFlag; multiLineFlag=false;
-    r := apply(toList s, x -> try html x else if errorMessage === "not one line" then break else error errorMessage); -- debugHack ("middle of htmlList " | toString s);
+    multiLineErrorFlag=false;
+    -- r := apply(toList s, html); -- should stop as soon as error flag
+    r := for i to #s-1 when not multiLineErrorFlag list html s#i;
     multiLineFlag=backupFlag;
     concatenate (
 	if not instance(s,VisibleList) then html class s,
-	if r =!= null then (
+	if not multiLineErrorFlag then (
 	    "$",
 	    texMath0 delims#0,
 	    if #s===0 then "\\," else
@@ -244,7 +251,7 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
 	    texMath0 delims#1,
 	    "$" -- , debugHack ("end1 of htmlList " | toString s)
 	    ) else if multiLineFlag then (  -- debugHack ("end2 of htmlList " | toString s);
-	    "$"|htmlLiteral texMathVisibleList s|"$" ) else error "not one line"
+	    "$"|htmlLiteral texMathVisibleList s|"$" ) else notOneLine()
 	)
     )
 htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|texMath(#L)|"\\ldots" else "\\,", "\\}$")
