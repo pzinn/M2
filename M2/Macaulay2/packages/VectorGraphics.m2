@@ -136,7 +136,7 @@ perspective = persp -> (
 viewPort = g -> (
     svg g; -- need to be rendered
     v := g.cache.ViewPort;
-    {vector{v#0_0,-v#1_1},vector{v#1_0,-v#0_1}} -- annoying sign
+    {vector{v#0_0,-v#1_1},vector{v#1_0,-v#0_1}} -- annoying negative sign
     )
 
 
@@ -375,7 +375,7 @@ jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 jsString GraphicsCoordinate := x -> x.JsFunc()
-jsString RR := x -> format(0,-1,1000,1000,"",x)
+jsString RR := x -> format(10,5,1000,1000,"",x) -- somewhat random
 
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
@@ -642,7 +642,8 @@ new SVG from GraphicsObject := (S,g) -> (
     if main === null then return {};
     ss := {};
     if g.?Perspective then ss = append(ss,"data-pmatrix" => jsString g.cache.PerspectiveMatrix);
-    if g.?ViewPort then r := g.ViewPort else r = g.cache.ViewPort; -- should be cached at this stage
+    if g.?ViewPort then r := {vector{g.ViewPort#0_0,-g.ViewPort#1_1}, vector {g.ViewPort#1_0,-g.ViewPort#0_1}} -- annoying negative sign
+    else r = g.cache.ViewPort; -- should be cached at this stage
     if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.Size=vector{0.,0.}; ) else (
 	r = apply(r,numeric);
 	rr = r#1 - r#0;
