@@ -62,6 +62,7 @@ export {
     "LieAlgebraModuleFromWeights",
     "trivialModule",
     "adjointModule",
+    "zeroModule",
     "isIrreducible",
     "character",
     "adams",
@@ -449,6 +450,9 @@ LieAlgebraModule#AfterPrint = M -> (
 
 trivialModule = method(TypicalValue => LieAlgebraModule)
 trivialModule LieAlgebra := g -> irreducibleLieAlgebraModule(toList(rank g:0),g)
+
+zeroModule = method(TypicalValue => LieAlgebraModule)
+zeroModule LieAlgebra := g -> new LieAlgebraModule from (g,{})
 
 LieAlgebraModule ^** ZZ := (cacheValue'(0,symbol ^**)) ((M,n) -> (
 	if n<0 then "error nonnegative powers only";
@@ -949,7 +953,9 @@ character (String,ZZ,List) := o -> (type,m,v) -> character1(type,m,v,o) -- trick
 character (Sequence,Sequence,List) := o -> (type,m,v) -> character2(type,m,v,o) -- tricky to memoize a method with options
 character (LieAlgebra,List) := o -> (g,v) -> if rank g == 0 then 1_(characterRing g) else character(g#"RootSystemType",g#"LieAlgebraRank",v,o) -- annoying special case, otherwise wrong ring
 character (LieAlgebra,Vector) := o -> (g,v) -> character(g,entries v,o)
-character LieAlgebraModule := o -> (cacheValue character) ((M) -> sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
+character LieAlgebraModule := o -> (cacheValue character) ((M) ->
+    if #(M#"DecompositionIntoIrreducibles") == 0 then 0_(characterRing M#"LieAlgebra")
+    else sum(pairs M#"DecompositionIntoIrreducibles",(v,a) -> a * character (M#"LieAlgebra",v,o)))
 
 weightDiagram = method(
     Options=>{Strategy=>null},
