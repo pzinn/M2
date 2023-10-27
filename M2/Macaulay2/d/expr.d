@@ -32,6 +32,13 @@ export nextHash():int := (
      then Ccode(void, " fprintf(stderr, \" *** hash code serial number counter overflow (too many mutable objects created)\\n\"); abort(); ");
      HashCounter);
 
+-- Knuth, Art of Computer Programming, Section 6.4
+export fibonacciHash(k:int,p:int):int := (
+    Ccode(int, "(2654435769 * ",k,") >> (32 - ",p,")"));
+
+-- hash codes for mutable objects that don't use nextHash
+export hashFromAddress(e:Expr):int := fibonacciHash(Ccode(int, "(long)",e), 9);
+
 export NULL ::= null();
 
 -- scopes
@@ -166,6 +173,11 @@ export newHashTableWithHash(Class:HashTable,parent:HashTable):HashTable := (
        ht:=newHashTable(Class,parent);
        ht.hash=nextHash();
        ht);
+
+export newCompiledFunction(fn:fun):CompiledFunction := (
+    cf := CompiledFunction(fn, 0);
+    cf.hash = hashFromAddress(Expr(cf));
+    cf);
 
 --More dummy declarations
 

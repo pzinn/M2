@@ -397,10 +397,11 @@ export convert0(e:ParseTree):Code := (
 	  )
      is a:Arrow do (
      	       p:=treePosition(a.lhs);
-	       Code(functionCode(
-	       unseq(c:=convert0(a.rhs)),a.desc,nextHash(),
-	       combineLocation(p,codeLocation(c),position(a.Operator))
-	       )))
+	       fc:=functionCode(
+	       unseq(c:=convert0(a.rhs)),a.desc,0,
+	       combineLocation(p,codeLocation(c),position(a.Operator)));
+	       fc.hash = hashFromAddress(Expr(fc));
+	       Code(fc))
      is u:Unary do (
 	  if u.Operator.word == CommaW
 	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocationLeft(location(u.Operator),codeLocation(s.(length(s)-1)))))
