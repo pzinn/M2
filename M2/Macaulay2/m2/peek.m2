@@ -14,7 +14,7 @@ peek'(ZZ,BasicList) := (depth,s) -> SPAN (
     if depth === 0 then hold s -- hold because of Option
     else {
 	class s,
-	apply(toList s, value -> peek'(depth-1,value))
+	apply(toList1 s, value -> peek'(depth-1,value))
       	}
     )
 
@@ -22,13 +22,13 @@ peek'(ZZ,Hypertext) := (depth,s) -> SPAN (
     if depth === 0 then s
     else {
 	class s,
-	apply(toList s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))
+	apply(toList1 s, value -> peek'(if instance(value,Hypertext) or instance(value,String) then depth else depth-1, value))
 	}
     )
 
 peek'(ZZ,List) := (depth,s) -> SPAN (
     if depth === 0 then { s }
-    else { apply(toList s, value -> peek'(depth,value)) }
+    else { apply(toList1 s, value -> peek'(depth,value)) }
     )
 peek'(ZZ, String) := (depth,s) -> SPAN hold ( if depth === 0 then s else format s )
 
