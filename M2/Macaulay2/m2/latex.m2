@@ -45,10 +45,6 @@ texLiteralPairs := splice {
     "↗" => "\\(\\nearrow\\)",
     "↘" => "\\(\\searrow\\)",
     "↙" => "\\(\\swarrow\\)"
-    -- greek letters below are only in math mode. kept in case it could be useful somewhere else
-    -- "Α" => "\\Alpha", "Β" => "\\Beta", "Ε" => "\\Epsilon", "Ζ" => "\\Zeta", "Η" => "\\Eta", "Ι" => "\\Iota", "Κ" => "\\Kappa", "Μ" => "\\Mu", "Ν" => "\\Nu", "Ο" => "\\Omicron", "Ρ" => "\\Rho", "Τ" => "\\Tau", "Χ" => "\\Chi",
-    -- "Γ" => "\\Gamma", "Δ" => "\\Delta", "Θ" => "\\Theta", "Λ" => "\\Lambda", "Ξ" => "\\Xi", "Π" => "\\Pi", "Σ" => "\\Sigma", "Υ" => "\\Upsilon", "Φ" => "\\Phi", "Ψ" => "\\Psi", "Ω" => "\\Omega",
-    -- "ϱ" => "\\varrho", "ϵ" => "\\epsilon", "π" => "\\pi", "ρ" => "\\rho", "ς" => "\\varsigma", "σ" => "\\sigma", "τ" => "\\tau", "υ" => "\\upsilon", "φ" => "\\varphi", "χ" => "\\chi", "ψ" => "\\psi", "ω" => "\\omega", "ϑ" => "\\vartheta", "α" => "\\alpha", "β" => "\\beta", "γ" => "\\gamma", "ϕ" => "\\phi", "δ" => "\\delta", "ε" => "\\varepsilon", "ϖ" => "\\varpi", "ζ" => "\\zeta", "η" => "\\eta", "θ" => "\\theta", "ι" => "\\iota", "κ" => "\\kappa", "λ" => "\\lambda", "μ" => "\\mu", "ν" => "\\nu", "ξ" => "\\xi", "ο" => "\\omicron"
     }
 texLiteralTable := hashTable texLiteralPairs
 
@@ -86,11 +82,22 @@ sectionType = sectionNumber -> (
 -----------------------------------------------------------------------------
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
+-- greek letters below are only in math mode
+texMathLiteralTable := hashTable {
+    "Α" => "\\Alpha", "Β" => "\\Beta", "Ε" => "\\Epsilon", "Ζ" => "\\Zeta", "Η" => "\\Eta", "Ι" => "\\Iota", "Κ" => "\\Kappa", "Μ" => "\\Mu", "Ν" => "\\Nu", "Ο" => "\\Omicron", "Ρ" => "\\Rho", "Τ" => "\\Tau", "Χ" => "\\Chi",
+    "Γ" => "\\Gamma", "Δ" => "\\Delta", "Θ" => "\\Theta", "Λ" => "\\Lambda", "Ξ" => "\\Xi", "Π" => "\\Pi", "Σ" => "\\Sigma", "Υ" => "\\Upsilon", "Φ" => "\\Phi", "Ψ" => "\\Psi", "Ω" => "\\Omega",
+    "ϱ" => "\\varrho", "ϵ" => "\\epsilon", "π" => "\\pi", "ρ" => "\\rho", "ς" => "\\varsigma", "σ" => "\\sigma", "τ" => "\\tau", "υ" => "\\upsilon", "φ" => "\\varphi", "χ" => "\\chi", "ψ" => "\\psi", "ω" => "\\omega", "ϑ" => "\\vartheta", "α" => "\\alpha", "β" => "\\beta", "γ" => "\\gamma", "ϕ" => "\\phi", "δ" => "\\delta", "ε" => "\\varepsilon", "ϖ" => "\\varpi", "ζ" => "\\zeta", "η" => "\\eta", "θ" => "\\theta", "ι" => "\\iota", "κ" => "\\kappa", "λ" => "\\lambda", "μ" => "\\mu", "ν" => "\\nu", "ξ" => "\\xi", "ο" => "\\omicron"
+}
+texMathLiteral = s -> (
+    flag:=false;
+    concatenate apply(characters s, c -> if texMathLiteralTable#?c then (flag=true; texMathLiteralTable#c) else if flag then (flag=false; "{}"|c) else c)
+    )
 -- TODO: expand and document this behavior
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
 suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
 texVariable = x -> (
     if x === "" then return "";
+    x=texMathLiteral x;
     xx := separate("\\$", x); if #xx > 1 then return demark("{\\char36}", texVariable \ xx); -- avoid the use of "$" in tex output
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb " | x#0 | "}";
     if last x === "'" then return texVariable substring(x, 0, #x-1) | "'";
