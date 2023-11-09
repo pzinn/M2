@@ -60,6 +60,10 @@ Nothing#{WebApp,Print} = identity
 
 webAppPrintFlag = false
 
+timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
+-- printingTimeLimit = 20 -- not enforced for now
+errorPrintingTimeLimit := 5
+
 (modes print)#WebApp = printFunc := x -> (
     backupFlag := webAppPrintFlag;
     webAppPrintFlag = true;
@@ -69,9 +73,9 @@ webAppPrintFlag = false
     webAppPrintFlag = backupFlag;
     )
 
-
 (modes errorPrint)#WebApp = () -> (
-    s := shortMode; shortMode=false;
+    backupFlag := webAppPrintFlag;
+    webAppPrintFlag = true;
     syms := new MutableHashTable;
     recScan := x -> (
 	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then (
@@ -88,12 +92,30 @@ webAppPrintFlag = false
 	else Abbreviate {x}
 	);
     msg := sequence recScan errorMessage | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s));
-    print SPAN ((
+    S := (
 	    "class"=>"M2Error",
 	    if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
 	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: "
-	    ) | msg);
-    shortMode=s;
+	    );
+    fun := () -> (
+--		scan(100000,i->i^i);
+    	    	y:=html (SPAN(S|msg));
+    		<< webAppHtmlTag | y | webAppEndTag << endl;
+    		);
+    try timelimit(errorPrintingTimeLimit, fun) else (
+	alarm 0; -- in case it's another error that triggered yty
+	global debugError <- fun;
+	stderr << endl << "--error or time limit reached in conversion of output to html: type 'debugError()' to run it again; will try conversion to net" << endl;
+	try timelimit(errorPrintingTimeLimit, () -> (
+    	    	y:=html SPAN append(S,net SPAN msg);
+    		<< webAppHtmlTag | y | webAppEndTag << endl;
+		)) else (
+	    alarm 0;
+	    y:=html SPAN append(S,"time limit/error reached in conversion of error output to html");
+	    << webAppHtmlTag | y | webAppEndTag << endl;
+	    )
+	);
+    webAppPrintFlag = backupFlag;
     )
 
 
