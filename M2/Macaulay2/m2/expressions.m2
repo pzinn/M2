@@ -1084,15 +1084,15 @@ html Product := v -> (
      )
 *-
 
-texMathPower := v -> (
+texMathSuperscript := v -> (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 < p or class v#0 === Superscript or class v#0 === Power then x = "\\left(" | x | "\\right)";
+    if precedence v#0 < p or class v#0 === Superscript or class v#0 === Power then x = "\\left(" | x | "\\right)"; -- precedence of double superscript
     concatenate(x,"^{",y,"}") -- no braces around x
 )
-texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else texMathPower v
-texMath Superscript := v -> if v#1 === moduleZERO then "0" else texMathPower v
+texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else texMathSuperscript v
+texMath Superscript := v -> if v#1 === moduleZERO then "0" else texMathSuperscript v
 
 texMath Subscript := v -> (
      p := precedence v;
@@ -1343,6 +1343,7 @@ short Nothing := identity
 
 Abbreviate = new WrapperType of Holder -- used for listSymbols and error messages
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)
+toString Abbreviate := y -> silentRobustString(45,3,y#0)
 --html Abbreviate := y -> html short y#0
 html Abbreviate := y -> try html short y#0 else try html y#0 else try html net y else "&lt;cannot print&gt;"
 -- short is known to cause problems in output routines... also Abbreviate is used in error message so no error can occur

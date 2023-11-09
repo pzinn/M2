@@ -39,8 +39,8 @@ if topLevelMode =!= WebApp then (
 
 -- TODO: what is this for exactly?
 badClass := meth -> (i, args) -> (
-     if i === -1 then error(silentRobustString(45,3,meth),": expected an output class, but got: ", silentRobustString(45,3,args))
-     else error(silentRobustString(45,3,meth),": expected argument ",toString (i+1)," to be a type, but it was: ", silentRobustString(45,3,args#i)))
+     if i === -1 then error(meth,": expected an output class, but got: ", silentRobustString(45,3,args))
+     else error(meth,": expected argument ",toString (i+1)," to be a type, but it was: ", args#i))
 
 -- TODO: handle this in the interpreter, the same way that it is handled for function closures
 chkopt0 := k -> if not ( instance(k, Symbol) ) then error "expected SYMBOL => VALUE"
