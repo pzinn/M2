@@ -1307,8 +1307,8 @@ handleError(c:Code,e:Expr):Expr := (
 	       if err.position == dummyPosition then err.position = p;
 	       return e;
 	       );
-	  clearAllFlags();
-	  clearAlarm();
+	  clearAllFlags(); if debugLevel == 123 then stderr << "clearing all flags 4" << endl;
+	  clearAlarm(); if debugLevel==123 then stderr << "clearing alarm" << endl;
 	  if p.loadDepth >= errorDepth && !err.position === p then (
 	       oldReportFrame := err.frame;
 	       err.frame = noRecycle(localFrame);
@@ -1380,7 +1380,7 @@ export evalraw(c:Code):Expr := (
 		    clearSteppingFlag();
 		    buildErrorPacket(steppingMessage))
 	       else if alarmedFlag then (
-		    clearAlarmedFlag();
+		    clearAlarmedFlag(); if debugLevel==123 then stderr << "clearing alarm flag 2" << endl;
 		    buildErrorPacket(alarmMessage))
 	       else if test(interruptedFlag) then (
 		    SuppressErrors = false;
@@ -1388,7 +1388,7 @@ export evalraw(c:Code):Expr := (
 		    buildErrorPacket(interruptMessage))
 	       else (
 		    SuppressErrors = false;
-		    clearAllFlags();
+		    clearAllFlags(); if debugLevel == 123 then stderr << "clearing all flags 2" << endl;
 		    buildErrorPacket("unknown exception")
 		    ))
 	  else when c
@@ -1580,7 +1580,7 @@ export evalexcept(c:Code):Expr := (
      e := eval(c);
      if test(exceptionFlag) then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (
-	       clearAlarmedFlag();
+	       clearAlarmedFlag(); if debugLevel==123 then stderr << "clearing alarm flag" << endl;
 	       printErrorMessageE(c,alarmMessage))
 	  else if test(interruptedFlag) then (
 	       SuppressErrors = false;
@@ -1592,7 +1592,7 @@ export evalexcept(c:Code):Expr := (
 	       e)
 	  else (
 	       SuppressErrors = false;
-	       clearAllFlags();
+	       clearAllFlags(); if debugLevel == 123 then stderr << "clearing all flags 3" << endl;
 	       printErrorMessageE(c,"unknown exception")))
      else e);
 

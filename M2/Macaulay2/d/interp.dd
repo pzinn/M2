@@ -82,18 +82,24 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       stdIO << file.posFile.file.prompt();
 	       issuePrompt = false;
 	       );
-	  clearAllFlags();
+	  clearAllFlags(); if debugLevel == 123 then stderr << "clearing all flags" << endl;
 	  if debugLevel == 123 then (
 	       stderr << "-- file: " << file.posFile.filename << ":" << file.posFile.line << ":" << file.posFile.column << newline;
+if debugLevel == 123 then	       stderr << "X" << endl;
 	       c := peek(file.posFile.file);
+if debugLevel == 123 then	       stderr << "Y" << endl;
 	       stderr << "-- next character: ";
 	       if c == int('\n') then stderr << "NEWLINE" else if c >= 0 then stderr << char(c) else stderr << c;
 	       stderr << endl;
 	       );
+if debugLevel == 123 then	       stderr << "A" << endl;
 	  u := peektoken(file,true);
+if debugLevel == 123 then	       stderr << "B" << endl;
 	  interruptPending = false; determineExceptionFlag();
 	  if u.word.typecode == TCerror || test(interruptedFlag) then (
+if debugLevel == 123 then	       stderr << "C" << endl;
 	       gettoken(file,true);
+if debugLevel == 123 then	       stderr << "D" << endl;
 	       if test(interruptedFlag) then (
 		    if debugLevel == 123 then stderr <<  "-- token read interrupted" << endl;
 		    clearFileError(file);
@@ -317,6 +323,7 @@ topLevelPrompt():string := (
 	  if method == nullE then ""
      	  else when applyEE(method,toExpr(lineNumber)) is s:stringCell do s.v
      	  is n:ZZcell do if isInt(n) then blanks(toInt(n)) else ""
+	  is err:Error do (printError(err); "")
      	  else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
 	  );
      if debugLevel == 123 then (

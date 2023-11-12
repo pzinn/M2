@@ -155,15 +155,22 @@ export unseq(c:Code):Code := (
 
 export convert0(e:ParseTree):Code := (
      when e
-     is w:For do Code(
+     is w:For do (
+       c:=convert0(w.doClause);
+       cc:=convert0(w.listClause);
+       loc:=codeLocation(c);
+       when c is
+         nullCode do loc=codeLocation(cc)
+	 else nothing;
+       Code(
 	  forCode(
 	       convert(w.inClause), convert(w.fromClause), convert(w.toClause),
-	       convert(w.whenClause), convert(w.listClause), 
-	       unseq(c:=convert0(w.doClause)),
+	       convert(w.whenClause), unseq(cc),
+	       unseq(c),
 	       w.dictionary.frameID,
 	       w.dictionary.framesize,
-	       combineLocation(location(w.forToken),codeLocation(c))
-	  ))
+	       combineLocation(location(w.forToken),loc)
+	  )))
      is w:WhileDo do Code(whileDoCode(convert(w.predicate),unseq(c:=convert0(w.doClause)),combineLocation(location(w.whileToken),codeLocation(c))))
      is w:WhileList do Code(whileListCode(convert(w.predicate),unseq(c:=convert0(w.listClause)),combineLocation(location(w.whileToken),codeLocation(c))))
      is w:WhileListDo do Code(whileListDoCode(convert(w.predicate),convert(w.listClause),unseq(c:=convert0(w.doClause)),combineLocation(location(w.whileToken),codeLocation(c))))
