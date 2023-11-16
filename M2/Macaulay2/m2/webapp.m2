@@ -98,12 +98,11 @@ errorPrintingTimeLimit := 5
 	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: "
 	    );
     fun := () -> (
---		scan(100000,i->i^i);
     	    	y:=html (SPAN(S|msg));
     		<< webAppHtmlTag | y | webAppEndTag << endl;
     		);
     try timelimit(errorPrintingTimeLimit, fun) else (
-	alarm 0; -- in case it's another error that triggered yty
+	alarm 0; -- in case it's another error that triggered try
 	global debugError <- fun;
 	stderr << endl << "--error or time limit reached in conversion of output to html: type 'debugError()' to run it again; will try conversion to net" << endl;
 	try timelimit(errorPrintingTimeLimit, () -> (
@@ -258,7 +257,10 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
     backupFlag := multiLineFlag; multiLineFlag=false;
     multiLineErrorFlag=false;
     -- r := apply(toList s, html); -- should stop as soon as error flag
-    r := for i to #s-1 when not multiLineErrorFlag list html s#i;
+    try (r := for i to #s-1 when not multiLineErrorFlag list html s#i;) else (
+    multiLineFlag=backupFlag;
+    error errorMessage; -- must revert flag before throwing error
+    );
     multiLineFlag=backupFlag;
     concatenate (
 	if not instance(s,VisibleList) then html class s,
