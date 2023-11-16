@@ -13,7 +13,7 @@ newPackage(
     -- testing "OldFactor" => false, check compatibility problems
     )
 
-export {"FactorPolynomialRing","FactorLeadMonomial"}
+export {"FactorPolynomialRing","FactorLeadMonomial","factored"}
 
 OldFactor := (options Factor).Configuration#"OldFactor";
 --FactorLeadMonomial := (options Factor).Configuration#"FactorLeadMonomial";
@@ -60,8 +60,8 @@ factor PolynomialRing := opts -> R -> (
     	factor R := opts1 -> a -> new Rf from a;
 	);
     toList Rf := a -> apply(if a#0 == 1 then a#1 else append(a#1,(a#0,1)),u->Power u); -- for compatibility with old factor
-    value Rf := a->(a#0)*product(a#1,u->(u#0)^(u#1));
-    raw Rf := a-> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
+    value Rf := a -> (a#0)*product(a#1,u->(u#0)^(u#1));
+    raw Rf := a -> (raw a#0)*product(a#1,u->(raw u#0)^(u#1)); -- !!!
     if (options R).Inverses then (
         denominator Rf := a -> new Rf from { (denominator a#0)*product(a#1,(f,e)->(denominator f)^e), {} };
         numerator Rf := a -> new Rf from { numerator a#0, apply(a#1,(f,e)->(numerator f,e)) };
@@ -151,8 +151,31 @@ factor PolynomialRing := opts -> R -> (
     -*	lowestPart(ZZ,Rf) := (d,x) -> lowestPart x; -- no checking performed
     lowestPart Rf := x -> (new Rf from {x#0,{}}) * product(x#1,(f,e) -> (new Rf from lowestPart f)^e); *-
     remove(Rf,symbol vars); -- in case R had already cached its vars
+    -- for faster input that's already factored
+    newRf:=Rf#(NewFromMethod,Rf,R);
+    mulR:=lookup(symbol *,R,R);
+    powR:=lookup(symbol ^,R,ZZ);
+    valRf:=lookup(value,Rf);
+    factored(Rf,Boolean):= (X,flag) -> if flag then (
+	use R;
+	new Rf from R := (X,x) -> if x===0_R then Rf#0
+	else if #(xx:=listForm x) === 1 then {promote(xx#0#1,R),nonnull apply(#(xx#0#0),i->if xx#0#0#i!=0 then (R_i,xx#0#0#i))}
+	else {1_R,{(x,1)}};
+	R * R := (x,y) -> if #(listForm x) === 1 and #(listForm y) === 1 then mulR(x,y) else (new Rf from x)*(new Rf from y);
+	R ^ ZZ := (x,i) -> if #(listForm x) === 1 then powR(x,i) else (new Rf from x)^i;
+	value Rf := a -> if #(a#1)==0 then a#0 else mulR(a#0,fold(mulR,apply(a#1,powR)));
+	)
+    else (
+	new Rf from R := newRf;
+	R * R := mulR;
+	R ^ ZZ := powR;
+	value Rf := valRf;
+	use Rf;
+	);
     Rf
     )
+factored = method(Dispatch=>{Type,Thing})
+
 
 frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
     R0:=last R.baseRings;
@@ -189,7 +212,7 @@ frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
 	    r=numerator r*ds;
 	    s=numerator s*dr;
 	    );
-        if s == 0 then error "division by 0";
+        if s === 0_R then error "division by 0";
         g:=gcd(r,s);
         if isField coefficientRing R then g=g*s#0 -- no constant in the denominator
 --        else if coefficientRing R === ZZ and lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
