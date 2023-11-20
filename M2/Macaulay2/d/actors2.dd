@@ -649,10 +649,11 @@ setupfun("unsequence",unSingleton);
 disassembleCode(c:Code):Expr := ( -- add locations?
      when c
      is x:Error do Expr(Sequence(toExpr("error"), x.message))
-     is x:semiCode do Expr(Sequence(toExpr("semi"),list(new Sequence len length(x.w) do foreach s in x.w do provide toExpr(s))))
+     is x:sequenceCode do Expr(Sequence(toExpr("sequence"),list(new Sequence len length(x.x) do foreach s in x.x do provide toExpr(s))))
+     is x:listCode do Expr(Sequence(toExpr("list"),list(new Sequence len length(x.y) do foreach s in x.y do provide toExpr(s))))
      is x:arrayCode do Expr(Sequence(toExpr("array"),list(new Sequence len length(x.z) do foreach s in x.z do provide toExpr(s))))
      is x:angleBarListCode do Expr(Sequence(toExpr("angleBarList"),list(new Sequence len length(x.t) do foreach s in x.t do provide toExpr(s))))
-     is x:listCode do Expr(Sequence(toExpr("list"),list(new Sequence len length(x.y) do foreach s in x.y do provide toExpr(s))))
+     is x:semiCode do Expr(Sequence(toExpr("semi"),list(new Sequence len length(x.w) do foreach s in x.w do provide toExpr(s))))
      is x:integerCode do toExpr(x.x)
      is x:realCode do toExpr(x.x)
      is x:unaryCode do Expr(Sequence(toExpr("1-OP"),toExpr(getUnopName(x.f)),
