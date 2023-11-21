@@ -202,7 +202,7 @@ solve = method(Options => { ClosestFit => false,
 solve(MutableMatrix,MutableMatrix) := opts -> (A,b) -> (
      R := ring A;
      if not isField R then
-       error("solve not implemented over ring " | ring A);
+       error("solve not implemented over ring ", ring A);
      if opts.ClosestFit then (
          if (opts#Precision !=0) then (
 		     A=mutableMatrix(promote(matrix(A), CC_(opts#Precision)));

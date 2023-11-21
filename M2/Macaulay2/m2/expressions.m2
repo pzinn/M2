@@ -1345,7 +1345,7 @@ Abbreviate = new WrapperType of Holder -- used for listSymbols and error message
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)
 toString Abbreviate := y -> silentRobustString(45,3,y#0)
 --html Abbreviate := y -> html short y#0
-html Abbreviate := y -> try html short y#0 else try html y#0 else try html net y else "&lt;cannot print&gt;"
+html Abbreviate := y -> try html short y#0 else try html y#0 else try html net y else try html simpleToString y#0 else "&lt;&lt;cannot print&gt;&gt;"
 -- short is known to cause problems in output routines... also Abbreviate is used in error message so no error can occur
 
 -- Local Variables:

@@ -61,7 +61,6 @@ Nothing#{WebApp,Print} = identity
 webAppPrintFlag = false
 
 timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
--- printingTimeLimit = 20 -- not enforced for now
 errorPrintingTimeLimit := 5
 
 (modes print)#WebApp = printFunc := x -> (
@@ -104,13 +103,13 @@ errorPrintingTimeLimit := 5
     try timelimit(errorPrintingTimeLimit, fun) else (
 	alarm 0; -- in case it's another error that triggered try
 	global debugError <- fun;
-	stderr << endl << "--error or time limit reached in conversion of output to html: type 'debugError()' to run it again; will try conversion to net" << endl;
+	stderr << endl << "--error or time limit reached in conversion of error output to html: type " | webAppHtmlTag | "<code data-m2code>debugError()</code>" | webAppEndTag |" to run it again; will try conversion to net" << endl;
 	try timelimit(errorPrintingTimeLimit, () -> (
-    	    	y:=html SPAN append(S,net SPAN msg);
+    	    	y:=html SPAN append(S,net SPAN msg); -- clumsy
     		<< webAppHtmlTag | y | webAppEndTag << endl;
 		)) else (
 	    alarm 0;
-	    y:=html SPAN append(S,"time limit/error reached in conversion of error output to html");
+	    y:=html SPAN append(S,"time limit/error reached in conversion of error output to net");
 	    << webAppHtmlTag | y | webAppEndTag << endl;
 	    )
 	);
@@ -122,7 +121,18 @@ on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumbe
 
 Thing#{WebApp,Print} = x -> (
     << endl << on() | " = ";
-    printFunc x;
+    fun := () -> ( printFunc x; );
+    try timelimit(printingTimeLimit, fun) else (
+	alarm 0; -- in case it's another error that triggered try
+	global debugError <- fun;
+	stderr << "--error or time limit reached in conversion of output to html: type " | webAppHtmlTag | "<code data-m2code>debugError()</code>" | webAppEndTag |" to run it again; will try conversion to net" << endl;
+	try timelimit(printingTimeLimit, () -> (
+		<< net x << endl;
+		)) else (
+	    alarm 0;
+	    error "time limit/error reached in conversion of output to net";
+	    )
+	);
     )
 
 InexactNumber#{WebApp,Print} = x ->  withFullPrecision ( () -> Thing#{WebApp,Print} x )
