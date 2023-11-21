@@ -61,20 +61,18 @@ Nothing#{WebApp,Print} = identity
 webAppPrintFlag = false
 
 timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
-errorPrintingTimeLimit := 5
 
 (modes print)#WebApp = printFunc := x -> (
     backupFlag := webAppPrintFlag;
     webAppPrintFlag = true;
     y := try html if shortMode then short x else x;  -- we compute the html now (in case it produces an error)
+    webAppPrintFlag = backupFlag;
     if class y =!= String then error "invalid html output";
     << webAppHtmlTag | y | webAppEndTag << endl;
-    webAppPrintFlag = backupFlag;
     )
 
 (modes errorPrint)#WebApp = () -> (
-    backupFlag := webAppPrintFlag;
-    webAppPrintFlag = true;
+    s := shortMode; shortMode=false;
     syms := new MutableHashTable;
     recScan := x -> (
 	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then (
@@ -91,29 +89,12 @@ errorPrintingTimeLimit := 5
 	else Abbreviate {x}
 	);
     msg := sequence recScan errorMessage | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s));
-    S := (
+    try print SPAN ((
 	    "class"=>"M2Error",
 	    if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
 	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: "
-	    );
-    fun := () -> (
-    	    	y:=html (SPAN(S|msg));
-    		<< webAppHtmlTag | y | webAppEndTag << endl;
-    		);
-    try timelimit(errorPrintingTimeLimit, fun) else (
-	alarm 0; -- in case it's another error that triggered try
-	global debugError <- fun;
-	stderr << endl << "--error or time limit reached in conversion of error output to html: type " | webAppHtmlTag | "<code data-m2code>debugError()</code>" | webAppEndTag |" to run it again; will try conversion to net" << endl;
-	try timelimit(errorPrintingTimeLimit, () -> (
-    	    	y:=html SPAN append(S,net SPAN msg); -- clumsy
-    		<< webAppHtmlTag | y | webAppEndTag << endl;
-		)) else (
-	    alarm 0;
-	    y:=html SPAN append(S,"time limit/error reached in conversion of error output to net");
-	    << webAppHtmlTag | y | webAppEndTag << endl;
-	    )
-	);
-    webAppPrintFlag = backupFlag;
+	    ) | msg) else stderr << endl << "--error in conversion of error output to html" << endl; -- should never happen
+    shortMode=s;
     )
 
 
@@ -127,7 +108,8 @@ Thing#{WebApp,Print} = x -> (
 	global debugError <- fun;
 	stderr << "--error or time limit reached in conversion of output to html: type " | webAppHtmlTag | "<code data-m2code>debugError()</code>" | webAppEndTag |" to run it again; will try conversion to net" << endl;
 	try timelimit(printingTimeLimit, () -> (
-		<< net x << endl;
+--		<< flush << net x << flush << endl; -- not quite right
+		printFunc net x;
 		)) else (
 	    alarm 0;
 	    error "time limit/error reached in conversion of output to net";
