@@ -203,9 +203,9 @@ html2 := (fun,args,lprec,rprec,sep,supp) -> (
     fun = html fun;
     args = html args;
     concatenate (
-	if #fun<=2 or last fun!="$" then (pureTexFlag=false; fun|"$") else substring(fun,0,#fun-1),
+	if #fun<=2 or last fun!="$" then (if #fun>0 then pureTexFlag=false; fun|"$") else substring(fun,0,#fun-1),
 	sep,
-	if #args<=2 or first args!="$" then (pureTexFlag=false; "$"|args) else substring(args,1)
+	if #args<=2 or first args!="$" then (if #args>0 then pureTexFlag=false; "$"|args) else substring(args,1)
 	)
     )
 html RowExpression := s -> (
@@ -216,7 +216,7 @@ html RowExpression := s -> (
     if not multiLineErrorFlag then (
 	r=new MutableList from r;
 	scan(#r-1,i->(
-	    	if last r#i =!= "$" or first r#(i+1) =!= "$" then pureTexFlag=false else (
+		if #(r#i)<=2 or last r#i =!= "$" or first r#(i+1) =!= "$" then (if #(r#i)>0 then pureTexFlag=false) else (
 		    r#i=substring(r#i,0,#(r#i)-1);
 		    r#(i+1)=substring(r#(i+1),1);
 		    )
