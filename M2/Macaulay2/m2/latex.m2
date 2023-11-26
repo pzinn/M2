@@ -105,6 +105,7 @@ texVariable = x -> (
     if (r := regex(suffixesRegExp, x)) =!= null then return (
 	r = r#1; "\\" | substring(r, x) | "{" | texVariable substring(x, 0, r#0) | "}");
     if #x === 1 or regex("[^[:alnum:]]", x) =!= null then x else "\\textit{" | x | "}")
+texMath SymbolBody :=
 texMath Symbol := x -> if keywordTexMath#?x then keywordTexMath#x else texVariable toString x
 
 -----------------------------------------------------------------------------

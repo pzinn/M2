@@ -688,7 +688,9 @@ disassembleCode(c:Code):Expr := ( -- add locations?
 	       Sequence(toExpr("body"),toExpr(x.body))
 	       ))))
      is x:globalAssignmentCode do Expr(Sequence(
-     	        toExpr(concatenate(array(string)("global-assign ",x.lhs.word.name))),
+     	        toExpr("global-assign"),
+		SymbolBody(x.lhs),
+		toExpr(x.lhs.frameindex),
 		list(Sequence(toExpr(x.rhs)))
 		))
      is x:localAssignmentCode do Expr(Sequence(
@@ -764,9 +766,9 @@ disassembleCode(c:Code):Expr := ( -- add locations?
 	       ))
 	       ))
      is x:catchCode do Expr(Sequence(toExpr("try"),list(Sequence(toExpr(x.code)))))
-     is x:globalSymbolClosureCode  do Expr(Sequence(toExpr("global"),toExpr(x.symbol.word.name)))
-     is x:threadSymbolClosureCode  do Expr(Sequence(toExpr("thread"),toExpr(x.symbol.word.name)))
-     is x:localSymbolClosureCode do Expr(Sequence(toExpr("thread"),toExpr(x.symbol.word.name),toExpr(x.nestingDepth)))
+     is x:globalSymbolClosureCode  do Expr(Sequence(toExpr("global"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex)))
+     is x:threadSymbolClosureCode  do Expr(Sequence(toExpr("thread"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex)))
+     is x:localSymbolClosureCode do Expr(Sequence(toExpr("local"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex),toExpr(x.nestingDepth)))
      is x:nullCode do Expr(Sequence())
      else toExpr(tostring(c))
      );
