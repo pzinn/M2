@@ -143,7 +143,7 @@ STRONG     = new MarkUpType of Hypertext
 SUB        = new MarkUpType of Hypertext
 SUP        = new MarkUpType of Hypertext
 TT         = new MarkUpType of Hypertext -- not supported in HMTL5
---- TT replacements
+-- TT replacements
 SAMP        = new MarkUpType of Hypertext
 KBD         = new MarkUpType of Hypertext
 VAR         = new MarkUpType of Hypertext
@@ -258,7 +258,7 @@ new HREF from List      := (HREF, x) -> (
     then x#0 else error "HREF expected URL to be a string or a sequence of 2 strings";
     if x#?1 then prepend(url, drop(x, 1)) else {url})
 
-new OL from VisibleList :=
+new OL from VisibleList := 
 new UL from VisibleList := (T, x) -> apply(nonnull x, e -> (
 	if class e === TO then LI{TOH{e#0}}
 	else if instance(e, LI) or instance(e,Option) or instance(e,OptionTable) then e
@@ -337,7 +337,8 @@ scan({HTML, HEAD, TITLE, BODY}, T -> addAttribute(T, htmlGlobalAttr))
 addAttribute(META,  htmlGlobalAttr | {"name", "content", "http-equiv"})
 addAttribute(LINK,  htmlGlobalAttr | {"href", "rel", "title", "type"})
 addAttribute(STYLE, htmlGlobalAttr | {"type"})
-addAttribute(SCRIPT, htmlGlobalAttr | {"src", "type"})
+addAttribute(SCRIPT, htmlGlobalAttr | {"async", "crossorigin", "defer",
+	"integrity", "nomodule", "referrerpolicy", "src", "type"})
 
 -- html global and event attributes
 htmlAttr = htmlGlobalAttr | {
@@ -353,7 +354,7 @@ htmlAttr = htmlGlobalAttr | {
     }
 
 scan({BR, HR, PARA, PRE, HEADER1, HEADER2, HEADER3, HEADER4, HEADER5, HEADER6,
-        BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, SAMP, KBD, VAR, LI, CODE,
+	BLOCKQUOTE, EM, ITALIC, SMALL, BOLD, STRONG, SUB, SUP, SPAN, TT, SAMP, KBD, VAR, LI, CODE,
 	DL, DT, DD, UL, DIV, TABLE, TR}, T -> addAttribute(T, htmlAttr))
 addAttribute(LABEL,  htmlAttr | {"for", "from"})
 addAttribute(ANCHOR, htmlAttr | {"href", "rel", "target", "type"})
@@ -378,13 +379,8 @@ style Hypertext := true >> o -> x -> (
     str := concatenate apply(keys o, key -> if class key === String then key|":"|toString o#key|";");
     if str === "" then return x;
     (ops,arg) := override(options class x,toSequence x);
-    if ops#"style" =!= null then (
-	str0 := ops#"style";
-	str = concatenate(str0, if #str0>0 and last str0 =!= ";" then ";",str);
-    	i := position(toList x, y -> class y === Option and y#0 === "style");
-    	if i=!=null then x = drop(x,{i,i});
-	);
-    append(x,"style"=>str)
+    ops = applyPairs(ops,(k,v)->if k==="style" then (k,concatenate(v, if v=!=null and #v>0 and last v =!= ";" then ";",str)) else if v=!=null then (k,v));
+    new class x from (toList sequence arg | apply(pairs ops,a->new Option from a))
     )
 
 htmlClass = method()

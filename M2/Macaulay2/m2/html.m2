@@ -104,7 +104,7 @@ html Hypertext := x -> (
     popIndentLevel(1, if instance(x, HypertextVoid)
 	then concatenate(head, "<", qname, attr, ">", tail)
 	else concatenate(head, "<", qname, attr, ">", prefix,
-	    apply(cont,html1), suffix, "</", qname, ">", tail)))
+	    apply(cont, html1), suffix, "</", qname, ">", tail)))
 
 -----------------------------------------------------------------------------
 -- Exceptional (html, MarkUpType) methods
