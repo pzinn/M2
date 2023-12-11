@@ -656,22 +656,22 @@ disassembleCode(c:Code):Expr := ( -- add locations?
      is x:semiCode do Expr(Sequence(toExpr("semi"),list(new Sequence len length(x.w) do foreach s in x.w do provide toExpr(s))))
      is x:integerCode do toExpr(x.x)
      is x:realCode do toExpr(x.x)
-     is x:unaryCode do Expr(Sequence(toExpr("1-OP"),toExpr(getUnopName(x.f)),
+     is x:unaryCode do Expr(Sequence(toExpr("1-OP"),SymbolBody(getUnopName(x.f)),
                list(Sequence(
 	       toExpr(x.rhs)))
 	       ))
-     is x:binaryCode do Expr(Sequence(toExpr("2-OP"),toExpr(getBinopName(x.f)),
+     is x:binaryCode do Expr(Sequence(toExpr("2-OP"),SymbolBody(getBinopName(x.f)),
                list(Sequence(
                toExpr(x.lhs),
 	       toExpr(x.rhs)
 	       ))))
-     is x:ternaryCode do Expr(Sequence(toExpr("3-OP"),toExpr(getTernopName(x.f)),
+     is x:ternaryCode do Expr(Sequence(toExpr("3-OP"),SymbolBody(getTernopName(x.f)),
                list(Sequence(
                toExpr(x.arg1),
 	       toExpr(x.arg2),
 	       toExpr(x.arg3)
 	       ))))
-     is x:multaryCode do Expr(Sequence(toExpr("OP"),toExpr(getMultopName(x.f)),
+     is x:multaryCode do Expr(Sequence(toExpr("OP"),SymbolBody(getMultopName(x.f)),
                list(new Sequence len length(x.args) do foreach c in x.args do provide toExpr(c))
 	       ))
      is x:adjacentCode do Expr(Sequence(toExpr("adjacent"),
