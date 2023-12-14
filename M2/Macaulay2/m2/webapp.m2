@@ -245,7 +245,7 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
     if debugLevel === 42 then return htmlTex s;
     l:=lookup(texMath,class s);
     if l =!= texMathVisibleList and l =!= texMathBasicList then return htmlTex1 s;
-    delims := lookup("delimiters",class s);
+    delims := lookup(symbol texMath,class s);
     backupFlag := multiLineFlag; multiLineFlag=false;
     multiLineErrorFlag=false;
     -- r := apply(toList s, html); -- should stop as soon as error flag
@@ -258,7 +258,7 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
 	if not instance(s,VisibleList) then html class s,
 	if not multiLineErrorFlag then (
 	    "$",
-	    texMath0 delims#0,
+	    delims#0,
 	    if #s===0 then "\\," else
 	    demark(",\\,",apply(r,a->(
 		    	if #a<=2 then (pureTexFlag=false; "$"|a|"$") else (
@@ -266,7 +266,7 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
 	    		    if last a==="$" then a=substring(a,0,#a-1) else (pureTexFlag=false;a=a|"$");
 			    a
 	    		    )))),
-	    texMath0 delims#1,
+	    delims#1,
 	    "$" -- , debugHack ("end1 of htmlList " | toString s)
 	    ) else if multiLineFlag then (  -- debugHack ("end2 of htmlList " | toString s);
 	    "$"|htmlLiteral texMathVisibleList s|"$" ) else notOneLine()
