@@ -1577,6 +1577,7 @@ locate(e:Expr):Expr := (
      is Sequence do locate(lookupfun(e))
      is CompiledFunction do nullE
      is CompiledFunctionClosure do nullE
+     is CompiledFunctionBody do nullE
      is s:SymbolClosure do locateSymbol(s.symbol)
      is c:CodeClosure do locateCode(c.code)
      is s:SpecialExpr do locate(s.e)
