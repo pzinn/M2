@@ -10,7 +10,7 @@ newPackage(
 	Keywords => {"Graphics"},
         DebuggingMode => false,
 	AuxiliaryFiles => true,
-	PackageImports => {"Text","Graphs"},
+	PackageImports => {"Text"},
 	PackageExports => {"Text"}
         )
 
@@ -1081,13 +1081,12 @@ gfxLabel = true >> o -> label -> (
     new GraphicsIdged from (tag,s)
     )
 *-
+importFrom_"NumericalAlgebraicGeometry" { "solveSystem" }
+importFrom_"NAGtypes" { "Coordinates" }
 
 -- plot rewrite
 plot2d = true >> o -> (P,r) -> ( -- #r == 2, P should be a polynomial or nonempty list of polynomials
-    pkg := needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
-    sS := value pkg.Dictionary#"solveSystem";
-    pkg2 := needsPackage "NAGtypes";
-    Crd := pkg2.Dictionary#"Coordinates";
+    needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
     if not instance(P,List) then P={P};
     R := ring first P; if any(P, p -> ring p =!= R) then error "All polynomials must be in the same ring";
     n := try o.Mesh else 100; -- TODO better
@@ -1097,7 +1096,7 @@ plot2d = true >> o -> (P,r) -> ( -- #r == 2, P should be a polynomial or nonempt
     ymin := 1000; ymax := -1000; -- TODO better
     val := transpose apply(n+1, i -> (
 	    x := i*(rx#1-rx#0)/n+rx#0;
-	    yy := if explicit then apply(P, p -> sub (p,R_0=>x)) else sort apply(sS append(P, R_0 -x), p -> p#Crd#1); -- there are subtle issues with sorting solutions depending on real/complex...
+	    yy := if explicit then apply(P, p -> sub (p,R_0=>x)) else sort apply(solveSystem append(P, R_0 -x), p -> p#Coordinates#1); -- there are subtle issues with sorting solutions depending on real/complex...
 	    apply(yy, y -> if abs imaginaryPart y < 1e-6 then (
 		    y = realPart y;
 		    if y<ymin then ymin = y;
@@ -1108,7 +1107,7 @@ plot2d = true >> o -> (P,r) -> ( -- #r == 2, P should be a polynomial or nonempt
     ry := apply(r,x->x_1);
     val = val | transpose apply(n+1, i -> (
 	    y := i*(ry#1-ry#0)/n+ry#0;
-	    xx := sort apply(sS append(P, R_1 -y), p -> p#Crd#0); -- there are subtle issues with sorting solutions depending on real/complex...
+	    xx := sort apply(solveSystem append(P, R_1 -y), p -> p#Coordinates#0); -- there are subtle issues with sorting solutions depending on real/complex...
 	    apply(xx, x -> if abs imaginaryPart x < 1e-6 then (
 		    x = realPart x;
 		    vector { x, y })))));
@@ -1124,10 +1123,7 @@ plot2d = true >> o -> (P,r) -> ( -- #r == 2, P should be a polynomial or nonempt
 
 -- should we test if it's a curve or a surface?
 plot3d = true >> o -> (P,r) -> (
-    pkg := needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
-    sS := value pkg.Dictionary#"solveSystem";
-    pkg2 := needsPackage "NAGtypes";
-    Crd := pkg2.Dictionary#"Coordinates";
+    needsPackage "NumericalAlgebraicGeometry"; -- probably overkill
     if not instance(P,List) then P={P};
     R := ring first P; if any(P, p -> ring p =!= R) then error "All polynomials must be in the same ring";
     n := try o.Mesh else 10; -- TODO better
@@ -1138,7 +1134,7 @@ plot3d = true >> o -> (P,r) -> (
     val := table(n+1,n+1,(i,j)->(
 	    x := i*(rx#1-rx#0)/n+rx#0;
 	    y := j*(ry#1-ry#0)/n+ry#0;
-	    zz := if explicit then apply(P,p -> sub(p,{R_0=>x,R_1=>y})) else sort apply(sS (P | { R_0-x,R_1-y}), p -> p#Crd#2); -- there are subtle issues with sorting solutions depending on real/complex...
+	    zz := if explicit then apply(P,p -> sub(p,{R_0=>x,R_1=>y})) else sort apply(solveSystem (P | { R_0-x,R_1-y}), p -> p#Coordinates#2); -- there are subtle issues with sorting solutions depending on real/complex...
 	    apply(zz, z -> if abs imaginaryPart z < 1e-6 then vector { x, y, realPart z })));
     GraphicsList { Size => 40, Axes=>gens R, "fill" => "white", -- Axes=>Frame TODO
 	    symbol Contents => flatten flatten table(n,n,(i,j) -> for k from 0 to min(#val#i#j,#val#(i+1)#j,#val#i#(j+1),#val#(i+1)#(j+1))-1 list (
@@ -1180,6 +1176,7 @@ html Partition := p -> if #p===0 then "&varnothing;" else html gList(
     vert conjugate p,horiz p,Size=>vector{2*p#0,2*#p},"stroke-width"=>0.05)
 
 -- graphs
+importFrom_"Graphs" { "adjacencyMatrix", "vertexSet", "writeDotFile", "Digraph" }
 sc:=100; -- should be large because of foreignObject
 -- TODO overall size
 showGraph = G -> if G.cache#?"graphics" then G.cache#"graphics" else (
