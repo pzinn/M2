@@ -4,7 +4,7 @@ needs "expressions.m2" -- for precedence
 needs "hypertext.m2"
 needs "methods.m2"
 
-peek' = method(TypicalValue => Net)
+peek' = method(TypicalValue => Hypertext)
 
 peek'(ZZ,Nothing) := (depth,s) -> SPAN "null"
 peek'(ZZ,Thing) := (depth,s) -> SPAN s
