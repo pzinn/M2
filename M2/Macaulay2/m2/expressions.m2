@@ -221,7 +221,7 @@ Minus#operator = symbol -
 expressionValue Minus := v -> minus apply(toSequence v,expressionValue)
 toString'(Function, Minus) := (fmt,v) -> (
      term := v#0;
-     if precedence term > precedence v or class term === Product
+     if precedence term > precedence v or instance(term,Product)
      then "-" | fmt term
      else "-(" | fmt term | ")"
      )
@@ -290,7 +290,7 @@ toString'(Function, Sum) := (fmt,v) -> (
 	  seps := newClass(MutableList, apply(n+1, i->"+"));
 	  seps#0 = seps#n = "";
 	  v = apply(n, i -> (
-		    if class v#i === Minus 
+		    if instance(v#i,Minus)
 		    then ( seps#i = "-"; v#i#0 )
 		    else v#i ));
 	  names := apply(n, i -> (
@@ -552,7 +552,7 @@ MatrixExpression.synonym = "matrix expression"
 matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
 matrixOpts := m -> ( -- helper function
     (opts,x) := override(matrixOpts1,toSequence m);
-    (opts, if #x > 0 and class x#0 =!= List then { x } else toList x) -- because of #1548
+    (opts, if #x > 0 and not instance(x#0,List) then { x } else toList x) -- because of #1548
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
@@ -765,7 +765,7 @@ net Power := v -> (
      else (
      	  nety := net y;
 	  nety = nety ^ (1 + depth nety);
-	  if class x === Subscript then (
+	  if instance(x,Subscript) then (
 	       t := stack(nety,"",nopars x#1);
 	       horizontalJoin (
 		    if precedence x < prec symbol ^
@@ -790,7 +790,7 @@ net Sum := v -> (
 	  seps := newClass(MutableList, apply(n, i->" + "));
 	  seps#0 = "";
 	  v = apply(n, i -> (
-		    if class v#i === Minus
+		    if instance(v#i,Minus)
 		    then (
 			 seps#i = if i == 0 then "- " else " - ";
 			 v#i#0)
@@ -830,13 +830,13 @@ net Product := v -> (
 	       i -> (
 		    term := v#i;
 		    nterm := net term;
-	       	    if precedence term <= p and class term =!= Divide then (
+		    if precedence term <= p and not instance(term,Divide) then (
 			 seps#i = seps#(i+1) = "";
 			 nterm = bigParenthesize nterm;
 			 );
-		    if class term === Power
+		    if instance(term,Power)
 		    and not (term#1 === 1 or term#1 === ONE)
-		    or class term === Subscript then (
+		    or instance(term,Subscript) then (
 			 seps#(i+1) = "";
 			 );
 	       	    nterm));
@@ -900,7 +900,7 @@ toCompactString RingElement := x -> toString raw x
 -- toCompactString can also handle e.g. factored expressions
 toCompactString Product := x -> if #x === 0 then "1" else concatenate apply(toList x,toCompactParen)
 toCompactString Sum := x -> if #x === 0 then "0" else concatenate apply(#x,i->
-    if i===0 or class x#i === Minus then toCompactString x#i else { "+", toCompactString x#i })
+    if i===0 or instance(x#i,Minus) then toCompactString x#i else { "+", toCompactString x#i })
 toCompactString Minus := x -> "-" | toCompactParen x#0
 toCompactString Power := x -> if x#1 === 1 or x#1 === ONE then toCompactString x#0 else (
     a:=toCompactParen x#0;
@@ -977,9 +977,9 @@ texMath Sum := v -> (
      if n === 0 then "0"
      else (
 	  p := precedence v;
-	  seps := apply(toList(1..n-1), i -> if class v#i === Minus then "" else "+");
+	  seps := apply(toList(1..n-1), i -> if instance(v#i,Minus) then "" else "+");
 	  names := apply(n, i -> (
-		    if precedence v#i <= p and class v#i =!= Minus
+		    if precedence v#i <= p and not instance(v#i,Minus)
 		    then "\\left(" | texMath v#i | "\\right)"
 		    else texMath v#i ));
 	  concatenate mingle ( names, seps )))
@@ -1009,16 +1009,16 @@ texMath Product := v -> (
     n := # v;
     if n === 0 then "1"
     else (
-	v = apply(v, x -> if class x === Power and (x#1 === 1 or x#1 === ONE) then x#0 else x);
+	v = apply(v, x -> if instance(x,Power) and (x#1 === 1 or x#1 === ONE) then x#0 else x);
 	p := precedence v;
-	nums := apply(v, x -> isNumber x or (class x === Power and isNumber x#0));
+	nums := apply(v, x -> isNumber x or (instance(x,Power) and isNumber x#0));
 	precs := apply(v, x -> precedence x <= p);
 	seps := apply (n-1, i-> if nums#(i+1) then "\\times "
-	    else if class v#i =!= Power and class v#i =!= Subscript and not precs#i and not precs#(i+1) then
-	    if nums#i or class v#i === Symbol then "\\," else "\\ "
+	    else if not instance(v#i,Power) and not instance(v#i,Subscript) and not precs#i and not precs#(i+1) then
+	    if nums#i or instance(v#i,Symbol) then "\\," else "\\ "
 	    else "");
 	boxes := apply(n, i -> (
-		if precs#i and class v#i =!= Divide
+		if precs#i and not instance(v#i,Divide)
 		then "\\left(" | texMath v#i | "\\right)"
 		else texMath v#i
 		)
@@ -1049,7 +1049,7 @@ texMathSuperscript := v -> (
     p := precedence v;
     x := texMath v#0;
     y := texMath v#1;
-    if precedence v#0 < p or class v#0 === Superscript or class v#0 === Power then x = "\\left(" | x | "\\right)"; -- precedence of double superscript
+    if precedence v#0 < p or instance(v#0,Superscript) or instance(v#0,Power) then x = "\\left(" | x | "\\right)"; -- precedence of double superscript
     concatenate(x,"^{",y,"}") -- no braces around x
 )
 texMath Power := v -> if v#1 === 1 or v#1 === ONE then texMath v#0 else texMathSuperscript v
@@ -1059,7 +1059,7 @@ texMath Subscript := v -> (
      p := precedence v;
      x := texMath v#0;
      y := if class v#1 === Sequence then demark(",", apply(v#1,texMath)) else texMath v#1; -- no () for sequences
-     if precedence v#0 <  p or class v#0 === Subscript then x = "\\left(" | x | "\\right)"; -- precedence or double subscript
+     if precedence v#0 <  p or instance(v#0,Subscript) then x = "\\left(" | x | "\\right)"; -- precedence or double subscript
      concatenate(x,"_{",y,"}") -- no braces around x
      )
 
