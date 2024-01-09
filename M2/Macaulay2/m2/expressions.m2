@@ -476,6 +476,8 @@ expression ZZ := i -> (
      else if i < 0 then new Minus from { -i }
      else hold i
      )
+OneExpression ^ Holder     :=
+OneExpression ^ Expression :=
 Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
 Holder     ^ ZeroExpression :=
