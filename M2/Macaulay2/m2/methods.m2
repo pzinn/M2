@@ -386,6 +386,11 @@ format String   := String => x -> format' x
 format Sequence := String => s -> format' s
 protect symbol format
 
+-- use /// around strings w/ backslashes
+formatNoEscaping = x -> (
+    if match("\\\\", x) then concatenate("/// ", x, " ///")
+    else format x)
+
 toString = method(Dispatch => Thing, TypicalValue => String)
 toString Thing := simpleToString			    -- if all else fails...
 toString String := identity
@@ -613,13 +618,14 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     store.HookAlgorithms#alg = hook)
 
 -- tracking debugInfo
-infoLevel     := -1
-pushInfoLevel :=  n     -> (infoLevel = infoLevel + n; n)
+threadVariable infoLevel
+pushInfoLevel :=  n -> (
+    if infoLevel === null then infoLevel = -1;
+    infoLevel = infoLevel + n; n)
 popInfoLevel  := (n, s) -> (infoLevel = infoLevel - n; s)
 
 -- This function is mainly used by runHooks, printing a line like this:
  -- (quotient,Ideal,Ideal) with Strategy => Monomial from -*Function[../../Macaulay2/packages/Saturation.m2:196:30-205:82]*-
--- TODO: the filenames are not emacs clickable, perhaps M2-mode should be improved
 debugInfo = (func, key, strategy, infoLevel) -> if debugLevel > infoLevel then printerr(
     toString key, if strategy =!= null then (" with Strategy => ", toString strategy), " from ", toString func)
 
