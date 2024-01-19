@@ -49,6 +49,7 @@ factor PolynomialRing := opts -> R -> (
     Rf:=new FactorPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
     R.factor=Rf; -- careful that this is symbol factor, not method factor
     Rf.baseRings=append(R.baseRings,R);
+    Rf.promoteDegree=Rf.liftDegree=identity;
     commonEngineRingInitializations Rf;
     if Rf.?frac then remove(Rf,global frac);   -- simpler to do it in this order -- though needs more checking (see also above)
     expression Rf := a -> (expression a#0)* product apply(a#1,(f,e)->(expression f)^e);
