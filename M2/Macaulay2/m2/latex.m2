@@ -47,11 +47,18 @@ texLiteralPairs := splice {
     "↙" => "\\(\\swarrow\\)"
     }
 texLiteralTable := hashTable texLiteralPairs
-
-texLiteral = s -> (
+texLiteral1 := t -> s -> (
     flag:=false;
-    concatenate apply(characters s, c -> if texLiteralTable#?c then (s:=texLiteralTable#c; flag=first s==="\\" and last =!="}"; s) else if flag then (flag=false; " "|c) else c)
+    concatenate apply(characters s,
+	c -> if t#?c then (
+	    s:=t#c;
+	    flag=first s==="\\" and last s =!="}";
+	    s
+	    )
+	else if flag then (flag=false; " "|c) else c
+	) | if flag then " " else ""
     )
+texLiteral := texLiteral1 texLiteralTable
 
 HALFLINE    := "\\vskip 4.75pt\n"
 ENDLINE     := "\\leavevmode\\hss\\endgraf\n"
@@ -103,7 +110,6 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
     symbol << => "\\ll ",
     symbol >> => "\\gg ",
     symbol ~ => "\\sim ",
-    symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol _ => "\\_",
     symbol { => "\\{",
     symbol } => "\\}",
@@ -117,6 +123,9 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
     symbol ^^ => "\\wedge\\wedge ",
     symbol <| => "\\langle ",
     symbol |> => "\\rangle ",
+    symbol | => "\\mid",
+    symbol || => "\\mid\\mid",
+    symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol _* => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     symbol ^* => "{}^*" -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
     },symbolBody)
@@ -130,10 +139,7 @@ texMathLiteralTable := merge(texLiteralTable,
     "ϱ" => "\\varrho", "ϵ" => "\\epsilon", "π" => "\\pi", "ρ" => "\\rho", "ς" => "\\varsigma", "σ" => "\\sigma", "τ" => "\\tau", "υ" => "\\upsilon", "φ" => "\\varphi", "χ" => "\\chi", "ψ" => "\\psi", "ω" => "\\omega", "ϑ" => "\\vartheta", "α" => "\\alpha", "β" => "\\beta", "γ" => "\\gamma", "ϕ" => "\\phi", "δ" => "\\delta", "ε" => "\\varepsilon", "ϖ" => "\\varpi", "ζ" => "\\zeta", "η" => "\\eta", "θ" => "\\theta", "ι" => "\\iota", "κ" => "\\kappa", "λ" => "\\lambda", "μ" => "\\mu", "ν" => "\\nu", "ξ" => "\\xi", "ο" => "\\omicron",
     "𝔞" => "\\mathfrak{a}","𝔟" => "\\mathfrak{b}","𝔠" => "\\mathfrak{c}","𝔡" => "\\mathfrak{d}","𝔢" => "\\mathfrak{e}","𝔣" => "\\mathfrak{f}","𝔤" => "\\mathfrak{g}","𝔥" => "\\mathfrak{h}","𝔦" => "\\mathfrak{i}","𝔧" => "\\mathfrak{j}","𝔨" => "\\mathfrak{k}","𝔩" => "\\mathfrak{l}","𝔪" => "\\mathfrak{m}","𝔫" => "\\mathfrak{n}","𝔬" => "\\mathfrak{o}","𝔭" => "\\mathfrak{p}","𝔮" => "\\mathfrak{q}","𝔯" => "\\mathfrak{r}","𝔰" => "\\mathfrak{s}","𝔱" => "\\mathfrak{t}","𝔲" => "\\mathfrak{u}","𝔳" => "\\mathfrak{v}","𝔴" => "\\mathfrak{w}","𝔵" => "\\mathfrak{x}","𝔶" => "\\mathfrak{y}","𝔷" => "\\mathfrak{z}","𝔄" => "\\mathfrak{A}","𝔅" => "\\mathfrak{B}","𝔆" => "\\mathfrak{C}","𝔇" => "\\mathfrak{D}","𝔈" => "\\mathfrak{E}","𝔉" => "\\mathfrak{F}","𝔊" => "\\mathfrak{G}","𝔋" => "\\mathfrak{H}","𝔌" => "\\mathfrak{I}","𝔍" => "\\mathfrak{J}","𝔎" => "\\mathfrak{K}","𝔏" => "\\mathfrak{L}","𝔐" => "\\mathfrak{M}","𝔑" => "\\mathfrak{N}","𝔒" => "\\mathfrak{O}","𝔓" => "\\mathfrak{P}","𝔔" => "\\mathfrak{Q}","𝔕" => "\\mathfrak{R}","𝔖" => "\\mathfrak{S}","𝔗" => "\\mathfrak{T}","𝔘" => "\\mathfrak{U}","𝔙" => "\\mathfrak{V}","𝔚" => "\\mathfrak{W}","𝔛" => "\\mathfrak{X}","𝔜" => "\\mathfrak{Y}","𝔝" => "\\mathfrak{Z}"
 },last)
-texMathLiteral = s -> (
-    flag:=false;
-    concatenate apply(characters s, c -> if texMathLiteralTable#?c then (s:=texMathLiteralTable#c; flag=first s==="\\" and last =!="}"; s) else if flag then (flag=false; "{}"|c) else c)
-    )
+texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
 suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
