@@ -184,7 +184,7 @@ randomMutableMatrix(ZZ,ZZ,RR,ZZ) := options -> (n,m,percentagezero,maxentry) -> 
 LUdecomposition = method()
 LUdecomposition MutableMatrix := (A) -> (
      if not isField ring A then
-       error("LU not implemented over ring " | ring A);
+       error("LU not implemented over ring ", ring A);
      nrows := rawNumberOfRows raw A;
      L := mutableMatrix(ring A,0,0,Dense=>true);
      U := mutableMatrix(ring A,0,0,Dense=>true);
