@@ -209,6 +209,16 @@ export parallelAssignmentCode := {+
      rhs:Code,
      location:Location};
 
+export augmentedAssignmentCode := {+
+    oper:Symbol,
+    lhs:Code,
+    rhs:Code,
+    info:Symbol, -- variable name or operator
+    location:Location};
+
+-- code that's already been evaluated; needed for augmented assignment
+export evaluatedCode := {+ expr:Expr, location:Location};
+
 export nullCode := {+};
 export realCode := {+x:RR,location:Location};
 export integerCode := {+x:ZZ,location:Location};
@@ -259,7 +269,7 @@ export Code := (
      or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
      or globalAssignmentCode or localAssignmentCode 
      or globalSymbolClosureCode or threadSymbolClosureCode or localSymbolClosureCode
-     or parallelAssignmentCode 
+     or parallelAssignmentCode or augmentedAssignmentCode or evaluatedCode
      or unaryCode or binaryCode or ternaryCode or multaryCode or forCode
      or sequenceCode or listCode or arrayCode or angleBarListCode or semiCode
      or newCode or newFromCode or newOfCode or newOfFromCode

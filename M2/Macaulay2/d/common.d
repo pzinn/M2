@@ -6,11 +6,13 @@ use stdiop0;
 export codeLocation(c:Code):Location := (
      when c
      is f:adjacentCode do f.location
+     is f:augmentedAssignmentCode do f.location
      is f:arrayCode do f.location
      is f:angleBarListCode do f.location
      is f:binaryCode do f.location
      is f:catchCode do f.location
      is f:Error do ( p:=f.position; Location(p.filename,p.line,p.column,p.line,p.column,p.line,p.column,p.loadDepth) )
+     is f:evaluatedCode do f.location
      is f:forCode do f.location
      is f:functionCode do f.location
      is f:globalAssignmentCode do f.location
@@ -69,6 +71,10 @@ export tostring(c:Code):string := (
      is x:angleBarListCode do concatenate(array(string)( "(angleBarList ", between(" ",new array(string) len length(x.t) do foreach s in x.t do provide tostring(s)), ")"))
      is x:binaryCode do concatenate(array(string)("(2-OP ",getBinopName(x.f).word.name," ",tostring(x.lhs)," ",tostring(x.rhs),")"))
      is x:adjacentCode do concatenate(array(string)("(adjacent ",tostring(x.lhs)," ",tostring(x.rhs),")"))
+     is x:evaluatedCode do concatenate(array(string)(
+	       "(expr ",
+	       tostring(hash(x.expr)),
+	       ")"))
      is x:forCode do concatenate(array(string)(
 	       "(for", 
 	       " in: ",tostring(x.inClause),
@@ -116,6 +122,12 @@ export tostring(c:Code):string := (
 			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
 			 else provide join("'",x.lhs.i.word.name)),
 		    ") ", tostring(x.rhs), ")" ) ) )
+     is x:augmentedAssignmentCode do concatenate(array(string)(
+	     "(augmented-assign ",
+	     x.oper.word.name, " ",
+	     tostring(x.lhs), " ",
+	     tostring(x.rhs), " ",
+	     x.info.word.name, ")"))
      is x:realCode do tostringRR(x.x)
      is x:sequenceCode do (
 	  concatenate(array(string)(

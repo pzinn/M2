@@ -399,6 +399,27 @@ export convert0(e:ParseTree):Code := (
 	       is p:Parentheses do parallelAssignment(p,b.rhs,b.Operator.dictionary)
 	       else dummyCode		  -- should not happen
 	       )
+	  else if isAugmentedAssignmentOperatorWord(b.Operator.word)
+	  then (
+	      when b.lhs
+	      is a:Adjacent
+	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
+		      unseq(c2:=convert0(b.rhs)), AdjacentS.symbol, combineLocation(codeLocation(c1),codeLocation(c2))))
+	      is u:Unary
+	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
+		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combineLocation(codeLocation(c1),codeLocation(c2))))
+	      is u:Postfix
+	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
+		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combineLocation(codeLocation(c1),codeLocation(c2))))
+	      is c:Binary
+	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
+		      unseq(c2:=convert0(b.rhs)), c.Operator.entry, combineLocation(codeLocation(c1),codeLocation(c2))))
+	      is t:Token
+	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
+		      unseq(c2:=convert0(b.rhs)), t.entry, combineLocation(codeLocation(c1),codeLocation(c2))))
+	      else Code(augmentedAssignmentCode(b.Operator.entry, dummyCode,
+		      dummyCode, dummySymbol, dummyLocation)) -- CHECK
+		      )
 	  else Code(binaryCode(b.Operator.entry.binary,unseq(c1:=convert0(b.lhs)),
 	       	    unseq(c2:=convert0(b.rhs)),combineLocation(codeLocation(c1),codeLocation(c2),location(b.Operator))))
 	  )
