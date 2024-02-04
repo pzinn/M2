@@ -104,10 +104,10 @@ if topLevelMode =!= WebApp then (
 			hush = false;
 			error toString stack(line1,commentGuard line2,commentGuard line3))))));
     scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}, (ops,type) ->
-     	scan(ops, op -> (
-	       	ht := 8;
-	       	preX := "            ";
-	       	if not Thing#?(op,symbol =) then (
+	scan(ops, op -> (
+		ht := 8;
+		preX := "            ";
+		if not Thing#?(op,symbol =) then (
 		    undocumented' ((op,symbol =), Thing);
 		    installMethod((op,symbol =), Thing, (y,z) -> (
 			    preY := centerString(width preX, toString op);
@@ -121,7 +121,7 @@ if topLevelMode =!= WebApp then (
 			    -* line3 := preZ | silentRobustNetWithClass(wid,ht,errorPrintingTimeLimit,z); *-
 			    hush = false;
 			    error toString stack(line1,commentGuard line2 -*,commentGuard line3 *- ))));
-	       	if not Thing#?op then (
+		if not Thing#?op and op =!= symbol ?? then (
 		    undocumented' (op, Thing);
 		    installMethod(op, Thing, (x) -> (
 			    line1 := concatenate("no method for ", concatenate(type," operator ",op), " applied to object:");
@@ -133,7 +133,7 @@ if topLevelMode =!= WebApp then (
 			    hush = false;
 			    error toString stack(line1,commentGuard line2)));
 		    ))))
-    	) else (
+    ) else (
 	ofc := x -> (hold x," (of class ",class x,")");
 	scan(flexibleBinaryOperators, op -> (
 		if not Thing#?((op,symbol =),Thing,Thing) then (
