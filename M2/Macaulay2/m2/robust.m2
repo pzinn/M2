@@ -159,8 +159,8 @@ if topLevelMode =!= WebApp then (
 			undocumented' ((op,symbol =), Thing);
 			installMethod((op,symbol =), Thing, (y,z) ->
 			    error ("no method for assignment to ", type, " operator ",op, " applied to objects:",BR{},UL LI ofc y)));
-	    	    if not Thing#?op then (
-			undocumented' (op, Thing);
+		    if not Thing#?op and op =!= symbol ?? then (
+	    	    	undocumented' (op, Thing);
 			installMethod(op, Thing, (x) ->
 			    error ("no method for ", type, " operator ",op, " applied to objects:",BR{},UL LI ofc x)));
 	    	    )));

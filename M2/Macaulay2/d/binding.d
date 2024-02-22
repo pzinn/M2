@@ -264,7 +264,6 @@ bumpPrecedence();
      export QuestionS := makeKeyword(unarybinaryright("?"));
      export NotEqualEqualEqualS := makeKeyword(binaryright("=!="));
      export NotEqualS := makeKeyword(binaryright("!="));
-     export BelongsS := makeKeyword(binaryright("∈"));
 -- operations on terms that yield terms:
 bumpPrecedence();
      export BarBarS := makeKeyword(binaryleft("||"));
@@ -467,7 +466,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS, BelongsS);
+     AdjacentS, AtAtS, PowerS, UnderscoreS, PowerStarStarS, orS, andS, xorS);
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS, 
@@ -497,7 +496,7 @@ export augmentedAssignmentOperatorTable := newSymbolHashTable();
 offset := 0;
 export augmentedAssignmentOperatorWords := (
     new array(Word)
-    len length(opsWithBinaryMethod) - 10 at i
+    len length(opsWithBinaryMethod) - 9 at i
     do (
 	-- to avoid ambiguity and syntax errors, we don't create augmented
 	-- assignment operators for ==, <==, <===, :, SPACE, or, and, xor, ?
@@ -510,8 +509,7 @@ export augmentedAssignmentOperatorWords := (
 	    opsWithBinaryMethod.(i + offset) === orS                      ||
 	    opsWithBinaryMethod.(i + offset) === andS                     ||
 	    opsWithBinaryMethod.(i + offset) === xorS                     ||
-	    opsWithBinaryMethod.(i + offset) === QuestionS                ||
-	    opsWithBinaryMethod.(i + offset) === BelongsS)
+	    opsWithBinaryMethod.(i + offset) === QuestionS)
 	do offset = offset + 1;
 	bop := opsWithBinaryMethod.(i + offset).symbol;
 	aaop := binaryright(bop.word.name + "=");

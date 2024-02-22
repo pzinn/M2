@@ -257,7 +257,6 @@ makenew(classs:HashTable,parent:HashTable):Expr := (
 		    break;
 		    );
 	       if p == mutableHashTableClass then (
-		    o.hash = nextHash();
 		    break;
 		    );
 	       if p == cacheTableClass then (

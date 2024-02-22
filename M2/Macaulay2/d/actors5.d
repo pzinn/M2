@@ -142,9 +142,6 @@ setup(PercentS,modC);
 AtAtfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,AtAtS);
 setup(AtAtS,AtAtfun);
 
-Belongsfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,BelongsS);
-setup(BelongsS,Belongsfun);
-
 StarStarfun(lhs:Code,rhs:Code):Expr := binarymethod(lhs,rhs,StarStarS);
 setup(StarStarS,StarStarfun);
 
@@ -1879,7 +1876,7 @@ foreach s in syms do storeInHashTable(
 storeE = nullE;
 syms = SymbolSequence();
 
-export fileDictionaries := newHashTableWithHash(mutableHashTableClass,nothingClass);
+export fileDictionaries := newHashTable(mutableHashTableClass,nothingClass);
 setupconst("fileDictionaries",Expr(fileDictionaries));
 
 export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (

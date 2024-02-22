@@ -291,8 +291,6 @@ setupMethods((), {
       minimize
 	  })
 
-Thing ∈ Type := instance
-
 assert = method()
 assert Thing := x -> assert' x
 

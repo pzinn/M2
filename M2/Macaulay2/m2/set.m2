@@ -111,7 +111,7 @@ isSubset(VisibleList,Set) := Boolean => (S,T) -> all(S, x -> T#?x)
 isSubset(VisibleList,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 isSubset(Set,VisibleList) := Boolean => (S,T) -> isSubset(S,set T)
 
-Thing ∈ Set := isMember(Thing,Set) := Boolean => (a,s) -> s#?a
+isMember(Thing,Set) := Boolean => (a,s) -> s#?a
 
 VirtualTally / Command  :=
 VirtualTally / Function := VirtualTally => (x,f) -> applyKeys(x,f,plus)

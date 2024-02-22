@@ -2,7 +2,7 @@
 -- put bindings to variables before the forward references, for safety
 use hashtables;
 use convertr;
-export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
+export globalAssignmentHooks := newHashTable(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
 export evalSequenceHadError := false;
 export evalSequenceErrorMessage := nullE;
@@ -28,7 +28,7 @@ export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
 
 -- TODO move elsewhere
-export filePositionClass := newHashTableWithHash(typeClass,basicListClass);
+export filePositionClass := newHashTable(typeClass,basicListClass);
 setupconst("FilePosition",Expr(filePositionClass));
 
 -- error stuff
@@ -1394,8 +1394,8 @@ handleError(c:Code,e:Expr):Expr := (
 	       if err.position == dummyPosition then err.position = p;
 	       return e;
 	       );
-	  clearAllFlags(); if debugLevel == 123 then stderr << "clearing all flags 4" << endl;
-	  clearAlarm(); if debugLevel==123 then stderr << "clearing alarm" << endl;
+	  clearAllFlags();
+	  clearAlarm();
 	  if p.loadDepth >= errorDepth && !err.position === p then (
 	       oldReportFrame := err.frame;
 	       err.frame = noRecycle(localFrame);
@@ -1467,7 +1467,7 @@ export evalraw(c:Code):Expr := (
 		    clearSteppingFlag();
 		    buildErrorPacket(steppingMessage))
 	       else if alarmedFlag then (
-		    clearAlarmedFlag(); if debugLevel==123 then stderr << "clearing alarm flag 2" << endl;
+		    clearAlarmedFlag();
 		    buildErrorPacket(alarmMessage))
 	       else if test(interruptedFlag) then (
 		    SuppressErrors = false;
@@ -1475,7 +1475,7 @@ export evalraw(c:Code):Expr := (
 		    buildErrorPacket(interruptMessage))
 	       else (
 		    SuppressErrors = false;
-		    clearAllFlags(); if debugLevel == 123 then stderr << "clearing all flags 2" << endl;
+		    clearAllFlags();
 		    buildErrorPacket("unknown exception")
 		    ))
 	  else when c
@@ -1656,7 +1656,7 @@ export evalexcept(c:Code):Expr := (
      e := eval(c);
      if test(exceptionFlag) then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (
-	       clearAlarmedFlag(); if debugLevel==123 then stderr << "clearing alarm flag" << endl;
+	       clearAlarmedFlag();
 	       printErrorMessageE(c,alarmMessage))
 	  else if test(interruptedFlag) then (
 	       SuppressErrors = false;
@@ -1668,7 +1668,7 @@ export evalexcept(c:Code):Expr := (
 	       e)
 	  else (
 	       SuppressErrors = false;
-	       clearAllFlags(); if debugLevel == 123 then stderr << "clearing all flags 3" << endl;
+	       clearAllFlags();
 	       printErrorMessageE(c,"unknown exception")))
      else e);
 
