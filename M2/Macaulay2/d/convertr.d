@@ -435,7 +435,14 @@ export convert0(e:ParseTree):Code := (
 	  then Code(sequenceCode(s:=makeCodeSequence(e,CommaW),combineLocationLeft(location(u.Operator),codeLocation(s.(length(s)-1)))))
 	  else if u.Operator.word == SemicolonW
 	  then Code(semiCode(s:=makeCodeSequence(e,SemicolonW),combineLocationLeft(location(u.Operator),codeLocation(s.(length(s)-1)))))
-	  else Code(unaryCode(u.Operator.entry.unary,unseq(c:=convert0(u.rhs)),combineLocationLeft(location(u.Operator),codeLocation(c)))))
+	  else (
+	    c:=convert0(u.rhs);
+	    loc:=codeLocation(c);
+	    loc2:=location(u.Operator);
+	    when c is
+              nullCode do nothing
+	    else loc2=combineLocationLeft(loc2,loc);
+	  Code(unaryCode(u.Operator.entry.unary,unseq(c),loc2))))
      is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
