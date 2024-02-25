@@ -48,6 +48,7 @@ export printErrorMessageE(c:Code,message:Expr):Expr := printErrorMessageE(codePo
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
      printErrorMessageE(position(c),toExpr(message)));
 
+handleError(c:Code,e:Expr):Expr;
 eval(c:Code):Expr;
 applyEE(f:Expr,e:Expr):Expr;
 export evalAllButTail(c:Code):Code := while true do c = (
@@ -649,11 +650,11 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 			 f.frameID = desc.frameID;
 			 f.values.0 = e;
 			 );
-		    ret := nullE;
+		    ret := nullE; tailCode := dummyCode;
 		    while true do (
 			 localFrame = f;
 	  		 recursionDepth = recursionDepth + 1;
-			 tailCode := evalAllButTail(model.body);
+			 tailCode = evalAllButTail(model.body);
 	  		 recursionDepth = recursionDepth - 1;
 			 -- formerly, just ret := eval(model.body); now do tail recursion instead
 			 when tailCode
@@ -766,7 +767,7 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 			 f.frameID = -2;				    -- just to be tidy, not really needed
 			 recycleBin.framesize = f;
 			 );
-		    when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
+		    when ret is Error do returnFromFunction(handleError(tailCode,ret)) else ret -- this check takes time, too!
 		    )
 	       else (
 		    f := Frame(previousFrame,desc.frameID,framesize,false,
@@ -1378,7 +1379,7 @@ export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
 	  + tostring(got)));
 
 
-handleError(c:Code,e:Expr):Expr := (
+export handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
 	  p := codePosition(c);
 	  if SuppressErrors
