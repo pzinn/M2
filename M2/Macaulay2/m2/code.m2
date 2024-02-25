@@ -64,6 +64,7 @@ code FilePosition := x -> (
 	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
 	      }
 	  ))
+code Symbol     :=
 code Pseudocode := s -> code locate s
 code Sequence   := s -> (
     key := select(s, x -> not instance(x, Option));
@@ -82,18 +83,11 @@ code Sequence   := s -> (
     if func =!= null or (func = lookup key) =!= null
     then DIV {mesg, formatDocumentTag s, codeFunction(s, func, 0) }
     else "-- no method function found: " | formatDocumentTag key)
-code Function   := f -> DIV { codeFunction(null, f, 0), (lookup(code,Thing)) f }
-code Command    := C -> DIV { codeFunction(null, C#0, 0), (lookup(code,Thing)) C }
+code Function   := f -> codeFunction(null, f, 0)
+code Command    := C -> code C#0
 code List       := L -> DIV between_(HR{}) apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
 code Thing      := x -> if hasAttribute(x,ReverseDictionary) then code getAttribute(x,ReverseDictionary)
-code Symbol     := x -> ( -- that's not really code... rethink
-    l := locate x;
-    if l =!= null then (
-    	c := code l;
-	DIV { symbol symbol, " ", x, ": ", if c=!=null then c else l }
-    	)
-    )
 
 -----------------------------------------------------------------------------
 -- edit
