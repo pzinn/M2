@@ -712,6 +712,7 @@ tex = method(Dispatch => Thing, TypicalValue => String)
 --
 if topLevelMode =!= WebApp then texMath = method(Dispatch => Thing, TypicalValue => String) else (
     texMath = new MethodFunctionSingle from (x -> texMath1 x); -- will be defined later
+    texMath1 = x -> (lookup(texMath,class x)) x; -- temp def
     typicalValues#texMath = String;
     )
 -- 

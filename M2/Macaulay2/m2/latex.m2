@@ -155,6 +155,10 @@ texMath Symbol := texVariable @@ texMathLiteral @@ toString
 texMath Keyword :=  texMath @@ symbolBody
 texMath SymbolBody := s -> if keywordTexMath#?s then keywordTexMath#s else texMathSymbol s
 
+-- add augmented operators
+removeLast := s -> substring(s,0,#s-1)
+keywordTexMath = merge(keywordTexMath, hashTable apply(toList augmentedAssignmentOperators, s -> symbolBody s => (texMath (getGlobalSymbol ( removeLast toString s ))) | "="), last)
+
 -----------------------------------------------------------------------------
 
 tex     Nothing := tex @@ toString
