@@ -182,7 +182,7 @@ multiLineFlag = true -- false means only one-line is allowed, otherwise error fl
 multiLineErrorFlag = false
 pureTexFlag = true -- means only tex, nothing else
 
---debugHack = msg -> ( << msg << " (multiLineFlag=" << toString multiLineFlag << " pureTexFlag=" << toString pureTexFlag << ")" << endl; )
+-- debugHack = msg -> ( << msg << " (multiLineFlag=" << toString multiLineFlag << " multiLineErrorFlag=" << toString multiLineErrorFlag << " pureTexFlag=" << toString pureTexFlag << ")" << endl; )
 
 notOneLine := () -> ( multiLineErrorFlag=true; "")
 
@@ -196,11 +196,12 @@ scan({HypertextContainer,HypertextParagraph,VerticalList,Net}, t->(
 	h:=lookup(html,t);
 	html t := s -> if multiLineFlag then h s  else notOneLine();
 	));
-html2 := (fun,args,lprec,rprec,sep,supp) -> (
+html2 := (fun,args,lprec,rprec,sep,supp) -> ( -- debugHack("start of html2 " | toString fun | " " |toString sep | " " | toString args);
     if rightPrecedence fun < lprec then ( fun = sequence fun; if supp then sep="{}"; );
     if precedence args <= rprec then ( args = sequence args; if supp then sep="{}"; );
     fun = html fun;
     args = html args;
+    -- debugHack("middle of html2 " | toString fun | " " |toString sep | " " | toString args);
     concatenate (
 	if #fun<2 or last fun!="$" then (if #fun>0 then pureTexFlag=false; fun|"$") else substring(fun,0,#fun-1),
 	sep,
@@ -209,10 +210,12 @@ html2 := (fun,args,lprec,rprec,sep,supp) -> (
     )
 html RowExpression := s -> (
     if debugLevel === 42 then return htmlTex s;
-    multiLineErrorFlag = false;
+    -- debugHack ("start of html RowExpression " | toString s | " : " | toString class s);
+    multiLineErrorBackupFlag:=multiLineErrorFlag; multiLineErrorFlag=false;
     -- r := apply(s, html); -- should stop as soon as flag is true
     r := for i to #s-1 when not multiLineErrorFlag list html s#i;
     if not multiLineErrorFlag then (
+	multiLineErrorFlag=multiLineErrorBackupFlag;
 	r=new MutableList from r;
 	scan(#r-1,i->(
 		if #(r#i)<2 or last r#i =!= "$" or first r#(i+1) =!= "$" then (if #(r#i)>0 then pureTexFlag=false) else (
@@ -240,22 +243,24 @@ html BinaryOperation := b -> (
     )
 html Product := html Sum := html Minus := html Constant := htmlTex
 htmlList :=
-html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
+html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s | " : " | toString class s);
     if debugLevel === 42 then return htmlTex s;
     l:=lookup(texMath,class s);
     if l =!= texMathVisibleList and l =!= texMathBasicList then return htmlTex1 s;
     delims := lookup(symbol texMath,class s);
     backupFlag := multiLineFlag; multiLineFlag=false;
-    multiLineErrorFlag=false;
+    multiLineErrorBackupFlag:=multiLineErrorFlag; multiLineErrorFlag=false;
     -- r := apply(toList s, html); -- should stop as soon as error flag
     try (r := for i to #s-1 when not multiLineErrorFlag list html s#i;) else (
     multiLineFlag=backupFlag;
     error errorMessage; -- must revert flag before throwing error
     );
+    -- debugHack ("middle of htmlList " | toString s | " : " | toString class s);
     multiLineFlag=backupFlag;
     concatenate (
 	if not instance(s,VisibleList) then html class s,
 	if not multiLineErrorFlag then (
+	    multiLineErrorFlag=multiLineErrorBackupFlag;
 	    "$",
 	    delims#0,
 	    if #s===0 then "\\," else
@@ -266,8 +271,8 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s);
 			    a
 	    		    )))),
 	    delims#1,
-	    "$" -- , debugHack ("end1 of htmlList " | toString s)
-	    ) else if multiLineFlag then (  -- debugHack ("end2 of htmlList " | toString s);
+	    "$" -- ,debugHack ("end1 of htmlList " | toString s | " : " | toString class s)
+	    ) else if multiLineFlag then ( -- debugHack ("end2 of htmlList " | toString s | " : " | toString class s);
 	    "$"|htmlLiteral texMathVisibleList s|"$" ) else notOneLine()
 	)
     )
@@ -284,11 +289,11 @@ html HashTable := H -> (
 
 -- the texMath hack
 texMath1 = x -> if not webAppPrintFlag then texMath0 x else (
-    -- debugHack ("start of texMath1 "|toString x);
+    -- debugHack ("start of texMath1 "|toString x | " : "|toString class x);
     backupFlag:=pureTexFlag;
     pureTexFlag=true;
     h := html x;
-    -- debugHack ("middle of texMath1 "|toString x);
+    -- debugHack ("middle of texMath1 "|toString x | " : "|toString class x);
     first(if #h>2 and h#0=="$" and h#(#h-1)=="$" and pureTexFlag
     then delim|substring(h,1,#h-2)|delim
     else delim|webAppHtmlTag|h|webAppEndTag|delim -- switch back to html
