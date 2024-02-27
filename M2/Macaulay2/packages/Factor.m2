@@ -40,8 +40,8 @@ factor FractionField := opts -> F -> frac(factor(opts,last F.baseRings))  -- sim
 
 leadCoeff := x -> ( -- iterated leadCoefficient
     R := ring x;
-    if class R === PolynomialRing then leadCoeff leadCoefficient x else
-    if class R === QuotientRing or class R === GaloisField then leadCoeff lift(x,ambient R) else
+    if instance(R,PolynomialRing) then leadCoeff leadCoefficient x else
+    if instance(R,QuotientRing) or instance(R,GaloisField) then leadCoeff lift(x,ambient R) else
     x);
 
 factor PolynomialRing := opts -> R -> (
