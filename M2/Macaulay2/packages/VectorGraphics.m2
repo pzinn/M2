@@ -720,7 +720,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	"style" => concatenate("width:",toString g.cache.Size_0,"em;",
 	    "height:",toString g.cache.Size_1,"em;"
 	    ),
-	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1}),
+	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1})
 	};
     if is3d g or draggable g then ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TODO more customized: might want 2d background drag etc
     if is3d g then (
