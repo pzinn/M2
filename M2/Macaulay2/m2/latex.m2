@@ -184,7 +184,7 @@ texMath NumberedVerticalList := s -> concatenate(
 BasicList.texMath = ("\\{","\\}")
 Sequence.texMath = ("(",")")
 Array.texMath = ("[","]")
-AngleBarList.texMath = ("\\langle","\\rangle")
+AngleBarList.texMath = ("\\langle ","\\rangle ")
 
 
 texMathVisibleList =
