@@ -115,7 +115,7 @@ factor PolynomialRing := opts -> R -> (
     -- various redefinitions (there might be a more clever way to automate this?)
     Rf.generators=apply(generators R,a->new Rf from a);
     Rf.indexSymbols=applyValues(R.indexSymbols,x->new Rf from x);
-    Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
+    if R.?indexStrings then Rf.indexStrings=applyValues(R.indexStrings,x->new Rf from x);
     Rf#0=new Rf from { 0_R, {} };
     Rf#1=new Rf from { 1_R, {} };
     -- then operations!
