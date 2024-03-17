@@ -693,8 +693,23 @@ disassembleCode(c:Code):Expr := ( -- add locations?
 		list(Sequence(toExpr(x.rhs)))
 		))
      is x:localAssignmentCode do Expr(Sequence(
-                Sequence(toExpr("local-assign"),toExpr(x.frameindex),toExpr(x.nestingDepth)),
+                toExpr("local-assign"),toExpr(x.frameindex),toExpr(x.nestingDepth),
 		list(Sequence(toExpr(x.rhs)))
+		))
+     is x:parallelAssignmentCode do Expr(Sequence(
+                toExpr("parallel-assign"),
+		list(list(new Sequence len length(x.nestingDepth) do
+			 for i from 0 to length(x.nestingDepth)-1 do
+			 if x.lhs.i == dummySymbol
+			 then provide Expr(Sequence(toExpr(x.frameindex.i),toExpr(x.nestingDepth.i)))
+			 else provide Expr(Sequence(SymbolBody(x.lhs.i),toExpr(x.lhs.i.frameindex)))
+			 ),
+			 toExpr(x.rhs))
+		))
+     is x:augmentedAssignmentCode do Expr(Sequence(
+                toExpr("augmented-assign"),
+		SymbolBody(x.oper),
+		list(Sequence(toExpr(x.lhs),toExpr(x.rhs)))
 		))
      is x:globalMemoryReferenceCode do Expr(Sequence(toExpr("global-fetch"),toExpr((x.frameindex))))
      is x:localMemoryReferenceCode do Expr(Sequence(toExpr("fetch"),toExpr(x.frameindex),toExpr(x.nestingDepth)))

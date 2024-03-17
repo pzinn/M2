@@ -116,9 +116,9 @@ export tostring(c:Code):string := (
 	       array(string)(
 	       	    "(parallel-assign (",
 		    between(" ",
-			 new array(string) len length(x.nestingDepth) do 
-			 for i from 0 to n-1 do 
-			 if x.lhs.i == dummySymbol 
+			 new array(string) len n do
+			 for i from 0 to n-1 do
+			 if x.lhs.i == dummySymbol
 			 then provide concatenate(array(string)("(",tostring(x.frameindex.i)," ",tostring(x.nestingDepth.i),")"))
 			 else provide join("'",x.lhs.i.word.name)),
 		    ") ", tostring(x.rhs), ")" ) ) )
