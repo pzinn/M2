@@ -788,8 +788,11 @@ tikzconv := hashTable {
     "viewBox" => y -> (
 	vb := pack(value \ separate("\\s|,",y),2);
 	tikzsize = sqrt(0.5*(vb#1#0^2+vb#1#1^2));
-	"execute at begin picture={\\bgroup\\tikzset{every path/.style={}}\\clip ("|jsString vb#0#0|","|jsString vb#0#1|") rectangle ++("|jsString vb#1#0|","|jsString vb#1#1|");\\egroup}"
-	) }
+--	"execute at begin picture={\\bgroup\\tikzset{every path/.style={}}\\clip ("|jsString vb#0#0|","|jsString vb#0#1|") rectangle ++("|jsString vb#1#0|","|jsString vb#1#1|");\\egroup}"
+	"execute at begin picture={\\clip ("|jsString vb#0#0|","|jsString vb#0#1|") rectangle ++("|jsString vb#1#0|","|jsString vb#1#1|");}"
+	),
+    "tikz" => identity -- custom options can be added
+    }
 ovr := x -> ( -- borrowed from html.m2
     T := class x;
     (op,ct) := try override(options T, toSequence x) else error("markup type ", toString T, ": ",
@@ -812,7 +815,7 @@ tex SVG := texMath SVG := x -> concatenate(
 	st = append(st,"y={(0cm,-1cm)}");
 	);
     st=append(st,"baseline=(current  bounding  box.center)");
-    st=append(st,"every path/.style={draw="|try op#"stroke" else "black"|",fill="|try op#"fill" else "none"|"}");
+    if op#?"stroke" or op#?"fill" then st=append(st,"every path/.style={"|(try ("draw="|op#"stroke"|",") else "")|(try ("fill="|try op#"fill") else "")|"}"); -- important change: no default draw/fill
     if not op#?"stroke-linejoin" then st=append(st,"line join=round");
     "\\begin{tikzpicture}[",
     demark(",",st),
