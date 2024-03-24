@@ -803,7 +803,7 @@ net Sum := v -> (
 		    then bigParenthesize net v#i
 		    else      	   	 net v#i))))
 
-isNumber = method(TypicalValue => Boolean)
+isNumber = method(Dispatch => Thing, TypicalValue => Boolean)
 isNumber Thing := i -> false
 isNumber RR :=
 isNumber QQ := -- QQ never appears in an expression...
