@@ -375,7 +375,11 @@ jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 jsString GraphicsCoordinate := x -> x.JsFunc()
-jsString RR := x -> format(10,5,1000,1000,"",x) -- somewhat random
+jsString RR := x -> (
+    i:=5;
+    while (s:=format(5,i,i,i,"e",x); match("e",s)) do i+=1;
+    s
+    )
 
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
