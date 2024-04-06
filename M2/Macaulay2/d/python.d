@@ -403,7 +403,7 @@ wrappedM2Function(self:pythonObject, args:pythonObject):pythonObjectOrNull := (
     when r
     is e:Error do (
 	Ccode(void, "PyErr_SetString(PyExc_RuntimeError, ",
-	    tocharstar(e.message), ")");
+	    tocharstar(tostringerror(e.message)), ")");
 	pythonObjectOrNull(null()))
     is o:pythonObjectCell do pythonObjectOrNull(o.v)
     else (
