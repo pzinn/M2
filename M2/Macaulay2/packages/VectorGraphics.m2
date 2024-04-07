@@ -1,8 +1,8 @@
 -- -*- coding: utf-8 -*-
 newPackage(
         "VectorGraphics",
-        Version => "1.01",
-        Date => "October 4, 2022", -- "May 18, 2018",
+        Version => "1.02",
+        Date => "April 7, 2024", -- "May 18, 2018",
         Authors => {{Name => "Paul Zinn-Justin",
                   Email => "pzinn@unimelb.edu.au",
                   HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
@@ -375,11 +375,7 @@ jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
 jsString GraphicsCoordinate := x -> x.JsFunc()
-jsString RR := x -> (
-    i:=5;
-    while (s:=format(5,i,i,i,"e",x); match("e",s)) do i+=1;
-    s
-    )
+jsString RR := x -> format(5,5,1000,1000,"e",x)
 
 one := map(RR^4,RR^4,1)
 updateTransformMatrix := (g,m) -> ( -- (object,matrix of parent)
