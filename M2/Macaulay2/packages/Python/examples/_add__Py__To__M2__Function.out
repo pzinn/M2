@@ -1,51 +1,58 @@
 -- -*- M2-comint -*- hash: 1817891267
+i1 : 1:0fractions = import "fractions"
 
-i1 : fractions = import "fractions"
+o1 = $<samp class="token string">&lt;module 'fractions' from '/usr/lib64/python3.12/fractions.py'></samp>$
 
-o1 = <module 'fractions' from '/usr/lib/python3.9/fractions.py'>
+o1 : <span><samp class="token class-name">PythonObject</samp> of class module</span>
+i2 : 2:0x = fractions@@"Fraction"(2, 3)
 
-o1 : PythonObject of class module
+o2 = $<samp class="token string">2/3</samp>$
 
-i2 : x = fractions@@"Fraction"(2, 3)
+o2 : <span><samp class="token class-name">PythonObject</samp> of class fractions.Fraction</span>
+i3 : 3:0value x
 
-o2 = 2/3
+o3 = $<samp class="token string">2/3</samp>$
 
-o2 : PythonObject of class fractions.Fraction
+o3 : <span><samp class="token class-name">PythonObject</samp> of class fractions.Fraction</span>
+i4 : 4:0toQQ = x -> value x@@"numerator" / value x@@"denominator";
+i5 : 5:0addPyToM2Function("Fraction", toQQ, "Fraction -> QQ");
+i6 : 6:0value x
 
-i3 : value x
+o6 = $\frac{2}{3}$
 
-o3 = 2/3
+o6 : $\htmlClass{token class-name}{{\mathbb Q}}$
+i7 : 7:0hooks value
 
-o3 : PythonObject of class fractions.Fraction
+o7 = <ol start="0" style="display:inline-table">
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">unknown -> PythonObject</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">function -> FunctionClosure</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">Counter -> Tally</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">dict -> HashTable</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">set -> Set</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">list -> List</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">tuple -> Sequence</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">str -> String</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">complex -> CC</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">float -> RR</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">int -> ZZ</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">bool -> Boolean</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">Fraction -> QQ</samp>$)$  </li>
+</ol>
+
 
-i4 : toQQ = x -> value x@@"numerator" / value x@@"denominator";
-
-i5 : addPyToM2Function("Fraction", toQQ, "Fraction -> QQ");
-
-i6 : value x
-
-     2
-o6 = -
-     3
-
-o6 : QQ
-
-i7 : hooks value
-
-o7 = {0 => (value, PythonObject, Strategy => unknown -> PythonObject)    }
-     {1 => (value, PythonObject, Strategy => function -> FunctionClosure)}
-     {2 => (value, PythonObject, Strategy => Counter -> Tally)           }
-     {3 => (value, PythonObject, Strategy => dict -> HashTable)          }
-     {4 => (value, PythonObject, Strategy => set -> Set)                 }
-     {5 => (value, PythonObject, Strategy => list -> List)               }
-     {6 => (value, PythonObject, Strategy => tuple -> Sequence)          }
-     {7 => (value, PythonObject, Strategy => str -> String)              }
-     {8 => (value, PythonObject, Strategy => complex -> CC)              }
-     {9 => (value, PythonObject, Strategy => float -> RR)                }
-     {10 => (value, PythonObject, Strategy => int -> ZZ)                 }
-     {11 => (value, PythonObject, Strategy => bool -> Boolean)           }
-     {12 => (value, PythonObject, Strategy => Fraction -> QQ)            }
-
-o7 : NumberedVerticalList
-
-i8 : 
+o7 : <samp class="token class-name">NumberedVerticalList</samp>
+i8 : 8:0
+

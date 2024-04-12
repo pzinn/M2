@@ -1,15 +1,13 @@
 -- -*- M2-comint -*- hash: 1355463756
+i1 : 1:0floor toPython 5.8
 
-i1 : floor toPython 5.8
+o1 = $<samp class="token string">5</samp>$
 
-o1 = 5
+o1 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i2 : 2:0floor toPython(-5.8)
 
-o1 : PythonObject of class int
+o2 = $<samp class="token string">-6</samp>$
 
-i2 : floor toPython(-5.8)
-
-o2 = -6
-
-o2 : PythonObject of class int
-
-i3 : 
+o2 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i3 : 3:0
+

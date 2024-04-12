@@ -1,18 +1,15 @@
 -- -*- M2-comint -*- hash: 538010608
+i1 : 1:0math = import "math"
 
-i1 : math = import "math"
+o1 = $<samp class="token string">&lt;module 'math' from '/usr/lib64/python3.12/lib-dynload/math.cpython-312-x86_64-linux-gnu.so'></samp>$
 
-o1 = <module 'math' (built-in)>
+o1 : <span><samp class="token class-name">PythonObject</samp> of class module</span>
+i2 : 2:0help math
 
-o1 : PythonObject of class module
+o2 = <samp class="token string">This module provides access to the mathematical functions
+defined by the C standard.</samp>
+i3 : 3:0help math@@sin
 
-i2 : help math
-
-o2 = This module provides access to the mathematical functions
-     defined by the C standard.
-
-i3 : help math@@sin
-
-o3 = Return the sine of x (measured in radians).
-
-i4 : 
+o3 = <samp class="token string">Return the sine of x (measured in radians).</samp>
+i4 : 4:0
+

@@ -1,27 +1,23 @@
 -- -*- M2-comint -*- hash: 1175896729
+i1 : 1:0quotientRemainder(toPython 37, toPython 5)
 
-i1 : quotientRemainder(toPython 37, toPython 5)
+o1 = $(<samp class="token string">7</samp>,\,<samp class="token string">2</samp>)$
 
-o1 = (7, 2)
+o1 : <samp class="token class-name">Sequence</samp>
+i2 : 2:0class \ oo
 
-o1 : Sequence
+o2 = $($<samp class="token class-name">PythonObject</samp>$,\,$<samp class="token class-name">PythonObject</samp>$)$
 
-i2 : class \ oo
+o2 : <samp class="token class-name">Sequence</samp>
+i3 : 3:0quotientRemainder(toPython 37, 5)
 
-o2 = (PythonObject, PythonObject)
+o3 = $(<samp class="token string">7</samp>,\,<samp class="token string">2</samp>)$
 
-o2 : Sequence
+o3 : <samp class="token class-name">Sequence</samp>
+i4 : 4:0class \ oo
 
-i3 : quotientRemainder(toPython 37, 5)
+o4 = $($<samp class="token class-name">PythonObject</samp>$,\,$<samp class="token class-name">PythonObject</samp>$)$
 
-o3 = (7, 2)
-
-o3 : Sequence
-
-i4 : class \ oo
-
-o4 = (PythonObject, PythonObject)
-
-o4 : Sequence
-
-i5 : 
+o4 : <samp class="token class-name">Sequence</samp>
+i5 : 5:0
+

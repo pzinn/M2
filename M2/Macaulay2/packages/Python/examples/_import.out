@@ -1,21 +1,18 @@
 -- -*- M2-comint -*- hash: 651727559
+i1 : 1:0math = import "math"
 
-i1 : math = import "math"
+o1 = $<samp class="token string">&lt;module 'math' from '/usr/lib64/python3.12/lib-dynload/math.cpython-312-x86_64-linux-gnu.so'></samp>$
 
-o1 = <module 'math' (built-in)>
+o1 : <span><samp class="token class-name">PythonObject</samp> of class module</span>
+i2 : 2:0getattr(math, "pi")
 
-o1 : PythonObject of class module
+o2 = $<samp class="token string">3.141592653589793</samp>$
 
-i2 : getattr(math, "pi")
+o2 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
+i3 : 3:0math@@sqrt 2
 
-o2 = 3.141592653589793
+o3 = $<samp class="token string">1.4142135623730951</samp>$
 
-o2 : PythonObject of class float
-
-i3 : math@@sqrt 2
-
-o3 = 1.4142135623730951
-
-o3 : PythonObject of class float
-
-i4 : 
+o3 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
+i4 : 4:0
+

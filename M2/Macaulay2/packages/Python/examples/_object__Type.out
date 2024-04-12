@@ -1,15 +1,13 @@
 -- -*- M2-comint -*- hash: 42511345
+i1 : 1:0objectType pythonValue "2"
 
-i1 : objectType pythonValue "2"
+o1 = $<samp class="token string">&lt;class 'int'></samp>$
 
-o1 = <class 'int'>
+o1 : <span><samp class="token class-name">PythonObject</samp> of class type</span>
+i2 : 2:0objectType pythonValue "'Hello, world!'"
 
-o1 : PythonObject of class type
+o2 = $<samp class="token string">&lt;class 'str'></samp>$
 
-i2 : objectType pythonValue "'Hello, world!'"
-
-o2 = <class 'str'>
-
-o2 : PythonObject of class type
-
-i3 : 
+o2 : <span><samp class="token class-name">PythonObject</samp> of class type</span>
+i3 : 3:0
+

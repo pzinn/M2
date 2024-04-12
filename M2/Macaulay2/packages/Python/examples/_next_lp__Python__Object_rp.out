@@ -1,39 +1,33 @@
 -- -*- M2-comint -*- hash: -945626027
+i1 : 1:0x = pythonValue "range(3)"
 
-i1 : x = pythonValue "range(3)"
+o1 = $<samp class="token string">range(0, 3)</samp>$
 
-o1 = range(0, 3)
+o1 : <span><samp class="token class-name">PythonObject</samp> of class range</span>
+i2 : 2:0i = iterator x
 
-o1 : PythonObject of class range
+o2 = $<samp class="token string">&lt;range_iterator object at 0x7fd615dfd9b0></samp>$
 
-i2 : i = iterator x
+o2 : <span><samp class="token class-name">PythonObject</samp> of class range_iterator</span>
+i3 : 3:0next i
 
-o2 = <range_iterator object at 0x7f582ec15650>
+o3 = $<samp class="token string">0</samp>$
 
-o2 : PythonObject of class range_iterator
+o3 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i4 : 4:0next i
 
-i3 : next i
+o4 = $<samp class="token string">1</samp>$
 
-o3 = 0
+o4 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i5 : 5:0next i
 
-o3 : PythonObject of class int
+o5 = $<samp class="token string">2</samp>$
 
-i4 : next i
+o5 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i6 : 6:0next i
 
-o4 = 1
+o6 = $\mathit{StopIteration}$
 
-o4 : PythonObject of class int
-
-i5 : next i
-
-o5 = 2
-
-o5 : PythonObject of class int
-
-i6 : next i
-
-o6 = StopIteration
-
-o6 : Symbol
-
-i7 : 
+o6 : <samp class="token class-name">Symbol</samp>
+i7 : 7:0
+

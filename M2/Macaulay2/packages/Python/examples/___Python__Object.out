@@ -1,53 +1,44 @@
 -- -*- M2-comint -*- hash: 658999336
+i1 : 1:0x = pythonValue "5"
 
-i1 : x = pythonValue "5"
+o1 = $<samp class="token string">5</samp>$
 
-o1 = 5
+o1 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i2 : 2:0y = pythonValue "2"
 
-o1 : PythonObject of class int
+o2 = $<samp class="token string">2</samp>$
 
-i2 : y = pythonValue "2"
+o2 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i3 : 3:0x + y
 
-o2 = 2
+o3 = $<samp class="token string">7</samp>$
 
-o2 : PythonObject of class int
+o3 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i4 : 4:0x - y
 
-i3 : x + y
+o4 = $<samp class="token string">3</samp>$
 
-o3 = 7
+o4 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i5 : 5:0x * y
 
-o3 : PythonObject of class int
+o5 = $<samp class="token string">10</samp>$
 
-i4 : x - y
+o5 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i6 : 6:0x / y
 
-o4 = 3
+o6 = $<samp class="token string">2.5</samp>$
 
-o4 : PythonObject of class int
+o6 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
+i7 : 7:0x > y
 
-i5 : x * y
+o7 = <samp class="token constant">true</samp>
+i8 : 8:0x == y
 
-o5 = 10
+o8 = <samp class="token constant">false</samp>
+i9 : 9:0x + 2
 
-o5 : PythonObject of class int
+o9 = $<samp class="token string">7</samp>$
 
-i6 : x / y
-
-o6 = 2.5
-
-o6 : PythonObject of class float
-
-i7 : x > y
-
-o7 = true
-
-i8 : x == y
-
-o8 = false
-
-i9 : x + 2
-
-o9 = 7
-
-o9 : PythonObject of class int
-
-i10 : 
+o9 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i10 : 10:0
+

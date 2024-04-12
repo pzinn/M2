@@ -1,27 +1,23 @@
 -- -*- M2-comint -*- hash: 636783514
+i1 : 1:0toPython {1, 2/3, "foo", (1, 2, 3), hashTable {"foo" => "bar"}}
 
-i1 : toPython {1, 2/3, "foo", (1, 2, 3), hashTable {"foo" => "bar"}}
+o1 = $<samp class="token string">[1, 0.6666666666666666, 'foo', (1, 2, 3), {'foo': 'bar'}]</samp>$
 
-o1 = [1, 0.6666666666666666, 'foo', (1, 2, 3), {'foo': 'bar'}]
+o1 : <span><samp class="token class-name">PythonObject</samp> of class list</span>
+i2 : 2:0value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
 
-o1 : PythonObject of class list
+o2 = $\{1,\,{.666667},\,$<samp class="token string">foo</samp>$,\,(1,\,2,\,3),\,$<samp class="token class-name">HashTable</samp>$\{$<samp class="token string">foo</samp>$\ \Rightarrow \ $<samp class="token string">bar</samp>$\}\}$
 
-i2 : value pythonValue "[1, 2/3, 'foo', (1, 2, 3), {'foo' : 'bar'}]"
+o2 : <samp class="token class-name">List</samp>
+i3 : 3:0math = import "math"
 
-o2 = {1, .666667, foo, (1, 2, 3), HashTable{foo => bar}}
+o3 = $<samp class="token string">&lt;module 'math' from '/usr/lib64/python3.12/lib-dynload/math.cpython-312-x86_64-linux-gnu.so'></samp>$
 
-o2 : List
+o3 : <span><samp class="token class-name">PythonObject</samp> of class module</span>
+i4 : 4:0math@@sqrt 2
 
-i3 : math = import "math"
+o4 = $<samp class="token string">1.4142135623730951</samp>$
 
-o3 = <module 'math' (built-in)>
-
-o3 : PythonObject of class module
-
-i4 : math@@sqrt 2
-
-o4 = 1.4142135623730951
-
-o4 : PythonObject of class float
-
-i5 : 
+o4 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
+i5 : 5:0
+

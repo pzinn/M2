@@ -1,15 +1,13 @@
 -- -*- M2-comint -*- hash: -1024785038
+i1 : 1:0ceiling toPython 5.8
 
-i1 : ceiling toPython 5.8
+o1 = $<samp class="token string">6</samp>$
 
-o1 = 6
+o1 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i2 : 2:0ceiling toPython(-5.8)
 
-o1 : PythonObject of class int
+o2 = $<samp class="token string">-5</samp>$
 
-i2 : ceiling toPython(-5.8)
-
-o2 = -5
-
-o2 : PythonObject of class int
-
-i3 : 
+o2 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
+i3 : 3:0
+

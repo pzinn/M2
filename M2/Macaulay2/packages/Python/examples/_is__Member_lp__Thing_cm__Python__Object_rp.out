@@ -1,15 +1,12 @@
 -- -*- M2-comint -*- hash: 1205050892
+i1 : 1:0isMember(toPython 3, toPython {1, 2, 3})
 
-i1 : isMember(toPython 3, toPython {1, 2, 3})
+o1 = <samp class="token constant">true</samp>
+i2 : 2:0isMember(toPython 4, toPython {1, 2, 3})
 
-o1 = true
+o2 = <samp class="token constant">false</samp>
+i3 : 3:0isMember(3, toPython {1, 2, 3})
 
-i2 : isMember(toPython 4, toPython {1, 2, 3})
-
-o2 = false
-
-i3 : isMember(3, toPython {1, 2, 3})
-
-o3 = false
-
-i4 : 
+o3 = <samp class="token constant">false</samp>
+i4 : 4:0
+

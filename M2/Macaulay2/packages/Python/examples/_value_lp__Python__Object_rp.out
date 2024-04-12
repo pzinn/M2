@@ -1,44 +1,54 @@
 -- -*- M2-comint -*- hash: 2033858126
+i1 : 1:0value pythonValue "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
 
-i1 : value pythonValue "[1, 3.14159, 'foo', (1,2,3), {'foo':'bar'}]"
+o1 = $\{1,\,{3.14159},\,$<samp class="token string">foo</samp>$,\,(1,\,2,\,3),\,$<samp class="token class-name">HashTable</samp>$\{$<samp class="token string">foo</samp>$\ \Rightarrow \ $<samp class="token string">bar</samp>$\}\}$
 
-o1 = {1, 3.14159, foo, (1, 2, 3), HashTable{foo => bar}}
+o1 : <samp class="token class-name">List</samp>
+i2 : 2:0class \ oo
 
-o1 : List
+o2 = $\{\htmlClass{token class-name}{{\mathbb Z}},\,\htmlClass{token class-name}{{\mathbb R}},\,$<samp class="token class-name">String</samp>$,\,$<samp class="token class-name">Sequence</samp>$,\,$<samp class="token class-name">HashTable</samp>$\}$
 
-i2 : class \ oo
+o2 : <samp class="token class-name">List</samp>
+i3 : 3:0hooks value
 
-o2 = {ZZ, RR, String, Sequence, HashTable}
+o3 = <ol start="0" style="display:inline-table">
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">unknown -> PythonObject</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">function -> FunctionClosure</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">Counter -> Tally</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">dict -> HashTable</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">set -> Set</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">list -> List</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">tuple -> Sequence</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">str -> String</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">complex -> CC</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">float -> RR</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">int -> ZZ</samp>$)$  </li>
+  <li>
+$($<samp class="token function">value</samp>$,\,$<samp class="token class-name">PythonObject</samp>$,\,\mathit{Strategy}\ \Rightarrow \ $<samp class="token string">bool -> Boolean</samp>$)$  </li>
+</ol>
+
 
-o2 : List
+o3 : <samp class="token class-name">NumberedVerticalList</samp>
+i4 : 4:0pythonValue "int"
 
-i3 : hooks value
+o4 = $<samp class="token string">&lt;class 'int'></samp>$
 
-o3 = {0 => (value, PythonObject, Strategy => unknown -> PythonObject)    }
-     {1 => (value, PythonObject, Strategy => function -> FunctionClosure)}
-     {2 => (value, PythonObject, Strategy => Counter -> Tally)           }
-     {3 => (value, PythonObject, Strategy => dict -> HashTable)          }
-     {4 => (value, PythonObject, Strategy => set -> Set)                 }
-     {5 => (value, PythonObject, Strategy => list -> List)               }
-     {6 => (value, PythonObject, Strategy => tuple -> Sequence)          }
-     {7 => (value, PythonObject, Strategy => str -> String)              }
-     {8 => (value, PythonObject, Strategy => complex -> CC)              }
-     {9 => (value, PythonObject, Strategy => float -> RR)                }
-     {10 => (value, PythonObject, Strategy => int -> ZZ)                 }
-     {11 => (value, PythonObject, Strategy => bool -> Boolean)           }
+o4 : <span><samp class="token class-name">PythonObject</samp> of class type</span>
+i5 : 5:0value oo
 
-o3 : NumberedVerticalList
+o5 = $<samp class="token string">&lt;class 'int'></samp>$
 
-i4 : pythonValue "int"
-
-o4 = <class 'int'>
-
-o4 : PythonObject of class type
-
-i5 : value oo
-
-o5 = <class 'int'>
-
-o5 : PythonObject of class type
-
-i6 : 
+o5 : <span><samp class="token class-name">PythonObject</samp> of class type</span>
+i6 : 6:0
+

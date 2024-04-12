@@ -1,15 +1,13 @@
 -- -*- M2-comint -*- hash: -230257467
+i1 : 1:0x = pythonValue "range(3)"
 
-i1 : x = pythonValue "range(3)"
+o1 = $<samp class="token string">range(0, 3)</samp>$
 
-o1 = range(0, 3)
+o1 : <span><samp class="token class-name">PythonObject</samp> of class range</span>
+i2 : 2:0i = iterator x
 
-o1 : PythonObject of class range
+o2 = $<samp class="token string">&lt;range_iterator object at 0x7fab97bfd9b0></samp>$
 
-i2 : i = iterator x
-
-o2 = <range_iterator object at 0x7f7fd46dd680>
-
-o2 : PythonObject of class range_iterator
-
-i3 : 
+o2 : <span><samp class="token class-name">PythonObject</samp> of class range_iterator</span>
+i3 : 3:0
+
