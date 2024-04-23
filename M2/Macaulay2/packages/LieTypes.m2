@@ -917,20 +917,22 @@ characterAlgorithms#"Freudenthal" = (type,m,v) -> (
     Omega:=Freud(type,m,v);
     mults:=new MutableHashTable from Omega;
     posroots:=positiveRoots(type,m);
-    -- sort, removing highest weight
-    Omega=drop(apply(reverse sort apply(toList Omega,w->R_w),first @@ exponents),1);
-    scan(Omega, w -> (
-    	    rhs:=0;
-    	    scan(posroots, a -> (
-        	    w':=w+a;
-        	    while mults#?w' do (
-	    		rhs=rhs+killingForm(type,m,w',a)*mults#w';
-	    		w'=w'+a;
-	    		)));
-    	    lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
-    	    mults#w = lift(2*rhs/lhs,ZZ);
-	    ));
-    sum(pairs mults,(w,mu) -> mu * R_w) -- is there a nicer way of writing this?
+    -- sort
+    Omega=apply(reverse sort apply(toList Omega,w->R_w),first @@ exponents);
+    s:=R_v;
+    for i from 1 to #Omega-1 do s+=(
+	w:=Omega#i;
+	rhs:=0;
+	scan(posroots, a -> (
+		w':=w+a;
+		while mults#?w' do (
+		    rhs=rhs+killingForm(type,m,w',a)*mults#w';
+		    w'=w'+a;
+		    )));
+	lhs:=killingForm(type,m,v+rho,v+rho)-killingForm(type,m,w+rho,w+rho);
+	mults#w = lift(2*rhs/lhs,ZZ)
+	)*R_w;
+    s
 )
 
 
