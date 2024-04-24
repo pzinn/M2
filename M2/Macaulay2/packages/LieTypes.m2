@@ -802,7 +802,7 @@ elemSym = memoize((L,i) -> (
     else sum(subsets(L,i),product)
     ))
 characterAlgorithms#"JacobiTrudi'" = (type,m,v) -> ( -- good for high rank algebras, small weights
-    if type != "A" or m<=3 then return;
+    if type != "A" then return;
     z := stdVars(type,m);
     conj:=reverse splice apply(m,i -> v#i : i+1);
     if #conj == 0 then 1_(characterRing(type,m)) else det matrix table(#conj,#conj,(i,j)->elemSym(z,conj#i+j-i))
@@ -935,10 +935,13 @@ characterAlgorithms#"Freudenthal" = (type,m,v) -> (
     s
 )
 
-
+characterAlgorithms#"Picker" = (type,m,v) -> (
+    if type != "A" and m>4 then characterAlgorithms#"Freudenthal"(type,m,v) -- forces Freudenthal for high rank not A
+    else if type == "A" and m<=3 then characterAlgorithms#"Weyl"(type,m,v) -- forces Weyl for low rank A
+    )
 
 -- last strategy = first choice
-scan({"JacobiTrudi","Freudenthal","Weyl","JacobiTrudi'"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
+scan({"JacobiTrudi","Freudenthal","Weyl","JacobiTrudi'","Picker"}, strat -> addHook(symbol character,characterAlgorithms#strat,Strategy=>strat))
 
 character = method(
     Options=>{Strategy=>null},
