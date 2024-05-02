@@ -898,7 +898,8 @@ tex svgElement Path := x -> concatenate(
     )
 tex svgElement Polyline := x -> concatenate(
     (op,ct,st) := ovr x;
-    pts := pack(separate("\\s|,",op#"points"),2);
+    pts:=separate("\\s|,",op#"points");
+    pts=if even(#pts) then pack(pts,2) else {};
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " ",
@@ -907,7 +908,8 @@ tex svgElement Polyline := x -> concatenate(
     )
 tex svgElement Polygon := x -> concatenate(
     (op,ct,st) := ovr x;
-    pts := pack(separate("\\s|,",op#"points"),2);
+    pts:=separate("\\s|,",op#"points");
+    pts=if even(#pts) then pack(pts,2) else {};
     "\\path",
     if #st>0 then "["|demark(",",st)|"]",
     " ",
