@@ -814,7 +814,8 @@ tex SVG := texMath SVG := x -> concatenate(
 	tikzscale = 1;
 	st = append(st,"y={(0cm,-1cm)}");
 	);
-    st=append(st,"baseline=(current  bounding  box.center)");
+    --st=append(st,"baseline=(current  bounding  box.center)");
+    st=append(st,///baseline={([yshift=-\the\dimexpr\fontdimen22\textfont2\relax]current  bounding  box.center)}///);
     if op#?"stroke" or op#?"fill" then st=append(st,"every path/.style={"|(try ("draw="|op#"stroke"|",") else "")|(try ("fill="|try op#"fill") else "")|"}"); -- important change: no default draw/fill
     if not op#?"stroke-linejoin" then st=append(st,"line join=round");
     "\\begin{tikzpicture}[",
