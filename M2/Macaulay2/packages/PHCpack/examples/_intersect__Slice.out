@@ -16,7 +16,7 @@
 i7 : 7:0Rtwo = ring w.Equations;
 i8 : 8:0X = transpose matrix {gens Rtwo | {1_CC}};
 
-o8 : <span><samp class="token class-name">Matrix</samp> $\textit{Rtwo}^{7}\,\longleftarrow \,\textit{Rtwo}^{1}$</span>
+o8 : <span><samp class="token class-name">Matrix</samp> $\mathit{Rtwo}^{7}\,\longleftarrow \,\mathit{Rtwo}^{1}$</span>
 i9 : 9:0slcRR = flatten entries (promote(slcmat,Rtwo) * X);
 i10 : 10:0fsols = intersectSlice(w,slcRR)
 

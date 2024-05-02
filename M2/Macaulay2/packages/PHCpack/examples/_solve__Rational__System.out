@@ -10,9 +10,9 @@
 
 o4 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
+<span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{{.543689},\,{.295598},\,{.160713}\}$</span>    </li>
+<span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{{.543689},\,{.295598},\,{.160713}\}$</span>    </li>
   </ul>
 </span>
 i5 : 5:0

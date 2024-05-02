@@ -7,7 +7,7 @@
 o3 : <samp class="token class-name">List</samp>
 i4 : 3:0opts = new OptionTable from {BertiniInputConfiguration=>{RandomSeed=>0,TrackTolBeforeEG=>1e-6,FinalTol=>1e-100}}
 
-o4 = <samp class="token class-name">OptionTable</samp>$\{\textit{BertiniInputConfiguration}\ \Rightarrow \ \{\textit{RandomSeed}\ \Rightarrow \ 0,\,\textit{TrackTolBeforeEG}\ \Rightarrow \ {.000001},\,\textit{FinalTol}\ \Rightarrow \ 10^{-100}\}\}$
+o4 = <samp class="token class-name">OptionTable</samp>$\{\mathit{BertiniInputConfiguration}\ \Rightarrow \ \{\mathit{RandomSeed}\ \Rightarrow \ 0,\,\mathit{TrackTolBeforeEG}\ \Rightarrow \ {.000001},\,\mathit{FinalTol}\ \Rightarrow \ 10^{-100}\}\}$
 
 o4 : <samp class="token class-name">OptionTable</samp>
 i5 : 4:0G = {x^2+y^2-1};

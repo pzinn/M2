@@ -18,7 +18,7 @@
 i5 : 5:0QR=frac(Rvu);
 i6 : 6:0ib=matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
 
-o6 : <span><samp class="token class-name">Matrix</samp> $\textit{QR}^{1}\,\longleftarrow \,\textit{QR}^{4}$</span>
+o6 : <span><samp class="token class-name">Matrix</samp> $\mathit{QR}^{1}\,\longleftarrow \,\mathit{QR}^{4}$</span>
 i7 : 7:0traceMatrix(I,ib)
 
 o7 = $\left(\!\begin{array}{cccc}
@@ -40,7 +40,7 @@
 i12 : 12:0QR=frac(Rvu);
 i13 : 13:0ib=matrix({{1,v,v^2/u}});
 
-o13 : <span><samp class="token class-name">Matrix</samp> $\textit{QR}^{1}\,\longleftarrow \,\textit{QR}^{3}$</span>
+o13 : <span><samp class="token class-name">Matrix</samp> $\mathit{QR}^{1}\,\longleftarrow \,\mathit{QR}^{3}$</span>
 i14 : 14:0traceMatrix(I,ib)
 
 o14 = $\left(\!\begin{array}{ccc}
@@ -59,14 +59,14 @@
 i19 : 19:0QR=frac(Rvu);
 i20 : 20:0ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
 
-o20 : <span><samp class="token class-name">Matrix</samp> $\textit{QR}^{1}\,\longleftarrow \,\textit{QR}^{6}$</span>
+o20 : <span><samp class="token class-name">Matrix</samp> $\mathit{QR}^{1}\,\longleftarrow \,\mathit{QR}^{6}$</span>
 i21 : 21:0traceMatrix(I,ib)
 
 o21 = $\left(\!\begin{array}{cccccc}
 6&amp;0&amp;0&amp;0&amp;\frac{-28\,u^{2}-56\,u-28}{5}&amp;0\\
 0&amp;0&amp;0&amp;\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{3}-36\,u^{2}}{5}\\
 0&amp;0&amp;\frac{-28\,u^{4}-84\,u^{3}-84\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{4}-36\,u^{3}}{5}&amp;0\\
-0&amp;\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&amp;0&amp;\frac{-36\,u^{4}}{5}&amp;0&amp;\frac{196\,u^{4}+980\,u^{3}+1\,372\,u^{2}+588\,u}{25}\\
+0&amp;\frac{-28\,u^{3}-56\,u^{2}-28\,u}{5}&amp;0&amp;-\frac{36\,u^{4}}{5}&amp;0&amp;\frac{196\,u^{4}+980\,u^{3}+1\,372\,u^{2}+588\,u}{25}\\
 \frac{-28\,u^{2}-56\,u-28}{5}&amp;0&amp;\frac{-36\,u^{4}-36\,u^{3}}{5}&amp;0&amp;\frac{196\,u^{4}+784\,u^{3}+1\,176\,u^{2}+784\,u+196}{25}&amp;0\\
 0&amp;\frac{-36\,u^{3}-36\,u^{2}}{5}&amp;0&amp;\frac{196\,u^{4}+980\,u^{3}+1\,372\,u^{2}+588\,u}{25}&amp;0&amp;\frac{420\,u^{4}+1\,764\,u^{3}+1\,260\,u^{2}-84\,u}{25}
 \end{array}\!\right)$

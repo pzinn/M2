@@ -16,7 +16,7 @@ found 6 irreducible factors
 i8 : 8:0system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 i9 : 9:0PD=primaryDecomposition(ideal(system))
 
-o9 = $\{$<samp class="token function">ideal</samp>${}(\textit{x13},\,\textit{x23},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12}),\,$<samp class="token function">ideal</samp>${}(\textit{x12},\,\textit{x22},\,\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24}),\,$<samp class="token function">ideal</samp>${}(\textit{x23}\,\textit{x14}-\textit{x13}\,\textit{x24},\,\textit{x21}\,\textit{x14}-\textit{x11}\,\textit{x24},\,\textit{x22}\,\textit{x14}-\textit{x12}\,\textit{x24},\,\textit{x12}\,\textit{x23}-\textit{x22}\,\textit{x13},\,\textit{x11}\,\textit{x23}-\textit{x21}\,\textit{x13},\,\textit{x11}\,\textit{x22}-\textit{x21}\,\textit{x12})\}$
+o9 = $\{$<samp class="token function">ideal</samp>${}(\mathit{x13},\,\mathit{x23},\,\mathit{x11}\,\mathit{x22}-\mathit{x21}\,\mathit{x12}),\,$<samp class="token function">ideal</samp>${}(\mathit{x12},\,\mathit{x22},\,\mathit{x23}\,\mathit{x14}-\mathit{x13}\,\mathit{x24}),\,$<samp class="token function">ideal</samp>${}(\mathit{x23}\,\mathit{x14}-\mathit{x13}\,\mathit{x24},\,\mathit{x21}\,\mathit{x14}-\mathit{x11}\,\mathit{x24},\,\mathit{x22}\,\mathit{x14}-\mathit{x12}\,\mathit{x24},\,\mathit{x12}\,\mathit{x23}-\mathit{x22}\,\mathit{x13},\,\mathit{x11}\,\mathit{x23}-\mathit{x21}\,\mathit{x13},\,\mathit{x11}\,\mathit{x22}-\mathit{x21}\,\mathit{x12})\}$
 
 o9 : <samp class="token class-name">List</samp>
 i10 : 10:0for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)

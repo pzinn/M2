@@ -3,7 +3,7 @@
 i2 : 2:0sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : 3:0describe ring ideal sys
 
-o3 = <samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,\textit{Degrees}\ \Rightarrow \ \{3:1\},\,\textit{Heft}\ \Rightarrow \ \{1\}])$
+o3 = <samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,\mathit{Degrees}\ \Rightarrow \ \{3:1\},\,\mathit{Heft}\ \Rightarrow \ \{1\}])$
 i4 : 4:0convertedSys = toLaurentPolynomial(sys,w);
 i5 : 5:0printWidth = 300;
 i6 : 6:0toString convertedSys
@@ -16,17 +16,17 @@
 o7 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i8 : 8:0describe oo
 
-o8 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\,z,\,w_{0},\,\textit{Degrees}\ \Rightarrow \ \{4:1\},\,$\textit{MonomialOrder}\ \Rightarrow \ $<ul style="display:inline-table">
+o8 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\,z,\,w_{0},\,\mathit{Degrees}\ \Rightarrow \ \{4:1\},\,$\mathit{MonomialOrder}\ \Rightarrow \ $<ul style="display:inline-table">
   <li>
-$\textit{Weights}\ \Rightarrow \ \{4:-1\}$  </li>
+$\mathit{Weights}\ \Rightarrow \ \{4:-1\}$  </li>
   <li>
-$\textit{MonomialSize}\ \Rightarrow \ 32$  </li>
+$\mathit{MonomialSize}\ \Rightarrow \ 32$  </li>
   <li>
-$\textit{GroupRevLex}\ \Rightarrow \ 4$  </li>
+$\mathit{GroupRevLex}\ \Rightarrow \ 4$  </li>
   <li>
-$\textit{Position}\ \Rightarrow \ \textit{Up}$  </li>
+$\mathit{Position}\ \Rightarrow \ \mathit{Up}$  </li>
 </ul>
-,\,$\textit{Inverses}\ \Rightarrow \ $<samp class="token constant">true</samp>,\,$\textit{Local}\ \Rightarrow \ $<samp class="token constant">true</samp>,\,$\textit{Global}\ \Rightarrow \ $<samp class="token constant">false</samp>\right\}$
+,\,$\mathit{Inverses}\ \Rightarrow \ $<samp class="token constant">true</samp>,\,$\mathit{Local}\ \Rightarrow \ $<samp class="token constant">true</samp>,\,$\mathit{Global}\ \Rightarrow \ $<samp class="token constant">false</samp>\right\}$
 i9 : 9:0P = QQ[x,y,z];
 i10 : 10:0f = (x*y + z^2*y) / y
 

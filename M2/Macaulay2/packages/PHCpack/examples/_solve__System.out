@@ -23,9 +23,9 @@
 
 o5 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
+<span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{1-\mathbf{i},\,1+\mathbf{i},\,-1\}$</span>    </li>
+<span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{1-\mathbf{i},\,1+\mathbf{i},\,-1\}$</span>    </li>
   </ul>
 </span>
 i6 : 6:0system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}

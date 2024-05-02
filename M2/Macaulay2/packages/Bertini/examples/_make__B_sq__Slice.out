@@ -6,7 +6,7 @@
 o1 : <samp class="token class-name">List</samp>
 i2 : 2:0variableGroups={{x0,x1},{y0,y1,y2}}
 
-o2 = $\{\{\textit{x0},\,\textit{x1}\},\,\{\textit{y0},\,\textit{y1},\,\textit{y2}\}\}$
+o2 = $\{\{\mathit{x0},\,\mathit{x1}\},\,\{\mathit{y0},\,\mathit{y1},\,\mathit{y2}\}\}$
 
 o2 : <samp class="token class-name">List</samp>
 i3 : 3:0xySlice=makeB'Slice(sliceType,variableGroups)
@@ -45,7 +45,7 @@
 o10 = <samp class="token string">x0*y0^2+x1*y1*y2+x2*y0*y2</samp>
 i11 : 11:0variableGroups={{x0,x1,x2},{y0,y1,y2}}
 
-o11 = $\{\{\textit{x0},\,\textit{x1},\,\textit{x2}\},\,\{\textit{y0},\,\textit{y1},\,\textit{y2}\}\}$
+o11 = $\{\{\mathit{x0},\,\mathit{x1},\,\mathit{x2}\},\,\{\mathit{y0},\,\mathit{y1},\,\mathit{y2}\}\}$
 
 o11 : <samp class="token class-name">List</samp>
 i12 : 12:0xxSlice=makeB'Slice({2,0},variableGroups)

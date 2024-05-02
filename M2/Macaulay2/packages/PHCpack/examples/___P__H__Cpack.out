@@ -34,9 +34,9 @@
 
 o7 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
+<span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\}$</span>    </li>
+<span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\}$</span>    </li>
   </ul>
 </span>
 i8 : 8:0

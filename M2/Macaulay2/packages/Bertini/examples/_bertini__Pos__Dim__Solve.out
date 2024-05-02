@@ -18,7 +18,7 @@
 
 o4 = <ul style="display:inline-table">
   <li>
-$\{-{4.15626}\cdot 10^{-74}-{3.29235}\cdot 10^{-73}\,\mathbf{i},\,-{7.92155}\cdot 10^{-76}+{3.22486}\cdot 10^{-73}\,\mathbf{i},\,{.0503881}+{.251514}\,\mathbf{i}\}$  </li>
+$\{{1.52343}\cdot 10^{-67}-{1.0663}\cdot 10^{-67}\,\mathbf{i},\,{1.49608}\cdot 10^{-67}-{1.2696}\cdot 10^{-67}\,\mathbf{i},\,{.188099}-{.366228}\,\mathbf{i}\}$  </li>
 </ul>
 
 
@@ -32,20 +32,20 @@ $\{-{4.15626}\cdot 10^{-74}-{3.29235}\cdot 10^{-73}\,\mathbf{i},\,-{7.92155}\cdo
 
 o6 = <span><samp class="token class-name">WitnessSet</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
+<span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Equations}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$        <pre class="token net" style="vertical-align:-100%">{-3} | x3+xy2+xz2-x |
+<span>$\mathit{Equations}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$        <pre class="token net" style="vertical-align:-100%">{-3} | x3+xy2+xz2-x |
 {-3} | x2y+y3+yz2-y |<br></pre>
 $</span>    </li>
     <li>
-<span>$\textit{Points}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>        <ul style="display:inline-table">
+<span>$\mathit{Points}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>        <ul style="display:inline-table">
           <li>
-$\{-{4.15626}\cdot 10^{-74}-{3.29235}\cdot 10^{-73}\,\mathbf{i},\,-{7.92155}\cdot 10^{-76}+{3.22486}\cdot 10^{-73}\,\mathbf{i},\,{.0503881}+{.251514}\,\mathbf{i}\}$          </li>
+$\{{1.52343}\cdot 10^{-67}-{1.0663}\cdot 10^{-67}\,\mathbf{i},\,{1.49608}\cdot 10^{-67}-{1.2696}\cdot 10^{-67}\,\mathbf{i},\,{.188099}-{.366228}\,\mathbf{i}\}$          </li>
         </ul>
 </span>    </li>
     <li>
-<span>$\textit{Slice}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{cccc}
--{1.40947}-{1.8903}\,\mathbf{i}&amp;{2.73583}+{.590423}\,\mathbf{i}&amp;{3.76289}+{.42091}\,\mathbf{i}&amp;-{.0837397}-{.96763}\,\mathbf{i}
+<span>$\mathit{Slice}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{cccc}
+-{.533272}-{1.61436}\,\mathbf{i}&amp;{1.09167}+{1.38354}\,\mathbf{i}&amp;-{.754514}-{2.57896}\,\mathbf{i}&amp;{1.08641}+{.208774}\,\mathbf{i}
 \end{array}\!\right)$</span>    </li>
   </ul>
 </span>

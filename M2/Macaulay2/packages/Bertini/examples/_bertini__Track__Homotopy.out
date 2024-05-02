@@ -13,9 +13,9 @@
 
 o7 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li>
-<span>$\textit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿9﻿\ldots\}$</span>    </li>
+<span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿9﻿\ldots\}$</span>    </li>
     <li>
-<span>$\textit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.41421}\}$</span>    </li>
+<span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.41421}\}$</span>    </li>
   </ul>
 </span>
 i8 : 8:0R=CC[x,y,t]; -- include the path variable in the ring
@@ -39,7 +39,7 @@
 o14 : <samp class="token class-name">List</samp>
 i15 : 15:0S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\{-{.797195}+{1.15696}\,\mathbf{i},\,-{.883324}-{.0967728}\,\mathbf{i}\},\,\{-{.730586}-{.0392258}\,\mathbf{i},\,-{.241016}+{.395005}\,\mathbf{i}\}\right\}$
+o15 = $\left\{\{-{.999451}-{2.19741}\,\mathbf{i},\,-{1.5233}-{.102751}\,\mathbf{i}\},\,\{{1.30609}+{.0982253}\,\mathbf{i},\,{.337138}+{.756669}\,\mathbf{i}\}\right\}$
 
 o15 : <samp class="token class-name">List</samp>
 i16 : 16:0
