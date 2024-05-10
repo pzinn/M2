@@ -616,7 +616,7 @@ addHook(MutableHashTable, Thing, Function) := opts -> (store, key, hook) -> (
     store.HookAlgorithms#alg = hook)
 
 -- tracking debugInfo
-threadVariable infoLevel
+threadLocal infoLevel
 pushInfoLevel :=  n -> (
     if infoLevel === null then infoLevel = -1;
     infoLevel = infoLevel + n; n)
