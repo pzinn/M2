@@ -123,12 +123,9 @@ export (o:file) << (w:Position) : file := o << tostring(w);
 export (o:BasicFile) << (w:Position) : BasicFile := o << tostring(w);
 threadLocal export SuppressErrors := false;
 cleanscreen():void := (
-     flush(stdIO);
-     if stdIO.outfd == stdError.outfd && !atEndOfLine(stdIO) || test(interruptedFlag) then (
-	  stdIO << '\n';
-     	  flush(stdIO);
-	  )
-     );
+    stdIO << flush;
+    if stdIO.outfd == stdError.outfd && !atEndOfLine(stdIO) || test(interruptedFlag)
+    then stdIO << newline << flush;);
 
 export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Position do o << w;
 export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
@@ -183,7 +180,7 @@ export getc(o:PosFile):int := (
 	  o.column = o.column + 1;
 	  );
      c );
-export flush(o:PosFile):void := flushinput(o.file);
+export flushInput(o:PosFile):void := flushinput(o.file);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d stdiop.o "

@@ -335,8 +335,10 @@ quotientRemainder(Matrix,Matrix) := Matrix => (f,g) -> (
 	  map(M, L, rem)
      ))
 
+leftQuotientWarn = true
+
 Matrix // Matrix := Matrix => (f,g) -> quotient(f,g)
-Matrix \\ Matrix := (g,f) -> f // g
+Matrix \\ Matrix := (g,f) -> (if leftQuotientWarn then (leftQuotientWarn = false; printerr "Warning: 'm \\\\ n' is deprecated; use 'n // m' instead."); f // g)
 quotient'(Matrix,Matrix) := Matrix => (f,g) -> (
      if not isFreeModule source f or not isFreeModule target f
      or not isFreeModule source g or not isFreeModule target g then error "expected maps between free modules";
@@ -440,10 +442,9 @@ indices RingElement := (f) -> rawIndices raw f
 indices Matrix := (f) -> rawIndices raw f
 
 support = method()
-support RingElement := support Matrix := (f) -> (
-     x := rawIndices raw f;
-     apply(x, i -> (ring f)_i))
-support Ideal := (I) -> rsort toList sum apply(flatten entries generators I, f -> set support f)
+support RingElement :=
+support Matrix      := f -> apply(try rawIndices raw f else {}, i -> (ring f)_i)
+support Ideal       := I -> support generators I
 --------------------
 -- homogenization --
 --------------------

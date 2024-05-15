@@ -227,7 +227,7 @@ export parse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      if token.word.typecode == TCerror then return errorTree(token);
      ret := token.word.parse.funs.unary(token,file,prec,obeylines);
      when ret is
-     err:ErrorTree do if isatty(file) || file.posFile.file.fulllines then flush(file) else skip(file,prec)
+     err:ErrorTree do if isatty(file) || file.posFile.file.fulllines then flushToken(file) else skip(file,prec)
      else nothing;
      ret
      );
@@ -246,7 +246,7 @@ export nparse(file:TokenFile,prec:int,obeylines:bool):ParseTree := (
      	  else ParseTree(dummy(position(token)))
 	  );
      when ret is
-     err:ErrorTree do if isatty(file) then flush(file) else skip(file,prec)
+     err:ErrorTree do if isatty(file) then flushToken(file) else skip(file,prec)
      else nothing;
      ret
      );
