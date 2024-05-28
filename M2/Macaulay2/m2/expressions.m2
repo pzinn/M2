@@ -476,7 +476,6 @@ expression ZZ := i -> (
      else if i < 0 then new Minus from { -i }
      else hold i
      )
-OneExpression ^ Holder     :=
 OneExpression ^ Expression :=
 Holder     ^ OneExpression :=
 Expression ^ OneExpression := (x,y) -> x
@@ -558,12 +557,11 @@ matrixOpts := m -> ( -- helper function
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if #m === 0 then return map(ZZ^0,ZZ^0,0); -- not great but best one can do
-    m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+    if #m>0 then m = if class m#0===ZeroExpression then m#0#0 else applyTable(m,expressionValue);
     -- TODO: keep track of blocks too
-    if opts.Degrees === null then m else (
+    if opts.Degrees === null then (if opts.MutableMatrix then mutableMatrix else matrix) m else (
     R := ring m;
-    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
+    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),m)
     ))
 toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
     (opts,m) := matrixOpts x;
@@ -913,8 +911,8 @@ toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
+    if #m==0 or class m#0 === ZeroExpression then return "0";
     blk := opts.Blocks =!= null; -- whether to display blocks
-    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
     net1 := if compactMatrixForm then toCompactString else net;
     vbox0 := if opts.Degrees === null then 0 else 1;
     (hbox,vbox) := if blk then (drop(accumulate(plus,0,opts.Blocks#0),-1),prepend(vbox0,accumulate(plus,vbox0,opts.Blocks#1))) else (false,{vbox0,vbox0+#m#0});
@@ -1115,7 +1113,7 @@ texMath Table := m -> (
 
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if all(m,r->all(r,i->class i===ZeroExpression)) then return "0";
+    if #m==0 or class m#0 === ZeroExpression then return "0";
     blk := opts.Blocks =!= null; -- whether to display blocks
     if blk then ( j := 0; h := 0; );
     m = applyTable(m,texMath);
