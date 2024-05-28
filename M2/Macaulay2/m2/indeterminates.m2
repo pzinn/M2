@@ -63,8 +63,7 @@ succ(Symbol,Symbol) := (x,y) -> (
      isUserSymbol(s,x) and isUserSymbol(t,y) and succS#?s and succS#s === t)
 succ(Subscript,Subscript) := (x,y) -> x#0 === y#0 and succ(x#1,y#1)
 succ(Thing,Thing) := x -> false
-runLengthEncode = method(Dispatch => Thing)
-runLengthEncode VisibleList := x -> (
+runLengthEncode1 = x -> (
     local xx;
     while (xx=runLengthEncode0 x; #x =!= #xx) do x=xx;
     xx
@@ -92,11 +91,11 @@ runLengthEncode0 = x -> (
 		    (dupin = null; oi = i; m = 1))));
      x)
 
-rle = method(Dispatch => Thing)
-rle VisibleList := x -> apply(runLengthEncode x, rle)
-rle Holder := x -> rle x#0
-rle Option := x -> x#0 => rle x#1
-rle Thing := identity
+runLengthEncode = method(Dispatch => Thing)
+runLengthEncode VisibleList := x -> apply(runLengthEncode1 x, runLengthEncode)
+runLengthEncode Holder := x -> runLengthEncode x#0
+runLengthEncode Option := x -> x#0 => runLengthEncode x#1
+runLengthEncode Thing := identity
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

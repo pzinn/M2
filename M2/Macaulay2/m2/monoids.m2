@@ -315,7 +315,7 @@ monoidParts = M -> (
     D := runLengthEncode if opts.DegreeRank === 0 then opts.Degrees else if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / vector;
     L := nonnull splice ( G, if not isDefault(opts, Degrees) then Degrees => D,
 	apply(( DegreeGroup, Heft, Join, MonomialOrder, WeylAlgebra, SkewCommutative, Inverses, Local, Global ),
-	    key -> if opts#?key and not isDefault(opts, key) then key => rle opts#key)))
+	    key -> if opts#?key and not isDefault(opts, key) then key => runLengthEncode opts#key)))
 
 expressionMonoid = M -> (
     T := if (options M).Local === true then List else Array;
