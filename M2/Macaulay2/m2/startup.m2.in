@@ -566,8 +566,6 @@ homeDirectory = getenv "HOME" | "/"
 
 initcurrentlayout()
 
-if firstTime and fileExists(prefixDirectory | currentLayout#"program licenses") then
-
 path = {}
 pkgpath = {}
 corepath = {}
