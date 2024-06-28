@@ -61,7 +61,7 @@ code FilePosition := x -> (
 	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
 	  DIV {
 	      x, ": --source code:",
-	      PRE M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i)
+	      PRE htmlClass(M2CODE concatenate between_"\n" toList apply(start-1 .. stop-1, i -> file#i),"norun")
 	      }
 	  ))
 code Symbol     :=

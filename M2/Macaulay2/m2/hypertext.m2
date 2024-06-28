@@ -370,8 +370,6 @@ addAttribute(BUTTON, buttonAttr)
 addAttribute(INPUT, buttonAttr | {"accept","alt","checked",
 	"height", "list", "max", "maxlength", "min", "minlength", "multiple",
 	"pattern", "placeholder", "readonly", "required", "size", "src", "step", "width" })
-M2CODE = method()
-M2CODE Thing := x -> prepend("class" => "language-macaulay2", CODE x)
 
 -- Written by P. Zinn-Justin
 style = method(Options => true)
@@ -395,6 +393,9 @@ htmlClass(Hypertext,List) := (x,c) -> (
     append(x,"class"=>demark_" " c)
     )
 htmlClass(Hypertext,String) := (x,s) -> htmlClass(x,{s})
+
+M2CODE = method()
+M2CODE Thing := x -> htmlClass(CODE x, "language-macaulay2")
 
 hypertext = method(Dispatch => Thing, TypicalValue => Hypertext)
 hypertext Hypertext := identity
