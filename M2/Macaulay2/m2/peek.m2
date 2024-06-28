@@ -9,8 +9,10 @@ peek' = method(TypicalValue => Hypertext)
 peek'(ZZ,Nothing) := (depth,s) -> SPAN "null"
 peek'(ZZ,Thing) := (depth,s) -> SPAN s
 
-peek'(ZZ,VerticalList) :=
-peek'(ZZ,BasicList) := (depth,s) -> SPAN (
+peek'(ZZ,VerticalList)        :=
+peek'(ZZ,Constant)            :=
+peek'(ZZ,InfiniteNumber)      :=
+peek'(ZZ,IndeterminateNumber) := (depth,s) -> SPAN (
     if depth === 0 then hold s -- hold because of Option
     else {
 	class s,
