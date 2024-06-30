@@ -35,7 +35,7 @@ protect PerspectiveMatrix
 --protect svgElement
 protect Owner
 protect JsFunc
-protect RefPointFunc
+protect Compute
 
 debug Core
 
@@ -67,10 +67,10 @@ GraphicsCoordinate = new SelfInitializingType of GraphicsAncestor
 GraphicsObject = new Type of GraphicsAncestor
 gParse GraphicsObject := g -> new GraphicsCoordinate from g -- GraphicsObject used as coordinate
 new GraphicsCoordinate from GraphicsObject := (T,g) -> hashTable { -- don't need to call directly, conversion is automatic anyway
-	symbol RefPointFunc => cmat -> g.cache.CurrentMatrix_3, -- closure
-	symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
-	symbol formation => FunctionApplication{GraphicsCoordinate,if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else short g}
-    	}
+    symbol Compute => () -> g.cache.CurrentMatrix_3, -- closure
+    symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
+    symbol formation => FunctionApplication{GraphicsCoordinate,if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else short g}
+    }
 gParse GraphicsCoordinate := identity
 
 globalAssignment GraphicsAncestor
@@ -111,17 +111,29 @@ GraphicsObject ++ List := (opts1, opts2) -> (
 
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
-GraphicsType List := (T,opts) -> (
+gParse2 = method()
+gParse2 (CacheTable,Thing) := (c,t) -> t
+gParse2 (CacheTable,Vector) := (c,v) -> new GraphicsCoordinate from hashTable { -- almost the same as new coord from object
+    symbol Compute => () -> c.CurrentMatrix*v, -- closure
+    symbol JsFunc => () -> "gNode("|c.Options#"id"|","|jsString v|")",
+    symbol formation => FunctionApplication{GraphicsCoordinate,expression v} -- not perfect but good enough for now
+    }
+
+gParse2 (CacheTable,List) := (c,l) -> apply(l,t->gParse2(c,t))
+
+GraphicsType List := (T,args) -> (
     opts0 := T.Options;
-    opts = gParse opts;
+    args = gParse args;
     -- scan the first few arguments in case we skipped the keys for standard arguments. also, parse
-    (opts2,opts1):=override(,toSequence (opts0|opts));
-    opts1 = sequence opts1;
-    if #opts1 > #opts0 then error "too many arguments";
-    sty := new MutableHashTable from applyPairs(opts2,(k,v) -> if class k === String then (k,v));
-    opts3 := new HashTable from applyPairs(opts2,(k,v) -> if class k =!= String then (k,v));
-    new T from merge(hashTable (apply(#opts1, i -> opts0#i#0 => opts1#i)
-	| { symbol style =>  sty, symbol cache => new CacheTable}),opts3,first)
+    (opts,std):=override(,toSequence (opts0|args));
+    std = sequence std;
+    if #std > #opts0 then error "too many arguments";
+    c := new CacheTable;
+    opts0=apply(#opts0,i-> opts0#i#0 => gParse2(c,if i<#std then std#i else if opts#?(opts0#i#0) then opts#(opts0#i#0) else opts0#i#1));
+    sty := new MutableHashTable from applyPairs(opts,(k,v) -> if class k === String then (k,v));
+    opts' := select(pairs opts,(k,v) -> class k =!= String);
+    new T from hashTable (opts' | opts0
+	| { symbol style =>  sty, symbol cache => c})
 )
 
 perspective = persp -> (
@@ -197,31 +209,45 @@ gList = true >> opts -> x -> (
     if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
     GraphicsList { symbol Contents => cnt, opts }
 )
+clone=method()
+clone VisibleList := l -> apply(l,clone)
+clone GraphicsObject := g -> (
+    c:=new CacheTable;
+    new class g from merge(applyValues(g,x->clone(c,x)),hashTable{symbol cache => c},last)
+    )
+clone (CacheTable,VisibleList) := (c,l) -> apply(l,x->clone(c,x))
+clone (CacheTable,GraphicsObject) := (c,g) -> clone g
+clone (CacheTable,GraphicsCoordinate) := (c,g) -> (
+    f := g.formation;
+    if class f =!= FunctionApplication or f#0 =!= GraphicsCoordinate or class f#1 =!= VectorExpression then g
+    else gParse2(c,value f#1) -- what about coordinates referring to other objects, or operations? TODO
+    )
+clone (CacheTable,Thing) := last
+clone Thing := identity
+
 -- lists with preferred coordinate
 gNode = true >> opts -> x -> (
-    x = nonnull toList deepSplice if instance(x,List) then toSequence x else sequence x;
+    x = deepSplice sequence x;
     ctr := x#0;
-    cnt := drop(x,1);
-    if any(cnt,y->not instance(y,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
-    -- minor optimization: if exactly one content, we don't encapsulate it in a GraphicsList
-    (if #cnt === 1 then if #opts === 0 then cnt#0 else new class cnt#0 from merge(cnt#0,opts,last) else GraphicsList { symbol Contents => cnt, opts }) ++ { symbol TransformMatrix => translation ctr }
+    cnt := toList drop(x,1);
+    cnt = clone cnt;
+    gList (toSequence cnt | (opts,symbol TransformMatrix => translation ctr))
     )
 Number * GraphicsAncestor := (x,v) -> (
     v = gParse v;
     new GraphicsCoordinate from {
-    symbol RefPointFunc => cmat -> x*compute(v,cmat),
+    symbol Compute => () -> x*compute v,
     symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")",
     symbol formation => Product{expression x,expression v}
     })
 --Array + GraphicsAncestor := -- too messy to include Arrays in complex coordinate operations
---GraphicsAncestor + Array :=
 Vector + GraphicsAncestor :=
 GraphicsAncestor + Vector :=
 GraphicsAncestor + GraphicsAncestor := (v,w) -> (
     v = gParse v;
     w = gParse w;
     new GraphicsCoordinate from {
-    symbol RefPointFunc => cmat -> compute(v,cmat)+compute(w,cmat),
+    symbol Compute => () -> compute v+compute w,
     symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")",
     symbol formation => Sum{expression v,expression w}
     })
@@ -230,85 +256,56 @@ Vector - GraphicsAncestor :=
 GraphicsAncestor - Vector :=
 GraphicsAncestor - GraphicsAncestor := (v,w) -> v+(-1)*w
 
-place = method()
---place (Array,GraphicsAncestor,Number,Number) :=
---place (GraphicsAncestor,Array,Number,Number) :=
-place (Vector,GraphicsAncestor,Number,Number) :=
-place (GraphicsAncestor,Vector,Number,Number) :=
-place (GraphicsAncestor,GraphicsAncestor,Number,Number) := (v,w,a,b) -> (
-    v = gParse v;
-    w = gParse w;
-    new GraphicsCoordinate from {
-    symbol RefPointFunc => cmat -> place(compute(v,cmat),compute(w,cmat),a,b),
-    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")",
-    symbol formation => FunctionApplication{place,(expression v,expression w)}
-    })
-place (Vector,Vector,Number,Number) := (v,w,a,b) -> (
-    v = gParse v;
-    w = gParse w;
+place1 := (v,w,a,b) -> (
     v=(1/v_3)*v; w=(1/w_3)*w;
     u := w - v;
     perp := vector { u_1, -u_0, 0, 0 };
     v + a*u + b*perp
     )
+place = (v,w,a,b) -> (
+    v=gParse v;
+    w=gParse w;
+    new GraphicsCoordinate from {
+    symbol Compute => () -> place1(compute v,compute w,a,b),
+    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")",
+    symbol formation => FunctionApplication{place,(expression v,expression w,expression a,expression b)}
+    })
 
-crossing = method()
-crossing(Vector,Vector,Vector,Vector) := true >> o -> (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
-    v1 = gParse v1;
-    v2 = gParse v2;
-    w1 = gParse w1;
-    w2 = gParse w2;
+crossing1 := (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
     v1=(1/v1_3)*v1; v2=(1/v2_3)*v2; w1=(1/w1_3)*w1; w2=(1/w2_3)*w2;
     cf := (i,j,k,l) -> v1_i*v2_j*w1_k*w2_l;
     v:=vector{-cf(0, 1, 0, 3) + cf(0, 1, 3, 0) + cf(0, 3, 0, 1) - cf(0, 3, 1, 0) + cf(1, 0, 0, 3) - cf(1, 0, 3, 0) - cf(3, 0, 0, 1) + cf(3, 0, 1, 0), -cf(0, 1, 1, 3) + cf(0, 1, 3, 1) + cf(1, 0, 1, 3) - cf(1, 0, 3, 1) + cf(1, 3, 0, 1) - cf(1, 3, 1, 0) - cf(3, 1, 0, 1) + cf(3, 1, 1, 0), -cf(0, 2, 1, 3) + cf(0, 2, 3, 1) + cf(1, 2, 0, 3) - cf(1, 2, 3, 0) + cf(2, 0, 1, 3) - cf(2, 0, 3, 1) - cf(2, 1, 0, 3) + cf(2, 1, 3, 0) + cf(2, 3, 0, 1) - cf(2, 3, 1, 0) - cf(3, 2, 0, 1) + cf(3, 2, 1, 0), -cf(0, 3, 1, 3) + cf(0, 3, 3, 1) + cf(1, 3, 0, 3) - cf(1, 3, 3, 0) + cf(3, 0, 1, 3) - cf(3, 0, 3, 1) - cf(3, 1, 0, 3) + cf(3, 1, 3, 0)};
     (1/v_3)*sub(v,RR)
     )
---l:={Vector,Array,GraphicsAncestor};
-l:={Vector,GraphicsAncestor};
-l2:=l**l; l3:=splice\(l**l2); l4:=splice\(l**l3);
-l3=select(l3,x->member(GraphicsAncestor,x))
-l4=select(l4,x->member(GraphicsAncestor,x))
-
-scan(l4, t ->
-crossing t := true >> o -> (v1,v2,w1,w2) -> (
+crossing = (v1,v2,w1,w2) -> (
     v1 = gParse v1;
     v2 = gParse v2;
     w1 = gParse w1;
     w2 = gParse w2;
     new GraphicsCoordinate from {
-    symbol RefPointFunc => cmat -> crossing(compute(v1,cmat),compute(v2,cmat),compute(w1,cmat),compute(w2,cmat)),
+    symbol Compute => () -> crossing1(compute v1,compute v2,compute w1,compute w2),
     symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")",
     symbol formation => FunctionApplication{crossing,(expression v1,expression v2,expression w1,expression w2)}
-    }))
+    })
 
-bisector = method()
-bisector(Vector,Vector,Vector) := (v,w1,w2) -> (
-    v = gParse v;
-    w1 = gParse w1;
-    w2 = gParse w2;
+bisector1 := (v,w1,w2) -> (
     v=(1/v_3)*v; w1=(1/w1_3)*w1; w2=(1/w2_3)*w2;
     v1:=w1-v; v2:=w2-v;
     r1:=sqrt(v1_0^2+v1_1^2+v1_2^2); r2:=sqrt(v2_0^2+v2_1^2+v2_2^2);
     a:=r1/(r1+r2);
     (1-a)*w1+a*w2
     )
-scan(l3, t ->
-bisector t := (v,w1,w2) -> (
+bisector = (v,w1,w2) -> (
     v = gParse v;
     w1 = gParse w1;
     w2 = gParse w2;
     new GraphicsCoordinate from {
-    symbol RefPointFunc => cmat -> bisector(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
+    symbol Compute => () -> bisector1(compute v,compute w1,compute w2),
     symbol JsFunc => () -> "gBisect("|jsString v|","|jsString w1|","|jsString w2|")",
     symbol formation => FunctionApplication{bisector,(expression v,expression w1,expression w2)}
     })
-)
 
-projection = method()
-projection(Vector,Vector,Vector) := (v,w1,w2) -> (
-    v = gParse v;
-    w1 = gParse w1;
-    w2 = gParse w2;
+projection1 := (v,w1,w2) -> (
     v=(1/v_3)*v; w1=(1/w1_3)*w1; w2=(1/w2_3)*w2;
     v1:=w1-v; v2:=w2-v;
     rs1:=v1_0^2+v1_1^2+v1_2^2; rs2:=v2_0^2+v2_1^2+v2_2^2;
@@ -316,21 +313,19 @@ projection(Vector,Vector,Vector) := (v,w1,w2) -> (
     a:=(rs1-sp)/(rs1+rs2-2*sp);
     (1-a)*w1+a*w2
     )
-scan(l3, t ->
-projection t := (v,w1,w2) -> (
+projection = (v,w1,w2) -> (
     v = gParse v;
     w1 = gParse w1;
     w2 = gParse w2;
     new GraphicsCoordinate from {
-    symbol RefPointFunc => cmat -> projection(compute(v,cmat),compute(w1,cmat),compute(w2,cmat)),
+    symbol Compute => () -> projection1(compute v,compute w1,compute w2),
     symbol JsFunc => () -> "gProject("|jsString v|","|jsString w1|","|jsString w2|")",
     symbol formation => FunctionApplication{projection,(expression v,expression w1,expression w2)}
     })
-)
 
 compute = method()
-compute (Vector,Matrix) := (v,cmat) -> cmat*v -- normal coordinates are affected by local transformation
-compute (GraphicsCoordinate,Matrix) := (v,cmat) -> v.RefPointFunc cmat -- graphics coordinates aren't (they're "nodes")
+compute GraphicsCoordinate := v -> v.Compute ()
+compute Vector := identity -- for coordinates entered directly
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { symbol RefPoint => vector {0.,0.,0.,1.}, symbol TextContent => null, symbol FontSize => 14. },
@@ -414,12 +409,12 @@ is3d GraphicsList := l -> (
 	true
 	) else false
     )
-is3d GraphicsCoordinate := x -> (x.RefPointFunc(map(RR^4,RR^4,1)))_2 != 0 -- TEMP? TODO better
+is3d GraphicsCoordinate := x -> (x.Compute())_2 != 0 -- TEMP? TODO better
 
 coord = (g,name,ind,labx,laby) -> (
     x := g#name;
-    if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",ind,x);
-    x=compute(x,g.cache.CurrentMatrix);
+    if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",ind,x); -- TODO now everyone's a GraphicsCoordinate...
+    x=compute x;
     x' := project3d(x,g);
     g.cache.Options#labx = x'_0;
     g.cache.Options#laby = x'_1;
@@ -440,8 +435,8 @@ svg1 Ellipse := g -> (
 		r = r * scale;
 		);
 	    ) else (
-	    if is3d g or instance(r,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,r);
-	    y:=project3d(compute(r,g.cache.CurrentMatrix),g)-x';
+	    if is3d g or instance(r,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,r); -- TODO modify: now always graphicscoordinate?
+	    y:=project3d(compute r,g)-x';
 	    r=sqrt(y_0^2+y_1^2);
 	    );
 	g.cache.Options#"r" = r;
@@ -485,8 +480,8 @@ svg1 Line := g -> (
 svg1 GraphicsPoly := g -> (
     x := g.PointList;
     x1 := select(x,y->not instance(y,String));
-    if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
-    x1 = apply(x1,y->project3d(compute(y,g.cache.CurrentMatrix),g));
+    if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select? TODO also now everyone's a GraphicsCoordinate
+    x1 = apply(x1,y->project3d(compute y,g));
     i:=-1;
     s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{jsString x1#i_0,jsString x1#i_1}) else y));
     if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
@@ -953,7 +948,7 @@ determineSide GraphicsPoly := g -> (
     -- find first 3 coords
     coords := select(g.PointList, x -> not instance(x,String));
     if #coords<3 then ( remove(g.cache,Filter); return; );
-    coords=apply(take(coords,3),x->project3d(compute(x,g.cache.CurrentMatrix),g));
+    coords=apply(take(coords,3),x->project3d(compute x,g));
     coords = {coords#1-coords#0,coords#2-coords#0};
     if coords#0_0*coords#1_1-coords#0_1*coords#1_0 > 0 then g.style#"visibility" =  "hidden";
     )
@@ -1008,12 +1003,12 @@ filter = g -> (
 	    -- find first 3 coords
 	    coords := select(g.PointList, x -> not instance(x,String));
 	    if #coords>=3 then (
-		coords=apply(3,i->(xx:=compute(coords#i,g.cache.CurrentMatrix);(1/xx_3)*xx^{0,1,2}));
+		coords=apply(3,i->(xx:=compute coords#i;(1/xx_3)*xx^{0,1,2}));
 		u:=coords#1-coords#0; v:=coords#2-coords#0; w:=vector{u_1*v_2-v_1*u_2,u_2*v_0-v_2*u_0,u_0*v_1-v_0*u_1}; w2:=w_0*w_0+w_1*w_1+w_2*w_2;
 		if w_2<0 then w=-w; -- TODO better (no assumption on perspective) by using determineSide, cf js
 		scan(l, gg -> (
 			-- compute reflected coords
-			light0 := compute(gg.Center,gg.cache.CurrentMatrix);
+			light0 := compute gg.Center;
 			light := (1/light0_3)*light0^{0,1,2};
 			lightrel := light-coords#0;
 			sp := w_0*lightrel_0+w_1*lightrel_1+w_2*lightrel_2;
@@ -1334,13 +1329,17 @@ multidoc ///
    A type for coordinates
   Description
    Text
-    A type that is used to describe (possibly dynamic) coordinates. Internally all coordinates are in $\RR^4$ (projective coordinates).
-    Any @TO {GraphicsObject}@ can be turned into a @BOLD "GraphicsCoordinate"@ corresponding to the reference point $(0,0,0,1)$ in its local coordinate system.
+    A type that is used to describe (possibly dynamic) coordinates. Internally all coordinates are in $\RR^4$ (projective coordinates):
+   Example
+    a=Circle{Radius=>1}; b=Circle{[1,1],Radius=>1}; mid=a.Center+b.Center
+    gList(a,b,Circle{mid,Radius=>1-1/sqrt 2})
+   Text
     @BOLD "GraphicsCoodinate"@s can also be manipulated using various operations such as addition, multiplication by scalar, etc.
-    Though you can perform the conversion from @TO {GraphicsObject}@ to @BOLD "GraphicsCoodinate"@s explicitly using "new... from...",
-    you do not ever need to do so since this conversion is performed automatically
+    Any @TO {GraphicsObject}@ can be turned into a @BOLD "GraphicsCoordinate"@ corresponding to the reference point $(0,0,0,1)$ in its local coordinate system.
+    Though one can perform the conversion from @TO {GraphicsObject}@ to @BOLD "GraphicsCoodinate"@s explicitly using "new... from...",
+    one rarely needs to do so since this conversion is performed automatically
     if you use a @TO {GraphicsObject}@ as coordinate inside another object, or apply arithmetic operations to it.
-    A convenient way to define @BOLD "GraphicsCoodinate"@s is via @TO {gNode}@.
+    A convenient way to define @BOLD "GraphicsCoodinate"@s is via @TO {gNode}@. For example, the same example can be written
    Example
     a=gNode([0,0],Circle{Radius=>1}); b=gNode([1,1],Circle{Radius=>1}); mid=a+b
     gList(a,b,Circle{mid,Radius=>1-1/sqrt 2})
@@ -1469,7 +1468,7 @@ multidoc ///
        vector{-8.130, 5.783, 0.671}, vector {-2.052, -7.993, -5.649}};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>"white"}))
-    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation(2^(n-1)*v#i)}))
+    g = memoize(n -> if n==0 then tetra else gList apply(4,i->gNode(2^(n-1)*v#i,g(n-1))))
     apply(4,g)
   Usage
    translation ( vector )
@@ -1701,14 +1700,15 @@ multidoc ///
   Key
    gNode
   Headline
-   VectorGraphics object(s) with a preferred reference origin
+   VectorGraphics copy of object(s) with a modified reference origin
   Description
    Text
-    @TT "gNode(coord,obj)"@ is a shortcut for @TT "obj ++ { TransformMatrix => translation coord }"@, where @TT "obj"@ is some @ TO {GraphicsObject} @ and @TT "coord"@ the coordinates of the new reference origin.
-    @TT "gNode(coord,a,b,c)"@ is a shortcut for @TT "gList(a,b,c) ++ { TransformMatrix => translation coord }"@.
+    @TT "gNode(coord,a,b,c...)"@ is a shortcut for @TT "gList(a',b',c'..., TransformMatrix => translation coord)"@,
+    where @TT "coord"@ are the coordinates of the new reference origin, and @TT "a', b', c'..."@ are copies
+    of the graphical objects @TT "a,b,c..."@.
    Example
     a=gNode([-1,-1],Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"})
-    b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black",Draggable=>true})
+    b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black"},Draggable=>true)
     gList(Line{a,b},a,b)
    Text
     Dragging acts recursively:
@@ -1717,7 +1717,6 @@ multidoc ///
  Node
   Key
    place
-   (place,Vector,Vector,Number,Number)
   Headline
    Position a point relative to two other points
   Usage
@@ -1727,13 +1726,11 @@ multidoc ///
     Gives a point situated at position a along the line (p1,p2) in units where they are at distance 1, and at position b orthogonally to it.
     Only makes sense in 2d.
    Example
-    circ=Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"};
-    (p1,p2)=apply(([-1,-1],[1,1]),coord -> gNode(coord,circ,Draggable=>true))
+    (p1,p2)=apply(([-1,-1],[1,1]),coord -> gNode(coord,Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"},Draggable=>true));
     gList(Polygon{{p1,place(p1,p2,0.7,0.3),p2,place(p1,p2,0.7,-0.3)}},p1,p2)
  Node
   Key
    bisector
-   (bisector,Vector,Vector,Vector)
   Usage
    bisector ( p, p1, p2 )
   Headline
@@ -1742,14 +1739,12 @@ multidoc ///
    Text
     Returns the location of the intersection of the angle bisectors of (p,p1) and (p,p2) with the line (p1,p2).
    Example
-    circ=Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"};
-    (a,b,c)=apply(([-1,-1],[2,0],[0,2]),coord -> gNode(coord,circ,Draggable=>true))
+    (a,b,c)=apply(([-1,-1],[2,0],[0,2]),coord -> gNode(coord,Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"},Draggable=>true));
     p=bisector(a,b,c); q=bisector(b,c,a); r=bisector(c,a,b); o=crossing(p,a,q,b);
     gList(Line{a,b},Line{a,c},Line{b,c},Line{p,a},Line{q,b},Line{r,c},Circle{o,projection(o,a,b)},a,b,c)
  Node
   Key
    crossing
-   (crossing,Vector,Vector,Vector,Vector)
   Usage
    crossing ( p1, p2, q1, q2 )
   Headline
@@ -1758,25 +1753,24 @@ multidoc ///
    Text
     Returns the location of the intersection of the two lines (p1,p2) and (q1,q2)
    Example
-    circ=Circle{Radius=>0.05,"fill"=>"green","stroke"=>"black","stroke-width"=>0.01,Size=>2};
-    (a,b,c,d)=apply(1..4,i -> gNode([random RR,random RR],circ,Draggable=>true))
+    (a,b,c,d)=apply(1..4,i -> gNode([random RR,random RR],Circle{Radius=>0.05,"fill"=>"green","stroke"=>"black","stroke-width"=>0.01},Draggable=>true));
     gList(Line{a,b},Line{c,d},Circle{crossing(a,b,c,d),Radius=>0.05,"fill"=>"blue"},a,b,c,d)
    Text
     A more complex example: Pappus' theorem:
    Example
-    circ=Circle{"fill"=>"black",Radius=>2};
-    (ag,cg,Ag,Cg)=apply(([0,0],[100,0],[0,100],[100,100]),crd->gNode(crd,circ,Draggable=>true));
-    (a,c,A,C)=apply((ag,cg,Ag,Cg),x->new GraphicsCoordinate from x) -- not necessary but cleaner
+    (ag,cg,Ag,Cg)=apply(([0,0],[100,0],[0,100],[100,100]),crd->Circle{Center=>crd,"draw"=>"black","fill"=>"red",Radius=>3,Draggable=>true});
+    (a,c,A,C)=apply((ag,cg,Ag,Cg),x->x.Center)
     b=a+1.2*c; B=1.7*A+C;
     X=crossing(a,B,A,b); Y=crossing(a,C,A,c); Z=crossing(b,C,B,c);
-    (bg,Bg,Xg,Yg,Zg)=apply((b,B,X,Y,Z),crd->circ++{Center=>crd});
-    gList(ag,bg,cg,Ag,Bg,Cg,Xg,Yg,Zg,Line{a,c},Line{A,C},Line{X,Z},Line{a,B},Line{a,C},Line{b,A},Line{b,C},Line{c,A},Line{c,B},Margin=>.3)
+    (bg,Bg,Xg,Yg,Zg)=apply((b,B,X,Y,Z),crd->Circle{"fill"=>"black",Radius=>3,Center=>crd});
+    gList(Line{a,c},Line{A,C},Line{X,Z},Line{a,B},Line{a,C},Line{b,A},Line{b,C},Line{c,A},Line{c,B},
+	ag,bg,cg,Ag,Bg,Cg,Xg,Yg,Zg,
+	Margin=>.3)
   Caveat
    In 3d, the behavior is undetermined if the lines do not intersect.
  Node
   Key
    projection
-   (projection,Vector,Vector,Vector)
   Usage
    projection ( p, p1, p2 )
   Headline
