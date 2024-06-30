@@ -1,20 +1,14 @@
 -- -*- M2-comint -*- hash: 1101768179
+i1 : 1:0R = QQ[x_0..x_8];
+i2 : 2:0I = ideal {-x_0+x_3+x_4, -x_1+x_3+x_5,-x_2+x_3+x_6, -x_0+x_2+x_7, -x_1+x_2+x_8, -x_0+x_1+1};
 
-i1 : R = QQ[x_0..x_8];
+o2 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
+i3 : 3:0X = normalToricVariety fan tropicalVariety I;
+i4 : 4:0f = x_0*x_1-x_2*x_3;
+i5 : 5:0D = classWonderfulCompactification(X,I,f)
 
-i2 : I = ideal {-x_0+x_3+x_4, -x_1+x_3+x_5,-x_2+x_3+x_6, -x_0+x_2+x_7, -x_1+x_2+x_8, -x_0+x_1+1};
+o5 = <samp class="token class-name">ToricCycle</samp>$\{\{2\}\ \Rightarrow \ 1,\,\{5\}\ \Rightarrow \ -1,\,\{6\}\ \Rightarrow \ -2,\,\{7\}\ \Rightarrow \ 1,\,\{9\}\ \Rightarrow \ 2,\,\{10\}\ \Rightarrow \ 2,\,\{11\}\ \Rightarrow \ -1,\,\{13\}\ \Rightarrow \ 2,\,\{14\}\ \Rightarrow \ 2,\,\{17\}\ \Rightarrow \ -1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{9\},\,\{10\},\,\{11\},\,\{13\},\,\{14\},\,\{17\},\,\{2\},\,\{5\},\,\{6\},\,\{7\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o2 : Ideal of R
-
-i3 : X = normalToricVariety fan tropicalVariety I;
-
-i4 : f = x_0*x_1-x_2*x_3;
-
-i5 : D = classWonderfulCompactification(X,I,f)
-
-o5 = 2*X    + 2*X     - X     + 2*X     + 2*X     - X     + X    - X    - 2*X    + X
-        {9}      {10}    {11}      {13}      {14}    {17}    {2}    {5}      {6}    {7}
-
-o5 : ToricCycle on X
-
-i6 : 
+o5 : <samp class="token class-name">ToricCycle</samp>
+i6 : 6:0
+

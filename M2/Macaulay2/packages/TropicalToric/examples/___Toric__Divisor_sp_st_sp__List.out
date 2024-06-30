@@ -1,61 +1,48 @@
 -- -*- M2-comint -*- hash: -1003275919
+i1 : 1:0rayList={{1,0},{0,1},{-1,-1},{0,-1}}
 
-i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
+o1 = $\{\{1,\,0\},\,\{0,\,1\},\,\{-1,\,-1\},\,\{0,\,-1\}\}$
 
-o1 = {{1, 0}, {0, 1}, {-1, -1}, {0, -1}}
+o1 : <samp class="token class-name">List</samp>
+i2 : 2:0coneList={{0,1},{1,2},{2,3},{3,0}}
 
-o1 : List
+o2 = $\{\{0,\,1\},\,\{1,\,2\},\,\{2,\,3\},\,\{3,\,0\}\}$
 
-i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+o2 : <samp class="token class-name">List</samp>
+i3 : 3:0X = normalToricVariety(rayList,coneList)
 
-o2 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}}
+o3 = $X$
 
-o2 : List
+o3 : <samp class="token class-name">NormalToricVariety</samp>
+i4 : 4:0D = X_3
 
-i3 : X = normalToricVariety(rayList,coneList)
+o4 = <samp class="token class-name">ToricDivisor</samp>$\{0\ \Rightarrow \ 0,\,1\ \Rightarrow \ 0,\,2\ \Rightarrow \ 0,\,3\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o3 = X
+o4 : <samp class="token class-name">ToricDivisor</samp>
+i5 : 5:0D*{2}
 
-o3 : NormalToricVariety
+o5 = <samp class="token class-name">ToricCycle</samp>$\{\{2,\,3\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{2,\,3\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-i4 : D = X_3
+o5 : <samp class="token class-name">ToricCycle</samp>
+i6 : 6:0D*{1}
 
-o4 = X
-      3
+o6 = <samp class="token class-name">ToricCycle</samp>$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\,\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o4 : ToricDivisor on X
+o6 : <samp class="token class-name">ToricCycle</samp>
+i7 : 7:0D = X_0 + 2*X_1 + 3*X_2 + 4*X_3
 
-i5 : D*{2}
+o7 = <samp class="token class-name">ToricDivisor</samp>$\{0\ \Rightarrow \ 1,\,1\ \Rightarrow \ 2,\,2\ \Rightarrow \ 3,\,3\ \Rightarrow \ 4,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o5 = X
-      {2, 3}
+o7 : <samp class="token class-name">ToricDivisor</samp>
+i8 : 8:0C = (orbits X)#1#0
 
-o5 : ToricCycle on X
+o8 = $\{0\}$
 
-i6 : D*{1}
+o8 : <samp class="token class-name">List</samp>
+i9 : 9:0D*C
 
-o6 = 0
+o9 = <samp class="token class-name">ToricCycle</samp>$\{\{0,\,3\}\ \Rightarrow \ 6,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{0,\,3\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o6 : ToricCycle on X
-
-i7 : D = X_0 + 2*X_1 + 3*X_2 + 4*X_3
-
-o7 = X  + 2*X  + 3*X  + 4*X
-      0      1      2      3
-
-o7 : ToricDivisor on X
-
-i8 : C = (orbits X)#1#0
-
-o8 = {0}
-
-o8 : List
-
-i9 : D*C
-
-o9 = 6*X
-        {0, 3}
-
-o9 : ToricCycle on X
-
-i10 : 
+o9 : <samp class="token class-name">ToricCycle</samp>
+i10 : 10:0
+

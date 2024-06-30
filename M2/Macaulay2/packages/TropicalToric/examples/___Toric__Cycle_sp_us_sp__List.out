@@ -1,46 +1,37 @@
 -- -*- M2-comint -*- hash: 23274687
+i1 : 1:0rayList={{1,0},{0,1},{-1,-1},{0,-1}}
 
-i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
+o1 = $\{\{1,\,0\},\,\{0,\,1\},\,\{-1,\,-1\},\,\{0,\,-1\}\}$
 
-o1 = {{1, 0}, {0, 1}, {-1, -1}, {0, -1}}
+o1 : <samp class="token class-name">List</samp>
+i2 : 2:0coneList={{0,1},{1,2},{2,3},{3,0}}
 
-o1 : List
+o2 = $\{\{0,\,1\},\,\{1,\,2\},\,\{2,\,3\},\,\{3,\,0\}\}$
 
-i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+o2 : <samp class="token class-name">List</samp>
+i3 : 3:0X = normalToricVariety(rayList,coneList)
 
-o2 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}}
+o3 = $X$
 
-o2 : List
+o3 : <samp class="token class-name">NormalToricVariety</samp>
+i4 : 4:0C = X_{0,1} + X_{0,2} - 2*X_{0,3} + X_{0}
 
-i3 : X = normalToricVariety(rayList,coneList)
+o4 = <samp class="token class-name">ToricCycle</samp>$\{\{0,\,1\}\ \Rightarrow \ 1,\,\{0,\,2\}\ \Rightarrow \ 1,\,\{0,\,3\}\ \Rightarrow \ -2,\,\{0\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{0\},\,\{0,\,1\},\,\{0,\,2\},\,\{0,\,3\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o3 = X
+o4 : <samp class="token class-name">ToricCycle</samp>
+i5 : 5:0C_{0,1}
 
-o3 : NormalToricVariety
+o5 = $1$
+i6 : 6:0C_{0,2}
 
-i4 : C = X_{0,1} + X_{0,2} - 2*X_{0,3} + X_{0}
+o6 = $1$
+i7 : 7:0C_{0,3}
 
-o4 = X    + X       + X       - 2*X
-      {0}    {0, 1}    {0, 2}      {0, 3}
+o7 = $-2$
 
-o4 : ToricCycle on X
+o7 : $\htmlClass{token class-name}{{\mathbb Q}}$
+i8 : 8:0C_0
 
-i5 : C_{0,1}
-
-o5 = 1
-
-i6 : C_{0,2}
-
-o6 = 1
-
-i7 : C_{0,3}
-
-o7 = -2
-
-o7 : QQ
-
-i8 : C_0
-
-o8 = 1
-
-i9 : 
+o8 = $1$
+i9 : 9:0
+

@@ -1,19 +1,14 @@
 -- -*- M2-comint -*- hash: -2133601056
+i1 : 1:0v = {1,0,0};
+i2 : 2:0C = {{1,0,0},{0,1,0},{0,0,1}};
+i3 : 3:0polymakeConeContains(v,C)
+polymake:  WARNING: created private directory /home/pzinn/.polymake
 
-i1 : v = {1,0,0};
+o3 = <samp class="token constant">true</samp>
+i4 : 4:0v = {1,0,0};
+i5 : 5:0C = {{2,1,0},{0,1,0},{0,0,1}};
+i6 : 6:0polymakeConeContains(v,C)
 
-i2 : C = {{1,0,0},{0,1,0},{0,0,1}};
-
-i3 : polymakeConeContains(v,C)
-
-o3 = true
-
-i4 : v = {1,0,0};
-
-i5 : C = {{2,1,0},{0,1,0},{0,0,1}};
-
-i6 : polymakeConeContains(v,C)
-
-o6 = false
-
-i7 : 
+o6 = <samp class="token constant">false</samp>
+i7 : 7:0
+

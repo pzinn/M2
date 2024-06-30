@@ -1,18 +1,13 @@
 -- -*- M2-comint -*- hash: 1083445600
+i1 : 1:0X = toricProjectiveSpace 3;
+i2 : 2:0S = ring X;
+i3 : 3:0I = ideal(S_0+S_1+S_2+1,S_0+2*S_1-S_2+4);
 
-i1 : X = toricProjectiveSpace 3;
+o3 : <span><samp class="token class-name">Ideal</samp> of $S$</span>
+i4 : 4:0classFromTropicalCox(X,I)
 
-i2 : S = ring X;
+o4 = <samp class="token class-name">ToricCycle</samp>$\{\{0,\,1\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{0,\,1\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-i3 : I = ideal(S_0+S_1+S_2+1,S_0+2*S_1-S_2+4);
-
-o3 : Ideal of S
-
-i4 : classFromTropicalCox(X,I)
-
-o4 = X
-      {0, 1}
-
-o4 : ToricCycle on X
-
-i5 : 
+o4 : <samp class="token class-name">ToricCycle</samp>
+i5 : 5:0
+

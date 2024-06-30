@@ -1,48 +1,39 @@
 -- -*- M2-comint -*- hash: -518461911
+i1 : 1:0rayList={{1,0},{0,1},{-1,-1},{0,-1}}
 
-i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
+o1 = $\{\{1,\,0\},\,\{0,\,1\},\,\{-1,\,-1\},\,\{0,\,-1\}\}$
 
-o1 = {{1, 0}, {0, 1}, {-1, -1}, {0, -1}}
+o1 : <samp class="token class-name">List</samp>
+i2 : 2:0coneList={{0,1},{1,2},{2,3},{3,0}}
 
-o1 : List
+o2 = $\{\{0,\,1\},\,\{1,\,2\},\,\{2,\,3\},\,\{3,\,0\}\}$
 
-i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+o2 : <samp class="token class-name">List</samp>
+i3 : 3:0X = normalToricVariety(rayList,coneList)
 
-o2 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}}
+o3 = $X$
 
-o2 : List
+o3 : <samp class="token class-name">NormalToricVariety</samp>
+i4 : 4:0D = X_3
 
-i3 : X = normalToricVariety(rayList,coneList)
+o4 = <samp class="token class-name">ToricDivisor</samp>$\{0\ \Rightarrow \ 0,\,1\ \Rightarrow \ 0,\,2\ \Rightarrow \ 0,\,3\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o3 = X
+o4 : <samp class="token class-name">ToricDivisor</samp>
+i5 : 5:0E = {0,3}
 
-o3 : NormalToricVariety
+o5 = $\{0,\,3\}$
 
-i4 : D = X_3
+o5 : <samp class="token class-name">List</samp>
+i6 : 6:0F = {1,2}
 
-o4 = X
-      3
+o6 = $\{1,\,2\}$
 
-o4 : ToricDivisor on X
+o6 : <samp class="token class-name">List</samp>
+i7 : 7:0isTransverse(D,E)
 
-i5 : E = {0,3}
+o7 = <samp class="token constant">false</samp>
+i8 : 8:0isTransverse(D,F)
 
-o5 = {0, 3}
-
-o5 : List
-
-i6 : F = {1,2}
-
-o6 = {1, 2}
-
-o6 : List
-
-i7 : isTransverse(D,E)
-
-o7 = false
-
-i8 : isTransverse(D,F)
-
-o8 = true
-
-i9 : 
+o8 = <samp class="token constant">true</samp>
+i9 : 9:0
+

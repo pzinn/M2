@@ -1,42 +1,33 @@
 -- -*- M2-comint -*- hash: 1985264245
+i1 : 1:0rayList={{1,0},{0,1},{-1,-1},{0,-1}}
 
-i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
+o1 = $\{\{1,\,0\},\,\{0,\,1\},\,\{-1,\,-1\},\,\{0,\,-1\}\}$
 
-o1 = {{1, 0}, {0, 1}, {-1, -1}, {0, -1}}
+o1 : <samp class="token class-name">List</samp>
+i2 : 2:0coneList={{0,1},{1,2},{2,3},{3,0}}
 
-o1 : List
+o2 = $\{\{0,\,1\},\,\{1,\,2\},\,\{2,\,3\},\,\{3,\,0\}\}$
 
-i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+o2 : <samp class="token class-name">List</samp>
+i3 : 3:0X = normalToricVariety(rayList,coneList)
 
-o2 = {{0, 1}, {1, 2}, {2, 3}, {3, 0}}
+o3 = $X$
 
-o2 : List
+o3 : <samp class="token class-name">NormalToricVariety</samp>
+i4 : 4:0X_{1}
 
-i3 : X = normalToricVariety(rayList,coneList)
+o4 = <samp class="token class-name">ToricCycle</samp>$\{\{1\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{1\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o3 = X
+o4 : <samp class="token class-name">ToricCycle</samp>
+i5 : 5:0X_{0,2}
 
-o3 : NormalToricVariety
+o5 = <samp class="token class-name">ToricCycle</samp>$\{\{0,\,2\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{0,\,2\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-i4 : X_{1}
+o5 : <samp class="token class-name">ToricCycle</samp>
+i6 : 6:02 * X_{2} - X_{3}
 
-o4 = X
-      {1}
+o6 = <samp class="token class-name">ToricCycle</samp>$\{\{2\}\ \Rightarrow \ 2,\,\{3\}\ \Rightarrow \ -1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{2\},\,\{3\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o4 : ToricCycle on X
-
-i5 : X_{0,2}
-
-o5 = X
-      {0, 2}
-
-o5 : ToricCycle on X
-
-i6 : 2 * X_{2} - X_{3}
-
-o6 = 2*X    - X
-        {2}    {3}
-
-o6 : ToricCycle on X
-
-i7 : 
+o6 : <samp class="token class-name">ToricCycle</samp>
+i7 : 7:0
+

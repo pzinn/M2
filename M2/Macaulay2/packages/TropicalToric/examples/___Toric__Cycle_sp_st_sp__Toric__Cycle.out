@@ -1,56 +1,43 @@
 -- -*- M2-comint -*- hash: 468101149
+i1 : 1:0X = toricProjectiveSpace 5
 
-i1 : X = toricProjectiveSpace 5
+o1 = $X$
 
-o1 = X
+o1 : <samp class="token class-name">NormalToricVariety</samp>
+i2 : 2:0D = X_{0,1}+5*X_{1,3}-X_{2}+2*X_{3}
 
-o1 : NormalToricVariety
+o2 = <samp class="token class-name">ToricCycle</samp>$\{\{0,\,1\}\ \Rightarrow \ 1,\,\{1,\,3\}\ \Rightarrow \ 5,\,\{2\}\ \Rightarrow \ -1,\,\{3\}\ \Rightarrow \ 2,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{0,\,1\},\,\{2\},\,\{3\},\,\{1,\,3\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-i2 : D = X_{0,1}+5*X_{1,3}-X_{2}+2*X_{3}
+o2 : <samp class="token class-name">ToricCycle</samp>
+i3 : 3:0C = X_{2,3}
 
-o2 = X       - X    + 2*X    + 5*X
-      {0, 1}    {2}      {3}      {1, 3}
+o3 = <samp class="token class-name">ToricCycle</samp>$\{\{2,\,3\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{2,\,3\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o2 : ToricCycle on X
+o3 : <samp class="token class-name">ToricCycle</samp>
+i4 : 4:0D*C
 
-i3 : C = X_{2,3}
+o4 = <samp class="token class-name">ToricCycle</samp>$\{\{0,\,1,\,2,\,3\}\ \Rightarrow \ 1,\,\{1,\,2,\,3,\,5\}\ \Rightarrow \ 5,\,\{2,\,3,\,5\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{2,\,3,\,5\},\,\{0,\,1,\,2,\,3\},\,\{1,\,2,\,3,\,5\}\},\,\mathit{variety}\ \Rightarrow \ X\}$
 
-o3 = X
-      {2, 3}
+o4 : <samp class="token class-name">ToricCycle</samp>
+i5 : 5:0X = toricProjectiveSpace 2
 
-o3 : ToricCycle on X
+o5 = $X$
 
-i4 : D*C
+o5 : <samp class="token class-name">NormalToricVariety</samp>
+i6 : 6:0Y = toricBlowup({0,1},X)
 
-o4 = X          + X             + 5*X
-      {2, 3, 5}    {0, 1, 2, 3}      {1, 2, 3, 5}
+o6 = $Y$
 
-o4 : ToricCycle on X
+o6 : <samp class="token class-name">NormalToricVariety</samp>
+i7 : 7:0D = Y_{3}
 
-i5 : X = toricProjectiveSpace 2
+o7 = <samp class="token class-name">ToricCycle</samp>$\{\{3\}\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{3\}\},\,\mathit{variety}\ \Rightarrow \ Y\}$
 
-o5 = X
+o7 : <samp class="token class-name">ToricCycle</samp>
+i8 : 8:0D*D
 
-o5 : NormalToricVariety
+o8 = <samp class="token class-name">ToricCycle</samp>$\{\{1,\,3\}\ \Rightarrow \ -1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{cycleSupport}\ \Rightarrow \ \{\{1,\,3\}\},\,\mathit{variety}\ \Rightarrow \ Y\}$
 
-i6 : Y = toricBlowup({0,1},X)
-
-o6 = Y
-
-o6 : NormalToricVariety
-
-i7 : D = Y_{3}
-
-o7 = Y
-      {3}
-
-o7 : ToricCycle on Y
-
-i8 : D*D
-
-o8 = - Y
-        {1, 3}
-
-o8 : ToricCycle on Y
-
-i9 : 
+o8 : <samp class="token class-name">ToricCycle</samp>
+i9 : 9:0
+

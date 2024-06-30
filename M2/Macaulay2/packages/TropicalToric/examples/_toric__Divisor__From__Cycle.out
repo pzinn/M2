@@ -1,16 +1,10 @@
 -- -*- M2-comint -*- hash: -834038959
+i1 : 1:0X = toricProjectiveSpace 2;
+i2 : 2:0D = X_{0} + X_{1};
+i3 : 3:0toricDivisorFromCycle D
 
-i1 : X = toricProjectiveSpace 2;
+o3 = <samp class="token class-name">ToricDivisor</samp>$\{0\ \Rightarrow \ 1,\,1\ \Rightarrow \ 1,\,2\ \Rightarrow \ 0,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{variety}\ \Rightarrow \ X\}$
 
-i2 : D = X_{0} + X_{1};
-
-o2 : ToricCycle on X
-
-i3 : toricDivisorFromCycle D
-
-o3 = X  + X
-      0    1
-
-o3 : ToricDivisor on X
-
-i4 : 
+o3 : <samp class="token class-name">ToricDivisor</samp>
+i4 : 4:0
+

@@ -1,51 +1,32 @@
 -- -*- M2-comint -*- hash: -746296924
+i1 : 1:0X = NormalToricVarieties$cartesianProduct apply((1,1), i-> toricProjectiveSpace i);
+i2 : 2:0S = ring X;
+i3 : 3:0f = 2 * S_1 + 3 * S_3 + S_0;
+i4 : 4:0torusIntersection(X,f)
 
-i1 : X = NormalToricVarieties$cartesianProduct apply((1,1), i-> toricProjectiveSpace i);
+o4 = $2\,y_{1}+3\,y_{2}+1$
 
-i2 : S = ring X;
+o4 : $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[y_{1}\,{.}{.}\,y_{2}\right]$
+i5 : 5:0torusIntersection(X,ideal(f))
 
-i3 : f = 2 * S_1 + 3 * S_3 + S_0;
+o5 = <samp class="token function">ideal</samp>${}\left(2\,y_{1}+3\,y_{2}+1\right)$
 
-i4 : torusIntersection(X,f)
+o5 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[y_{1}\,{.}{.}\,y_{2}\right]$</span>
+i6 : 6:0X = toricProjectiveSpace 3;
+i7 : 7:0S = ring X;
+i8 : 8:0f = S_0*S_1*S_2+S_0*S_1*S_3+S_0*S_2*S_3+S_1*S_2*S_3;
+i9 : 9:0torusIntersection(X,f)
 
-o4 = 2y  + 3y  + 1
-       1     2
+o9 = $y_{1}y_{2}y_{3}+y_{1}y_{2}+y_{1}y_{3}+y_{2}y_{3}$
 
-o4 : QQ[y ..y ]
-         1   2
+o9 : $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[y_{1}\,{.}{.}\,y_{3}\right]$
+i10 : 10:0I = ideal((S_1+S_2)*S_0, (S_1+S_2)*(S_0+S_1));
 
-i5 : torusIntersection(X,ideal(f))
+o10 : <span><samp class="token class-name">Ideal</samp> of $S$</span>
+i11 : 11:0torusIntersection(X,I)
 
-o5 = ideal(2y  + 3y  + 1)
-             1     2
+o11 = <samp class="token function">ideal</samp>${}\left(y_{1}+y_{2}\right)$
 
-o5 : Ideal of QQ[y ..y ]
-                  1   2
-
-i6 : X = toricProjectiveSpace 3;
-
-i7 : S = ring X;
-
-i8 : f = S_0*S_1*S_2+S_0*S_1*S_3+S_0*S_2*S_3+S_1*S_2*S_3;
-
-i9 : torusIntersection(X,f)
-
-o9 = y y y  + y y  + y y  + y y
-      1 2 3    1 2    1 3    2 3
-
-o9 : QQ[y ..y ]
-         1   3
-
-i10 : I = ideal((S_1+S_2)*S_0, (S_1+S_2)*(S_0+S_1));
-
-o10 : Ideal of S
-
-i11 : torusIntersection(X,I)
-
-o11 = ideal(y  + y )
-             1    2
-
-o11 : Ideal of QQ[y ..y ]
-                   1   3
-
-i12 : 
+o11 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[y_{1}\,{.}{.}\,y_{3}\right]$</span>
+i12 : 12:0
+
