@@ -1761,6 +1761,16 @@ multidoc ///
     circ=Circle{Radius=>0.05,"fill"=>"green","stroke"=>"black","stroke-width"=>0.01,Size=>2};
     (a,b,c,d)=apply(1..4,i -> gNode([random RR,random RR],circ,Draggable=>true))
     gList(Line{a,b},Line{c,d},Circle{crossing(a,b,c,d),Radius=>0.05,"fill"=>"blue"},a,b,c,d)
+   Text
+    A more complex example: Pappus' theorem:
+   Example
+    circ=Circle{"fill"=>"black",Radius=>2};
+    (ag,cg,Ag,Cg)=apply(([0,0],[100,0],[0,100],[100,100]),crd->gNode(crd,circ,Draggable=>true));
+    (a,c,A,C)=apply((ag,cg,Ag,Cg),x->new GraphicsCoordinate from x) -- not necessary but cleaner
+    b=a+1.2*c; B=1.7*A+C;
+    X=crossing(a,B,A,b); Y=crossing(a,C,A,c); Z=crossing(b,C,B,c);
+    (bg,Bg,Xg,Yg,Zg)=apply((b,B,X,Y,Z),crd->circ++{Center=>crd});
+    gList(ag,bg,cg,Ag,Bg,Cg,Xg,Yg,Zg,Line{a,c},Line{A,C},Line{X,Z},Line{a,B},Line{a,C},Line{b,A},Line{b,C},Line{c,A},Line{c,B},Margin=>.3)
   Caveat
    In 3d, the behavior is undetermined if the lines do not intersect.
  Node
