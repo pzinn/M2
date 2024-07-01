@@ -36,6 +36,7 @@ protect PerspectiveMatrix
 protect Owner
 protect JsFunc
 protect Compute
+protect Arguments
 
 debug Core
 
@@ -67,8 +68,7 @@ GraphicsCoordinate = new SelfInitializingType of GraphicsAncestor
 GraphicsObject = new Type of GraphicsAncestor
 gParse GraphicsObject := g -> new GraphicsCoordinate from g -- GraphicsObject used as coordinate
 new GraphicsCoordinate from GraphicsObject := (T,g) -> hashTable { -- don't need to call directly, conversion is automatic anyway
-    symbol Compute => () -> g.cache.CurrentMatrix_3, -- closure
-    symbol JsFunc => () -> "gNode("|g.cache.Options#"id"|")",
+    symbol cache => new CacheTable from { symbol GraphicsObject => g },
     symbol formation => FunctionApplication{GraphicsCoordinate,if hasAttribute(g,ReverseDictionary) then getAttribute(g,ReverseDictionary) else short g}
     }
 gParse GraphicsCoordinate := identity
@@ -82,15 +82,6 @@ toString GraphicsCoordinate := toString @@ expression
 net GraphicsCoordinate := net @@ expression
 html GraphicsCoordinate := html @@ expression
 expression GraphicsCoordinate := g -> if hasAttribute(g,ReverseDictionary) then expression getAttribute(g,ReverseDictionary) else g.formation
-
-GraphicsObject ++ List := (opts1, opts2) -> (
-    opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
-    sty := new MutableHashTable from select(opts2,o -> class o#0 === String);
-    if #sty>0 then opts2 = append(opts2,symbol style => merge(opts1.style,sty,last));
-    opts3 := new class opts1 from select(opts2,o -> class o#0 =!= String);
-    merge(opts1,opts3,
-    (x,y) -> if instance(x,Matrix) and instance(y,Matrix) then y*x else y -- for TransformMatrix and AnimMatrix
-    )) -- cf similar method for OptionTable
 
 -- a bunch of options are scattered throughout the code:
 -- * all dimensions are redefined as dimensionless quantities: Radius, FontSize, etc
@@ -111,15 +102,19 @@ GraphicsObject ++ List := (opts1, opts2) -> (
 
 GraphicsType = new Type of Type -- all usable Graphics objects are ~ self-initialized
 
+crdlist := new MutableList; -- not thread-safe
 gParse2 = method()
-gParse2 (CacheTable,Thing) := (c,t) -> t
-gParse2 (CacheTable,Vector) := (c,v) -> new GraphicsCoordinate from hashTable { -- almost the same as new coord from object
-    symbol Compute => () -> c.CurrentMatrix*v, -- closure
-    symbol JsFunc => () -> "gNode("|c.Options#"id"|","|jsString v|")",
-    symbol formation => FunctionApplication{GraphicsCoordinate,expression v} -- not perfect but good enough for now
-    }
-
-gParse2 (CacheTable,List) := (c,l) -> apply(l,t->gParse2(c,t))
+gParse2 Thing := identity
+gParse2 Vector := v -> (
+    c:=new GraphicsCoordinate from hashTable { -- almost the same as new coord from object
+	symbol cache => new CacheTable,
+	symbol Vector => v,
+	symbol formation => FunctionApplication{GraphicsCoordinate,expression v} -- not perfect but good enough for now
+	};
+    crdlist#(#crdlist)=c.cache;
+    c
+    )
+gParse2 List := l -> apply(l,gParse2)
 
 GraphicsType List := (T,args) -> (
     opts0 := T.Options;
@@ -128,12 +123,14 @@ GraphicsType List := (T,args) -> (
     (opts,std):=override(,toSequence (opts0|args));
     std = sequence std;
     if #std > #opts0 then error "too many arguments";
-    c := new CacheTable;
-    opts0=apply(#opts0,i-> opts0#i#0 => gParse2(c,if i<#std then std#i else if opts#?(opts0#i#0) then opts#(opts0#i#0) else opts0#i#1));
+    crdlist = new MutableList; -- not thread-safe
+    opts0=apply(#opts0,i-> opts0#i#0 => gParse2(if i<#std then std#i else if opts#?(opts0#i#0) then opts#(opts0#i#0) else opts0#i#1));
     sty := new MutableHashTable from applyPairs(opts,(k,v) -> if class k === String then (k,v));
     opts' := select(pairs opts,(k,v) -> class k =!= String);
-    new T from hashTable (opts' | opts0
-	| { symbol style =>  sty, symbol cache => c})
+    g := new T from hashTable (opts' | opts0
+	| { symbol style =>  sty, symbol cache => new CacheTable});
+    scan(crdlist, c -> c.GraphicsObject = g); -- tell coordinates who they belong to
+    g
 )
 
 perspective = persp -> (
@@ -209,37 +206,64 @@ gList = true >> opts -> x -> (
     if any(cnt,x->not instance(x,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
     GraphicsList { symbol Contents => cnt, opts }
 )
-clone=method()
+-- crdlist := new MutableList; -- not thread-safe
+grlist := new MutableHashTable; -- not thread-safe
+clone=method(Dispatch=>Thing)
 clone VisibleList := l -> apply(l,clone)
 clone GraphicsObject := g -> (
-    c:=new CacheTable;
-    new class g from merge(applyValues(g,x->clone(c,x)),hashTable{symbol cache => c},last)
+    g':=new class g from merge(applyValues(g,clone),hashTable{symbol cache => new CacheTable,symbol style => new MutableHashTable from g.style},last);
+    grlist#g=g';
+    g'
     )
-clone (CacheTable,VisibleList) := (c,l) -> apply(l,x->clone(c,x))
-clone (CacheTable,GraphicsObject) := (c,g) -> clone g
-clone (CacheTable,GraphicsCoordinate) := (c,g) -> (
-    f := g.formation;
-    if class f =!= FunctionApplication or f#0 =!= GraphicsCoordinate or class f#1 =!= VectorExpression then g
-    else gParse2(c,value f#1) -- what about coordinates referring to other objects, or operations? TODO
+clone GraphicsCoordinate := v -> (
+    v':=applyValues(v,clone);
+    if v.?cache then (
+	v'=new GraphicsCoordinate from merge(v',hashTable{cache=>new CacheTable from v.cache},last);
+	crdlist#(#crdlist)=v';
+	);
+    v'
     )
-clone (CacheTable,Thing) := last
 clone Thing := identity
+cloneall = x -> (
+    crdlist=new MutableList; grlist=new MutableHashTable;
+    x=clone x;
+    scan(crdlist,v->v.cache.GraphicsObject=grlist#(v.cache.GraphicsObject)); -- TODO should test if coord refers outside picture
+    x
+    )
+
+-- TODO rewrite more cleanly?
+GraphicsObject ++ List := (opts1, opts2) -> (
+    opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
+    sty := new MutableHashTable from select(opts2,o -> class o#0 === String);
+    if #sty>0 then opts2 = append(opts2,symbol style => merge(opts1.style,sty,last));
+    x := new class opts1 from select(opts2,o -> class o#0 =!= String);
+    x=merge(opts1,x,
+	(m,y) -> if instance(m,Matrix) and instance(y,Matrix) then m*x else m -- for TransformMatrix and AnimMatrix
+	);
+    -- almost like cloneall
+    crdlist=new MutableList; grlist=new MutableHashTable;
+    x=clone x;
+    grlist#opts1=x;
+    scan(crdlist,v->v.cache.GraphicsObject=grlist#(v.cache.GraphicsObject)); -- TODO should test if coord refers outside picture
+    x
+    ) -- cf similar method for OptionTable
 
 -- lists with preferred coordinate
 gNode = true >> opts -> x -> (
     x = deepSplice sequence x;
     ctr := x#0;
     cnt := toList drop(x,1);
-    cnt = clone cnt;
+    cnt = cloneall cnt;
     gList (toSequence cnt | (opts,symbol TransformMatrix => translation ctr))
     )
 Number * GraphicsAncestor := (x,v) -> (
     v = gParse v;
     new GraphicsCoordinate from {
-    symbol Compute => () -> x*compute v,
-    symbol JsFunc => () -> "gTimes("|jsString x|","|jsString v|")",
-    symbol formation => Product{expression x,expression v}
-    })
+	symbol Arguments => (x,v),
+	symbol Compute => times,
+	symbol JsFunc => "gTimes",
+	symbol formation => Product{expression x,expression v}
+	})
 --Array + GraphicsAncestor := -- too messy to include Arrays in complex coordinate operations
 Vector + GraphicsAncestor :=
 GraphicsAncestor + Vector :=
@@ -247,9 +271,10 @@ GraphicsAncestor + GraphicsAncestor := (v,w) -> (
     v = gParse v;
     w = gParse w;
     new GraphicsCoordinate from {
-    symbol Compute => () -> compute v+compute w,
-    symbol JsFunc => () -> "gPlus("|jsString v|","|jsString w|")",
-    symbol formation => Sum{expression v,expression w}
+	symbol Arguments => (v,w),
+	symbol Compute => plus,
+	symbol JsFunc => "gPlus",
+	symbol formation => Sum{expression v,expression w}
     })
 - GraphicsAncestor := v -> (-1)*v
 Vector - GraphicsAncestor :=
@@ -266,9 +291,10 @@ place = (v,w,a,b) -> (
     v=gParse v;
     w=gParse w;
     new GraphicsCoordinate from {
-    symbol Compute => () -> place1(compute v,compute w,a,b),
-    symbol JsFunc => () -> "gPlace("|jsString v|","|jsString w|","|jsString a|","|jsString b|")",
-    symbol formation => FunctionApplication{place,(expression v,expression w,expression a,expression b)}
+	symbol Arguments => (v,w,a,b),
+	symbol Compute => place1,
+	symbol JsFunc => "gPlace",
+	symbol formation => FunctionApplication{place,(expression v,expression w,expression a,expression b)}
     })
 
 crossing1 := (v1,v2,w1,w2) -> ( -- intersect lines (v1,v2) and (w1,w2)
@@ -283,9 +309,10 @@ crossing = (v1,v2,w1,w2) -> (
     w1 = gParse w1;
     w2 = gParse w2;
     new GraphicsCoordinate from {
-    symbol Compute => () -> crossing1(compute v1,compute v2,compute w1,compute w2),
-    symbol JsFunc => () -> "gInter("|jsString v1|","|jsString v2|","|jsString w1|","|jsString w2|")",
-    symbol formation => FunctionApplication{crossing,(expression v1,expression v2,expression w1,expression w2)}
+	symbol Arguments => (v1,v2,w1,w2),
+	symbol Compute => crossing1,
+	symbol JsFunc => "gInter",
+	symbol formation => FunctionApplication{crossing,(expression v1,expression v2,expression w1,expression w2)}
     })
 
 bisector1 := (v,w1,w2) -> (
@@ -300,9 +327,10 @@ bisector = (v,w1,w2) -> (
     w1 = gParse w1;
     w2 = gParse w2;
     new GraphicsCoordinate from {
-    symbol Compute => () -> bisector1(compute v,compute w1,compute w2),
-    symbol JsFunc => () -> "gBisect("|jsString v|","|jsString w1|","|jsString w2|")",
-    symbol formation => FunctionApplication{bisector,(expression v,expression w1,expression w2)}
+	symbol Arguments => (v,w1,w2),
+	symbol Compute => bisector1,
+	symbol JsFunc => "gBisect",
+	symbol formation => FunctionApplication{bisector,(expression v,expression w1,expression w2)}
     })
 
 projection1 := (v,w1,w2) -> (
@@ -318,14 +346,19 @@ projection = (v,w1,w2) -> (
     w1 = gParse w1;
     w2 = gParse w2;
     new GraphicsCoordinate from {
-    symbol Compute => () -> projection1(compute v,compute w1,compute w2),
-    symbol JsFunc => () -> "gProject("|jsString v|","|jsString w1|","|jsString w2|")",
-    symbol formation => FunctionApplication{projection,(expression v,expression w1,expression w2)}
+	symbol Arguments => (v,w1,w2),
+	symbol Compute => projection1,
+	symbol JsFunc => "gProject",
+	symbol formation => FunctionApplication{projection,(expression v,expression w1,expression w2)}
     })
 
 compute = method()
-compute GraphicsCoordinate := v -> v.Compute ()
-compute Vector := identity -- for coordinates entered directly
+compute GraphicsCoordinate := v -> (
+    if v.?Compute then v.Compute apply(v.Arguments,compute)
+    else if v.?Vector then v.cache.GraphicsObject.cache.CurrentMatrix*v.Vector
+    else v.cache.GraphicsObject.cache.CurrentMatrix_3
+    )
+compute Thing := identity -- for coordinates entered directly, or other params
 
 GraphicsHtml = new GraphicsType of GraphicsText from ( "foreignObject",
     { symbol RefPoint => vector {0.,0.,0.,1.}, symbol TextContent => null, symbol FontSize => 14. },
@@ -369,7 +402,20 @@ jsString VisibleList := x -> "[" | demark(",",jsString\x) | "]"
 jsString MutableList := x -> jsString toList x
 jsString HashTable := x -> "{" | demark(",",apply(pairs x, (key,val) -> jsString key | ":" | jsString val)) | "}"
 jsString Option := x -> "times(" | jsString x#0 | "," | jsString x#1 | ")"
-jsString GraphicsCoordinate := x -> x.JsFunc()
+jsString GraphicsCoordinate := v -> (
+    if v.?JsFunc then concatenate(
+	v.JsFunc,
+	"(",
+	between(",",apply(v.Arguments, jsString)),
+	")"
+	)
+    else concatenate(
+	"gNode(",
+	v.cache.GraphicsObject.cache.Options#"id",
+	if v.?Vector then (",",jsString v.Vector),
+	")"
+	)
+    )
 jsString RR := x -> format(5,5,1000,1000,"e",x)
 
 one := map(RR^4,RR^4,1)
@@ -409,11 +455,13 @@ is3d GraphicsList := l -> (
 	true
 	) else false
     )
-is3d GraphicsCoordinate := x -> (x.Compute())_2 != 0 -- TEMP? TODO better
+is3d GraphicsCoordinate := x -> (compute x)_2 != 0 -- TEMP? TODO better
+
+infoneeded = (g,x) -> is3d g or not x.?cache or x.cache.GraphicsObject =!= g
 
 coord = (g,name,ind,labx,laby) -> (
     x := g#name;
-    if instance(x,GraphicsCoordinate) or is3d g then ac(g.cache.Options,"data-coords",ind,x); -- TODO now everyone's a GraphicsCoordinate...
+    if infoneeded(g,x) then ac(g.cache.Options,"data-coords",ind,x); -- we remove useless info...
     x=compute x;
     x' := project3d(x,g);
     g.cache.Options#labx = x'_0;
@@ -435,7 +483,7 @@ svg1 Ellipse := g -> (
 		r = r * scale;
 		);
 	    ) else (
-	    if is3d g or instance(r,GraphicsCoordinate) then ac(g.cache.Options,"data-coords",1,r); -- TODO modify: now always graphicscoordinate?
+	    if infoneeded(g,r) then ac(g.cache.Options,"data-coords",1,r);
 	    y:=project3d(compute r,g)-x';
 	    r=sqrt(y_0^2+y_1^2);
 	    );
@@ -480,7 +528,7 @@ svg1 Line := g -> (
 svg1 GraphicsPoly := g -> (
     x := g.PointList;
     x1 := select(x,y->not instance(y,String));
-    if is3d g or any(x1,y->instance(y,GraphicsCoordinate)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select? TODO also now everyone's a GraphicsCoordinate
+    if any(x1,y->infoneeded(g,y)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
     x1 = apply(x1,y->project3d(compute y,g));
     i:=-1;
     s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{jsString x1#i_0,jsString x1#i_1}) else y));
