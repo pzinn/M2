@@ -9,7 +9,7 @@ peek' = method(TypicalValue => Hypertext)
 peek'(ZZ,Nothing) := (depth,s) -> SPAN "null"
 peek'(ZZ,Thing) := (depth,s) -> SPAN s
 
-peek'(ZZ,VerticalList)        :=
+peek'(ZZ,BasicList)        :=
 peek'(ZZ,Constant)            :=
 peek'(ZZ,InfiniteNumber)      :=
 peek'(ZZ,IndeterminateNumber) := (depth,s) -> SPAN (
