@@ -52,14 +52,25 @@ gParse Matrix := x -> (
     if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
     if rank source x == 2 then x++1.++1. else if rank source x == 3 then x++1. else sub(x,RR)
     )
-gParse Vector := x -> (
-    if rank class x < 2 or rank class x > 4 then error "wrong coordinates";
-    if rank class x === 2 then x || vector {0,1.}
-    else if rank class x === 3 then x || vector {1.}
-    else if rank class x === 4 then sub(x,RR)
+gParse Vector := x -> gParse(x,4)
+gParse (Vector,ZZ) := (x,d) -> (
+    x=sub(x,RR);
+    if rank class x > d then error "wrong coordinates";
+    if rank class x == d then return x;
+    while rank class x < d-1 do x = x || vector {0.};
+    x || vector {1.}
     )
 gParse List := l -> apply(l,gParse)
-gParse Option := o -> if o#0 === symbol Contents then o else o#0 => gParse o#1 -- don't parse Contents. annoying side-effect: can't use short syntax with GraphicsList
+gParse Option := o -> (
+    if o#0 === symbol Contents then o -- don't parse Contents. annoying side-effect: can't use short syntax with GraphicsList
+    else if o#0 === symbol ViewPort then o#0 => (
+	-- special
+	x1:=sub(o#1#0#0,RR); x2:=sub(o#1#1#0,RR);
+	y1:=sub(o#1#0#1,RR); y2:=sub(o#1#1#1,RR);
+	{vector {min(x1,x2),min(y1,y2)}, vector {max(x1,x2),max(y1,y2)}}
+	)
+    else o#0 => gParse o#1
+    )
 gParse OptionTable := h -> applyValues(h,gParse)
 gParse Thing := identity
 
@@ -239,7 +250,7 @@ GraphicsObject ++ List := (opts1, opts2) -> (
     if #sty>0 then opts2 = append(opts2,symbol style => merge(opts1.style,sty,last));
     x := new class opts1 from select(opts2,o -> class o#0 =!= String);
     x=merge(opts1,x,
-	(m,y) -> if instance(m,Matrix) and instance(y,Matrix) then m*x else m -- for TransformMatrix and AnimMatrix
+	(m,y) -> if instance(m,Matrix) and instance(y,Matrix) then m*y else m -- for TransformMatrix and AnimMatrix
 	);
     -- almost like cloneall
     crdlist=new MutableList; grlist=new MutableHashTable;
@@ -1540,6 +1551,8 @@ multidoc ///
    Text
     An option to fix manually the view port range of a @ TO {GraphicsObject} @.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
+   Example
+    Circle{Radius=>1,"fill"=>"red",ViewPort=>{[0,0],[1,1]},Margin=>0}
   SeeAlso
    viewPort
    Margin
