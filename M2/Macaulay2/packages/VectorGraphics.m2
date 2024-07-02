@@ -611,7 +611,7 @@ precompute := (g,m,c) -> ( -- 1st phase (object,current matrix,cache of owner)
     )
 
 updateGraphicsCache := (g,m) -> ( -- 2nd phase (object,current matrix)
-    updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
+--    updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
     if g.?Contents then (
 	is3d g; -- TODO better to force 3d state of children to be determined
 	scan(g.Contents,x -> updateGraphicsCache(x,g.cache.CurrentMatrix));
@@ -648,7 +648,7 @@ addAttribute(animateTransform,svgAttr|animateAttr|{"type"})
 
 svg2 = (g,m) -> ( -- 3rd phase (object,current matrix)
     s := try svgElement class g else return; -- what is the else for?
-    updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
+--    updateTransformMatrix(g,m); -- it's already been done but annoying issue of objects that appear several times
     g.cache.Contents={};
     svg1 g;
     filter g;
