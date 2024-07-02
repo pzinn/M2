@@ -144,19 +144,17 @@ GraphicsType List := (T,args) -> (
     g
 )
 
-perspective = persp -> (
-    if instance(persp,Matrix) then persp else (
-	if persp === () then persp = 1000;
-	matrix {{1,0,0,0},{0,-1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
+perspective = method()
+perspective Matrix := identity
+perspective Number := persp -> matrix {{1,0,0,0},{0,1,0,0},{0,0,-1,0},{0,0,-1/persp,1}} -- output is {x,y,z,1-z/p}
     -- note in particular that distance = z-p *cannot* be extracted from this;
     -- however, z/(1-z/p) is essentially inverse distance which is good enough for sorting purposes
-    )
-)
+installMethod(perspective,()->perspective 1000) -- use option?
 
 viewPort = g -> (
     svg g; -- need to be rendered
     v := g.cache.ViewPort;
-    {vector{v#0_0,-v#1_1},vector{v#1_0,-v#0_1}} -- annoying negative sign
+    {vector{v#0_0,v#0_1},vector{v#1_0,v#1_1}}
     )
 
 
@@ -480,7 +478,7 @@ coord = (g,name,ind,labx,laby) -> (
     x=compute x;
     x' := project3d(x,g);
     g.cache.Options#labx = x'_0;
-    g.cache.Options#laby = x'_1;
+    g.cache.Options#laby = - x'_1; -- svg has y coordinates inverted but we want to do this at the last minute
     (x,x')
 )
 
@@ -546,7 +544,7 @@ svg1 GraphicsPoly := g -> (
     if any(x1,y->infoneeded(g,y)) then g.cache.Options#"data-coords"=x1; -- be more subtle? select?
     x1 = apply(x1,y->project3d(compute y,g));
     i:=-1;
-    s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{jsString x1#i_0,jsString x1#i_1}) else y));
+    s := demark(" ", flatten apply(x, y -> if not instance(y,String) then (i=i+1;{jsString x1#i_0,jsString (-x1#i_1)}) else y));
     if instance(g,Path) then g.cache.Options#"d" = s else g.cache.Options#"points" = s;
     -- viewport
     g.cache.ViewPort= if #x1 === 0 then null else (
@@ -578,7 +576,7 @@ svg1 GraphicsText := g -> (
 	r := vector { f*0.6*length g.TextContent, 0.8*f }; -- width/height. very approximate TODO properly
 	x' = x' + vector {
 	    if g.style#?"text-anchor" then (if g.style#"text-anchor" == "middle" then -0.5*r_0 else if g.style#"text-anchor" == "end" then -r_0 else 0) else 0,
-	    if g.style#?"dominant-baseline" then (if g.style#"dominant-baseline" == "middle" then -0.5*r_1 else if g.style#"dominant-baseline" == "hanging" then 0 else -r_1) else -r_1
+	    if g.style#?"dominant-baseline" then (if g.style#"dominant-baseline" == "middle" then -0.5*r_1 else if g.style#"dominant-baseline" == "hanging" then -r_1 else 0) else 0
 	    };
 	{x',x'+r}
 	);
@@ -699,9 +697,8 @@ new SVG from GraphicsObject := (S,g) -> (
     main := svg g; -- run this first because it will compute the ranges too
     if main === null then return {};
     ss := {};
-    if g.?Perspective then ss = append(ss,"data-pmatrix" => jsString g.cache.PerspectiveMatrix);
-    if g.?ViewPort then r := {vector{g.ViewPort#0_0,-g.ViewPort#1_1}, vector {g.ViewPort#1_0,-g.ViewPort#0_1}} -- annoying negative sign
-    else r = g.cache.ViewPort; -- should be cached at this stage
+    if g.?Perspective then ss = append(ss,"data-pmatrix" => jsString (diagonalMatrix{1,-1,1,1}*g.cache.PerspectiveMatrix)); -- annoying sign
+    r := if g.?ViewPort then g.ViewPort else g.cache.ViewPort; -- should be cached at this stage
     if r === null or r#0 == r#1 then ( r={vector {0.,0.},vector {0.,0.}}; rr:=vector{0.,0.}; g.cache.Size=vector{0.,0.}; ) else (
 	r = apply(r,numeric);
 	rr = r#1 - r#0;
@@ -778,7 +775,7 @@ new SVG from GraphicsObject := (S,g) -> (
 	"style" => concatenate("width:",toString g.cache.Size_0,"em;",
 	    "height:",toString g.cache.Size_1,"em;"
 	    ),
-	"viewBox" => concatenate between(" ",toString \ {r#0_0,r#0_1,r#1_0-r#0_0,r#1_1-r#0_1})
+	"viewBox" => concatenate between(" ",toString \ {r#0_0,-r#1_1,r#1_0-r#0_0,r#1_1-r#0_1})
 	};
     if is3d g or draggable g then ss = append(ss, "onmousedown" => "gfxMouseDown(event)"); -- TODO more customized: might want 2d background drag etc
     if is3d g then (
@@ -1080,7 +1077,7 @@ filter = g -> (
 			light = p*(light || vector {1});
 			opts = opts | {
 			    feSpecularLighting { "result" => "spec"|toString i, "specularExponent" => toString gg.Specular, "lighting-color" => if sp<0 then "black" else toString gg.style#"fill",
-				fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
+				fePointLight { "data-origin" => gg.cache.Options#"id", "x" => toString(light_0/light_3), "y" => toString(-light_1/light_3), "z" => toString(4*gg.Radius/light_3) } },
 			    feComposite { "in" => "spec"|toString i, "in2" => "SourceGraphic", "operator" => "in", "result" => "clipspec"|toString i },
 			    feComposite { "in" => (if i==0 then "SourceGraphic" else "result"|toString(i-1)),  "in2" => "clipspec"|toString i, "result" => "result"|toString i,
 				"operator" => "arithmetic", "k1" => "0", "k2" => "1", "k3" => "1", "k4" => "0" }
