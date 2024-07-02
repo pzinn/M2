@@ -224,14 +224,15 @@ clone GraphicsCoordinate := v -> (
     v'
     )
 clone Thing := identity
+-*
 cloneall = x -> (
     crdlist=new MutableList; grlist=new MutableHashTable;
     x=clone x;
     scan(crdlist,v->v.cache.GraphicsObject=grlist#(v.cache.GraphicsObject)); -- TODO should test if coord refers outside picture
     x
     )
+*-
 
--- TODO rewrite more cleanly?
 GraphicsObject ++ List := (opts1, opts2) -> (
     opts2 = gParse if any(opts2,x->x#0===symbol cache) then opts2 else append(opts2,symbol cache => new CacheTable);
     sty := new MutableHashTable from select(opts2,o -> class o#0 === String);
@@ -250,12 +251,15 @@ GraphicsObject ++ List := (opts1, opts2) -> (
 
 -- lists with preferred coordinate
 gNode = true >> opts -> x -> (
-    x = deepSplice sequence x;
+    x = nonnull toList deepSplice sequence x;
     ctr := x#0;
-    cnt := toList drop(x,1);
-    cnt = cloneall cnt;
-    gList (toSequence cnt | (opts,symbol TransformMatrix => translation ctr))
-    )
+    cnt := drop(x,1);
+    if any(cnt,y->not instance(y,GraphicsObject)) then error "Contents should be a list of GraphicsObject only";
+    -- minor optimization: if exactly one content, we don't encapsulate it in a GraphicsList
+    if #cnt === 1 then cnt#0 ++ append(apply(pairs opts,(a,b)->a=>b),symbol TransformMatrix => translation ctr)
+    else GraphicsList { symbol Contents => cnt, opts } ++ { symbol TransformMatrix => translation ctr }
+)
+
 Number * GraphicsAncestor := (x,v) -> (
     v = gParse v;
     new GraphicsCoordinate from {
@@ -1368,8 +1372,6 @@ multidoc ///
     tetra=gList(apply(0..3,i->Polygon{f#i,"fill"=>c#i,"stroke"=>"none"}),
 	Light{[110,0,0],Radius=>10,"opacity"=>"1"},ViewPort=>{vector{-110,-100},vector{110,100}},
 	Size=>40,TransformMatrix=>rotation(-1.5,[4,1,0]))
-  Caveat
-   Do not use the same @TT "Light"@ object multiple times within the same @ TO {GraphicsObject} @.
  Node
   Key
    GraphicsCoordinate
@@ -1485,9 +1487,10 @@ multidoc ///
   Description
    Text
     viewPort gives the range of view port occupied by a @ TO {GraphicsObject} @, as computed by the package.
-    See also @ TO{ViewPort} @.
   Caveat
-    At the moment viewPort does not take into account the width of "stroke"s.
+    @TT "viewPort"@ does not take into account the width of "stroke"s.
+  SeeAlso
+    ViewPort
  Node
   Key
    rotation
@@ -1516,10 +1519,12 @@ multidoc ///
        vector{-8.130, 5.783, 0.671}, vector {-2.052, -7.993, -5.649}};
     f={{v#2,v#1,v#0},{v#0,v#1,v#3},{v#0,v#3,v#2},{v#1,v#2,v#3}};
     tetra=gList(apply(4,i->Polygon{f#i,"fill"=>"white"}))
-    g = memoize(n -> if n==0 then tetra else gList apply(4,i->gNode(2^(n-1)*v#i,g(n-1))))
+    g = memoize(n -> if n==0 then tetra else gList apply(4,i->g(n-1)++{TransformMatrix=>translation(2^(n-1)*v#i)}))
     apply(4,g)
   Usage
    translation ( vector )
+  SeeAlso
+   gNode
  Node
   Key
    OneSided
@@ -1535,7 +1540,9 @@ multidoc ///
    Text
     An option to fix manually the view port range of a @ TO {GraphicsObject} @.
     Only has an effect if in the outermost @ TO {VectorGraphics} @ object.
-    See also @ TO{viewPort} @ and @ TO{Margin} @.
+  SeeAlso
+   viewPort
+   Margin
  Node
   Key
    Size
@@ -1744,24 +1751,23 @@ multidoc ///
     circ = Circle{Radius=>0.1,"fill"=>"red"}; a = gNode([-1,0],circ,Draggable=>true); b = gNode([1,0.5],circ,Draggable=>true);  c = gNode([1,-0.5],circ,Draggable=>true);
     gList(Polygon{{[-1,0],[1,0.5],[1,-0.5]}},a,b,c)
     gList(Polygon{{a,b,c}},a,b,c)
- Node
-  Key
-   gNode
-  Headline
-   VectorGraphics copy of object(s) with a modified reference origin
-  Description
-   Text
-    @TT "gNode(coord,a,b,c...)"@ is a shortcut for @TT "gList(a',b',c'..., TransformMatrix => translation coord)"@,
-    where @TT "coord"@ are the coordinates of the new reference origin, and @TT "a', b', c'..."@ are copies
-    of the graphical objects @TT "a,b,c..."@.
-   Example
-    a=gNode([-1,-1],Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"})
-    b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black"},Draggable=>true)
-    gList(Line{a,b},a,b)
    Text
     Dragging acts recursively:
    Example
     l=null; scan(5,i->l=gNode([100,0],l,Circle{"fill"=>"red"},Draggable=>true)); l++{Margin=>1}
+ Node
+  Key
+   gNode
+  Headline
+   VectorGraphics object(s) with a preferred reference origin
+  Description
+   Text
+    @TT "gNode(coord,obj)"@ is a shortcut for @TT "obj ++ { TransformMatrix => translation coord }"@, where @TT "obj"@ is some @ TO {GraphicsObject} @ and @TT "coord"@ the coordinates of the new reference origin.
+    @TT "gNode(coord,a,b,c)"@ is a shortcut for @TT "gList(a,b,c) ++ { TransformMatrix => translation coord }"@.
+   Example
+    a=gNode([-1,-1],Circle{Radius=>0.1,"fill"=>"red","stroke"=>"black"})
+    b=gNode([1,1],Circle{Radius=>0.1,"fill"=>"green","stroke"=>"black"},Draggable=>true)
+    gList(Line{a,b},a,b)
  Node
   Key
    place
@@ -1859,7 +1865,7 @@ undocumented {
     Contents, TextContent, RefPoint, Specular, Radius, Point1, Point2, PointList, Mesh, FontSize, RadiusX, RadiusY, Frame,
     (symbol ++, GraphicsObject, List), (symbol ?,GraphicsObject,GraphicsObject), (symbol SPACE,GraphicsType,List),
     (expression, GraphicsAncestor), (html,GraphicsObject), (net,GraphicsAncestor), (toString,GraphicsAncestor), (short,GraphicsObject),
-    (tex, SVG), (texMath, SVG), (tex, GraphicsObject), (texMath, GraphicsObject), 
+    (tex, SVG), (texMath, SVG), (tex, GraphicsObject), (texMath, GraphicsObject), (hypertext, GraphicsObject),
     (expression, GraphicsCoordinate), (net, GraphicsCoordinate), (html, GraphicsCoordinate), (toString, GraphicsCoordinate),
     (NewOfFromMethod,GraphicsType,GraphicsObject,VisibleList), (NewFromMethod,SVG,GraphicsObject), (NewFromMethod,GraphicsCoordinate,GraphicsObject)
 }
