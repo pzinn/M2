@@ -1344,7 +1344,7 @@ export printError(err:Error):Error := (
      	if !isEmptySequenceE(err.message) then setGlobalVariable(errorMessage,err.message);
         setGlobalVariable(errorPosition,Expr(sethash(List(filePositionClass,
 	Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth)),
-	0,false),false)));
+	hash_t(0),false),false)));
      when applyEE(errorPrint,Expr(Sequence()))
      is e:Error do (
          if debugLevel == 123 then stderr << e.position << " errorPrint error: " << tostringerror(e.message) <<endl;
@@ -1503,7 +1503,7 @@ export evalraw(c:Code):Expr := (
 	       is Error do left
 	       else binarymethod(left,b.rhs,AdjacentS))
 	  is m:functionCode do (
-	       fc := FunctionClosure(noRecycle(localFrame),m,0);
+	       fc := FunctionClosure(noRecycle(localFrame),m,hash_t(0));
 	       fc.hash = hashFromAddress(Expr(fc));
 	       return Expr(fc))
 	  is r:localMemoryReferenceCode do (

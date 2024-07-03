@@ -1,6 +1,7 @@
 --		Copyright 1994 by Daniel R. Grayson
 use binding;
 use common;
+use util;
 
 dummyMultaryFun(c:CodeSequence):Expr := (
      error("dummy multary function called");
@@ -188,7 +189,13 @@ export convert0(e:ParseTree):Code := (
 	  var := token.entry;
 	  wrd := token.word;
 	  if wrd.typecode == TCRR
-	  then Code(realCode(parseRR(wrd.name),location(token)))
+	  then (
+	       x:= parseRR(wrd.name);
+	       when x
+	       is y:RR do Code(realCode(y, location(token)))
+	       is null do Code(Error(position(token),
+		       toExpr("expected precision to be a small non-negative integer"),
+		       nullE,false,dummyFrame)))
 	  else if wrd.typecode == TCint
 	  then Code(integerCode(parseInt(wrd.name),location(token)))
  	  else if wrd.typecode == TCstring
@@ -426,7 +433,7 @@ export convert0(e:ParseTree):Code := (
      is a:Arrow do (
      	       p:=treePosition(a.lhs);
 	       fc:=functionCode(
-	       unseq(c:=convert0(a.rhs)),a.desc,0,
+	       unseq(c:=convert0(a.rhs)),a.desc,hash_t(0),
 	       combineLocation(p,codeLocation(c),position(a.Operator)));
 	       fc.hash = hashFromAddress(Expr(fc));
 	       Code(fc))
