@@ -156,6 +156,7 @@ factor PolynomialRing := opts -> R -> (
     newRf:=Rf#(NewFromMethod,Rf,R);
     mulR:=lookup(symbol *,R,R);
     powR:=lookup(symbol ^,R,ZZ);
+    divR:=lookup(symbol /,R,R);
     valRf:=lookup(value,Rf);
     factored(Rf,Boolean):= (X,flag) -> if flag then (
 	use R;
@@ -164,12 +165,18 @@ factor PolynomialRing := opts -> R -> (
 	else {1_R,{(x,1)}};
 	R * R := (x,y) -> if #(listForm x) === 1 and #(listForm y) === 1 then mulR(x,y) else (new Rf from x)*(new Rf from y);
 	R ^ ZZ := (x,i) -> if #(listForm x) === 1 then powR(x,i) else (new Rf from x)^i;
+	if Rf.?frac then (
+	    R / R := (x,y) -> new Rf.frac from {new Rf from x,new Rf from y};
+	    );
 	value Rf := a -> if #(a#1)==0 then a#0 else mulR(a#0,fold(mulR,apply(a#1,powR)));
 	)
     else (
 	new Rf from R := newRf;
 	R * R := mulR;
 	R ^ ZZ := powR;
+	if Rf.?frac then (
+	    R / R := divR;
+	    );
 	value Rf := valRf;
 	use Rf;
 	);
