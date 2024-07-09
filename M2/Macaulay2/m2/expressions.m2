@@ -557,9 +557,9 @@ matrixOpts := m -> ( -- helper function
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if #m>0 then m = if class m#0===ZeroExpression then m#0#0 else applyTable(m,expressionValue);
+    if #m>0 then m = if class m#0===ZeroExpression then m#0#0 else (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
     -- TODO: keep track of blocks too
-    if opts.Degrees === null then (if opts.MutableMatrix then mutableMatrix else matrix) m else (
+    if opts.Degrees === null then m else (
     R := ring m;
     map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),m)
     ))
