@@ -757,11 +757,6 @@ mode MutableHashTable := H -> new ModeDependentFunctionClosure from ( x -> (if H
 modes = method()
 modes ModeDependentFunctionClosure := f -> (frame f)#0
 
--- augmented assignment -- syntactic sugar for installing methods
--- e.g., "T += f" is equivalent to "installMethod(symbol +=, T, f)"
-scan(augmentedAssignmentOperators, op ->
-    installMethod(op, Type, Function => (T, f) -> installMethod(op, T, f)))
-
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:
