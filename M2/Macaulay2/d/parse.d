@@ -113,7 +113,7 @@ export Dictionary := {
 
 export Token := {+		-- a word, as encountered in the input
      word:Word,			--   the word
-     filename:string, line:ushort, column:ushort, line2:ushort, column2:ushort, loadDepth:ushort, -- position:Position, --   the location where it was encountered
+     position:Position,         --   the location where it was encountered
      dictionary:Dictionary,	--   the dictionary active at the time it was encountered
      entry:Symbol,     	  	--   the symbol table entry, found in the dictionary above, or one for wider lexical scope
      followsNewline:bool        --   whether it followed white space with a newline in it
@@ -161,45 +161,45 @@ export ParseTree := (
 export localSymbolClosureCode := {+
      nestingDepth:int,
      symbol:Symbol,
-     location:Location
+     position:Position
      };
 export globalSymbolClosureCode := {+
      symbol:Symbol,
-     location:Location
+     position:Position
      };
 export threadSymbolClosureCode := {+
      symbol:Symbol,
-     location:Location,
+     position:Position,
      x:void						    -- just to distinguish it
      };
 export localMemoryReferenceCode := {+
      nestingDepth:int,
      frameindex:int,
-     location:Location
+     position:Position
      };
 export globalMemoryReferenceCode := {+
      frameindex:int,
-     location:Location
+     position:Position
      };
 export threadMemoryReferenceCode := {+
      frameindex:int,
-     location:Location,
+     position:Position,
      x:void						    -- just to distinguish it
      };
 export localAssignmentCode := {+
      nestingDepth:int,
      frameindex:int,
      rhs:Code,
-     location:Location
+     position:Position
      };
 export globalAssignmentCode := {+
      lhs:Symbol,
      rhs:Code,
-     location:Location
+     position:Position
      };
-export ifCode := {+ predicate:Code, thenClause:Code, elseClause:Code, location:Location };
-export tryCode := {+ code:Code, thenClause:Code, elseClause:Code, location:Location };
-export catchCode := {+ code:Code, location:Location };
+export ifCode := {+ predicate:Code, thenClause:Code, elseClause:Code, position:Position };
+export tryCode := {+ code:Code, thenClause:Code, elseClause:Code, position:Position };
+export catchCode := {+ code:Code, position:Position };
 
 export SymbolSequence := array(Symbol);
 export parallelAssignmentCode := {+
@@ -207,44 +207,44 @@ export parallelAssignmentCode := {+
      frameindex:array(int),
      lhs:SymbolSequence, -- spots corresponding to local variables are filled with dummySymbol
      rhs:Code,
-     location:Location};
+     position:Position};
 
 export augmentedAssignmentCode := {+
     oper:Symbol,
     lhs:Code,
     rhs:Code,
     info:Symbol, -- variable name or operator
-    location:Location};
+    position:Position};
 
 -- code that's already been evaluated; needed for augmented assignment
-export evaluatedCode := {+ expr:Expr, location:Location};
+export evaluatedCode := {+ expr:Expr, position:Position};
 
 export nullCode := {+};
-export realCode := {+x:RR,location:Location};
-export integerCode := {+x:ZZ,location:Location};
-export stringCode := {+x:string,location:Location};
-export unaryCode := {+f:unop,rhs:Code,location:Location};
-export binaryCode := {+f:binop,lhs:Code,rhs:Code,location:Location};
-export adjacentCode := {+lhs:Code,rhs:Code,location:Location};
-export whileDoCode := {+predicate:Code,doClause:Code,location:Location};
-export whileListCode := {+predicate:Code,listClause:Code,location:Location};
-export whileListDoCode := {+predicate:Code,listClause:Code,doClause:Code,location:Location};
+export realCode := {+x:RR,position:Position};
+export integerCode := {+x:ZZ,position:Position};
+export stringCode := {+x:string,position:Position};
+export unaryCode := {+f:unop,rhs:Code,position:Position};
+export binaryCode := {+f:binop,lhs:Code,rhs:Code,position:Position};
+export adjacentCode := {+lhs:Code,rhs:Code,position:Position};
+export whileDoCode := {+predicate:Code,doClause:Code,position:Position};
+export whileListCode := {+predicate:Code,listClause:Code,position:Position};
+export whileListDoCode := {+predicate:Code,listClause:Code,doClause:Code,position:Position};
 
-export ternaryCode := {+f:ternop,arg1:Code,arg2:Code,arg3:Code,location:Location};
+export ternaryCode := {+f:ternop,arg1:Code,arg2:Code,arg3:Code,position:Position};
 
-export newOfFromCode := {+newClause:Code,ofClause:Code,fromClause:Code,location:Location};
-export newFromCode   := {+newClause:Code,fromClause:Code,location:Location};
-export newOfCode     := {+newClause:Code,ofClause:Code,location:Location};
-export newCode       := {+newClause:Code,location:Location};
+export newOfFromCode := {+newClause:Code,ofClause:Code,fromClause:Code,position:Position};
+export newFromCode   := {+newClause:Code,fromClause:Code,position:Position};
+export newOfCode     := {+newClause:Code,ofClause:Code,position:Position};
+export newCode       := {+newClause:Code,position:Position};
 
 export CodeSequence     := tarray(Code);
-export sequenceCode     := {+x:CodeSequence, location:Location};
-export listCode         := {+y:CodeSequence, location:Location};
-export arrayCode        := {+z:CodeSequence, location:Location};
-export angleBarListCode := {+t:CodeSequence, location:Location};
-export semiCode         := {+w:CodeSequence, location:Location};
-export multaryCode      := {+f:multop, args:CodeSequence, location:Location};
-export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, location:Location} ;
+export sequenceCode     := {+x:CodeSequence, position:Position};
+export listCode         := {+y:CodeSequence, position:Position};
+export arrayCode        := {+z:CodeSequence, position:Position};
+export angleBarListCode := {+t:CodeSequence, position:Position};
+export semiCode         := {+w:CodeSequence, position:Position};
+export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
+export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 
 export newLocalFrameCode := {+
      frameID:int,
@@ -262,7 +262,7 @@ export functionCode := {+
      body:Code,
      desc:functionDescription,
      hash:hash_t,
-     location:Location
+     position:Position
      };
 export Code := (
      nullCode or realCode or stringCode or integerCode 

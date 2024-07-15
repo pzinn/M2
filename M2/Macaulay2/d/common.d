@@ -3,52 +3,48 @@ use basic;
 use binding;
 use stdiop0;
 
-export codeLocation(c:Code):Location := (
+export codePosition(c:Code):Position := ( -- TODO retire
      when c
-     is f:adjacentCode do f.location
-     is f:augmentedAssignmentCode do f.location
-     is f:arrayCode do f.location
-     is f:angleBarListCode do f.location
-     is f:binaryCode do f.location
-     is f:catchCode do f.location
-     is f:Error do ( p:=f.position; Location(p.filename,p.line,p.column,p.line,p.column,p.line,p.column,p.loadDepth) )
-     is f:evaluatedCode do f.location
-     is f:forCode do f.location
-     is f:functionCode do f.location
-     is f:globalAssignmentCode do f.location
-     is f:globalMemoryReferenceCode do f.location
-     is f:globalSymbolClosureCode do f.location
-     is f:ifCode do f.location
-     is f:integerCode do f.location
-     is f:listCode do f.location
-     is f:localAssignmentCode do f.location
-     is f:localMemoryReferenceCode do f.location
-     is f:localSymbolClosureCode do f.location
-     is f:multaryCode do f.location
-     is f:newCode do f.location
-     is f:newFromCode do f.location
-     is f:newLocalFrameCode do codeLocation(f.body)
-     is f:newOfCode do f.location
-     is f:newOfFromCode do f.location
-     is f:nullCode do dummyLocation
-     is f:parallelAssignmentCode do f.location
-     is f:realCode do f.location
-     is f:semiCode do f.location
-     is f:sequenceCode do f.location
-     is f:stringCode do f.location
-     is f:ternaryCode do f.location
-     is f:threadMemoryReferenceCode do f.location
-     is f:threadSymbolClosureCode do f.location
-     is f:tryCode do f.location
-     is f:unaryCode do f.location
-     is f:whileDoCode do f.location
-     is f:whileListCode do f.location
-     is f:whileListDoCode do f.location
+     is f:adjacentCode do f.position
+     is f:augmentedAssignmentCode do f.position
+     is f:arrayCode do f.position
+     is f:angleBarListCode do f.position
+     is f:binaryCode do f.position
+     is f:catchCode do f.position
+     is f:Error do f.position
+     is f:evaluatedCode do f.position
+     is f:forCode do f.position
+     is f:functionCode do f.position
+     is f:globalAssignmentCode do f.position
+     is f:globalMemoryReferenceCode do f.position
+     is f:globalSymbolClosureCode do f.position
+     is f:ifCode do f.position
+     is f:integerCode do f.position
+     is f:listCode do f.position
+     is f:localAssignmentCode do f.position
+     is f:localMemoryReferenceCode do f.position
+     is f:localSymbolClosureCode do f.position
+     is f:multaryCode do f.position
+     is f:newCode do f.position
+     is f:newFromCode do f.position
+     is f:newLocalFrameCode do codePosition(f.body)
+     is f:newOfCode do f.position
+     is f:newOfFromCode do f.position
+     is f:nullCode do dummyPosition
+     is f:parallelAssignmentCode do f.position
+     is f:realCode do f.position
+     is f:semiCode do f.position
+     is f:sequenceCode do f.position
+     is f:stringCode do f.position
+     is f:ternaryCode do f.position
+     is f:threadMemoryReferenceCode do f.position
+     is f:threadSymbolClosureCode do f.position
+     is f:tryCode do f.position
+     is f:unaryCode do f.position
+     is f:whileDoCode do f.position
+     is f:whileListCode do f.position
+     is f:whileListDoCode do f.position
      );
-
-export position(l:Location):Position := Position(l.filename,l.line3,l.column3,l.loadDepth);
-
-export codePosition(c:Code):Position := position(codeLocation(c));
 
 export pos(c:Code):void := (					    -- for use in the debugger
      stdIO << codePosition(c) << endl;

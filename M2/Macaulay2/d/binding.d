@@ -397,7 +397,7 @@ export StopIterationE := Expr(StopIterationS);
 
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
-     e := makeSymbol(t.word,position(t),t.dictionary);
+     e := makeSymbol(t.word,t.position,t.dictionary); -- TODO check that symbol has correct position range
      t.entry = e;
      e);
 --Error flag for parsing; should be thread local because may have multiple threads parsing at once
@@ -406,7 +406,7 @@ export makeErrorTree(p:Position,message:string):void := (
      bindErr = new ErrorTree len length(bindErr)+1 do (foreach e in bindErr do provide e; provide ErrorTree1(p,message));   --ErrorTree(ErrorTree1(p,message));
      );
 export makeErrorTree(e:ParseTree,message:string):void := makeErrorTree(treePosition(e),message);
-export makeErrorTree(e:Token,message:string):void := makeErrorTree(position(e),message);
+export makeErrorTree(e:Token,message:string):void := makeErrorTree(e.position,message);
 makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is token:Token do (
@@ -458,7 +458,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  when lookup(t.word,t.dictionary)
      	  is entry:Symbol do (
 	       t.entry = entry;
-	       if entry.position == tempPosition then entry.position = position(t);
+	       if entry.position == tempPosition then entry.position = t.position;
 	       if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
 	       if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
 	       )
@@ -474,7 +474,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
 
 		    locallyCreated := t.dictionary.frameID != 0 && dictionaryDepth(t.dictionary) > 0;
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
-		    t.entry = makeSymbol(t.word,position(t),globalDictionary,thread,locallyCreated);
+		    t.entry = makeSymbol(t.word,t.position,globalDictionary,thread,locallyCreated);
 		    )
 	       else makeErrorTree(t,"undefined symbol " + t.word.name);
 	       	    )));
@@ -639,7 +639,7 @@ bindTokenLocally(t:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 1;
      when r
      is entry:Symbol do (
-	  if dictionary.frameID == entry.frameID && !SuppressErrors then stderr << position(t) << " warning: local declaration of " + t.word.name + " shields variable with same name" << endl;
+	  if dictionary.frameID == entry.frameID && !SuppressErrors then stderr << t.position << " warning: local declaration of " + t.word.name + " shields variable with same name" << endl;
 	  )
      else nothing;
      t.dictionary = dictionary;

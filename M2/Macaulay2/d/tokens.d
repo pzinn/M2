@@ -60,9 +60,6 @@ export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
 (threadLocal export debuggingMode := false) = true;
 
-export location(t:Token):Location := Location(t.filename,t.line,t.column,t.line2,t.column2,t.line,t.column,t.loadDepth);
-export position(t:Token):Position := Position(t.filename,t.line,t.column,t.loadDepth);
-
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame
      );

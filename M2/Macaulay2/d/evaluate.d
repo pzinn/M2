@@ -13,7 +13,7 @@ threadLocal recycleBin := new array(Frame) len 20 do provide dummyFrame;
 export trace := false;
 threadLocal export backtrace := true;
 threadLocal lastCode := dummyCode;
-threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0));
+threadLocal lastCodePosition := Position("",ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0),ushort(0));
 export chars := new array(Expr) len 256 do (
     i := 0;
     while i<256 do (
@@ -46,7 +46,7 @@ WrongNumArgs(c:Code,wanted:int,got:int):Expr;
 export printErrorMessageE(c:Code,message:string):Expr := printErrorMessageE(codePosition(c),toExpr(message));
 export printErrorMessageE(c:Code,message:Expr):Expr := printErrorMessageE(codePosition(c),message);
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
-     printErrorMessageE(position(c),toExpr(message)));
+     printErrorMessageE(c.position,toExpr(message)));
 
 handleError(c:Code,e:Expr):Expr;
 eval(c:Code):Expr;
@@ -1263,7 +1263,7 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    e := tryEval(x.lhs);
 	    if tryEvalSuccess then lexpr = e)
 	else lexpr = eval(x.lhs);
-	left := evaluatedCode(lexpr, dummyLocation);
+	left := evaluatedCode(lexpr, dummyPosition);
 	when left.expr is e:Error do return Expr(e) else nothing;
 	-- check if user-defined method exists
 	meth := lookup(Class(left.expr),
@@ -1293,23 +1293,23 @@ augmentedAssignmentFun(x:augmentedAssignmentCode):Expr := (
 	    else globalAssignment(y.frameindex, x.info, r))
 	is y:binaryCode do (
 	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
-		    dummyLocation));
+		    dummyPosition));
 	    if y.f == DotS.symbol.binary || y.f == SharpS.symbol.binary
 	    then AssignElemFun(y.lhs, y.rhs, r)
 	    else InstallValueFun(CodeSequence(Code(
-			globalSymbolClosureCode(x.info, dummyLocation)),
+			globalSymbolClosureCode(x.info, dummyPosition)),
 		    y.lhs, y.rhs, r)))
 	is y:adjacentCode do (
 	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
-		    dummyLocation));
+		    dummyPosition));
 	    InstallValueFun(CodeSequence(Code(globalSymbolClosureCode(
-			    AdjacentS.symbol, dummyLocation)),
+			    AdjacentS.symbol, dummyPosition)),
 		    y.lhs, y.rhs, r)))
 	is y:unaryCode do (
 	    r := Code(binaryCode(s.binary, Code(left), x.rhs,
-		    dummyLocation));
+		    dummyPosition));
 	    UnaryInstallValueFun(
-		Code(globalSymbolClosureCode(x.info, dummyLocation)),
+		Code(globalSymbolClosureCode(x.info, dummyPosition)),
 		y.rhs, r))
 	else buildErrorPacket(
 	    "augmented assignment not implemented for this code")));

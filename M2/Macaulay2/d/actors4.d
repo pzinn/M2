@@ -1583,15 +1583,15 @@ setupfun("precision0",precision);
 
 -- locate:
 locateCode(c:Code):Expr := (
-          p:=codeLocation(c);
-	  if p == dummyLocation
+          p:=codePosition(c);
+	  if p == dummyPosition
 	  then nullE
 	  else Expr(sethash(List(filePositionClass,
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line1)),toExpr(int(p.column1)),
 		    toExpr(int(p.line2)),toExpr(int(p.column2)),
-		    toExpr(int(p.line3)),toExpr(int(p.column3))),
+		    toExpr(int(p.line)),toExpr(int(p.column))),
 	       hash_t(0),false),false)));
 locateSymbol(s:Symbol):Expr := (
           p:=s.position;

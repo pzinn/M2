@@ -273,21 +273,11 @@ skipwhite(file:PosFile):int := (
 
 -- this errorToken means there was a parsing error or an error reading the file!
 errorToken(position:Position,message:string):Token := Token(Word(message,TCerror,hash_t(0),newParseinfo()),
-     position.filename,
-     position.line,
-     position.column,
-     position.line,
-     position.column,
-     position.loadDepth,
+     position,
      globalDictionary,			    -- should replace this by dummyDictionary, I think
      dummySymbol,false);
 errorToken(filename:string,line:ushort,column:ushort,loadDepth:ushort,message:string):Token := Token(Word(message,TCerror,hash_t(0),newParseinfo()),
-     filename,
-     line,
-     column,
-     line,
-     column,
-     loadDepth,
+     Position(filename,line,column,line,column,line,column,loadDepth),
      globalDictionary,			    -- should replace this by dummyDictionary, I think
      dummySymbol,false);
 
@@ -307,17 +297,17 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  line := file.line;
 	  column := file.column;
 	  ch := peek(file);
-     	  if iseof(ch) then return Token(wordEOF,file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline)
+     	  if iseof(ch) then return Token(wordEOF,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
      	  else if iserror(ch) then return errorToken(file.filename,line,column,loadDepth,"parsing error")
 	  else if ch == int('\n') then (
 	       getc(file);
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,
-		    file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+		    Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
 	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode except 226) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       decimal := true;
@@ -387,20 +377,20 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       c = peek(file);
 	       if isalpha(c) && !SuppressErrors then stderr << position(file) << " warning: character '"+char(c)+"' immediately following number" <<endl;
 	       s := takestring(tokenbuf);
-	       return Token(Word(s,typecode,hash_t(0), parseWORD),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       return Token(Word(s,typecode,hash_t(0), parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
-	       return Token(getstringslashes(file),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline)
+	       return Token(getstringslashes(file),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
 	       )
 	  else if isquote(ch) then (
-	       return Token(getstring(file),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline)
+	       return Token(getstring(file),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
 	       )
 	  else if ch == 226 then ( -- unicode math symbols
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
 	  else (
-	        return Token(recognize(file),file.filename, line, column, file.line, file.column, loadDepth,globalDictionary,dummySymbol,sawNewline))
+	        return Token(recognize(file),Position(file.filename, line, column, line, column, file.line, file.column,loadDepth),globalDictionary,dummySymbol,sawNewline))
 		)
 	);
 export gettoken(file:PosFile,obeylines:bool):Token := (
