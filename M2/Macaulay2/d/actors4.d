@@ -1582,26 +1582,14 @@ precision(e:Expr):Expr := (
 setupfun("precision0",precision);
 
 -- locate:
-locateCode(c:Code):Expr := (
-          p:=codePosition(c);
-	  if p == dummyPosition
+locate(p:Position):Expr := (
+	  if p == dummyPosition || p == tempPosition
 	  then nullE
 	  else Expr(sethash(List(filePositionClass,
 	       Sequence(
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.line1)),toExpr(int(p.column1)),
 		    toExpr(int(p.line2)),toExpr(int(p.column2)),
-		    toExpr(int(p.line)),toExpr(int(p.column))),
-	       hash_t(0),false),false)));
-locateSymbol(s:Symbol):Expr := (
-          p:=s.position;
-	  if p == dummyPosition || p == tempPosition
-	  then nullE
-	  else Expr(sethash(List(filePositionClass,
-	       Sequence(
-		    toExpr(verifyMinimizeFilename(p.filename)),
-		    toExpr(int(p.line)),toExpr(int(p.column)),
-		    toExpr(int(p.line)),toExpr(int(p.column)+length(s.word.name)),
 		    toExpr(int(p.line)),toExpr(int(p.column))),
 	       hash_t(0),false),false)));
 locate(e:Expr):Expr := (
@@ -1611,11 +1599,11 @@ locate(e:Expr):Expr := (
      is CompiledFunction do nullE
      is CompiledFunctionClosure do nullE
      is CompiledFunctionBody do nullE
-     is s:SymbolClosure do locateSymbol(s.symbol)
-     is c:CodeClosure do locateCode(c.code)
+     is s:SymbolClosure do locate(s.symbol.position)
+     is c:CodeClosure do locate(codePosition(c.code))
      is s:SpecialExpr do locate(s.e)
-     is f:functionCode do locateCode(Code(f))
-     is f:FunctionClosure do locateCode(Code(f.model))
+     is f:functionCode do locate(codePosition(Code(f)))
+     is f:FunctionClosure do locate(codePosition(Code(f.model)))
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 

@@ -379,10 +379,12 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       s := takestring(tokenbuf);
 	       return Token(Word(s,typecode,hash_t(0), parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
-	       return Token(getstringslashes(file),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
+	       s:=getstringslashes(file);
+	       return Token(s,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
 	       )
 	  else if isquote(ch) then (
-	       return Token(getstring(file),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
+	       s:=getstring(file);
+	       return Token(s,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
 	       )
 	  else if ch == 226 then ( -- unicode math symbols
 	       tokenbuf << char(getc(file));
@@ -390,7 +392,8 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       tokenbuf << char(getc(file));
 	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
 	  else (
-	        return Token(recognize(file),Position(file.filename, line, column, line, column, file.line, file.column,loadDepth),globalDictionary,dummySymbol,sawNewline))
+	        w:=recognize(file);
+	        return Token(w,Position(file.filename, line, column, line, column, file.line, file.column,loadDepth),globalDictionary,dummySymbol,sawNewline))
 		)
 	);
 export gettoken(file:PosFile,obeylines:bool):Token := (
