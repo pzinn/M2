@@ -228,7 +228,7 @@ dummySymbolClosure := SymbolClosure(globalFrame,dummySymbol);
 globalFrame.values.dummySymbolFrameIndex = Expr(dummySymbolClosure);
 export dummyCode := Code(nullCode());
 export NullCode := Code(nullCode());
-export dummyCodeClosure := CodeClosure(dummyFrame,dummyCode);
+export dummyPseudocodeClosure := PseudocodeClosure(dummyFrame,dummyCode);
 export dummyToken   := Token(
      Word("-*dummy token*-",TCnone,hash_t(0),newParseinfo()),
      dummyPosition,
@@ -275,7 +275,8 @@ export compiledFunctionClass := newtypeof(functionClass);
 export compiledFunctionClosureClass := newtypeof(functionClass);
 export symbolClass := newbasictype();
 export keywordClass := newtypeof(symbolClass);
-export codeClass := newbasictype();
+export pseudocodeClass := newbasictype();
+export pseudocodeClosureClass := newtypeof(pseudocodeClass);
 export mysqlConnectionClass := newbasictype();
 export mysqlFieldClass := newbasictype();
 export mysqlResultClass := newbasictype();

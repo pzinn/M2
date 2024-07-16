@@ -151,7 +151,7 @@ fileMode(ZZ,String) := fileMode
 frames(Sequence) := frames
 frames(Symbol) := frames
 frames(Function) := frames
-frames(Pseudocode) := frames
+frames(PseudocodeClosure) := frames
 powermod(ZZ,ZZ,ZZ) := ZZ => powermod
 
 chk := (type,key) -> if type#?key then (

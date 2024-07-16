@@ -1007,7 +1007,8 @@ tostringfun(e:Expr):Expr := (
 	  + tostring(Ccode(int,"\n # if WITH_MYSQL \n (", fld.fld, ")->type \n #else \n 0 \n #endif \n"))
 	  + ">>")
      is Net do toExpr("<<net>>")
-     is CodeClosure do toExpr("<<pseudocode>>")
+     is PseudocodeClosure do toExpr("<<pseudocode closure>>")
+     is Pseudocode do toExpr("<<pseudocode>>")
      is functionCode do toExpr("<<a function body>>")
      is CompiledFunction do toExpr("<<a compiled function>>")
      is CompiledFunctionClosure do toExpr("<<a compiled function closure>>")
@@ -1592,6 +1593,7 @@ locate(p:Position):Expr := (
 		    toExpr(int(p.line2)),toExpr(int(p.column2)),
 		    toExpr(int(p.line)),toExpr(int(p.column))),
 	       hash_t(0),false),false)));
+
 locate(e:Expr):Expr := (
      when e
      is Nothing do nullE
@@ -1600,10 +1602,11 @@ locate(e:Expr):Expr := (
      is CompiledFunctionClosure do nullE
      is CompiledFunctionBody do nullE
      is s:SymbolClosure do locate(s.symbol.position)
-     is c:CodeClosure do locate(codePosition(c.code))
+     is c:PseudocodeClosure do locate(codePosition(c.code))
+     is c:Pseudocode do locate(codePosition(c.code))
      is s:SpecialExpr do locate(s.e)
-     is f:functionCode do locate(codePosition(Code(f)))
-     is f:FunctionClosure do locate(codePosition(Code(f.model)))
+     is f:functionCode do locate(f.position)
+     is f:FunctionClosure do locate(f.model.position)
      else WrongArg("a function, symbol, sequence, or null"));
 setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
 

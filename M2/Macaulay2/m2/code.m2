@@ -244,7 +244,6 @@ debuggerUsageMessage = ///--debugger activation depth control:
     	      	   	-- that produced an error
     code current        -- source code of current expression
     value current       -- execute current expression, obtain value
-    disassemble current -- display microcode of current expression
     currentString       -- the string being evaluated by 'value', if
                         -- an error occurred within it
 -- emacs commands in *M2* buffer:

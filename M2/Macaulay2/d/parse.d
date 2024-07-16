@@ -278,7 +278,8 @@ export Code := (
      or Error						    -- for tail recursion
      or newLocalFrameCode				    -- soon obsolete
      );
-export CodeClosure := {+ frame:Frame, code:Code };
+export PseudocodeClosure := {+ frame:Frame, code:Code };
+export Pseudocode := {+ code:Code };
 
 
 
@@ -382,7 +383,8 @@ export Expr := (
      RRcell or
      RRicell or
      Boolean or
-     CodeClosure or
+     PseudocodeClosure or
+     Pseudocode or
      CompiledFunction or
      CompiledFunctionBody or
      CompiledFunctionClosure or

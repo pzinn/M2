@@ -803,19 +803,19 @@ disassembleCode(c:Code):Expr := ( -- add locations?
      );
 disassemble(e:Expr):Expr := (
      when e
-     is f:FunctionClosure do disassembleCode(Code(f.model))
-     is f:functionCode do disassembleCode(Code(f))
-     is c:CodeClosure do disassembleCode(c.code)
+     is c:PseudocodeClosure do disassembleCode(c.code)
+     is c:Pseudocode do disassembleCode(c.code)
      is s:SpecialExpr do disassemble(s.e)
-     else WrongArg("pseudocode or a function closure derived from Macaulay 2 code")
+     else WrongArg("pseudocode")
      );
 setupfun("disassemble", disassemble);
 
 pseudocode(e:Expr):Expr := (
      when e
-     is f:FunctionClosure do Expr(CodeClosure(f.frame, Code(f.model)))
+     is f:FunctionClosure do Expr(PseudocodeClosure(f.frame, Code(f.model)))
+     is f:functionCode do Expr(Pseudocode(f.body))
      is s:SpecialExpr do pseudocode(s.e)
-     else WrongArg("a function closure derived from Macaulay 2 code")
+     else WrongArg("a function derived from Macaulay2 code")
      );
 setupfun("pseudocode", pseudocode);
 
