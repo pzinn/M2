@@ -80,7 +80,7 @@ horizontalJoin BasicList := Net => horizontalJoin
 unstack Net := List => unstack
 localDictionaries Function := List => localDictionaries
 localDictionaries Symbol := List => localDictionaries
-localDictionaries Pseudocode := List => localDictionaries
+localDictionaries PseudocodeClosure := List => localDictionaries
 localDictionaries Dictionary := List => localDictionaries
 values HashTable := List => values
 merge(HashTable,HashTable,Function) := HashTable => merge
