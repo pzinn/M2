@@ -397,7 +397,7 @@ export StopIterationE := Expr(StopIterationS);
 
 -----------------------------------------------------------------------------
 export makeSymbol(t:Token):Symbol := (
-     e := makeSymbol(t.word,t.position,t.dictionary); -- TODO check that symbol has correct position range
+     e := makeSymbol(t.word,t.position,t.dictionary);
      t.entry = e;
      e);
 --Error flag for parsing; should be thread local because may have multiple threads parsing at once

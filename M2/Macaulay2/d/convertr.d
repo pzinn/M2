@@ -25,11 +25,10 @@ export UnaryInstallMethodFun := dummyTernaryFun;
 export InstallValueFun := dummyMultaryFun;
 export UnaryInstallValueFun := dummyTernaryFun;
 
--- TODO sort out this mess
 combinePosition(a:Position,b:Position):Position := Position(a.filename,b.line,b.column,a.line1,a.column1,b.line2,b.column2,a.loadDepth); -- combine with emphasis on right
 combinePositionLeft(a:Position,b:Position):Position := Position(a.filename,a.line,a.column,a.line1,a.column1,b.line2,b.column2,a.loadDepth); -- combine with emphasis on left
 combinePosition(a:Position,b:Position,c:Position):Position := Position(a.filename,c.line,c.column,a.line1,a.column1,b.line2,b.column2,a.loadDepth); -- left, right, center
-combinePositionAdjacent(a:Position,b:Position):Position := Position(a.filename,a.line2,a.column2,a.line1,a.column1,b.line2,b.column2,a.loadDepth); -- is this really useful?
+combinePositionAdjacent(a:Position,b:Position):Position := Position(a.filename,a.line2,a.column2,a.line1,a.column1,b.line2,b.column2,a.loadDepth); -- special for Adjacent
 
 convert0(e:ParseTree):Code;
 convert(e:ParseTree):Code;
@@ -451,7 +450,7 @@ export convert0(e:ParseTree):Code := (
      is q:Quote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePosition(q.Operator.position,token.position); -- TODO check
+	  p := combinePosition(q.Operator.position,token.position);
 	  if sym.frameID == 0
 	  then (
 	       if sym.thread
@@ -462,17 +461,17 @@ export convert0(e:ParseTree):Code := (
      is q:GlobalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePosition(q.Operator.position,token.position); -- TODO check
+	  p := combinePosition(q.Operator.position,token.position);
      	  Code(globalSymbolClosureCode(sym,p)))
      is q:ThreadQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePosition(q.Operator.position,token.position); -- TODO check
+	  p := combinePosition(q.Operator.position,token.position);
      	  Code(threadSymbolClosureCode(sym,p)))
      is q:LocalQuote do (
 	  token := q.rhs;
 	  sym := token.entry;
-	  p := combinePosition(q.Operator.position,token.position); -- TODO check
+	  p := combinePosition(q.Operator.position,token.position);
 	  nd := nestingDepth(sym.frameID,token.dictionary);
 	  Code(localSymbolClosureCode(nd,sym,p)))
      is i:TryThenElse do Code(tryCode(convert(i.primary),convert(i.sequel),unseq(c:=convert0(i.alternate)),combinePosition(i.tryToken.position,codePosition(c))))
