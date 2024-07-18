@@ -1455,7 +1455,7 @@ map(a:Sequence,f:Expr):Expr := (
 				   when arg is args:Sequence do (
 					if 1 == length(args) then values.0 = args.0
 					else (
-					     errret = WrongNumArgs(Code(model),numparms,length(args));
+					     errret = WrongNumArgs(dummyPosition,numparms,length(args));
 					     while true do provide nullE;
 					     )
 					)
@@ -1482,7 +1482,7 @@ map(a:Sequence,f:Expr):Expr := (
 				   when arg is args:Sequence do (
 					if 1 == length(args) then values.0 = args.0
 					else (
-					     errret = WrongNumArgs(Code(model),numparms,length(args));
+					     errret = WrongNumArgs(dummyPosition,numparms,length(args));
 					     while true do provide nullE;
 					     )
 					)
@@ -1521,12 +1521,12 @@ map(a:Sequence,f:Expr):Expr := (
 			      foreach arg in a do (
 				   when arg is args:Sequence do (
 					if 0 != length(args) then (
-					     errret = WrongNumArgs(Code(model),0,length(args));
+					     errret = WrongNumArgs(dummyPosition,0,length(args));
 					     while true do provide nullE;
 					     )
 					)
 				   else (
-					errret = WrongNumArgs(Code(model),numparms,1);
+					errret = WrongNumArgs(dummyPosition,numparms,1);
 					while true do provide nullE;
 					);
 				   tmp := eval(body);
@@ -1560,12 +1560,12 @@ map(a:Sequence,f:Expr):Expr := (
 					     foreach x at i in args do values.i = x;
 					     )
 					else (
-					     errret=WrongNumArgs(Code(model),numparms,length(args));
+					     errret=WrongNumArgs(dummyPosition,numparms,length(args));
 					     while true do provide nullE;
 					     )
 					)
 				   else (
-					errret = WrongNumArgs(Code(model),numparms,1);
+					errret = WrongNumArgs(dummyPosition,numparms,1);
 					while true do provide nullE;
 					);
 				   tmp := eval(body);
@@ -1963,7 +1963,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   else (
 					recursionDepth = recursionDepth - 1;
 					localFrame = saveLocalFrame;
-					return WrongNumArgs(Code(model),numparms,length(args));
+					return WrongNumArgs(dummyPosition,numparms,length(args));
 					)
 				   )
 			      else values.0 = arg;
@@ -1989,7 +1989,7 @@ scan(a:Sequence,f:Expr):Expr := (
 				   else (
 					recursionDepth = recursionDepth - 1;
 					localFrame = saveLocalFrame;
-					return WrongNumArgs(Code(model),numparms,length(args));
+					return WrongNumArgs(dummyPosition,numparms,length(args));
 					)
 				   )
 			      else values.0 = arg;
@@ -2018,13 +2018,13 @@ scan(a:Sequence,f:Expr):Expr := (
 				   if 0 != length(args) then (
 					recursionDepth = recursionDepth - 1;
 					localFrame = saveLocalFrame;
-					return WrongNumArgs(Code(model),0,length(args));
+					return WrongNumArgs(dummyPosition,0,length(args));
 					)
 				   )
 			      else (
 				   recursionDepth = recursionDepth - 1;
 				   localFrame = saveLocalFrame;
-				   return WrongNumArgs(Code(model),numparms,1);
+				   return WrongNumArgs(dummyPosition,numparms,1);
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (
@@ -2046,13 +2046,13 @@ scan(a:Sequence,f:Expr):Expr := (
 				   else (
 					recursionDepth = recursionDepth - 1;
 					localFrame = saveLocalFrame;
-					return WrongNumArgs(Code(model),numparms,length(args));
+					return WrongNumArgs(dummyPosition,numparms,length(args));
 					)
 				   )
 			      else (
 				   recursionDepth = recursionDepth - 1;
 				   localFrame = saveLocalFrame;
-				   return WrongNumArgs(Code(model),numparms,1);
+				   return WrongNumArgs(dummyPosition,numparms,1);
 				   );
 			      tmp := eval(body);
 			      when tmp is err:Error do (

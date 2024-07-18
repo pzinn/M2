@@ -42,7 +42,7 @@ export isEmptySequenceE(e:Expr):bool := (
     );
 printErrorMessageE(p:Position,message:Expr):Expr;
 printErrorMessage(p:Position,message:string):Expr; -- ???
-WrongNumArgs(c:Code,wanted:int,got:int):Expr;
+WrongNumArgs(p:Position,wanted:int,got:int):Expr;
 export printErrorMessageE(c:Code,message:string):Expr := printErrorMessageE(codePosition(c),toExpr(message));
 export printErrorMessageE(c:Code,message:Expr):Expr := printErrorMessageE(codePosition(c),message);
 export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
@@ -552,7 +552,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 	       )
 	  )
      else if desc.numparms != length(v)
-     then WrongNumArgs(Code(model),desc.numparms,length(v))
+     then WrongNumArgs(dummyPosition,desc.numparms,length(v))
      else (
 	  if framesize == 0 then (
 	       saveLocalFrame := localFrame;
@@ -849,7 +849,7 @@ export applyFCCS(c:FunctionClosure,cs:CodeSequence):Expr := (
 	  else applyFCS(c,v)
 	  )
      else if desc.numparms != length(cs)
-     then WrongNumArgs(Code(model),desc.numparms,length(cs))
+     then WrongNumArgs(dummyPosition,desc.numparms,length(cs))
      else (
      	  previousFrame := c.frame;
      	  framesize := desc.framesize;
@@ -980,7 +980,7 @@ export applyEEE(g:Expr,e0:Expr,e1:Expr):Expr := (
 	  if desc.restargs
 	  then applyFCS(c,Sequence(e0,e1))
 	  else if desc.numparms != 2
-	  then WrongNumArgs(Code(model),desc.numparms,2)
+	  then WrongNumArgs(dummyPosition,desc.numparms,2)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
@@ -1049,7 +1049,7 @@ export applyEEEE(g:Expr,e0:Expr,e1:Expr,e2:Expr):Expr := (
 	  if desc.restargs
 	  then applyFCS(c,Sequence(e0,e1,e2))
 	  else if desc.numparms != 3
-	  then WrongNumArgs(Code(model),desc.numparms,3)
+	  then WrongNumArgs(dummyPosition,desc.numparms,3)
 	  else if recursionDepth > recursionLimit then RecursionLimit()
 	  else (
 	       previousFrame := c.frame;
@@ -1369,15 +1369,10 @@ export printErrorMessage(p:Position,message:Expr):Expr := ( -- for use when we h
      e := Error(p,message,nullE,false,dummyFrame);
      printError(e);
      Expr(e));
-export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
-     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
+export WrongNumArgs(p:Position,wanted:int,got:int):Expr := printErrorMessage0(p,"expected " + tostring(wanted) + " argument"
 	  + (if wanted == 1 then "" else "s") + ", but got "
-	  + tostring(got)));
-export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
-     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
-	  + (if wanted == 1 then "" else "s") + ", but got "
-	  + tostring(got)));
-
+	  + tostring(got));
+export WrongNumArgs(c:Code,wanted:int,got:int):Expr := WrongNumArgs(codePosition(c),wanted,got);
 
 export handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
