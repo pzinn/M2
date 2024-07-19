@@ -408,19 +408,19 @@ export convert0(e:ParseTree):Code := (
 	      when b.lhs
 	      is a:Adjacent
 	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), AdjacentS.symbol, combinePosition(codePosition(c1),codePosition(c2))))
+		      unseq(c2:=convert0(b.rhs)), AdjacentS.symbol, combinePosition(codePosition(c1),codePosition(c2),b.Operator.position)))
 	      is u:Unary
 	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combinePosition(codePosition(c1),codePosition(c2))))
+		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combinePosition(codePosition(c1),codePosition(c2),b.Operator.position)))
 	      is u:Postfix
 	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combinePosition(codePosition(c1),codePosition(c2))))
+		      unseq(c2:=convert0(b.rhs)), u.Operator.entry, combinePosition(codePosition(c1),codePosition(c2),b.Operator.position)))
 	      is c:Binary
 	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), c.Operator.entry, combinePosition(codePosition(c1),codePosition(c2))))
+		      unseq(c2:=convert0(b.rhs)), c.Operator.entry, combinePosition(codePosition(c1),codePosition(c2),b.Operator.position)))
 	      is t:Token
 	      do Code(augmentedAssignmentCode(b.Operator.entry, unseq(c1:=convert0(b.lhs)),
-		      unseq(c2:=convert0(b.rhs)), t.entry, combinePosition(codePosition(c1),codePosition(c2))))
+		      unseq(c2:=convert0(b.rhs)), t.entry, combinePosition(codePosition(c1),codePosition(c2),b.Operator.position)))
 	      else Code(augmentedAssignmentCode(b.Operator.entry, dummyCode,
 		      dummyCode, dummySymbol, dummyPosition)) -- CHECK
 		      )
