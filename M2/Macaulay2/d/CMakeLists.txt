@@ -82,6 +82,7 @@ set(DLIST
   xmlactors.d	# removed unless WITH_XML
   actors5.d
   actors6.dd
+  debugging.dd
   threads.dd
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d

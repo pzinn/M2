@@ -1582,34 +1582,6 @@ precision(e:Expr):Expr := (
      else WrongArgRR());
 setupfun("precision0",precision);
 
--- locate:
-locate(p:Position):Expr := (
-	  if p == dummyPosition || p == tempPosition
-	  then nullE
-	  else Expr(sethash(List(filePositionClass,
-	       Sequence(
-		    toExpr(verifyMinimizeFilename(p.filename)),
-		    toExpr(int(p.line1)),toExpr(int(p.column1)),
-		    toExpr(int(p.line2)),toExpr(int(p.column2)),
-		    toExpr(int(p.line)),toExpr(int(p.column))),
-	       hash_t(0),false),false)));
-
-locate(e:Expr):Expr := (
-     when e
-     is Nothing do nullE
-     is Sequence do locate(lookupfun(e))
-     is CompiledFunction do nullE
-     is CompiledFunctionClosure do nullE
-     is CompiledFunctionBody do nullE
-     is s:SymbolClosure do locate(s.symbol.position)
-     is c:PseudocodeClosure do locate(codePosition(c.code))
-     is c:Pseudocode do locate(codePosition(c.code))
-     is s:SpecialExpr do locate(s.e)
-     is f:functionCode do locate(f.position)
-     is f:FunctionClosure do locate(f.model.position)
-     else WrongArg("a function, symbol, sequence, or null"));
-setupfun("locate", locate).Protected = false; -- will be overloaded in m2/methods.m2
-
 historyGet(e:Expr):Expr := (
     when e
     is n:ZZcell do (
