@@ -1469,6 +1469,7 @@ export evalraw(c:Code):Expr := (
 		    buildErrorPacket(steppingMessage))
 	       else if alarmedFlag then (
 		    clearAlarmedFlag();
+		    stderr << "alarm evalraw " << tostring(c) << endl;
 		    buildErrorPacket(alarmMessage))
 	       else if test(interruptedFlag) then (
 		    SuppressErrors = false;
@@ -1658,6 +1659,7 @@ export evalexcept(c:Code):Expr := (
      if test(exceptionFlag) then (				    -- compare this code to the code at the top of eval() above
 	  if alarmedFlag then (
 	       clearAlarmedFlag();
+	       stderr << "alarm evalexcept" << tostring(c) << endl;
 	       printErrorMessageE(c,alarmMessage))
 	  else if test(interruptedFlag) then (
 	       SuppressErrors = false;
