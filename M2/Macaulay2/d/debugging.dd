@@ -138,7 +138,7 @@ disassembleCode(c:Code):Expr := ( -- add locations?
 	       Sequence(toExpr("else"),toExpr(x.elseClause))
 	       ))
 	       ))
-     is x:catchCode do Expr(Sequence(toExpr("try"),list(Sequence(toExpr(x.code)))))
+     is x:catchCode do Expr(Sequence(toExpr("catch"),list(Sequence(toExpr(x.code)))))
      is x:globalSymbolClosureCode  do Expr(Sequence(toExpr("global"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex)))
      is x:threadSymbolClosureCode  do Expr(Sequence(toExpr("thread"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex)))
      is x:localSymbolClosureCode do Expr(Sequence(toExpr("local"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex),toExpr(x.nestingDepth)))
