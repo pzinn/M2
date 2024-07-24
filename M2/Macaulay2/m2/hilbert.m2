@@ -156,11 +156,11 @@ addHook((length, Module), Strategy => Default, M -> (
 -- ProjectiveHilbertPolynomial type declaration
 -----------------------------------------------------------------------------
 
-ProjectiveHilbertPolynomial = new Type of HashTable
+ProjectiveHilbertPolynomial = new Type of VirtualTally
 ProjectiveHilbertPolynomial.synonym = "projective Hilbert polynomial"
 
 -- printing
-expression ProjectiveHilbertPolynomial := h -> sum(sort pairs h, (n, c) -> c * new Subscript from {"P", n})
+expression ProjectiveHilbertPolynomial := h -> Sum apply(sort pairs h, (n, c) -> c * new Subscript from {symbol ℙ, n})
 net     ProjectiveHilbertPolynomial :=     net @@ expression
 texMath ProjectiveHilbertPolynomial := texMath @@ expression
 
@@ -172,17 +172,10 @@ projectiveHilbertPolynomial(ZZ, ZZ) := memoize(
 	if d <= 0
 	then apply(min(-d+1, n+1), j -> n-j => (-1)^j * binomial(-d, j))
 	else apply(n+1, j -> n-j => binomial(d-1+j, j))))
+ℙ = new ScriptedFunctor from { subscript => projectiveHilbertPolynomial }
 
--- arithmetic ops
--- TODO: how can we abstract away this section?
+-- arithmetic ops: should there be a subclass of VirtualTally that does that automatically?
 P0 := projectiveHilbertPolynomial 0
-ProjectiveHilbertPolynomial == ProjectiveHilbertPolynomial := Boolean => (h, k) -> h === k
-ProjectiveHilbertPolynomial + ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h, k) -> merge(h, k, continueIfZero @@ plus)
-ProjectiveHilbertPolynomial - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (h, k) -> h + -k
-   - ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => h -> applyValues(h, minus)
-ZZ * ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (b, h) -> (
-    if b === 0 then new ProjectiveHilbertPolynomial from {} else if b === 1 then h else applyValues(h, c -> b * c))
-ProjectiveHilbertPolynomial * ZZ := ProjectiveHilbertPolynomial => (h, b) -> b * h
 ProjectiveHilbertPolynomial + ZZ := ProjectiveHilbertPolynomial => (h, n) -> h + n * P0
 ZZ + ProjectiveHilbertPolynomial := ProjectiveHilbertPolynomial => (n, h) -> h + n * P0
 ProjectiveHilbertPolynomial - ZZ := ProjectiveHilbertPolynomial => (h, n) -> h - n * P0
