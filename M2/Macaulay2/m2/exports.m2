@@ -1264,7 +1264,8 @@ export {
 	"|-",
 	"||",
 	"}",
-	"~"
+	"~",
+	"ℙ"
 }
 
 export \\ toString \ toList augmentedAssignmentOperators
