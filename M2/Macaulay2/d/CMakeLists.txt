@@ -61,8 +61,8 @@ set(DLIST
   binding.d
   basic.d
   common.d
-  convertr.d
   util.d
+  convertr.d
   struct.d
   classes.dd
   buckets.dd
