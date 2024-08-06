@@ -142,7 +142,7 @@ disassembleCode(c:Code):Expr := ( -- add locations?
      is x:globalSymbolClosureCode  do Expr(Sequence(toExpr("global"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex)))
      is x:threadSymbolClosureCode  do Expr(Sequence(toExpr("thread"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex)))
      is x:localSymbolClosureCode do Expr(Sequence(toExpr("local"),SymbolBody(x.symbol),toExpr(x.symbol.frameindex),toExpr(x.nestingDepth)))
-     is x:nullCode do Expr(Sequence())
+     is x:nullCode do nullE
      else toExpr(tostring(c))
      );
 disassemble(e:Expr):Expr := (
