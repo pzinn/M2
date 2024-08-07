@@ -75,6 +75,7 @@ set(DLIST
   mysqldummy.d	# removed if WITH_SQL
   pthread.d
   actors.d
+  debugging.dd
   actors2.dd
   actors3.d
   actors4.d
@@ -82,7 +83,6 @@ set(DLIST
   xmlactors.d	# removed unless WITH_XML
   actors5.d
   actors6.dd
-  debugging.dd
   threads.dd
   python.d	# removed unless WITH_PYTHON
   interface.dd interface2.d

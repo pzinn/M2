@@ -265,40 +265,35 @@ debuggerHook = entering -> (
      )
 
 -- disassemble
-CodeList := new Type of VisibleList
-html CodeList := x -> html UL apply(x,y->new LI from {y})
-net CodeList := x -> stack apply(x,net)
-toString CodeList := x -> demark(" ", apply(x,toString))
 CodeSequence := new Type of VisibleList
-html CodeSequence := x -> html SPAN between(" ", x)
-net CodeSequence := x ->  horizontalJoin between(" ",apply(x,net))
-toString CodeSequence := x -> "(" | demark(" ", apply(x,toString)) |")"
+html CodeSequence := x -> html VerticalList x
+net CodeSequence := x -> stack apply(x,net)
+toString CodeSequence := x -> demark(" ", apply(x,toString))
+CodeList := new Type of VisibleList
+html CodeList := x -> html RowExpression between(" ", x)
+net CodeList := x ->  horizontalJoin between(" ",apply(x,net))
+toString CodeList := x -> "(" | demark(" ", apply(x,toString)) |")"
 
 fmtCode = method(Dispatch=>Thing)
 fmtCode List := l -> new CodeList from apply(l,fmtCode)
 fmtCode Sequence := s -> new CodeSequence from apply(s,fmtCode)
 fmtCode Thing := identity
-fmtCode Pseudocode := fmtCode @@ disassemble
+fmtCode Pseudocode := fmtCode @@ toList
 
 html Pseudocode := html @@ fmtCode
 net Pseudocode := net @@ fmtCode
 toString Pseudocode := toString @@ fmtCode
 
 Pseudocode _ ZZ := (x,i) -> (
-    x=last disassemble x;
-    if class x =!= List then error "no such member";
+    x=last toList x;
+    if class x =!= Sequence or not x#?i then error "no such member";
     x=x#i;
-    if class x === Sequence then x=last x;
+    if class x === List then x=last x;
     x
     )
 
-Pseudocode _* := x -> (
-    x=last disassemble x;
-    if class x =!= List then error "no such member";
-    apply(x, y -> if class y === Sequence then last y else y)
-    )
-
-
+disassemble = method()
+disassemble Pseudocode := toString
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
