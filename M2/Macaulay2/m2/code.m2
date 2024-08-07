@@ -290,6 +290,12 @@ Pseudocode _ ZZ := (x,i) -> (
     x
     )
 
+Pseudocode _* := x -> (
+    x=last disassemble x;
+    if class x =!= List then error "no such member";
+    apply(x, y -> if class y === Sequence then last y else y)
+    )
+
 
 
 -- Local Variables:
