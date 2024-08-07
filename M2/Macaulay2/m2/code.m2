@@ -265,21 +265,23 @@ debuggerHook = entering -> (
      )
 
 -- disassemble
-CodeList := new Type of List
-html CodeList := x -> html UL x
+CodeList := new Type of VisibleList
+html CodeList := x -> html UL apply(x,y->new LI from {y})
 net CodeList := x -> stack apply(x,net)
-toString CodeList := x -> "(" | demark(" ", apply(x,toString)) |")"
+toString CodeList := x -> demark(" ", apply(x,toString))
+CodeSequence := new Type of VisibleList
+html CodeSequence := x -> html SPAN between(" ", x)
+net CodeSequence := x ->  horizontalJoin between(" ",apply(x,net))
+toString CodeSequence := x -> "(" | demark(" ", apply(x,toString)) |")"
 
 fmtCode = method(Dispatch=>Thing)
 fmtCode List := l -> new CodeList from apply(l,fmtCode)
-fmtCode Sequence := s -> RowExpression between(" ",apply(s,fmtCode))
+fmtCode Sequence := s -> new CodeSequence from apply(s,fmtCode)
 fmtCode Thing := identity
 fmtCode Pseudocode := fmtCode @@ disassemble
 
 html Pseudocode := html @@ fmtCode
 net Pseudocode := net @@ fmtCode
-texMath Pseudocode := texMath @@ fmtCode
-tex Pseudocode := tex @@ fmtCode
 toString Pseudocode := toString @@ fmtCode
 
 Pseudocode _ ZZ := (x,i) -> (
