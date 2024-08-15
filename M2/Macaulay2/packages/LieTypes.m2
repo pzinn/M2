@@ -678,7 +678,7 @@ casimirScalar(String,ZZ,List) := (type, m, w) -> (
     rho:=apply(plus sequence m,h->1/1);
     killingForm(type,m,w,w) + 2*killingForm(type,m,w,rho)
 )
-
+casimirScalar(LieAlgebra,List) := (g, w) -> casimirScalar(g#"RootSystemType",g#"LieAlgebraRank",w)
 casimirScalar(LieAlgebraModule) := (M) -> (
     if not isIrreducible M then error "Casimir scalar on irreducible modules only";
     g:=M#"LieAlgebra";
