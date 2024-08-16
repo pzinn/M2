@@ -7,7 +7,7 @@ void fatal(const char *s,...)
      va_list ap;
      va_start(ap,s);
      if (cur.filename != NULL) {
-     	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column,"");
+	  fprintf(stderr,errfmt,cur.filename,cur.lineno,cur.column,"");
      	  }
      vfprintf(stderr,s,ap);
      fprintf(stderr,"\n");

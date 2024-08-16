@@ -34,6 +34,7 @@ M2_DFILES += interrupts.d
 M2_DFILES += pthread0.d
 M2_DFILES += stdiop0.d 
 M2_DFILES += gmp.d
+M2_DFILES += ballarith.d
 M2_DFILES += engine.dd
 ifeq (@XML@,yes)
 M2_DFILES += xml.d
@@ -63,6 +64,7 @@ M2_DFILES += buckets.dd
 M2_DFILES += equality.dd
 M2_DFILES += hashtables.dd
 M2_DFILES += regex.dd
+M2_DFILES += debugging.dd
 M2_DFILES += evaluate.d
 M2_DFILES += sets.dd
 M2_DFILES += version.dd
@@ -86,7 +88,6 @@ M2_SRCFILES += xmlactors.d
 endif
 M2_DFILES += actors5.d
 M2_DFILES += actors6.dd
-M2_DFILES += debugging.dd
 M2_DFILES += threads.dd
 
 ifeq (@PYTHON@,yes)

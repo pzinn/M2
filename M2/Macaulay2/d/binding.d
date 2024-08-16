@@ -459,8 +459,8 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  is entry:Symbol do (
 	       t.entry = entry;
 	       if entry.position == tempPosition then entry.position = t.position;
-	       if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
-	       if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
+               if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
+               if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
 	       )
      	  else (
 	       if forcedef
@@ -878,6 +878,10 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(i.primary,dictionary);
 	  -- i.alternate = bindnewdictionary(i.alternate,dictionary);
 	  bind(i.alternate,dictionary);
+	  )
+     is i:TryThen do (
+	  bind(i.primary,dictionary);
+	  bind(i.sequel,dictionary);
 	  )
      is i:TryThenElse do (
 	  bind(i.primary,dictionary);

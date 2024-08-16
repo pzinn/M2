@@ -297,7 +297,7 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  line := file.line;
 	  column := file.column;
 	  ch := peek(file);
-     	  if iseof(ch) then return Token(wordEOF,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
+	  if iseof(ch) then return Token(wordEOF,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
      	  else if iserror(ch) then return errorToken(file.filename,line,column,loadDepth,"parsing error")
 	  else if ch == int('\n') then (
 	       getc(file);

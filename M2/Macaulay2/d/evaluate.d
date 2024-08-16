@@ -2,6 +2,8 @@
 -- put bindings to variables before the forward references, for safety
 use hashtables;
 use convertr;
+use debugging;
+
 export globalAssignmentHooks := newHashTableWithHash(mutableHashTableClass,nothingClass);
 setupconst("globalAssignmentHooks",Expr(globalAssignmentHooks));
 export threadLocal evalSequenceHadError := false;
@@ -26,10 +28,6 @@ export iteratorS := setupvar("iterator", nullE);
 export nextS := setupvar("next", nullE);
 export applyIteratorS := setupvar("applyIterator", nullE);
 export joinIteratorsS := setupvar("joinIterators", nullE);
-
--- TODO move elsewhere
-export filePositionClass := newHashTableWithHash(typeClass,basicListClass);
-setupconst("FilePosition",Expr(filePositionClass));
 
 -- error stuff
 errorPosition := setupvar("errorPosition",nullE);
@@ -612,7 +610,7 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
      );
 
 wrongModel1(model:functionCode):Expr := printErrorMessageE(
-     Code(model), 
+     Code(model),
      "expected " + tostring(model.desc.numparms) + " argument" + (if model.desc.numparms == 1 then "" else "s") + " but got 1"
      );
 
@@ -1460,6 +1458,7 @@ export evalprof(c:Code):Expr := (
         e)
     else evalraw(c));
 export evalraw(c:Code):Expr := (
+    -- # typical value: symbol SPACE, Function, Thing, Thing
      -- better would for cancellation requests to set exceptionFlag:
      -- Ccode(void,"pthread_testcancel()");
      e := (
@@ -1535,14 +1534,11 @@ export evalraw(c:Code):Expr := (
 	  is c:globalSymbolClosureCode do return Expr(SymbolClosure(globalFrame,c.symbol))
 	  is c:threadSymbolClosureCode do return Expr(SymbolClosure(threadFrame,c.symbol))
 	  is c:tryCode do (
-	       p := tryEval(c.code);
-	       if tryEvalSuccess
-	       then (
-		   when p is Error do p
-		   else if c.thenClause == NullCode then p
-		   else eval(c.thenClause))
-	       else (
-		   eval(c.elseClause)))
+	      ret := tryEval(c.code);
+	      if tryEvalSuccess then
+	      when ret is Error do ret
+	      else if c.thenClause == NullCode then ret   else eval(c.thenClause)
+	      else if c.elseClause == NullCode then nullE else eval(c.elseClause))
 	  is c:catchCode do (
 	       p := eval(c.code);
 	       when p is err:Error do if err.message == throwMessage then err.value else p
@@ -1754,6 +1750,7 @@ setup(LeftArrowS,assigntofun);
 
 idfun(e:Expr):Expr := e;
 setupfun("identity",idfun);
+-- # typical value: scanPairs, HashTable, Function, Nothing
 scanpairs(f:Expr,obj:HashTable):Expr := (	-- obj is not Mutable
      foreach bucket in obj.table do (
 	  p := bucket;
@@ -1778,6 +1775,7 @@ scanpairsfun(e:Expr):Expr := (
 setupfun("scanPairs",scanpairsfun);
 
 mpre():Expr := buildErrorPacket("applyPairs: expected function to return null, a sequence of length 2, or an option x=>y");
+-- # typical value: applyPairs, HashTable, Function, HashTable
 mappairs(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
@@ -1819,6 +1817,7 @@ mappairsfun(e:Expr):Expr := (
      else      WrongNumArgs(2));
 setupfun("applyPairs",mappairsfun);
 
+-- # typical value: applyKeys, HashTable, Function, HashTable
 export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
@@ -1833,6 +1832,7 @@ export mapkeys(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
 	       p = p.next;
 	       ));
      Expr(sethash(x,o.Mutable)));
+-- # typical value: applyKeys, HashTable, Function, Function, HashTable
 export mapkeysmerge(f:Expr,o:HashTable,g:Expr):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
@@ -1873,6 +1873,7 @@ mapkeysfun(e:Expr):Expr := (
      else      WrongNumArgs(2,3));
 setupfun("applyKeys",mapkeysfun);
 
+-- # typical value: applyValues, HashTable, Function, HashTable
 export mapvalues(f:Expr,o:HashTable):Expr := (	-- o is not Mutable
      x := newHashTable(o.Class,o.parent);
      x.beingInitialized = true;
@@ -1991,6 +1992,7 @@ merge(e:Expr):Expr := (
 	  else WrongArgHashTable(2)
 	  else WrongArgHashTable(1))
      else WrongNumArgs(3));
+-- # typical value: merge, HashTable, HashTable, Function, HashTable
 setupfun("merge",merge);		  -- see objects.d
 combine(f:Expr,g:Expr,h:Expr,x:HashTable,y:HashTable):Expr := (	-- x and y are not Mutable
      z := newHashTable(x.Class,x.parent);
@@ -2144,7 +2146,6 @@ export binarymethod(left:Expr,right:Expr,methodkey:Expr,methodkeyname:string):Ex
 AssignElemFun = assignelemfun;
 setup(EqualS,AssignElemFun);
 AssignQuotedElemFun = assignquotedelemfun; -- what is this for? never used
-setup(EqualS,AssignElemFun);
 
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
 

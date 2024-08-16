@@ -45,6 +45,7 @@ set(DLIST
   pthread0.d
   stdiop0.d
   gmp.d
+  ballarith.d
   engine.dd
   xml.d		# removed unless WITH_XML
   stdio0.d
@@ -69,13 +70,13 @@ set(DLIST
   equality.dd
   hashtables.dd
   regex.dd
+  debugging.dd
   evaluate.d
   sets.dd
   mysql.d	# removed unless WITH_SQL
   mysqldummy.d	# removed if WITH_SQL
   pthread.d
   actors.d
-  debugging.dd
   actors2.dd
   actors3.d
   actors4.d
@@ -133,11 +134,6 @@ foreach(_d_source IN LISTS DLIST)
   _SCC_TRANSLATE(${_d_source} _c) # sets _c_source
   list(APPEND CLIST ${_c_source})
 endforeach()
-
-# To avoid unnecessary recompiling, only version.dd is given GIT_DESCRIPTION
-set_property(SOURCE version-tmp.cc APPEND PROPERTY COMPILE_DEFINITIONS
-  GIT_DESCRIPTION="${GIT_DESCRIPTION}"
-  GIT_BRANCH="${GIT_BRANCH}")
 
 ###############################################################################
 ## Compile the interpreter

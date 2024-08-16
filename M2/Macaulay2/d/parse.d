@@ -128,9 +128,10 @@ export For := {+ forToken:Token, variable:ParseTree, inClause:ParseTree, fromCla
 export WhileDo := {+ whileToken:Token, predicate:ParseTree, dotoken:Token, doClause:ParseTree};
 export WhileList := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree};
 export WhileListDo := {+ whileToken:Token, predicate:ParseTree, listtoken:Token, listClause:ParseTree, dotoken:Token, doClause:ParseTree };
-export TryElse := {+ tryToken:Token, primary:ParseTree, elseToken:Token, alternate:ParseTree};
 export TryThenElse := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree, elseToken:Token, alternate:ParseTree};
-export Try := {+ tryToken:Token, primary:ParseTree};
+export TryThen     := {+ tryToken:Token, primary:ParseTree, thenToken:Token, sequel:ParseTree};
+export TryElse     := {+ tryToken:Token, primary:ParseTree,                                    elseToken:Token, alternate:ParseTree};
+export Try         := {+ tryToken:Token, primary:ParseTree};
 export Catch := {+ catchToken:Token, primary:ParseTree};
 export IfThen := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree };
 export IfThenElse := {+ ifToken:Token, predicate:ParseTree, thenClause:ParseTree, elseClause:ParseTree};
@@ -153,7 +154,7 @@ export ParseTree := (
      Token or Adjacent or Binary or Unary or Postfix or Parentheses 
      or EmptyParentheses or IfThen or IfThenElse
      or Quote or GlobalQuote or ThreadQuote or LocalQuote
-     or TryThenElse or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy or ErrorTree );
+     or TryThenElse or TryThen or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy or ErrorTree );
 
 
 -- Code
@@ -258,13 +259,14 @@ export functionDescription := {
      restargs:bool		    -- whether last parm gets rest of args
      };
 export dummyDesc := functionDescription(-1,0,0,false);
-export functionCode := {+
+export functionCode := {+ -- this is called FunctionBody in the top-level
      body:Code,
      desc:functionDescription,
      hash:hash_t,
      position:Position
      };
 export Code := (
+    -- when adding or removing classes of core here, also update debugging.dd
      nullCode or realCode or stringCode or integerCode 
      or globalMemoryReferenceCode or threadMemoryReferenceCode or localMemoryReferenceCode 
      or globalAssignmentCode or localAssignmentCode 

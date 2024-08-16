@@ -51,6 +51,7 @@ document {
      f 0
      return
      current
+     disassemble oo
      step(-3)
      step
      step
@@ -565,6 +566,7 @@ document {
      }
 
 -- TODO: this needs some upgrades
+-- TODO: also show how to use "headlines methods X"
 document {
   Key => {
     methods,

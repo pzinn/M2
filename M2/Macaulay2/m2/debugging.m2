@@ -134,7 +134,6 @@ allValues = () -> unique join(flatten(values \ dictionaryPath), select(getAttrib
 	  ))
 showStructure = Command(types -> show1(if types === () then justTypes allValues() else types, parent))
 showClassStructure = Command(types -> show1(if types === () then allThingsWithNames allValues() else types, class))
-ancestors = X -> while true list (local Z; if Z === Thing then break ; Z = X; X = parent X; Z)
 -----------------------------------------------------------------------------
 
 typicalValues#frame = MutableList
@@ -190,7 +189,8 @@ clearAll = Command (() -> (
 	  ))
 
 generateAssertions = method(TypicalValue => Net)
-generateAssertions String := s -> generateAssertions select(lines s, x -> not match("^[[:space:]]*(--.*)?$",x))
+generateAssertions String := s -> generateAssertions select(
+    lines replace("-\\*(.|\n)*?\\*-", "", s), x -> not match("^[[:space:]]*(--.*)?$",x))
 generateAssertions List := y -> (
      nogens := {PolynomialRing, QuotientRing,Function};
      good := t -> (
@@ -239,10 +239,11 @@ locate Function    :=
 locate Pseudocode  :=
 locate Sequence    :=
 locate Symbol      := FilePosition => locate'
-locate Command := FilePosition => C -> locate'(C#0)
+locate Command     := FilePosition => C -> locate'(C#0)
 locate List        := List     => x -> apply(x, locate)
 protect symbol locate
 
+sortByLocation = sortBy(toString @@ locate)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

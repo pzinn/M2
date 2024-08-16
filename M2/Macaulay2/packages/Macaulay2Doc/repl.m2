@@ -215,7 +215,7 @@ document {
      ///,
      SeeAlso => {mutable, "try"}
      }
-document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, PseudocodeClosure), (frames, Function)},
+document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, PseudocodeClosure), (frames, FunctionClosure)},
      Headline => "get the frames associated to a closure",
      Usage => "frames f",
      Inputs => { "f" => {"() or ", ofClass{Symbol,Function,PseudocodeClosure}}},
@@ -502,7 +502,7 @@ document { Key => LocalDictionary,
      have values; thus they may be referred to as dictionary closures.",
      SeeAlso => { localDictionaries, GlobalDictionary }
      }
-document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictionaries, PseudocodeClosure), (localDictionaries, Dictionary), (localDictionaries, Function)},
+document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictionaries, PseudocodeClosure), (localDictionaries, Dictionary), (localDictionaries, FunctionClosure)},
      Headline => "get local dictionaries",
      Usage => "localDictionaries f",
      Inputs => {
@@ -973,18 +973,53 @@ document { Key => {Pseudocode, PseudocodeClosure},
      Headline => "the class of pseudocodes",
      "The Macaulay2 interpreter compiles its language into pseudocode, which is evaluated later, step by step.  At each
      step, the evaluator is considering a pseudocode item.  These pseudocode items are normally not available to the user, but
-     the internal function ", TO "pseudocode", " can convert
-     a function closure to pseudocode and display their contents, the function ", TO "value", " can evaluate it (bindings of values to local symbols
+     the internal function ", TO "pseudocode", " can convert a function closure to pseudocode and display their contents,
+     the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
      and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
+     SeeAlso => { "disassemble" }
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",
      Usage => "pseudocode f",
      Inputs => { "f" => FunctionClosure },
      Outputs => { PseudocodeClosure => { "the pseudocode of the function ", TT "f"} },
+     SeeAlso => { disassemble },
+     EXAMPLE lines ///
+	  pseudocode(() -> 2+4*3)
+	  disassemble oo
+	  pseudocode functionBody(() -> 2+4*3)
+	  disassemble oo
+     ///,
+     PARA {
+	  "One can look at specific part of the code by using ", TT "_",":"
+	  },
      EXAMPLE lines ///
 	  pseudocode resolution
+          oo_4_1_1_0
+	  value oo
+     ///,
+     PARA {
+	  "It may be useful to look at code during debugging, as in the following demonstration."
+	  },
+     EXAMPLE lines ///
+     load "Macaulay2Doc/demo1.m2"
+     code g
+     g 2
+     code current
+     current
+     disassemble current
+     ///
+     }
+document { Key => disassemble,
+     Headline => "disassemble a pseudocode or function",
+     Usage => "disassemble c",
+     Inputs => { "c" => ofClass{Function, Pseudocode} },
+     Outputs => { String => {"the disassembled form of ", TT "c"} },
+     SeeAlso => { pseudocode },
+     EXAMPLE lines ///
+     disassemble (() -> 1/(1-1))
+     disassemble functionBody (() -> 1/(1-1))
      ///,
      PARA {
 	  "One can look at specific part of the code by using ", TT "_",":"
@@ -1001,6 +1036,7 @@ document { Key => pseudocode,
      code g
      g 2
      code current
+     disassemble current
      current
      ///
      }
@@ -1014,6 +1050,8 @@ document { Key => "current",
      code g
      g 2
      code current
+     current
+     disassemble current
      value current
      x = 11
      value current
