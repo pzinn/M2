@@ -315,7 +315,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      expression F := (f) -> (
 	 e:=expression numerator f;
 	 e':=expression denominator f;
-	 if class e === Minus then -((-e)/e') else e/e'
+	 if class e === Minus then Minus{e#0/e'} else e/e'
 	 );
      numerator F := (f) -> new R from rawNumerator raw f;
      denominator F := (f) -> new R from rawDenominator raw f;
