@@ -340,7 +340,7 @@ export lookup1force(object:HashTable,key:Expr,keyhash:hash_t):Expr := (
 	  bucket = bucket.next;
 	  );
      if lockit then unlock(object.mutex);
-     buildErrorPacket("key not found in hash table"));
+     buildErrorPacket(seq(toExpr("key "),key,toExpr(" not found in hash table"))));
 export lookup1force(object:HashTable,key:Expr):Expr := lookup1force(object,key,hash(key));
 export lookup1Q(object:HashTable,key:Expr,keyhash:hash_t):bool := (
      lockit := object.Mutable && !object.beingInitialized;
