@@ -828,8 +828,6 @@ bitnotfun(e:Expr):Expr := (
     else WrongArgZZ());
 setupfun("bitnotfun", bitnotfun);
 
-semicolonfun(lhs:Code,rhs:Code):Expr := when eval(lhs) is err:Error do Expr(err) else eval(rhs);
-setup(SemicolonS,semicolonfun);
 starfun(rhs:Code):Expr := unarymethod(rhs,StarS);
 timesfun(lhs:Code,rhs:Code):Expr := (
      l := eval(lhs);
@@ -1983,14 +1981,14 @@ map(e1:Expr,e2:Expr,f:Expr):Expr := (
 	       )
 	  is b2:List do (
 	       mutable := b1.Mutable;
-	       class := b1.Class;
-	       if class != b2.Class then (
+	       b1class := b1.Class;
+	       if b1class != b2.Class then (
 		    mutable = false;
-		    class = listClass;
+		    b1class = listClass;
 		    );
 	       c := map(b1.v,b2.v,f);
 	       when c is err:Error do if err.message == breakMessage then if err.value == dummyExpr then nullE else err.value else c
-	       is v:Sequence do list(class,v,mutable)
+	       is v:Sequence do list(b1class,v,mutable)
 	       else nullE		  -- will not happen
 	       )
 	  is s2:stringCell do map(b1.v, strtoseq(s2), f)

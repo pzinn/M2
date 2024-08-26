@@ -3,8 +3,12 @@
 
 o1 = $<samp class="token string">&lt;module 'fractions' from '/usr/lib64/python3.12/fractions.py'></samp>$
 
+<<<<<<< HEAD
 o1 : <span><samp class="token class-name">PythonObject</samp> of class module</span>
 i2 : 2:0x = fractions@@"Fraction"(2, 3)
+=======
+o1 = <module 'fractions' from '/usr/lib/python3.12/fractions.py'>
+>>>>>>> 4ddabeb54cdf9e9c8206fd5ff98be252dd08f93b
 
 o2 = $<samp class="token string">2/3</samp>$
 

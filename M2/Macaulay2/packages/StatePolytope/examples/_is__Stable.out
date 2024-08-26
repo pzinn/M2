@@ -11,6 +11,22 @@
 o4 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
 i5 : 5:0isStable(3,I) 
 
+<<<<<<< HEAD
 o5 = <samp class="token constant">false</samp>
 i6 : 6:0
 
+=======
+i3 : isStable(3,I)
+
+o3 = true
+
+i4 : I = ideal(a^2,b^2,b*c);
+
+o4 : Ideal of R
+
+i5 : isStable(3,I) 
+
+o5 = false
+
+i6 : 
+>>>>>>> 4ddabeb54cdf9e9c8206fd5ff98be252dd08f93b

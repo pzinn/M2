@@ -1564,11 +1564,6 @@ export evalraw(c:Code):Expr := (
 	       return Expr(SymbolClosure(f,r.symbol)))
 	  is b:ternaryCode do b.f(b.arg1,b.arg2,b.arg3)
 	  is b:multaryCode do b.f(b.args)
-	  is n:newLocalFrameCode do (
-	       localFrame = Frame(localFrame,n.frameID,n.framesize,false, new Sequence len n.framesize do provide nullE);
-	       x := eval(n.body);
-	       localFrame = localFrame.outerFrame;
-	       x)
 	  is c:evaluatedCode do return c.expr
 	  is c:forCode do return evalForCode(c)
 	  is c:whileListDoCode do evalWhileListDoCode(c)
@@ -2149,6 +2144,8 @@ AssignQuotedElemFun = assignquotedelemfun; -- what is this for? never used
 
 export notFun(a:Expr):Expr := if a == True then False else if a == False then True else unarymethod(a,notS);
 
+-- evaluate.d depends on hashtables.dd, so we use a pointer
+-- to evaluate methods in hashtables.dd before it is defined.
 applyEEEpointer = applyEEE;
 
 nullify(c:Code):Expr := (
