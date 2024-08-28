@@ -1318,11 +1318,11 @@ steppingFurther(c:Code):bool := steppingFlag && (
      if p == dummyPosition || p.loadDepth < errorDepth then return true;
      if stepCount >= 0 then (
 	  if lastCodePosition.filename != p.filename
-	  || lastCodePosition.line != p.line
+	  || lastCodePosition.lineF != p.lineF
 	  then (
      	       stepCount = stepCount - 1;
      	       lastCodePosition.filename = p.filename;
-	       lastCodePosition.line = p.line;
+	       lastCodePosition.lineF = p.lineF;
 	       if debugLevel == 1001 && stepCount >= 0 then printErrorMessage(p,"--evaluating: "+present(tostring(c)));
 	       );
 	  stepCount >= 0)
@@ -1341,7 +1341,7 @@ export printError(err:Error):Error := (
      then (
      	if !isEmptySequenceE(err.message) then setGlobalVariable(errorMessage,err.message);
         setGlobalVariable(errorPosition,Expr(sethash(List(filePositionClass,
-	Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.line),toExpr(err.position.column),toExpr(err.position.loadDepth)),
+	Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.lineF),toExpr(err.position.columnF),toExpr(err.position.loadDepth)),
 	hash_t(0),false),false)));
      when applyEE(errorPrint,Expr(Sequence()))
      is e:Error do (

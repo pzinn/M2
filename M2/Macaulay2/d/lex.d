@@ -281,6 +281,10 @@ errorToken(filename:string,line:ushort,column:ushort,loadDepth:ushort,message:st
      globalDictionary,			    -- should replace this by dummyDictionary, I think
      dummySymbol,false);
 
+newPosition(file:PosFile, line:ushort, column:ushort):Position := Position(
+    --             [ beginning ] [      endpoint       ] [   focus   ]
+    file.filename, line, column, file.line, file.column, line, column, loadDepth);
+
 gettoken1(file:PosFile,sawNewline:bool):Token := (
      -- warning : tokenbuf is static
      while true do (
@@ -297,17 +301,19 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	  line := file.line;
 	  column := file.column;
 	  ch := peek(file);
-	  if iseof(ch) then return Token(wordEOF,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
+	  if iseof(ch) then return Token(wordEOF,
+	      newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline)
      	  else if iserror(ch) then return errorToken(file.filename,line,column,loadDepth,"parsing error")
 	  else if ch == int('\n') then (
 	       getc(file);
 	       return Token(
 		    if file.file.fulllines then wordEOC else NewlineW,
-		    Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
+		    newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else if isalpha(ch) then ( -- valid symbols are an alpha (letters, any unicode except 226) followed by any number of alphanum (alpha, digit, dollar, prime)
 	       tokenbuf << char(getc(file));
 	       while isalnum(peek(file)) do tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
+	       return Token(makeUniqueWord(takestring(tokenbuf), parseWORD),
+		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else if isdigit(ch) || ch==int('.') && isdigit(peek(file,1)) then (
 	       typecode := TCint;
 	       decimal := true;
@@ -377,23 +383,26 @@ gettoken1(file:PosFile,sawNewline:bool):Token := (
 	       c = peek(file);
 	       if isalpha(c) && !SuppressErrors then stderr << position(file) << " warning: character '"+char(c)+"' immediately following number" <<endl;
 	       s := takestring(tokenbuf);
-	       return Token(Word(s,typecode,hash_t(0), parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
+	       return Token(Word(s,typecode,hash_t(0), parseWORD),
+		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else if ch == int('/') && peek(file,1) == int('/') && peek(file,2) == int('/') then (
 	       s:=getstringslashes(file);
-	       return Token(s,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
-	       )
+	       return Token(s,
+		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else if isquote(ch) then (
 	       s:=getstring(file);
-	       return Token(s,Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline)
-	       )
+	       return Token(s,
+	       	   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else if ch == 226 then ( -- unicode math symbols
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
 	       tokenbuf << char(getc(file));
-	       return Token(makeUniqueWord(takestring(tokenbuf),parseWORD),Position(file.filename, line, column, line, column, file.line, file.column, loadDepth),globalDictionary,dummySymbol,sawNewline))
+	       return Token(makeUniqueWord(takestring(tokenbuf), parseWORD),
+		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 	  else (
 	        w:=recognize(file);
-	        return Token(w,Position(file.filename, line, column, line, column, file.line, file.column,loadDepth),globalDictionary,dummySymbol,sawNewline))
+	        return Token(w,
+		   newPosition(file, line, column), globalDictionary, dummySymbol, sawNewline))
 		)
 	);
 export gettoken(file:PosFile,obeylines:bool):Token := (
