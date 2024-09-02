@@ -1022,14 +1022,7 @@ document { Key => disassemble,
      disassemble functionBody (() -> 1/(1-1))
      ///,
      PARA {
-	  "One can look at specific part of the code by using ", TT "_",":"
-	  },
-     EXAMPLE lines ///
-          oo_4_1_1_0
-	  value oo
-     ///,
-     PARA {
-	  "It may be useful to look at code during debugging, as in the following demonstration."
+	  "It may be useful to disassemble code during debugging, as in the following demonstration."
 	  },
      EXAMPLE lines ///
      load "Macaulay2Doc/demo1.m2"
