@@ -97,7 +97,6 @@ timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
     shortMode=s;
     )
 
-
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 
 Thing#{WebApp,Print} = x -> (
