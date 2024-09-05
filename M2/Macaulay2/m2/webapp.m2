@@ -85,7 +85,7 @@ timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
 	    else x
 	    )
     	else if class x === Symbol and not syms#?x and (l:=locate x) =!= null then ( syms#x=l; x)
-	else if class x === String or class x === Option or class x === OptionTable or class x === DocumentTag then x
+	else if class x === String or class x === Option or class x === OptionTable or class x === Keyword then x -- this is ridiculous
 	else Abbreviate {x}
 	);
     msg := sequence recScan errorMessage | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s));
