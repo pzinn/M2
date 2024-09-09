@@ -427,6 +427,12 @@ new LieAlgebraModule from Sequence := (T,s) -> new LieAlgebraModule from {
 
 LieAlgebraModule_ZZ := (M,i) -> irreducibleLieAlgebraModule(M#"LieAlgebra",(sort keys M#"DecompositionIntoIrreducibles")#i)
 LieAlgebraModule_* := M -> apply(sort keys M#"DecompositionIntoIrreducibles", v -> irreducibleLieAlgebraModule(M#"LieAlgebra",v))
+LieAlgebraModule_List := (V,w) -> (V#"DecompositionIntoIrreducibles")_w
+LieAlgebraModule_Vector := (V,w) -> V_(entries w)
+LieAlgebraModule_LieAlgebraModule := (V,W) -> (
+	if not isIrreducible W then error "last module must be irreducible";
+    	V_(first keys W#"DecompositionIntoIrreducibles")
+    )
 
 isIrreducible = method()
 isIrreducible LieAlgebraModule := M -> values M#"DecompositionIntoIrreducibles" == {1}
@@ -454,12 +460,20 @@ trivialModule LieAlgebra := g -> irreducibleLieAlgebraModule(toList(rank g:0),g)
 zeroModule = method(TypicalValue => LieAlgebraModule)
 zeroModule LieAlgebra := g -> new LieAlgebraModule from (g,{})
 
+
 LieAlgebraModule ^** ZZ := (cacheValue'(0,symbol ^**)) ((M,n) -> (
 	if n<0 then "error nonnegative powers only";
     	if n==0 then trivialModule M#"LieAlgebra"
     	else if n==1 then M
     	else M**(M^**(n-1)) -- order matters for speed purposes
     ))
+
+-*
+-- the implementation below seems more reasonable but it's actually slower in most circumstances
+LieAlgebraModule ^** ZZ := LieAlgebraModule => (M, n) -> BinaryPowerMethod(M, n, tensor,
+    M -> trivialModule M#"LieAlgebra",
+    M -> error "LieAlgebraModule ^** ZZ: expected non-negative integer")
+*-
 
 adjointWeight := (type,m) -> splice (
     if type == "A" then if m==1 then {2} else {1,m-2:0,1}
@@ -1141,12 +1155,7 @@ LieAlgebraModule ** LieAlgebraModule := (V,W) -> ( -- cf Humpheys' intro to LA &
 
 tensorCoefficient = method(
     TypicalValue=>ZZ)
-tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := (U,V,W) -> (
-	if not isIrreducible W then error "third module must be irreducible";
-    	nu:=first keys W#"DecompositionIntoIrreducibles";
-    	fullTensorProduct:=(U**V)#"DecompositionIntoIrreducibles";
-    	fullTensorProduct_nu
-    )
+tensorCoefficient(LieAlgebraModule, LieAlgebraModule,LieAlgebraModule) := (U,V,W) -> (U**V)_W
 
 
 ---------------------------------------------------------
@@ -2200,6 +2209,17 @@ doc ///
 
 doc ///
     Key
+        zeroModule
+	(zeroModule,LieAlgebra)
+    Headline
+        The zero module of a Lie algebra
+    Description
+        Text
+	    Returns the zero-dimensional module.
+///
+
+doc ///
+    Key
         adjointModule
 	(adjointModule,LieAlgebra)
     Headline
@@ -2217,6 +2237,7 @@ TEST ///
     g=simpleLieAlgebra("A",2);
     M=irreducibleLieAlgebraModule({2,1},g);
     assert(M ** trivialModule g === M)
+    assert(M ** zeroModule g === zeroModule g)
     assert(dim adjointModule(g++g)==2*dim adjointModule g)
 ///
 
@@ -2479,6 +2500,45 @@ doc ///
 	    M = matrix {{2, 0, -3, 0}, {0, 2, 0, -1}, {-1, 0, 2, 0}, {0, -1, 0, 2}}
 	    h := new LieAlgebra from M
 	    cartanMatrix h
+///
+
+doc ///
+    Key
+       (symbol _,LieAlgebraModule,ZZ)
+       (symbol _,LieAlgebraModule,List)
+       (symbol _,LieAlgebraModule,Vector)
+       (symbol _,LieAlgebraModule,LieAlgebraModule)
+    Headline
+        Pick out one irreducible submodule of a Lie algebra module
+    Description
+        Text
+	   If a number is given, the ordering is the same as when the module is displayed:
+	Example
+	   g=simpleLieAlgebra("A",2);
+	   (adjointModule g)^**3
+	   oo_2
+        Text
+	   Instead one can simply use a weight or irreducible module as subscript:
+	Example
+	   g=simpleLieAlgebra("A",3);
+	   M=(adjointModule g)^**2
+	   describe M
+	   M_{1,0,1}
+	   M_(trivialModule g)
+///
+
+doc ///
+    Key
+       (symbol _*,LieAlgebraModule)
+    Headline
+        List irreducible submodules of a Lie algebra module
+    Description
+        Text
+	   Gives a list of nonisomorphic irreducible submodules:
+	Example
+	   g=simpleLieAlgebra("A",2);
+	   (adjointModule g)^**3
+	   oo_*
 ///
 
 
