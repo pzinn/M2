@@ -99,7 +99,6 @@ code Function   := f -> codeFunction(null, f, 0)
 code Command    := C -> code C#0
 code List       := L -> DIV between_(HR{}) dedupMethods apply(L, code)
 code ZZ         := i -> code previousMethodsFound#i
-code Thing      := x -> if hasAttribute(x,ReverseDictionary) then code getAttribute(x,ReverseDictionary)
 
 -----------------------------------------------------------------------------
 -- edit
