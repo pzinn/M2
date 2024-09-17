@@ -1,1 +1,1 @@
-export default [@M2SYMBOLS@];
+export default [@M2SYMBOLS@].sort();
