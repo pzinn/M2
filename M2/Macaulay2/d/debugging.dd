@@ -204,7 +204,10 @@ locate(e:Expr):Expr := (
     is Nothing do nullE
     is Sequence do locate(lookupfun(e))
     is f:FunctionClosure do locate(f.model.position)
-    is f:functionCode    do locate(f.position)
+    is f:functionCode    do (
+        p:=f.position;
+	locate(Position(p.filename,p.lineF,p.columnF,p.lineR,p.columnR,p.lineF,p.columnF,p.loadDepth))
+	)
     -- TODO: can we use binary debug symbols?
     is CompiledFunction        do nullE
     is CompiledFunctionBody    do nullE
