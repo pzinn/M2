@@ -246,7 +246,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
         );
     if curCotOpts.Presentation === Borel then (
 	BB := defineB(FF,n,curCotOpts.Ktheory,curCotOpts.Equivariant);
-	if curCotOpts.Equivariant then promoteFromMap(FF0,BB,map(BB,FF0,{FF_0})); -- TODO move elsewhere
+	if curCotOpts.Equivariant then promoteFromMap(map(BB,FF0,{FF_0})); -- TODO move elsewhere
 	x := getSymbol "x";
 	-- Chern classes
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
@@ -266,8 +266,8 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	if curCotOpts.Equivariant then promoteFromMap(FF0,AA,map(AA,FF0,{FF_0}));
-	promoteFromMap(AA,BB,f*map(R1,AA));
+	if curCotOpts.Equivariant then promoteFromMap(map(AA,FF0,{FF_0}));
+	promoteFromMap(f*map(R1,AA));
 	-- reverse transformation
 	lift(Module,BB,AA) := opts -> (v,b,AA) -> vector apply(entries v,x->lift(x,AA));
 	lift(Matrix,BB,AA) := opts -> (m,b,AA) -> matrix applyTable(entries m,x->lift(x,AA));

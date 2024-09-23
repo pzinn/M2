@@ -13,14 +13,16 @@ needs "matrix2.m2" -- for lift
 
 -- automate promotion
 promoteFromMap = method()
-promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
+promoteFromMap RingMap := f -> (
+    R := source f;
+    S := target f;
     promote(R,S) := (a,S1) -> f a;
     promote(Matrix,R,S) :=
     promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
-    promote(Module,R,S) := (M,R1,S1) -> f M; -- TODO rethink carefully
---    promote(List,R,S) := (L,R1,S1) -> f\L; -- TODO put back!!!!!!!!!!
+    promote(Module,R,S) := (M,R1,S1) -> f ** M; -- TODO rethink carefully -- should it be f M ?
+--    promote(List,R,S) := (L,R1,S1) -> apply(L,f.cache.DegreeMap); -- reinstate
     )
-promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
+promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap map(S,R)
 
 
 -- TODO: rewrite this to be easier to manage with degree group
@@ -90,8 +92,8 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
                      -- is an error!! MES
      RS := AB/image fg;
-     promoteFromMap(R,RS,map(RS,R,(vars AB)_{0 .. m-1}));
-     promoteFromMap(S,RS,map(RS,S,(vars AB)_{m .. m+n-1}));
+     promoteFromMap map(RS,R,(vars AB)_{0 .. m-1});
+     promoteFromMap map(RS,S,(vars AB)_{m .. m+n-1});
      RS
      )
 
