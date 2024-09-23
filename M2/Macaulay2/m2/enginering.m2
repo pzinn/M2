@@ -332,9 +332,13 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      if R.?numallvars then F.numallvars=R.numallvars;
-     scan(R.baseRings, S -> if S.?frac and not isPromotable(S.frac,F) then
-	 promote(S.frac,F) := (a,F) -> fraction(promote(numerator a,R),promote(denominator a,R))
-	 );
+     scan(R.baseRings, S -> if S.?frac and not isPromotable(S.frac,F) then (
+	     promote(S.frac,F) := (a,F) -> fraction(promote(numerator a,R),promote(denominator a,R));
+	     promote(List,S.frac,F) := (m,G,F) -> apply(m, d -> splice ( d | toList(degreeLength F-#d:0) )); -- TODO check
+	     promote(Module,S.frac,F) := (M,G,F) -> F ** M;
+	     promote(Matrix,S.frac,F) := (m,G,F) -> map(promote(target m,F),promote(source m,F),applyTable(entries m,x->promote(x,F)));
+	     promote(MutableMatrix,S.frac,F) := (m,G,F) -> mutableMatrix applyTable(entries m,x->promote(x,F));
+	     ));
      F)
 
 -- methods for all ring elements

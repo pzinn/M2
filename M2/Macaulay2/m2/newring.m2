@@ -11,6 +11,18 @@ needs "matrix2.m2" -- for lift
 -- new polynomial ring or quotient ring from old --
 ----------------------------------
 
+-- automate promotion
+promoteFromMap = method()
+promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
+    promote(R,S) := (a,S1) -> f a;
+    promote(Matrix,R,S) :=
+    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
+    promote(Module,R,S) := (M,R1,S1) -> f M; -- TODO rethink carefully
+--    promote(List,R,S) := (L,R1,S1) -> f\L; -- TODO put back!!!!!!!!!!
+    )
+promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
+
+
 -- TODO: rewrite this to be easier to manage with degree group
 nothing := symbol nothing
 newRing = method( Options => applyValues(monoidDefaults, x -> nothing), TypicalValue => Ring )
@@ -77,7 +89,11 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      fg := substitute(f,(vars AB)_{0 .. m-1}) | substitute(g,(vars AB)_{m .. m+n-1});
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
                      -- is an error!! MES
-     AB/image fg)
+     RS := AB/image fg;
+     promoteFromMap(R,RS,map(RS,R,(vars AB)_{0 .. m-1}));
+     promoteFromMap(S,RS,map(RS,S,(vars AB)_{m .. m+n-1}));
+     RS
+     )
 
 -------------------------
 -- Graph of a ring map --

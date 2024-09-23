@@ -61,18 +61,6 @@ expandElem := (P,vrs,els) -> (
     sub(C,ring first els) * product(#vrs, i -> (els#i)^(ee#i)) + expandElem(Q,vrs,els)
     )
 
--- automate promotion
-promoteFromMap = method()
-promoteFromMap (Ring,Ring,RingMap) := (R,S,f) -> (
-    promote(R,S) := (a,S1) -> f a;
-    promote(Matrix,R,S) :=
-    promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
-    promote(Module,R,S) := (M,R1,S1) -> f M;
---    promote(List,R,S) := (L,R1,S1) -> f\L; -- TODO put back!!!!!!!!!!
-    S.baseRings = prepend(R,S.baseRings); -- temporary -- until promotability test improved in enginering.m2
-    )
-promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap(R,S,map(S,R))
-
 tautoClass = method(Dispatch=>{Thing,Thing,Type},Options=>true); -- "Chern classes" -- renamed tautoClass to avoid confusion with motivic classes
 zeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}
 dualZeroSection = method(Dispatch=>{Type},Options=>true) -- note the {}

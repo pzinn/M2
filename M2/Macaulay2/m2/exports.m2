@@ -1031,6 +1031,7 @@ export {
 	"projectiveHilbertPolynomial",
 	"programPaths",
 	"promote",
+	"promoteFromMap",
 	"protect",
 	"prune",
 	"pruningMap",
