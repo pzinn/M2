@@ -14,13 +14,14 @@ needs "matrix2.m2" -- for lift
 -- automate promotion
 promoteFromMap = method()
 promoteFromMap RingMap := f -> (
+    -- if isPromotable(R,S) then error "can't redefine promote"; -- would be safer this way? see infinite loop below
     R := source f;
     S := target f;
     promote(R,S) := (a,S1) -> f a;
     promote(Matrix,R,S) :=
     promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
-    promote(Module,R,S) := (M,R1,S1) -> f ** M; -- TODO rethink carefully -- should it be f M ?
-    promote(List,R,S) := (L,R1,S1) -> apply(L,f.cache.DegreeMap); -- reinstate
+    promote(Module,R,S) := (M,R1,S1) -> f ** M; -- should it be f M ?
+    promote(List,R,S) := (L,R1,S1) -> apply(L,f.cache.DegreeMap); -- can create infinite loop if f has DegreeMap as in ringmap.m2:88
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap map(S,R)
 
@@ -93,7 +94,7 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
                      -- is an error!! MES
      RS := AB/image fg;
      promoteFromMap map(RS,R,(vars AB)_{0 .. m-1});
-     promoteFromMap map(RS,S,(vars AB)_{m .. m+n-1});
+     if S =!= R then promoteFromMap map(RS,S,(vars AB)_{m .. m+n-1});
      RS
      )
 
