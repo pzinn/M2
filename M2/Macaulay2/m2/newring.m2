@@ -20,7 +20,7 @@ promoteFromMap RingMap := f -> (
     promote(Matrix,R,S) :=
     promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
     promote(Module,R,S) := (M,R1,S1) -> f ** M; -- TODO rethink carefully -- should it be f M ?
---    promote(List,R,S) := (L,R1,S1) -> apply(L,f.cache.DegreeMap); -- reinstate
+    promote(List,R,S) := (L,R1,S1) -> apply(L,f.cache.DegreeMap); -- reinstate
     )
 promoteFromMap (Ring,Ring) := (R,S) -> promoteFromMap map(S,R)
 

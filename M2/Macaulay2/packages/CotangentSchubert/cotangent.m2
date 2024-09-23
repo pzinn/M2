@@ -137,6 +137,7 @@ defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
             -if Equiv then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
 	BB := BB0/J;
 	BBs#(n,Kth,Equiv) = BB;
+	if Equiv then promoteFromMap(map(BB,if Kth then FK_0 else FH_0,{FF_0}));
 	);
     BBs#(n,Kth,Equiv)
     )
@@ -246,7 +247,6 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
         );
     if curCotOpts.Presentation === Borel then (
 	BB := defineB(FF,n,curCotOpts.Ktheory,curCotOpts.Equivariant);
-	if curCotOpts.Equivariant then promoteFromMap(map(BB,FF0,{FF_0})); -- TODO move elsewhere
 	x := getSymbol "x";
 	-- Chern classes
 	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
