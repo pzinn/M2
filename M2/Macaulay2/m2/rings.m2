@@ -90,6 +90,7 @@ toExternalString Ring := toString @@ describe
 -- promote, lift, liftable, and isConstant
 -----------------------------------------------------------------------------
 
+-- TODO rename isLiftable; add test that lift method exists
 -- some remnants from lift and promote, version 2
 liftable = method(TypicalValue => Boolean, Dispatch => {Thing, Type, Type})
 liftable(Number,      Number)      :=

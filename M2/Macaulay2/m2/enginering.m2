@@ -334,10 +334,15 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if R.?numallvars then F.numallvars=R.numallvars;
      scan(R.baseRings, S -> if S.?frac and not isPromotable(S.frac,F) then (
 	     promote(S.frac,F) := (a,F) -> fraction(promote(numerator a,R),promote(denominator a,R));
-	     promote(List,S.frac,F) := (m,G,F) -> apply(m, d -> splice ( d | toList(degreeLength F-#d:0) )); -- TODO check
+	     promote(List,S.frac,F) := (m,G,F) -> apply(m, d -> splice ( d | toList(degreeLength F-#d:0) ));
 	     promote(Module,S.frac,F) := (M,G,F) -> F ** M;
 	     promote(Matrix,S.frac,F) := (m,G,F) -> map(promote(target m,F),promote(source m,F),applyTable(entries m,x->promote(x,F)));
 	     promote(MutableMatrix,S.frac,F) := (m,G,F) -> mutableMatrix applyTable(entries m,x->promote(x,F));
+	     lift(F,S.frac) := opts -> (a,G) -> fraction(lift(numerator a,S),lift(denominator a,S));
+	     lift(List,F,S.frac) := opts -> (m,F,G) -> apply(m, d -> take(d,degreeLength S.frac));
+	     lift(Module,F,S.frac) := opts -> (M,F,G) -> S.frac ** M;
+	     lift(Matrix,F,S.frac) := opts -> (m,F,G) -> map(lift(target m,S.frac),lift(source m,S.frac),applyTable(entries m,x->lift(x,S.frac)));
+	     lift(MutableMatrix,F,S.frac) := opts -> (m,F,G) -> mutableMatrix applyTable(entries m,x->lift(x,S.frac));
 	     ));
      F)
 
