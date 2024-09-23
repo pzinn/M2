@@ -274,7 +274,10 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o.Variables = o.Variables_v;
      o.Degrees = o.Degrees_v;
      o = new OptionTable from o;
-     (S := (coefficientRing R)(monoid [o]),map(R,S,(generators R)_v)))
+     S := (coefficientRing R)(monoid [o]);
+     f := map(R,S,(generators R)_v);
+     promoteFromMap f;
+     (S,f))
 
 -----------------------------------------------------------------------------
 
