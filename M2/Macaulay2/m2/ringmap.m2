@@ -14,8 +14,6 @@ needs "mutablemat.m2"
 -- should do something about the degree map here
 degmap0 := n -> ( d := toList ( n : 0 ); e -> d )
 
-workable = f -> try (f(); true) else false
-
 -----------------------------------------------------------------------------
 -- RingMap type declarations and basic methods
 -----------------------------------------------------------------------------
@@ -85,7 +83,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 		    " into a degree of length ", toString degreeLength R);
 	       opts.DegreeMap
 	       )
-	  else if workable (() -> promote({},S,R)) then (d -> first promote({d},S,R))
+	  else if (pr:=lookup(promote,List,S,R)) =!= null then (d -> first pr({d},S,R))
 	  else if degreeLength R === degreeLength S then identity
 	  else if degreeLength S === 0 or degreeLength R === 0 then degmap0 degreeLength R
 	  else (
