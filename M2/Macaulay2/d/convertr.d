@@ -438,7 +438,7 @@ export convert0(e:ParseTree):Code := (
 	 p:=treePosition(a.lhs);
 	 fc:=functionCode(
 	     unseq(c:=convert0(a.rhs)),a.desc,hash_t(0),
-	     combinePositionR(p,codePosition(c)));
+	     combinePositionC(p,codePosition(c), a.Operator.position));
 	 fc.hash = hashFromAddress(Expr(fc));
 	 Code(fc))
      is u:Unary do (

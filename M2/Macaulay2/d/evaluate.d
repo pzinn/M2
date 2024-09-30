@@ -609,8 +609,8 @@ export applyFCS(c:FunctionClosure,v:Sequence):Expr := (
 	  )
      );
 
-wrongModel1(model:functionCode):Expr := printErrorMessage(
-     Position(model.position.filename,model.position.lineL,model.position.columnL,model.position.lineL,model.position.columnL,model.position.lineL,model.position.columnL,model.position.loadDepth),
+wrongModel1(model:functionCode):Expr := printErrorMessageE(
+     Code(model),
      "expected " + tostring(model.desc.numparms) + " argument" + (if model.desc.numparms == 1 then "" else "s") + " but got 1"
      );
 
