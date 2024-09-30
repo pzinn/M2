@@ -6,7 +6,7 @@ needs "monideal.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,14,21,15),ascii);
+webAppTags := apply((17,18,19,20,28,29,30,14,21),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
@@ -15,8 +15,7 @@ webAppTags := apply((17,18,19,20,28,29,30,14,21,15),ascii);
 	webAppInputContdTag,  -- text, continuation of input
 	webAppUrlTag,         -- used internally to follow URLs
 	webAppPromptTag,      -- input/output prompt
-	webAppPositionTag,    -- code position (row:col)
-	webAppInspectTag      -- preliminary support for inspector
+	webAppPositionTag     -- code position (row:col)
 	)=webAppTags;
 
 webAppTagsRegex := concatenate("[",webAppTags,"]")
