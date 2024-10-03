@@ -4,50 +4,46 @@ use binding;
 use stdiop0;
 
 export codePosition(c:Code):Position := ( -- TODO retire
-     when c
-     is f:adjacentCode do f.position
-     is f:augmentedAssignmentCode do f.position
-     is f:arrayCode do f.position
-     is f:angleBarListCode do f.position
-     is f:binaryCode do f.position
-     is f:catchCode do f.position
-     is f:Error do f.position
-     is f:evaluatedCode do f.position
-     is f:forCode do f.position
-     is f:functionCode do f.position
-     is f:globalAssignmentCode do f.position
-     is f:globalMemoryReferenceCode do f.position
-     is f:globalSymbolClosureCode do f.position
-     is f:ifCode do f.position
-     is f:integerCode do f.position
-     is f:listCode do f.position
-     is f:localAssignmentCode do f.position
-     is f:localMemoryReferenceCode do f.position
-     is f:localSymbolClosureCode do f.position
-     is f:multaryCode do f.position
-     is f:newCode do f.position
-     is f:newFromCode do f.position
-     is f:newOfCode do f.position
-     is f:newOfFromCode do f.position
-     is f:nullCode do dummyPosition
-     is f:parallelAssignmentCode do f.position
-     is f:realCode do f.position
-     is f:semiCode do f.position
-     is f:sequenceCode do f.position
-     is f:stringCode do f.position
-     is f:ternaryCode do f.position
-     is f:threadMemoryReferenceCode do f.position
-     is f:threadSymbolClosureCode do f.position
-     is f:tryCode do f.position
-     is f:unaryCode do f.position
-     is f:whileDoCode do f.position
-     is f:whileListCode do f.position
-     is f:whileListDoCode do f.position
-     );
-
-export pos(c:Code):void := (					    -- for use in the debugger
-     stdIO << codePosition(c) << endl;
-     );
+    when c
+    is f:nullCode                  do dummyPosition
+    is f:realCode                  do f.position
+    is f:stringCode                do f.position
+    is f:integerCode               do f.position
+    is f:globalMemoryReferenceCode do f.position
+    is f:threadMemoryReferenceCode do f.position
+    is f:localMemoryReferenceCode  do f.position
+    is f:globalAssignmentCode      do f.position
+    is f:localAssignmentCode       do f.position
+    is f:parallelAssignmentCode    do f.position
+    is f:augmentedAssignmentCode   do f.position
+    is f:evaluatedCode             do f.position
+    is f:globalSymbolClosureCode   do f.position
+    is f:threadSymbolClosureCode   do f.position
+    is f:localSymbolClosureCode    do f.position
+    is f:unaryCode                 do f.position
+    is f:binaryCode                do f.position
+    is f:ternaryCode               do f.position
+    is f:multaryCode               do f.position
+    is f:sequenceCode              do f.position
+    is f:listCode                  do f.position
+    is f:arrayCode                 do f.position
+    is f:angleBarListCode          do f.position
+    is f:semiCode                  do f.position
+    is f:newCode                   do f.position
+    is f:newFromCode               do f.position
+    is f:newOfCode                 do f.position
+    is f:newOfFromCode             do f.position
+    is f:forCode                   do f.position
+    is f:whileDoCode               do f.position
+    is f:whileListCode             do f.position
+    is f:whileListDoCode           do f.position
+    is f:ifCode                    do f.position
+    is f:tryCode                   do f.position
+    is f:adjacentCode              do f.position
+    is f:functionCode              do f.position
+    is f:catchCode                 do f.position
+    is f:Error                     do f.position
+    );
 
 export tostringerror(e:Expr):string := (
      when e
@@ -58,37 +54,6 @@ export tostringerror(e:Expr):string := (
      else ""
 );
 
-export setup(word:Word):void := (
-     makeSymbol(word,dummyPosition,globalDictionary);
-     );
-export setup(word:Word,fn:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fn,e,unopNameList);
-     e.unary = fn;
-     );
-export setup(word:Word,fn:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     binopNameList = binopNameListCell(fn,e,binopNameList);
-     e.binary = fn;
-     );
-export setup(word:Word,fun1:unop,fun2:binop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fun1,e,unopNameList);
-     binopNameList = binopNameListCell(fun2,e,binopNameList);
-     e.unary = fun1;
-     e.binary = fun2;
-     );
-export setup(word:Word,fun1:unop,fun2:unop):void := (
-     e := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fun2,e,unopNameList);
-     unopNameList = unopNameListCell(fun1,e,unopNameList);
-     e.unary = fun1;
-     e.postfix = fun2;
-     );
-export setup(e:SymbolClosure,fn:unop):void := (
-     unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
-     e.symbol.unary = fn;
-     );
 export setuppostfix(e:SymbolClosure,fn:unop):void := (
      unopNameList = unopNameListCell(fn,e.symbol,unopNameList);
      e.symbol.postfix = fn;
@@ -103,12 +68,6 @@ export setup(e:SymbolClosure,fun1:unop,fun2:binop):void := (
      e.symbol.unary = fun1;
      e.symbol.binary = fun2;
      );
-export setup(e:SymbolClosure,fun1:unop,fun2:unop):void := (
-     unopNameList = unopNameListCell(fun1,e.symbol,unopNameList);
-     unopNameList = unopNameListCell(fun2,e.symbol,unopNameList);
-     e.symbol.unary = fun1;
-     e.symbol.postfix = fun2;
-     );
 export setupop(s:SymbolClosure,fun:unop):void := (
      unopNameList = unopNameListCell(fun,s.symbol,unopNameList);
      s.symbol.unary = fun;
@@ -119,14 +78,6 @@ export setup(e:SymbolClosure,fn:ternop):void := (
 export setup(e:SymbolClosure,fn:multop):void := (
      multopNameList = multopNameListCell(fn,e.symbol,multopNameList);
      );
-export setupfun(name:string,fun:unop):Symbol := (
-     word := makeUniqueWord(name,
-	  parseinfo(precSpace,precSpace,precSpace,parsefuns(unaryop, defaultbinary)));
-     entry := makeSymbol(word,dummyPosition,globalDictionary);
-     unopNameList = unopNameListCell(fun,entry,unopNameList);
-     entry.unary = fun;
-     entry.Protected = true;
-     entry);
 export setupfun(name:string, value:function(Expr):Expr):Symbol := (
      word := makeUniqueWord(name,parseWORD);
      entry := makeSymbol(word,dummyPosition,globalDictionary);
@@ -154,6 +105,9 @@ export setupconst(name:string,value:Expr):Symbol := (
 setup(commaS,dummyBinaryFun);
 
 threadLocal export errorDepth := ushort(0);
+
+-- for use in the debugger
+export printPosition(c:Code):void := ( stdIO << codePosition(c) << endl; );
 
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
 export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then if err.value == dummyExpr then nullE else err.value else z else z;
