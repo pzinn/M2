@@ -117,14 +117,14 @@ promote(RR,RRi') := (i,K) -> toRRi(K.precision,i,i)
 promote(RRi,RRi') := (i,K) -> toRRi(K.precision,left(i),right(i))
 lift(Number,InexactNumber) := opts -> (x,RR) -> lift(x,default RR,opts)
 
-liftable(Number,InexactNumber) := (x,RR) -> liftable(x,default RR)
-liftable(CC,RR'):= (z,RR) -> imaginaryPart z == 0
+isLiftable(Number,InexactNumber) := (x,RR) -> isLiftable(x,default RR)
+isLiftable(CC,RR'):= (z,RR) -> imaginaryPart z == 0
 lift(CC,RR'):= opts -> (z,RR) -> (
      if imaginaryPart z == 0 then realPart z
      else if opts.Verify then error "lift: complex number is not real"
      )
 
-liftable(RRi,RR) := (z,RR) -> diameter(z) == 0
+isLiftable(RRi,RR) := (z,RR) -> diameter(z) == 0
 lift(RRi,RR') := opts -> (r,RR) -> (
      if diameter(r) == 0 then lift(midpoint(r),RR)
      else if opts.Verify then error "lift: interval has positive diameter"
@@ -187,8 +187,8 @@ promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
      (prec,sgn,expt,m,numbits) := partsRR z;
      sgn * m / 2^(numbits - expt)
      ) else error "promote(RR,QQ): non-finite number encountered"
-liftable(RRi,QQ) := (z,RR) -> diameter(z) == 0
-liftable(RRi,ZZ) := (z,RR) -> diameter(z) == 0
+isLiftable(RRi,QQ) := (z,RR) -> diameter(z) == 0
+isLiftable(RRi,ZZ) := (z,RR) -> diameter(z) == 0
 lift(RRi,QQ) := opts -> (r,QQ) -> (
      if diameter(r) == 0 then lift(midpoint(r),QQ)
      else if opts.Verify then error "lift: interval has positive diameter"
