@@ -481,7 +481,6 @@ swap = (x,y) -> (y,x)
 promoterightexact   = swap @@ promoteleftexact   @@ swap
 promoterightinexact = swap @@ promoteleftinexact @@ swap
 
--- should this be exported like isLiftable? in which case, make a method
 isPromotable = (R,S) -> lookup(promote,R,S) =!= null
 
 divmod := R -> (f,g) -> (

@@ -88,7 +88,7 @@ factor RingElement := opts -> f -> (
     then ret else error "factor: no method implemented for this type of element";
     -- TODO: simplify this
     facs = apply(facs, exps, (f, e) -> if leadCoeff(p := new RM from f) >= 0 then p else (if odd e then c = -c; -p));
-    if isLiftable(facs#0, RM.BaseRing) then (
+    if liftable(facs#0, RM.BaseRing) then (
 	-- factory returns the possible constant factor in front
 	assert(exps#0 == 1);
 	c = c * facs#0;
