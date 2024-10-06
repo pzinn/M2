@@ -3,6 +3,7 @@ export {
     "SheafMap",
     -- Methods
     "sheafMap",
+    "isLiftable",
 --    "yonedaSheafExtension",
     }
 
@@ -118,6 +119,7 @@ toExternalString SheafMap := toString @@ describe
 -----------------------------------------------------------------------------
 --general method: checks whether a map phi is in the image of
 --the map Hom(eta,target phi)
+isLiftable = method()
 isLiftable(Matrix, Matrix) := (phi, eta) -> (
     newPhi := homomorphism' phi;
     deta := Hom(eta, target phi);
