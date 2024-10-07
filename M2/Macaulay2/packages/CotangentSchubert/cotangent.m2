@@ -102,18 +102,18 @@ pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G
 q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
 FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
-promoteFromMap(FK_0,FK_-1);
+setupPromoteMethods(FK_0,FK_-1);
 
 h := getSymbol "h"; ybar := getSymbol "ybar";
 FH_-1 = frac(factor(ZZ (monoid[h,ybar]))); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ (monoid[h])));
-promoteFromMap(FH_0,FH_-1);
+setupPromoteMethods(FH_0,FH_-1);
 
 defineFK = n -> (
     if not FK#?n then (
         z := getSymbol "z"; -- q := getSymbol "q";
         FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
-        promoteFromMap(FK_0,FK_n);
+        setupPromoteMethods(FK_0,FK_n);
         );
     FK#n
     )
@@ -122,7 +122,7 @@ defineFH = n -> (
     if not FH#?n then (
         y := getSymbol "y"; -- h := getSymbol "h";
         FH_n = frac(factor(ZZ (monoid[h,y_1..y_n,MonomialOrder=>{Weights=>{n+1:1},Weights=>{1,n:0},RevLex}])));
-        promoteFromMap(FH_0,FH_n);
+        setupPromoteMethods(FH_0,FH_n);
         );
     FH#n
     )
@@ -137,7 +137,7 @@ defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
             -if Equiv then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
 	BB := BB0/J;
 	BBs#(n,Kth,Equiv) = BB;
-	if Equiv then promoteFromMap(map(BB,if Kth then FK_0 else FH_0,{FF_0}));
+	if Equiv then setupPromoteMethods(map(BB,if Kth then FK_0 else FH_0,{FF_0}));
 	);
     BBs#(n,Kth,Equiv)
     )
@@ -266,12 +266,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	if curCotOpts.Equivariant then promoteFromMap(map(AA,FF0,{FF_0}));
-	promoteFromMap(f*map(R1,AA));
+	if curCotOpts.Equivariant then setupPromoteMethods(map(AA,FF0,{FF_0}));
+	setupPromoteMethods(f*map(R1,AA));
 	-- reverse transformation
-	lift(Module,BB,AA) := opts -> (v,b,AA) -> vector apply(entries v,x->lift(x,AA));
-	lift(Matrix,BB,AA) := opts -> (m,b,AA) -> matrix applyTable(entries m,x->lift(x,AA));
-	lift (BB,AA) := opts -> (b,AA) -> (
+	setupLiftMethods( b -> (
 	    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
 	    AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
 	    b = sub(b,AB);
@@ -280,7 +278,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    v := seq -> apply(toList seq, j -> AB_j);
 	    scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
 	    sub(b,AA)
-	    );
+	    ),BB,AA);
 	--
 	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
 	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> lift(zeroSection(AA,Partial=>false),AA)

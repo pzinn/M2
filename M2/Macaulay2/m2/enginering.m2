@@ -225,7 +225,39 @@ commonEngineRingInitializations = (F) -> (
      *-
      )
 
------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- TODO improve this, or deprecate promote/lift(List,R,S)
+defaultDegMap := (R,S) -> (
+    if degreeLength S == degreeLength R then (m,R,S) -> m
+    else if degreeLength S<degreeLength R then (m,R,S) -> apply(m, d -> take(d,degreeLength S))
+    else (m,R,S) -> apply(m, d -> d|toList((degreeLength S-degreeLength R):0))
+    )
+
+-- automate promote
+setupPromoteMethods = method()
+setupPromoteMethods (Function,Ring,Ring,Function) := (f,R,S,degmap) -> (
+    promote(R,S) := (a,S) -> f a;
+    promote(List,R,S) := (m,R,S) -> apply(m,degmap);
+    -- promote(Matrix,R,S) :=
+    -- promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
+    promote(Module,R,S) := (M,R1,S1) -> S ** M; -- shouldnt degmap be involved?
+    promote(Matrix,R,S) := (m,R,S) -> map(promote(target m,S),promote(source m,S),applyTable(entries m,x->promote(x,S)));
+    promote(MutableMatrix,R,S) := (m,R,S) -> mutableMatrix applyTable(entries m,x->promote(x,S));
+    )
+setupPromoteMethods (Function,Ring,Ring) := (f,R,S) -> setupPromoteMethods(f,R,S,defaultDegMap(R,S));
+
+-- automate (to some extent) lift
+setupLiftMethods = method()
+setupLiftMethods (Function,Ring,Ring,Function) := (f,R,S,degmap) -> (
+    lift(R,S) := opts -> (a,S) -> if opts.Verify then f a else try f a;
+    lift(List,R,S) := opts -> (m,R,S) -> apply(m,degmap);
+    lift(Module,R,S) := opts -> (M,R,S) -> S ** M; -- shouldnt degmap be involved?
+    lift(Matrix,R,S) := opts -> (m,R,S) -> map(lift(target m,S),lift(source m,S),applyTable(entries m,x->lift(x,S)));
+    lift(MutableMatrix,R,S) := opts -> (m,R,S) -> mutableMatrix applyTable(entries m,x->lift(x,S));
+    )
+setupLiftMethods (Function,Ring,Ring) := (f,R,S) -> setupLiftMethods(f,R,S,defaultDegMap(R,S));
+
+    -----------------------------------------------------------------------------
 reduce := (r,s) -> (
      z := syz( matrix{{r,s}}, SyzygyLimit => 1 );
      a := z_(1,0);
@@ -333,16 +365,8 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      if R.?numallvars then F.numallvars=R.numallvars;
      scan(R.baseRings, S -> if S.?frac and not isPromotable(S.frac,F) then (
-	     promote(S.frac,F) := (a,F) -> fraction(promote(numerator a,R),promote(denominator a,R));
-	     promote(List,S.frac,F) := (m,G,F) -> apply(m, d -> splice ( d | toList(degreeLength F-#d:0) ));
-	     promote(Module,S.frac,F) := (M,G,F) -> F ** M;
-	     promote(Matrix,S.frac,F) := (m,G,F) -> map(promote(target m,F),promote(source m,F),applyTable(entries m,x->promote(x,F)));
-	     promote(MutableMatrix,S.frac,F) := (m,G,F) -> mutableMatrix applyTable(entries m,x->promote(x,F));
-	     lift(F,S.frac) := opts -> (a,G) -> fraction(lift(numerator a,S),lift(denominator a,S));
-	     lift(List,F,S.frac) := opts -> (m,F,G) -> apply(m, d -> take(d,degreeLength S.frac));
-	     lift(Module,F,S.frac) := opts -> (M,F,G) -> S.frac ** M;
-	     lift(Matrix,F,S.frac) := opts -> (m,F,G) -> map(lift(target m,S.frac),lift(source m,S.frac),applyTable(entries m,x->lift(x,S.frac)));
-	     lift(MutableMatrix,F,S.frac) := opts -> (m,F,G) -> mutableMatrix applyTable(entries m,x->lift(x,S.frac));
+	     setupPromoteMethods(a->fraction(promote(numerator a,R),promote(denominator a,R)),S.frac,F);
+	     setupLiftMethods(a->fraction(lift(numerator a,S),lift(denominator a,S)),F,S.frac);
 	     ));
      F)
 

@@ -276,7 +276,9 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      o = new OptionTable from o;
      S := (coefficientRing R)(monoid [o]);
      f := map(R,S,(generators R)_v);
-     promoteFromMap f;
+     g := map(S,R,apply(generators R, v->substitute(v,S)));
+     setupPromoteMethods f;
+     setupLiftMethods g;
      (S,f))
 
 -----------------------------------------------------------------------------
