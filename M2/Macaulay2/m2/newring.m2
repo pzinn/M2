@@ -78,11 +78,11 @@ tensor(QuotientRing,   QuotientRing) := monoidTensorDefaults >> optns -> (R, S) 
      -- forceGB fg;  -- if the monomial order chosen doesn't restrict, then this
                      -- is an error!! MES
      RS := AB/image fg;
-     setupPromoteMethods map(RS,R,(vars AB)_{0 .. m-1});
-     setupLiftMethods map(R,RS,generators A | toList(n:0));
+     setupPromote map(RS,R,(vars AB)_{0 .. m-1});
+     setupLift map(R,RS,generators A | toList(n:0));
      if S =!= R then (
-	 setupPromoteMethods map(RS,S,(vars AB)_{m .. m+n-1});
-	 setupLiftMethods map(S,RS,toList(m:0) | generators B);
+	 setupPromote map(RS,S,(vars AB)_{m .. m+n-1});
+	 setupLift map(S,RS,toList(m:0) | generators B);
 	 );
      RS
      )

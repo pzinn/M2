@@ -102,18 +102,18 @@ pushforwardToPointFromCotangent=method(); -- pushforward to a point from K(T^*(G
 q := getSymbol "q"; zbar := getSymbol "zbar";
 FK_-1 = frac(factor(ZZ (monoid[q,zbar,DegreeRank=>0]))); -- same as FK_1, really but diff variable name
 FK_0 = frac(factor(ZZ (monoid[q,DegreeRank=>0])));
-setupPromoteMethods(FK_0,FK_-1);
+setupPromote(FK_0,FK_-1);
 
 h := getSymbol "h"; ybar := getSymbol "ybar";
 FH_-1 = frac(factor(ZZ (monoid[h,ybar]))); -- same as FH_1, really but diff variable name
 FH_0 = frac(factor(ZZ (monoid[h])));
-setupPromoteMethods(FH_0,FH_-1);
+setupPromote(FH_0,FH_-1);
 
 defineFK = n -> (
     if not FK#?n then (
         z := getSymbol "z"; -- q := getSymbol "q";
         FK_n = frac(factor(ZZ (monoid[q,z_1..z_n,DegreeRank=>0,MonomialOrder=>{Weights=>{n+1:1},RevLex}])));
-        setupPromoteMethods(FK_0,FK_n);
+        setupPromote(FK_0,FK_n);
         );
     FK#n
     )
@@ -122,7 +122,7 @@ defineFH = n -> (
     if not FH#?n then (
         y := getSymbol "y"; -- h := getSymbol "h";
         FH_n = frac(factor(ZZ (monoid[h,y_1..y_n,MonomialOrder=>{Weights=>{n+1:1},Weights=>{1,n:0},RevLex}])));
-        setupPromoteMethods(FH_0,FH_n);
+        setupPromote(FH_0,FH_n);
         );
     FH#n
     )
@@ -137,7 +137,7 @@ defineB = (FF,n,Kth,Equiv) -> ( -- TODO remove FF
             -if Equiv then elem(k,drop(gens FF,1)) else if Kth then binomial(n,k) else 0);
 	BB := BB0/J;
 	BBs#(n,Kth,Equiv) = BB;
-	if Equiv then setupPromoteMethods(map(BB,if Kth then FK_0 else FH_0,{FF_0}));
+	if Equiv then setupPromote(map(BB,if Kth then FK_0 else FH_0,{FF_0}));
 	);
     BBs#(n,Kth,Equiv)
     )
@@ -266,10 +266,10 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	R1 := FF monoid new Array from args;
 	f := map(BB,R1,e\inds);
 	AA := R1 / kernel f;
-	if curCotOpts.Equivariant then setupPromoteMethods(map(AA,FF0,{FF_0}));
-	setupPromoteMethods(f*map(R1,AA));
+	if curCotOpts.Equivariant then setupPromote(map(AA,FF0,{FF_0}));
+	setupPromote(f*map(R1,AA));
 	-- reverse transformation
-	setupLiftMethods( b -> (
+	setupLift( b -> (
 	    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
 	    AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
 	    b = sub(b,AB);

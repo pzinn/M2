@@ -277,8 +277,8 @@ selectVariables(List,PolynomialRing) := (v,R) -> (
      S := (coefficientRing R)(monoid [o]);
      f := map(R,S,(generators R)_v);
      g := map(S,R,apply(generators R, v->substitute(v,S)));
-     setupPromoteMethods f;
-     setupLiftMethods g;
+     setupPromote f;
+     setupLift g;
      (S,f))
 
 -----------------------------------------------------------------------------

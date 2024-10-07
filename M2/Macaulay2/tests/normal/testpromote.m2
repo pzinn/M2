@@ -78,7 +78,7 @@ assert(lift(z,R,Verify=>false) === null)
 R=QQ[x_1,x_2]
 R'=QQ[e_1,e_2]
 f=map(R,R',{x_1+x_2,x_1*x_2})
-setupPromoteMethods f
+setupPromote f
 assert(e_2==x_1*x_2)
 assert(map(R,R') === f)
 

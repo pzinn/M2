@@ -568,16 +568,16 @@ map(Module,Nothing,RingMap,List) := Matrix => o -> (M,N,p,f) -> map(M,N,p,map(M,
 map(Module,RingMap) := Matrix => o -> (M,p) -> map(M,,p,map(M,cover M,1),o)
 
 --
-setupPromoteMethods (RingMap,Ring,Ring,Function) := lookup(setupPromoteMethods,Function,Ring,Ring,Function)
-setupPromoteMethods (RingMap,Ring,Ring) := (f,R,S) -> setupPromoteMethods(f,R,S,f.cache.DegreeMap)
+setupPromote (RingMap,Ring,Ring,Function) := lookup(setupPromote,Function,Ring,Ring,Function)
+setupPromote (RingMap,Ring,Ring) := (f,R,S) -> setupPromote(f,R,S,f.cache.DegreeMap)
 -- note that promote(Module,R,S) := (M,R,S) -> f ** M would make more sense, but promote only works with free modules anyway
-setupPromoteMethods RingMap := f -> setupPromoteMethods(f,source f,target f)
-setupPromoteMethods (Ring,Ring) := (R,S) -> setupPromoteMethods map(S,R)
+setupPromote RingMap := f -> setupPromote(f,source f,target f)
+setupPromote (Ring,Ring) := (R,S) -> setupPromote map(S,R)
 
-setupLiftMethods (RingMap,Ring,Ring) := (f,R,S) -> -- f is a partial inverse to the promote map
-    setupLiftMethods( a -> ( b := f a; if promote(b,R) == a then b else error "cannot lift" ), R,S,f.cache.DegreeMap);
+setupLift (RingMap,Ring,Ring) := (f,R,S) -> -- f is a partial inverse to the promote map
+    setupLift( a -> ( b := f a; if promote(b,R) == a then b else error "cannot lift" ), R,S,f.cache.DegreeMap);
 
-setupLiftMethods RingMap := f -> setupLiftMethods(f,source f,target f)
+setupLift RingMap := f -> setupLift(f,source f,target f)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
