@@ -228,9 +228,10 @@ commonEngineRingInitializations = (F) -> (
 ------------------------------------------------------------------------------
 -- TODO improve this, or deprecate promote/lift(List,R,S)
 defaultDegMap := (R,S) -> (
-    if degreeLength S == degreeLength R then (m,R,S) -> m
-    else if degreeLength S<degreeLength R then (m,R,S) -> apply(m, d -> take(d,degreeLength S))
-    else (m,R,S) -> apply(m, d -> d|toList((degreeLength S-degreeLength R):0))
+    n:=degreeLength S-degreeLength R;
+    if n==0 then identity
+    else if n<0 then d -> take(d,degreeLength S)
+    else d -> d|toList(n:0)
     )
 
 -- automate promote
