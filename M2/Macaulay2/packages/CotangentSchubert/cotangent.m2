@@ -269,8 +269,7 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	if curCotOpts.Equivariant then setupPromote(map(AA,FF0,{FF_0}));
 	setupPromote(f*map(R1,AA));
 	-- reverse transformation
-	setupLift( b -> (
-	    if d == n-1 then return (map(AA,BB,gens AA)) b; -- special case of full flag
+	setupLift( if #(unique dims) == n+1 then map(AA,BB,gens AA) else b -> ( -- special case of full flag
 	    AB := FF monoid (BB.generatorSymbols | AA.generatorSymbols); -- no using it
 	    b = sub(b,AB);
 	    -- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));

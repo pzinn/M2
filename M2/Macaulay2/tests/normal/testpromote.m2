@@ -76,12 +76,16 @@ assert(lift(x_T,R) == x_R)
 assert(lift(z,R,Verify=>false) === null)
 
 R=QQ[x_1,x_2]
-R'=QQ[e_1,e_2]
+R'=QQ[e_1,e_2,Degrees=>{1,2}]
 f=map(R,R',{x_1+x_2,x_1*x_2})
 setupPromote f
 assert(e_2==x_1*x_2)
 assert(map(R,R') === f)
 
+R=QQ[u]; S=QQ[v];
+setupPromote map(R,S,{u^2},DegreeMap=>i->2*i)
+assert(isHomogeneous map(R,S))
+assert(promote(S^{1,2},R)==R^{2,4})
 
 end
 -- Local Variables:

@@ -239,9 +239,7 @@ setupPromote = method()
 setupPromote (Function,Ring,Ring,Function) := (f,R,S,degmap) -> (
     promote(R,S) := (a,S) -> f a;
     promote(List,R,S) := (m,R,S) -> apply(m,degmap);
-    -- promote(Matrix,R,S) :=
-    -- promote(MutableMatrix,R,S) := -- doesn't work, cf https://github.com/Macaulay2/M2/issues/2192
-    promote(Module,R,S) := (M,R1,S1) -> S ** M; -- shouldnt degmap be involved?
+    promote(Module,R,S) := (M,R1,S1) -> S ** M;
     promote(Matrix,R,S) := (m,R,S) -> map(promote(target m,S),promote(source m,S),applyTable(entries m,x->promote(x,S)));
     promote(MutableMatrix,R,S) := (m,R,S) -> mutableMatrix applyTable(entries m,x->promote(x,S));
     )
@@ -252,7 +250,7 @@ setupLift = method()
 setupLift (Function,Ring,Ring,Function) := (f,R,S,degmap) -> (
     lift(R,S) := opts -> (a,S) -> if opts.Verify then f a else try f a;
     lift(List,R,S) := opts -> (m,R,S) -> apply(m,degmap);
-    lift(Module,R,S) := opts -> (M,R,S) -> S ** M; -- shouldnt degmap be involved?
+    lift(Module,R,S) := opts -> (M,R,S) -> S ** M;
     lift(Matrix,R,S) := opts -> (m,R,S) -> map(lift(target m,S),lift(source m,S),applyTable(entries m,x->lift(x,S)));
     lift(MutableMatrix,R,S) := opts -> (m,R,S) -> mutableMatrix applyTable(entries m,x->lift(x,S));
     )
