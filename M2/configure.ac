@@ -1021,6 +1021,19 @@ else AC_MSG_RESULT([no, will build])
      BUILD_csdp=yes
 fi
 
+AC_DEFUN([CHECK_NMZ_PACKAGE],
+    [AC_RUN_IFELSE(
+        [AC_LANG_PROGRAM([
+	    #include <libnormaliz/nmz_config.h>
+	    ], [
+	    #ifdef $1
+	      return 0;
+	    #else
+	      return 1;
+	    #endif
+	    ])],
+	[LIBS="$LIBS $2"])])
+
 AS_IF([test $BUILD_normaliz = no],
     [AC_MSG_CHECKING(whether the package normaliz is installed)
      AS_IF([command -v normaliz > /dev/null],
@@ -1030,19 +1043,10 @@ AS_IF([test $BUILD_normaliz = no],
 	       AC_MSG_CHECKING([for libnormaliz])
 	       AC_LANG(C++)
 	       SAVELIBS=$LIBS
-	       LIBS="$LIBS -lnormaliz -lnauty -lgmp"
-	       dnl check if libnormaliz built w/ eantic
-	       AC_RUN_IFELSE(
-	           [AC_LANG_PROGRAM([
-		       #include <libnormaliz/nmz_config.h>
-		       ], [
-		       #ifdef ENFNORMALIZ
-		         return 0;
-		       #else
-		         return 1;
-		       #endif
-		       ])],
-		   [LIBS="$LIBS -leantic -leanticxx"])
+	       LIBS="$LIBS -lnormaliz -lgmp"
+	       CHECK_NMZ_PACKAGE([ENFNORMALIZ], [-leantic -leanticxx])
+	       CHECK_NMZ_PACKAGE([NMZ_COCOA], [-lcocoa])
+	       CHECK_NMZ_PACKAGE([NMZ_NAUTY], [-lnauty])
 	       AC_LINK_IFELSE(
 		   [AC_LANG_PROGRAM([
 		       #include <libnormaliz/cone.h>
@@ -1324,10 +1328,13 @@ else
 fi
 AC_SUBST(GTEST_PATH)
 
-AC_SUBST(PYTHON,no)
+AC_SUBST([PYTHON])
 AC_ARG_WITH(python, AS_HELP_STRING(--with-python@<:@=3.x@:>@.,
     [link with libpython. If the version number is not specified, then the
-     system's default version will be detected.]), PYTHON=$withval)
+     system's default version will be detected.  Use --without-python to turn
+     off Python support.]),
+    [PYTHON=$withval],
+    [PYTHON=yes])
 if test $PYTHON != no
 then AC_DEFINE(WITH_PYTHON,1,[whether we are linking with the python library])
     if test $PYTHON = yes
