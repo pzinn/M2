@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 285553619
+-- -*- M2-comint -*- hash: 14062042649050035155
 i1 : 1:0R = CC[x,y];
 i2 : 2:0f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 i3 : 3:0fSols = solveSystem(f, randomSeed=>3);

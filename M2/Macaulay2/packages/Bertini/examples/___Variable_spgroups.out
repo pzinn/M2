@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -273104196
+-- -*- M2-comint -*- hash: 18358394276875387580
 i1 : 1:0R = CC[x,y];
 i2 : 2:0F1 = {x*y+1,2*x*y+3*x+4*y+5};
 i3 : 3:0bertiniZeroDimSolve(F1, AffVariableGroup=>{{x},{y}});

@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1488243299
+-- -*- M2-comint -*- hash: 6114446290252515939
 i1 : 1:0R = CC[x,y];
 i2 : 2:0F = {x^2-1,y^2-2};
 i3 : 3:0S = bertiniZeroDimSolve F

@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -703438448
+-- -*- M2-comint -*- hash: 1730917110014697872
 i1 : 1:0r := PieriRootCount(3,2,1);
 i2 : 2:0print r
 $55$

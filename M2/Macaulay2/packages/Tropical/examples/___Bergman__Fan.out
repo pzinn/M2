@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1587567648
+-- -*- M2-comint -*- hash: 10480927928276198368
 i1 : 1:0M=uniformMatroid(2,3);
 i2 : 2:0T=BergmanFan(M);
 i3 : 3:0rays T

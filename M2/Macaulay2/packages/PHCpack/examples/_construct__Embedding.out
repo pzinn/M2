@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1285962778
+-- -*- M2-comint -*- hash: 10821514162226185190
 i1 : 1:0R = CC[x,y,z];
 i2 : 2:0f = { x^2 - y, x^3 - z };
 i3 : 3:0fe1 = constructEmbedding(f,1);

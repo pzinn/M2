@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -524747189
+-- -*- M2-comint -*- hash: 4847554454883991115
 i1 : 1:0s=makeB'Section({x,y,z})
 
 o1 = <samp class="token class-name">B'Section</samp>$\{\ldots ﻿2﻿\ldots\}$

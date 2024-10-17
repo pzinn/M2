@@ -1,9 +1,8 @@
--- -*- M2-comint -*- hash: -211311793
+-- -*- M2-comint -*- hash: 8946122813830832975
 i1 : 1:0v = versionNumber(null)
 
 o1 = $($<samp class="token string">2.4.85</samp>$,\,$<samp class="token string">2020-06-30</samp>$)$
 
-<<<<<<< HEAD
 o1 : <samp class="token class-name">Sequence</samp>
 i2 : 2:0print v_0
 <samp class="token string">2.4.85</samp>
@@ -11,16 +10,3 @@
 <samp class="token string">2020-06-30</samp>
 i4 : 4:0
 
-=======
-o1 = (2.4.90, 2024-03-20)
-
-o1 : Sequence
-
-i2 : print v_0
-2.4.90
-
-i3 : print v_1
-2024-03-20
-
-i4 : 
->>>>>>> 4ddabeb54cdf9e9c8206fd5ff98be252dd08f93b

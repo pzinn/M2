@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1222343848
+-- -*- M2-comint -*- hash: 13081289695883985752
 i1 : 1:0R = CC[x,y];
 i2 : 2:0f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
 i3 : 3:0(m,q,qsols) = mixedVolume(f,StartSystem=>true);

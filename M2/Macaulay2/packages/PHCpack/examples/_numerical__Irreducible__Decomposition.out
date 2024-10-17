@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1215191058
+-- -*- M2-comint -*- hash: 1462883842830477294
 i1 : 1:0R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
 i2 : 2:0system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
 i3 : 3:0V=numericalIrreducibleDecomposition(system)

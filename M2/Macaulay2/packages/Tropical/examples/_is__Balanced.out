@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -599996858
+-- -*- M2-comint -*- hash: 8680144405152974406
 i1 : 1:0QQ[x,y,z]
 
 o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$

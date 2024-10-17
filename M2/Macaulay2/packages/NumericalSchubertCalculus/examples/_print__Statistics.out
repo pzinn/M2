@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1309898240
+-- -*- M2-comint -*- hash: 4420568397496153600
 i1 : 1:0k = 3;
 i2 : 2:0n = 6;
 i3 : 3:0SchPblm = {
@@ -38,6 +38,6 @@
 # moves of type {2, 0, 0} = 3
 # moves of type {2, 1, 0} = 1
 # moves of type {2, 2, 0} = 12
-tracking time = .279798
+tracking time = .359146
 i7 : 11:0
 

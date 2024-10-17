@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1886230761
+-- -*- M2-comint -*- hash: 11456565689027762409
 i1 : 1:0QQ[x,y,z];
 i2 : 2:0sys = {y-x^2, z-x^3, (x+y+z-1)/x};
 i3 : 3:0describe ring ideal sys

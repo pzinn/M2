@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1393920928
+-- -*- M2-comint -*- hash: 4423001283312120928
 i1 : 1:0R = CC[x,t]; -- include the path variable in the ring
 i2 : 2:0H = { (x^2-1)*t + (x^2-2)*(1-t)};
 i3 : 3:0sol1 = point {{1}};
