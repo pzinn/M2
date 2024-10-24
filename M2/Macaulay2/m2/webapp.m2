@@ -80,7 +80,10 @@ timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
 	else Abbreviate {x}
 	);
     msg:=recScan \ sequence errorMessage;
+    backupFlag := webAppPrintFlag;
+    webAppPrintFlag = true;
     h := try html SPAN msg else try html net msg else try html toString msg else try html toExternalString msg;
+    webAppPrintFlag = backupFlag;
     try print SPAN ((
 	    "class"=>"M2Error",
 	    if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
