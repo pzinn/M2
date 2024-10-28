@@ -152,13 +152,13 @@ texMathLiteralTable := merge(texLiteralTable,
 texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior
 suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
-suffixesRegExp := "\\w("|demark("|",suffixes)|")$";
+suffixesRegExp := "(\\S+)\\s*("|demark("|",suffixes)|")$";
 texVariable = x -> (
     if x === "" then return "";
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb " | x#0 | "}";
     if last x === "'" then return texVariable substring(x, 0, #x-1) | "'";
     if (r := regex(suffixesRegExp, x)) =!= null then return (
-	r = r#1; "\\" | substring(r, x) | "{" | texVariable substring(x, 0, r#0) | "}");
+	"\\" | substring(r#2, x) | "{" | texVariable substring(r#1,x) | "}");
     if #x === 1 or regex("[^[:alnum:]]", x) =!= null then x else "\\mathit{" | x | "}")
 texMathSymbol :=
 texMath Symbol := texVariable @@ texMathLiteral @@ toString
