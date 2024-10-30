@@ -648,11 +648,11 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 			 f.frameID = desc.frameID;
 			 f.values.0 = e;
 			 );
-		    ret := nullE; tailCode := dummyCode;
+		    ret := nullE;
 		    while true do (
 			 localFrame = f;
 	  		 recursionDepth = recursionDepth + 1;
-			 tailCode = evalAllButTail(model.body);
+			 tailCode := evalAllButTail(model.body);
 	  		 recursionDepth = recursionDepth - 1;
 			 -- formerly, just ret := eval(model.body); now do tail recursion instead
 			 when tailCode
@@ -765,7 +765,7 @@ export applyFCC(fc:FunctionClosure,ec:Code):Expr := (
 			 f.frameID = -2;				    -- just to be tidy, not really needed
 			 recycleBin.framesize = f;
 			 );
-		    when ret is Error do returnFromFunction(handleError(tailCode,ret)) else ret -- this check takes time, too!
+		    when ret is err:Error do returnFromFunction(ret) else ret -- this check takes time, too!
 		    )
 	       else (
 		    f := Frame(previousFrame,desc.frameID,framesize,false,

@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.81",
-    Date => "Jan 22, 2023",
+    Version => "0.82",
+    Date => "Sep 23, 2024",
     Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
@@ -173,6 +173,7 @@ global variable names instead of the hash table contents.
 * define a Lie algebra based on its Cartan matrix
 * M @ M' for tensor product of modules over different Lie algebras
 * improved caching of characters
+* added/exported method zeroModule
 
 *-
 
