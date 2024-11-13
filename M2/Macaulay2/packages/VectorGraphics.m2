@@ -49,6 +49,10 @@ svgAttr= htmlAttr | htmlData | { "transform", "filter" } -- what else ?
 gParse := method()
 -- gParse Sequence := x -> gParse vector toList x -- retired due to https://github.com/Macaulay2/M2/issues/1548
 gParse Array := x -> gParse vector toList x -- replaced with this
+gParse AngleBarList := x -> (
+    r := if #x>1 then x#1 else 1;
+    gParse vector { r * cos x#0, r * sin x#0 }
+    )
 gParse Matrix := x -> (
     if rank source x =!= rank target x or rank source x < 2 or rank source x > 4 then error "wrong matrix";
     if rank source x == 2 then x++1.++1. else if rank source x == 3 then x++1. else sub(x,RR)
