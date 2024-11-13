@@ -430,29 +430,6 @@ net Complex := C -> (
 
 texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
 
--- NOTE: there are hardcoded constant values (8, 10) 
--- in the next function.
-texMatrixShort = method()
-texMatrixShort Matrix := String => m -> (
-    if m == 0 then return "0";
-    e := entries m;
-    texRow := row -> if #row > 8 then 
-            { texMath first row, "\\cdots", texMath last row } 
-        else 
-            texMath\row;
-    e = if #e > 10 then ( 
-            t := texRow first e; 
-            {t, toList(#t:"\\vphantom{\\Big|}\\vdots"), texRow last e} 
-            )
-        else 
-            texRow\e;
-    concatenate(
-	"\\begin{bmatrix}" | newline,
-	between(///\\/// | newline, 
-            for row in e list concatenate between("&", row)),
-	"\\end{bmatrix}"
-        )
-    )
 
 texMath Complex := String => C -> (
     (lo, hi) := concentration C;
@@ -464,7 +441,7 @@ texMath Complex := String => C -> (
                 texUnder(texMath moduleAbbrv(C_i, C_i),i) 
             else (
                 "\\,\\xleftarrow{\\scriptsize " 
-                | texMatrixShort dd^C_i 
+                | texMath short dd^C_i 
                 | "}\\," 
                 | texUnder(texMath moduleAbbrv(C_i, C_i),i)
                 )

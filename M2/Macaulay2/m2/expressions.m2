@@ -1250,7 +1250,7 @@ texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing
 toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
-shortLength := 8
+shortLength = 8
 shortStringLength := 3*shortLength
 shortMode = false
 -- used e.g. in chaincomplexes.m2
