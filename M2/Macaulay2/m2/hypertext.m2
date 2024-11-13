@@ -31,7 +31,7 @@ toExternalString Hypertext := s -> concatenate(toString class s, toExternalStrin
 
 new Hypertext from VisibleList := (M,x) -> x -- needed because otherwise next line takes over
 new Hypertext from Thing  := (M,x) -> {x}
-new Hypertext from Net    := (M,x) -> {toString x}
+new Hypertext from Net    := (M,x) -> between(BR(),unstack x)
 
 Hypertext#AfterPrint = x -> null
 
@@ -462,8 +462,10 @@ texMath MarkUpType := X -> (
 
 short Hypertext := x -> (
     (ops,arg) := override(options class x,toSequence x);
-    append(new class x from apply(arg,short),ops)
+    x=new class x from apply(sequence arg,short);
+    if #ops==0 then x else append(x,ops)
     )
+short LITERAL:=identity
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

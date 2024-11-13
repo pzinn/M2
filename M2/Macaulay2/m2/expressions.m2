@@ -1255,7 +1255,7 @@ shortStringLength := 3*shortLength
 shortMode = false
 -- used e.g. in chaincomplexes.m2
 short = method(Dispatch => Thing, TypicalValue => Expression)
-short Thing := short @@ expression
+short Thing := short @@ expression -- should this be the default? or identity?
 short Holder := identity -- to avoid infinite loops
 short MatrixExpression :=
 short Table := x ->  (
@@ -1278,7 +1278,7 @@ short BasicList := x -> (
     if l === hold then shortList x else short expression x
     )
 short BinaryOperation := b -> BinaryOperation {b#0,short b#1,short b#2}
-short String := s -> if #s > shortStringLength then substring(s,0,shortStringLength) | "..." | last s else s -- too radical, keep shortLength chars
+short String := s -> if #s > shortStringLength then substring(s,0,shortStringLength-3) | "..." | last s else s -- too radical, keep shortLength chars
 short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
 -- tentative -- potentially dangerous for custom classes
 short HashTable := H -> (
@@ -1289,13 +1289,15 @@ short HashTable := H -> (
     	    new class H from append(applyTable(take(s,shortLength),short),short s#shortLength#0=>cdots)
     	    ))
     )
-short MutableHashTable := expression
 short Set := H -> hold ( if #H <= shortLength then applyKeys(H,short) else (
 	new class H from append(apply(take(keys H,shortLength),short),ldots)
 	))
 -- a few types shouldn't be affected by short
-short FilePosition := hold
-short Nothing := identity
+short MutableHashTable := -- expression
+short FilePosition := -- hold -- or identity? rethink
+short Nothing :=
+short Type :=
+short Symbol := identity
 
 Abbreviate = new WrapperType of Holder -- used for listSymbols and error messages
 net Abbreviate := y -> silentRobustNet(55,4,3,y#0)

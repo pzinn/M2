@@ -94,7 +94,8 @@ code Sequence   := s -> (
     -- TODO: say "strategies for method: ..."
     if func =!= null or (func = lookup key) =!= null
     then DIV { DIV { mesg, formatDocumentTag s }, codeFunction(s, func, 0) }
-    else "-- no method function found: " | formatDocumentTag key)
+    else SPAN { "-- no method function found: " | formatDocumentTag key })
+
 code Function   := f -> codeFunction(null, f, 0)
 code Command    := C -> code C#0
 code List       := L -> DIV between_(HR{}) dedupMethods apply(L, code)

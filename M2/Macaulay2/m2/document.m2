@@ -119,6 +119,7 @@ format   DocumentTag := tag -> tag.Format
 package  DocumentTag := tag -> getpkg tag.Package
 toString DocumentTag :=
 net      DocumentTag := tag -> concatenate (tag.Package, " :: ", format tag)
+short    DocumentTag := identity
 
 -- FIXME: this is kind of a hack
 toExternalString DocumentTag := tag -> (
