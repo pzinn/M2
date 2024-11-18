@@ -363,10 +363,7 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      if R.?numallvars then F.numallvars=R.numallvars;
-     scan(R.baseRings, S -> if S.?frac and not isPromotable(S.frac,F) then (
-	     setupPromote(a->fraction(promote(numerator a,R),promote(denominator a,R)),S.frac,F);
-	     setupLift(a->fraction(lift(numerator a,S),lift(denominator a,S)),F,S.frac);
-	     ));
+     scan(R.baseRings, S -> if S.?frac then setupLift(a->fraction(lift(numerator a,S),lift(denominator a,S)),F,S.frac));
      F)
 
 -- methods for all ring elements
@@ -504,7 +501,11 @@ swap = (x,y) -> (y,x)
 promoterightexact   = swap @@ promoteleftexact   @@ swap
 promoterightinexact = swap @@ promoteleftinexact @@ swap
 
-isPromotable = (R,S) -> lookup(promote,R,S) =!= null
+isPromotable = (R,S) -> lookup(promote,R,S) =!= null or (instance(R,FractionField) and instance(S,FractionField) and (
+	R0:=baseRing R; S0:=baseRing S;
+	l:=lookup(promote,R0,S0);
+	l=!=null and (setupPromote(a->fraction(promote(numerator a,S0),promote(denominator a,S0)),R,S); true)
+	))
 
 divmod := R -> (f,g) -> (
      (q,r) := rawDivMod(raw f, raw g);
