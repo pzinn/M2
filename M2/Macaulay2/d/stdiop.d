@@ -161,6 +161,8 @@ export peek(o:PosFile, offset:int):int := (
 	  );
      c);
 export peek(o:PosFile):int := peek(o,0);
+-- concatenate the next two bytes into a single int
+export peek2(o:PosFile):int := (peek(o) << 8) | peek(o, 1);
 export isatty(o:PosFile):bool := o.file.inisatty;
 export close(o:PosFile):int := (
      when close(o.file) is errmsg do ERROR else 0
@@ -191,6 +193,21 @@ export getc(o:PosFile):int := (
 	  );
      c );
 export flushInput(o:PosFile):void := flushinput(o.file);
+
+-- TODO refactor
+printMessage(position:Position,message:string):void := (
+     if !SuppressErrors then (
+         cleanscreen();
+         stdError << position;
+         if recursionDepth > 0 then stdError << "[" << recursionDepth << "]:";
+         -- gettid() is not there in Solaris
+         -- tid := gettid();
+         -- if tid != -1 && tid != getpid() then stdError << "<" << gettid() << ">:";
+         stdError << " " << message << endl;
+         );
+     );
+
+export printWarningMessage(position:Position,message:string):void := printMessage(position,"warning: "+message);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d stdiop.o "

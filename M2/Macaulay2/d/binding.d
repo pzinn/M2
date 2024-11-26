@@ -283,7 +283,11 @@ bumpPrecedence();
      export PlusS := makeKeyword(unarybinaryleft("+"));	    -- also binary
      export PlusPlusS := makeKeyword(binaryleft("++"));
 bumpPrecedence();
+     export InterpunctS := makeKeyword(binaryleft("·"));
+bumpPrecedence();
      export StarStarS := makeKeyword(binaryleft("**"));
+     export BoxTimesS := makeKeyword(binaryleft("⊠"));
+     export ShuffleProductS := makeKeyword(binaryleft("⧢"));
 bumpPrecedence();
      precBracket := prec;
      export leftbracket := parens("[","]",precBracket, precRightParen, precRightParen);
@@ -500,7 +504,10 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      PowerGreaterEqualS,   UnderscoreGreaterEqualS,
      PowerLessS,           UnderscoreLessS,
      PowerLessEqualS,      UnderscoreLessEqualS,
-     PowerStarStarS
+     PowerStarStarS,
+     InterpunctS,
+     BoxTimesS,
+     ShuffleProductS
      );
 export opsWithUnaryMethod := array(SymbolClosure)(
      StarS, MinusS, PlusS, LessLessS, QuestionQuestionS,
@@ -643,7 +650,8 @@ bindTokenLocally(t:Token,dictionary:Dictionary):void := (
      lookupCountIncrement = 1;
      when r
      is entry:Symbol do (
-	  if dictionary.frameID == entry.frameID && !SuppressErrors then stderr << t.position << " warning: local declaration of " + t.word.name + " shields variable with same name" << endl;
+	  if dictionary.frameID == entry.frameID
+	  then printWarningMessage(t, "local declaration of " + t.word.name + " shields variable with same name" );
 	  )
      else nothing;
      t.dictionary = dictionary;

@@ -60,6 +60,9 @@ export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
 (threadLocal export debuggingMode := false) = true;
 
+-- TODO refactor
+export printWarningMessage(t:Token,message:string):void := printWarningMessage(t.position,message);
+
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame
      );
