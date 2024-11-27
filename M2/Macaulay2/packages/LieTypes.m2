@@ -2,7 +2,7 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.82",
+    Version => "0.83",
     Date => "Sep 23, 2024",
     Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
@@ -204,7 +204,7 @@ LieAlgebra = new Type of HashTable
 LieAlgebra.GlobalAssignHook = globalAssignFunction
 LieAlgebra.GlobalReleaseHook = globalReleaseFunction
 
-cartanMatrixQQ := (type, m) -> promote(cartanMatrix(type,m),QQ)
+cartanMatrixQQ := a -> promote(cartanMatrix a,QQ)
 characterRing = method()
 characterRing (String,ZZ) := memoize( (type,m) -> (
     Q:=sum \ entries inverse cartanMatrixQQ(type,m);
@@ -1366,7 +1366,8 @@ new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Ca
 subLieAlgebra = method ( TypicalValue => LieAlgebra )
 
 subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(ZZ^(rank g),0,0) else matrix transpose apply(S,s ->
-	if class s === ZZ then apply(rank g, j -> if j+1 == s then 1 else 0)
+	if class s === ZZ and s>0 and s<=rank g then apply(rank g, j -> if j+1 == s then 1 else 0)
+	else if class s === ZZ and s==0 then entries lift(-inverse cartanMatrixQQ g*vector highestRoot g,ZZ)
 	else if instance(s,Vector) and rank class s == rank g then entries s
 	else if class s === List and #s == rank g then s
 	else error "wrong argument"))
@@ -2384,15 +2385,24 @@ doc ///
         h:LieAlgebra
     Description
         Text
-	   @TT "S"@ must be a subset of vertices of the Dynkin diagram of @TT "g"@ (as labelled by @TO dynkinDiagram@);
-	   or a matrix whose columns are the simple coroots of the subalgebra expanded in the basis of simple coroots of @TT "g"@.
+	   @TT "S"@ must be either a subset of vertices of the Dynkin diagram of @TT "g"@ (as labelled by @TO dynkinDiagram@):
 	Example
 	   g=𝔢_8; dynkinDiagram g
 	   subLieAlgebra(g,{1,2,3,4,5,8})
+	Text
+	   The vertices are labelled from 1 to the rank of g; because we frequently want to consider the lowest root, it is labelled 0:
+	Example
 	   h=𝔣_4; dynkinDiagram h
-	   subLieAlgebra(h,matrix transpose{{1,0,0,0},{0,1,0,0},{0,0,1,0},-{2,3,2,1}}) -- simple coroots 1,2,3 and opposite of highest root
+	   subLieAlgebra(h,{0,1,2,3})
+	Text
+	   Or @TT "S"@ must be a matrix whose columns are the simple coroots of the subalgebra expanded in the basis of simple coroots of @TT "g"@:
+	Example
+	   g=𝔞_2; h=subLieAlgebra(g,matrix{{2},{2}}); describe h
+	   V=LL_(2,4) g; qdim V
+	   W=branchingRule(V,h); describe W
+	   character W
     Caveat
-        If @TT "S"@ is a matrix, does not check if the map of root lattices leads to a valid Lie algebra embeddng.
+        If @TT "S"@ is a matrix, does not check if the map of root lattices leads to a valid Lie algebra embedding.
 ///
 
 TEST ///
