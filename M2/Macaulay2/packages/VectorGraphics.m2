@@ -837,7 +837,8 @@ tikzconv1 := x -> y -> (
 	) else if substring(y,0,3)=="rgb" then ( -- TODO cmy as well
 	c = value substring(y,3);
 	y = "{rgb,255:red,"|jsString min(c#0,255)|";green,"|jsString min(c#1,255)|";blue,"|jsString min(c#2,255)|"}";
-	);
+	)
+    else if y == "transparent" then y="none";
     x|"="|y
     )
 tikzconv := hashTable {
