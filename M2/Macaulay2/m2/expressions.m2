@@ -1250,15 +1250,10 @@ net Set := net @@ expression
 texMath Set := texMath @@ expression
 
 -- shortening expressions
-Dots = new Type of Symbol
-cdots=new Dots from symbol cdots
-ddots=new Dots from symbol ddots
-vdots=new Dots from symbol vdots
-ldots=new Dots from symbol ldots
-texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing in ordinary LaTeX
-toString Dots := x -> "..."
-net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
-
+⋯:=symbol ⋯
+⋱:=symbol ⋱
+⋮:=symbol ⋮
+…:=symbol …
 -- used e.g. in chaincomplexes.m2
 shortLength := 8
 shortStringLength := 3*shortLength
@@ -1268,15 +1263,15 @@ short Holder := identity -- to avoid infinite loops
 short MatrixExpression :=
 short Table := x ->  (
     (opts,m) := matrixOpts x;
-    shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
+    shortRow := row -> apply(if #row>shortLength then { first row, ⋯, last row } else row,short);
     new class x from
-	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
+	apply(if #m>shortLength then {first m,if #m#0>shortLength then {⋮,⋱,⋮} else toList(#m#0:⋮),last m}
 	    else m,shortRow)
     )
 short VisibleList :=
 short Expression := x -> apply(if #x>shortLength then new class x from {
 	first x,
-	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
+	if instance(x,VectorExpression) or instance(x,VerticalList) then ⋮ else if instance(x,VisibleList) then … else ⋯,
 	last x
 	}
     else x,short)
@@ -1285,12 +1280,12 @@ short String := s -> if #s > shortStringLength then substring(s,0,shortStringLen
 short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
 short HashTable := H -> hold ( if #H <= shortLength then H else (
     s := sortByName pairs H;
-    new class H from append(take(s,shortLength),s#shortLength#0=>cdots)
+    new class H from append(take(s,shortLength),s#shortLength#0=>⋯)
     ))
 short MutableHashTable := expression
 short Set := H -> hold ( if #H <= shortLength then H else (
 	s := sort keys H;
-	new class H from append(take(s,shortLength),RowExpression{s#shortLength,ldots})
+	new class H from append(take(s,shortLength),RowExpression{s#shortLength,…})
 	))
 
 Abbreviate = new WrapperType of Holder -- only used once, for listSymbols
