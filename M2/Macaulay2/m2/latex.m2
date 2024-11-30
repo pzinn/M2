@@ -89,7 +89,7 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
 	symbol ==>  => "\\Longrightarrow ",
 	symbol <==  => "\\Longleftarrow ",
 	symbol <==> => "\\Longleftrightarrow ",
-	symbol _>   => "{}_>",
+	symbol _>   => "{}_>", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
 	symbol _<   => "{}_<",
 	symbol ^>   => "{}^>",
 	symbol ^<   => "{}^<",
@@ -124,10 +124,13 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
 	symbol |>  => "\\rangle ",
 	symbol |   => "\\mid",
 	symbol ||  => "\\mid\\mid",
-	symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol _*  => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol ^*  => "{}^*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
---	symbol ·   => "\\cdot",
+	symbol ^** => "{}^{\\otimes}",
+	symbol _*  => "{}_*",
+	symbol ^*  => "{}^*",
+        symbol ^<= => "{}^{\\le}",
+        symbol ^>= => "{}^{\\ge}",
+        symbol _<= => "{}_{\\le}",
+        symbol _>= => "{}_{\\ge}"
 	},symbolBody)
 
 bbLetters := set characters "kABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -143,7 +146,7 @@ texMathLiteralTable := merge(texLiteralTable,
 	"𝔴" => "\\mathfrak{w}","𝔵" => "\\mathfrak{x}","𝔶" => "\\mathfrak{y}","𝔷" => "\\mathfrak{z}","𝔄" => "\\mathfrak{A}","𝔅" => "\\mathfrak{B}","𝔆" => "\\mathfrak{C}","𝔇" => "\\mathfrak{D}","𝔈" => "\\mathfrak{E}","𝔉" => "\\mathfrak{F}","𝔊" => "\\mathfrak{G}",
 	"𝔋" => "\\mathfrak{H}","𝔌" => "\\mathfrak{I}","𝔍" => "\\mathfrak{J}","𝔎" => "\\mathfrak{K}","𝔏" => "\\mathfrak{L}","𝔐" => "\\mathfrak{M}","𝔑" => "\\mathfrak{N}","𝔒" => "\\mathfrak{O}","𝔓" => "\\mathfrak{P}","𝔔" => "\\mathfrak{Q}","𝔕" => "\\mathfrak{R}",
 	"𝔖" => "\\mathfrak{S}","𝔗" => "\\mathfrak{T}","𝔘" => "\\mathfrak{U}","𝔙" => "\\mathfrak{V}","𝔚" => "\\mathfrak{W}","𝔛" => "\\mathfrak{X}","𝔜" => "\\mathfrak{Y}","𝔝" => "\\mathfrak{Z}",
-	"×" => "\\times", "÷" => "\\div", "±" => "\\pm",
+	"×" => "\\times", "÷" => "\\div", "±" => "\\pm", "·"  => "\\cdot","⋯"=>"\\cdots","⋱"=>"\\ddots","⋮"=>"\\vdots","…"=>"\\ldots"
 	},last)
 texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior
@@ -156,10 +159,8 @@ texVariable := x -> (
     if (r := regex(suffixesRegExp, x)) =!= null then return (
 	r = r#1; "\\" | substring(r, x) | "{" | texVariable substring(x, 0, r#0) | "}");
     if #x === 1 or regex("[^[:alnum:]]", x) =!= null then x else "\\mathit{" | x | "}")
-texMathSymbol :=
-texMath Symbol := texVariable @@ texMathLiteral @@ toString
-texMath Keyword :=  texMath @@ symbolBody
-texMath SymbolBody := s -> if keywordTexMath#?s then keywordTexMath#s else texMathSymbol s
+texMath Symbol :=  texMath @@ symbolBody
+texMath SymbolBody := s -> if keywordTexMath#?s then keywordTexMath#s else texVariable texMathLiteral toString s
 
 -- add augmented operators
 removeLast := s -> substring(s,0,#s-1)
