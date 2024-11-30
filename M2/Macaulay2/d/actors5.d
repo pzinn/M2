@@ -28,6 +28,7 @@ export makeKeywordFun(e:Expr):Expr := (
         is b1:Boolean do
 	when seq.3
 	is b2:Boolean do (
+	   if !isvalidkeyword(s.v) then buildErrorPacket("invalid keyword") else (
 	   u:=errorunary;
 	   t:=errorbinary;
 	   prec:=toInt(p);
@@ -42,7 +43,7 @@ export makeKeywordFun(e:Expr):Expr := (
 	   else (
 	   install(s.v,w);  -- TODO check whether install is really needed (for mathematical symbols as opposed to words)
 	   Expr(makeKeyword(w)))
-	)
+	))
 	else WrongArg(4,"a boolean")
 	else WrongArg(3,"a boolean")
 	else WrongArg(2,"an integer")
