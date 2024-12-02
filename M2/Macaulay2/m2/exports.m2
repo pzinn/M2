@@ -57,9 +57,6 @@ export {
 	"_>=",
 	"_<",
 	"_<=",
-	"·",
-	"⊠",
-	"⧢",
 	"Abbreviate",
 	"Acknowledgement",
 	"AdditionalPaths",
@@ -329,6 +326,7 @@ export {
 	"Position",
 	"Postfix",
 	"Power",
+	"Precedence",
 	"Precision",
 	"Prefix",
 	"PrimaryTag",
@@ -404,6 +402,7 @@ export {
 	"Superscript",
 	"Symbol",
 	"SymbolBody",
+	"Syntax",
 	"Syzygies",
 	"SyzygyLimit",
 	"SyzygyMatrix",
@@ -899,6 +898,7 @@ export {
 	"lookup",
 	"lookupCount",
 	"makeDirectory",
+	"makeKeyword",
 	"makeDocumentTag",
 	"makePackageIndex",
 	"map",
@@ -1320,7 +1320,7 @@ export {
 	"∫" => "integrate",
 	"≤" => "<=",
 	"≥" => ">=",
-	"⊢" => "|-"
+	"⊢" => "|-",
 }
 
 exportMutable {

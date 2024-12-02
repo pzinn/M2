@@ -448,7 +448,7 @@ flatten VisibleList := VisibleList => oldflatten
 -----------------------------------------------------------------------------
 
 dictionary = method()
-dictionary Keyword := s -> Core.Dictionary
+-- dictionary Keyword := s -> Core.Dictionary -- unnecessary and makes debugging harder
 dictionary Symbol := s -> (				    -- eventually every symbol will know what dictionary it's in, perhaps
      n := toString s;
      scan(dictionaryPath, d -> if d#?n and d#n === s then break d))
@@ -757,6 +757,23 @@ mode HashTable := x -> mode new MutableHashTable from x
 mode MutableHashTable := H -> new ModeDependentFunctionClosure from ( x -> (if H#?topLevelMode then H#topLevelMode else H#null) x )
 modes = method()
 modes ModeDependentFunctionClosure := f -> (frame f)#0
+
+-- move to a new file keywords.m2?
+protect Binary
+protect Prefix
+protect Postfix
+protect Precedence
+protect Syntax
+makeKeyword'=makeKeyword
+makeKeyword=method(TypicalValue => Keyword, Options => { Precedence => symbol *, Syntax => Binary })
+makeKeyword String := o -> s -> (
+    pr:=if instance(o.Precedence,Symbol) then (getParsing o.Precedence)#0 else o.Precedence;
+    makeKeyword'(s,
+    pr,
+    o.Syntax === Binary or (class o.Syntax === List and isMember(Binary,o.Syntax)),
+    o.Syntax === Prefix or (class o.Syntax === List and isMember(Prefix,o.Syntax))
+    ))
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
