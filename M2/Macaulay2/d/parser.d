@@ -466,7 +466,7 @@ export unaryif(ifToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree :
      thenToken := gettoken(file,false);
      if thenToken.word.typecode == TCerror then return errorTree(thenToken);
      if thenToken.word != thenW then return ParseTree(ErrorTree(ErrorTree1(thenToken.position,"syntax error : expected 'then'"),
-	  	  ErrorTree1(ifToken.position," ... to match this")));
+                 ErrorTree1(ifToken.position," ... to match this 'if'")));
      thenClause := parse(file,thenW.parse.unaryStrength,obeylines);
      when thenClause
      is err:ErrorTree do return thenClause
