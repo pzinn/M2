@@ -229,21 +229,17 @@ expression Matrix := m -> (
 net Matrix := net @@ expression
 toString Matrix := toString @@ expression
 texMath Matrix := texMath @@ expression
-⋯:=symbol ⋯
-⋱:=symbol ⋱
-⋮:=symbol ⋮
-…:=symbol …
 short Matrix := m -> MatrixExpression ( -- can't go thru MatrixExpression
     if m==0 then {new ZeroExpression from {0_(ring m)}} else (
 	n1:=rank target m;
 	n2:=rank source m;
 	if n1>shortLength then
 	if n2>shortLength then
-	{{short m_(0,0),⋯,short m_(0,n2-1)},{⋮,⋱,⋮},{short m_(n1-1,0),⋯,short m_(n1-1,n2-1)}}
+	{{short m_(0,0),cdots,short m_(0,n2-1)},{vdots,ddots,vdots},{short m_(n1-1,0),cdots,short m_(n1-1,n2-1)}}
 	else
-	{apply(n2,i->short m_(0,i)),toList(n2:⋮),apply(n2,i->short m_(n1-1,i))}
+	{apply(n2,i->short m_(0,i)),toList(n2:vdots),apply(n2,i->short m_(n1-1,i))}
 	else if n2>shortLength then
-	apply(n1,i->{short m_(i,0),⋯,short m_(i,n2-1)})
+	apply(n1,i->{short m_(i,0),cdots,short m_(i,n2-1)})
 	else applyTable(entries m,short)
 	)
     )

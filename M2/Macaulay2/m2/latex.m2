@@ -33,18 +33,7 @@ noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 texLiteralEncode := c -> concatenate apply(ascii c,i->("\\char",toString i))
 texLiteralPairs := splice {
     apply(0..8|11..12|14..31|127..255|toSequence ascii "\\{}$&#^_%~|<>\"", c -> ascii c => texLiteralEncode ascii c),
-    "`"  => "{`}", -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-    -- various unicode symbols -- TODO probably remove
-    "←" => "\\(\\leftarrow\\)",
-    "↑" => "\\(\\uparrow\\)",
-    "→" => "\\(\\rightarrow\\)",
-    "↓" => "\\(\\downarrow\\)",
-    "↔" => "\\(\\leftrightarrow\\)",
-    "↕" => "\\(\\updownarrow\\)",
-    "↖" => "\\(\\nwarrow\\)",
-    "↗" => "\\(\\nearrow\\)",
-    "↘" => "\\(\\searrow\\)",
-    "↙" => "\\(\\swarrow\\)"
+    "`"  => "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
     }
 texLiteralTable := hashTable texLiteralPairs
 texLiteral1 := t -> s -> (
@@ -158,7 +147,8 @@ texMathLiteralTable := merge(texLiteralTable,
 	"𝔋" => "\\mathfrak{H}","𝔌" => "\\mathfrak{I}","𝔍" => "\\mathfrak{J}","𝔎" => "\\mathfrak{K}","𝔏" => "\\mathfrak{L}","𝔐" => "\\mathfrak{M}","𝔑" => "\\mathfrak{N}","𝔒" => "\\mathfrak{O}","𝔓" => "\\mathfrak{P}","𝔔" => "\\mathfrak{Q}","𝔕" => "\\mathfrak{R}",
 	"𝔖" => "\\mathfrak{S}","𝔗" => "\\mathfrak{T}","𝔘" => "\\mathfrak{U}","𝔙" => "\\mathfrak{V}","𝔚" => "\\mathfrak{W}","𝔛" => "\\mathfrak{X}","𝔜" => "\\mathfrak{Y}","𝔝" => "\\mathfrak{Z}",
 	"×" => "\\times", "÷" => "\\div", "±" => "\\pm", "⊠"  => "\\boxtimes",
-	"·"  => "\\cdot", "⋯" => "\\cdots", "⋱" => "\\ddots", "⋮" => "\\vdots", "…" => "\\ldots"
+	"·"  => "\\cdot", "⋯" => "\\cdots", "⋱" => "\\ddots", "⋮" => "\\vdots", "…" => "\\ldots",
+	"←" => "\\leftarrow", "↑" => "\\uparrow", "→" => "\\rightarrow", "↓" => "\\downarrow", "↔" => "\\leftrightarrow", "↕" => "\\updownarrow", "↖" => "\\nwarrow", "↗" => "\\nearrow", "↘" => "\\searrow", "↙" => "\\swarrow"
 	},last)
 texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior

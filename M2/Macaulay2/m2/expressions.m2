@@ -1241,10 +1241,10 @@ net Set := net @@ expression
 texMath Set := texMath @@ expression
 
 -- shortening expressions
-⋯:=symbol ⋯
-⋱:=symbol ⋱
-⋮:=symbol ⋮
-…:=symbol …
+cdots=⋯:=symbol ⋯
+ddots=⋱:=symbol ⋱
+vdots=⋮:=symbol ⋮
+ldots=…:=symbol …
 -- used e.g. in chaincomplexes.m2
 shortLength = 8
 shortStringLength := 3*shortLength
@@ -1256,15 +1256,15 @@ short Holder := identity -- to avoid infinite loops
 short MatrixExpression :=
 short Table := x ->  (
     (opts,m) := matrixOpts x;
-    shortRow := row -> apply(if #row>shortLength then { first row, ⋯, last row } else row,short);
+    shortRow := row -> apply(if #row>shortLength then { first row, cdots, last row } else row,short);
     new class x from
-	apply(if #m>shortLength then {first m,if #m#0>shortLength then {⋮,⋱,⋮} else toList(#m#0:⋮),last m}
+	apply(if #m>shortLength then {first m,if #m#0>shortLength then {vdots,ddots,vdots} else toList(#m#0:vdots),last m}
 	    else m,shortRow)
     )
 shortList := short VisibleList :=
 short Expression := x -> hold apply(if #x>shortLength then new class x from {
 	first x,
-	if instance(x,VectorExpression) or instance(x,VerticalList) then ⋮ else if instance(x,VisibleList) then … else ⋯,
+	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
 	}
     else x,short)
@@ -1282,11 +1282,11 @@ short HashTable := H -> (
     if l =!= hold then short expression H else hold (
 	if #H <= shortLength then applyPairs(H,(k,v)->(short k,short v)) else (
 	    s := -* sortByName *- pairs H; -- sorting may be slow
-    	    new class H from append(applyTable(take(s,shortLength),short),short s#shortLength#0=>⋯)
+    	    new class H from append(applyTable(take(s,shortLength),short),short s#shortLength#0=>cdots)
     	    ))
     )
 short Set := H -> hold ( if #H <= shortLength then applyKeys(H,short) else (
-	new class H from append(apply(take(keys H,shortLength),short),…)
+	new class H from append(apply(take(keys H,shortLength),short),ldots)
 	))
 -- a few types shouldn't be affected by short
 short MutableHashTable := -- expression
