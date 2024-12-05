@@ -253,7 +253,7 @@ GraphicsObject ++ List := (opts1, opts2) -> (
     if #sty>0 then opts2 = append(opts2,symbol style => merge(opts1.style,sty,last));
     x := new class opts1 from select(opts2,o -> class o#0 =!= String);
     x=merge(opts1,x,
-	(m,m') -> if instance(m,Matrix) and instance(m',Matrix) then m*m' else m' -- for TransformMatrix and AnimMatrix
+	(m,m') -> if instance(m,Matrix) and instance(m',Matrix) then m'*m else m' -- for TransformMatrix and AnimMatrix
 	);
     -- almost like cloneall
     crdlist=new MutableList; grlist=new MutableHashTable;
