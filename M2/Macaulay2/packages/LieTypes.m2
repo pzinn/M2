@@ -292,8 +292,8 @@ dynkinDiagram (String,ZZ,ZZ) := (type,m,shift) -> if not isSimple(type,m) then e
     else if type=="B" then dynkinA (1+shift,m-1+shift,false) | ("=>=o"||pad(4,toString(m+shift)))
     else if type=="C" then dynkinA (1+shift,m-1+shift,false) | ("=<=o"||pad(4,toString(m+shift)))
     else if type=="D" then dynkinA (1+shift,m-2+shift,false) | ((" o"|toString(m-1+shift))||"/"||""||"\\"||(" o"|toString(m+shift)))^2
-    else if type=="E" then "        o 2"||"        |"|| (dynkinA (1+shift,1+shift,false)|dynkinA(3+shift,m+shift,true))
-    else if type=="F" then dynkinA (1,2,false) | ("=>=o---o"||"   3   4")
+    else if type=="E" then ("        o "|toString(2+shift))||"        |"|| (dynkinA (1+shift,1+shift,false)|dynkinA(3+shift,m+shift,true))
+    else if type=="F" then dynkinA (shift+1,shift+2,false) | ("=>=o---o"||(pad(4,toString(3+shift))|pad(4,toString(4+shift))))
     else if type=="G" then "o≡<≡o"||(toString(shift+1)|pad(4,toString(shift+2)))
     )
 dynkinDiagram (String,ZZ) := (type,m) -> dynkinDiagram(type,m,0)
@@ -1365,7 +1365,7 @@ new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Ca
 
 subLieAlgebra = method ( TypicalValue => LieAlgebra )
 
-subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(ZZ^(rank g),0,0) else matrix transpose apply(S,s ->
+subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(ZZ^(rank g),0,0) else matrix transpose apply(splice S,s ->
 	if class s === ZZ and s>0 and s<=rank g then apply(rank g, j -> if j+1 == s then 1 else 0)
 	else if class s === ZZ and s==0 then entries lift(-inverse cartanMatrixQQ g*vector highestRoot g,ZZ)
 	else if instance(s,Vector) and rank class s == rank g then entries s
