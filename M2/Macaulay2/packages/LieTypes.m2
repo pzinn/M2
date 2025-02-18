@@ -264,6 +264,8 @@ expression LieAlgebra := g -> (
     )
 net LieAlgebra := net @@ expression;
 texMath LieAlgebra := texMath @@ expression;
+toString LieAlgebra := toString @@ expression;
+toExternalString LieAlgebra := toString @@ describe;
 
 LieAlgebra ++ LieAlgebra := directSum
 directSum LieAlgebra := identity
@@ -449,6 +451,8 @@ expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then ex
 
 net LieAlgebraModule := net @@ expression
 texMath LieAlgebraModule := texMath @@ expression
+toString LieAlgebraModule := toString @@ expression;
+toExternalString LieAlgebraModule := toString @@ describe;
 
 -- helper
 new LieAlgebraModule from Sequence := (T,s) -> new LieAlgebraModule from {
@@ -1528,18 +1532,84 @@ doc ///
     Outputs
         b:Boolean
     Description
-        Text
-	    This function tests equality of the underlying hash tables of $g$ and $h$ are the same.    
         Example
 	    g=simpleLieAlgebra("A",2)
 	    h=simpleLieAlgebra("A",2)
 	    g==h
+        Text
+	    When dealing with subalgebras, Lie algebras can be isomorphic but different:
+        Example
+	    g1=subLieAlgebra(g,{1}); describe g1
+	    g2=subLieAlgebra(g,{2}); describe g2
+	    g1==g2 -- false!
 ///
 
 TEST ///
     assert(simpleLieAlgebra("A",2) == simpleLieAlgebra("A",2))
 ///
 
+
+doc ///
+    Key
+        (symbol _,LieAlgebra,ZZ)
+    Headline
+        selects one summand of a semi-simple Lie Algebra
+    Usage
+        g_n
+    Inputs
+        g:LieAlgebra
+	n:ZZ
+    Outputs
+        h:LieAlgebra
+    Description
+        Example
+	    g=simpleLieAlgebra("A",2) ++ simpleLieAlgebra("A",2)
+	    g_0
+        Text
+	    Note that the same result can be obtained by using @TO subLieAlgebra@:
+	Example
+	    dynkinDiagram g
+	    g_0 == subLieAlgebra(g,{1,2})
+	    g_1 == subLieAlgebra(g,{3,4})
+///
+
+TEST ///
+    assert((𝔞_1++𝔞_2)_0 == 𝔞_1)
+///
+
+
+doc ///
+    Key
+        (symbol _*,LieAlgebra)
+    Headline
+        gives the list of summands of a semi-simple Lie Algebra
+    Usage
+        g_*
+    Inputs
+        g:LieAlgebra
+    Description
+        Example
+	    g=simpleLieAlgebra("A",2) ++ simpleLieAlgebra("A",3)
+	    g_*
+///
+
+doc ///
+    Key
+        embedding
+	(embedding,LieAlgebra,LieAlgebra)
+    Headline
+        gives the embedding of Cartan subalgebras of one Lie algebra into another
+    Usage
+        embedding(g,h)
+    Inputs
+        g:LieAlgebra
+        h:LieAlgebra
+    Description
+        Example
+	    h=simpleLieAlgebra("F",4)
+	    g=subLieAlgebra(h,{0,1}); describe g
+	    embedding(g,h)
+///
 
 doc ///
     Key
