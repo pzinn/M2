@@ -306,7 +306,13 @@ dynkinDiagram LieAlgebra := g -> (
 	)
     )
 
-LieAlgebra == LieAlgebra := (V,W)-> (V===W)
+LieAlgebra == LieAlgebra := (g,h)-> (
+    g#"LieAlgebraRank" == h#"LieAlgebraRank"
+    and
+    g#"RootSystemType" == h#"RootSystemType"
+    and
+    all(g#subLieAlgebra,(k,m) -> not h#subLieAlgebra#?k or h#subLieAlgebra#k == m)
+    )
 
 dualCoxeterNumber = method(
     TypicalValue => ZZ
@@ -2385,7 +2391,10 @@ doc ///
         h:LieAlgebra
     Description
         Text
-	   @TT "S"@ must be either a subset of vertices of the Dynkin diagram of @TT "g"@ (as labelled by @TO dynkinDiagram@):
+	   For the purposes of this function, a sub-Lie algebra means an embedding of a Lie algebra into another up to linear equivalence.
+	   According to Dynkin's theory, this means that it is determined by the restriction of the embedding to the Cartan subalgebra,
+	   and that is the data provided by @TT "S"@.
+	   Specifically, @TT "S"@ must be either a subset of vertices of the Dynkin diagram of @TT "g"@ (as labelled by @TO dynkinDiagram@):
 	Example
 	   g=𝔢_8; dynkinDiagram g
 	   subLieAlgebra(g,{1,2,3,4,5,8})
@@ -2402,7 +2411,7 @@ doc ///
 	   W=branchingRule(V,h); describe W
 	   character W
     Caveat
-        If @TT "S"@ is a matrix, does not check if the map of root lattices leads to a valid Lie algebra embedding.
+        If @TT "S"@ is a matrix, does not check if the map of Cartan subalgebras leads to a valid Lie algebra embedding.
 ///
 
 TEST ///
@@ -2461,6 +2470,9 @@ doc ///
 	   h=simpleLieAlgebra("G",2);
 	   g++h
 	   directSum(g,g,h)
+	Text
+	  Note that this is external direct sum, so if $g_i$ is a sub-Lie algebra of $h_i$, $i=1,2$,
+	  then $g_1\oplus g_2$ is a sub-Lie algebra of $h_1\oplus h_2$.
 ///
 
 doc ///
