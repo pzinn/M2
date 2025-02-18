@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.83",
-    Date => "Sep 23, 2024",
+    Version => "0.85",
+    Date => "Feb 18, 2025",
     Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
@@ -49,6 +49,7 @@ export {
     "cartanMatrix",
     "𝔞", "𝔟", "𝔠", "𝔡", "𝔢", "𝔣", "𝔤",
     "subLieAlgebra",
+    "embedding",
     --for the LieAlgebraModule type
     "LieAlgebraModule", 
     "irreducibleLieAlgebraModule", "LL", "ω",
@@ -222,6 +223,17 @@ characterRing (Sequence,Sequence) := memoize( (type,m) -> if #m == 0 then ZZ[Inv
 
 characterRing LieAlgebra := g -> characterRing(g#"RootSystemType",g#"LieAlgebraRank")
 
+-- helper
+new LieAlgebra from Sequence := (T,s) -> (
+    g:=new LieAlgebra from {
+	"RootSystemType"=>s#0,
+	"LieAlgebraRank"=>s#1,
+	subLieAlgebra => new MutableHashTable from if #s>2 then s#2 else {}  -- we need mutable because g is a subalgebra of itself and can't have a loop in an immutable object
+	};
+    g#subLieAlgebra#g = id_(ZZ^(plus s#1));
+    g
+    )
+
 simpleLieAlgebra = method(
     TypicalValue => LieAlgebra
     )
@@ -236,11 +248,7 @@ simpleLieAlgebra(String,ZZ) := (type,m) -> (
     	if type=="F" and m!=4 then error "The rank for type F must be 4.";
     	if type=="G" and m!=2 then error "The rank for type G must be 2.";
 	);
-    new LieAlgebra from {
-	"LieAlgebraRank"=>m,
-	"RootSystemType"=>type,
-	subLieAlgebra => hashTable { null => id_(ZZ^m) } -- any Lie algebra is a subalgebra of itself... but we can't hardcode it cause can't have a loop in an immutable HashTable... annoying
-	}
+    new LieAlgebra from (type,m)
     )
 
 fraktur := hashTable { ("A",𝔞),("B",𝔟),("C",𝔠),("D",𝔡),("E",𝔢),("F",𝔣),("G",𝔤) }
@@ -260,14 +268,14 @@ texMath LieAlgebra := texMath @@ expression;
 LieAlgebra ++ LieAlgebra := directSum
 directSum LieAlgebra := identity
 LieAlgebra.directSum = args -> if #args == 1 then args#0 else (
-    subList := apply(args, g -> g#subLieAlgebra);
-    subs := null;
-    scan(subList, s -> subs = if subs===null then applyKeys(s,sequence) else combine(subs,s,append,directSum,identity)); -- collisions shouldn't occur
-    new LieAlgebra from {
-    "RootSystemType" => join apply(args, g -> sequence g#"RootSystemType" ),
-    "LieAlgebraRank" => join apply(args, g -> sequence g#"LieAlgebraRank" ),
-    subLieAlgebra => applyKeys(subs,s->if all(s,h->h===null) then null else directSum apply(#args,i->if s#i===null then args#i else s#i)) -- messy; collisions shouldn't happen because identity embedding excluded
-    })
+    subs := applyKeys(new HashTable from args#0#subLieAlgebra,sequence);
+    scan(1..#args-1, i -> subs = combine(subs,new HashTable from args#i#subLieAlgebra,append,directSum,identity)); -- collisions shouldn't occur. we don't directSum yet the keys to avoid infinite loop
+    new LieAlgebra from (
+	join apply(args, g -> sequence g#"RootSystemType" ),
+	join apply(args, g -> sequence g#"LieAlgebraRank" ),
+	applyPairs(subs,(s,m)->if s!=args then (directSum s,m))
+	)
+    )
 
 rank LieAlgebra := g -> plus sequence g#"LieAlgebraRank"
 
@@ -311,7 +319,25 @@ LieAlgebra == LieAlgebra := (g,h)-> (
     and
     g#"RootSystemType" == h#"RootSystemType"
     and
-    all(g#subLieAlgebra,(k,m) -> not h#subLieAlgebra#?k or h#subLieAlgebra#k == m)
+    all(pairs g#subLieAlgebra,(k,m) -> not h#subLieAlgebra#?k or h#subLieAlgebra#k == m)
+    )
+
+LieAlgebra _ ZZ := (g,n) -> (
+    type:=g#"RootSystemType";
+    m:=g#"LieAlgebraRank";
+    if class m =!= Sequence or n<0 or n>=#m then error "invalid summand";
+    r:=toList(sum(n,i->m#i)..sum(n+1,i->m#i)-1);
+    new LieAlgebra from (
+	type#n,
+	m#n,
+	applyValues(new HashTable from g#subLieAlgebra, e -> e_r)
+	)
+    )
+
+LieAlgebra _* := g -> (
+    m:=g#"LieAlgebraRank";
+    if class m =!= Sequence then error "invalid summand";
+    apply(#m,i->g_i)
     )
 
 dualCoxeterNumber = method(
@@ -387,8 +413,8 @@ LieAlgebra#AfterPrint = g -> (
     if isSimple g then "simple ",
     class g,
     if #(g#subLieAlgebra)>1 then (
-	lst := nonnull keys g#subLieAlgebra; -- list of supalgebras
-	mins := select(lst, h -> not any(lst, k -> k#subLieAlgebra#?h)); -- find minimal elements
+	lst := select(keys g#subLieAlgebra,h->h=!=g); -- list of supalgebras
+	mins := select(lst, h -> not any(lst, k -> k=!=h and k#subLieAlgebra#?h)); -- find minimal elements
 	", subalgebra of ",
 	toSequence between(", ",mins)
 	)
@@ -424,6 +450,7 @@ expression LieAlgebraModule := M -> if hasAttribute(M,ReverseDictionary) then ex
 net LieAlgebraModule := net @@ expression
 texMath LieAlgebraModule := texMath @@ expression
 
+-- helper
 new LieAlgebraModule from Sequence := (T,s) -> new LieAlgebraModule from {
     "LieAlgebra" => s#0,
     "DecompositionIntoIrreducibles" => if class s#1 === VirtualTally then s#1 else new VirtualTally from s#1,
@@ -513,7 +540,7 @@ dual LieAlgebraModule := {} >> o -> lookup(starInvolution,LieAlgebraModule)
 
 
 
-LieAlgebraModule == LieAlgebraModule := (V,W)-> (V===W)
+LieAlgebraModule == LieAlgebraModule := (V,W)-> V#"DecompositionIntoIrreducibles" == W#"DecompositionIntoIrreducibles" and V#"LieAlgebra" == W#"LieAlgebra"
 
 -*
 isIsomorphic = method(
@@ -1362,7 +1389,7 @@ lieTypeFromCartan := C -> ( -- used internally. returns (type,m,order) where ord
     )
 
 new LieAlgebra from Matrix := (T,C) -> ( -- define a Lie algebra based on its Cartan matrix
-    if numColumns C == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>(),subLieAlgebra=>hashTable{null=>id_(ZZ^0)}};
+    if numColumns C == 0 then return new LieAlgebra from ((),());
     (type,m,L):=lieTypeFromCartan C;
     h:=directSum apply(type,m,simpleLieAlgebra); -- lazy though avoids unsequence, worrying about rings etc
     assert(cartanMatrix h == C_L^L);
@@ -1381,7 +1408,6 @@ subLieAlgebra (LieAlgebra, List) := (g,S) -> subLieAlgebra(g,if #S==0 then map(Z
 -*
     -- identify the sub-Dynkin diagram
     S=deepSplice S;
-    if #S == 0 then return new LieAlgebra from {"LieAlgebraRank"=>(),"RootSystemType"=>()}
     S=apply(S,i->i-1);
     C:=(cartanMatrix g)^S_S;
     h:=new LieAlgebra from C;
@@ -1398,15 +1424,15 @@ subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
     (type,m,L):=lieTypeFromCartan C;
     M=M_L; -- permuted matrix of coroots
     if M == id_(ZZ^(rank g)) then return g; -- not necessary but simpler
-    subs:=hashTable{null=>id_(ZZ^(plus m))};
-    subs=merge(applyValues(applyKeys(g#subLieAlgebra, k -> if k===null then g else k), A -> A*M),subs,last);
-    new LieAlgebra from {
-	"LieAlgebraRank"=>unsequence m,
-	"RootSystemType"=>unsequence type,
-	subLieAlgebra=>subs
-	}
+    new LieAlgebra from (
+	unsequence type,
+	unsequence m,
+	applyValues(new HashTable from g#subLieAlgebra, A -> A*M)
+	)
     )
-    
+
+embedding = method ( TypicalValue => Matrix )
+embedding(LieAlgebra,LieAlgebra) := (g,h) -> if g#subLieAlgebra#?h then g#subLieAlgebra#h else error "not a Lie subalgebra"
 
 branchingRule = method ( TypicalValue => LieAlgebraModule )
 
@@ -1415,7 +1441,6 @@ branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra
 
 branchingRule (LieAlgebraModule, LieAlgebra) := (M,h) -> ( -- here h must be a (known) subalgebra of that of M
     g:=M#"LieAlgebra";
-    if g===h then return M; -- annoying special case
     S:=try h#subLieAlgebra#g else error "not a Lie subalgebra";
     --    f:=if class S===List then a -> a_S else a -> entries(transpose S*vector a);
     f:=a -> entries(transpose S*vector a); -- lame but what we get for using Lists rather than vectors
@@ -1505,7 +1530,6 @@ doc ///
     Description
         Text
 	    This function tests equality of the underlying hash tables of $g$ and $h$ are the same.    
-	       
         Example
 	    g=simpleLieAlgebra("A",2)
 	    h=simpleLieAlgebra("A",2)
@@ -1777,7 +1801,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) === new LieAlgebraModule from (simpleLieAlgebra("A",2),{{1,1}=>1} ))
+    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) == new LieAlgebraModule from (simpleLieAlgebra("A",2),{{1,1}=>1} ))
 ///	
 		
 doc ///
@@ -1898,7 +1922,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) == new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
 ///
 
 doc ///
@@ -1926,7 +1950,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) == new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
 ///
 
 doc ///
