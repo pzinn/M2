@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.85",
-    Date => "Feb 18, 2025",
+    Version => "0.84",
+    Date => "Feb 21, 2025",
     Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
@@ -14,6 +14,7 @@ newPackage(
 	  },
     Keywords => {"Lie Groups and Lie Algebras"},
     PackageImports => {"ReesAlgebra"},
+    PackageExports => {"Isomorphism"},
     DebuggingMode => false,
     Certification => {
 	 -- same article as for package ConformalBlocks
@@ -175,6 +176,7 @@ global variable names instead of the hash table contents.
 * M @ M' for tensor product of modules over different Lie algebras
 * improved caching of characters
 * added/exported method zeroModule
+* reintroduced isIsomorphic
 
 *-
 
@@ -223,16 +225,16 @@ characterRing (Sequence,Sequence) := memoize( (type,m) -> if #m == 0 then ZZ[Inv
 
 characterRing LieAlgebra := g -> characterRing(g#"RootSystemType",g#"LieAlgebraRank")
 
--- helper
+-- helpers
 new LieAlgebra from Sequence := (T,s) -> (
-    g:=new LieAlgebra from {
+    new LieAlgebra from {
 	"RootSystemType"=>s#0,
 	"LieAlgebraRank"=>s#1,
-	subLieAlgebra => new MutableHashTable from if #s>2 then s#2 else {}  -- we need mutable because g is a subalgebra of itself and can't have a loop in an immutable object
-	};
-    g#subLieAlgebra#g = id_(ZZ^(plus s#1));
-    g
+	subLieAlgebra => if #s>2 then s#2 else hashTable {} -- note that we can't include the Lie algebra itself because this would create a loop...
+	}
     )
+-- ...instead we define this
+supalgebras = g -> hashTable append(pairs g#subLieAlgebra,g=>id_(ZZ^(plus g#"LieAlgebraRank"))) -- sup-Lie algebras including itself
 
 simpleLieAlgebra = method(
     TypicalValue => LieAlgebra
@@ -270,8 +272,8 @@ toExternalString LieAlgebra := toString @@ describe;
 LieAlgebra ++ LieAlgebra := directSum
 directSum LieAlgebra := identity
 LieAlgebra.directSum = args -> if #args == 1 then args#0 else (
-    subs := applyKeys(new HashTable from args#0#subLieAlgebra,sequence);
-    scan(1..#args-1, i -> subs = combine(subs,new HashTable from args#i#subLieAlgebra,append,directSum,identity)); -- collisions shouldn't occur. we don't directSum yet the keys to avoid infinite loop
+    subs := applyKeys(supalgebras args#0,sequence);
+    scan(1..#args-1, i -> subs = combine(subs,supalgebras args#i,append,directSum,identity)); -- collisions shouldn't occur. we don't directSum yet the keys to avoid infinite loop
     new LieAlgebra from (
 	join apply(args, g -> sequence g#"RootSystemType" ),
 	join apply(args, g -> sequence g#"LieAlgebraRank" ),
@@ -316,13 +318,16 @@ dynkinDiagram LieAlgebra := g -> (
 	)
     )
 
-LieAlgebra == LieAlgebra := (g,h)-> (
-    g#"LieAlgebraRank" == h#"LieAlgebraRank"
-    and
-    g#"RootSystemType" == h#"RootSystemType"
-    and
-    all(pairs g#subLieAlgebra,(k,m) -> not h#subLieAlgebra#?k or h#subLieAlgebra#k == m)
+LieAlgebra == LieAlgebra := (g,h)-> g===h
+
+-- helper function: gives the type of g in a canonical form
+isomClass := g -> (
+    l:=transpose {toList sequence g#"RootSystemType",toList sequence g#"LieAlgebraRank"};
+    l=apply(l,x->if x=={"D",3} then {"A",3} else if x=={"C",2} then {"B",2} else x); -- low rank isomorphisms
+    sort l
     )
+
+isIsomorphic(LieAlgebra,LieAlgebra) := o -> (g,h) -> isomClass g === isomClass h
 
 LieAlgebra _ ZZ := (g,n) -> (
     type:=g#"RootSystemType";
@@ -332,7 +337,7 @@ LieAlgebra _ ZZ := (g,n) -> (
     new LieAlgebra from (
 	type#n,
 	m#n,
-	applyValues(new HashTable from g#subLieAlgebra, e -> e_r)
+	applyValues(supalgebras g, e -> e_r)
 	)
     )
 
@@ -414,9 +419,9 @@ scan(pairs fraktur, (let,sym) ->
 LieAlgebra#AfterPrint = g -> (
     if isSimple g then "simple ",
     class g,
-    if #(g#subLieAlgebra)>1 then (
-	lst := select(keys g#subLieAlgebra,h->h=!=g); -- list of supalgebras
-	mins := select(lst, h -> not any(lst, k -> k=!=h and k#subLieAlgebra#?h)); -- find minimal elements
+    if #(g#subLieAlgebra)>0 then (
+	lst := keys g#subLieAlgebra;
+	mins := select(lst, h -> not any(lst, k -> k#subLieAlgebra#?h)); -- find minimal elements
 	", subalgebra of ",
 	toSequence between(", ",mins)
 	)
@@ -543,18 +548,8 @@ starInvolution LieAlgebraModule := M -> (
 dual LieAlgebraModule := {} >> o -> lookup(starInvolution,LieAlgebraModule)
 
 
-
-LieAlgebraModule == LieAlgebraModule := (V,W)-> V#"DecompositionIntoIrreducibles" == W#"DecompositionIntoIrreducibles" and V#"LieAlgebra" == W#"LieAlgebra"
-
--*
-isIsomorphic = method(
-    TypicalValue => Boolean
-    )
-isIsomorphic(LieAlgebraModule,LieAlgebraModule) := (M,N) -> ( -- actually this is the same as ===
-    if M#"LieAlgebra" != N#"LieAlgebra" then return false;
-    M#"DecompositionIntoIrreducibles"===N#"DecompositionIntoIrreducibles"
-)
-*-
+isIsomorphic(LieAlgebraModule,LieAlgebraModule) := o -> (V,W) -> V===W
+LieAlgebraModule == LieAlgebraModule := (V,W) -> V===W
 
 LieAlgebraModule == ZZ := (M,n) -> if n=!=0 then error "attempted to compare module to nonzero integer" else #(M#"DecompositionIntoIrreducibles") == 0
 
@@ -1427,16 +1422,19 @@ subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
     C := lift(D * G,ZZ);
     (type,m,L):=lieTypeFromCartan C;
     M=M_L; -- permuted matrix of coroots
-    if M == id_(ZZ^(rank g)) then return g; -- not necessary but simpler
+    if M == id_(ZZ^(rank g)) then return g; -- better this way, no weirdness of defining a new g subalgebra of g
     new LieAlgebra from (
 	unsequence type,
 	unsequence m,
-	applyValues(new HashTable from g#subLieAlgebra, A -> A*M)
+	applyValues(supalgebras g, A -> A*M)
 	)
     )
 
 embedding = method ( TypicalValue => Matrix )
-embedding(LieAlgebra,LieAlgebra) := (g,h) -> if g#subLieAlgebra#?h then g#subLieAlgebra#h else error "not a Lie subalgebra"
+embedding(LieAlgebra,LieAlgebra) := (g,h) -> (
+    l:=supalgebras g;
+    if l#?h then l#h else error "not a Lie subalgebra"
+    )
 
 branchingRule = method ( TypicalValue => LieAlgebraModule )
 
@@ -1445,6 +1443,7 @@ branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra
 
 branchingRule (LieAlgebraModule, LieAlgebra) := (M,h) -> ( -- here h must be a (known) subalgebra of that of M
     g:=M#"LieAlgebra";
+    if g===h then return M; -- annoying special case
     S:=try h#subLieAlgebra#g else error "not a Lie subalgebra";
     --    f:=if class S===List then a -> a_S else a -> entries(transpose S*vector a);
     f:=a -> entries(transpose S*vector a); -- lame but what we get for using Lists rather than vectors
@@ -1574,7 +1573,9 @@ doc ///
 ///
 
 TEST ///
-    assert((𝔞_1++𝔞_2)_0 == 𝔞_1)
+    g=𝔞_1++𝔞_2
+    assert(g_0 == subLieAlgebra(g,{1}))
+    assert(isIsomorphic(g_0,𝔞_1))
 ///
 
 
@@ -1591,6 +1592,10 @@ doc ///
         Example
 	    g=simpleLieAlgebra("A",2) ++ simpleLieAlgebra("A",3)
 	    g_*
+///
+TEST ///
+    assert(embedding(𝔞_1,𝔞_1)==1)
+    -- some example involving principal embedding
 ///
 
 doc ///
@@ -1871,7 +1876,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) == new LieAlgebraModule from (simpleLieAlgebra("A",2),{{1,1}=>1} ))
+    assert(irreducibleLieAlgebraModule({1,1},simpleLieAlgebra("A",2)) === new LieAlgebraModule from (simpleLieAlgebra("A",2),{{1,1}=>1} ))
 ///	
 		
 doc ///
@@ -1992,7 +1997,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) == new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
 ///
 
 doc ///
@@ -2020,7 +2025,7 @@ doc ///
 ///
 
 TEST ///
-    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) == new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
+    assert(irreducibleLieAlgebraModule({2,1},simpleLieAlgebra("A",2)) ** irreducibleLieAlgebraModule({1,2},simpleLieAlgebra("A",2)) === new LieAlgebraModule from (simpleLieAlgebra("A",2), {{{1, 1}, 2}, {{3, 0}, 1}, {{1, 4}, 1}, {{3, 3}, 1}, {{0, 0}, 1}, {{0, 3}, 1}, {{2, 2}, 2}, {{4, 1}, 1}} ))
 ///
 
 doc ///
@@ -2547,7 +2552,7 @@ g=simpleLieAlgebra("A",2);
 M=LL_(4,2) g;
 assert(dim branchingRule(M,{1}) == dim M)
 h=subLieAlgebra(g,matrix vector {2,2})
-assert(branchingRule(LL_(1,0)(g),h) == LL_2(h))
+assert(branchingRule(LL_(1,0)(g),h) === LL_2(h))
 ///
 
 doc ///
@@ -2598,7 +2603,7 @@ k=g++h
 A=LL_(1,2) g
 B=LL_(2,1) h
 M=LL_(1,2,2,1) k;
-assert ( M == A @ B )
+assert ( M === A @ B )
 assert(character(M,Strategy=>"Weyl")==character(M,Strategy=>"Freudenthal"))
 ///
 
