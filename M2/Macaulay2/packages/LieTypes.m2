@@ -1430,6 +1430,17 @@ subLieAlgebra (LieAlgebra,Matrix) := (g,M) -> ( -- matrix of coroots
 	)
     )
 
+subLieAlgebra(LieAlgebra,String) := (g,s) -> (
+    if s =!= "principal" then error "only principal subalgebra predefined";
+    if g#"RootSystemType"==="A" and g#"LieAlgebraRank"===1 then return g; -- better this way, no weirdness of defining a new g subalgebra of g
+    M := lift(2*inverse promote(cartanMatrix g,QQ)*matrix apply(rank g,i->{1}),ZZ); -- 2 rho^v = 2 sum of fundamental coweights
+    new LieAlgebra from (
+	"A",
+	1,
+	applyValues(supalgebras g, A -> A*M)
+	)
+    )
+
 embedding = method ( TypicalValue => Matrix )
 embedding(LieAlgebra,LieAlgebra) := (g,h) -> (
     l:=supalgebras g;
@@ -1593,10 +1604,6 @@ doc ///
 	    g=simpleLieAlgebra("A",2) ++ simpleLieAlgebra("A",3)
 	    g_*
 ///
-TEST ///
-    assert(embedding(𝔞_1,𝔞_1)==1)
-    -- some example involving principal embedding
-///
 
 doc ///
     Key
@@ -1614,6 +1621,11 @@ doc ///
 	    h=simpleLieAlgebra("F",4)
 	    g=subLieAlgebra(h,{0,1}); describe g
 	    embedding(g,h)
+	    embedding(subLieAlgebra(h,"principal"),h)
+///
+TEST ///
+    assert(embedding(𝔞_1,𝔞_1)==1)
+    assert(embedding(subLieAlgebra(𝔤_2,"principal"),𝔤_2)==matrix{{6},{10}}) -- 2*rho^v
 ///
 
 doc ///
@@ -2479,13 +2491,14 @@ doc ///
     	subLieAlgebra
 	(subLieAlgebra,LieAlgebra,List)
 	(subLieAlgebra,LieAlgebra,Matrix)
+	(subLieAlgebra,LieAlgebra,String)
     Headline
         Define a sub-Lie algebra of an existing one
     Usage
        subLieAlgebra(g,S)
     Inputs
         g:LieAlgebra
-	S:{List,Matrix}
+	S:{List,Matrix,String}
     Outputs
         h:LieAlgebra
     Description
@@ -2505,10 +2518,18 @@ doc ///
 	Text
 	   Or @TT "S"@ must be a matrix whose columns are the simple coroots of the subalgebra expanded in the basis of simple coroots of @TT "g"@:
 	Example
-	   g=𝔞_2; h=subLieAlgebra(g,matrix{{2},{2}}); describe h
+	   g=𝔢_6
+	   h=subLieAlgebra(g,{2,4,{0,0,1,0,1,0},{1,0,0,0,0,1}}); describe h
+	   branchingRule(adjointModule g,h)
+	Text
+	  Or @TT "S"@ is the string @TT "principal"@, which is currently the only predefined subalgebra:
+	Example
+	   g=𝔞_2; h=subLieAlgebra(g,"principal");
 	   V=LL_(2,4) g; qdim V
 	   W=branchingRule(V,h); describe W
 	   character W
+	Text
+	  In simply laced types, principal specialisation (character of principal subalgebra) and q-dimension agree.
     Caveat
         If @TT "S"@ is a matrix, does not check if the map of Cartan subalgebras leads to a valid Lie algebra embedding.
 ///
