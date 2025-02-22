@@ -2,8 +2,8 @@
 -- licensed under GPL v2 or any later version
 newPackage(
     "LieTypes",
-    Version => "0.84",
-    Date => "Feb 21, 2025",
+    Version => "0.9",
+    Date => "Feb 22, 2025",
     Headline => "common types and methods for Lie groups and Lie algebras",
     Authors => {
 	  {Name => "Dave Swinarski", Email => "dswinarski@fordham.edu"},
@@ -176,7 +176,16 @@ global variable names instead of the hash table contents.
 * M @ M' for tensor product of modules over different Lie algebras
 * improved caching of characters
 * added/exported method zeroModule
+
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+-- Summary, Version 0.9, February 2025
+-----------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
 * reintroduced isIsomorphic
+* improve subLieAlgebra, added principal subalgebra, method "embedding"
+* added cache to LieAlgebra
+* various bug fixes
 
 *-
 
@@ -227,14 +236,36 @@ characterRing LieAlgebra := g -> characterRing(g#"RootSystemType",g#"LieAlgebraR
 
 -- helpers
 new LieAlgebra from Sequence := (T,s) -> (
-    new LieAlgebra from {
+    emb:=if #s>2 then s#2 else hashTable {}; -- note that we can't include the Lie algebra itself because this would create a loop...
+    subs:=new MutableList;
+    for h in keys emb do (
+        -- find possible sub/supalgebras from existing ones
+        F:=emb#h;
+        l:=h.cache#"Subalgebras";
+        for k in l do if not emb#?k then (
+            G:=k#"Embeddings"#h;
+            -- g == k ?
+            if F==G then return k;
+            -- g < k ?
+            H:=F//G;
+            if F==G*H then emb=merge(emb,hashTable{k=>H},last);
+            -* -- k < g ? not much we can do about it. give user a warning?
+            H:=G//F;
+            if G==F*H then print("embedding detected - please define your algebras in the opposite order");
+            *-
+            );
+        );
+    g := new LieAlgebra from {
 	"RootSystemType"=>s#0,
 	"LieAlgebraRank"=>s#1,
-	subLieAlgebra => if #s>2 then s#2 else hashTable {} -- note that we can't include the Lie algebra itself because this would create a loop...
-	}
+	"Embeddings"=>emb,
+	cache => new CacheTable from { "Subalgebras" => subs }
+	};
+    scan(keys emb, h -> ( l:=h#cache#"Subalgebras"; l#(#l)=g )); -- we also record g in the bigger algebra
+    g
     )
--- ...instead we define this
-supalgebras = g -> hashTable append(pairs g#subLieAlgebra,g=>id_(ZZ^(plus g#"LieAlgebraRank"))) -- sup-Lie algebras including itself
+-- ...instead we define this (internally)
+supalgebras = g -> hashTable append(pairs g#"Embeddings",g=>id_(ZZ^(plus g#"LieAlgebraRank"))) -- sup-Lie algebras including itself
 
 simpleLieAlgebra = method(
     TypicalValue => LieAlgebra
@@ -419,9 +450,9 @@ scan(pairs fraktur, (let,sym) ->
 LieAlgebra#AfterPrint = g -> (
     if isSimple g then "simple ",
     class g,
-    if #(g#subLieAlgebra)>0 then (
-	lst := keys g#subLieAlgebra;
-	mins := select(lst, h -> not any(lst, k -> k#subLieAlgebra#?h)); -- find minimal elements
+    if #(g#"Embeddings")>0 then (
+	lst := keys g#"Embeddings";
+	mins := select(lst, h -> not any(lst, k -> k#"Embeddings"#?h)); -- find minimal elements
 	", subalgebra of ",
 	toSequence between(", ",mins)
 	)
@@ -1455,7 +1486,7 @@ branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra
 branchingRule (LieAlgebraModule, LieAlgebra) := (M,h) -> ( -- here h must be a (known) subalgebra of that of M
     g:=M#"LieAlgebra";
     if g===h then return M; -- annoying special case
-    S:=try h#subLieAlgebra#g else error "not a Lie subalgebra";
+    S:=try h#"Embeddings"#g else error "not a Lie subalgebra";
     --    f:=if class S===List then a -> a_S else a -> entries(transpose S*vector a);
     f:=a -> entries(transpose S*vector a); -- lame but what we get for using Lists rather than vectors
     LieAlgebraModuleFromWeights(applyKeys(weightDiagram M,f,plus),h)
@@ -2209,46 +2240,27 @@ TEST ///
     assert(casimirScalar(V) === 8/3)
 ///
 
--*
 doc ///
     Key
         isIsomorphic
-	(isIsomorphic,LieAlgebraModule,LieAlgebraModule)
+	(isIsomorphic,LieAlgebra,LieAlgebra)
     Headline
-        tests whether two Lie algebra modules are isomorphic
+        tests whether two Lie algebra are isomorphic
     Usage
-        isIsomorphic(V,W)
+        isIsomorphic(g,h)
     Inputs
-        V:LieAlgebraModule
-	W:LieAlgebraModule
+        g:LieAlgebra
+	h:LieAlgebra
     Outputs
         b:Boolean
     Description
-        Text
-	    To test whether two Lie algebra modules are isomorphic, we first test whether they are modules over the same Lie algebra, and if so, then test whether they have the same decomposition into irreducible Lie algebra modules.
-        
 	Example
-	    g=simpleLieAlgebra("A",2)
-	    M=irreducibleLieAlgebraModule({2,1},g)
-	    N=irreducibleLieAlgebraModule({1,2},g)
-	    Z=irreducibleLieAlgebraModule({0,0},g)
-	    isIsomorphic(M,N)
-	    isIsomorphic(M,M)
-	    isIsomorphic(M,M**Z)
-	    isIsomorphic(M**N,N**M)
+	    g=simpleLieAlgebra("D",4)
+	    h=subLieAlgebra(g,{2,{1,0,1,1}})
+	    isIsomorphic(h,simpleLieAlgebra("G",2))
 ///
 
-TEST ///
-    g=simpleLieAlgebra("A",2);
-    M=irreducibleLieAlgebraModule({2,1},g);
-    N=irreducibleLieAlgebraModule({1,2},g);
-    Z=irreducibleLieAlgebraModule({0,0},g);
-    assert(isIsomorphic(M,N) === false)
-    assert(isIsomorphic(M,M) === true)
-    assert(isIsomorphic(M,M**Z) === true)
-    assert(isIsomorphic(M**N,N**M) ===true)
-///
-
+-*
 doc ///
     Key
         MaxWordLength
@@ -2524,7 +2536,7 @@ doc ///
 	Text
 	  Or @TT "S"@ is the string @TT "principal"@, which is currently the only predefined subalgebra:
 	Example
-	   g=𝔞_2; h=subLieAlgebra(g,"principal");
+	   g=𝔞_2; h=subLieAlgebra(g,"principal"); describe h
 	   V=LL_(2,4) g; qdim V
 	   W=branchingRule(V,h); describe W
 	   character W
