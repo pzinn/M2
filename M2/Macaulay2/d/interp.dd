@@ -9,7 +9,7 @@ use profiler;
 
 import dirname(s:string):string;
 
-dummyError := Error(dummyPosition,Expr(stringCell("dummy error message")),nullE,false,dummyFrame);
+dummyError := Error(dummyPosition,toExpr("dummy error message"),nullE,false,dummyFrame);
 
 export setupargv():void := (
      setupconst("commandLine",toExpr(argv));
@@ -511,7 +511,7 @@ debugger(f:Frame,c:Code):Expr := (
 		when r is Error do return r else nothing;
 		);
 	 if debugLevel != 0 then
---	 printMessage(codePosition(c), "leaving debugger");
+	 printMessage(codePosition(c), "leaving debugger");
 	 decrementInterpreterDepth();
        setGlobalVariable(currentS,oldDebuggerCode);
      setDebuggingMode(true);

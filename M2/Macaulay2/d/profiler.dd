@@ -88,11 +88,11 @@ evalprofpointer = evalprof;
 -- briefly enables the profiler and evaluates the code that follows,
 -- updating the resulting statistics in the global ProfileTable.
 profile(c:Code):Expr := (
-    -- if debugLevel == -2 then printMessage(codePosition(c), "entering profiler");
+    if debugLevel == -2 then printMessage(codePosition(c), "entering profiler");
     profiling = true;
     data := cpuTimer(c); -- calls eval, not evalraw
     profiling = false;
-    -- if debugLevel == -2 then printMessage(codePosition(c), "leaving profiler");
+    if debugLevel == -2 then printMessage(codePosition(c), "leaving profiler");
     -- increment the total time in profiler and return the result
     increment(toExpr("total"), data));
 setupop(profileS, profile);

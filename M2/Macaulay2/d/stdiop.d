@@ -195,7 +195,7 @@ export getc(o:PosFile):int := (
 export flushInput(o:PosFile):void := flushinput(o.file);
 
 -- TODO refactor
-printMessage(position:Position,message:string):void := (
+export printMessage(position:Position,message:string):void := (
      if !SuppressErrors then (
          cleanscreen();
          stdError << position;
