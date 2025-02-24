@@ -1048,7 +1048,7 @@ weightDiagram = method(
 weightDiagram LieAlgebraModule := o -> (M) -> new VirtualTally from listForm character(M,o)
 weightDiagram(LieAlgebra,Vector) := weightDiagram(LieAlgebra,List) := o -> (g,v) -> new VirtualTally from listForm character(g,v,o)
 
-fac := memoize((type,m) -> ( -- possible denominator in Weyl product formula factors
+fac := memoize((type,m) -> ( -- possible denominator in Weyl product formula factors, ultimately coming from the choice of normalisation of the Killing form
     lcm append(apply(positiveCoroots(type,m), u -> numerator (killingForm(type,m,u,u)/2)),1) -- append is for g=0
     ))
 
@@ -1480,6 +1480,7 @@ embedding(LieAlgebra,LieAlgebra) := (g,h) -> (
 
 branchingRule = method ( TypicalValue => LieAlgebraModule )
 
+branchingRule (LieAlgebraModule, String) :=
 branchingRule (LieAlgebraModule, Matrix) :=
 branchingRule (LieAlgebraModule, List) := (M,S) -> branchingRule(M,subLieAlgebra(M#"LieAlgebra",S))
 
@@ -2557,6 +2558,7 @@ assert ( k#"LieAlgebraRank" === (1,1,1) and k#"RootSystemType" === ("A","A","A")
 doc ///
     Key
         branchingRule
+        (branchingRule,LieAlgebraModule,String)
         (branchingRule,LieAlgebraModule,List)
         (branchingRule,LieAlgebraModule,Matrix)
         (branchingRule,LieAlgebraModule,LieAlgebra)
@@ -2566,12 +2568,12 @@ doc ///
         branchingRule(V,S)
     Inputs
         V:LieAlgebraModule
-	S:{List,Matrix,LieAlgebra}
+	S:{String,List,Matrix,LieAlgebra}
     Outputs
         V':LieAlgebraModule
     Description
         Text
-	   @TT "S"@ must be a subset of vertices of the Dynkin diagram of the Lie algebra of @TT "V"@, or a matrix, see @TO subLieAlgebra@;
+	   @TT "S"@ must be a subset of vertices of the Dynkin diagram of the Lie algebra of @TT "V"@, or a matrix, or a string, see @TO subLieAlgebra@;
 	   or a sub-Lie algebra.
 	   Returns @TT "V"@ viewed as a module over the Lie subalgebra determined by @TT "S"@.
 	Example
