@@ -1207,12 +1207,12 @@ LieAlgebraModule ** LieAlgebraModule := (V,W) -> ( -- cf Humpheys' intro to LA &
     scanPairs(W#"DecompositionIntoIrreducibles", (w,a) -> -- loop over highest weights of W
     	scanPairs(wd, (v,b) -> ( -- loop over all weights of V
     		u:=v+w+rho;
-		t:=1; i:=-1;
+		t:=a*b; i:=-1;
 		while not any(u,zero) and ((i=position(u,j->j<0)) =!= null) do (
-	    	    u=u-u#i*sr#i;
+	    	    u-=u#i*sr#i;
 	    	    t=-t;
 	    	    );
-		if i === null then add(u-rho,a*b*t);
+		if i === null then add(u-rho,t);
 		)));
     new LieAlgebraModule from (g,ans)
     )
