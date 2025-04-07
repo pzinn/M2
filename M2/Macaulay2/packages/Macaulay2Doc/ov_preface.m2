@@ -180,7 +180,7 @@ document {
 
 document {
      Key => "gfan",
-     "The program ", TT "gfan", ", written by Anders Jensen, computes Groebner fans.
+     "The program ", TT "gfan", ", written by Anders Jensen, computes Gröbner fans.
      It is available at ", HREF "http://www.math.tu-berlin.de/~jensen/software/gfan/gfan0.4plus.tar.gz", ".
      The packages ", TO "StatePolytope::StatePolytope", " and ", TO "gfanInterface::gfanInterface", "
      run it."
@@ -344,10 +344,8 @@ document {
      G.-M. Greuel, R. Stobbe, G. Pfister, H. Schoenemann, and J. Schmidt,
      University of Kaiserslautern, Macaulay2 incorporates ", TT "Singular-Factory", ",
      version ", version#"factory version", ", a free library of polynomial routines
-     that provides for factorization of polynomials.  It is available at 
-     ", HREF "ftp://www.mathematik.uni-kl.de/pub/Math/Singular/Factory"," and at 
-     ", HREF "http://www.mathematik.uni-kl.de/ftp/pub/Math/Singular/SOURCES", ".  It
-     is part of ", TT "Singular", ", whose home page is ", HREF "http://www.singular.uni-kl.de/", ".",
+     that provides for factorization of polynomials.  It is part of ",
+     TT "Singular", ", whose home page is ", HREF "https://www.singular.uni-kl.de/", ".",
      PARA{},
      "The following important routines call upon it:",
      UL {
@@ -380,7 +378,7 @@ doc ///
   Description
     Text
       The program @SAMP "msolve"@, written by Jérémy Berthomieu, Christian Eder,
-      Vincent Neiger, and Mohab Safey El Din, uses advanced Groebner bases
+      Vincent Neiger, and Mohab Safey El Din, uses advanced Gröbner bases
       algorithms, multi-threading, and vectorization to obtain exact solutions
       for multivariate polynomial systems.  It is distributed under the GPLv2
       license and is available at @HREF "https://msolve.lip6.fr/"@.  It is used

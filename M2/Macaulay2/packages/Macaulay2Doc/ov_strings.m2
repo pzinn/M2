@@ -103,20 +103,33 @@ fghij"///,
 	  TO concatenate,
 	  TO format,
 	  TO lines,
+	  TO characters,
+	  TO demark,
 	  TO ascii,
 	  TO utf8,
+	  TO utf8substring,
+	  TO toLower,
+	  TO toUpper,
+	  TO urlEncode,
 	  TO substring,
+	  TO (value, String),
 	  TO (symbol _, String, ZZ),
 	  TO (symbol _, String, Sequence),
+	  TO (symbol .., String, String),
+	  TO (symbol ..<, String, String),
+	  TO (symbol ^, String, Sequence),
 	  "functions for handling nets",
 	  TO horizontalJoin,
 	  TO pad,
+	  TO wrap,
+	  TO centerString,
 	  TO columnate,
 	  TO stack,
 	  TO unstack,
 	  "more information",
      	  TO String,
-	  TO Net
+	  TO Net,
+	  TO "newline",
 	  }
      }
 
@@ -160,7 +173,16 @@ document {
      "Warning: if so many characters are written to a file that an internal buffer
      is filled before the line ends or first net is seen, then the buffer will be 
      flushed, and writing a net subsequently will produce an unexpected result.",
-     Subnodes => TO \ {(width, Net), (height, Net), (depth, Net)}
+    Subnodes => {
+	TO width,
+	TO (width, Net),
+	TO (height, Net),
+	TO (depth, Net),
+	TO (length, Net),
+        TO (symbol ^, Net, ZZ),
+	TO (symbol ||, Net, Net),
+        TO (symbol |, Net, Net),
+        },
      }
 
 document {
@@ -247,7 +269,7 @@ document {
      }
 
 document {
-     Key => {unstack,(unstack, Net)},
+     Key => {unstack,(unstack, Net),(unstack, String)},
      Headline => "list the rows of a net",
      TT "unstack x", " -- produces a list of strings, each containing the
      characters in one row of the ", TT "Net", " ", TT "x", ".",
@@ -260,12 +282,7 @@ document {
      }
 
 document {
-     Key => width,
-     Headline => "width of a file or net"
-     }
-
-document {
-     Key => {height,(height,Net),(height,String)},
+     Key => {(height,Net),(height,String)},
      Headline => "height of a net",
      TT "height n", " -- the height of a net ", TT "n", ".",
      PARA{},
@@ -299,7 +316,7 @@ document { Key => (width,File),
      Outputs => { ZZ => {"the width of the window or terminal attached to the file ", TT "f", ", if any, else 0" }}}
 
 document {
-     Key => {depth,(depth, Net),(depth, String)},
+     Key => {(depth, Net),(depth, String)},
      Headline => "depth of a net",
      TT "depth n", " -- the depth of a net or string ", TT "n", ".",
      PARA{},
@@ -310,7 +327,10 @@ document {
      }
 
 document {
-     Key => (length, String),
+    Key => {
+	(length, String),
+	(length, Net),
+    },
      Headline => "length of a string",
      Usage => "n = length s",
      Inputs => { "s" },
@@ -357,55 +377,6 @@ document {
 	  n0|n|n0
      	  ///,
      SeeAlso => {"strings and nets", height, depth}
-     }
-
-undocumented {(format, Sequence)}
-document {
-     Key => {
-	  format,
-	 (format, CC),
-	 (format, RR),
-	 (format, String)},
-     Headline => "format a string or a real number",
-     SYNOPSIS (
-     	  Usage => "format(s)",
-	  Inputs => {"s"},
-	  Outputs => {{"a string obtained from ", TT "s", " by inserting 
-		    escape sequences, thereby preparing it for printing in a form suitable
-		    for reading in again"}},
-	  EXAMPLE lines ///
-	  s = "a\"b\"c"
-	  t = format s
-	  u = value t
-	  u == s
-	  ///
-	  ),
-     SYNOPSIS (
-     	  Usage => "format(s,k,l,t,e,x)",
-	  Inputs => {
-	       "s" => ZZ => {"the maximum number of significant decimal digits (default: ", TO "printingPrecision", ").
-		    The special value ", TT "0", " imposes no limit." },
-	       "k" => ZZ => {"how far to the right of the decimal point to go, at most (default: ", TO "printingAccuracy", ").
-		    The special value ", TT "-1", " imposes no limit."},
-	       "l" => ZZ => {"maximum number of leading zeroes (default: ", TO "printingLeadLimit", ")"},
-	       "t" => ZZ => {"maximum number of trailing zeroes (default: ", TO "printingTrailLimit", ")"},
-	       "e" => String => {"the separator between the mantissa and the exponent (default: ", TO "printingSeparator", ")"},
-	       "x" => RR => "the number to be converted to a string"
-	       },
-	  Outputs => {
-	       String => {"the decimal representation of the number ", TT "x", ", prepared according to the parameters above"}
-	       },
-	  EXAMPLE lines ///
-	      format(10,1/3000.)
-	      format(10,6,1/3000.)
-	      format(10,6,2,1/3000.)
-	      format(10,300000.)
-	      format(10,-1,10,5,300000.)
-	      format(10,-1,10,4,300000.)
-	      format(10,-1,10,4,"E",300000.)
-	  ///
-	  ),
-     SeeAlso => {toExternalString}
      }
 
 document {

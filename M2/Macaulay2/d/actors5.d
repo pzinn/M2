@@ -2003,7 +2003,7 @@ setupconst("fileDictionaries",Expr(fileDictionaries));
 
 export newStaticLocalDictionaryClosure(filename:string):DictionaryClosure := (
      d := newStaticLocalDictionaryClosure();
-     storeInHashTable(fileDictionaries,toExpr(filename),Expr(d));
+     storeInHashTable(fileDictionaries,toExpr(relativizeFilename(filename)),Expr(d));
      d);
 
 fileMode(e:Expr):Expr := (

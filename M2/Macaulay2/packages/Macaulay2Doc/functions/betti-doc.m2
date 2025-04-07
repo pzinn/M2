@@ -84,6 +84,8 @@ Node
       C.dd
   Contributors
     Hans-Christian von Bothmer donated the last feature.
+  Subnodes
+    MultigradedBettiTally
 ///
 
 ------------------
@@ -146,7 +148,7 @@ Node
       multigraded B
   Synopsis
     Heading
-      Betti table of a Groebner basis
+      Betti table of a Gröbner basis
     Usage
       betti G
     Inputs
@@ -251,8 +253,6 @@ Node
     regularity
     pdim
   Subnodes
-    BettiTally
-    MultigradedBettiTally
     (multigraded, BettiTally)
     (betti, BettiTally)
     [betti, Minimize]
@@ -288,12 +288,6 @@ Node
       betti(t, Weights => {0,1})
       betti(t, Weights => {1,1})
       peek oo
-    Text
-    Example
-      t' = multigraded t
-      betti(t', Weights => {1,0})
-      betti(t', Weights => {0,1})
-      betti(t', Weights => {1,1})
   SeeAlso
     "heft vectors"
     MultigradedBettiTally

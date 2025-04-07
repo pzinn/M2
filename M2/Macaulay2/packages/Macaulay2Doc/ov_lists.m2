@@ -434,53 +434,103 @@ doc///
 
  SeeAlso
   (symbol #?, BasicList, ZZ)
+  Set
  Subnodes
-  BasicList
-  VisibleList
-  MutableList
-  (symbol #, BasicList)
-  (symbol #, BasicList, ZZ)
-  (symbol _, VisibleList, ZZ)
-  (symbol _, VisibleList, List)
-  (symbol |, List,List)
-  (apply,BasicList,Function)
-  (scan,BasicList,Function)
-  (all,BasicList,Function)
-  (any,BasicList,Function)
-  (select, BasicList, Function)
-  (fold, VisibleList, Function)
-  (accumulate, VisibleList, Function)
-  (position, VisibleList, Function)
-  (positions, VisibleList, Function)
-  number
-  table
-  join
-  append
-  prepend
-  insert
-  between
-  delete
-  drop
-  take
-  first
-  last
-  flatten
-  splice
-  deepSplice
-  mingle
-  pack
-  reverse
-  sequence
-  unsequence
-  sort
-  rsort
-  switch
-  toList
-  toSequence
-  uniform
-  unique
-  same
-  runLengthEncode
+  :Types of lists
+    BasicList
+    VisibleList
+    MutableList
+  :Information about lists
+    (length, VisibleList)
+    (symbol #, List)
+    isEmpty
+  :Accessing list elements
+    (symbol #, List, ZZ)
+    (symbol _, VisibleList, ZZ)
+    (symbol _, VisibleList, List)
+    drop
+    take
+    first
+    last
+  :Creating simple lists
+    -- for .. list
+    -- apply
+    (symbol .., ZZ, ZZ)
+    (symbol ..<, ZZ, ZZ)
+    (symbol :, ZZ, Thing)
+  :Iterating over lists
+    (symbol /, VisibleList, Function)
+    (symbol //, VisibleList, Function)
+    scan
+    apply
+    fold
+    accumulate
+    ultimate
+  :Creating iterators
+    Iterator
+  :Searching in lists
+    all
+    any
+    same
+    uniform
+    select
+    isMember
+    isSubset
+    position
+    positions
+    min
+    minPosition
+    max
+    maxPosition
+    number
+    partition
+    sublists
+  :Nested lists
+    table
+    isTable
+    subtable
+    applyTable
+    (symbol **, List, List)
+    (symbol .., List, List)
+    (symbol ..<, List, List)
+    pack
+    netList -- TODO: move elsewhere?
+  :Sorting lists
+    sort
+    rsort
+    isSorted
+  :Manipulating lists
+    (symbol +, List, List)
+    (symbol -, List, List)
+    (symbol |, List, List)
+    join
+    append
+    prepend
+    rotate
+    insert
+    replace
+    between
+    delete
+    sum
+    product
+    toList
+    toSequence
+    flatten
+    splice
+    deepSplice
+    mingle
+    mergePairs
+    reverse
+    sequence
+    unsequence
+    switch
+    tally
+    commonest
+    unique
+    runLengthEncode
+    uniquePermutations
+    permutations
+    subsets
 ///
 
 document {
@@ -497,7 +547,25 @@ document {
 	  "L = new Type of BasicList",
 	  "x = new L from {a,b,c,d}",
 	  "join(x,x)"
-	  }
+	  },
+     "Here are the core types that inherit from ", TT "BasicList", ":",
+     Subnodes => TO \ {
+	 FilePosition,
+	 --Eliminate,
+	 Command,
+	 --VisibleList,
+	 --ProductOrder,
+	 URL,
+	 --MutableList,
+	 RingElement,
+	 --Time,
+	 Option,
+	 Vector,
+	 --Partition,
+	 Expression,
+	 Manipulator,
+	 IndexedVariable
+         },
      }
 
 document {
@@ -541,8 +609,8 @@ document {
      ///,
      PARA {"For an overview of lists and sequences, see ", TO "lists and sequences", "."},
      Subnodes => {
+	 -- TO Hybrid, -- this is documented in MinimalPrimes
 	 TO VerticalList,
-	 TO NumberedVerticalList
      }
 }
 
@@ -563,7 +631,7 @@ document { Key => VerticalList,
      EXAMPLE lines ///
 	 toList v
      ///,
-     SeeAlso => { NumberedVerticalList }
+     Subnodes => TO NumberedVerticalList,
      }
 
 document { Key => NumberedVerticalList,
@@ -737,9 +805,25 @@ document {
 	  "s",
       	  "peek s",
 	  },
-     SeeAlso => {"BasicList"}
+     SeeAlso => {"BasicList"},
+     Subnodes => { TO Bag },
      }
- 
+
+document {
+    Key => {
+	 rotate,
+	(rotate, ZZ, VisibleList)
+    },
+    Headline => "rotate a list",
+    Usage => "rotate(n,v)",
+    Inputs => {"n","v"},
+    Outputs => {{"the list obtained by rotating the list ", TT "v", " leftward ", TT "n", " places"}},
+    EXAMPLE lines ///
+        p = 0 .. 20
+	rotate(3,p)
+	rotate(-3,p)
+    ///}
+
 document {
     Key => {
 	runLengthEncode,

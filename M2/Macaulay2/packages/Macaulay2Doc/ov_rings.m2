@@ -33,7 +33,8 @@ document {
 	  TO "symmetric algebras",
 	  TO "tensor products of rings",
 	  TO "Weyl algebras",
-	  -- TO "Schur rings", 
+	  TO "local rings",
+	  TO "Schur rings",
 	  TO "associative algebras",
        	  },
      PARA{},
@@ -49,10 +50,8 @@ document {
 	  TO "ZZ", 
 	  TO "QQ", 
 	  TO "RR",
-	  TO "RR'",
 	  TO "RRi",
 	  TO "CC",
-	  TO "CC'",
 	  },
      "The names of some of these rings are double letters so the corresponding symbols
      with single letters are preserved for use as variables.",
@@ -111,8 +110,78 @@ document {
 }
 
 document {
+    Key => Number,
+    Headline => "the class of all numbers",
+    Subnodes => {
+	TO isANumber,
+	TO InfiniteNumber,
+	TO IndeterminateNumber,
+	TO InexactNumber,
+	TO InexactNumber'
+    }}
+
+document {
+    Key => InfiniteNumber,
+    Headline => "the class of all infinite numbers",
+    Subnodes => { TO isFinite, TO isInfinite, TO infinity } }
+
+document {
+    Key => infinity,
+    Headline => "infinity" }
+
+document {
+    Key => IndeterminateNumber,
+    Headline => "the class of all indeterminate numbers",
+    "Indeterminate numbers result, for example, from multiplying 0 by infinity.
+    There is only one instance of this class.",
+    Subnodes => { TO indeterminate } }
+
+document {
+    Key => indeterminate,
+    Headline => "an indeterminate number",
+    TT "indeterminate", " -- a representation of an indeterminate number, ",
+    "such as might result from multiplying 0 by infinity." }
+
+document {
+    Key => InexactNumber,
+    "This type of number is intended to serve as a parent class for those types of numbers ",
+    "that are inexactly represented in the computer.",
+    Subnodes => {
+	TO precision,
+	TO numeric,
+	TO round,
+	TO size2,
+	TO clean,
+	TO norm,
+	TO "minExponent",
+	TO "maxExponent",
+        },
+    }
+
+document {
+    Key => InexactNumber',
+    "This class is the common parent of the classes of complex fields and real fields.",
+    Subnodes => {
+	TO "RR_*",
+	TO "CC_*",
+	TO (symbol _*, RingFamily),
+        },
+    }
+
+document {
      Key => ZZ,
-     Headline => "the class of all integers" }
+     Headline => "the class of all integers",
+    Subnodes => {
+	-- TO (factor, ZZ),
+	TO zero,
+	TO even,
+	TO odd,
+	TO (isPrime, ZZ),
+	TO (isPseudoprime, ZZ),
+	TO nextPrime,
+	TO changeBase,
+        },
+    }
 
 document {
      Key => QQ,
@@ -173,14 +242,18 @@ document {
 	  numeric_200 pi
 	  Gamma oo
 	  ///,
-     SeeAlso => {toRR, numeric, precision, format, "printingPrecision", "printingAccuracy",
+    SeeAlso => {numeric, precision, format, "printingPrecision", "printingAccuracy",
 	  "printingLeadLimit", "printingTrailLimit", "printingSeparator",
 	  "maxExponent", "minExponent"
-	  }
+	  },
+    Subnodes => {
+	TO toRR,
+	TO isReal,
+        },
      }
 
 document {
-     Key => RR',
+     Key => "RR_*",
      Headline => "the parent class of all rings of real numbers",
      PARA {
 	  "Floating point real numbers are treated in a special way.  Recall first to create a polynomial, one must
@@ -261,11 +334,17 @@ document {
 	  value y === x
      ///,
      Caveat => { "Currently, most transcendental functions are not implemented for complex arguments." },
-     SeeAlso => {"ii", toCC, toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"}
+    SeeAlso => {"ii", toRR, numeric, precision, format, "printingPrecision", "printingAccuracy", "printingLeadLimit", "printingTrailLimit", "printingSeparator"},
+    Subnodes => {
+	TO toCC,
+	TO conjugate,
+	TO realPart,
+	TO imaginaryPart,
+        },
      }
 
 document {
-     Key => CC',
+     Key => "CC_*",
      Headline => "the parent class of all rings of complex numbers",
      PARA {
 	  "Floating point complex numbers are treated in a special way.  Recall first to create a polynomial, one must
@@ -305,7 +384,7 @@ document {
      ///
      }
 
-undocumented {RRi'}
+undocumented {"RRi_*"}
 
 document {
      Key => RRi,
@@ -335,7 +414,24 @@ document {
      EXAMPLE {"exp(interval(2,4))","cos(interval(1,1.3))","sqrt(interval(2))"},
      "Transcendental functions are available to high precision, with ", TO "numericInterval", ".",
     EXAMPLE {"numericInterval(100,pi)","numericInterval_200 EulerConstant"},
-    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)}
+    SeeAlso => {toRRi, numericInterval, precision, interval, (span,Sequence), (span,List)},
+    Subnodes => {
+	TO toRRi,
+	TO interval,
+	TO diameter,
+	TO left,
+	TO right,
+	TO midpoint,
+	TO numericInterval,
+	TO (intersect, RRi),
+        TO (intersection, RRi, RRi),
+        TO (isMember, QQ, RRi),
+        TO (isEmpty, RRi),
+        TO (isSubset, RRi, RRi),
+	TO span, -- TODO: perhaps this should be shared
+	TO (span, List),
+	TO (span, Sequence),
+        },
 	  }
 
 document {
@@ -362,8 +458,12 @@ document {
 	"To view this element as an element of ", TT "ZZ", " use the ", TO "lift", " command.",
 	EXAMPLE {
 	     "lift (17_R^-1, ZZ)"
-	     } 
-	}
+	     },
+    Subnodes => {
+	TO char,
+	TO getPrimeWithRootOfUnity,
+        },
+    }
 
 document {
      Key => "finite fields",
@@ -456,7 +556,8 @@ document {
      EXAMPLE "lift(k_0, ring T)",
      "We can even lift it back to the polynomial ring.",
      EXAMPLE "lift(k_0, ambient ring T)",
-     "For more information see ", TO "GaloisField", "."
+     "For more information see ", TO "GaloisField", ".",
+     Subnodes => TO isFinitePrimeField,
      }
 
 document {
@@ -600,6 +701,15 @@ document {
        	  },
      SeeAlso => {"heft vectors", "division in polynomial rings with monomials less than 1"},
      Subnodes => {
+	 TO isPolynomialRing,
+	 TO (symbol SPACE, Ring, Array),
+	 TO (symbol SPACE, Ring, Monoid),
+	 TO coefficientRing,
+	 TO vars,
+	 TO(vars, List),
+	 TO "get a ring variable by index",
+	 TO "get a ring variable by name",
+	 TO "get a monomial by exponent vector",
 	 TO "graded and multigraded polynomial rings",
 	 TO "monomial orderings",
          }
@@ -736,7 +846,12 @@ document {
 	  "R = ZZ/101[x,y,z]/(x-y,y-z,z-x)",
       	  "trim R"
 	  },
-     "For more information see ", TO "QuotientRing", "."
+     "For more information see ", TO "QuotientRing", ".",
+     Subnodes => {
+	 TO (symbol /, Ring, Ideal),
+	 TO isQuotientRing,
+	 TO isQuotientOf,
+         },
      }
 
 document {
@@ -749,7 +864,12 @@ document {
 	  TO "//",
 	  TO "%",
 	  TO "terms",
+	  TO "someTerms",
+	  TO "part",
+	  TO "parts",
 	  TO "diff",
+	  TO "contract",
+	  TO "content",
 	  -- TO "f _ ZZ",
 	  -- TO "f _ monomial",
 	  TO "listForm",
@@ -899,6 +1019,29 @@ document {
      polynomials, or rather, their lead monomials, stand with respect to each 
      other in the monomial ordering.",
      EXAMPLE "f ? g",
+     Subnodes => {
+	 TO degree,
+	 TO homogenize,
+	 TO weightRange,
+	 TO monomials,
+	 TO coefficient,
+	 TO coefficients,
+	 TO content,
+	 TO exponents,
+	 TO index,
+	 TO indices,
+	 TO part,
+	 TO parts,
+	 TO someTerms,
+	 TO terms,
+	 TO topCoefficients,
+	 TO leadCoefficient,
+	 TO leadMonomial,
+	 TO leadTerm,
+	 TO size,
+	 TO standardForm,
+	 TO listForm,
+         },
      }
 
 document {
@@ -923,7 +1066,10 @@ document {
 	  "T#0",
       	  "T#0#0",
       	  "T#0#1",
-	  }
+	  },
+     Subnodes => {
+	 TO (roots, RingElement),
+         },
      }
 
 document {
@@ -969,19 +1115,25 @@ document {
 	  },
      "Note that computations, such as Gröbner bases, over fraction fields can be quite slow.",
      SeeAlso => {
-	  frac,
-	  numerator,
-	  denominator,
 	  liftable,
 	  lift,
 	  (kernel,RingMap)
-	  }
+	  },
+    Subnodes => {
+	TO frac,
+	TO fraction,
+	TO numerator,
+	TO denominator,
+        },
      }
 
 document {
      Key => "finite field extensions",
-     UL {
-	  TO "toField",
+    Subnodes => {
+	TO isField,
+	TO toField,
+	TO getNonUnit,
+	TO isPrimitive,
 	  -- writeup under "toField" is a good start,
 	  -- needs an example
 	  }
@@ -1023,7 +1175,11 @@ document {
 	  "matrix{{x}} * matrix{{y}}"
 	  },
      "You may compute Gröbner bases, syzygies, and form quotient rings of these skew
-     commutative rings."
+     commutative rings.",
+     Subnodes => {
+	 TO isSkewCommutative,
+	 TO antipode,
+         },
      }
 
 document {
@@ -1143,6 +1299,22 @@ document {
     Key => "associative algebras",
     "Associative (i.e., not necessarily commutative) algebras are implemented in
     the ", TO "AssociativeAlgebras::AssociativeAlgebras", " package."
+    }
+
+document {
+    Key => "local rings",
+    "Localizations of polynomial rings with respect to prime ideals are implemented in
+    the ", TO "LocalRings::LocalRings", " package.",
+    Subnodes => {
+	"alternative ways to construct a local ring",
+	TO (symbol SPACE, Ring, List),
+        },
+    }
+
+document {
+    Key => "Schur rings",
+    "Representation rings of general linear groups and of symmetric groups are implemented in
+    the ", TO "SchurRings::SchurRings", " package."
     }
 
 -*

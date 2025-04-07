@@ -44,8 +44,10 @@ document {
      PARA{},
      Subnodes => {
 	  TO "class",
+	  TO "synonym",
 	  TO "parent",
 	  TO "instance",
+	  TO "instances",
 	  TO "ancestor",
 	  TO "ancestors",
 	  },
@@ -311,9 +313,14 @@ document {
 	       new M
 	  ///
 	  ),
-     Subnodes => {
-	  TO "newClass"
-	  }
+    Subnodes => {
+	TO "of",
+	TO "newClass",
+	TO NewMethod,
+	TO NewOfMethod,
+	TO NewFromMethod,
+	TO NewOfFromMethod,
+        },
      }
 
 document {
@@ -354,7 +361,11 @@ document {
 	  "K = new Qu from {0,0,0,1}",
 	  "2*I + 5*J",
 	  "peek oo"
-	  }
+	  },
+     Subnodes => {
+	 TO expression,
+	 TO describe,
+         },
      }
 
 document {
@@ -472,12 +483,22 @@ document {
 
 document {
      Key => Type,
-     Headline => "the class of all types",
-     "Everything in the system is classified, and the class that a thing
-     belongs to is a type.  A type is implemented as a hash table containing
-     method functions for its instances.",
+     Headline => "the class of all mutable types",
+     "Everything in the system is classified, and the class that a thing belongs to is a type. ",
+     "A type is implemented as a ", TO2(MutableHashTable, "mutable hash table"),
+     " containing method functions for its instances.",
      PARA{},
-     "The list of types known to the system is displayed below."
+     "The list of types known to the system is displayed below.",
+     Subnodes => {
+	 "mathematical mutable types",
+	 TO Monoid,
+	 TO Ring,
+	 TO RingFamily,
+	 "other mutable types",
+	 TO SelfInitializingType,
+	 TO WrapperType,
+	 TO HeaderType,
+         },
      }
 
 document {
@@ -487,14 +508,34 @@ document {
      includes numbers, strings, and lists.  More complicated things such as
      polynomials, groups, rings, and chain complexes are implemented
      as ", ITALIC "hash tables", ".  See ", TO "Type", " for information
-     about what types of things there are."
+     about what types of things there are.",
+     Subnodes => TO \ {
+	 --Net,
+	 NetFile,
+	 Boolean,
+	 Dictionary,
+	 Nothing,
+	 --Database,
+	 --HashTable,
+	 --Task,
+	 --SymbolBody,
+	 --BasicList,
+	 Number,
+	 File,
+	 --Function,
+	 AtomicInt,
+	 Symbol,
+	 Pseudocode
+	 --FunctionBody
      }
+}
 document {
      Key => Nothing,
      Headline => "the empty class",
      "This class is useful for representing the class of an argument
      that is missing.  It is also used as the parent for those things that
-     are not themselves types, i.e., which do not have instances."
+     are not themselves types, i.e., which do not have instances.",
+     Subnodes => { TO "null" },
      }
 
 document {
@@ -532,40 +573,8 @@ document {
      SeeAlso => { "class", "parent" }
      }
 
-document {
-     Key => Symbol,
-     Headline => "the class of all symbols",
-     "Symbols are entered as an alphabetic character followed by a
-     sequence of alphanumeric characters; case is significant.
-     The single symbol character ' is regarded as alphabetic, so that
-     symbols such as ", TT "x'", " may be used.",
-     PARA{},
-     "Symbols are used as names for values to be preserved, as indeterminates
-     in polynomial rings, and as keys in hash tables.  They may have
-     global scope, meaning they are visible from every line of code,
-     or local scope, with visibility restricted to a single file or
-     function body.",
-     EXAMPLE {
-	  "x",
-	  "ab12"
-	  },
-     SeeAlso => {":="}
-     }
-
-document {
-     Key => Keyword,
-     Headline => "the class of all keywords",
-     PARA {
-	  "Keywords are symbols that are treated specially by the system while parsing user input.  Some of them,
-	  such as ", TO "and", ", consist of alphanumeric characters and look just like
-	  ordinary symbols.  Others, such as ", TO "==>", ", consist of special characters
-	  and are called operators."
-	  },
-     SeeAlso => {"precedence of operators"}
-     }
-
 document { Key => ImmutableType,
-     Headline => "the class of immutable types",
+     Headline => "the class of all immutable types",
      "All types are implemented as hash tables.  Most types are mutable, so that additional methods for handling their instances can be added
      at any time.  However, if a type has an ancestor where the methods can be stored, then mutability is not needed.",
      PARA{},
@@ -589,12 +598,18 @@ document { Key => ImmutableType,
      EXAMPLE lines ///
 	  ZZ^3_0 + ZZ^3_2
      ///,
-     SeeAlso => {showStructure,parent,class}
+     SeeAlso => {showStructure,parent,class},
+     -- PARA{},
+     -- "The list of immutable types known to the system is displayed below.",
+     -- Subnodes => {
+     -- 	 "mathematical immutable types",
+     -- 	 TO Module,
+     --     },
      }
 
 document {
      Key => serialNumber,
-     Headline => "serial number of a dictionary, task, symbol, mutable hash table, or mutable list, ",
+     Headline => "serial number of a dictionary, task, symbol, mutable hash table, or mutable list",
      Usage => "serialNumber x",
      Inputs => {"x"},
      Outputs => { ZZ => { "the serial number of ", TT "x" } },
@@ -636,63 +651,6 @@ document {
      TO "Command", " is an example of a self initializing type.",
      SeeAlso => {"HeaderType", "WrapperType"}
      }
-
-document {
-     Key => Vector,
-     Headline => "the class of all elements of modules that are handled by the engine",
-     "If ", TT "R", " is a ring handled by the engine, and ", TT "M", " is a
-     module over ", TT "R", ", then M is a subclass of Vector.",
-     PARA{},
-     SeeAlso => {"engine", "Module"}}
-document {
-     Key => Matrix,
-     Headline => "the class of all matrices",
-     "A matrix is a homomorphism between two modules, together with
-     an integer (or vector of integers) called its degree, which is
-     used when determining whether the map is homogeneous.  The matrix
-     is stored in the usual way as a rectangular array of ring elements.
-     When the source or target modules are not free, the matrix is
-     interpreted as a linear transformation in terms of the generators
-     of the modules.",
-     SeeAlso => "matrices",
-     PARA{},
-     "A matrix ", TT "f", " is an immutable object, so if you want to
-     cache information about it, put it in the hash table ", TT "f.cache", ".",
-     PARA{},
-     "Common ways to make a matrix:",
-     UL {
-	  TO "map",
-	  TO "matrix",
-	  },
-     "Common ways to get information about matrices:",
-     UL {
-	  TO (degree, Matrix),
-	  TO (isHomogeneous, Matrix),
-	  TO (matrix, Matrix),
-	  },
-     "Common operations on matrices:",
-     UL {
-	  TO (symbol +, Matrix, Matrix),
-	  TO (symbol -, Matrix, Matrix),
-	  TO (symbol *, RingElement, Matrix),
-	  TO (symbol *, Matrix, Matrix),
-	  TO (symbol ==, Matrix, Matrix),
-	  TO (symbol ++, Matrix, Matrix),
-	  TO (symbol **, Matrix, Matrix),
-	  TO (symbol %, Matrix, Matrix),
-	  TO (symbol //, Matrix, Matrix),
-	  TO (symbol |, Matrix, Matrix),
-	  TO (symbol ||, Matrix, Matrix),
-	  TO (symbol ^, Matrix, List),
-	  TO (symbol _, Matrix, List)
-	  },
-     "Common ways to use a matrix:",
-     UL {
-	  TO (cokernel, Matrix),
-	  TO (image, Matrix),
-	  TO (kernel, Matrix),
-	  TO (homology, Matrix, Matrix),
-	  }}
 
 document {
      Key => Descent,

@@ -30,13 +30,36 @@ document {
 document {
     Key => "system facilities",
     Subnodes => {
+	"Input and output:",
+	  TO "printing to the screen",
+	  TO "printing to a file",
+	  TO "reading files",
+	  TO "getting input from the user",
+	  TO "creating and writing files",
+	  TO "saving polynomials and matrices in files",
+	  TO "two dimensional formatting",
+	  TO "file manipulation",
+	  TO "communicating with programs",
+	  TO "using sockets",
 	"Loading files:",
+	  TO "notify",
 	  TO "autoload",
 	  TO "initialization file",
 	  TO "input",
 	  TO "load",
 	  TO "needs",
 	  TO "end",
+	  TO "loadedFiles",
+	  TO "fileExitHooks",
+	"Loading path:",
+	  TO "path",
+	  TO "rootURI",
+	  TO "rootPath",
+	  TO "homeDirectory",
+	  TO minimizeFilename,
+	  TO relativizeFilename,
+	  TO toAbsolutePath,
+	  TO searchPath,
 	"Echoing characters:",
 	  TO "clearEcho",
 	  TO "setEcho",
@@ -44,30 +67,52 @@ document {
 	  TO "top level loop", -- see repl.m2
 	  TO "restart",
 	  TO "addEndFunction",
-	"Interface to the operating system:",
-	  TO "alarm",
-	  TO "currentDirectory",
-	  TO "exec",
-	  TO "exit",
-	  TO "fork",
-	  TO "getenv",
-	  TO "processID",
-	  TO "path",
-	  TO "quit",
-	  TO "run",
-	  TO "sleep",
-	  TO "nanosleep",
+	"Timing computations:",
 	  TO "Time",
 	  TO "time",
 	  TO "timing",
 	  TO "elapsedTime",
 	  TO "elapsedTiming",
+	  TO "cpuTime",
+	  TO "currentTime",
+	  TO "sleep",
+	  TO "nanosleep",
+	"Interface to the operating system:",
+	  TO "alarm",
+	  TO "exec",
+	  TO "exit",
+	  TO "fork",
+	  TO "show",
+	  TO "pager",
+	  TO "getenv",
+	  TO "getWWW",
+	  TO "splitWWW",
+	  TO "httpHeaders",
+	  -- TO "threadID",
+	  TO "processID",
+	  TO "groupID",
+	  TO "setGroupID",
+	  -- TODO: combine:
+	  TO kill,
+	  TO(kill, ZZ),
+	  TO "quit",
 	  TO "wait",
+	  TO limitFiles,
+	  TO limitProcesses,
 	"Variables with information about the state of the current process:",
 	  TO "commandLine",
+	  TO "scriptCommandLine",
 	  TO "environment",
 	  TO "version",
+	"Working with databases:",
+	  TO Database,
+	  TO firstkey,
+	  TO nextkey,
+	  TO openDatabase,
+	  TO openDatabaseOut,
+	  TO reorganize,
 	"Dealing with the garbage collector:",
+	  TO "GCstats",
 	  TO "collectGarbage",
 	  TO "registerFinalizer"
 	  }
@@ -206,7 +251,14 @@ document {
      }
 document {
      Key => read,
-     Headline => "read from a file", }
+     Headline => "read from a file",
+    Subnodes => {
+	TO (read, Sequence),
+	TO (read, String),
+	TO (read, File),
+	TO (read, File, ZZ),
+        },
+    }
 document {
      Key => (read,Sequence),
      Usage => "read()",
@@ -589,7 +641,7 @@ document {
      PARA{
 	  "Functions previously registered with ", TO "addEndFunction", " will
 	  be called before the current instance of the program terminates.  Then the program will be invoked
-	  afresh, as described in ", TO "Invoking the program", "."
+	  afresh, as described in ", TO "invoking the Macaulay2 program", "."
 	  }
      }
 
@@ -978,26 +1030,6 @@ document {
 	  }
      }
 
-
-document {
-     Key => File,
-     Headline => "the class of all files",
-     "Files may be input files, output files, pipes, or sockets.
-     A list of currently open files may be obtained with ", TO "openFiles", ".",
-     DIV {
-	  "class" => "waystouse",
-	  SUBSECTION {"Functions operating on path names:"},
-	  UL {
-	       TO minimizeFilename,
-	       TO "path",
-	       TO relativizeFilename,
-	       TO searchPath,
-	       TO temporaryFileName,
-	       TO toAbsolutePath
-	       }
-	  }
-     }
-
 document {
      Key => connectionCount,
      Headline => "the number of connections",
@@ -1095,8 +1127,6 @@ document { Key => {(symlinkDirectory, String, String),symlinkDirectory,[symlinkD
      SeeAlso => { symlinkFile, copyDirectory }
      }
 
-document { Key => UpdateOnly,
-     Headline => "only copies of newer files should replace files" }
 document { Key => {(copyDirectory, String, String),copyDirectory,[copyDirectory, Exclude],[copyDirectory, UpdateOnly],[copyDirectory, FollowLinks],[copyDirectory, Verbose]},
      Usage => "copyDirectory(src,dst)",
      Inputs => {
@@ -1235,14 +1265,14 @@ document { Key => Wrap,
      ///
      }
 
-document { Key => "fileDictionaries",
-     Headline => "local dictionaries for loaded files",
-     Usage => "fileDictionaries#fn",
-     Inputs => { "fn" => String },
-     Outputs => {{"the local dictionary in effect for the scope of the file loaded from the path ", TT "fn"}},
-     }
 document { Key => fileMode,
-     Headline => "set or get file mode"
+     Headline => "set or get file mode",
+     Subnodes => {
+	  TO (fileMode, File),
+	  TO (fileMode, ZZ, File),
+	  TO (fileMode, String),
+	  TO (fileMode, ZZ, String),
+          },
      }
 document { Key => (fileMode,String),
      Headline => "get file mode",
@@ -1865,7 +1895,7 @@ document { Key => "prefixDirectory",
 	  line option.  This will affect the value of ", TO "path", " and thus the locations of the files loaded initially.  Use the
 	  ", TT "--notify", " command line option to display the locations of files as they are loaded."
 	  },
-     SeeAlso => { "prefixPath", "Invoking the program" }
+     SeeAlso => { "prefixPath", "invoking the Macaulay2 program" }
      }
 document {
      Key => "rootPath",
@@ -1874,12 +1904,7 @@ document {
 	  String => "the path, as seen by external programs, to the root of the file system seen by Macaulay2"
 	  },
      PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by external programs.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
+	  "This string may be concatenated with an absolute path to get one understandable by external programs."
 	  },
      EXAMPLE lines ///
      fn = temporaryFileName()
@@ -1895,12 +1920,7 @@ document {
 	  String => "the path, as seen by an external browser, to the root of the file system seen by Macaulay2"
 	  },
      PARA {
-	  "This string may be concatenated with an absolute path to get one understandable by an external browser.
-	  Currently, this makes a difference only under Microsoft Windows with Cygwin, but there it's crucial
-	  for those external programs that are not part of Cygwin.  Fortunately, programs compiled under Cygwin
-	  know were to look for files whose paths start with something like ", TT "C:/", ", so it is safe
-	  always to concatenate with the value of ", TO "rootPath", ", even when it is unknown whether the
-	  external program has been compiled under Cygwin."
+	  "This string may be concatenated with an absolute path to get one understandable by an external browser."
 	  },
      EXAMPLE lines ///
      fn = temporaryFileName()

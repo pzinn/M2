@@ -1,6 +1,13 @@
 --		Copyright 1993-1998 by Daniel R. Grayson
 
 document {
+     Key => File,
+     Headline => "the class of all files",
+     "Files may be input files, output files, pipes, or sockets.
+     A list of currently open files may be obtained with ", TO "openFiles", ".",
+     }
+
+document {
      Key => "printing to the screen",
      "Use the operator ", TO "<<", " to print something to the screen.",
      EXAMPLE {
@@ -44,7 +51,63 @@ document {
 	  "43!",
 	  "truncateOutput infinity",
 	  "43!"
-	  }
+	  },
+     Subnodes => {
+	 TO print,
+	 TO printerr,
+	 TO pretty,
+	 TO "printWidth",
+	 TO truncateOutput,
+         }
+     }
+
+document {
+     Key => { "printing to a file", (symbol <<, File, Thing),(symbol <<, String, Thing), (symbol <<, File, Manipulator),
+	  (symbol <<, Nothing, Thing),(symbol <<, Nothing, Manipulator), (symbol <<, Thing),
+	  (symbol <<, File, Symbol),(symbol <<, File, Net),(symbol <<,File,String) },
+     Headline => "print to a file",
+     Usage => "f << x\n  << x",
+     Inputs => {
+	  "f" => Nothing => { ofClass {File, String, Nothing} },
+	  "x"
+	  },
+     Outputs => {
+	  File => "the output file(s) used"
+     	  },
+     Consequences => {{
+	  "The object ", TT "x", " is prepared for printing (with ", TO "net", ") and printed on the output file(s) ", TT "f", ".
+	  If ", TT "f", " is a string, then it is interpreted as a filename and an output file is opened, used, and returned,
+	  unless a single open file with the same name already exists, in which case it is used and returned.
+	  Filenames starting with ", TT "!", " or with ", TT "$", " are treated specially, see ", TO "openInOut", ".
+	  If ", TT "f", " is a list, then the output operation is performed on each one.
+	  If ", TT "f", " is ", TO "null", ", then the output is discarded; thus ", TO "null", " is useful as a dummy output file.
+	  If ", TT "f", " is omitted, as in the second usage line, then the output is sent to ", TO "stdio", ", and it will appear (usually) on the screen."
+	  }},
+     PARA {
+	  "Parsing of ", TO "<<", " associates leftward, so that several objects  may be displayed with an expression such as ", TT "f<<x<<y<<z", "."
+	  },
+     EXAMPLE lines ///
+     	  stderr << "-- hi there --" << endl
+     	  << "-- ho there --" << endl
+	  fn = temporaryFileName()
+	  fn << "hi there" << endl << close
+	  get fn
+	  R = QQ[x]
+	  f = (x+1)^10
+	  << f
+	  fn << f << close
+     	  get fn
+	  fn << toExternalString f << close
+     	  get fn
+	  value get fn
+	  removeFile fn
+     ///,
+     SeeAlso => { endl, flush, close },
+     Subnodes => {
+	 TO printString,
+         TO stdio,
+         TO stderr,
+         },
      }
 
 document {
@@ -250,9 +313,16 @@ document {
      Key => "file manipulation",
      Headline => "Unix file manipulation functions",
      Subnodes => {
-	  TO fileExists,
 	  TO isRegularFile,
 	  TO isDirectory,
+	  TO baseFilename,
+	  -- TODO: change FileName to Filename
+	  TO temporaryFileName,
+	  TO fileMode,
+	  TO fileExists,
+	  TO fileReadable,
+	  TO fileWritable,
+	  TO fileExecutable,
 	  TO fileTime, -- can use to get or set (currentTime)
 	  TO copyFile,
 	  TO moveFile,
@@ -261,14 +331,16 @@ document {
 	  TO symlinkFile,
 	  TO linkFile,
 	  TO readlink,
-	  TO mkdir,
+	  TO realpath,
+	  "Directories",
+	  TO currentDirectory,
+	  TO readDirectory,
 	  TO makeDirectory,
+	  TO mkdir,
+	  TO changeDirectory,
 	  TO copyDirectory,
 	  TO removeDirectory,
 	  TO symlinkDirectory,
-	  TO readDirectory,
-	  TO realpath,
-	  TO temporaryFileName
 	  }
      }
 
@@ -362,7 +434,13 @@ document {
      PARA{},
      "Another useful function is ", TO "wait", ", which can be used
      to wait for input to be available from any of a list of input
-     files."
+     files.",
+     Subnodes => {
+	 TO run,
+	 TO findProgram,
+	 TO runProgram,
+	 TO (symbol <<, Program, Thing),
+         },
      }
 
 document {
@@ -394,7 +472,39 @@ wait pid///,
 	  Then we use an ordinary input command, namely ", TO "get", ", to obtain the message.
 	  Finally, we ", TO "wait", " for the child process to finish, as we should."
 	  },
-     SeeAlso => { "openInOut", "openListener", "getWWW" }
+     SeeAlso => { getWWW },
+     Subnodes => {
+	 "Creating a socket",
+	 TO openListener,
+	 TO openIn,
+	 TO openInOut,
+	 TO openOut,
+	 TO openOutAppend,
+	 "Manipulating a socket",
+	 TO endl,
+	 TO flush,
+	 TO close,
+	 TO closeIn,
+	 TO closeOut,
+	 "Interacting a socket",
+	 TO get,
+	 TO getc,
+	 TO read,
+	 TO scanLines,
+	 TO fileLength,
+	 TO(height, File),
+	 TO(width, File),
+	 TO atEndOfFile,
+	 TO echoOn,
+	 TO echoOff,
+	 TO isOpen,
+	 TO isReady,
+	 TO isOutputFile,
+	 TO isInputFile,
+	 TO isListener,
+	 TO openFiles,
+	 TO connectionCount,
+         },
      }
 
 -- Local Variables:

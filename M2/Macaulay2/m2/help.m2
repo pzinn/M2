@@ -51,7 +51,7 @@ examples ZZ := seeAbout_examples
 counter := 0
 next := () -> counter = counter + 1
 optTO := key -> (
-    tag := makeDocumentTag(key, Package => package key);
+    tag := makeDocumentTag(key, Package => package' key);
     ptag := getPrimaryTag tag;
     fkey := format tag;
     if currentHelpTag.?Key and instance(currentHelpTag.Key, Sequence) and currentHelpTag =!= ptag then return;
@@ -156,7 +156,7 @@ documentationValue(Symbol, Thing) := (S, X) -> ()
 -- e.g. Macaulay2Doc :: MethodFunction
 documentationValue(Symbol, Type)  := (S, T) -> (
     -- catch when an unexported type is documented; TODO: where should this be caught?
-    if package T === null then error("encountered unexported type ", toString T);
+    if package' T === null then error("encountered unexported type ", toString T);
     -- types that inherit from T
     b := smenu(toString \ subclasses T);
     -- constructors of T
@@ -281,6 +281,7 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    DIV { "class" => "exports",
 		fixup UL {
 		    if #b > 0 then LI {"Types",                  smenu b},
+		    -- FIXME: this line is displayed empty for Truncations
 		    if #a > 0 then LI {"Functions and commands", smenu a},
 		    if #m > 0 then LI {"Methods",                smenu m},
 		    if #c > 0 then LI {"Symbols",                smenu c},
@@ -324,6 +325,7 @@ getOperator := key -> if operator#?key then (
 	))
 
 -- TODO: expand this
+-- TODO: add location of symbol definition and documentation
 getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     SUBSECTION "For the programmer",
     fixup PARA deepSplice {
@@ -387,8 +389,9 @@ getDefaultOptions := (nkey, opt) -> DIV (
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package tag, format tag, desc);
-	if instance(key, String) then DIV { desc } -- overview key
+	desc = processExamples(package' tag, format tag, desc);
+	if instance(key, String) -- overview key
+	or instance(key, Package) then DIV { desc }
 	else DIV { SUBSECTION "Description", desc })
     else DIV { COMMENT "empty documentation body" })
 
@@ -406,6 +409,7 @@ getData = (key, tag, rawdoc) -> (
 	Caveat          => getOption(rawdoc, Caveat),
 	SeeAlso         => getOption(rawdoc, SeeAlso),
 	Subnodes        => getOption(rawdoc, Subnodes),
+	"Location"      => toString locate tag, -- for debugging
 	-- this is so a "Ways to use" section is listed when multiple
 	-- method keys are documented together without the base function
 	"WaysToUse"     => DIV (
@@ -447,6 +451,7 @@ help = method(Dispatch => Thing)
 help DocumentTag := tag -> (
     rawdoc := fetchAnyRawDocumentation tag;
     rawtag := if rawdoc =!= null then rawdoc.DocumentTag else tag;
+    -- TODO: if the symbol is not defined, perhaps call 'about'?
     getBody(tag.Key, rawtag, rawdoc))
 
 help Sequence := key -> (
@@ -578,6 +583,7 @@ matchfun := (re, db) -> key -> (
 about = method(Options => {Body => false})
 about Type     :=
 about Symbol   :=
+about ScriptedFunctor :=
 about Function := o -> f -> about("\\b" | toString f | "\\b", o)
 about String   := o -> re -> lastabout = (
     packagesSeen := new MutableHashTable;

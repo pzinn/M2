@@ -17,7 +17,7 @@ document {
 	  },
 
      PARA{
-	  "There is special syntax for creating and accessing strings, lists, sequences, and hashtables.  These are the key data types underlying many new
+	  "There is special syntax for creating and accessing strings, lists, sequences, and hash tables.  These are the key data types underlying many new
 	  types.  The Macaulay2 engine implements rings, ring elements, and matrices, as instances of low-level types, and various high-level types,
 	  visible to the user, are based on them.  Examples include ", TO "Ring", ", ", TO "RingElement", ", ", TO "Matrix", ", ", TO "Ideal", ", ", 
 	  TO "RingMap", ", ", TO "Module", ", and ", TO "ChainComplex", "."
@@ -30,6 +30,7 @@ document {
 
      Subnodes => {
 	      TO "variables",
+	      TO "comments",
 	  "basic data types",
 	      TO "numeric types",
 	      TO "strings and nets",
@@ -49,29 +50,18 @@ document {
 	      TO "making functions with a variable number of arguments",
 	      TO "making functions with multiple return values",
 	      TO "making new functions with optional arguments",
+	      TO "caching computation results",
 	      TO "using hooks",
 	      --TO "code",
 	  "classes and types",
 	      TO "what a class is",
 	      TO "installing methods",
-	      TO "binary methods",
 	      TO "inheritance",
 	      TO "making new classes",
 	      TO "making a new method function",
 	      --TO "methods",
 	  "debugging Macaulay2 programs",
 	      TO "debugging",
-	      TO "the debugger",
-	  "input and output",
-	      TO "printing to the screen",
-	      TO "reading files",
-	      TO "getting input from the user",
-	      TO "creating and writing files",
-	      TO "saving polynomials and matrices in files",
-	      TO "two dimensional formatting",
-	      TO "file manipulation",
-	      TO "communicating with programs",
-	      TO "using sockets",
      	  "packages",
 	      TO "packages",
 	      TO "creating a package",
@@ -537,6 +527,9 @@ document {
 	  "f(3,7)",
 	  "f(5,11,a=>10^20)",
 	  },
+     Subnodes => {
+         TO "symbols used as the name or value of an optional argument",
+         },
      }
 
 document {
@@ -941,84 +934,66 @@ document {
      }
 
 document {
-     Key => "hash tables",
-     "A hash table is a data structure that can implement a function
-     whose domain is a finite set.  An element of the domain is called
-     a key.  The hash table stores the key-value pairs in such a way
-     that when presented with a key, the corresponding value can be
-     quickly recovered.",
-     PARA{},
-     "A dictionary could be implemented as a hash table: the keys would
-     be the words in the language, and the values could be the definitions
-     of the words.",
-     PARA{},
-     "A phone book could also be implemented as a hash table: the keys would
-     be the names of the subscribers, and the values could be the corresponding
-     phone numbers.  (We exclude the possibility of two subscribers with
-     the same name.)",
-     PARA{},
-     "As an example we implement a phone book.",
-     EXAMPLE {
-	  ///book = new HashTable from {
-     "Joe" => "344-5567",
-     "Sarah" => "567-4223",
-     "John" => "322-1456"}///,
-     	  },
-     "We use the operator ", TO "#", " to obtain values from the phone book.",
-     EXAMPLE ///book#"Sarah"///,
-     "The operator ", TO "#?", " can be used to tell us whether a given key
-     has an entry in the hash table.",
-     EXAMPLE ///book#?"Mary"///,
-     "We have implemented the notion of set via hash tables in which every value
-     is the number 1.",
-     EXAMPLE {
-	  "x = set {a,b,c,r,t}",
-	  "peek x",
-	  "x#?a",
-	  "x#?4",
-	  },
-     "There is a type of hash table that is mutable, i.e., a hash table
-     whose entries can be changed.  They are changed with assignment 
-     statements of the form ", TT "x#key=value", ".",
-     EXAMPLE {
-	  ///x = new MutableHashTable;///,
-	  ///x#"Joe" = "344-5567";///,
-	  ///x#3 = {a,b,c};///,
-	  ///x#{1,2} = 44;///,
-	  ///x#3///,
-	  ///x#?4///,
-	  },
-     "When a mutable hash table is printed, its contents are not displayed.  
-     This prevents infinite loops in printing routines.",
-     EXAMPLE "x",
-     "Use ", TO "peek", " to see the contents of a mutable hash table.",
-     EXAMPLE "peek x",
-     "A variant of ", TO "#", " is ", TO ".", ".  It takes only global symbols
-     as keys, and ignores their values.",
-     EXAMPLE {
-	  "p=4;",
-	  "x.p = 444;",
-	  "x.p",
-	  "x#?4"
-	  },
-     Subnodes => {
-	  TO "HashTable",
-	  TO "MutableHashTable",
-	  TO "hashTable",
-	  TO "hashing",
-	  TO "hash",
-	  "functions for manipulating hash tables",
-	  TO "isMutable",
-	  TO "keys",
-	  TO "values",
-	  TO "pairs",
-	  TO "copy",
-	  TO "remove",
-	  TO "merge",
-	  TO "combine",
-	  TO "mapping over hash tables",
-	  }
-     }
+    Key => Symbol,
+    Headline => "the class of all symbols",
+    "Symbols are entered as an alphabetic character followed by a
+    sequence of alphanumeric characters; case is significant.
+    The single symbol character ' is regarded as alphabetic, so that
+    symbols such as ", TT "x'", " may be used.",
+    PARA{},
+    "Symbols are used as names for values to be preserved, as indeterminates
+    in polynomial rings, and as keys in hash tables.  They may have
+    global scope, meaning they are visible from every line of code,
+    or local scope, with visibility restricted to a single file or
+    function body.",
+    EXAMPLE {
+	"x",
+	"ab12"
+    },
+    SeeAlso => {
+	":=",
+	"<-",
+	"threadLocal",
+    },
+    Subnodes => {
+	TO Keyword,
+	TO SymbolBody,
+	TO "symbol",
+	TO "global",
+	TO "local",
+	TO getSymbol,
+	TO getGlobalSymbol,
+	TO isGlobalSymbol,
+	TO erase,
+	TO protect,
+	TO (value, Symbol),
+	TO (findSynonyms, Symbol),
+	TO "globalAssign",
+	TO "globalAssignFunction",
+	TO "GlobalAssignHook",
+	TO "globalAssignment",
+	TO "globalAssignmentHooks",
+	TO "globalReleaseFunction",
+	TO "GlobalReleaseHook",
+	TO ((symbol _, symbol =), Symbol, Thing),
+	TO (symbol .., Symbol, Symbol),
+	TO (symbol ..<, Symbol, Symbol),
+	-- TO (symbol _, Symbol, Ring),
+	TO (symbol _, Symbol, Thing),
+    },
+}
+
+document {
+    Key => Keyword,
+    Headline => "the class of all keywords",
+    PARA {
+	"Keywords are symbols that are treated specially by the system while parsing user input.  Some of them,
+	such as ", TO "and", ", consist of alphanumeric characters and look just like
+	ordinary symbols.  Others, such as ", TO "==>", ", consist of special characters
+	and are called operators."
+    },
+    SeeAlso => {"precedence of operators"}
+}
 
 binaryOperators := core "binaryOperators"
 prefixOperators := core "prefixOperators"
@@ -1071,6 +1046,7 @@ document {
      "predicates",
 	  TO symbol and ,
 	  TO symbol or ,
+	  TO symbol xor ,
 	  TO symbol not ,
      "functions",
           TO symbol SPACE,
@@ -1116,6 +1092,22 @@ document {
           TO symbol ==> ,
           TO symbol <=== ,
           TO symbol <== ,
+          TO symbol ^<,
+          TO symbol ^<=,
+          TO symbol ^>,
+          TO symbol ^>=,
+          TO symbol _<,
+          TO symbol _<=,
+          TO symbol _>,
+          TO symbol _>=,
+          TO symbol _~,
+     "operators used for functors",
+          TO symbol ^~,
+          TO symbol ^!,
+          TO symbol ^*,
+          TO symbol _!,
+          TO symbol _*,
+          TO symbol |_,
      "built in operators" ,
 	  TO symbol => ,
           TO symbol , ,

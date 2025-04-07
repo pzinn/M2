@@ -15,7 +15,8 @@ isQuotientRing = method(TypicalValue => Boolean)
 isQuotientRing Ring := R -> false
 isQuotientRing QuotientRing := R -> true
 
-isFinitePrimeField = F -> isQuotientRing F and ambient F === ZZ and F.?char
+isFinitePrimeField = method(TypicalValue => Boolean)
+isFinitePrimeField Ring := F -> isQuotientRing F and ambient F === ZZ and F.?char
 
 isQuotientOf = method(TypicalValue => Boolean)
 isQuotientOf(Ring,Ring) := (R,S) -> false
@@ -37,7 +38,6 @@ degreesMonoid QuotientRing := (cacheValue degreesMonoid) (S -> degreesMonoid amb
 degreeLength QuotientRing := S -> degreeLength ambient S
 degreeGroup  QuotientRing := S -> degreeGroup  ambient S
 
-vars QuotientRing := (cacheValue vars) (S -> map(S^1,, table (1, numgens S, (i,j) -> S_j)))
 degrees QuotientRing := R -> degrees ambient R
 
 precision QuotientRing := precision @@ ambient

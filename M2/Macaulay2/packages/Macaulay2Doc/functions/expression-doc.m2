@@ -49,7 +49,28 @@ document {
 	  d / 4
 	  d / 1
 	  d == e
-     ///
+     ///,
+     Subnodes => {
+	 TO (value, Expression),
+	 TO hold,
+	 TO Table,
+	 TO Holder,
+	 TO Adjacent,
+	 TO MapExpression,
+	 TO FunctionApplication,
+	 TO AssociativeExpression,
+	 TO MatrixExpression,
+	 TO VectorExpression,
+	 TO RowExpression,
+	 TO SparseVectorExpression,
+	 TO SparseMonomialVectorExpression,
+	 TO BinaryOperation,
+	 TO Divide,
+	 TO Minus,
+	 TO Power,
+	 TO Subscript,
+	 TO Superscript,
+         }
      }
 
 document {

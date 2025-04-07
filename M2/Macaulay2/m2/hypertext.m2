@@ -171,7 +171,7 @@ PRE        = new MarkUpType of HypertextParagraph
 -- Tables
 TABLE      = new MarkUpType of HypertextContainer
 TR         = new MarkUpType of HypertextContainer
-TD         = new MarkUpType of Hypertext
+TD         = new MarkUpType of HypertextContainer
 TH         = new MarkUpType of TD
 
 -- Misc
@@ -466,6 +466,8 @@ short Hypertext := x -> (
     if #ops==0 then x else append(x,ops)
     )
 short LITERAL:=identity
+
+unique Hypertext := x -> new class x from unique toList x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -51,7 +51,8 @@ document {
      "The difference here is that here we are using simple assignment, rather than
      installing a method.  To document the return type is ", TT "X", " in this case, 
      make an entry in ", TT "typicalValues", " directly.",
-     PRE "f = t -> (...)\ntypicalValues#f = X"
+     PRE "f = t -> (...)\ntypicalValues#f = X",
+     Subnodes => { TO "typicalValues", },
      }
 
 document {
@@ -155,7 +156,14 @@ document {
      "where ", TT "( ... )", " represents suitable code for the operation at hand.",
      PARA{},
      "The routine for making new methods is ", TO "method", ".",
-     SeeAlso =>{"binary methods"}
+     SeeAlso =>{"binary methods"},
+     Subnodes => {
+	 TO "installing assignment methods",
+	 TO "installing augmented assignment methods",
+         TO installMethod,
+	 TO "binary methods",
+	 TO "nullaryMethods",
+         },
      }
 
 document {
@@ -220,14 +228,17 @@ document {
      second type is reset to ", TT "Z", ", the first type is replaced 
      by its parent, and the search continues.)",
      PARA{},
-     "The same search order applies to method functions defined with
-     ", TO "method", "."
+     "The same search order applies to method functions defined with ", TO "method", ".",
+    Subnodes => {
+	TO lookup,
+        },
      }
 
 document { Key => FunctionClosure,
      Headline => "the class of all function closures",
      "Functions created by the operator ", TO "->", " are function closures.",
-     EXAMPLE "class (x->x)"
+     EXAMPLE "class (x->x)",
+    Subnodes => TO uncurry,
      }
 document { Key => CompiledFunction,
      Headline => "the class of all compiled functions",
@@ -256,7 +267,18 @@ document {
 	  "making functions with a variable number of arguments",
 	  "making functions with multiple return values",
 	  "making new functions with optional arguments"
-	  }
+	  },
+    Subnodes => {
+	TO FunctionClosure,
+	TO CompiledFunction,
+	TO CompiledFunctionClosure,
+	TO (symbol SPACE, Function, Thing),
+        TO (symbol @@, Function, Function),
+        TO (symbol _, Function, Thing),
+        TO (methodOptions, Function),
+	TO identity,
+	TO notImplemented,
+        },
      }
 document {
      Key => "->",
@@ -288,7 +310,10 @@ document {
 	  "f = x -> 2*x+1",
 	  "f 100"
 	  },
-     "The class of all functions is ", TO "Function", "."
+     "The class of all functions is ", TO "Function", ".",
+     Subnodes => {
+	 TO (options, Function),
+         },
      }
 
 document {
@@ -416,7 +441,11 @@ document {
 document {
      Key => OptionTable,
      Headline => "the class of hash tables for optional arguments",
-     SeeAlso => ">>" }
+     Subnodes => {
+	 TO (symbol >>, OptionTable, Function),
+	 TO (symbol ++, OptionTable, OptionTable),
+         }
+     }
 document {
      Key => {(symbol >>, OptionTable, Function),
 	  (symbol >>, List, Function),(symbol >>, Boolean, Function)},

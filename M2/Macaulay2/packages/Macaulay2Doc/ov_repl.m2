@@ -6,12 +6,21 @@ document {
      associated with the symbol ", TO "Print", " is applied to perform the printing,
      unless the printing is to be suppressed, as indicated by a semicolon at the end
      of the statement, in which case the ", TO "NoPrint", " method is applied.",
-     Subnodes => {TO "capture"},
+     Subnodes => {
+	 TO "value",
+	 TO "capture",
+	 TO "oo",
+	 TO "ooo",
+	 TO "oooo",
+	 TO "OutputDictionary",
+	 TO "clearAll",
+	 TO "clearOutput",
+	 TO "topLevelMode",
+         },
      SeeAlso => {
 	  "Print",
 	  "NoPrint",
 	  "BeforePrint",
-	  "AfterEval",
 	  "AfterPrint",
 	  "AfterNoPrint"
 	  }
@@ -38,7 +47,7 @@ document {
      }
 
 document {
-     Key => "--",
+     Key => {"comments", "--", "-*", "*-"},
      Headline => "comment",
      Consequences => {"Macaulay2 ignores commented text"},
      "Use a double hyphen ", TT "--", " to introduce a comment in the text
@@ -48,12 +57,13 @@ document {
      for visibility.",
      EXAMPLE {
 	  "x = 1 -- this is a comment",
+	  "y = -* this is an enclosed comment *- 2"
 	  }
      }
 
 document {
      Key => {"operatorAttributes"},
-     Headline => "a hashtable with information about Macaulay2 operators",
+     Headline => "a hash table with information about Macaulay2 operators",
      Usage => "operatorAttributes",
      Outputs => {{ "an experimental hash table that give information about ", TO "operators", " in the Macaulay2 language" }},
      "Meanings of the symbols used:",
@@ -145,7 +155,16 @@ document {
      ///,
      SeeAlso => {mutable, "try"}
      }
-document { Key => {frames,(frames, Symbol), (frames, Sequence), (frames, PseudocodeClosure), (frames, FunctionClosure)},
+document {
+    Key => {
+	frames,
+	(frames, Symbol),
+	(frames, Sequence),
+	(frames, PseudocodeClosure),
+	(frames, FunctionClosure),
+	(frames, CompiledFunction),
+	(frames, CompiledFunctionClosure),
+    },
      Headline => "get the frames associated to a closure",
      Usage => "frames f",
      Inputs => { "f" => {"() or ", ofClass{Symbol,Function,PseudocodeClosure}}},
@@ -290,7 +309,8 @@ document {
 	  { "at top level, whenever it is time to print an output value of type ", TT "X", ", the function ", TT "f", " will be called" }
 	  },
      "The function ", TT "f", " is responsible for printing the output prompt and for applying the ", TO "BeforePrint", " and ", TO "AfterPrint", " methods, if desired.",
-     EXAMPLE "code Thing#{Standard,Print}"
+     EXAMPLE "code Thing#{Standard,Print}",
+     Subnodes => { TO Wrap },
      }
 document {
      Key => NoPrint,
@@ -370,13 +390,26 @@ document {
      Headline => "the current top level mode",
      Usage => "topLevelMode = x",
      Inputs => {
-	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard", " or ", TO "WebApp", " or ", TO "Jupyter"}
+	  "x" => Symbol => {TO "TeXmacs", ", or ", TO "Standard", " or ", TO "WebApp"}
 	  },
      Consequences => {
 	  {"the interpreter will produce input and output prompts appropriate for the mode, and will
 	       format output values appropriately"}
 	  },
-     PARA "This variable is intended for internal use only."
+     PARA "This variable is intended for internal use only.",
+     Subnodes => {
+	 "Keys for top level modes:",
+	 TO Standard,
+	 TO WebApp,
+	 TO TeXmacs,
+	 "Keys for mode-dependent printing methods:",
+	 TO Print,
+	 TO NoPrint,
+	 TO AfterEval,
+	 TO BeforePrint,
+	 TO AfterPrint,
+	 TO AfterNoPrint,
+         },
      }
 document {
      Key => Standard,
@@ -398,12 +431,6 @@ document {
      the use of the (currently developed) web app with (Ka)TeX output as front end.",
      SeeAlso => { Standard, Print, NoPrint, BeforePrint, AfterPrint,AfterNoPrint}
      }
-document {
-    Key => Jupyter,
-    Headline => "top level printing method used in the Jupyter kernel",
-    "The mode allows for a more semantic output, with input, STDOUT, value and class clearly delimited.",
-    SeeAlso => {Standard, TeXmacs, WebApp}
-    }
 
 document {
      Key => "shield",
@@ -448,7 +475,15 @@ document { Key => {localDictionaries,(localDictionaries, Symbol), (localDictiona
 	  d#0#"y"
 	  value d#0#"y"
 	  peek localDictionaries()
-     ///
+     ///,
+     SeeAlso => { "fileDictionaries" },
+     }
+document { Key => "fileDictionaries",
+     Headline => "local dictionaries for loaded files",
+     Usage => "fileDictionaries#fn",
+     Inputs => { "fn" => String },
+     Outputs => {{"the local dictionary in effect for the scope of the file loaded from the path ", TT "fn"}},
+     SeeAlso => { "localDictionaries" },
      }
 
 document { Key => {listSymbols,(listSymbols, Dictionary), (listSymbols, List)},
@@ -710,7 +745,12 @@ document {
      EXAMPLE {
 	  "Core.Dictionary # \"sin\"",
 	  "Core.Dictionary #? \"sin\""
-	  }
+	  },
+    Subnodes => {
+	TO GlobalDictionary,
+	TO LocalDictionary,
+	TO(length, Dictionary),
+    }
      }
 
 document {
@@ -750,7 +790,7 @@ document {
 	  "compactMatrixForm = false;",
 	  "f"
 	  },
-      Caveat => {"This flag currently has no effect outside of ", TO "Standard"," output mode."}
+     SeeAlso => { "blockMatrixForm" },
      }
 
 document {
@@ -767,7 +807,8 @@ document {
 	  "f = random(M,M)",
 	  "blockMatrixForm = true;",
 	  "f"
-	  }
+	  },
+     SeeAlso => { "compactMatrixForm" },
      }
     
 
@@ -919,10 +960,10 @@ document { Key => functionBody,
 	  f 1 === f 2
 	  functionBody f 1 === functionBody f 2
      ///,
-     SeeAlso => FunctionBody }
+     Subnodes => { TO FunctionBody, TO CompiledFunctionBody },
+}
 document { Key => FunctionBody,
-     Headline => "the class of function bodies",
-     SeeAlso => functionBody }
+     Headline => "the class of function bodies" }
 
 document { Key => symbol OutputDictionary,
      Headline => "the dictionary for output values",
@@ -945,7 +986,8 @@ document { Key => {Pseudocode, PseudocodeClosure},
      the function ", TO "value", " can evaluate it (bindings of values to local symbols
      are enclosed with the pseudocode), the operator ", TO "===", " can be used for equality testing,
      and when the debugger is activated after an error, the variable ", TO "current", " contains the pseudocode step whose execution produced the error.",
-     SeeAlso => { "disassemble" }
+     SeeAlso => { "disassemble" },
+     Subnodes => { TO (value, Pseudocode) },
      }
 document { Key => pseudocode,
      Headline => "produce the pseudocode for a function",
@@ -979,7 +1021,14 @@ document { Key => pseudocode,
      disassemble current
      ///
      }
-document { Key => disassemble,
+document {
+    Key => {
+	 disassemble,
+	(disassemble, FunctionBody),
+	(disassemble, FunctionClosure),
+	(disassemble, Pseudocode),
+	(disassemble, PseudocodeClosure),
+    },
      Headline => "disassemble a pseudocode or function",
      Usage => "disassemble c",
      Inputs => { "c" => ofClass{Function, Pseudocode} },
