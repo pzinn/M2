@@ -1,8 +1,4 @@
 undocumented {
-    (symbol -, ZZ, ProjectiveHilbertPolynomial),
-    (symbol -, ProjectiveHilbertPolynomial),
-    (symbol -, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
-    (symbol -, ProjectiveHilbertPolynomial, ZZ),
     (symbol -, ChainComplexMap),
     (symbol -, ChainComplexMap, ChainComplexMap),
     (symbol -, ChainComplexMap, RingElement),

@@ -7,9 +7,6 @@ undocumented {
     (symbol +, GradedModuleMap, GradedModuleMap),
     (symbol +, GradedModuleMap, RingElement),
     (symbol +, RingElement, GradedModuleMap),
-    (symbol +, ProjectiveHilbertPolynomial, ProjectiveHilbertPolynomial),
-    (symbol +, ProjectiveHilbertPolynomial, ZZ),
-    (symbol +, ZZ, ProjectiveHilbertPolynomial),
 }
 
 document {

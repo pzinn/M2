@@ -101,8 +101,6 @@ document {
 	 (symbol *, RingElement, RingElement),
 	 (symbol *, Thing, List),
 	 (symbol *, List, Thing),
-	 (symbol *, ZZ, ProjectiveHilbertPolynomial),
-	 (symbol *, ProjectiveHilbertPolynomial, ZZ),
 	 (symbol *, RingElement, Vector),
 	 (symbol *, Number, Vector),
 	 (symbol *, Vector, RingElement),
