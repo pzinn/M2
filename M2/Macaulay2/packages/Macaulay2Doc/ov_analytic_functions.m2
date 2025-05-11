@@ -9,17 +9,20 @@ undocumented {
     (tan, RingElement),
     (atan, RingElement),
     (tanh, RingElement),
+    (expm1, RingElement),
+    (log1p, RingElement),
 }
 
 doc ///
 Node
   Key
-    "analytical functions"
+    "analytic functions"
   Subnodes
     Constant -- the class of constants
     :Special functions
       integrate
       abs
+      sign
       floor
       (floor, Number)
       ceiling

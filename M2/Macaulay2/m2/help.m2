@@ -13,7 +13,7 @@
 
 needs "system.m2" -- for chkrun
 needs "document.m2"
-needs "installPackage.m2" -- TODO: can this be removed?
+needs "installPackage.m2" -- for topFileName
 
 -----------------------------------------------------------------------------
 -- Local variables
@@ -75,6 +75,7 @@ smenuCLASS := s -> ul (last \ sort \\ nonnull \\ optTOCLASS \ toList s)
 
 -- this is a simplified version of submenu in SimpleDoc
 -- used in html.m2 and format.m2
+-- TODO: this seems to be very slow
 redoMENU = contents -> (
     contents = deepApply'(contents, identity, item -> instance(item, BasicList) and not isLink item);
     DIV prepend(
@@ -218,6 +219,8 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
     fn := pkg#"pkgname" | ".m2";
     -- authors
     au := pkg.Options.Authors;
+    -- citation
+    ci := citePackage pkg;
     -- exported symbols
     -- TODO: this misses exported symbols from Macaulay2Doc; is this intentional?
     e := toSequence pkg#"exported symbols";
@@ -248,33 +251,31 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    cert  = new HashTable from cert;
 	    -- TODO: compare with the one in installPackage.m2
 	    star := IMG { "src" => replace("PKG", "Style",currentLayout#"package") | "GoldStar.png", "alt" => "a gold star"};
-	    commit := replace("(?<=/blob/)master", toString cert#"release at publication", cert#"repository code URI");
 	    DIV {
 		SUBSECTION {"Certification ", star},
 		PARA {
-		    "Version ", BOLD cert#"version at publication", " of this package was accepted for publication",
+		    "Version ", BOLD cert#"version at publication", " of this package",
+		    if cert#?"legacy name"
+		    then (" (under the name \"", cert#"legacy name", "\")"),
+		    " was accepted for publication",
 		    " in ",     HREF{cert#"volume URI", "volume " | cert#"volume number"},
 		    " of ",     HREF{cert#"journal URI",            cert#"journal name"},
 		    " on ",          cert#"acceptance date", ", in the article ",
 		                HREF{cert#"published article URI",  cert#"article title"},
 		    " (DOI: ",  HREF{"https://doi.org/" | cert#"published article DOI", cert#"published article DOI"},
 		    "). That version can be obtained",
-		    " from ",   HREF{cert#"published code URI", "the journal"}, " or",
-		    " from ",   HREF{commit, SPAN{"the ", EM "Macaulay2", " source code repository"}},
+		    " from ",   HREF{cert#"published code URI", "the journal"},
 		    "."}}
 	    ),
 	DIV {
 	    SUBSECTION "Version",
 	    PARA { "This documentation describes version ", BOLD pkg.Options.Version, " of ",
 		if pkg#"pkgname" === "Macaulay2Doc" then "Macaulay2" else pkg#"pkgname", "." }},
-	if pkg#"pkgname" =!= "Macaulay2Doc" then DIV {
-	    SUBSECTION "Source code",
-	    PARA { "The source code from which this documentation is derived is in the file ",
-		HREF { if installLayout =!= null then installLayout#"packages" | fn else pkg#"source file", fn }, ".",
-		if pkg#?"auxiliary files" then (
-		    " The auxiliary files accompanying it are in the directory ",
-		    HREF { if installLayout =!= null then installLayout#"packages" | pkg#"pkgname" | "/" else pkg#"auxiliary files", pkg#"pkgname" | "/" }, ".")
-		}
+	if instance(ci, DIV) then ci else DIV {
+	    SUBSECTION "Citation",
+	    PARA "If you have used this package in your research, please cite it as follows:",
+	    TABLE {"class" => "examples",
+		TR TD PRE prepend("class" => "language-bib", CODE ci)}
 	    },
 	if pkg#"pkgname" =!= "Macaulay2Doc" and #e + #m > 0 then DIV {
 	    SUBSECTION "Exports",
@@ -290,9 +291,24 @@ documentationValue(Symbol, Package)         := (S, pkg) -> if pkg =!= Core then 
 	    }))
 
 -----------------------------------------------------------------------------
--- Handling operators
+-- Details for developers
 -----------------------------------------------------------------------------
 
+-- temporarily disabled because sometime the links are broken
+linkToFile := (src, fn, pos) -> TT { fn | pos } -- HREF { if installLayout === null then src else installLayout#"packages" | fn, fn | pos };
+
+-- TODO: support more objects
+getSource = method()
+getSource(Symbol, Thing)   := (S, x) -> null
+getSource(Symbol, Package) := (S, pkg) -> (
+    -- TODO: for packages, should we link to the location on GitHub instead?
+    ", defined in ", linkToFile(pkg#"source file", pkg#"pkgname" | ".m2", ""),
+    if pkg#?"auxiliary files" then (
+	", with auxiliary files in ",
+	linkToFile(pkg#"auxiliary files", pkg#"pkgname" | "/", ""))
+    )
+
+-- Handling operators
 -- e.g. symbol +
 getOperator := key -> if operator#?key then (
     op := toString key;
@@ -325,17 +341,31 @@ getOperator := key -> if operator#?key then (
 	))
 
 -- TODO: expand this
--- TODO: add location of symbol definition and documentation
 getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     SUBSECTION "For the programmer",
     fixup PARA deepSplice {
-	"The object ", TO S, " is ", ofClass class s,
+	"The object ", TO S, " is ", ofClass class s, getSource(S, s),
 	if parent s =!= Nothing then (
 	    f := drop(ancestors s, 1);
-	    if #f > 1 then ", with ancestor classes " else if #f == 1 then ", with ancestor class " else ", with no ancestor class.",
-	    toSequence between(" < ", f / (T -> TO T))),
+	    if #f == 1 then ", with ancestor class "   else
+	    if #f >= 2 then ", with ancestor classes " else ", with no ancestor class.",
+	    toSequence between(" < ", TO \ f)),
 	"."},
     getOperator S)
+
+getLocation := tag -> if tag =!= null then (
+    pkg := package tag;
+    docpos := locate tag;
+    linepos := ":" | docpos#1 | ":" | docpos#2;
+    docfile := toAbsolutePath docpos#0;
+    filename := replace(pkg#"source directory", "", docfile);
+    HR{},
+    DIV ( "class" => "waystouse",
+	fixup PARA (
+	    "The source of this document is in ",
+	    linkToFile(docfile, filename, linepos), ".")
+        )
+    )
 
 -----------------------------------------------------------------------------
 -- helper functions for help
@@ -348,8 +378,10 @@ headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag k
 headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
 
 headlines = method()
-headlines List := L -> TABLE apply(#L, i -> { pad(floor log_10(#L) + 2, i | "."),
-	TO2(tag := makeDocumentTag L#i, net tag), commentize headline tag })
+headlines List := L -> (
+    lastabout = tags := apply(L, makeDocumentTag);
+    TABLE apply(#L, i -> { pad(floor log_10(#L) + 2, i | "."),
+	TO2(tags#i, net tags#i), commentize headline tags#i }))
 
 -- Compare with SYNOPSIS in document.m2
 getSynopsis := (key, tag, rawdoc) -> (
@@ -406,6 +438,7 @@ getData = (key, tag, rawdoc) -> (
 	Acknowledgement => getOption(rawdoc, Acknowledgement),
 	Contributors    => getOption(rawdoc, Contributors),
 	References      => getOption(rawdoc, References),
+	Citation        => getOption(rawdoc, Citation),
 	Caveat          => getOption(rawdoc, Caveat),
 	SeeAlso         => getOption(rawdoc, SeeAlso),
 	Subnodes        => getOption(rawdoc, Subnodes),
@@ -422,7 +455,8 @@ getData = (key, tag, rawdoc) -> (
 		if instance(opt := key#1, Option)
 		then documentationValue(opt#0, opt)
 		else documentationValue(opt, value opt),
-		getDefaultOptions(key#0, key#1))),
+		getDefaultOptions(key#0, key#1)),
+	    getLocation tag),
     };
     result = applyValues(result,  val -> fixup val);
     result = selectValues(result, val -> val =!= null and val =!= () and val =!= DIV{});
@@ -437,8 +471,8 @@ getBody := (key, tag, rawdoc) -> (
     DIV nonnull splice (
 	data := getData(key, tag, rawdoc);
 	HEADER1 toList data.Headline,
-	apply(("Synopsis", Description, SourceCode, Acknowledgement,
-		Contributors, References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
+	apply(("Synopsis", Description, SourceCode, Acknowledgement, Contributors,
+		References, Caveat, SeeAlso, Subnodes, "WaysToUse"),
 	    section -> if data#?section then data#section)
         )
     )
@@ -557,6 +591,15 @@ briefDocumentation = key -> (
 ? Symbol   :=
 ? Thing    := -- TODO: does this interfere with anything?
 ? Type     := briefDocumentation
+
+-----------------------------------------------------------------------------
+-- extract the citation guide from the documentation or package info
+-----------------------------------------------------------------------------
+-- this is used by cite from PackageCitations
+citePackage = pkg -> (
+    tag := makeDocumentTag pkg;
+    rawdoc := fetchAnyRawDocumentation tag;
+    getOption(rawdoc, Citation) ?? (symbolFrom("PackageCitations", "iCite")) pkg)
 
 -----------------------------------------------------------------------------
 -- get a list of commands whose name matches the regex

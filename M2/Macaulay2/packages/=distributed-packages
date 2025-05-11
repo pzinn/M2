@@ -167,7 +167,6 @@ Topcom
 Triangulations
 ReflexivePolytopesDB
 AbstractToricVarieties
-Licenses
 TestIdeals
 FrobeniusThresholds
 Seminormalization
@@ -282,3 +281,6 @@ NumericalSemigroups
 IncidenceCorrespondenceCohomology
 ToricHigherDirectImages
 Brackets
+IntegerProgramming
+GameTheory
+AllMarkovBases

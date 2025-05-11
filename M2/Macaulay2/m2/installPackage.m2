@@ -207,13 +207,15 @@ assembleTree := (pkg, nodes) -> (
     graph = new HashTable from apply(nodes, tag -> (
 	    checkIsTag tag;
 	    fkey := format tag;
-	    if  pkg#"raw documentation"#?fkey
-	    and pkg#"raw documentation"#fkey.?Subnodes then (
-		subnodes := pkg#"raw documentation"#fkey.Subnodes;
-		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(fixup \ subnodes, node -> package node === pkg);
-		tag => getPrimaryTag \ subnodes)
-	    else tag => {}));
+	    rawdoc := pkg#"raw documentation"#fkey ?? ();
+	    content := apply({Description, Acknowledgement,
+		    Contributors, References, Caveat}, key -> try rawdoc#key);
+	    sublinks := deepSelect(content,
+		e -> try e#0 === ("class" => "subnode") else false);
+	    subnodes := rawdoc.Subnodes ?? ();
+	    subnodes  = deepSelect(join(sublinks, subnodes), DocumentTag);
+	    subnodes  = select(fixup \ subnodes, node -> package node === pkg);
+	    tag => getPrimaryTag \ subnodes));
     -- build the forest
     tableOfContents := makeForest(graph, visits);
     -- signal errors
@@ -221,11 +223,11 @@ assembleTree := (pkg, nodes) -> (
 	scan(keys visits#"missing",
 	    node -> (
 		printerr("error: missing reference(s) to subnode documentation: ", format node);
-		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
+		printerr("\t", net TABLE apply(unique visits#"parents"#node, tag -> { locate tag, format tag }))));
 	scan(keys visits#"repeated",
 	    node -> (
 		printerr("error: repeated references to subnode documentation: ", format node);
-		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
+		printerr("\t", net TABLE apply(unique visits#"parents"#node, tag -> { locate tag, format tag }))));
 	error("installPackage: error in assembling the documentation tree"));
     -- build the navigation links
     buildLinks tableOfContents;
@@ -546,6 +548,8 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    toString cachehash);
 	samehash);
 
+    errorList := new MutableList;
+
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     scan(pairs pkg#"example inputs", (fkey, inputs) -> (
 	    inpf  := inpfn  fkey; -- input file
@@ -571,8 +575,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 		desc, demark_newline inputs, pkg,
 		inpf, outf, errf, data,
 		inputhash, changeFunc fkey,
-		usermode) then (possiblyCache(outf, outf', fkey))();
+		usermode) then (possiblyCache(outf, outf', fkey))()
+	    else errorList##errorList = fkey;
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
+
+    if #errorList > 0 then (
+	stderr << concatenate(printWidth:"=") << endl;
+	printerr("Summary: ", toString(#errorList), " example(s) failed in package ", pkg#"pkgname", ":");
+	printerr netList(Boxes => false, HorizontalSpace => 2,
+	    apply(toList errorList, fkey -> { fkey, locate makeDocumentTag fkey })));
 
     -- check for obsolete example output files and remove them
     if chkdoc then (
@@ -775,7 +786,7 @@ installPackage Package := opts -> pkg -> (
 
 	if 0 < numExampleErrors then verboseLog stack apply(readDirectory exampleOutputDir,
 	    file -> if match("\\.errors$", file) then stack {
-		file, concatenate(width file : "*"), getErrors(exampleOutputDir | file)});
+		file, concatenate(width file : "="), getErrors(exampleOutputDir | file)});
 
 	if not opts.IgnoreExampleErrors then checkForErrors pkg;
 
