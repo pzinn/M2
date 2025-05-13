@@ -1,14 +1,3 @@
-undocumented {
-    (symbol -, ChainComplexMap),
-    (symbol -, ChainComplexMap, ChainComplexMap),
-    (symbol -, ChainComplexMap, RingElement),
-    (symbol -, RingElement, ChainComplexMap),
-    (symbol -, GradedModuleMap),
-    (symbol -, GradedModuleMap, GradedModuleMap),
-    (symbol -, GradedModuleMap, RingElement),
-    (symbol -, RingElement, GradedModuleMap),
-}
-
 document {
     Key => minus,
     Headline => "additive inverse",

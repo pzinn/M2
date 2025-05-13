@@ -4,6 +4,8 @@ needs "matrix.m2"
 needs "modules.m2"
 needs "quotient.m2"
 
+-----------------------------------------------------------------------------
+
 notsamering := (X,Y) -> (
      if X === Y then error("expected ",pluralsynonym X, " for the same ring")
      else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))

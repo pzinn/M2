@@ -755,9 +755,6 @@ gcdLLL List := options -> (s) -> (
      then bgcdLLL(s,options.Threshold)
      else agcdLLL(s,options.Threshold))
 
-addHook((resolution, Module), Strategy => symbol LLL,
-    (o,M) -> if ring M === ZZ then chainComplex compress LLL presentation M)
-
 addHook((minimalPresentation, Module), Strategy => symbol LLL,
     (o, M) -> (
 	  return null;					    -- this routine isn't correct yet -- it only partially minimizes; we could use this for trim and improve it for this

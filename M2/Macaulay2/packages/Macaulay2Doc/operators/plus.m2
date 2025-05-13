@@ -1,14 +1,3 @@
-undocumented {
-    (symbol +, ChainComplexMap, ChainComplexMap),
-    (symbol +, ChainComplexMap, RingElement),
-    (symbol +, ChainComplexMap, ZZ),
-    (symbol +, RingElement, ChainComplexMap),
-    (symbol +, ZZ, ChainComplexMap),
-    (symbol +, GradedModuleMap, GradedModuleMap),
-    (symbol +, GradedModuleMap, RingElement),
-    (symbol +, RingElement, GradedModuleMap),
-}
-
 document {
      Key => plus,
      Headline => "addition",
