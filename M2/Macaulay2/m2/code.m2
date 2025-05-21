@@ -37,7 +37,7 @@ codeFunction := (key, func, level) -> if level <= limit then (
 previousMethodsFound = null
 
 codeAddress = pos -> ( pos, ": --source code:" ) -- [addr]:[line]:[char]-[line]:[char]:
-codeContent = (s, e, filelines) -> PRE M2CODE stack filelines_{s-1 .. e-1}
+codeContent = (s, e, filelines) -> PRE htmlClass(M2CODE stack filelines_{s-1 .. e-1},"norun")
 
 -- e.g. see code methods(map, Module, List)
 dedupMethods = L -> (
