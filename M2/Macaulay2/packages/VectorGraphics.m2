@@ -1356,7 +1356,7 @@ multidoc ///
    Example
     Circle{Center=>vector {10,10},Radius=>1,"fill"=>"green","stroke"=>"none"}
     Circle{[10,10],1} -- equivalent syntax for coordinates
-    gList(oo,Circle{[0,0],[10,10]})
+    gList apply(10,i->Circle{<|2*pi*i/10,(1+sqrt 5)/2|>,1}) -- another syntax: polar coordinates
  Node
   Key
    Line
