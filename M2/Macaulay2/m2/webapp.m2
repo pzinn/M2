@@ -13,7 +13,7 @@ webAppTags := apply((17,18,19,20,28,29,30,14,21),ascii);
 	webAppCellEndTag,     -- closing tag for cell ~ </p>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
-	webAppUrlTag,         -- used internally to follow URLs
+	webAppUrlTag,         -- used internally to follow URLs -- DEPRECATED
 	webAppPromptTag,      -- input/output prompt
 	webAppPositionTag     -- code position (row:col)
 	)=webAppTags;
@@ -168,7 +168,8 @@ if topLevelMode === WebApp then (
     )
 
 -- show
-(modes(lookup(show,URL)))#WebApp = url -> (<< webAppUrlTag | url#0 | webAppEndTag;);
+--(modes(lookup(show,URL)))#WebApp = url -> (<< webAppUrlTag | url#0 | webAppEndTag;);
+(modes(lookup(show,URL)))#WebApp = url -> ANCHOR { "href" => htmlLiteral url#0, "Opening "|url#0, "class" => "auto" }
 
 -- the html hack
 -- basic idea: anything that sits on a single line doesn't require extensible KaTeX delimiters -> just HTML it
