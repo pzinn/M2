@@ -145,12 +145,9 @@ if topLevelMode === WebApp then (
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
     -- the edit hack
-    editURL := f -> URL ("#editor:"|toString f); -- TODO rewrite the edit mess using mode
-    editMethod String :=
-    editMethod FilePosition := f -> show editURL f;
---    fixup FilePosition := lookup(hypertext,FilePosition); -- shouldn't change that (say, in doc)
-    fixup FilePosition := f -> SAMP HREF { f#0, toString f }; -- let's try this
-    hypertext FilePosition := f -> SAMP HREF {editURL f,toString f};
+    --editURL := f -> URL ("#editor:"|toString f);
+    editMethod String := f -> show URL("#editor:"|f);
+    editMethod FilePosition := editMethod @@ toURL; -- shouldn't that always be the case?
     -- redefine htmlLiteral to exclude codes
     -- except it should sometimes allow them...
     htmlLiteral0 := htmlLiteral;

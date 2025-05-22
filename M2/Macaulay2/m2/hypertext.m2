@@ -46,10 +46,15 @@ new URL from String := (URL, str) -> { str }
 isAbsoluteURL = url -> match( "^(#|mailto:|[a-z]+://)", url )
 
 -- TODO: phase this one out eventually
+fileExists' = pth -> (
+    if match("#",pth) then pth = substring(0,lastMatch#0#0,pth);
+    fileExists pth
+)
+
 toURL = method()
 toURL String := pth -> (
      if isAbsolutePath pth then concatenate(rootURI,
-	  if fileExists pth then realpath pth
+	  if fileExists' pth then realpath pth
 	  else (
 	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
 	       pth))
@@ -77,6 +82,12 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
      r)
 
 toURL URL := first -- a way to provide exact URLs with no editing. should toURL produce a URL, in which case it'd be identity here?
+
+toURL FilePosition := p -> concatenate(
+	p#0,
+	"#L",toString p#1,":C",toString p#2,
+	if #p>=5 then ("-L",toString p#3,":C",toString p#4)
+	)
 
 -----------------------------------------------------------------------------
 -- MarkUpType type declarations
@@ -424,7 +435,6 @@ hypertext Manipulator :=
 hypertext Nothing :=
 hypertext Boolean := SAMPc "constant"
 hypertext Type :=
-hypertext FilePosition :=
 hypertext Dictionary := SAMPc "class-name"
 hypertext String := SAMPc "string"
 hypertext Net := n -> PRE {
@@ -432,6 +442,10 @@ hypertext Net := n -> PRE {
     "class"=>"token net",
     if #n>0 and depth n!=0 then "style" => "vertical-align:"|toString(-100*depth n)|"%"
     }
+hypertext FilePosition := p -> SAMP HREF {
+    toURL p,
+    toString p};
+
 hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net
