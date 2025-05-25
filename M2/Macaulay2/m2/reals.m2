@@ -418,13 +418,21 @@ texMath CC := texMath @@ expression
 texMath RR := x -> (
     if not isANumber x then texMath toString x else
     if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
-    else replace(///\{1\}\\cdot ///,"",
-	"{" | format(
-	printingPrecision,
-	printingAccuracy,
-	printingLeadLimit,
-	printingTrailLimit,
-	"}\\cdot 10^{", x ) | "}"))
+    else (
+	s := simpleToString x;
+	r := regex("(\\d+)(?:\\.(\\d+)|)(?:"|regexQuote printingSeparator|"(\\d+)|)",s);
+	if r === null then return s; -- shouldn't happen
+	ss := substring(r#1,s);
+	if ss=="1" and r#2#1==0 and r#3#1>0 then "10^{"|substring(r#3,s)|"}"
+	else concatenate (
+	    "{",
+	    (lookup(texMath,ZZ)) ss,
+	    if r#2#1>0 then "."|substring(r#2,s),
+	    "}",
+	    if r#3#1>0 then "\\cdot 10^{"|substring(r#3,s)|"}"
+	    )
+	)
+    )
 texMath RRi := x -> concatenate("\\big[",texMath left x,",",texMath right x,"\\big]",if isEmpty x then "\\text{ (an empty interval)}")
 withFullPrecision = f -> (
      prec := printingPrecision;

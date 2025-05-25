@@ -314,6 +314,20 @@ coefficientRing FractionField := F -> coefficientRing last F.baseRings
 
 -- freduce := (f) -> (numerator f)/(denominator f)
 
+isPromotable(FractionField,FractionField) := (F,G) -> lookup(promote,F,G) =!= null or (
+    R:=baseRing F; S:=baseRing G;
+    l:=lookup(promote,R,S);
+    l=!=null and (setupPromote(a->fraction(promote(numerator a,S),promote(denominator a,S)),F,G); true)
+    )
+
+lift(RingElement, RingElement) := opts -> (f, R) -> (
+    if (instance(class f,FractionField) and instance(R,FractionField) and (R1:=baseRing R; lookup(lift,baseRing class f,R1) =!= null)) then (
+	setupLift(a->fraction(lift(numerator a,R1),lift(denominator a,R1)),class f,R);
+	return lift(f,R,opts);
+	);
+    if opts.Verify then error ("cannot lift from "|toString class f|" to "|toString R)
+    )
+
 factoryAlmostGood = R -> (
     if instance(R,QuotientRing) then factoryAlmostGood ambient R
     else if instance(R,PolynomialRing) then factoryAlmostGood coefficientRing R
@@ -363,7 +377,6 @@ frac EngineRing := R -> if isField R then R else if R.?frac then R.frac else (
      if R.?indexSymbols then F.indexSymbols = applyValues(R.indexSymbols, r -> promote(r,F));
      if R.?indexStrings then F.indexStrings = applyValues(R.indexStrings, r -> promote(r,F));
      if R.?numallvars then F.numallvars=R.numallvars;
-     scan(R.baseRings, S -> if S.?frac then setupLift(a->fraction(lift(numerator a,S),lift(denominator a,S)),F,S.frac));
      F)
 
 -- methods for all ring elements
@@ -460,10 +473,10 @@ ZZ ? RingElement := (m,y) -> m_(class y) ? y
 
 RingElement ^ ZZ := RingElement => (x,i) -> new ring x from (raw x)^i
 
-toString RingElement := toString @@ expression
+toString         RingElement :=         toString @@ expression
 toExternalString RingElement := toExternalFormat @@ expression
-net RingElement := net @@ expression
-texMath RingElement := texMath @@ expression
+net              RingElement :=              net @@ expression
+texMath          RingElement :=          texMath @@ expression
 
 someTerms(RingElement,ZZ,ZZ) := RingElement => (f,i,n) -> new ring f from rawGetTerms(numgens ring f,raw f,i,n+i-1)
 
@@ -502,12 +515,6 @@ promoteleftexact = (f,g) -> (
 swap = (x,y) -> (y,x)
 promoterightexact   = swap @@ promoteleftexact   @@ swap
 promoterightinexact = swap @@ promoteleftinexact @@ swap
-
-isPromotable = (R,S) -> lookup(promote,R,S) =!= null or (instance(R,FractionField) and instance(S,FractionField) and (
-	R0:=baseRing R; S0:=baseRing S;
-	l:=lookup(promote,R0,S0);
-	l=!=null and (setupPromote(a->fraction(promote(numerator a,S0),promote(denominator a,S0)),R,S); true)
-	))
 
 divmod := R -> (f,g) -> (
      (q,r) := rawDivMod(raw f, raw g);

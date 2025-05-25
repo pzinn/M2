@@ -53,7 +53,7 @@ fileExists' = pth -> (
 
 toURL = method()
 toURL String := pth -> (
-     if isAbsolutePath pth then concatenate(rootURI,
+     urlEncode if isAbsolutePath pth then concatenate(rootURI,
 	  if fileExists' pth then realpath pth
 	  else (
 	       stderr << "-- *** warning: file needed for URL not found: " << pth << endl;
@@ -79,7 +79,7 @@ toURL(String, String) := (prefix,tail) -> (		    -- this is the good one
 	  stderr << "--                      prefix        = " << prefix << endl;
 	  stderr << "--                      result        = " << r << endl;
 	  );
-     r)
+     urlEncode r)
 
 toURL URL := first -- a way to provide exact URLs with no editing. should toURL produce a URL, in which case it'd be identity here?
 
@@ -445,7 +445,6 @@ hypertext Net := n -> PRE {
 hypertext FilePosition := p -> SAMP HREF {
     toURL p,
     toString p};
-
 hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net

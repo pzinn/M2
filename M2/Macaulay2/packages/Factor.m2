@@ -13,7 +13,7 @@ newPackage(
     -- testing "OldFactor" => false, check compatibility problems
     )
 
-export {"FactorPolynomialRing","FactorLeadMonomial","factored"}
+export {"FactoredPolynomialRing","FactorLeadMonomial","factored"}
 
 OldFactor := (options Factor).Configuration#"OldFactor";
 --FactorLeadMonomial := (options Factor).Configuration#"FactorLeadMonomial";
@@ -28,14 +28,14 @@ subPairs := (a,b) -> fusePairs(a,b, (x,y)-> if y===null then continue else if x=
 -- mergePairs could be defined similarly as
 -- mergePairs := (a,b,f) -> fusePairs(a,b, (x,y) -> if x === null then y else if y === null then x else f(x,y));
 
-FactorPolynomialRing = new Type of PolynomialRing;
-FactorPolynomialRing.synonym = "factorized polynomial ring";
-coefficientRing FactorPolynomialRing := R -> coefficientRing last R.baseRings;
-factor FactorPolynomialRing := opts -> identity;
---expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
-expression FactorPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression last R.baseRings)_factor
---describe FactorPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
-describe FactorPolynomialRing := R -> Describe (describe last R.baseRings)_factor
+FactoredPolynomialRing = new Type of PolynomialRing;
+FactoredPolynomialRing.synonym = "factored polynomial ring";
+coefficientRing FactoredPolynomialRing := R -> coefficientRing last R.baseRings;
+factor FactoredPolynomialRing := opts -> identity;
+--expression FactoredPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression factor) (expression last R.baseRings)
+expression FactoredPolynomialRing := R -> if hasAttribute(R,ReverseDictionary) then expression getAttribute(R,ReverseDictionary) else (expression last R.baseRings)_factor
+--describe FactoredPolynomialRing := R -> Describe (expression factor) (describe last R.baseRings)
+describe FactoredPolynomialRing := R -> Describe (describe last R.baseRings)_factor
 factor FractionField := opts -> F -> frac(factor(opts,last F.baseRings))  -- simpler to do it in this order -- though needs more checking (see also below)
 
 leadCoeff := x -> ( -- iterated leadCoefficient
@@ -46,7 +46,8 @@ leadCoeff := x -> ( -- iterated leadCoefficient
 
 factor PolynomialRing := opts -> R -> (
     if R.?factor then return R.factor;
-    Rf:=new FactorPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
+    Rf:=new FactoredPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
+    -- TODO FactoredRingElement?
     R.factor=Rf; -- careful that this is symbol factor, not method factor
     Rf.baseRings=append(R.baseRings,R);
     Rf.promoteDegree=Rf.liftDegree=identity;
@@ -124,7 +125,7 @@ factor PolynomialRing := opts -> R -> (
         if n>0 then new Rf from { a#0^n, apply(a#1,(f,e)->(f,e*n)) } else if n===0 then 1_Rf else if a#1 =!= {} then error "division is not defined in this ring" else new Rf from {(a#0)^n,{}} -- negative value of n can only occur for constant/monomial
         );
     - Rf := a -> new Rf from { -a#0, a#1 };
-    -- to avoid #321
+    -- to avoid #321 TODO #321 has been fixed!!!
     --    gcd (Rf, Rf) := (a,b) -> new Rf from { gcd(a#0,b#0), if a#0==0 then b#1 else if b#0==0 then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
     --    lcm (Rf, Rf) := (a,b) -> new Rf from { lcm(a#0,b#0), mergePairs(a#1,b#1,max) }; -- ha!
     gcd (Rf, Rf) := (a,b) -> new Rf from { new R from rawGCD(raw a#0,raw b#0), if a#0===0_R then b#1 else if b#0===0_R then a#1 else commonPairs(a#1,b#1,min) }; -- commonPairs only adds keys in both
@@ -138,7 +139,7 @@ factor PolynomialRing := opts -> R -> (
     Rf + Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)+value(b//c))) );
     Rf - Rf := (a,b) ->  ( c:=gcd(a,b); c*(new Rf from (value(a//c)-value(b//c))) );
     Rf == Rf := (a,b) -> ( c:=gcd(a,b); value(a//c) == value(b//c) ); -- this is almost, but not quite the same as asking for equality of every factor (!)
-    -- ... and map (only really useful when target ring is also factorized, or map considerably reduces complexity of polynomial)
+    -- ... and map (only really useful when target ring is also factored, or map considerably reduces complexity of polynomial)
     RingMap Rf := (p,x) -> (
         R := source p;
         S := target p;
@@ -185,7 +186,7 @@ factor PolynomialRing := opts -> R -> (
 factored = method(Dispatch=>{Type,Thing})
 
 
-frac FactorPolynomialRing := R -> if R.?frac then R.frac else (
+frac FactoredPolynomialRing := R -> if R.?frac then R.frac else (
     R0:=last R.baseRings;
     if not (options R).Inverses then (
 	F := (lookup(frac,EngineRing)) R;
@@ -256,14 +257,14 @@ frac PolynomialRing := R -> (
     F
     )
 
-newRing FactorPolynomialRing := opts -> (R) -> factor(newRing(last R.baseRings,opts)) -- TODO missing factor options
+newRing FactoredPolynomialRing := opts -> (R) -> factor(newRing(last R.baseRings,opts)) -- TODO missing factor options
 
-FactorPolynomialRing / Ideal := QuotientRing => (F,I) -> I.cache.QuotientRing = (last F.baseRings)/((map(last F.baseRings,F))I);
+FactoredPolynomialRing / Ideal := QuotientRing => (F,I) -> I.cache.QuotientRing = (last F.baseRings)/((map(last F.baseRings,F))I);
 --- possibly temp: for now, we lose factoring when taking quotients
 
 
 -- this is an optimization: the product would take forever
-FactorPolynomialRing _ List := (R,v) -> (
+FactoredPolynomialRing _ List := (R,v) -> (
     R0 := last R.baseRings;
     if (options R).Inverses then new R from { R0_v, {} }
     else new R from { 1_R, sort apply(#v, i-> (R0_i,v#i)) }
@@ -308,7 +309,7 @@ first(g value F,
 )
 *-
 
---FactorPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
+--FactoredPolynomialRing#{Standard,AfterPrint}=Thing#{Standard,AfterPrint}
 
 if ((options Factor).Configuration#"DegreesRings") then (
     -- degrees rings
@@ -387,25 +388,26 @@ multidoc ///
   Key
    Factor
   Headline
-   A package to work with factorized expressions
+   A package to work with factored expressions
   Description
    Text
-    @EM Factor@ is a package that defines a new type of polynomial rings, @TO FactorPolynomialRing@. You can mostly use them
-    as ordinary polynomial rings (with some caveats to be described below); the difference is that elements are displayed in
-    a factorized form. In fact, they are also stored internally in a factorized form.
+    @EM Factor@ is a package that defines a new type of polynomial rings, @TO FactoredPolynomialRing@.
+    You can mostly use them as ordinary polynomial rings (with some caveats to be described below);
+    the difference is that elements are displayed in a factored form.
+    In fact, they are also stored internally in a factored form.
     [description of the package options]
   Caveat
-    Some functions, most notably @TO decompose@, do not work on factorized polynomial rings,
+    Some functions, most notably @TO decompose@, do not work on factored polynomial rings,
     and require the traditional form produced by factor.
     If you need them you should leave the option "OldFactor" to its default false.
  Node
   Key
-   FactorPolynomialRing
+   FactoredPolynomialRing
   Headline
-   A polynomial ring with factorized entries
+   A polynomial ring with factored entries
   Description
    Text
-    Factorized polynomial rings are simply produced by the command @TO factor@
+    Factored polynomial rings are simply produced by the command @TO factor@
    Example
     R = factor ( QQ[x,y] );
     x^2-y^2   

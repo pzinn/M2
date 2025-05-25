@@ -139,7 +139,7 @@ Thing#{WebApp,AfterNoPrint} = x -> (
 removeWebAppTags = s -> if s === null then null else replace(webAppTagsRegex,"😀",s);
 if topLevelMode === WebApp then (
     extractStr := x -> concatenate apply(x,y -> if instance(y,Hypertext) then extractStr y else if instance(y,String) then y);
-    -- the help hack: if started in WebApp mode, help is compiled in it as well
+    -- the help hack: on this branch, help is compiled in WebApp mode as well
     processExtra := x -> ( xx := extractStr x; if #xx>0 and first xx === webAppCellTag and last xx =!= webAppCellEndTag then xx=xx|webAppCellEndTag; new LITERAL from xx);
     processExamplesLoop ExampleItem := processExtra @@ (lookup(processExamplesLoop,ExampleItem));
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
