@@ -351,7 +351,6 @@ export convert0(e:ParseTree):Code := (
 	then Code(newOfCode(    convert(n.newClass), convert(n.newParent),                            pos))
 	else Code(newOfFromCode(convert(n.newClass), convert(n.newParent), convert(n.newInitializer), pos)))
     is d:dummy do dummyCode
-    is e:ErrorTree do dummyCode
     );
 
 export unseq(c:Code):Code := (

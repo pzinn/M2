@@ -7,6 +7,7 @@
 -- into a single \n.
 use stdio;
 use expr;
+use util;
 
 shorten(s:string):string := (				    -- purely textual
      -- shorten filenames like "/a/b/c/../d////e/f" to "/a/b/d/e/f"
@@ -128,6 +129,34 @@ cleanscreen():void := (
     if stdIO.outfd == stdError.outfd && !atEndOfLine(stdIO) || test(interruptedFlag)
     then stdIO << newline << flush;);
 
+-- TODO don't use this
+export printMessage(position:Position,message:string):void := (
+     stdError << "deprecated printMessage" << endl;
+     if !SuppressErrors then (
+     	  cleanscreen();
+	  stdError << position;
+	  if recursionDepth > 0 then stdError << "[" << recursionDepth << "]:";
+     	  -- gettid() is not there in Solaris
+	  -- tid := gettid();
+	  -- if tid != -1 && tid != getpid() then stdError << "<" << gettid() << ">:";
+	  stdError << " " << message << endl;
+	  );
+     );
+
+export dummyprintExprMessage(position:Position,message:Expr):void := (
+nothing
+); -- will be overwritten in evaluate.d
+export printExprMessage := dummyprintExprMessage;
+export printErrorMessage(position:Position,message:Expr):void := (
+     printExprMessage(position, message); -- TODO add error: ? don't think ever need
+     );
+export printErrorMessage(position:Position,message:string):void := printErrorMessage(position, toExpr(message));
+export printWarningMessage(position:Position,message:Expr):void := printExprMessage(position, message); -- TODO add warning?
+
+export printWarningMessage(position:Position,message:string):void := printWarningMessage(position,toExpr(message)); -- printMessage(position,"warning: "+message);
+export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
+     printErrorMessage(Position(filename,line,column,line,column,line,column,ushort(0)), message);
+     );
 export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Position do o << w;
 export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
 export copy(p:Position):Position := Position(
@@ -194,21 +223,6 @@ export getc(o:PosFile):int := (
 	  );
      c );
 export flushInput(o:PosFile):void := flushinput(o.file);
-
--- TODO refactor
-export printMessage(position:Position,message:string):void := (
-     if !SuppressErrors then (
-         cleanscreen();
-         stdError << position;
-         if recursionDepth > 0 then stdError << "[" << recursionDepth << "]:";
-         -- gettid() is not there in Solaris
-         -- tid := gettid();
-         -- if tid != -1 && tid != getpid() then stdError << "<" << gettid() << ">:";
-         stdError << " " << message << endl;
-         );
-     );
-
-export printWarningMessage(position:Position,message:string):void := printMessage(position,"warning: "+message);
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d stdiop.o "

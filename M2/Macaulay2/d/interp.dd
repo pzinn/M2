@@ -22,8 +22,8 @@ currentPosFile  := dummyPosFile;
 currentFileDirectory := setupvar("currentFileDirectory", toExpr("./"));
 update(err:Error,prefix:string,f:Code):Error := (
      if !err.printed
-     then printErrorMessage0(codePosition(f),Expr(Sequence(toExpr(prefix + ": "), err.message)))
-     else printErrorMessage0(codePosition(f),toExpr(prefix + ": --backtrace update-- "))
+     then printErrorMessage0(f,Expr(Sequence(toExpr(prefix + ": "), err.message)))
+     else printErrorMessage0(f,toExpr(prefix + ": --backtrace update-- "))
      );
 previousLineNumber := -1;
 
@@ -93,7 +93,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 	       );
 	  u := peektoken(file,true);
 	  interruptPending = false; determineExceptionFlag();
-	  if u.word.typecode == TCerror || test(interruptedFlag) then (
+	  if u == errorToken || test(interruptedFlag) then (
 	       gettoken(file,true);
 	       if test(interruptedFlag) then (
 		    if debugLevel == 123 then stderr <<  "-- token read interrupted" << endl;
@@ -105,7 +105,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    )
 	       else (
 		    if debugLevel == 123 then stderr <<  "-- token read error" << endl;
-		    printError(Error(u.position,toExpr(u.word.name),nullE,false,dummyFrame));
 		    promptWanted = true;
 	       	    if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 	       	    if stopIfError || returnIfError then return buildErrorPacket("--backtrace: token read error--");
@@ -133,8 +132,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 		    promptWanted = true;
 		    if debugLevel == 123 then stderr <<  "-- ordinary token, ready to parse: " << u.position << endl;
 		    parsed := parse(file,SemicolonW.parse.precedence,true);
-		    when parsed is
-		    e:ErrorTree do (
+		    if parsed == errorTree then (
 			 if test(interruptedFlag) then (
 		    	      if debugLevel == 123 then stderr <<  "-- parsing interrupted" << endl;
 		    	      clearFileError(file);
@@ -145,7 +143,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      )
 			 else (
 		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
-		       	      foreach err in e do printErrorMessage(err.position,err.message);
 			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
 			      file.posFile.line = file.posFile.line + 1;
@@ -168,12 +165,12 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 if !(s.word == SemicolonW || s.word == NewlineW || s.word == wordEOC || s.word == wordEOF)
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
-			      printErrorMessage(s.position,msg);
+			      printErrorMessage(s,msg);
 			      if stopIfError || returnIfError then return Expr(Error(s.position,toExpr(msg),nullE,false,dummyFrame));
 			      )
 			 else (
-			      when localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
-			      is null do (
+			      if localBind(parsed,dictionary) -- assign scopes to tokens, look up symbols; returns false iff an error occurred
+			      then (
 				   -- result of BeforeEval is ignored unless error:
 				   -- BeforeEval method is independent of mode
 				   f := convert(parsed); -- convert to runnable code
@@ -197,7 +194,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     lastvalue = nullE;
 					     )
 					else (
-					     if !err.printed then printError(err);
+					     if !err.printed then printErrorMessage(err);
 					     if stopIfError || returnIfError then return lastvalue;
 					     );
 					lasterrmsg = err;
@@ -251,9 +248,8 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     )
 					)
 				   )
-			      is e:ErrorTree do (
+			      else (
 				   -- an error occurred in localBind
-				   foreach err in e do printErrorMessage(err.position,err.message);
 				   if isatty(file) 
 				   then flushToken(file)
 				   else return (
@@ -298,7 +294,7 @@ readeval(file:TokenFile,returnLastvalue:bool,returnIfError:bool):Expr := (
      when hook is x:List do foreach f in x.v do (
 	  r := applyEE(f,haderror);
 	  when r is err:Error do (
-	       if lastexiterror != dummyError && !lastexiterror.printed then printError(lastexiterror); -- or else it gets bumped
+	       if lastexiterror != dummyError && !lastexiterror.printed then printErrorMessage(lastexiterror); -- or else it gets bumped
 	       lastexiterror = err;
 	       ) else nothing
 	  )
@@ -324,7 +320,6 @@ topLevelPrompt():string := (
 	  if method == nullE then ""
      	  else when applyEE(method,toExpr(lineNumber)) is s:stringCell do s.v
      	  is n:ZZcell do if isInt(n) then blanks(toInt(n)) else ""
-	  is err:Error do (printError(err); "")
      	  else "\n<--bad prompt--> : " -- unfortunately, we are not printing the error message!
 	  );
      if debugLevel == 123 then (

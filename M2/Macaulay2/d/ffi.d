@@ -648,7 +648,7 @@ ffiClosureFunction(cif:Pointer "ffi_cif *", ret:voidPointer,
     do Ccode(void, "memcpy(",
 	endianAdjust(ret, Ccode(voidPointer, "((ffi_cif *)", cif, ")->rtype")),
 	", ", ptr.v, ", ", cif, "->rtype->size)")
-    is err:Error do (printError(err);)
+    is err:Error do printErrorMessage(err)
     else nothing);
 
 ffiClosureFinalizer(ptr:voidPointer, closure:voidPointer):void := (
@@ -679,3 +679,19 @@ ffiFunctionPointerAddress(e:Expr):Expr := (
 	else WrongArg(1, "a function"))
     else WrongNumArgs(2));
 setupfun("ffiFunctionPointerAddress", ffiFunctionPointerAddress);
+
+getMemory0(e:Expr):Expr := (
+    when e
+    is a:Sequence
+    do (
+	when a.0
+	is n:ZZcell do (
+	    if !isInt(n) then WrongArgSmallInteger(1)
+	    else when a.1
+	    is atomic:Boolean do (
+		if atomic.v then toExpr(getMemAtomic(toInt(n.v)))
+		else toExpr(getMem(toInt(n.v))))
+	    else WrongArgBoolean(2))
+	else WrongArgZZ(1))
+    else WrongNumArgs(2));
+setupfun("getMemory0", getMemory0);

@@ -550,25 +550,46 @@ toString'(Function, SparseMonomialVectorExpression) := (fmt,v) -> toString (
 -----------------------------------------------------------------------------
 MatrixExpression = new HeaderType of Expression
 MatrixExpression.synonym = "matrix expression"
-matrixOpts1 := new OptionTable from {Blocks=>null,Degrees=>null,MutableMatrix=>false};
+matrixOpts1 := new OptionTable from {
+    Blocks => null,
+    Degrees => null,
+    symbol MutableMatrix => false,
+    symbol zero => null};
 matrixOpts = m -> ( -- helper function
     (opts,x) := override(matrixOpts1,toSequence m);
     (opts, if #x > 0 and not instance(x#0,List) then { x } else toList x) -- because of #1548
     )
 expressionValue MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if #m>0 then m = if class m#0===ZeroExpression then m#0#0 else (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+    if opts.zero =!= null
+    then (
+	if opts.MutableMatrix
+	then mutableMatrix(
+	    commonRing toList opts.zero, rank opts.zero#0, rank opts.zero#1)
+	else map(opts.zero#0, opts.zero#1, 0))
     -- TODO: keep track of blocks too
-    if opts.Degrees === null then m else (
-    R := ring m;
-    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),m)
-    ))
+    else (
+	m = (if opts.MutableMatrix then mutableMatrix else matrix) applyTable(m,expressionValue);
+	if opts.Degrees === null then m else (
+	    R := ring m;
+	    map(R^(-opts.Degrees#0),R^(-opts.Degrees#1),entries m)
+	    )))
 toString'(Function, MatrixExpression) := (fmt,x) -> concatenate(
     (opts,m) := matrixOpts x;
-    if #m!=0 and class m#0 === ZeroExpression then m=table(#(opts.Degrees#0),#(opts.Degrees#1),a->0);
-    if opts.MutableMatrix then "mutableMatrix {" else "matrix {",
-    between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
-    "}" )
+    if opts.zero =!= null
+    then (
+	if opts.MutableMatrix
+	then ("mutableMatrix(",
+	    fmt commonRing toList opts.zero, ", ",
+	    fmt opts.zero#0, ", ",
+	    fmt opts.zero#1, ")")
+	else ("map(",
+	    fmt opts.zero#0, ", ",
+	    fmt opts.zero#1, ", 0)"))
+    else (
+	if opts.MutableMatrix then "mutableMatrix {" else "matrix {",
+	between(", ",apply(m,row->("{", between(", ",apply(row,fmt)), "}"))),
+	"}" ))
 -----------------------------------------------------------------------------
 VectorExpression = new HeaderType of Expression
 VectorExpression.synonym = "vector expression"
@@ -1250,6 +1271,7 @@ texMath Dots := x -> "\\" | simpleToString x -- note that \vdots has bad spacing
 toString Dots := x -> "..."
 net Dots := x -> if x === vdots then "."||"."||"." else if x === ddots then ".  "||" . "||"  ." else "..."
 
+-- used e.g. in chaincomplexes.m2
 shortLength = 8
 shortStringLength := 3*shortLength
 shortMode = false

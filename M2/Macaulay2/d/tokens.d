@@ -21,6 +21,11 @@ export isatty(f:TokenFile):bool := isatty(f.posFile);
 
 -- Expr Functions
 
+export printErrorMessage(err:Error):void := (
+     printErrorMessage(err.position,err.message);
+     err.printed = true;
+     );
+
 export getLocalDictionary(frameID:int):Dictionary := (
      p := allDictionaries;
      while (
@@ -54,8 +59,24 @@ export handleInterrupts := true;
 (threadLocal export stopIfError := true) = false;
 (threadLocal export debuggingMode := false) = true;
 
--- TODO refactor
+export printIfError(e:Expr):void := (
+     when e is err:Error do (
+	  printErrorMessage(err.position,err.message);
+	  err.printed = true;
+	  )
+     else nothing;
+     );
+export printError(err:Error):Error := (
+     if !(err.printed && err.position.filename === "stdio")
+     then printErrorMessage(err.position, if err.printed then Expr(stringCell("--back trace--")) else err.message);
+     err.printed = true;
+     err);
+export printErrorMessage(t:Token,message:string):void := printErrorMessage(t.position,message);
 export printWarningMessage(t:Token,message:string):void := printWarningMessage(t.position,message);
+export printErrorMessage(t:Token,message:Expr):void := printErrorMessage(t.position,message);
+export printWarningMessage(t:Token,message:Expr):void := printWarningMessage(t.position,message);
+
+
 
 export (x:SymbolClosure) === (y:SymbolClosure) : bool := (
      x == y || x.symbol == y.symbol && x.frame == y.frame

@@ -223,24 +223,25 @@ blocks := m -> if m.cache.?components then flatten apply(m.cache.components,bloc
 
 protect Blocks
 blockMatrixForm=false;  -- governs expression Matrix inclusion of blocks
-expression Matrix := m -> (
-    zeroflag := m==0;
-    x := if zeroflag then {new ZeroExpression from {0_(ring m)}} else applyTable(entries m, expression);
-    d := degrees -* cover *- target m;
-    if zeroflag or not all(d, i -> all(i, j -> j == 0)) then x=append(x,Degrees=>{d, degrees source m}); -- runlengthencode?
-    if not zeroflag and blockMatrixForm then (
-    	b1 := blocks target m;
-    	b2 := blocks source m;
-    	if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
-	);
-    MatrixExpression x
+expression Matrix := m -> MatrixExpression (
+    if m == 0 then {symbol zero => (target m, source m)}
+    else (
+	x := applyTable(entries m, expression);
+	d := degrees -* cover *- target m;
+	if not all(d, i -> all(i, j -> j == 0)) then x=append(x,Degrees=>{d, degrees source m});
+	if blockMatrixForm then (
+	    b1 := blocks target m;
+	    b2 := blocks source m;
+	    if #b1>1 or #b2>1 then x=append(x,Blocks=>{b1,b2});
+	    );
+	x)
     )
 
 net Matrix := net @@ expression
 toString Matrix := toString @@ expression
 texMath Matrix := texMath @@ expression
 short Matrix := m -> MatrixExpression ( -- can't go thru MatrixExpression
-    if m==0 then {new ZeroExpression from {0_(ring m)}} else (
+    if m==0 then {symbol zero => (target m, source m)} else (
 	n1:=rank target m;
 	n2:=rank source m;
 	if n1>shortLength then
@@ -657,11 +658,28 @@ isSubquotient(Module,Module) := (M,N) -> (
      relations N % relations M == 0
      )
 
+-----------------------------------------------------------------------------
+-- inducedMap
+-----------------------------------------------------------------------------
+
 inducedMap = method (
      Options => {
 	  Verify => true,
 	  Degree => null 
 	  })
+-- TODO: hookify this, so people can add more application specific induced maps
+inducedMap(Module, Module)          := Matrix => opts -> (M, N) -> (
+    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
+    -- e.g. avoid a gb computation for inducedMap(M, image basis(d, M))
+    if N.cache.?Monomials and M === target N.cache.Monomials
+    then map(M, N, N.cache.Monomials, Degree => opts.Degree)
+    else inducedMap(M, N, id_(ambient N), opts))
+inducedMap(Module, Nothing, Matrix) := Matrix => opts -> (M, N, f) -> (
+    B := image f;
+    -- e.g. avoid a gb computation for inducedMap(image f, , f)
+    if M === target B.cache.Monomials
+    then map(M, source B.cache.Monomials, B.cache.Monomials, Degree => opts.Degree)
+    else inducedMap(M, source f, f, opts))
 inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
      N := target f;
      M := source f;
@@ -683,7 +701,6 @@ inducedMap(Module,Module,Matrix) := Matrix => opts -> (N',M',f) -> (
 	  if not isWellDefined f' then error "inducedMap: expected matrix to induce a well-defined map";
 	  );
      f')
-inducedMap(Module,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(M,source f, f,o)
 inducedMap(Nothing,Module,Matrix) := o -> (M,N,f) -> inducedMap(target f,N, f,o)
 inducedMap(Nothing,Nothing,Matrix) := o -> (M,N,f) -> inducedMap(target f,source f, f,o)
 
@@ -696,10 +713,6 @@ addHook((inducedMap, Module, Module, Matrix), Strategy => Default, (opts, N', M'
      f' := g // gbN';
      f' = map(N',M',f',Degree => if opts.Degree === null then degree f else opts.Degree);
      (f', g, gbN', gbM)))
-
-inducedMap(Module,Module) := Matrix => o -> (M,N) -> (
-    if ambient M =!= ambient N then error "inducedMap: expected modules with same ambient free module";
-     inducedMap(M,N,id_(ambient N),o))
 
 -- TODO: deprecate this in favor of isWellDefined
 inducesWellDefinedMap = method(TypicalValue => Boolean)
@@ -716,6 +729,8 @@ inducesWellDefinedMap(Module,Module,Matrix) := (M,N,f) -> (
 inducesWellDefinedMap(Module,Nothing,Matrix) := (M,N,f) -> inducesWellDefinedMap(M,source f,f)
 inducesWellDefinedMap(Nothing,Module,Matrix) := (M,N,f) -> inducesWellDefinedMap(target f,N,f)
 inducesWellDefinedMap(Nothing,Nothing,Matrix) := (M,N,f) -> true
+
+-----------------------------------------------------------------------------
 
 vars Ring := Matrix => R -> (
      g := generators R;

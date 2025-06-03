@@ -70,7 +70,7 @@ timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
     << webAppHtmlTag | y | webAppEndTag << endl;
     )
 
-(modes errorPrint)#WebApp = () -> (
+(modes errorPrint)#WebApp = (errorPosition,errorMessage) -> (
     s := shortMode; shortMode=false;
     syms := new MutableHashTable;
     recScan := x -> (
@@ -146,7 +146,7 @@ if topLevelMode === WebApp then (
     M2outputRE      = "(?="|webAppCellTag|")";
     -- the edit hack
     --editURL := f -> URL ("#editor:"|toString f);
-    editMethod String := f -> show URL("#editor:"|f);
+    editMethod String := f -> show URL("#editor:"|f); -- make it more agnostic? e.g. #editor after
     editMethod FilePosition := editMethod @@ toURL; -- shouldn't that always be the case?
     -- redefine htmlLiteral to exclude codes
     -- except it should sometimes allow them...

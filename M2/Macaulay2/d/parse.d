@@ -63,7 +63,6 @@ export TCid := 1;			-- identifiers and operators
 export TCint := 2;
 export TCRR := 3;
 export TCstring := 4;
-export TCerror :=5;
 export Word := {		-- a word, one for each name made by makeUniqueWord()
      name:string,		--   the string representing it in this language
      typecode:int,		--   TCid, TCint, TCRR, or TCstring
@@ -145,13 +144,14 @@ export Postfix:= {+lhs:ParseTree, Operator:Token};
 export Parentheses := {+ left:Token, contents:ParseTree, right:Token };
 export EmptyParentheses := {+ left:Token, right:Token };
 export dummy := {+position:Position};
-export ErrorTree1 := {+position:Position, message: string};
-export ErrorTree := tarray(ErrorTree1);
 export ParseTree := (
-     Token or Adjacent or Binary or Unary or Postfix or Parentheses 
-     or EmptyParentheses or IfThen or IfThenElse
-     or Quote or GlobalQuote or ThreadQuote or LocalQuote
-     or TryThenElse or TryThen or TryElse or Try or Catch or WhileDo or For or WhileList or WhileListDo or Arrow or New or dummy or ErrorTree );
+    Token or Parentheses or EmptyParentheses or Adjacent or Arrow
+    or Quote or GlobalQuote or ThreadQuote or LocalQuote
+    or Unary or Binary or Postfix or IfThen or IfThenElse
+    or Try or TryThen or TryThenElse or TryElse or Catch
+    or WhileDo or WhileListDo or WhileList or For
+    or New
+    or dummy );
 
 
 -- Code

@@ -195,7 +195,7 @@ processError = args -> try ( -- we don't want errors here
     recScan args;
     sequence args | join apply(toSequence pairs syms,(s,l) -> ("\n", l, ": here is the first use of ",s))
     ) else sequence args
-errorPrint = mode ( () -> (
+errorPrint = mode ( (errorPosition,errorMessage) -> (
     if errorPosition#1 > 0 then stderr << errorPosition << ": ";
     msg := processError errorMessage;
     if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then stderr << "error: ";

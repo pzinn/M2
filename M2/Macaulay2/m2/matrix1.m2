@@ -311,14 +311,15 @@ subquotient(Nothing,Matrix) := (null,relns) -> (
 	  Mparts = append(Mparts, symbol relations => relns);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Nothing) := (subgens,null) -> (
-     R := ring subgens;
-     E := target subgens;
-     rE := E.RawFreeModule;
-     subgens = align matrix subgens;
+subquotient(Matrix, Nothing) := (subgens0, null) -> (
+    R := ring subgens0;
+    E := target subgens0;
+    rE := E.RawFreeModule;
+    subgens := align matrix subgens0;
      if E.?generators then subgens = E.generators * subgens;
      Mparts := {
 	  symbol cache => new CacheTable from { 
+	    symbol Monomials => subgens0,
 	       cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
 	       },
 	  symbol RawFreeModule => rE,
@@ -330,16 +331,16 @@ subquotient(Matrix,Nothing) := (subgens,null) -> (
 	  Mparts = append(Mparts, symbol relations => E.relations);
 	  );
      new Module of Vector from hashTable Mparts)
-subquotient(Matrix,Matrix) := (subgens,relns) -> (
-     R := ring relns;
-     E := target subgens;
+subquotient(Matrix, Matrix) := (subgens0, relns) -> (
+    R := ring relns;
+    E := target subgens0;
      if E =!= target relns then error "expected maps with the same target";
      rE := E.RawFreeModule;
      n := rawRank rE;
      if n == 0 then new Module from (R,rE)
      else (
 	  relns = align matrix relns;
-	  subgens = align matrix subgens;
+	subgens := align matrix subgens0;
 	  if E.?generators then (
 	       relns = E.generators * relns;
 	       subgens = E.generators * subgens;
@@ -347,6 +348,7 @@ subquotient(Matrix,Matrix) := (subgens,relns) -> (
 	  if E.?relations then relns = relns | E.relations;
 	  Mparts := {
 	       symbol cache => new CacheTable from { 
+		symbol Monomials => subgens0,
 		    cache => new MutableHashTable	    -- this hash table is mutable, hence has a hash number that can serve as its age
 		    },
 	       symbol RawFreeModule => rE,
@@ -396,13 +398,13 @@ Number ** RingElement :=
 RingElement ** Number := 
 RingElement ** RingElement := (r,s) -> matrix {{r}} ** matrix {{s}}
 
-Matrix#AfterPrint = Matrix#AfterNoPrint = f -> (
+Matrix.AfterPrint = Matrix.AfterNoPrint = f -> (
     class f,
     (
-	(tar, src) := apply((target f, source f), M -> moduleAbbrv(M, null));
+	(tar, src) := apply((target f, source f), moduleAbbrv);
 	if tar =!= null and src =!= null
-	then (" ", new MapExpression from expression \ {tar, src}))
-    )
+	then (" ", MapExpression(tar, src))
+    ))
 
 -- precedence Matrix := x -> precedence symbol x
 
@@ -577,6 +579,28 @@ Ideal ^ Array := (I, e) -> (
    -- apply the ring homomorphism and create the new ideal
    ideal phi generators I
 )
+
+-----------------------------------------------------------------------------
+-- kernel and homology
+-----------------------------------------------------------------------------
+
+kernel = method(Options => {
+	DegreeLimit  => {},
+	Strategy     => {},
+	SubringLimit => infinity, -- stop after finding enough elements of a subring
+    })
+kernel Matrix := Module => opts -> g -> g.cache.kernel ??= if g == 0 then source g else tryHooks(
+    (kernel, Matrix), (opts, g), (opts, g) -> (
+	-- this is the default algorithm
+	-- compare with homology below
+	N := source g;
+	P := target g;
+	g = matrix g;
+	if P.?generators then g = P.generators * g;
+	h := modulo(g, if P.?relations then P.relations);
+	if N.?generators then h = N.generators * h;
+	subquotient(h, if N.?relations then N.relations)))
+kernel RingElement := Module => opts -> f -> kernel(matrix {{f}}, opts)
 
 homology(Matrix,Matrix) := Module => opts -> (g,f) -> (
      if g == 0 then cokernel f

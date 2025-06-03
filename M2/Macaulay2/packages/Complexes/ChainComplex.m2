@@ -427,7 +427,7 @@ Complex#id = (C) -> (
     result
     )
 
-importFrom(Core, {"moduleAbbrv"})
+importFrom(Core, "short")
 net Complex := C -> (
      (lo,hi) := C.concentration;
      if lo > hi then 
@@ -438,7 +438,7 @@ net Complex := C -> (
      else
          horizontalJoin between(" <-- ", 
              for i from lo to hi list
-                 stack (net moduleAbbrv(C_i, C_i), " ", net i))
+                 stack (net short C_i, " ", net i))
      )
 
 texUnder := (x,y) -> "\\underset{\\vphantom{\\Bigg|}"|y|"}{"|x|"}"
@@ -451,16 +451,24 @@ texMath Complex := String => C -> (
     else (
         concatenate for i from lo to hi list (
             if i === lo then 
-                texUnder(texMath moduleAbbrv(C_i, C_i),i) 
+                texUnder(texMath short C_i, i) 
             else (
                 "\\,\\xleftarrow{\\scriptsize " 
                 | texMath short dd^C_i 
                 | "}\\," 
-                | texUnder(texMath moduleAbbrv(C_i, C_i),i)
+                | texUnder(texMath short C_i, i)
                 )
             )
         )
     )
+
+importFrom(Core, {"leftarrow", "mtable"})
+mathML Complex := C -> (
+    if C == 0 then mathML "0"
+    else (
+	(lo, hi) := concentration C;
+	mtable transpose between({leftarrow, "", ""},
+	    toList apply(lo..hi, i -> {mathML short C_i, "", mathML i}))))
 
 gradedModule Complex := Complex => C -> (
     (lo,hi) := concentration C;
@@ -717,30 +725,64 @@ canonicalTruncation(Complex,InfiniteNumber,InfiniteNumber) :=
 canonicalTruncation(Complex,ZZ,Nothing) := 
 canonicalTruncation(Complex,Nothing,ZZ) := Complex => (C,lo,hi) -> canonicalTruncation(C, (lo,hi))
 
-part(List, Complex) := Complex => (deg, C) -> (
-    -- return a Complex over the coefficient ring
-    R := ring C;
-    A := coefficientRing R;
-    psi := map(A,R, DegreeMap => degR -> take(degR, - degreeLength A));
-    (lo, hi) := concentration C;
-    if lo === hi 
-    then complex(psi source basis(deg, C_lo), Base => lo)
-    else (
-        maps := hashTable for i from lo+1 to hi list (
-            f := psi matrix basis(deg, dd^C_i);
-            if source f == 0 then continue else i => f
-            );
-        if # keys maps === 0 then complex(psi source basis(deg, C_lo), Base => lo)  else complex maps
-        )
-    )
-part(ZZ, Complex) := Complex => (deg, C) -> part({deg}, C)
+importFrom_Truncations { "inducedTruncationMap" }
 
-truncate(List, Complex) := Complex => {} >> opts -> (e, C) -> (
+truncateModuleOpts := options(truncate, List, Module)
+truncate(ZZ,   Complex) :=
+truncate(List, Complex) := Complex => truncateModuleOpts >> opts -> (degs, C) -> (
+    (lo, hi) := C.concentration;
+    if lo == hi
+    then complex(truncate(degs, C_lo, opts), Base => lo)
+    -- this is the simplest way to truncate the whole complex:
+    -- else complex applyValues(C.dd.map, f -> truncate(degs, f, opts)))
+    else (
+	-- this construction requires ~half as many truncations
+	f := truncate(degs, dd^C_lo, opts);
+	complex hashTable for i from lo+1 to hi list i => (
+	    f = inducedTruncationMap(source f, truncate(degs, C_i, opts), dd^C_i))
+    ))
+
+--------------------------------------------------------------------
+-- basis -----------------------------------------------------------
+--------------------------------------------------------------------
+importFrom_Core { "inducedBasisMap" }
+
+-- returns the graded component of the complex in the given degree
+-- as a complex over the same ring (as opposed to the coefficient ring)
+-- TODO: also define basis given a degree range and infinite ranges
+basis(ZZ,   Complex) :=
+basis(List, Complex) := Complex => opts -> (deg, C) -> (
+    (lo, hi) := C.concentration;
+    if lo == hi
+    then complex(image basis(deg, C_lo, opts), Base => lo)
+    -- this is the simplest way to take the basis of the whole complex:
+    -- else complex applyValues(C.dd.map, f -> basis(deg, f, opts)))
+    else (
+	-- this construction requires ~half as many basis computations
+	f := basis(deg, dd^C_lo, opts);
+	complex hashTable for i from lo+1 to hi list i => (
+	    f = inducedBasisMap(source f, image basis(deg, C_i, opts), dd^C_i))
+    ))
+
+--------------------------------------------------------------------
+-- part ------------------------------------------------------------
+--------------------------------------------------------------------
+importFrom_Core "residueMap" -- gives a map back to the coefficient ring
+
+-- this may not always be well-defined, so it is not exported
+cover' = method()
+cover' Complex := Complex => C -> (
     (lo, hi) := concentration C;
-    if lo === hi then return complex truncate(e, C_lo);
-    complex hashTable for i from lo+1 to hi list i => truncate(e, dd^C_i)
-    )
-truncate(ZZ, Complex) := Complex => {} >> opts -> (e, C) -> truncate({e}, C)
+    if lo == hi
+    then complex(cover C_lo, Base => lo)
+    else complex applyValues(C.dd.map, cover))
+cover' ComplexMap := ComplexMap => f -> (
+    map(cover' target f, cover' source f, i -> cover f_i, Degree => degree f))
+
+-- returns the graded component of the complex in the given degree
+-- but as a complex over the coefficient ring instead
+part(ZZ,   Complex) :=
+part(List, Complex) := Complex => (deg, C) -> (residueMap ring C) cover' basis(deg, C)
 
 --------------------------------------------------------------------
 -- homology --------------------------------------------------------

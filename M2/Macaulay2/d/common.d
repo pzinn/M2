@@ -2,6 +2,7 @@
 use basic;
 use binding;
 use stdiop0;
+use util;
 
 export codePosition(c:Code):Position := ( -- TODO retire
     when c
@@ -105,6 +106,25 @@ export setupconst(name:string,value:Expr):Symbol := (
 setup(commaS,dummyBinaryFun);
 
 threadLocal export errorDepth := ushort(0);
+export printErrorMessage0(c:Code,message:Expr):Error := (
+     p := codePosition(c);
+     e := Error(p,message,nullE,false,dummyFrame);
+     if p.loadDepth >= errorDepth then printError(e);
+     e);
+export printErrorMessageE(p:Position,message:Expr):Expr := ( -- for use when we have no code
+     e := Error(p,message,nullE,false,dummyFrame);
+     if p.loadDepth >= errorDepth then printError(e);
+     Expr(e));
+export printErrorMessageE(c:Code,message:Expr):Expr := printErrorMessageE(codePosition(c),message);
+export printErrorMessageE(c:Token,message:Expr):Expr := ( -- for use when we have no code
+     printErrorMessageE(c.position,message));
+-- TODO remove/deprecate those
+export printErrorMessage0(c:Code,message:string):Error := printErrorMessage0(c,toExpr(message));
+export printErrorMessageE(c:Code,message:string):Expr := printErrorMessageE(c,toExpr(message));
+export printErrorMessageE(p:Position,message:string):Expr := printErrorMessageE(p,toExpr(message));
+export printErrorMessageE(c:Token,message:string):Expr := printErrorMessageE(c,toExpr(message));
+
+
 
 -- for use in the debugger
 export printPosition(c:Code):void := ( stdIO << codePosition(c) << endl; );
@@ -112,6 +132,14 @@ export printPosition(c:Code):void := ( stdIO << codePosition(c) << endl; );
 export returnFromFunction(z:Expr):Expr := when z is err:Error do if err.message == returnMessage then err.value else z else z;
 export returnFromLoop(z:Expr):Expr     := when z is err:Error do if err.message == breakMessage  then if err.value == dummyExpr then nullE else err.value else z else z;
 
+export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
+     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
+	  + (if wanted == 1 then "" else "s") + ", but got "
+	  + tostring(got)));
+export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
+     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
+	  + (if wanted == 1 then "" else "s") + ", but got "
+	  + tostring(got)));
 
 
 -----------------------------------------------------------------------------

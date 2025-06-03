@@ -420,10 +420,11 @@ texMath RR := x -> (
     if    isInfinite x then texMath(if x > 0 then infinity else -infinity)
     else (
 	s := simpleToString x;
-	r := regex("(\\d+)(?:\\.(\\d+)|)(?:"|regexQuote printingSeparator|"(\\d+)|)",s);
+	r := regex("(-?\\d*)(?:\\.(\\d*)|)(?:"|regexQuote printingSeparator|"(-?\\d+)|)",s);
 	if r === null then return s; -- shouldn't happen
 	ss := substring(r#1,s);
 	if ss=="1" and r#2#1==0 and r#3#1>0 then "10^{"|substring(r#3,s)|"}"
+	else if ss=="-1" and r#2#1==0 and r#3#1>0 then "-10^{"|substring(r#3,s)|"}"
 	else concatenate (
 	    "{",
 	    (lookup(texMath,ZZ)) ss,

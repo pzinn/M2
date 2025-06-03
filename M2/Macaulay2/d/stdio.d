@@ -164,6 +164,7 @@ init():void := (
 	       stdIO.readline = false; -- don't go thru readline
 	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
 	       stdIO.outisatty = true; -- not so important?
+	       STDERR = 1;
 	  )
 	  else
 	  if arg === "--read-only-files" then (

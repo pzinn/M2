@@ -59,6 +59,9 @@ export insert(table:SymbolHashTable, newname:Word, entry:Symbol):Symbol := ( -- 
      -- compilerBarrier();
      entry);
 
+--Error flag for parsing; should be thread local because may have multiple threads parsing at once
+threadLocal HadError := false;
+
 
 export makeEntry(word:Word,position:Position,dictionary:Dictionary,thread:bool,locallyCreated:bool):Symbol := (
      while dictionary.Protected do (
@@ -409,13 +412,16 @@ export makeSymbol(t:Token):Symbol := (
      e := makeSymbol(t.word,t.position,t.dictionary);
      t.entry = e;
      e);
---Error flag for parsing; should be thread local because may have multiple threads parsing at once
-threadLocal bindErr:=ErrorTree();
-export makeErrorTree(p:Position,message:string):void := (
-     bindErr = new ErrorTree len length(bindErr)+1 do (foreach e in bindErr do provide e; provide ErrorTree1(p,message));   --ErrorTree(ErrorTree1(p,message));
+export makeErrorTree(e:ParseTree,message:string):void := (
+     HadError = true;
+     printErrorMessage(treePosition(e),message);
+     setLastErrorpointer(treePosition(e), toExpr(message));
      );
-export makeErrorTree(e:ParseTree,message:string):void := makeErrorTree(treePosition(e),message);
-export makeErrorTree(e:Token,message:string):void := makeErrorTree(e.position,message);
+export makeErrorTree(e:Token,message:string):void := (
+     HadError = true;
+     printErrorMessage(e,message);
+     setLastErrorpointer(e.position, toExpr(message));
+     );
 makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
      when e
      is token:Token do (
@@ -468,8 +474,8 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
      	  is entry:Symbol do (
 	       t.entry = entry;
 	       if entry.position == tempPosition then entry.position = t.position;
-               if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
-               if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
+	       if entry.flagLookup then makeErrorTree(t,"flagged symbol encountered");
+	       if thread && !entry.thread then makeErrorTree(t,"symbol already present, but not thread local");
 	       )
      	  else (
 	       if forcedef
@@ -485,8 +491,7 @@ lookup(t:Token,forcedef:bool,thread:bool):void := (
 		    t.dictionary = globalDictionary; -- undefined variables are defined as global
 		    t.entry = makeSymbol(t.word,t.position,globalDictionary,thread,locallyCreated);
 		    )
-	       else makeErrorTree(t,"undefined symbol " + t.word.name);
-	       	    )));
+	       else makeErrorTree(t,"undefined symbol " + t.word.name))));
 lookup(t:Token):void := lookup(t,true,false);
 lookuponly(t:Token):void := lookup(t,false,false);
 -----------------------------------------------------------------------------
@@ -856,7 +861,6 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
      is ee:Parentheses do bind(ee.contents,dictionary)
      is EmptyParentheses do nothing
      is dummy do nothing
-     is ErrorTree do nothing
      is w:WhileDo do (
 	  bind(w.predicate,dictionary);
 	  -- w.body = bindnewdictionary(w.body,dictionary);
@@ -909,10 +913,10 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(i.primary,dictionary);
 	  )
      );
-export localBind(e:ParseTree,dictionary:Dictionary): (ErrorTree or null) := (
-     bindErr=ErrorTree();
+export localBind(e:ParseTree,dictionary:Dictionary):bool := (
+     HadError = false;
      bind(e,dictionary);
-     if length(bindErr)>0 then (ErrorTree or null) (bindErr) else (ErrorTree or null) (null())
+     !HadError
      );
 
 -- Local Variables:

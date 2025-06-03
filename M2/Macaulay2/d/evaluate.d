@@ -37,21 +37,12 @@ export joinIteratorsS := setupvar("joinIterators", nullE);
 export pairsIteratorS := setupvar("pairsIterator", nullE);
 
 -- error stuff
-errorPosition := setupvar("errorPosition",nullE);
-errorMessage := setupvar("errorMessage",nullE);
 export errorPrint := nullE;
 export isEmptySequenceE(e:Expr):bool := (
     when e
     is s:Sequence do if length(s) == 0 then true else false
     else false
     );
-printErrorMessageE(p:Position,message:Expr):Expr;
-printErrorMessage(p:Position,message:string):Expr; -- ???
-WrongNumArgs(c:Code,wanted:int,got:int):Expr;
-export printErrorMessageE(c:Code,message:string):Expr := printErrorMessageE(codePosition(c),toExpr(message));
-export printErrorMessageE(c:Code,message:Expr):Expr := printErrorMessageE(codePosition(c),message);
-export printErrorMessageE(c:Token,message:string):Expr := ( -- for use when we have no code
-     printErrorMessageE(c.position,toExpr(message)));
 
 handleError(c:Code,e:Expr):Expr;
 eval(c:Code):Expr;
@@ -1355,47 +1346,19 @@ steppingFurther(c:Code):bool := steppingFlag && (
 	  microStepCount >= 0)
      else false);
 
-export printError(err:Error):Error := (
-     recursionDepth=0;
-     if !(SuppressErrors||(err.printed && err.position.filename === "stdio"))
-     then (
-     	if !isEmptySequenceE(err.message) then setGlobalVariable(errorMessage,err.message);
-        setGlobalVariable(errorPosition,Expr(sethash(List(filePositionClass,
-	Sequence(toExpr(verifyMinimizeFilename(err.position.filename)),toExpr(err.position.lineF),toExpr(err.position.columnF),toExpr(err.position.loadDepth)),
-	hash_t(0),false),false)));
-     when applyEE(errorPrint,Expr(Sequence()))
-     is e:Error do (
-         if debugLevel == 123 then stderr << e.position << " errorPrint error: " << tostringerror(e.message) <<endl;
-	  stderr << err.position << " error: " << tostringerror(err.message) <<endl;
-	 )
-     else nothing
-     );
-     err.printed=true;
-     err
-);
-export printErrorMessage0(p:Position,message:Expr):Error := ( -- for use when we have no code
-     e := Error(p,message,nullE,false,dummyFrame);
-     if p.loadDepth >= errorDepth then printError(e);
-     e);
-export printErrorMessage0(p:Position,message:string):Error := printErrorMessage0(p,toExpr(message));
-export printErrorMessageE(p:Position,message:Expr):Expr := Expr(printErrorMessage0(p,message)); -- for use when we have no code
-export printErrorMessage(p:Position,message:string):Expr := ( -- for use when we have no code
-     e := Error(p,toExpr(message),nullE,false,dummyFrame);
-     printError(e);
-     Expr(e));
-export printErrorMessage(p:Position,message:Expr):Expr := ( -- for use when we have no code
-     e := Error(p,message,nullE,false,dummyFrame);
-     printError(e);
-     Expr(e));
-export WrongNumArgs(c:Code,wanted:int,got:int):Expr := (
-     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
-	  + (if wanted == 1 then "" else "s") + ", but got "
-	  + tostring(got)));
-export WrongNumArgs(c:Token,wanted:int,got:int):Expr := (
-     printErrorMessageE(c, "expected " + tostring(wanted) + " argument"
-	  + (if wanted == 1 then "" else "s") + ", but got "
-	  + tostring(got)));
 
+
+actualprintExprMessage(position:Position,message:Expr):void := (
+     if !SuppressErrors then (
+         when applyEE(errorPrint,Expr(Sequence(Expr(sethash(List(filePositionClass,
+	Sequence(toExpr(verifyMinimizeFilename(position.filename)),toExpr(position.lineF),toExpr(position.columnF),toExpr(position.loadDepth)),
+	hash_t(0),false),false)),message)))
+      is e:Error do (
+       	 stderr << position << " error: " << tostringerror(message) <<endl;
+      )
+      else nothing
+      );
+);
 
 export handleError(c:Code,e:Expr):Expr := (
      when e is err:Error do (
@@ -1642,7 +1605,14 @@ export evalraw(c:Code):Expr := (
 	       	    tmp)
 	       else AngleBarList(r)
 	       ));
-     when e is Error do handleError(c,e) else e);
+     when e is Error
+     do (
+	 f := handleError(c,e);
+	 when f is err:Error
+	 do setLastErrorpointer(err.position, err.message)
+	 else nothing;
+	 f)
+     else e);
 
 export evalexcept(c:Code):Expr := (
      -- printErrorMessage(codePosition(c),"--evaluating: "+present(tostring(c)));
@@ -2131,6 +2101,8 @@ export notFun(a:Expr):Expr := if a == True then False else if a == False then Tr
 -- evaluate.d depends on hashtables.dd, so we use a pointer
 -- to evaluate methods in hashtables.dd before it is defined.
 applyEEEpointer = applyEEE;
+
+printExprMessage = actualprintExprMessage;
 
 -- Local Variables:
 -- compile-command: "echo \"make: Entering directory \\`$M2BUILDDIR/Macaulay2/d'\" && make -C $M2BUILDDIR/Macaulay2/d evaluate.o "

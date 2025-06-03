@@ -712,13 +712,18 @@ else if test $SHARED = no -a $TRY_STATIC = yes
      fi
 fi
 
+AC_ARG_WITH([system-libs],
+    [AS_HELP_STRING([--with-system-libs],
+        [use system gc, memtailor, mathic, and mathicgb instead of building them])],,
+    [with_system_libs=no])
+
 ## we build gc by default so we can configure it for large memory spaces
 ## see issue #2445
 AC_ARG_WITH([system-gc],
     [AS_HELP_STRING([--with-system-gc],
         [use system gc instead of building it])],
     [],
-    [with_system_gc=no])
+    [with_system_gc=$with_system_libs])
 
 AS_IF([test "x$with_system_gc" = xyes],
     [AC_MSG_CHECKING(whether package bdw-gc is provided)
@@ -830,7 +835,9 @@ AS_IF([test $BUILD_lapack = no],
          [AC_MSG_NOTICE([blas/lapack not found; will build])
           BUILD_lapack=yes])])
 AS_IF([test $BUILD_lapack = yes],
-    [BLAS_LIBS=-lrefblas
+    [dnl we need our patched FFLAS-FFPACK when no CBLAS
+     BUILD_fflas_ffpack=yes
+     BLAS_LIBS=-lrefblas
      LAPACK_LIBS=-llapack])
 AC_SUBST([LINALGLIBS], ["$LAPACK_LIBS $BLAS_LIBS"])
 
@@ -1309,7 +1316,7 @@ AS_IF([test $BUILD_tbb = yes],
 AC_ARG_WITH([system-memtailor],
     [AS_HELP_STRING([--with-system-memtailor],
 	[use system memtailor instead of building git submodule])],,
-    [with_system_memtailor=no])
+    [with_system_memtailor=$with_system_libs])
 if test $with_system_memtailor = no
 then
     BUILD_memtailor=yes
@@ -1325,7 +1332,7 @@ fi
 AC_ARG_WITH([system-mathic],
     [AS_HELP_STRING([--with-system-mathic],
 	[use system mathic instead of building git submodule])],,
-    [with_system_mathic=no])
+    [with_system_mathic=$with_system_libs])
 if test $with_system_mathic = no
 then
     BUILD_mathic=yes
@@ -1341,7 +1348,7 @@ fi
 AC_ARG_WITH([system-mathicgb],
     [AS_HELP_STRING([--with-system-mathicgb],
 	[use system mathicgb instead of building git submodule])],,
-    [with_system_mathicgb=no])
+    [with_system_mathicgb=$with_system_libs])
 if test $with_system_mathicgb = no
 then
     BUILD_mathicgb=yes
@@ -1472,16 +1479,38 @@ AC_ARG_ENABLE(linbox,
     ENABLE_LINBOX=yes
     )
 
-AC_SUBST(ENABLE_FPLLL,no)
-AC_ARG_ENABLE(fplll,
-    [AS_HELP_STRING(--enable-fplll,[enable building the fplll library and linking with it])],
-    AC_DEFINE(HAVE_FPLLL,1,[whether we are linking with the fplll library])
-    BUILD_fplll=yes
-    ENABLE_FPLLL=yes
-    )
-    
 test $BUILD_linbox = yes && BUILTLIBS="-llinbox $BUILTLIBS"
-test $BUILD_fplll = yes && BUILTLIBS="-lfplll $BUILTLIBS"
+
+AC_LANG([C++])
+AC_ARG_WITH([fplll],
+    [AS_HELP_STRING([--with-fplll], [enable linking with the fplll library])])
+
+AS_IF([test "x$with_fplll" = "xyes"],
+    [AC_DEFINE([HAVE_FPLLL], [1],
+	[whether we are linking with the fplll library])
+     AS_IF([test "x$BUILD_fplll" = "xno"],
+         [AC_CHECK_HEADER([fplll.h],
+             [AC_MSG_CHECKING([for library containing lll_reduction])
+	      SAVELIBS=$LIBS
+	      LIBS="$LIBS -lfplll"
+	      AC_LINK_IFELSE(
+	         [AC_LANG_PROGRAM(
+	             [
+		      #include <fplll.h>
+		     ],
+		     [fplll::ZZ_mat<mpz_t> mat(2, 2);
+		      lll_reduction(mat, 0.99, 0.51, fplll::LM_WRAPPER,
+		                    fplll::FT_DEFAULT, 0, fplll::LLL_DEFAULT);
+		     ])],
+	         [AC_MSG_RESULT([-lfplll])],
+	         [LIBS=$SAVELIBS
+		  BUILD_fplll=yes
+	          AC_MSG_RESULT([no])])],
+             [BUILD_fplll=yes])
+	  AS_IF([test "x$BUILD_fplll" = "xyes"],
+	     [AC_MSG_NOTICE([fplll not found; will build])])])
+     AS_IF([test "x$BUILD_fplll" = "xyes"],
+         [BUILTLIBS="-lfplll $BUILTLIBS"])])
 
 SINGULARLIBS="-lfactory  "
 if test $BUILD_factory = no
