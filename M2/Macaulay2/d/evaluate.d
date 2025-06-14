@@ -1349,11 +1349,13 @@ steppingFurther(c:Code):bool := steppingFlag && (
 
 
 actualprintExprMessage(position:Position,message:Expr):void := (
-     if !SuppressErrors then (
+      recursionDepth=0;
+      if !SuppressErrors then (
          when applyEE(errorPrint,Expr(Sequence(Expr(sethash(List(filePositionClass,
 	Sequence(toExpr(verifyMinimizeFilename(position.filename)),toExpr(position.lineF),toExpr(position.columnF),toExpr(position.loadDepth)),
 	hash_t(0),false),false)),message)))
       is e:Error do (
+         if debugLevel == 123 then stderr << "printing error: " << e.position << " error: " << tostringerror(e.message) << endl;
        	 stderr << position << " error: " << tostringerror(message) <<endl;
       )
       else nothing
