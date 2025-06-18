@@ -1939,9 +1939,7 @@ store(e:Expr):Expr := (			    -- called with (symbol,newvalue)
 		       is p:List
 		       do (
 			   if p.Class == filePositionClass then (
-			       when a.1
-			       is msg:stringCell do (lastError = s.1; e)
-			       else WrongArgString(2))
+			       lastError = s.1; e)
 			   else WrongArg(1, "a file position"))
 		       else WrongArg(1, "a file position"))
 		   else WrongNumArgs(2))
