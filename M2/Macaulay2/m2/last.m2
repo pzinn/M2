@@ -95,6 +95,8 @@ Function.GlobalReleaseHook = (X,x) -> (
      )
 waterMark = serialNumber symbol waterMark      -- used by Serialization package
 
+symbol run <- (x -> 1)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

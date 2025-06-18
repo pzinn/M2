@@ -1402,7 +1402,7 @@ run(e:Expr):Expr := (
      is x:stringCell do toExpr(run(x.v))
      else WrongArgString()
      );
-setupfun("run",run);
+setupfun("run",run).Protected=false;
 
 header "#include <math.h>";
 
