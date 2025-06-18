@@ -25,7 +25,7 @@ load "./Macaulay2Doc/loads.m2"
 
 --------------------------------------------------------------------------------
 -- check to make sure the documentation doesn't leak symbols
-erase \ { symbol core, symbol isMissingDoc, symbol isUndocumented }
+erase \ { symbol core, symbol isMissingDoc, symbol isUndocumented, symbol resolution }
 if keys Macaulay2Doc#"private dictionary" =!= {} 
 then error splice (
      "global symbols inadvertently defined by package Macaulay2Doc: ", 
