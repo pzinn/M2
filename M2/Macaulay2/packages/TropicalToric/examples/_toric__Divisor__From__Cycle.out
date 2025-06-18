@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -834038959
+-- -*- M2-comint -*- hash: 1061292516861121361
 i1 : 1:0X = toricProjectiveSpace 2;
 i2 : 2:0D = X_{0} + X_{1};
 i3 : 3:0toricDivisorFromCycle D

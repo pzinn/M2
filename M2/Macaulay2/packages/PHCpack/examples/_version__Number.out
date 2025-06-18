@@ -1,12 +1,15 @@
 -- -*- M2-comint -*- hash: 8946122813830832975
 i1 : 1:0v = versionNumber(null)
+sh: line 1: phc: command not found
+Which version of phc is in your execution path?
 
-o1 = $($<samp class="token string">2.4.85</samp>$,\,$<samp class="token string">2020-06-30</samp>$)$
+
+o1 = $($<samp class="token string"></samp>$,\,$<samp class="token string"></samp>$)$
 
 o1 : <samp class="token class-name">Sequence</samp>
 i2 : 2:0print v_0
-<samp class="token string">2.4.85</samp>
+<samp class="token string"></samp>
 i3 : 3:0print v_1
-<samp class="token string">2020-06-30</samp>
+<samp class="token string"></samp>
 i4 : 4:0
 

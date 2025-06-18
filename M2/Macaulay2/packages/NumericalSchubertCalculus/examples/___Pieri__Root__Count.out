@@ -1,6 +1,9 @@
 -- -*- M2-comint -*- hash: 1730917110014697872
 i1 : 1:0r := PieriRootCount(3,2,1);
+sh: line 1: phc: command not found
+Which version of phc is in your execution path?
+
 i2 : 2:0print r
-$55$
+$0$
 i3 : 3:0
 

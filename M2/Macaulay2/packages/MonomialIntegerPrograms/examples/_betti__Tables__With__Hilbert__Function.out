@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1672066474
+-- -*- M2-comint -*- hash: 9565362202495006122
 i1 : 1:0R = QQ[x,y,z]; L = {1, 3, 5, 5, 4};
 i3 : 2:0bettiTablesWithHilbertFunction(L, R) --outputs unique tables matching the criteria
 

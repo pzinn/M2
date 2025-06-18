@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1083445600
+-- -*- M2-comint -*- hash: 8974712213391806816
 i1 : 1:0X = toricProjectiveSpace 3;
 i2 : 2:0S = ring X;
 i3 : 3:0I = ideal(S_0+S_1+S_2+1,S_0+2*S_1-S_2+4);

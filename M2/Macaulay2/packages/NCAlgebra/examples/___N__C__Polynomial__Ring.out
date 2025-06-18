@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 847232713
+-- -*- M2-comint -*- hash: 1332287094473
 i1 : 1:0A = QQ{x,y}
 
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$

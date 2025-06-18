@@ -1,4 +1,5 @@
--- -*- M2-comint -*- hash: -633297982
+-- -*- M2-comint -*- hash: 1330806563778
 i1 : 1:0loadPackage("MonomialIntegerPrograms", Configuration => {"CustomScipPrintLevel" => "2"}, Reload => true);
+ -- warning: reloading MonomialIntegerPrograms; recreate instances of types from this package
 i2 : 2:0
 

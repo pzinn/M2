@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 2024780271
+-- -*- M2-comint -*- hash: 180791062597448175
 i1 : 1:0R = QQ[a,b,c];
 i2 : 2:0ScipPrintLevel = 1;
 i3 : 3:0codim(monomialIdeal(a^2, b*a, c*b))

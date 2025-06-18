@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: 1474937778
+-- -*- M2-comint -*- hash: 8188472734618600370
 i1 : 1:0rayList={{1,0},{1,1},{0,1},{-1,-1}};
 i2 : 2:0coneList={{0,1},{1,2},{2,3},{3,0}};
 i3 : 3:0X = normalToricVariety(rayList,coneList);

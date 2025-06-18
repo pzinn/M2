@@ -1,4 +1,4 @@
--- -*- M2-comint -*- hash: -1335674534
+-- -*- M2-comint -*- hash: 4990986480355850586
 i1 : 1:0R = QQ[x,y,z,w,v];
 i2 : 2:0I = monomialIdeal(x*y*w, x*z*v, y*x, y*z*v);
 

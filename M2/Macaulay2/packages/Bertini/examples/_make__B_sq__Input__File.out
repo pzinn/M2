@@ -7,7 +7,7 @@
 i2 : 2:0theDir = temporaryFileName();
 i3 : 3:0makeDirectory theDir
 
-o3 = <samp class="token string">/tmp/M2-3914778-0/1</samp>
+o3 = <samp class="token string">/tmp/M2-106292-0/1</samp>
 i4 : 4:0makeB'InputFile(theDir,
 5:0        BertiniInputConfiguration=>{MPType=>2},
 6:0    AffVariableGroup=>{{x1,x2},{y}},
