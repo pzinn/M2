@@ -201,6 +201,7 @@ texMath HashTable := H -> (
     else texMath class H | texMath apply(sortByName pairs H, (k, v) -> k => v)
     )
 
+texMath RingFamily :=
 texMath Ring := R -> (
     if R.?texMath then R.texMath
     else if hasAttribute(R, ReverseDictionary) then texMath toString getAttribute(R, ReverseDictionary)
