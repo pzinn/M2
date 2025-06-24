@@ -871,12 +871,12 @@ export read(o:file):StringOrError := (
 export peek(o:file,offset:int):int := (
      startFileInput(o);
      if !o.input then (endFileInput(o); return EOF;);
-     if offset >= bufsize then (endFileInput(o); return ERROR-1;);		    -- tried to peek too far
+     if offset >= bufsize then (endFileInput(o); return ERROR;);		    -- tried to peek too far
      if o.inindex+offset >= o.insize then (
 	  if o.eof then (endFileInput(o); return EOF;);
      	  while (
 	       r := filbuf(o);
-	       if r == ERROR then (endFileInput(o); return ERROR-2;);
+	       if r == ERROR then (endFileInput(o); return ERROR;);
 	       o.inindex+offset >= o.insize
 	       )
 	  do (
