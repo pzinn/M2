@@ -64,6 +64,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew config
+          brew update
           brew tap macaulay2/tap
           brew install --overwrite python
           brew install automake boost tbb ccache ctags texinfo llvm make ninja yasm libffi msolve googletest fplll
@@ -164,7 +165,7 @@ jobs:
             -L`brew --prefix readline`/lib"
           export F77=gfortran-14
           export FC=gfortran-14
-          ../../configure --enable-download --with-system-gc --with-fplll
+          ../../configure --with-system-gc --with-fplll
 
       - name: Build Macaulay2 using Make
         if: matrix.build-system == 'autotools'
