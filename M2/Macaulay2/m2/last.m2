@@ -90,13 +90,24 @@ if fullCopyright then addStartFunction(() -> print copyright())
 undocumented' = x -> error "late use of function undocumented'"
 
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
+
+
+-- added: prevent run
+run0 := run
+allowedRuns := {"normaliz", "bertini", "phc", "scip", "bergman", "polymake", "dot", "gfan", "which", "mpsolve", "msolve", "topcom", "true"}
+
+run = x -> (
+    if debugLevel>0 then "running " << x << endl;
+    for s in allowedRuns do if match("^"|s|"|/"|s,x) then return run0 x;
+    1)
+--
+
+
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
      if hasAttribute(x,ReverseDictionary) and getAttribute(x,ReverseDictionary) === X then removeAttribute(x,ReverseDictionary);
      )
 waterMark = serialNumber symbol waterMark      -- used by Serialization package
-
-symbol run <- (x -> 1)
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
