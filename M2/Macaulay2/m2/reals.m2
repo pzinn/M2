@@ -475,6 +475,10 @@ BesselY = method()
 BesselY(ZZ, Number) := (n, x) -> BesselY'(n, numeric x)
 BesselY(Number, Number) := (n, x) -> BesselY'(numeric n, numeric x)
 
+ring ComplexField := R -> CC
+ring RealField := R -> RR
+ring RealIntervalField := R -> RRi
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "
 -- End:

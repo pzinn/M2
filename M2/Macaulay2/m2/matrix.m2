@@ -13,8 +13,10 @@ nottosamering := (X,Y) -> (
 tosamering = (M,N) -> (
      R := ring M; S := ring N;
      if R =!= S then (
-	 if isPromotable(R,S) then (promote(M,S),N)
-	 else if isPromotable(S,R) then (M,promote(N,R))
+	 R' := if instance(R,InexactField) then ring R else R;
+	 S' := if instance(S,InexactField) then ring S else S;
+	 if isPromotable(R',S) then (promote(M,S),N)
+	 else if isPromotable(S',R) then (M,promote(N,R))
 	 else nottosamering(class M,class N)
 	 )
      else (M,N))
