@@ -3,6 +3,22 @@
 
 needs "modules.m2"
 
+notsamering := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for the same ring")
+     else error("expected ",synonym X," and ",synonym Y," for the same ring"))
+samering = (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
+nottosamering := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
+     else error("expected ",synonym X," and ",synonym Y," for compatible rings"))
+tosamering = (M,N) -> (
+     R := ring M; S := ring N;
+     if R =!= S then (
+	 if isPromotable(R,S) then (promote(M,S),N)
+	 else if isPromotable(S,R) then (M,promote(N,R))
+	 else nottosamering(class M,class N)
+	 )
+     else (M,N))
+
 oops := R -> error (
      if degreeLength R === 1
      then "expected degree to be an integer or list of integers of length 1"
@@ -79,22 +95,14 @@ InfiniteNumber * Matrix := (r,m) -> (map(target m, source m, matrix(r*(entries m
 Matrix * InfiniteNumber := (m,r) -> r*m
 Number * Matrix :=
 RingElement * Matrix := (r,m) -> (
-    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
+    (r,m) = tosamering(r,m);
      map(target m, source m, reduce(target m, raw r * raw m)))
 Matrix * Number :=
 Matrix * RingElement := (m,r) -> (
-    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
+    (r,m) = tosamering(r,m);
      map(target m, source m, reduce(target m, raw m * raw r)))
 Matrix / Number      :=
 Matrix / RingElement := (m,r) -> m * (1/r)
-
-toSameRing = (m,n) -> (
-     if ring m =!= ring n then (
-	  try (promote(m,ring n) , n) else
-	  try (m , promote(n,ring m))
-	  else error "expected compatible rings"
-	  )
-     else (m,n))
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
      if # ind === 2
@@ -128,7 +136,7 @@ Matrix == ZZ := (m,i) -> if i === 0 then rawIsZero m.RawMatrix else m - i == 0
 
 Matrix + Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f + raw g))
-     ) @@ toSameRing
+     ) @@ tosamering
 Matrix + RingElement :=
 Matrix + Number      := (f,r) -> if r == 0 then f else f + r*id_(target f)
 RingElement + Matrix :=
@@ -138,7 +146,7 @@ Number + Vector := RingElement + Vector := (r,v) -> vector(r + matrix v)
 
 Matrix - Matrix := Matrix => (
      (f,g) -> map(target f, source f, reduce(target f, raw f - raw g))
-     ) @@ toSameRing
+     ) @@ tosamering
 Matrix - RingElement :=
 Matrix - Number      := (f,r) -> if r == 0 then f else f - r*id_(target f)
 RingElement - Matrix :=
@@ -176,13 +184,7 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       q,
 	       Degree => degree m + if m.?RingMap then m.RingMap.cache.DegreeMap degree n else degree n))
      else (
-     	  R := ring m;
-	  S := ring target n;
-	  if R =!= S then ( -- use toSameRing?
-	       try m = promote(m,S) else
-	       try n = promote(n,R) else
-	       error "maps over incompatible rings";
-	       );
+	  (m,n) = tosamering(m,n);
 	  M = target m;
 	  P := source m;
 	  N = source n;
@@ -515,7 +517,7 @@ bothFree := (f,g) -> (
      or not isFreeModule source g or not isFreeModule target g then error "expected a homomorphism between free modules"
      else (f,g))
 
-diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing 
+diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ tosamering
 diff(RingElement, RingElement) := RingElement => (f,g) -> (diff(matrix{{f}},matrix{{g}}))_(0,0)
 diff(Matrix, RingElement) := (m,f) -> diff(m,matrix{{f}})
 diff(RingElement, Matrix) := (f,m) -> diff(matrix{{f}},m)
@@ -525,7 +527,7 @@ diff(Vector, Vector) := (v,w) -> diff(matrix{v}, transpose matrix{w})
 diff(Matrix, Vector) := (m,w) -> diff(m,transpose matrix {w})
 diff(Vector, Matrix) := (v,m) -> diff(matrix {v}, m)
 
-contract(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing
+contract(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixContract(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ tosamering
 contract(RingElement, RingElement) := RingElement => (f,g) -> (contract(matrix{{f}},matrix{{g}}))_(0,0)
 contract(Matrix, RingElement) := (m,f) -> contract(m,matrix{{f}})
 contract(RingElement, Matrix) := (f,m) -> contract(matrix{{f}},m)
@@ -543,8 +545,8 @@ contract(Number, Matrix) := (f,m) -> contract(matrix{{f}},m)
 contract(Vector, Number) := (v,f) -> (contract(matrix{v},matrix{{f}}))_0
 contract(Number, Vector) := (f,v) -> contract(matrix{{f}},transpose matrix{v})
 
-diff'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n) )) @@ bothFree @@ toSameRing
-contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n) )) @@ bothFree @@ toSameRing
+diff'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * diff(n,m) * flip(source m, dual source n) )) @@ bothFree @@ tosamering
+contract'(Matrix, Matrix) := Matrix => ((m,n) -> ( flip(dual target n, target m) * contract(n,m) * flip(source m, dual source n) )) @@ bothFree @@ tosamering
 
 jacobian = method()
 jacobian Matrix := Matrix => (m) -> diff(transpose vars ring m, m)

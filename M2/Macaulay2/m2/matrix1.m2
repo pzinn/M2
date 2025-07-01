@@ -6,17 +6,6 @@ needs "quotient.m2"
 
 -----------------------------------------------------------------------------
 
-notsamering := (X,Y) -> (
-     if X === Y then error("expected ",pluralsynonym X, " for the same ring")
-     else error("expected ",X.synonym," and ",Y.synonym," for the same ring"))
-nottosamering := (X,Y) -> (
-     if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
-     else error("expected ",X.synonym," and ",Y.synonym," for compatible rings"))
-samering = (M,N) -> if ring M === ring N then (M,N) else notsamering(class M,class N)
-tosamering := (M,N) -> if ring M === ring N then (M,N) else (
-     z := try 0_(ring M) + 0_(ring N) else nottosamering(class M,class N);
-     (promote(M,ring z),promote(N,ring z)))
-
 module Ring := Module => (cacheValue symbol module)(R -> R^1)
 
 matrix(RingFamily,List) := Matrix => opts -> (R,m) -> matrix(default R, m, opts)
@@ -382,7 +371,7 @@ tensor(Matrix, Matrix) := Matrix => {} >> opts -> ((f, g) -> (
      map(target f ** target g, 
 	  source f ** source g, 
 	  map(R, f.RawMatrix ** g.RawMatrix),
-	  Degree => degree f + degree g))) @@ toSameRing
+	  Degree => degree f + degree g))) @@ tosamering
 
 Matrix ** Module := Matrix => (f, M) -> tensor(f, id_M)
 Module ** Matrix := Matrix => (M, f) -> tensor(id_M, f)
