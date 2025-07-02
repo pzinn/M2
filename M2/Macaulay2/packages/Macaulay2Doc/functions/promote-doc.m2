@@ -19,7 +19,10 @@ promote(Vector,type of RingElement)
 *-
 
 undocumented {(promote,CC,CC_*),
-     (promote, Matrix, InexactNumber),(promote, Number, InexactNumber),
+     (promote, Matrix, InexactNumber),
+     (promote, QQ, RR),
+     (promote, ZZ, RR),
+     (promote, Number, CC),
      (promote, Ideal, Number),
      (promote, Ideal, RingElement),
      (promote, List, QQ, CC_*),
