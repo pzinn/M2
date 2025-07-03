@@ -159,6 +159,10 @@ QQ _ ComplexField :=
 RR _ ComplexField :=
 CC _ ComplexField := (x,R) -> toCC(R.precision,x)
 
+lift1 := z -> if z === 0. then 0/1 else if isFinite z then (
+     (prec,sgn,expt,m,numbits) := partsRR z;
+     sgn * m / 2^(numbits - expt)
+     )
 lift(RR,QQ) := opts -> (r,QQ) -> (
      if r == 0 then return 0/1;
      r' := r;
@@ -174,7 +178,7 @@ lift(RR,QQ) := opts -> (r,QQ) -> (
 	  d := m_(1,0);
 	  q := n / d;
 	  if r === numeric(p,q) then return q;
-	  if r' == 0 or abs(n*d) > p2 then return promote(r,QQ);
+	  if r' == 0 or abs(n*d) > p2 then return lift1 r;
 	  r' = 1/r' ;
 	  ))
 lift(RR,ZZ) := opts -> (r,ZZ) -> (
@@ -185,10 +189,6 @@ lift(CC,QQ) := lift(CC,ZZ) := opts -> (z,R) -> (
      if imaginaryPart z == 0 then lift(realPart z, R) 
      else if opts.Verify then error "lift: complex number not real"
      )
-promote(RR,QQ) := (z,QQ) -> if z === 0. then 0/1 else if isFinite z then (
-     (prec,sgn,expt,m,numbits) := partsRR z;
-     sgn * m / 2^(numbits - expt)
-     ) else error "promote(RR,QQ): non-finite number encountered"
 liftable(RRi,QQ) := (z,RR) -> diameter(z) == 0
 liftable(RRi,ZZ) := (z,RR) -> diameter(z) == 0
 lift(RRi,QQ) := opts -> (r,QQ) -> (
