@@ -42,9 +42,9 @@ RingFamily_* := RRi -> RRi#(symbol _*)
 RingFamily_* = (RR,e) -> RR#(symbol _*) = e
 RingFamily_* = (RRi,e) -> RRi#(symbol _*) = e
 InexactNumber' = new Type of Nothing'
-RR_* = RR' = new InexactFieldFamily of InexactNumber'
-RRi_* = RRi' = new InexactFieldFamily of InexactNumber'
-CC_* = CC' = new InexactFieldFamily of InexactNumber'
+RR_* = RR' = new Type of InexactNumber'
+RRi_* = RRi' = new Type of InexactNumber'
+CC_* = CC' = new Type of InexactNumber'
 
 RR'.texMath = ///{\mathbb R}_*///
 RRi'.texMath = ///{\square\mathbb R}_*///

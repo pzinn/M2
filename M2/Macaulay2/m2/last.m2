@@ -94,7 +94,7 @@ unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s)
 
 -- added: prevent run
 run0 := run
-allowedRuns := {"normaliz", "bertini", "phc", "scip", "bergman", "polymake", "dot", "gfan", "which", "mpsolve", "msolve", "topcom", "true"}
+allowedRuns := {"normaliz", "bertini", "phc", "scip", "bergman", "polymake", "dot", "gfan", "which", "mpsolve", "msolve", "topcom", "4ti2", "true"}
 
 run = x -> (
     if debugLevel>0 then "running " << x << endl;
