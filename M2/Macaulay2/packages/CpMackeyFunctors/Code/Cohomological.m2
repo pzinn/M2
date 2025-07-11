@@ -34,7 +34,11 @@ makeFreeModuleSurjectionCohomological(CpMackeyFunctor) := MackeyFunctorHomomorph
     gensUnderlying := inducedMap(M.Underlying, source gensUnderlying0, gensUnderlying0);
     gensFixed0 := mingens cokernel (M.Trans * gensUnderlying);
     gensFixed := inducedMap(M.Fixed, source gensFixed0, gensFixed0);
-    makeUniversalMapCohomological(M, gensUnderlying, gensFixed)
+    f := makeUniversalMapCohomological(M, gensUnderlying, gensFixed);
+    gensTorsion0 := mingens ((cokernel f).Underlying);
+    gensTorsion := inducedMap(M.Underlying, source gensTorsion0, gensTorsion0);
+    g := makeUniversalMapUnderlying(M, gensTorsion);
+    f | g
 )
 
 
