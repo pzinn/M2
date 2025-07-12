@@ -1,8 +1,8 @@
 ------additional stuff for cohomological Mackey functors------
 makeUniversalMapFixedCohomological = method()
--- Given a Mackey functor M and vector x in fixed module, produce map A -> M
+-- Given a Mackey functor M and vector x in fixed module, produce map Z -> M
 makeUniversalMapFixedCohomological(CpMackeyFunctor,Vector) := MackeyFunctorHomomorphism => (M,x) -> makeUniversalMapFixedCohomological(M,matrix x)
--- Given a Mackey functor M and a matrix of n vectors in fixed module, produce map A^n -> M
+-- Given a Mackey functor M and a matrix of n vectors in fixed module, produce map Z^n -> M
 makeUniversalMapFixedCohomological(CpMackeyFunctor,Matrix) := MackeyFunctorHomomorphism => (M,x) -> (
     if not isCohomological(M) then error "input is not a cohomological Mackey functor";
     n := numColumns x;
