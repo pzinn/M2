@@ -246,7 +246,7 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 topNodeButton  := (htmlDirectory, topFileName)   -> HREF {htmlDirectory | topFileName,   "top" };
 indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexFileName, "index"};
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
-pkgButton      := TO2 {"packages provided with Macaulay2", "Packages"};
+pkgButton      := TO2 {"Macaulay2Doc :: packages provided with Macaulay2", "Packages"};
 homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
 searchBox      := LITERAL ///<form method="get" action="https://www.google.com/search">
   <input placeholder="Search" type="text" name="q" value="">
@@ -543,6 +543,8 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    toString cachehash);
 	samehash);
 
+    errorList := new MutableList;
+
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     scan(pairs pkg#"example inputs", (fkey, inputs) -> (
 	    inpf  := inpfn  fkey; -- input file
@@ -568,8 +570,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 		desc, demark_newline inputs, pkg,
 		inpf, outf, errf, data,
 		inputhash, changeFunc fkey,
-		usermode) then (possiblyCache(outf, outf', fkey))();
+		usermode) then (possiblyCache(outf, outf', fkey))()
+	    else errorList##errorList = fkey;
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
+
+    if #errorList > 0 then (
+	stderr << concatenate(printWidth:"=") << endl;
+	printerr("Summary: ", toString(#errorList), " example(s) failed in package ", pkg#"pkgname", ":");
+	printerr netList(Boxes => false, HorizontalSpace => 2,
+	    apply(toList errorList, fkey -> { fkey, locate makeDocumentTag fkey })));
 
     -- check for obsolete example output files and remove them
     if chkdoc then (
@@ -773,7 +782,7 @@ installPackage Package := opts -> pkg -> (
 
 	if 0 < numExampleErrors then verboseLog stack apply(readDirectory exampleOutputDir,
 	    file -> if match("\\.errors$", file) then stack {
-		file, concatenate(width file : "*"), getErrors(exampleOutputDir | file)});
+		file, concatenate(width file : "="), getErrors(exampleOutputDir | file)});
 
 	if not opts.IgnoreExampleErrors then checkForErrors pkg;
 
@@ -875,7 +884,7 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 uninstallPackage = method(Options => { InstallPrefix => applicationDirectory() | "local/" })
 uninstallPackage Package := opts -> pkg -> uninstallPackage(toString pkg, opts)
 uninstallPackage String  := opts -> pkg -> (
-    checkPackageName pkg;
+    checkPackageName(pkg, false);
     installPrefix := minimizeFilename opts.InstallPrefix;
     apply(findFiles apply({1, 2},
 	    i -> apply(flatten {

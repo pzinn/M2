@@ -37,6 +37,7 @@ addStartFunction(
 		   DebuggingMode  => true);
 	       User.PackageIsLoaded = true;
 	       User#"source directory" = "";
+	       User#"source file" = "stdio";
 	       path = prepend("./",path); -- now we search also the user's current directory, since our files have already been loaded
 	       path = unique apply( path, minimizeFilename);	    -- beautify
 	       allowLocalCreation User#"private dictionary";
@@ -55,7 +56,7 @@ addStartFunction( () -> (
 addStartFunction( () -> (
 	  if not nobanner then (
 	       if topLevelMode === TeXmacs then stderr << TeXmacsBegin << "verbatim:";
-	       stderr << "Type `help` to see useful commands" << endl;
+	       print SPAN("Type ", KBD M2CODE "help", " to see useful commands");
 	       if topLevelMode === TeXmacs then stderr << TeXmacsEnd << flush;
 	       );
 	  )
@@ -85,6 +86,8 @@ addStartFunction( () -> if version#"gc version" < "7.0" then error "expected lib
 
 copyright = new Command from(() -> help "Copyright and license")
 if fullCopyright then addStartFunction(() -> print copyright())
+
+undocumented' = x -> error "late use of function undocumented'"
 
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 Function.GlobalReleaseHook = (X,x) -> (

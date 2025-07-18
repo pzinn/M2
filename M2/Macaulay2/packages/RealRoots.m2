@@ -22,7 +22,20 @@ newPackage(
     Keywords=>{"Real Algebraic Geometry"},
     PackageImports=>{},
     PackageExports=>{},
-    DebuggingMode=>false
+    DebuggingMode=>false,
+    Certification => {
+	"journal name" => "Journal of Software for Algebra and Geometry",
+	"journal URI" => "https://msp.org/jsag/",
+	"article title" => "Real solutions to systems of polynomial equations in Macaulay2",
+	"acceptance date" => "2024-03-18",
+	"published article URI" => "https://msp.org/jsag/2024/14-1/p10.xhtml",
+	"published article DOI" => "10.2140/jsag.2024.14.87",
+	"published code URI" => "https://msp.org/jsag/2024/14-1/jsag-v14-n1-x10-RealRoots.m2",
+	"release at publication" => "8280f904f702534a4a01a727e86c8ac56c64f25b",
+	"version at publication" => "1.0",
+	"volume number" => "14",
+	"volume URI" => "https://msp.org/jsag/2024/14-1/"
+	}
     )
 
 
@@ -90,17 +103,6 @@ isArtinian (Ring) := Boolean => S->(
     if not (isPolynomialRing ambient S and isField coefficientRing S) then error "Error: Expected quotient of polynomial ring over a field";
     dim S === 0
     )
-
-        
---Computes the sign of a real number
-sign = method()
-for A in {ZZ,QQ} do
-sign (A) := ZZ => n->(
-     if n < 0 then -1 
-     else if n == 0 then 0
-     else if n > 0 then 1
-     )
-
 
 --Computes the sign of a real univariate polynomial at a given real number
 signAt = method()
