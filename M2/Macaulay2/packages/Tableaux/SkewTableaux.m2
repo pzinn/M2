@@ -174,7 +174,7 @@ SkewTableau_Sequence := (T,thePosition)->(
     (rowIndex,colIndex) := thePosition;
     (lam,mu) := standardize skewShape normalizeNegativeRows T;
 
-    if not isMember(rowIndex, rowRange T) then error("index "|toString(rowIndex)|" out of range");
+    if rowIndex < 0 or rowIndex >= numRows T then error("index "|toString(rowIndex)|" out of range");
     if colIndex < mu#rowIndex or colIndex >= lam#rowIndex then error "index "|toString(colIndex)|" out of range";
 
     T^rowIndex#colIndex
