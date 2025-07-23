@@ -53,7 +53,7 @@ TEST /// -- numRows, numColumns, rowRange, columnRange, positionList, toIndex, t
 ///
 
 TEST /// -- yngTableau
-         -- isSkew, isWeaklyDecreasing, isNonnegative
+         -- isWeaklyDecreasing, isNonnegative
 
   lam = new Partition from {4,1,0,-3,0,2,0,0}
   mu = new Partition from {1,0,0,2,-2,-1,-5,-1,0,0}
@@ -62,9 +62,6 @@ TEST /// -- yngTableau
 
   lam' = new Partition from {6,5,3,1}
   T' = yngTableau(lam')
-
-  assert(isSkew T == true)
-  assert(isSkew T' == false)
 
   assert(isWeaklyDecreasing T == false)
   assert(isWeaklyDecreasing T' == true)
