@@ -15,7 +15,7 @@ newPackage(
 export {"SkewTableau", "skewTableau",
         "youngDiagram", "ferrersDiagram", "drawInnerShape",
         "skewShape", "standardize", "rowEntries", "columnEntries", "rowRange", "columnRange",
-        "isSkew", "isWeaklyDecreasing", "isNonnegative",
+        "isWeaklyDecreasing", "isNonnegative",
         "toPosition", "toIndex", "positionList", "applyEntries", "applyPositions",
         "verticalConcatenate", "shift", "unshift",
         "boxContent", "hookLength",
