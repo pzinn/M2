@@ -467,10 +467,10 @@ components SkewTableau := T -> (
 -- making new tableau
 
 applyEntries = method(TypicalValue => SkewTableau)
-applyEntries (SkewTableau,Function) := (T,f) -> skewTableau(truncate skewShape T, apply(entries T, theBox -> f theBox))
+applyEntries (SkewTableau,Function) := (T,f) -> skewTableau(truncate skewShape T, apply(entries T, f))
 
 applyPositions = method(TypicalValue => SkewTableau)
-applyPositions (SkewTableau,Function) := (T,f) -> skewTableau(truncate skewShape T, apply(positionList T, thePosition -> f thePosition))
+applyPositions (SkewTableau,Function) := (T,f) -> skewTableau(truncate skewShape T, apply(positionList T, f))
 
 conjugate SkewTableau := T -> (
     if not isWeaklyDecreasing T or not isNonnegative T then error "expected shape to be weakly decreasing and nonnegative";
