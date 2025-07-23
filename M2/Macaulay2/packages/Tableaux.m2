@@ -4,7 +4,7 @@ newPackage(
     Date => "July 22, 2025",
     Authors => {
 	{Name => "John Graf", Email => "jrgraf@alumni.ncsu.edu", HomePage => "https://j-graf.github.io/"}},
-    Headline => "a package for constructing skew tableaux",
+    Headline => "constructing skew tableaux",
     Keywords => {"Combinatorics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,
