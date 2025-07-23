@@ -1054,26 +1054,6 @@ Description
 
 doc ///
 Key
-    isSkew
-   (isSkew, SkewTableau)
-Headline
-   check if a tableau is skew
-Usage
-   isSkew T
-Inputs
-    T:SkewTableau
-      a tableau.
-Outputs
-    b:Boolean
-      returns false if the inner shape is $0$, and true otherwise.
-Description
-  Example
-    isSkew skewTableau(new Partition from {6,6,5,3,1}, new Partition from {2,1,1})
-    isSkew skewTableau(new Partition from {6,6,5,3,1}, new Partition from {})
-///
-
-doc ///
-Key
     isWeaklyDecreasing
    (isWeaklyDecreasing, SkewTableau)
    (isWeaklyDecreasing, Partition, Partition)
