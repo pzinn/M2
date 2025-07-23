@@ -28,19 +28,19 @@ export {"allSemistandardTableaux", "numSemistandardTableaux"}
 
 
     
--- Implimentation of class SkewTableau
+-- Implementation of class SkewTableau
 
 load "Tableaux/SkewTableaux.m2"
 
 
 
--- Implimentation of subclass YngTableau
+-- Implementation of subclass YngTableau
 
 load "Tableaux/YngTableaux.m2"
 
 
 
--- TODO: Implimentation of subclass Tabloid
+-- TODO: Implementation of subclass Tabloid
 
 -- load "Tableaux/Tabloids.m2"
 
