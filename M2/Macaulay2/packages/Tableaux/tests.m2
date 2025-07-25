@@ -52,7 +52,7 @@ TEST /// -- numRows, numColumns, rowRange, columnRange, positionList, toIndex, t
   
 ///
 
-TEST /// -- yngTableau
+TEST /// -- youngTableau
          -- isWeaklyDecreasing, isNonnegative
 
   lam = new Partition from {4,1,0,-3,0,2,0,0}
@@ -61,7 +61,7 @@ TEST /// -- yngTableau
   T = skewTableau(lam,mu,entryList)
 
   lam' = new Partition from {6,5,3,1}
-  T' = yngTableau(lam')
+  T' = youngTableau(lam')
 
   assert(isWeaklyDecreasing T == false)
   assert(isWeaklyDecreasing T' == true)
