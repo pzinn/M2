@@ -1,6 +1,6 @@
 newPackage(
     "Tableaux",
-    Version => "1.0",
+    Version => "0.5",
     Date => "July 22, 2025",
     Authors => {
 	{Name => "John Graf", Email => "jrgraf@alumni.ncsu.edu", HomePage => "https://j-graf.github.io/"}},
@@ -21,7 +21,7 @@ export {"SkewTableau", "skewTableau",
         "boxContent", "hookLength",
         }
 
-export {"YngTableau", "yngTableau",
+export {"YoungTableau", "youngTableau",
         "shape"}
 
 export {"allSemistandardTableaux", "numSemistandardTableaux"}
@@ -34,9 +34,9 @@ load "Tableaux/SkewTableaux.m2"
 
 
 
--- Implementation of subclass YngTableau
+-- Implementation of subclass YoungTableau
 
-load "Tableaux/YngTableaux.m2"
+load "Tableaux/YoungTableaux.m2"
 
 
 
