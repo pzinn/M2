@@ -1,9 +1,9 @@
 
 
-YngTableau = new Type of SkewTableau
+YoungTableau = new Type of SkewTableau
 
-yngTableau = method(TypicalValue => YngTableau)
-yngTableau (Partition,List) := (lam,theList) -> (
+youngTableau = method(TypicalValue => YoungTableau)
+youngTableau (Partition,List) := (lam,theList) -> (
     numBoxesNeeded := sum for i from 0 to #lam-1 list abs(lam#i);
     
     if (numBoxesNeeded != #theList) then error "partition sizes do not match with the length of the list";
@@ -11,22 +11,22 @@ yngTableau (Partition,List) := (lam,theList) -> (
 
     mu := new Partition from {};
 
-    new YngTableau from {
+    new YoungTableau from {
         "outerShape" => lam,
         "innerShape" => mu,
         values => theList
         }
     )
-yngTableau Partition := lam -> (
+youngTableau Partition := lam -> (
     numBoxesNeeded := sum for i from 0 to #lam-1 list abs(lam#i);
     
-    yngTableau(lam, toList(numBoxesNeeded:""))
+    youngTableau(lam, toList(numBoxesNeeded:""))
     )
 
-skewTableau YngTableau := T -> new SkewTableau from T
+skewTableau YoungTableau := T -> new SkewTableau from T
 
 shape = method(TypicalValue => Partition)
-shape YngTableau := T -> (
+shape YoungTableau := T -> (
     T#"outerShape"
     )
 
