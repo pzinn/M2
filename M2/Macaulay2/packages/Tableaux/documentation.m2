@@ -7,7 +7,7 @@ Node
     a package for computing with Young tableaux
   Description
     Text
-      This package provides the classes @TO SkewTableau@ and @TO YngTableau@.
+      This package provides the classes @TO SkewTableau@ and @TO YoungTableau@.
 ///
 
 doc ///
@@ -31,24 +31,24 @@ Description
     T = skewTableau(lam,mu,entryList)
 SeeAlso
     skewTableau
-    YngTableau
+    YoungTableau
 ///
 
 doc ///
 Key
-    YngTableau
+    YoungTableau
 Headline
     a type of HashTable representing a (nonskew) Young tableau
 Description
   Text
-    This is a subclass of @TO SkewTableau@. Each object of YngTableau is essentially just a skew tableau with inner
+    This is a subclass of @TO SkewTableau@. Each object of YoungTableau is essentially just a skew tableau with inner
     shape $\mu=0$.
   Example
     lam = new Partition from {4,3,2}
     entryList = toList(1..(sum toList lam))
-    T = yngTableau(lam,entryList)
+    T = youngTableau(lam,entryList)
 SeeAlso
-    yngTableau
+    youngTableau
     SkewTableau
 ///
 
@@ -60,7 +60,7 @@ Key
    (skewTableau, Partition, List)
    (skewTableau, Partition, Partition)
    (skewTableau, Partition)
-   (skewTableau, YngTableau)
+   (skewTableau, YoungTableau)
     drawInnerShape
    (drawInnerShape, Boolean)
 Headline
@@ -104,9 +104,9 @@ Description
   Example
     skewTableau(new Partition from {-2,-4,2}, new Partition from {1,-1,-1}, {1,2,3,4,5,6,7,8,9})
   Text
-    We may cast an object of type @TO YngTableau@ to type SkewTableau.
+    We may cast an object of type @TO YoungTableau@ to type SkewTableau.
   Example
-    T' = yngTableau(new Partition from {3,1,1})
+    T' = youngTableau(new Partition from {3,1,1})
     skewTableau T'
   Text
     The inner shape may be drawn by calling drawInnerShape.
@@ -118,26 +118,26 @@ Description
     T''
 SeeAlso
   SkewTableau
-  YngTableau
-  yngTableau
+  YoungTableau
+  youngTableau
 ///
 
 doc ///
 Key
-    yngTableau
-   (yngTableau, Partition, List)
-   (yngTableau, Partition)
+    youngTableau
+   (youngTableau, Partition, List)
+   (youngTableau, Partition)
 Headline
-    constructor for type YngTableau
+    constructor for type YoungTableau
 Usage
-    yngTableau(lam, entryList)
+    youngTableau(lam, entryList)
 Inputs
     lam:Partition
       the shape $\lambda$.
     entryList:List
       the filling of the boxes. If not given, then box entries are assumed to be the empty string "".
 Outputs
-    T:YngTableau
+    T:YoungTableau
       a (nonskew) Young tableau of shape $\lambda$ with the given filling.
 Consequences
     Item
@@ -149,24 +149,24 @@ Description
   Example
     lam = new Partition from {4,3,2}
     entryList = {1,2,3,4,5,6,7,8,9}
-    T = yngTableau(lam,entryList)
+    T = youngTableau(lam,entryList)
   Text
     We may construct tableaux with any compositions.
   Example
-    yngTableau(new Partition from {3,5,1}, {7,"&",4,2,"g","u",6,0,-1})
+    youngTableau(new Partition from {3,5,1}, {7,"&",4,2,"g","u",6,0,-1})
   Text
     The shape may have negative parts. In this case, a vertical line is drawn by @TO2{(net, SkewTableau),"net"}@
     to indicate that negative parts are to the left. If any $\lambda_i<0$, then the boxes in that row are drawn shaded.
   Example
-    yngTableau(new Partition from {-2,-4,2})
+    youngTableau(new Partition from {-2,-4,2})
   Text
-    We may cast an object of type YngTableau to type @TO SkewTableau@.
+    We may cast an object of type YoungTableau to type @TO SkewTableau@.
   Example
-    T' = yngTableau(new Partition from {3,1,1})
+    T' = youngTableau(new Partition from {3,1,1})
     skewTableau T'
 SeeAlso
   SkewTableau
-  YngTableau
+  YoungTableau
   skewTableau
 ///
 
@@ -197,7 +197,7 @@ Description
     youngDiagram T
 SeeAlso
   skewTableau
-  yngTableau
+  youngTableau
   ferrersDiagram
 ///
 
@@ -228,7 +228,7 @@ Description
     ferrersDiagram T
 SeeAlso
   skewTableau
-  yngTableau
+  youngTableau
   youngDiagram
 ///
 
@@ -253,7 +253,7 @@ Description
     tex T
 SeeAlso
   skewTableau
-  yngTableau
+  youngTableau
   youngDiagram
   ferrersDiagram
 ///
@@ -307,7 +307,7 @@ SeeAlso
 doc ///
 Key
     shape
-   (shape, YngTableau)
+   (shape, YoungTableau)
    (truncate, Partition)
 Headline
     the shape of a Young tableau
@@ -323,7 +323,7 @@ Description
   Text
     This returns the original shape used to construct the tableau.
   Example
-    T = yngTableau(new Partition from {4,3,1,0})
+    T = youngTableau(new Partition from {4,3,1,0})
     shape T
   Text
     It may be convenient to remove trailing $0$'s from the partitions by using truncate on the partition.
