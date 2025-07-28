@@ -111,7 +111,7 @@ InvariantRing
 QuillenSuslin
 EnumerationCurves
 Book3264Examples
-Divisor
+WeilDivisors
 EllipticCurves
 HighestWeights
 MinimalPrimes
@@ -285,3 +285,6 @@ Brackets
 IntegerProgramming
 GameTheory
 AllMarkovBases
+Tableaux
+CpMackeyFunctors
+JSONRPC

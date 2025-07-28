@@ -767,8 +767,8 @@ set(4ti2_PROGRAMS
   qsolve rays walk zbasis zsolve hilbert graver ppi genmodel gensymm output)
 list(TRANSFORM 4ti2_PROGRAMS PREPEND ${M2_HOST_PREFIX}/bin/ OUTPUT_VARIABLE 4ti2_PROGRAMS)
 ExternalProject_Add(build-4ti2
-  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_12/4ti2-1.6.12.tar.gz
-  URL_HASH          SHA256=5c72266610a18f39c6dfda62fb3af40482d083739f87e5240ae4f9a5b9d402dd
+  URL               https://github.com/4ti2/4ti2/releases/download/Release_1_6_13/4ti2-1.6.13.tar.gz
+  URL_HASH          SHA256=f59e1ea5563d2188b0e8ff61a8584845a899e3e54a570305f6f99b26c9b1e6b5
   PREFIX            libraries/4ti2
   SOURCE_DIR        libraries/4ti2/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
@@ -864,7 +864,7 @@ _ADD_COMPONENT_DEPENDENCY(programs gfan "gmp;cddlib" GFAN)
 # http://www-cgrl.cs.mcgill.ca/~avis/C/lrs.html
 # TODO: the shared library target doesn't work on Apple
 ExternalProject_Add(build-lrslib
-  URL               https://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-073.tar.gz
+  URL               https://macaulay2.com/Downloads/OtherSourceCode/lrslib-073.tar.gz
   URL_HASH          SHA256=c49a4ebd856183473d1d5a62785fcdfe1057d5d671d4b96f3a1250eb1afe4e83
   PREFIX            libraries/lrslib
   SOURCE_DIR        libraries/lrslib/build
@@ -931,8 +931,8 @@ set(nauty_BINARIES
   genspecialg gentourng gentreeg hamheuristic labelg linegraphg listg multig newedgeg pickg
   planarg ranlabg shortg showg subdivideg twohamg vcolg watercluster2)
 ExternalProject_Add(build-nauty
-  URL               https://pallini.di.uniroma1.it/nauty2_8_9.tar.gz
-  URL_HASH          SHA256=c97ab42bf48796a86a598bce3e9269047ca2b32c14fc23e07208a244fe52c4ee
+  URL               https://pallini.di.uniroma1.it/nauty2_9_0.tar.gz
+  URL_HASH          SHA256=7b38834c7cefe17d25e05eef1ef3882fa9cd1933f582b9eb9de7477411956053
   PREFIX            libraries/nauty
   SOURCE_DIR        libraries/nauty/build
   DOWNLOAD_DIR      ${CMAKE_SOURCE_DIR}/BUILD/tarfiles
