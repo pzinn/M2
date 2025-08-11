@@ -121,13 +121,14 @@ setUpApplicationDirectory = () -> (
 -----------------------------------------------------------------------------
 -- exit, restart
 -----------------------------------------------------------------------------
-
+exec0:=exec
+exec = a -> return
 restart = Command ( 
      () -> (
 	  restarting = true;
 	  runEndFunctions();
 	  scan(openFiles(), f -> if f =!= stdio and f =!= stderr then close f);
-	  exec if isMember("--restarted",commandLine) then commandLine else join({commandLine#0,"--restarted"},drop(commandLine,1))
+	  exec0 if isMember("--restarted",commandLine) then commandLine else join({commandLine#0,"--restarted"},drop(commandLine,1))
 	  )
      )
 

@@ -1310,7 +1310,7 @@ exec(e:Expr):Expr := (
      is a:List do exec(a.v)
      is stringCell do exec(Sequence(e))
      else WrongArg( "a string or a sequence or list of strings"));
-setupfun("exec",exec);
+setupfun("exec",exec).Protected=false;
 
 youngest(e:Expr):Expr := (
      when e
