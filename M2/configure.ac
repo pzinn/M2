@@ -115,7 +115,7 @@ then if test -f /usr/bin/sw_vers
      fi
      # translate to something standard (for us), and verify :
      case $ISSUE_FLAVOR in
-         "Mac OS X") ISSUE_FLAVOR=MacOS ;;
+         "Mac OS X"|"macOS") ISSUE_FLAVOR=MacOS ;;
 	 "debian"|"Debian"*) ISSUE_FLAVOR=Debian ;;
          "ubuntu"|"Ubuntu") ISSUE_FLAVOR=Ubuntu ;;
 	 "FedoraCore"*) ISSUE_FLAVOR=FedoraCore ;;
@@ -262,7 +262,7 @@ AC_SUBST(M2_CFLAGS)
 AC_SUBST(M2_CXXFLAGS)
 
 dnl Fix standards, apply everywhere
-CXXFLAGS="-std=gnu++14 $CXXFLAGS"
+CXXFLAGS="-std=gnu++17 $CXXFLAGS"
 CFLAGS="-std=gnu11 $CFLAGS"
 
 AC_PROG_CC() 			# set CFLAGS before this
@@ -503,6 +503,7 @@ case $COMPRESS in
     *) AC_MSG_ERROR(unrecognized option for enable-compress) ;;
 esac
 
+$GIT fetch --tags https://github.com/Macaulay2/M2 2> /dev/null || true
 AC_SUBST([GIT_DESCRIPTION],
          [`$GIT describe --tags --dirty || echo release-$PACKAGE_VERSION`])
 AC_SUBST([GIT_BRANCH],
@@ -925,6 +926,7 @@ then AC_LANG(C)
 	       AC_CHECK_HEADERS([arb.h],,
 		   [AC_CHECK_HEADERS([flint/arb.h],,
 		       [AC_MSG_ERROR([Arb headers not found])])])
+	       AC_CHECK_FUNCS([flint_rand_init])
 	  fi,
 	  AC_MSG_RESULT([no])
 	  BUILD_flint=yes)
@@ -934,6 +936,7 @@ if test $BUILD_flint = yes
 then BUILTLIBS="-lflint $BUILTLIBS -lm"
      AC_DEFINE([HAVE_FLINT_NMOD_H])
      AC_DEFINE([HAVE_FLINT_ARB_H])
+     AC_DEFINE([HAVE_FLINT_RAND_INIT])
      AS_IF([test $BUILD_gmp = no],
          [AC_LANG([C])
           AC_MSG_CHECKING([if gmp >= 6.2.1 (needed to build flint)])
@@ -957,6 +960,9 @@ then BUILTLIBS="-lflint $BUILTLIBS -lm"
                   BUILD_gmp=yes
                   LIBS_GMP="-lgmpxx -lgmp"
                   BUILTLIBS="$LIBS_GMP $BUILTLIBS"])])
+     AS_IF([test "x$BUILD_factory" = "xno"],
+         [AC_MSG_NOTICE([we will build factory since we are building flint])
+          BUILD_factory=yes])
 fi
 
 dnl debian: 4ti2-
@@ -1226,8 +1232,11 @@ AC_ARG_WITH(unbuilt-programs,
 	esac
      done])
 
-AC_SUBST(DOWNLOAD,no)
-AC_ARG_ENABLE(download, AS_HELP_STRING(--enable-download,enable automatic downloading of needed third-party libraries), DOWNLOAD=$enableval)
+AC_SUBST([DOWNLOAD], [yes])
+AC_ARG_ENABLE([download],
+    [AS_HELP_STRING([--disable-download],
+        [disable automatic downloading of needed third-party libraries])],
+    [DOWNLOAD=$enableval])
 AC_CHECK_PROGS(WGET,wget,false)
 AC_CHECK_PROGS(CURL,curl,false)
 if test $DOWNLOAD = yes
