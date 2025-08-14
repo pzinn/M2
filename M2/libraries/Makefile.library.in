@@ -100,7 +100,6 @@ else
 UNTARCMD      ?= @TAR@ xf $(TARFILE_DIR)/$(TARFILE) $(TAROPTIONS)
 endif
 %.E: %.c; $(COMPILE.c) -E $(OUTPUT_OPTION) $<
-export PATH := @abs_top_srcdir@/usr-build/bin:$(PATH)
 all:prereq install post-install
 prereq:
 post-install:
@@ -116,7 +115,7 @@ uninstall::; rm -f .installed-$(VERSION)
 reinstall: uninstall install
 always:
 diffs: .untarred2-$(VERSION) always
-	D=`pwd`; cd $(UNTARDIR) && diff -ur $(DIFF_OPTIONS) $$D/tmp/$(TARDIR) $(TARDIR) |egrep -v '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
+	D=`pwd`; cd $(UNTARDIR) && diff -ur $(DIFF_OPTIONS) $$D/tmp/$(TARDIR) $(TARDIR) | grep -Ev '^Only in ' >$$D/$@ || echo diffs: `pwd`/$@
 unmark:; rm -f .configured-$(VERSION) .compiled-$(VERSION)
 package-clean: unmark ; if [ -d $(BUILDDIR) ]; then $(MAKE) $(NOTPARALLEL) -C $(BUILDDIR) clean ; fi
 PACKAGE-DISTCLEAN-TARGET := distclean
@@ -196,7 +195,7 @@ endif
 PATCHCMD = cd $(UNTARDIR) && for i in $(PATCHFILE) ; do @PATCH@ --batch -p0 < $$i ; done
 .patched-$(VERSION) : $(PATCHFILE)
 	$(WHY)
-	if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
+	@ if [ -d $(UNTARDIR) -a -d $(OLDUNTARDIR)/$(UNTARDIR) ] ; \
 	    then echo please remove or move $(OLDUNTARDIR)/$(UNTARDIR) out of the way ; \
 	         exit 1 ; \
 	    fi

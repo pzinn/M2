@@ -207,13 +207,15 @@ assembleTree := (pkg, nodes) -> (
     graph = new HashTable from apply(nodes, tag -> (
 	    checkIsTag tag;
 	    fkey := format tag;
-	    if  pkg#"raw documentation"#?fkey
-	    and pkg#"raw documentation"#fkey.?Subnodes then (
-		subnodes := pkg#"raw documentation"#fkey.Subnodes;
-		subnodes  = select(deepApply(subnodes, identity), DocumentTag);
-		subnodes  = select(fixup \ subnodes, node -> package node === pkg);
-		tag => getPrimaryTag \ subnodes)
-	    else tag => {}));
+	    rawdoc := pkg#"raw documentation"#fkey ?? ();
+	    content := apply({Description, Acknowledgement,
+		    Contributors, References, Caveat}, key -> try rawdoc#key);
+	    sublinks := deepSelect(content,
+		e -> try e#0 === ("class" => "subnode") else false);
+	    subnodes := rawdoc.Subnodes ?? ();
+	    subnodes  = deepSelect(join(sublinks, subnodes), DocumentTag);
+	    subnodes  = select(fixup \ subnodes, node -> package node === pkg);
+	    tag => getPrimaryTag \ subnodes));
     -- build the forest
     tableOfContents := makeForest(graph, visits);
     -- signal errors
@@ -221,11 +223,11 @@ assembleTree := (pkg, nodes) -> (
 	scan(keys visits#"missing",
 	    node -> (
 		printerr("error: missing reference(s) to subnode documentation: ", format node);
-		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
+		printerr("\t", net TABLE apply(unique visits#"parents"#node, tag -> { locate tag, format tag }))));
 	scan(keys visits#"repeated",
 	    node -> (
 		printerr("error: repeated references to subnode documentation: ", format node);
-		printerr("  Parent nodes: ", demark_", " (format \ unique visits#"parents"#node))));
+		printerr("\t", net TABLE apply(unique visits#"parents"#node, tag -> { locate tag, format tag }))));
 	error("installPackage: error in assembling the documentation tree"));
     -- build the navigation links
     buildLinks tableOfContents;
@@ -244,7 +246,7 @@ BACKWARD  := tag -> if PREV#?tag then BACKWARD0 PREV#tag else if UP#?tag then UP
 topNodeButton  := (htmlDirectory, topFileName)   -> HREF {htmlDirectory | topFileName,   "top" };
 indexButton    := (htmlDirectory, indexFileName) -> HREF {htmlDirectory | indexFileName, "index"};
 tocButton      := (htmlDirectory, tocFileName)   -> HREF {htmlDirectory | tocFileName,   "toc"};
-pkgButton      := TO2 {"packages provided with Macaulay2", "Packages"};
+pkgButton      := TO2 {"Macaulay2Doc :: packages provided with Macaulay2", "Packages"};
 homeButton     := HREF {"https://macaulay2.com/", "Macaulay2"};
 searchBox      := LITERAL ///<form method="get" action="https://www.google.com/search">
   <input placeholder="Search" type="text" name="q" value="">
@@ -504,8 +506,6 @@ reproduciblePaths = outstr -> (
 	     outstr = replace(prefixdir | Layout#2#key,
 		 finalPrefix | Layout#1#key, outstr));
 	 outstr = replace(prefixdir, finalPrefix, outstr);
-	 -- usr-build/bin is in PATH during build
-	 outstr = replace(builddir | "usr-build/", finalPrefix, outstr);
 	 -- home directory
 	 outstr = replace(homedir, "/home/m2user", outstr);
 	 );
@@ -541,6 +541,8 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 	    toString cachehash);
 	samehash);
 
+    errorList := new MutableList;
+
     usermode := if opts.UserMode === null then not noinitfile else opts.UserMode;
     scan(pairs pkg#"example inputs", (fkey, inputs) -> (
 	    inpf  := inpfn  fkey; -- input file
@@ -566,8 +568,15 @@ generateExampleResults := (pkg, rawDocumentationCache, exampleDir, exampleOutput
 		desc, demark_newline inputs, pkg,
 		inpf, outf, errf, data,
 		inputhash, changeFunc fkey,
-		usermode) then (possiblyCache(outf, outf', fkey))();
+		usermode) then (possiblyCache(outf, outf', fkey))()
+	    else errorList##errorList = fkey;
 	    storeExampleOutput(pkg, fkey, outf, verboseLog)));
+
+    if #errorList > 0 then (
+	stderr << concatenate(printWidth:"=") << endl;
+	printerr("Summary: ", toString(#errorList), " example(s) failed in package ", pkg#"pkgname", ":");
+	printerr netList(Boxes => false, HorizontalSpace => 2,
+	    apply(toList errorList, fkey -> { fkey, locate makeDocumentTag fkey })));
 
     -- check for obsolete example output files and remove them
     if chkdoc then (
@@ -615,9 +624,7 @@ checkForWarnings := pkg -> (
 
 checkForErrors := pkg -> (
     if 0 < numDocumentationErrors then error("installPackage: ", toString numDocumentationErrors,
-	" error(s) occurred in processing documentation for package ", toString pkg);
-    if 0 < numExampleErrors then error("installPackage: ", toString numExampleErrors,
-	" error(s) occurred in running examples for package ", toString pkg))
+	" error(s) occurred in processing documentation for package ", toString pkg))
 
 -----------------------------------------------------------------------------
 -- installPackage
@@ -771,9 +778,10 @@ installPackage Package := opts -> pkg -> (
 
 	if 0 < numExampleErrors then verboseLog stack apply(readDirectory exampleOutputDir,
 	    file -> if match("\\.errors$", file) then stack {
-		file, concatenate(width file : "*"), getErrors(exampleOutputDir | file)});
-
-	if not opts.IgnoreExampleErrors then checkForErrors pkg;
+		file, concatenate(width file : "="), getErrors(exampleOutputDir | file)});
+	if not opts.IgnoreExampleErrors and  0 < numExampleErrors
+	then error("installPackage: ", numExampleErrors,
+	    " error(s) occurred in running examples for package ", pkg);
 
 	-- if no examples were generated, then remove the directory
 	if length readDirectory exampleOutputDir == 2 then removeDirectory exampleOutputDir;
@@ -873,7 +881,7 @@ removeFiles = p -> scan(reverse findFiles p, fn -> if fileExists fn or readlink 
 uninstallPackage = method(Options => { InstallPrefix => applicationDirectory() | "local/" })
 uninstallPackage Package := opts -> pkg -> uninstallPackage(toString pkg, opts)
 uninstallPackage String  := opts -> pkg -> (
-    checkPackageName pkg;
+    checkPackageName(pkg, false);
     installPrefix := minimizeFilename opts.InstallPrefix;
     apply(findFiles apply({1, 2},
 	    i -> apply(flatten {

@@ -27,7 +27,9 @@ document {
      Key => {"Copyright and license", "copyright"},
      PARA {
 	  "Macaulay2, its object code, source code, and documentation,
-	  are copyright by Daniel R. Grayson and Michael E. Stillman.  We permit you to use it either
+	  are copyright by ",
+	  HREF{"https://github.com/Macaulay2/M2/wiki/The-Macaulay2-Authors",
+	      "The Macaulay2 Authors"}, ".  We permit you to use it either
 	  under the terms of the GNU General Public License, version 2, as published by the Free Software Foundation, and as
 	  contained in the file ", TO "COPYING-GPL-2", " accompanying the program, or
 	  under the terms of the GNU General Public License, version 3, as published by the Free Software Foundation, and as
@@ -395,21 +397,21 @@ document {
      intellectual debt to Dave Bayer, who, with Michael Stillman,
      wrote Macaulay, a specialized computer algebra system for algebraic
      geometry and the predecessor of this program.",
-     SeeAlso => "authors of Macaulay2 packages"
+     SeeAlso => "The authors of Macaulay2 packages"
      }
 
 document {
-     Key => "The authors",
+     Key => "The authors of Macaulay2",
      PARA{},
      "To communicate with the authors about the program, use this email address:
      ", HREF {"mailto:macaulay2@googlegroups.com", "<macaulay2@googlegroups.com>"}, ".",
      Subnodes => {
-     	  "The authors of Macaulay2:",
+	 -- "The authors of Macaulay2:",
 	  TO "Daniel R. Grayson",
 	  TO "Michael E. Stillman",
      	  "Our co-author for the tutorials, long time supporter and user of Macaulay2, and collaborator on the project since 2007:",
 	  TO "David Eisenbud"},
-     SeeAlso => "authors of Macaulay2 packages"
+     SeeAlso => "The authors of Macaulay2 packages"
      }
 
 document {
@@ -480,29 +482,6 @@ document {
 	  },
      IMG { "src" => replace("PKG","Style",currentLayout#"package") | "stillman.jpg", "alt" => "picture of Stillman" }
      }
-
-document {
-     Key => "Other sources of information about Macaulay2",
-     SUBSECTION "Web site",
-     UL {
-	  (HREF "https://macaulay2.com/", " -- the main Macaulay2 web site: citations, binary distributions"),
-	  },
-     SUBSECTION "Books",
-     UL {
-	  "Computations in algebraic geometry with Macaulay 2, Algorithms and Computations in Mathematics, no. 8,
-	  edited by David Eisenbud, Daniel R. Grayson, Michael E. Stillman, and Bernd Sturmfels,
-	  Springer-Verlag, 2001, ISBN 3-540-42230-7.",
-	  "Computational Algebraic Geometry, London Mathematical Society Student Texts (No. 58), by Hal Schenck,
-	  ISBN-13: 9780521536509, ISBN-10: 0521536502, 2003, 208 pages.",
-	  }
-     
-     }
-
--* -- Mike wanted this: 
-document {
-     Key => "Resources required",
-     }
-*-
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

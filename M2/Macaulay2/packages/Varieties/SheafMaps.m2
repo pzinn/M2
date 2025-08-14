@@ -28,6 +28,10 @@ autotruncate = { MinimalGenerators => false } >> opts -> L -> (
     deg := max apply(L, f -> f.degree);
     apply(L, f -> subtruncate(deg, f.map, opts)))
 
+-- TODO: confirm that this is the right choice
+-- should regularity defined in Complexes do this??
+regularity' = M -> regularity flattenModule M
+
 -----------------------------------------------------------------------------
 -- SheafHom type declarations and basic constructors
 -----------------------------------------------------------------------------
@@ -158,8 +162,8 @@ SheafMap == SheafMap := Boolean => (psi, phi) -> psi === phi or (
     -- g := if phi.cache.?minimalPresentation then phi.cache.minimalPresentation.map else phi.map;
     -- if f == g then return true;
     -- r := 1 + max(
-    -- 	regularity target f, regularity source f,
-    -- 	regularity target g, regularity source g);
+    -- 	regularity' target f, regularity' source f,
+    -- 	regularity' target g, regularity' source g);
     -- truncate(r, f, MinimalGenerators => false) == truncate(r, g, MinimalGenerators => false))
 
 SheafMap == ZZ := Boolean => (f, n) -> ( if n === 0 then image f == n else matrix(prune f) == n)
@@ -167,17 +171,26 @@ ZZ == SheafMap := Boolean => (n, f) -> f == n
 
 isIsomorphism SheafMap := Boolean => f -> ker f == 0 and coker f == 0
 
-isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
-    M := module prune F;
-    N := module prune G;
-    -- TODO: isIsomorphic should check === first
-    if M === N then return (true, id_F);
-    (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then sheaf(F.variety, isom)))
+-- TODO: isomorphisms of modules are cached under Y.cache.cache.Isomorphisms,
+-- where Y is the youngest of the modules, but currently isomorphisms of sheaves
+-- is simply cached under the source. We should fix this.
+importFrom_Isomorphism "Isomorphisms"
+
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> (
+    if F === G then return true;
+    if G.cache.?Isomorphisms
+    and G.cache.Isomorphisms#?F then return true;
+    (M, N) := (module prune F, module prune G);
+    if isIsomorphic(M, N, o, Strict => true, Homogeneous => true)
+    then (( G.cache.Isomorphisms ??= new MutableHashTable )#F = (M, N); true)
+    else false)
 
 -- TODO: perhaps better would be to construct random
 -- maps F --> G and check their kernel and cokernel.
-isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
+isIsomorphic(CoherentSheaf, CoherentSheaf) := Boolean => o -> (F, G) -> F === G or (
+    if F === G then return true;
+    if G.cache.?Isomorphisms
+    and G.cache.Isomorphisms#?F then return true;
     -- Note: sometimes calling isIsomorphic(prune F, prune G) is faster,
     -- but we will leave it to the user to decide if that is the case.
     -- Check if F and G are already pruned or if their minimal presentation is cached
@@ -188,15 +201,28 @@ isIsomorphic(CoherentSheaf, CoherentSheaf) := Sequence => o -> (F, G) -> (
 	-- TODO: using regularity in won't suffice in the multigraded case,
 	-- and multigradedRegularity may not be optimal. What should methods
 	-- that truncate the base module do instead?
-	r := 1 + max(regularity F.module, regularity G.module);
+	r := 1 + max(regularity' F.module, regularity' G.module);
 	truncate(r, F.module, MinimalGenerators => false),
 	truncate(r, G.module, MinimalGenerators => false));
-    -- TODO: isIsomorphic should check === first
-    if M === N then return (true, id_F);
-    (ret, isom) := isIsomorphic(M, N, o, Strict => true);
-    (ret, if ret then sheaf(F.variety, isom)))
+    -- FIXME: this is incomplete, because we need to store pruning maps or embedding maps
+    -- in order to compose/precompose with the cached isomorphism on the modules.
+    if isIsomorphic(M, N, o, Strict => true, Homogeneous => true)
+    then (( G.cache.Isomorphisms ??= new MutableHashTable )#F = (M, N); true)
+    else false)
 
-isIsomorphic(SheafMap, SheafMap) := Sequence => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
+isomorphism(CoherentSheaf, CoherentSheaf) := SheafMap => o -> (F, G) -> (
+    if F === G then id_F else if isIsomorphic(F, G, o,
+	Strict => true, Homogeneous => true)
+    -- FIXME: this is probably not correct yet, because we may
+    -- need to compose/precompose with the pruning maps of F and G.
+    then --map(F, G,
+	--inverse (prune F).cache.pruningMap *
+	sheaf isomorphism splice(G.cache.Isomorphisms#F,
+	    Strict => true, Homogeneous => true)
+	--* (prune G).cache.pruningMap)
+    else error "sheaves are not isomorphic")
+
+isIsomorphic(SheafMap, SheafMap) := Boolean => o -> (psi, phi) -> isIsomorphic(coker phi, coker psi, o)
 
 -- arithmetic ops
 - SheafMap := f -> map(target f, source f, -matrix f)
@@ -385,7 +411,7 @@ SheafMap.InverseMethod = (cacheValue symbol inverse) (f -> (
     g := matrix f;
     -- truncate the underlying map so it is an isomorphism
     -- TODO: make this more efficient, e.g. look at degrees of ann coker g
-    e := max(regularity ker g, regularity coker g);
+    e := max(regularity' ker g, regularity' coker g);
     -- TODO: this is kludgy, but maybe it works?
     h := try inverse g else inverse truncate(e + 1, g);
     -- then invert and sheafify the new map
@@ -505,8 +531,10 @@ Ext(ZZ, CoherentSheaf, SheafMap) := Matrix => opts -> (m, F, f) -> (
     l := max(
 	l1 := min(dim N1, m),
 	l2 := min(dim N2, m));
-    P1 := resolution flattenModule N1;
-    P2 := resolution flattenModule N2;
+    -- TODO: confirm that these length limits are correct
+    S := ring presentation R;
+    P1 := resolution(flattenModule N1, LengthLimit => dim S);
+    P2 := resolution(flattenModule N2, LengthLimit => dim S);
     p := max(
 	p1 := length P1,
 	p2 := length P2);
@@ -582,7 +610,7 @@ ExtLongExactSequence(CoherentSheaf, SheafMap, SheafMap) := Matrix => opts -> (F,
         --probably just add in l3, P3, etc., take max as above
 	M = truncate(r, M, MinimalGenerators => false));
     -- TODO: can we truncate at the regularity of homology(f,g) instead?
-    reg := 1 + max(regularity coker matrix f, regularity ker matrix g);
+    reg := 1 + max(regularity' coker matrix f, regularity' ker matrix g);
     -- TODO: verify the Base of the complex
     -- TODO: should lo be used somewhere?
     part_0 ExtLES(M,

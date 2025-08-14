@@ -80,14 +80,14 @@ document {
 		    LI ("mc -- ", "not documented yet"),
 		    LI ("min -- ", TO "min"),
 		    LI ("modulo -- ", TO "modulo"),
-		    LI ("monitor -- ", TO "using Macaulay2 with emacs"),
+		    LI ("monitor -- ", TO "using Macaulay2 with Emacs"),
 		    LI ("monitoring -- ", "not documented yet"),
 		    LI ("monoms -- ", "not documented yet"),
 		    LI ("monprimes -- ", "not documented yet"),
 		    LI ("mr -- ", "not documented yet"),
 		    LI ("mult -- ", TO "*"),
 		    LI ("ncols -- ", "use numgens source m"),
-		    LI ("nres -- ", TO "resolution"),
+		    LI ("nres -- ", TO "OldChainComplexes :: resolution"),
 		    LI ("nrows -- ", "use numgens target m"),
 		    LI ("numinfo -- ", "not documented yet"),
 		    LI ("nvars -- ", "use numgens R"),
@@ -252,8 +252,8 @@ document {
 		    LI ("<remove_lowest_dim -- ", "not documented yet"),
 		    LI ("<representatives -- ", "not documented yet"),
 		    LI ("<representatives_old -- ", "not documented yet"),
-		    LI ("<res -- ", TO "resolution"),
-		    LI ("<res_and_dim -- ", TO "resolution", ",", TO "pdim"),
+		    LI ("<res -- ", TO "OldChainComplexes :: resolution"),
+		    LI ("<res_and_dim -- ", TO "OldChainComplexes :: resolution", ",", TO "pdim"),
 		    LI ("<ring -- ", "not documented yet"),
 		    LI ("<sagbi -- ", "not documented yet"),
 		    LI ("<sagbi_step -- ", "not documented yet"),
@@ -393,9 +393,9 @@ document {
      allowed.",
      
      HEADER3 "commands",
-     "Using Macaulay2 in emacs, type the first few letters of a command,
-     then hit <TAB>. The list of all commands starting with those letters
-     will be displayed, or if there is only one, emacs will complete the typing
+     "Using Macaulay2 in Emacs, type the first few letters of a command,
+     then hit ", KBD "Tab", ". The list of all commands starting with those letters
+     will be displayed, or if there is only one, Emacs will complete the typing
      for you.",
 
      HEADER3 "compress <matrix> <result matrix>",

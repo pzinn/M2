@@ -1,7 +1,7 @@
 -- -*- coding: utf-8 -*-
 document {
      Key => "modules",
-     "Modules in Macaulay2 are implemented as ", TO "subquotient modules", ".  
+     "In Macaulay2, modules are implemented as ", TO "subquotient modules", ".
      Submodules and quotients of free modules are perhaps the most common and important
      modules, and subquotients form the smallest class of modules that naturally includes these cases.",
      PARA{},
@@ -44,6 +44,7 @@ document {
 	  TO "Saturation :: module quotients, saturation, and annihilator",
 
 	  "graded modules",
+	  TO gradedModule,
 	  TO "Hilbert functions and free resolutions",
 	  -- Mike wanted this: TO "degrees of elements and free modules",
 	  -- Mike wanted this: TO "degree and multiplicity of a module",
@@ -590,16 +591,16 @@ document {
           "poincare' M",
 	  },
      SUBSECTION "free resolutions",
-     "The minimal free resolution ", TT "C", " is computed using ", TO (resolution,Module), ".  
+     "The minimal free resolution ", TT "C", " is computed using ", TO "OldChainComplexes :: resolution(Module)", ".
      The specific matrices are obtained by indexing ", TT "C.dd", ".",
      EXAMPLE {
 	  "C = resolution M",
 	  "C.dd_3"
 	  },
-     "For more information about chain complexes and resolutions, see ", TO "chain complexes",
-     " and ", TO "computing resolutions", ".",
+     "For more information about chain complexes and resolutions, see ", TO "Complexes :: Complexes",
+     " and ", TO "OldChainComplexes :: computing resolutions", ".",
      SUBSECTION "betti numbers",
-     "Use ", TO2{(betti,GradedModule),"betti"}, " to display the graded betti numbers of ", TT "M", ".",
+     "Use ", TO betti, " to display the graded betti numbers of ", TT "M", ".",
      EXAMPLE "betti C",
      "This table should be interpreted as follows: the number in the ", 
      TT "i", "-th row and ", TT "j", "-th column (indices starting at 0),

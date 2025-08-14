@@ -35,11 +35,11 @@ Node
               })
   SeeAlso
     "packages"
-    "authors of Macaulay2 packages"
+    "The authors of Macaulay2 packages"
 
 Node
   Key
-    "authors of Macaulay2 packages"
+    "The authors of Macaulay2 packages"
   Description
     Text
       The following people have authored packages that are distributed with Macaulay2:
@@ -88,12 +88,9 @@ Node
       Many packages are distributed with Macaulay2, and others are available from
       the author's homepage.
 
-      To load a package, say @TT "FirstPackage"@, enter:
-    Pre
+      To load a package, say @TT "FirstPackage"@, use either of the following methods.
+    Example
       loadPackage "FirstPackage"
-    Text
-      or
-    Pre
       needsPackage "FirstPackage"
     Text
       For technical information about packages, see @TO Package@.
@@ -171,7 +168,7 @@ Node
         :a list of exported functions and variables, set via @TO export@ and @TO exportMutable@
         :the code that constitutes the package
         :the documentation for the package, which comes after @TO beginDocumentation@
-        :a number of tests for the new package, added using @TO symbol TEST@
+        :a number of tests for the new package, added using @TO symbol TEST@ or by adding files to a "tests" subdirectory of the package directory
 
     Text
       See @TO "an example of a package"@ for the basic template for new packages, or

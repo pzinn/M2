@@ -27,7 +27,6 @@ newPackage( "RationalMaps",
 	 "published article URI" => "https://msp.org/jsag/2022/12-1/p03.xhtml",
 	 "published article DOI" => "10.2140/jsag.2022.12.17",
 	 "published code URI" => "https://msp.org/jsag/2022/12-1/jsag-v12-n1-x03-RationalMaps.m2",
-	 "repository code URI" => "https://github.com/Macaulay2/M2/blob/master/M2/Macaulay2/packages/RationalMaps.m2",
 	 "release at publication" => "0cee3a5ae1e3fbd3dfa8407a4c8d6ad6a13dffd3",	    -- git commit number in hex
 	 "version at publication" => "1.0",
 	 "volume number" => "12",
@@ -2619,7 +2618,7 @@ TEST /// --test #28
 ///
 
 TEST /// --test #29, map from genus 3 curve to projective space
-    needsPackage "Divisor";
+    needsPackage "WeilDivisors";
     C = ZZ/103[x,y,z]/(x^4+x^2*y*z+y^4+z^3*x);
     Q = ideal(y,x+z); --a point on our curve
     f2 = mapToProjectiveSpace(7*divisor(Q)); --a divisor of degree 7 (this is degree 7, so should induce an embedding)

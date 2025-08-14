@@ -111,7 +111,7 @@ InvariantRing
 QuillenSuslin
 EnumerationCurves
 Book3264Examples
-Divisor
+WeilDivisors
 EllipticCurves
 HighestWeights
 MinimalPrimes
@@ -167,7 +167,6 @@ Topcom
 Triangulations
 ReflexivePolytopesDB
 AbstractToricVarieties
-Licenses
 TestIdeals
 FrobeniusThresholds
 Seminormalization
@@ -177,6 +176,7 @@ Chordal
 Tropical
 SymbolicPowers
 Complexes
+OldChainComplexes
 GroebnerWalk
 RandomMonomialIdeals
 Matroids
@@ -279,6 +279,13 @@ Permutations
 SCMAlgebras
 NumericalSemigroups
 ExteriorExtensions
+Oscillators
 IncidenceCorrespondenceCohomology
 ToricHigherDirectImages
 Brackets
+IntegerProgramming
+GameTheory
+AllMarkovBases
+Tableaux
+CpMackeyFunctors
+JSONRPC

@@ -1333,6 +1333,7 @@ setupfun("readlink",readlinkfun);
 
 realpathfun(e:Expr):Expr := (
      when e is f:stringCell do (
+	  if f.v === "stdio" || f.v === "currentString" then return e;
      	  when realpath(expandFileName(f.v))
      	  is null do buildErrorPacket(syscallErrorMessage("realpath"))
      	  is p:string do toExpr(p)
@@ -2111,7 +2112,8 @@ toExternalString(e:Expr):Expr := (
 setupfun("toExternalString0",toExternalString);
 
 header "
-#ifndef GC_get_full_gc_total_time /* added in bdwgc 8 */
+/* added in bdwgc 8 */
+#if GC_VERSION_MAJOR < 8
 unsigned long GC_get_full_gc_total_time(void) {return 0;}
 #endif
 #define DEF_GC_FN0(s)	static void * s##_0(void *client_data) { (void) client_data; return (void *) (long) s(); }

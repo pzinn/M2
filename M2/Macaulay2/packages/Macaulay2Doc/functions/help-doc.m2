@@ -24,8 +24,8 @@ doc ///
 	  { M2CODE "help \"Macaulay2\"",	  { " -- display the top of the documentation tree" }},
           { M2CODE "help \"matrices\"",           { " -- display an overview of matrices in Macaulay2" }},
 	  { M2CODE "help X",                      { " -- display the documentation node whose key is ", TT "X" }},
-	  { M2CODE "help res",                    { " -- documentation for the function ", TO "res", " and ways to use it" }},
-          { M2CODE "help(res, Module)",           { " -- documentation for the method ", TO (res, Module) }},
+	  { M2CODE "help res",                    { " -- documentation for the function ", TO "OldChainComplexes :: res", " and ways to use it" }},
+          { M2CODE "help(res, Module)",           { " -- documentation for the method ", TO "OldChainComplexes :: resolution(Module)" }},
 	  { M2CODE "help Module",                 { " -- documentation for the type ", TO "Module", " and methods that take one as input" }},
 	  { M2CODE "help symbol **",              { " -- documentation for the operator ", TO "**", " and its various uses and meanings" }},
           { M2CODE "help(symbol **, Ring, Ring)", { " -- documentation for the method ", TO (symbol **, Ring, Ring) }},
@@ -222,9 +222,6 @@ Node
   Key
      about
     [about, Body]
-    (help, ZZ)
-    (viewHelp, ZZ)
-    (infoHelp, ZZ)
     (about, Function)
     (about, String)
     (about, Symbol)
@@ -263,7 +260,6 @@ Node
     Since @TT "s"@ is taken as a regular expression, parentheses serve
     for grouping subexpressions, rather than matching themselves.
   SeeAlso
-    (help, ZZ)
     (symbol?, Symbol)
     apropos
     headlines
@@ -310,6 +306,10 @@ Node
   Key
     headlines
    (headlines, List)
+   -- TODO: move to separate node
+   (help,     ZZ)
+   (viewHelp, ZZ)
+   (infoHelp, ZZ)
   Headline
     display a table of documentation headlines
   Usage
@@ -319,19 +319,32 @@ Node
   Description
     Text
       This method displays a table of documentation headlines for the input list.
+
+      If the input is a list of documentation nodes generated using the function @TO about@,
+      the method @TO (help, ZZ)@ can be used to select and open one of the documentation nodes.
     Example
       headlines about firstFunction
       help 0
+    Text
+      This is also true for a list of symbols generated using the function @TO apropos@.
+    Example
       headlines apropos "hilbert"
+--      help 0
+    Text
+      If the input was a list of method keys generated using @TO methods@, then in addition
+      the method @TO (code, ZZ)@ can be used to view the source code for the selected entry.
+    Example
       headlines methods syz
-      code 0
+--      help 1
+      code 1
   SeeAlso
     help
     viewHelp
     about
     apropos
     methods
-    code
+    --(help, ZZ)
+    (code, ZZ)
 ///
 
 -- the node displayed by the help command by default
@@ -383,6 +396,6 @@ Node
       TABLE {
 	  { M2CODE "loadedPackages",                            "-- a list of the currently loaded packages" },
 	  { M2CODE "help \"packages provided with Macaulay2\"", "-- a list of all the available packages" },
-	  { M2CODE "help \"initialization file \"",             "-- show documentation about the file init.m2" }
+	  { M2CODE "help \"initialization file\"",              "-- show documentation about the file init.m2" }
       }
 ///
