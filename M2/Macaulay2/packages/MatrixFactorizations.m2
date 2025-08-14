@@ -2,7 +2,7 @@ newPackage(
     "MatrixFactorizations",
     AuxiliaryFiles => true -*may need to change*-,
     Version => "0.1", 
-    Date => "",
+    Date => "August 13, 2025",
     Authors => {
         {Name => "David Favero", 
             Email => "favero@umn.edu", 
@@ -17,7 +17,8 @@ newPackage(
             Email => "kvandebo@nd.edu", 
             HomePage => "https://sites.google.com/view/kellervandebogert/home"}
     },
-    Headline => "a package for computing with length d matrix factorizations",
+    Headline => "computing with matrix factorizations of different lengths",
+    Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
         "Complexes",
 	"CompleteIntersectionResolutions",
@@ -27,8 +28,7 @@ newPackage(
         "Complexes",
 	"CompleteIntersectionResolutions",
 	"TensorComplexes"
-    },
-    DebuggingMode => true
+    }
 )
 
 export{"ZZdFactorization",

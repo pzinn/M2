@@ -668,7 +668,7 @@ TEST ///
 
 
 TEST ///
---test for identity from documnetation
+--test for identity from documentation
             S = ZZ/101[a,b,c]
             R = S/(a^2+b^2+c^2);
 	    m = ideal vars R

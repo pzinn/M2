@@ -704,7 +704,7 @@ doc ///
 	    with the caveat that $d^F_0 : F_0 \to F_{d-1}$, since one should count degree modulo d. 
 
 	    Sometimes the user may wish to view a module as a ZZ/d-graded factorization with zeros in all
-	    other spots. This can be accomplished with the followig syntax:
+	    other spots. This can be accomplished with the following syntax:
         Example
             S = ZZ/101[a..c]
 	    M = coker vars S
