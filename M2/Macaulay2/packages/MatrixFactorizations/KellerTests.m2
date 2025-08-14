@@ -99,11 +99,57 @@ assert(H_0 == H_1)
 
 TEST ///
 --playing around with pruning maps/cached data of pruning maps (pruning 0 maps)
-
+S = ZZ/101[x,y,z,w];
+F = koszulMF({x,y,z,w}, y*w - x*z);
+E = Hom(F,F)
+assert(potential E == 0)
+assert(E.dd^2 == 0)
+Ed = dual E
+C = HH E
+D = prune C
+assert(isWellDefined D)
+assert((isdFactorization D)_0)
+assert(D.cache.?pruningMap)
+g = D.cache.pruningMap
+assert isWellDefined g
+assert isFactorizationMorphism g
+assert isWellDefined prune g
+assert(prune g == id_D)
+assert (target g == C)
+assert (source g == D)
+g^-1
+assert(isWellDefined g^(-1))
+assert(g*g^-1 == 1 and g^-1*g == 1)
 ///
 
 TEST ///
 --playing around with adjoining roots of unity
+Q = QQ[x_1..x_3];
+d = 3;
+Qt = adjoinRoot(d, Q, t)
+assert(Qt.?rootOfUnity) --stores the root of unity in the ring
+{t, t^2, t^3}
+Dt = ZZdfactorization {x_1*1_Qt,x_2*1_Qt,x_3*1_Qt}
+assert(Dt.cache.?rootOfUnity)
+S = QQ[x,y,z];
+C = ZZdfactorization {x,y,z}
+assert(not C.cache.?rootOfUnity)
+Ct = adjoinRoot(C, t)
+assert(Ct.cache.?rootOfUnity)
+assert(Ct.cache.rootOfUnity^3 == 1)
+St = adjoinRoot(3, S, t);
+Ct' = C**St
+assert(Ct'.cache.?rootOfUnity)
+R = ZZ/3[x,y,z]
+R.rootOfUnity = 1_R
+Cx = ZZdfactorization {x,x,x}
+Cy = ZZdfactorization {y,y,y}
+Cz = ZZdfactorization {z,z,z}
+Cxyz = Cx**Cy**Cz
+assert(isWellDefined Cxyz)
+assert(potential Cxyz == x^3+y^3+z^3)
+Cxyz.dd
+assert(Cxyz.dd^3 == (x^3+y^3+z^3)*id_(Cxyz))
 ///
 
 TEST ///

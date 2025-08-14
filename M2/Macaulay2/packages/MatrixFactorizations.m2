@@ -21,12 +21,13 @@ newPackage(
     Keywords => {"Commutative Algebra", "Homological Algebra"},
     PackageExports => {
         "Complexes",
-	"CompleteIntersectionResolutions",
-	"TensorComplexes"
+	--"CompleteIntersectionResolutions",
+	--"TensorComplexes"
     },
     PackageImports => {
         "Complexes",
 	"CompleteIntersectionResolutions",
+	"PushForward",
 	"TensorComplexes"
     }
 )
@@ -55,7 +56,7 @@ export{"ZZdFactorization",
     "eulerMF",
     "adjoinRoot",
     --"dTensor",
-    "eulerChi",
+    --"eulerChi",
     "unfold",
     --"dDual",
     --"dShift",

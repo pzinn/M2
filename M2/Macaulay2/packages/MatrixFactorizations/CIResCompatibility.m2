@@ -1,5 +1,5 @@
-needsPackage "CompleteIntersectionResolutions"
-needsPackage "PushForward"
+--needsPackage "CompleteIntersectionResolutions"
+--needsPackage "PushForward"
 
 Matrix Array := Matrix => (M,L) -> ((M^[L_0])_[L_1])
 
@@ -14,8 +14,8 @@ higherHomotopyFactorization(List,Complex) :=  (L,C) -> (
     Ln := apply(keys H,i->(i_1+2*(i_0)_0-1,i_1));
     Hn := new HashTable from for i from 0 to length Ln-1 list Ln_i => H#((keys H)#i);
     (lo,hi) := concentration C;
-    Lo := select(toList(lo-1..hi+1),i->odd(i));
-    Le := select(toList(lo-1..hi+1),i->even(i));
+    Lo := select(toList(lo-1..hi+1),odd);
+    Le := select(toList(lo-1..hi+1),even);
     T1 := table(Lo,Le,(u,v) ->
 	if Hn#?(u,v) then map(C_u,C_v,Hn#(u,v)) else 0);
     T2 := table(Le,Lo,(u,v) ->
@@ -32,8 +32,8 @@ higherHomotopyFactorization(RingElement,Complex) := (f,C) -> (
     Ln := apply(keys H,i->(i_1+2*(i_0)_0-1,i_1));
     Hn := new HashTable from for i from 0 to length Ln-1 list Ln_i => H#((keys H)#i);
     (lo,hi) := concentration C;
-    Lo := select(toList(lo-1..hi+1),i->odd(i));
-    Le := select(toList(lo-1..hi+1),i->even(i));
+    Lo := select(toList(lo-1..hi+1),odd);
+    Le := select(toList(lo-1..hi+1),even);
     T1 := table(Lo,Le,(u,v) ->
 	if Hn#?(u,v) then map(C_u,C_v,Hn#(u,v)) else 0);
     T2 := table(Le,Lo,(u,v) ->

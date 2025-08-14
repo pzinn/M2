@@ -5527,7 +5527,7 @@ doc ///
             isdFactorization K'
 ///
 
-
+-*
 doc ///
     Key
         eulerChi
@@ -5559,11 +5559,46 @@ doc ///
 	    F = Hom(D,D)
 	    eulerChi(F)
     Caveat
-        In order to be well-defined, the input should be a complex.
+        In order to be well-defined, the input should be a complex (ie, the differential should square to 0).
     SeeAlso
         "Making ZZdFactorizations"
 ///
+*-
 
+doc ///
+    Key
+        (euler, ZZdFactorization)
+    Headline
+        Calculates the Euler characteristic of a ZZdFactorization
+    Usage
+        euler(ZZdFactorization)
+    Inputs
+        ZZdFactorization:ZZdFactorization
+            A ZZdFactorization object representing a complex
+    Outputs
+        :ZZ
+    Description
+         Text
+            Calculates the Euler characteristic of a ZZdFactorization. To be well-defined, the input should be a complex.
+            This method calculates the Euler characteristic by computing
+	    $$\ell_R (H_0 (C)) - \ell_R (H_1 (C))$$
+	    where $C$ is some ZZ/2-graded complex. An easy way to construct such complexes is to take
+	    the endomorphisms of a matrix factorization arising from an isolated singularity.
+         Example
+            S = ZZ/101[a..c]
+	    C = koszulMF(a^3+b^3+c^3)
+	    E = Hom(C,C)
+	    prune HH E
+	    euler E
+	    Q = ZZ/101[a,b,c,d]
+	    D = koszulMF(a*b - c*d)
+	    F = Hom(D,D)
+	    euler(F)
+    Caveat
+        In order to be well-defined, the input should be a complex (ie, the differential should square to 0).
+    SeeAlso
+        "Making ZZdFactorizations"
+///
 
 doc ///
     Key

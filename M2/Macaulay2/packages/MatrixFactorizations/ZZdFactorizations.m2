@@ -1,4 +1,4 @@
-needsPackage "Complexes"
+--needsPackage "Complexes"
 
 ZZdFactorization = new Type of MutableHashTable --
   -- note: we make this mutable in order to construct the
@@ -145,7 +145,7 @@ Symbol ^ ZZdFactorization := ZZdFactorizationMap => (sym, C) -> (
 net ZZdFactorization := C -> (
      (lo,hi) := (0,C.period);
      if lo > hi then 
-         error "In a complex, lo <= hi should always hold in the concentration"
+         error "in a factorization, the period should be positive"
          --"0"
      else if lo == hi and C_lo === 0 then 
          "0"

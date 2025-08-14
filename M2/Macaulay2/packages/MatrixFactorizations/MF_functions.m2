@@ -2,8 +2,8 @@
 --currently not working, but will put it back: needs "ZZdFactorizationsCODE.m2"
 --take this one out when putting above back in:
 --needs "ZZdFactorizations.m2"
-needsPackage "TensorComplexes" --Koszul factorization method needs this
-needsPackage "Cyclotomic" --for adjoining roots of unity
+--needsPackage "TensorComplexes" --Koszul factorization method needs this
+--needsPackage "Cyclotomic" --for adjoining roots of unity
 --needsPackage "Matrix Factorizations"
 --shift function
 --shift = method()
@@ -832,9 +832,8 @@ hhh(ZZdFactorization) := ZZ => F -> (p := period F;
     hhh(0,F) + hhh(1,F)
     )
 
---euler characteristic of a ZZdfactorization. Caveart: in order to be well-defined, the input should be a complex
-eulerChi = method();
-eulerChi(ZZdFactorization) := ZZ => F -> (p := period F;
+--euler characteristic of a ZZdfactorization. Caveat: in order to be well-defined, the input should be a complex
+euler(ZZdFactorization) := ZZ => F -> (p := period F;
     if not(p==2) then error "expected 2-periodic factorization";
     hhh(0,F) - hhh(1,F)
     )
