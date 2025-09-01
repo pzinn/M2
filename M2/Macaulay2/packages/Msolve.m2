@@ -257,9 +257,6 @@ msolveRUR Ideal := opt -> I0 ->(
     RUR#"findRootsUniPoly"=W;
     RUR#"denominator"=diff(T,W);
     vs:=last para;
-    <<"S= "<<toString gens(S)<<endl;
-    <<"vs= "<<vs<<endl;
-    <<"Msolve vars= "<<sVarsMsolve<<endl;
     msolveVarOrder:=for sg in gens(S) list position(sVarsMsolve,i->i==toString(sg));
     tempNumerator:=(append(for f in vs list sum((f_0)_0+1,i->T^i*((f_0)_1)_i),-T*diff(T,W)));
     if (numgens(S)==#(tempNumerator)) then(
