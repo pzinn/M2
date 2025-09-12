@@ -116,6 +116,8 @@ jobs:
           else echo `brew --prefix ccache`/libexec        >> $GITHUB_PATH
                echo `brew --prefix make  `/libexec/gnubin >> $GITHUB_PATH
                echo `brew --prefix libtool`/libexec/gnubin >> $GITHUB_PATH
+               echo "CPPFLAGS=-I$(brew --prefix)/include -I$(brew --prefix libomp)/include -I$(brew --prefix readline)/include" >> $GITHUB_ENV
+               echo "LDFLAGS= -L$(brew --prefix)/lib     -L$(brew --prefix libomp)/lib     -L$(brew --prefix readline)/lib"     >> $GITHUB_ENV
           fi
 
       - uses: actions/cache@v4
@@ -164,12 +166,6 @@ jobs:
         if: matrix.build-system == 'autotools'
         run: |
           ../../autogen.sh
-          export CPPFLAGS="-I`brew --prefix`/include \
-            -I`brew --prefix libomp`/include         \
-            -I`brew --prefix readline`/include"
-          export  LDFLAGS="-L`brew --prefix`/lib \
-            -L`brew --prefix libomp`/lib         \
-            -L`brew --prefix readline`/lib"
           export F77=gfortran-14
           export FC=gfortran-14
           ../../configure --enable-download --with-system-gc --with-fplll
