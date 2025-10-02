@@ -109,6 +109,7 @@ validContent = new MutableHashTable
 -----------------------------------------------------------------------------
 -- <!ENTITY % dd.content "( #PCDATA | %Flow.mix; )*" >
 validContent#"dd" =
+validContent#"iframe" =
 -- <!ENTITY % li.content "( #PCDATA | %Flow.mix; )*" >
 validContent#"li" = 
 -- <!ENTITY % div.content "( #PCDATA | %Flow.mix; )*" >
