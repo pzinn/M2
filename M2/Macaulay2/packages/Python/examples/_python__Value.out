@@ -1,20 +1,0 @@
--- -*- M2-comint -*- hash: 170764785
-i1 : 1:0pythonValue "2 + 2"
-
-o1 = $<samp class="token string">4</samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i2 : 2:0debugLevel = 1
-
-o2 = $1$
-i3 : 3:0x = 5
-
-o3 = $5$
-i4 : 4:0pythonValue("3 + ", x)
- -- python command: 3 + 5
-
-o4 = $<samp class="token string">8</samp>$
-
-o4 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i5 : 5:0
-

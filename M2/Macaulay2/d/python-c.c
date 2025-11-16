@@ -3,27 +3,32 @@
 
 #include <gmp.h>
 
-int python_RunSimpleString(M2_string s) {
-  char *t = M2_tocharstar(s);
-  int ret = PyRun_SimpleString(t);
-  GC_FREE(t);
-  return ret;
-}
+const char * python_Initialize(char *executable)
+{
+#if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 8
+  PyConfig config;
+  PyStatus status;
 
-PyObject *globals, *locals;
+  PyConfig_InitIsolatedConfig(&config);
+  status = PyConfig_SetBytesString(&config, &config.executable, executable);
+  if (PyStatus_Exception(status))
+    goto exception;
 
-static void init() {
-  if (!globals) {
-#if 0    
-    globals = PyEval_GetGlobals(); /* this returns null because no frame is currently executing */
-#elif 1
-    globals = PyDict_New();
-    PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
+  status = Py_InitializeFromConfig(&config);
+
+exception:
+  PyConfig_Clear(&config);
+
+  if (PyStatus_Exception(status) != 0)
+    return status.err_msg;
+  else
+    return NULL;
 #else
-    globals = PyDict_New();
-    PyRun_String("import __builtin__ as __builtins__",Py_eval_input, globals, locals);
+  (void)executable;
+
+  Py_Initialize();
+  return NULL;
 #endif
-  }
 }
 
 /**************
@@ -37,14 +42,6 @@ int python_ErrOccurred(void) {
 		return -1;
 	} else
 		return (PyErr_Occurred() != NULL);
-}
-
-PyObject *python_RunString(M2_string s) {
-  char *t = M2_tocharstar(s);
-  init();
-  PyObject *ret = PyRun_String(t,Py_eval_input,globals,locals);
-  GC_FREE(t);
-  return ret;
 }
 
 int python_Main() {

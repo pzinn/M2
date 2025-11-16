@@ -864,7 +864,9 @@ document {
 	"An ", M2CODE "IFRAME", " object represents an inline frame in HTML, ",
 	"which allows embedding an independent browsing context (another HTML ",
 	"document) within the current one."},
-    EXAMPLE "html IFRAME {\"src\" => \"https://example.com\"}"}
+    EXAMPLE "html IFRAME {\"src\" => \"https://example.com\"}",
+    PARA {"This is rendered in the browser as:"},
+    IFRAME {"src" => "https://example.com"}}
 
 document { Key => (options, MarkUpType),
      "Optional arguments of mark up types allow attributes to be added to html elements.",

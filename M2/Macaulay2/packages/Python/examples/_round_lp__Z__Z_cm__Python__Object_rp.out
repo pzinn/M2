@@ -1,28 +1,0 @@
--- -*- M2-comint -*- hash: 259384909
-i1 : 1:0x = (import "math")@@pi
-
-o1 = $<samp class="token string">3.141592653589793</samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
-i2 : 2:0round x
-
-o2 = $<samp class="token string">3</samp>$
-
-o2 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i3 : 3:0round(3, x)
-
-o3 = $<samp class="token string">3.142</samp>$
-
-o3 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
-i4 : 4:0round toPython 2.5
-
-o4 = $<samp class="token string">2</samp>$
-
-o4 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i5 : 5:0round toPython 3.5
-
-o5 = $<samp class="token string">4</samp>$
-
-o5 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i6 : 6:0
-

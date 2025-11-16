@@ -54,7 +54,7 @@ BlockExtra = set {}
 ---<!ENTITY % Form.class  "| %form.qname;" >
 ---<!ENTITY % Fieldset.class  "| %fieldset.qname;" >
 ---<!ENTITY % BlkSpecial.class "%Table.class; %Form.class; %Fieldset.class;" >
-BlkSpecial = set { "table", "form", "fieldset" }
+BlkSpecial = set { "table", "form", "fieldset", "iframe"}
 
 -- <!ENTITY % Blkpres.class "| %hr.qname;" >
 ---<!ENTITY % BlkPres.class "| %hr.qname;" >

@@ -97,10 +97,10 @@ toSameRing = (m,n) -> (
      else (m,n))
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
-     if # ind === 2
-     then promote(rawMatrixEntry(m.RawMatrix, ind#0, ind#1), ring m)
-     else error "expected a sequence of length two"
-     )
+    n := (raw m)_ind;
+    if instance(n, RawRingElement) then promote(n, ring m)
+    else if instance(n, RawMatrix) then map(ring m, n)
+    else error "internal error")
 
 Number      == Matrix :=
 RingElement == Matrix :=
@@ -431,8 +431,8 @@ Matrix || Number := (f,g) -> concatRows(f,g*id_(source f))
 -----------------------------------------------------------------------------
 -- submatrix, submatrixByDegrees
 -----------------------------------------------------------------------------
-Matrix _ List := Matrix => (f,v) -> submatrix(f,listZ splice v)	-- get some columns
-Matrix ^ List := Matrix => (f,v) -> submatrix(f,listZ splice v,) -- get some rows
+Matrix _ List := Matrix => (f,v) -> submatrix(f, v)  -- get some columns
+Matrix ^ List := Matrix => (f,v) -> submatrix(f, v,) -- get some rows
 
 Matrix _ ZZ := Vector => (m,i) -> (
      R := ring m;
@@ -442,10 +442,13 @@ Matrix _ ZZ := Vector => (m,i) -> (
      new target h from {h})
 
 -- given a map of free modules, find a submatrix of it
-submatrixFree = (m, rows, cols) -> map(ring m, if rows === null
-    then rawSubmatrix(raw cover m, listZZ cols)
-    else rawSubmatrix(raw cover m, listZZ rows,
-	if cols =!= null then listZZ cols else 0 .. numgens source m - 1))
+submatrixFree = (m, rows, cols) -> (
+    if rows =!= null then rows = adjustIndices(listZZ rows, numRows m);
+    if cols =!= null then cols = adjustIndices(listZZ cols, numColumns m);
+    map(ring m, if rows === null
+    then rawSubmatrix(raw cover m, cols)
+    else rawSubmatrix(raw cover m, rows,
+	if cols =!= null then cols else 0 .. numgens source m - 1)))
 -- given a module, find a part of the ambient module
 -- along with corresponding generators and relations
 sliceModule = (M, rows) -> (

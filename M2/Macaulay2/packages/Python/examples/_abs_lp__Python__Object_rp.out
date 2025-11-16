@@ -1,8 +1,0 @@
--- -*- M2-comint -*- hash: 941520406
-i1 : 1:0abs toPython(-12)
-
-o1 = $<samp class="token string">12</samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i2 : 2:0
-

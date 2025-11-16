@@ -111,7 +111,7 @@ InvariantRing
 QuillenSuslin
 EnumerationCurves
 Book3264Examples
-Divisor
+WeilDivisors
 EllipticCurves
 HighestWeights
 MinimalPrimes
@@ -123,7 +123,7 @@ TateOnProducts
 LatticePolytopes
 FiniteFittingIdeals
 HigherCIOperators
-LieTypes
+LieAlgebraRepresentations
 ConformalBlocks
 M0nbar
 AnalyzeSheafOnP1
@@ -169,6 +169,7 @@ ReflexivePolytopesDB
 AbstractToricVarieties
 TestIdeals
 FrobeniusThresholds
+NonPrincipalTestIdeals
 Seminormalization
 AlgebraicSplines
 TriangularSets
@@ -279,6 +280,7 @@ Msolve
 Permutations
 SCMAlgebras
 NumericalSemigroups
+ExteriorExtensions
 Oscillators
 IncidenceCorrespondenceCohomology
 ToricHigherDirectImages
@@ -286,3 +288,8 @@ Brackets
 IntegerProgramming
 GameTheory
 AllMarkovBases
+Tableaux
+CpMackeyFunctors
+JSONRPC
+MatrixFactorizations
+PathSignatures

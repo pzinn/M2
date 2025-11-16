@@ -1,33 +1,0 @@
--- -*- M2-comint -*- hash: -842121848
-i1 : 1:0x = pythonValue "[1,2,3,4]"
-
-o1 = $<samp class="token string">[1, 2, 3, 4]</samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class list</span>
-i2 : 2:0getitem(x, 0)
-
-o2 = $<samp class="token string">1</samp>$
-
-o2 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i3 : 3:0x_1
-
-o3 = $<samp class="token string">2</samp>$
-
-o3 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i4 : 4:0x = pythonValue "{'spam':1,'eggs':2}"
-
-o4 = $<samp class="token string">{'spam': 1, 'eggs': 2}</samp>$
-
-o4 : <span><samp class="token class-name">PythonObject</samp> of class dict</span>
-i5 : 5:0getitem(x, "spam")
-
-o5 = $<samp class="token string">1</samp>$
-
-o5 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i6 : 6:0x_"eggs"
-
-o6 = $<samp class="token string">2</samp>$
-
-o6 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i7 : 7:0
-

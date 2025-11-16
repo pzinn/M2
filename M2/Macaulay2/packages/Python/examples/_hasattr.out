@@ -1,14 +1,0 @@
--- -*- M2-comint -*- hash: 262776068
-i1 : 1:0foo = pythonValue "'Hello, world!'"
-
-o1 = $<samp class="token string">Hello, world!</samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class str</span>
-i2 : 2:0hasattr(foo, "upper")
-
-o2 = <samp class="token constant">true</samp>
-i3 : 3:0hasattr(foo, "bar")
-
-o3 = <samp class="token constant">false</samp>
-i4 : 4:0
-

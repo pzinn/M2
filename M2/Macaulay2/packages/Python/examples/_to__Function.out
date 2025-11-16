@@ -1,33 +1,0 @@
--- -*- M2-comint -*- hash: -1691897374
-i1 : 1:0math = import "math"
-
-o1 = $<samp class="token string">&lt;module 'math' from '/usr/lib64/python3.12/lib-dynload/math.cpython-312-x86_64-linux-gnu.so'></samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class module</span>
-i2 : 2:0pysqrt = toFunction math@@sqrt
-
-o2 = <samp class="token function">pysqrt</samp>
-
-o2 : <samp class="token class-name">FunctionClosure</samp>
-i3 : 3:0pysqrt 2
-
-o3 = $<samp class="token string">1.4142135623730951</samp>$
-
-o3 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
-i4 : 4:0int = toFunction pythonValue "int"
-
-o4 = <samp class="token function">int</samp>
-
-o4 : <samp class="token class-name">FunctionClosure</samp>
-i5 : 5:0int("deadbeef", "base" => 16)
-
-o5 = $<samp class="token string">3735928559</samp>$
-
-o5 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i6 : 6:0math@@cos pi
-
-o6 = $<samp class="token string">-1.0</samp>$
-
-o6 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
-i7 : 7:0
-

@@ -6,14 +6,14 @@ needs "monideal.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags := apply((17,18,19,20,28,29,30,14,21),ascii);
+webAppTags = apply((17,18,19,20,28,29,30,14,21),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
 	webAppCellEndTag,     -- closing tag for cell ~ </p>
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
-	webAppUrlTag,         -- used internally to follow URLs -- DEPRECATED
+	webAppLiteralTag,     -- used internally to keep track of encoding
 	webAppPromptTag,      -- input/output prompt
 	webAppPositionTag     -- code position (row:col)
 	)=webAppTags;
@@ -145,22 +145,20 @@ if topLevelMode === WebApp then (
     -- the help hack 2 (incidentally, this regex is safer than in standard mode)
     M2outputRE      = "(?="|webAppCellTag|")";
     -- the edit hack
-    --editURL := f -> URL ("#editor:"|toString f);
     editMethod String := f -> show URL("#editor:"|f); -- make it more agnostic? e.g. #editor after
     editMethod FilePosition := editMethod @@ toURL; -- shouldn't that always be the case?
     -- redefine htmlLiteral to exclude codes
     -- except it should sometimes allow them...
     htmlLiteral0 := htmlLiteral;
-    delim:=ascii {239,187,191};
-    htmlLiteral = s -> if s === null then s else (
-	s=separate(delim,s);
+    html1 String := htmlLiteral = s -> if s === null then s else (
+	-- s=separate(webAppLiteralTag,s); -- uses match
+	s = separate'(webAppLiteralTag, s, setRegexFlags options separate, setMatchFlags options separate);
 	concatenate apply(#s, i -> if even i then removeWebAppTags htmlLiteral0 s#i else s#i)
 	);
-    html1 String:=htmlLiteral; -- ugh
     -- colored tex
     col := (c,f) -> ( x -> if webAppPrintFlag then ///\htmlClass{token /// | c | ///}{/// | f x | ///}/// else f x );
     texMath RingFamily :=
-    texMath Ring := col("class-name",lookup(texMath,HashTable));
+    texMath Ring := col("class-name",lookup(texMath,Ring));
     texMath HashTable := col("constant",lookup(texMath,HashTable));
     -- t:=col("keyword",texVariable @@ toString);
     -- texMath Keyword := x -> t if keywordTexMath#?x then keywordTexMath#x else x
@@ -273,11 +271,16 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s | " : "
     )
 htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|texMath(#L)|"\\ldots" else "\\,", "\\}$")
 html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
+html MutableHashTable := H -> (
+    if debugLevel === 42 or H.?texMath then htmlTex H
+    else if lookup(texMath,class H) =!= lookup(texMath,MutableHashTable) then htmlTex1 H
+    else if hasAttribute(H,ReverseDictionary) then html (SAMPc "constant") getAttribute(H,ReverseDictionary)
+    else htmlMutable H
+    )
 html HashTable := H -> (
     if debugLevel === 42 or H.?texMath then htmlTex H
     else if lookup(texMath,class H) =!= lookup(texMath,HashTable) then htmlTex1 H
     else if hasAttribute(H,ReverseDictionary) then html (SAMPc "constant") getAttribute(H,ReverseDictionary)
-    else if isMutable H then htmlMutable H
     else concatenate(html class H,
 	htmlList apply(sortByName pairs H, p -> new Option from p)
     ))
@@ -290,8 +293,8 @@ texMath1 = x -> if not webAppPrintFlag then texMath0 x else (
     h := html x;
     -- debugHack ("middle of texMath1 "|toString x | " : "|toString class x);
     first(if #h>2 and h#0=="$" and h#(#h-1)=="$" and pureTexFlag
-    then delim|substring(h,1,#h-2)|delim
-    else delim|webAppHtmlTag|h|webAppEndTag|delim -- switch back to html
+    then webAppLiteralTag|substring(h,1,#h-2)|webAppLiteralTag
+    else webAppLiteralTag|webAppHtmlTag|h|webAppEndTag|webAppLiteralTag -- switch back to html
     ,pureTexFlag=backupFlag)
 )
 

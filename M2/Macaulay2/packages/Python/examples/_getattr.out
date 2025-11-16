@@ -1,18 +1,0 @@
--- -*- M2-comint -*- hash: 1790491913
-i1 : 1:0foo = pythonValue "'Hello, world!'"
-
-o1 = $<samp class="token string">Hello, world!</samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class str</span>
-i2 : 2:0(getattr(foo, "upper"))()
-
-o2 = $<samp class="token string">HELLO, WORLD!</samp>$
-
-o2 : <span><samp class="token class-name">PythonObject</samp> of class str</span>
-i3 : 3:0foo@@lower()
-
-o3 = $<samp class="token string">hello, world!</samp>$
-
-o3 : <span><samp class="token class-name">PythonObject</samp> of class str</span>
-i4 : 4:0
-

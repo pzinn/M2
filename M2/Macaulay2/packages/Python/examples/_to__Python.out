@@ -1,76 +1,0 @@
--- -*- M2-comint -*- hash: -507498815
-i1 : 1:0toPython 2
-
-o1 = $<samp class="token string">2</samp>$
-
-o1 : <span><samp class="token class-name">PythonObject</samp> of class int</span>
-i2 : 2:0toPython (1/2)
-
-o2 = $<samp class="token string">0.5</samp>$
-
-o2 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
-i3 : 3:0toPython pi
-
-o3 = $<samp class="token string">3.141592653589793</samp>$
-
-o3 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
-i4 : 4:0toPython ii
-
-o4 = $<samp class="token string">1j</samp>$
-
-o4 : <span><samp class="token class-name">PythonObject</samp> of class complex</span>
-i5 : 5:0toPython "foo"
-
-o5 = $<samp class="token string">foo</samp>$
-
-o5 : <span><samp class="token class-name">PythonObject</samp> of class str</span>
-i6 : 6:0toPython {1, 2, 3, 4}
-
-o6 = $<samp class="token string">[1, 2, 3, 4]</samp>$
-
-o6 : <span><samp class="token class-name">PythonObject</samp> of class list</span>
-i7 : 7:0toPython (1, 2, 3, 4)
-
-o7 = $<samp class="token string">(1, 2, 3, 4)</samp>$
-
-o7 : <span><samp class="token class-name">PythonObject</samp> of class tuple</span>
-i8 : 8:0toPython hashTable {"foo" => "bar"}
-
-o8 = $<samp class="token string">{'foo': 'bar'}</samp>$
-
-o8 : <span><samp class="token class-name">PythonObject</samp> of class dict</span>
-i9 : 9:0toPython set {1, 2, 3, 4}
-
-o9 = $<samp class="token string">{1, 2, 3, 4}</samp>$
-
-o9 : <span><samp class="token class-name">PythonObject</samp> of class set</span>
-i10 : 10:0toPython true
-
-o10 = $<samp class="token string">True</samp>$
-
-o10 : <span><samp class="token class-name">PythonObject</samp> of class bool</span>
-i11 : 11:0toPython null
-
-o11 = $<samp class="token string">None</samp>$
-
-o11 : <span><samp class="token class-name">PythonObject</samp> of class NoneType</span>
-i12 : 12:0m2sqrt = x -> (
-13:0    print "calling Macaulay2 code from Python!";
-14:0    sqrt x)
-
-o12 = <samp class="token function">m2sqrt</samp>
-
-o12 : <samp class="token class-name">FunctionClosure</samp>
-i13 : 15:0pysqrt = toPython m2sqrt
-
-o13 = $<samp class="token string">&lt;built-in method m2sqrt of PyCapsule object at 0x7fca03530e70></samp>$
-
-o13 : <span><samp class="token class-name">PythonObject</samp> of class builtin_function_or_method</span>
-i14 : 16:0pysqrt 2
-<samp class="token string">calling Macaulay2 code from Python!</samp>
-
-o14 = $<samp class="token string">1.4142135623730951</samp>$
-
-o14 : <span><samp class="token class-name">PythonObject</samp> of class float</span>
-i15 : 17:0
-

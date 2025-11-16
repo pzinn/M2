@@ -83,8 +83,14 @@ product VirtualTally := (w) -> product(pairs w, (k,v) -> k^v)
 Set.synonym = "set"
 
 -- constructors, both compiled functions defined in d/sets.dd
-set VisibleList := Set => set
-new Set from List := Set => (X,x) -> set x
+set' = set
+set = method(TypicalValue => Set, Dispatch => Thing)
+set Set         := identity
+set HashTable   :=
+set VisibleList := Set => set'
+new Set from Set         := Set => (Set, S) -> set' S
+new Set from HashTable   :=
+new Set from VisibleList := Set => (Set, X) -> set' X
 
 -- set operations
 elements Set := List => keys

@@ -333,6 +333,7 @@ bumpPrecedence();
      export ParenStarParenS := makeKeyword(postfix("(*)"));
 bumpPrecedence();
      export AtAtS := makeKeyword(binaryleft("@@"));
+     export AtAtQuestionS := makeKeyword(binaryleft("@@?"));
 bumpPrecedence();
      export TildeS := makeKeyword(postfix("~"));
      export PowerTildeS := makeKeyword(postfix("^~"));
@@ -501,7 +502,7 @@ export opsWithBinaryMethod := array(SymbolClosure)(
      LongDoubleRightArrowS, LongLongDoubleRightArrowS,
      LongDoubleLeftArrowS, LongLongDoubleLeftArrowS,
      ColonS, BarS, HatHatS, AmpersandS, DotDotS, DotDotLessS, MinusS, PlusS, PlusPlusS, StarStarS, StarS, BackslashBackslashS, DivideS, LeftDivideS, PercentS, SlashSlashS, AtS, 
-     AdjacentS, AtAtS, orS, andS, xorS,
+     AdjacentS, AtAtS, AtAtQuestionS, orS, andS, xorS,
      -- TODO: why are these four not listed here?
      -- GreaterS, GreaterEqualS, LessS, LessEqualS,
      BarUnderscoreS,
@@ -540,7 +541,7 @@ export fixedPostfixOperators := array(SymbolClosure)(SemicolonS,commaS);
 -- augmented assignment operators --
 ------------------------------------
 
--- same precendence as =
+-- same precedence as =
 saveprec := prec;
 prec = EqualW.parse.precedence;
 

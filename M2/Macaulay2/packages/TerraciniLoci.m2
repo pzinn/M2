@@ -15,9 +15,7 @@
 -- GNU General Public License for more details.
 
 -- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
--- 02110-1301, USA.
+-- along with this program; if not, see <https://www.gnu.org/licenses/>.
 
 --
 
@@ -31,8 +29,8 @@
 
 newPackage("TerraciniLoci",
     Headline => "Terracini loci of projective varieties",
-    Version => "0.3",
-    Date => "May 10, 2025",
+    Version => "0.4",
+    Date => "November 10, 2025",
     Authors => {
 	{
 	    Name => "Francesco Galuppi",
@@ -59,6 +57,9 @@ newPackage("TerraciniLoci",
 ---------------
 
 -*
+
+0.4 (2025-11-10, M2 1.25.11)
+* update GPL 2 text (FSF no longer has a physical address)
 
 0.3 (2025-05-10, M2 1.25.05)
 * add citation information
