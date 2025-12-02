@@ -269,7 +269,7 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s | " : "
 	    "$"|htmlLiteral texMathVisibleList s|"$" ) else notOneLine()
 	)
     )
-htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|texMath(#L)|"\\ldots" else "\\,", "\\}$")
+htmlMutable := L -> concatenate(html class L, "$\\{", if #L > 0 then "\\ldots "|texMath0(#L)|"\\ldots" else "\\,", "\\}$")
 html MutableList  := L -> if debugLevel===42 then htmlTex L else htmlMutable L
 html MutableHashTable := H -> (
     if debugLevel === 42 or H.?texMath then htmlTex H
