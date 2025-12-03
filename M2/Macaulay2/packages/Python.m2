@@ -613,7 +613,7 @@ load "Python/doc.m2"
 -- if in WebAppp mode, let's also import matplotlib and change the backend
 if topLevelMode === WebApp then try (
     sys@@"path"@@append Python#"auxiliary files";
-    mpl = pythonImportImportModule "matplotlib";
+    mpl := pythonImportImportModule "matplotlib";
     mpl@@use "module://m2web_backend";
 )
 
