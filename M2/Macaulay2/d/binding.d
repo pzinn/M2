@@ -416,12 +416,10 @@ export makeSymbol(t:Token):Symbol := (
 export makeErrorTree(e:ParseTree,message:string):void := (
      HadError = true;
      printErrorMessage(treePosition(e),message);
-     setLastErrorpointer(treePosition(e), toExpr(message));
      );
 export makeErrorTree(e:Token,message:string):void := (
      HadError = true;
      printErrorMessage(e,message);
-     setLastErrorpointer(e.position, toExpr(message));
      );
 makeSymbol(e:ParseTree,dictionary:Dictionary):void := (
      when e

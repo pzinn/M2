@@ -244,10 +244,7 @@ html BasicList := s -> ( -- debugHack ("start of htmlList " | toString s | " : "
     backupFlag := multiLineFlag; multiLineFlag=false;
     multiLineErrorBackupFlag:=multiLineErrorFlag; multiLineErrorFlag=false;
     -- r := apply(toList s, html); -- should stop as soon as error flag
-    try (r := for i to #s-1 when not multiLineErrorFlag list html s#i;) else (
-    multiLineFlag=backupFlag;
-    error last lastError; -- must revert flag before throwing error
-    );
+    r := for i to #s-1 when not multiLineErrorFlag list html s#i;
     -- debugHack ("middle of htmlList " | toString s | " : " | toString class s);
     multiLineFlag=backupFlag;
     concatenate (
