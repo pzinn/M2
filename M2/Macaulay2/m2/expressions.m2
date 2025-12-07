@@ -933,7 +933,7 @@ toCompactString Divide := x -> toCompactParen x#0 | "/" | toCompactParen x#1
 
 net MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if #m==0 or class m#0 === ZeroExpression then return "0";
+    if opts.zero =!= null then return "0";
     blk := opts.Blocks =!= null; -- whether to display blocks
     net1 := if compactMatrixForm then toCompactString else net;
     vbox0 := if opts.Degrees === null then 0 else 1;
@@ -1135,7 +1135,7 @@ texMath Table := m -> (
 
 texMath MatrixExpression := x -> (
     (opts,m) := matrixOpts x;
-    if #m==0 or class m#0 === ZeroExpression then return "0";
+    if opts.zero =!= null then return "0";
     blk := opts.Blocks =!= null; -- whether to display blocks
     if blk then ( j := 0; h := 0; );
     m = applyTable(m,texMath);
