@@ -91,9 +91,9 @@ undocumented' = x -> error "late use of function undocumented'"
 
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 
-
--- added: prevent run
+-- prevent running arbitrary code on Macaulay2Web
 run0 := run
+get0 := get
 allowedRuns := {
     "4ti2",
     "M2",
@@ -131,12 +131,14 @@ allowedRuns := {
     "which"
     }
 
-run = x -> (
-    if debugLevel>0 then "running " << x << endl;
-    for s in allowedRuns do if match("^"|s|"|/"|s,x) then return run0 x;
-    1)
---
-
+secureRun := (runf, strf, x) -> (
+    if debugLevel > 0 then printerr("running: ", x);
+    if any(allowedRuns, s -> match("^"|s|"|/"|s, strf x)) then runf x
+    else error "cannot run this command on Macaulay2Web")
+run = x -> secureRun(run0, identity, x)
+get = x -> (
+    if x#?0 and x#0 == "!" then secureRun(get0, substring_1, x)
+    else get0 x)
 
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
