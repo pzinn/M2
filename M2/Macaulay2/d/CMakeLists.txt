@@ -169,7 +169,6 @@ target_include_directories(M2-interpreter
     # for libraries that the interpreter needs
     $<BUILD_INTERFACE:${READLINE_INCLUDE_DIR}>
     $<BUILD_INTERFACE:${LIBXML2_INCLUDE_DIR}>
-    $<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIR}>
     $<INSTALL_INTERFACE:include/Macaulay2>
     $<$<BOOL:${WITH_PYTHON}>:$<BUILD_INTERFACE:${Python3_INCLUDE_DIRS}>>
   PRIVATE
@@ -193,6 +192,10 @@ foreach(LIB IN LISTS LIBRARIES_LIST)
         "$<BUILD_INTERFACE:${${LIB}_INCLUDE_DIR}>")
   endif()
 endforeach()
+
+if(TARGET Eigen3::Eigen)
+  target_include_directories(M2-interpreter PUBLIC $<BUILD_INTERFACE:$<TARGET_PROPERTY:Eigen3::Eigen,INTERFACE_INCLUDE_DIRECTORIES>>)
+endif()
 
 foreach(LIB IN LISTS LIBRARY_LIST)
   if(${LIB}_FOUND)
