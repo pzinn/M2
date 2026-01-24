@@ -2127,6 +2127,25 @@ export rawMatrixEntry(e:Expr):Expr := (
      );
 setupfun("rawMatrixEntry",rawMatrixEntry);
 
+entriesArrayToExpr(entriesOrNull:RawRingElementArrayArrayOrNull):Expr := (
+    when entriesOrNull is entries:RawRingElementArrayArray do (
+        list(new Sequence len length(entries) do (
+            foreach row in entries do (
+                provide list(listClass, toExpr(row))))))
+    else (
+        nullE
+    ));
+
+export rawMatrixEntries(e:Expr):Expr := (
+    when e
+    is M:RawMutableMatrixCell do (
+        entriesArrayToExpr(Ccode(RawRingElementArrayArrayOrNull, "IM2_MutableMatrix_get_entries(", M.p, ")")))
+    is M:RawMatrixCell do (
+        entriesArrayToExpr(Ccode(RawRingElementArrayArrayOrNull, "IM2_Matrix_get_entries(", M.p, ")")))
+    else WrongArg("a raw matrix or mutable matrix")
+    );
+setupfun("rawMatrixEntries",rawMatrixEntries);
+
 export rawSortColumns(e:Expr):Expr := (
      when e is s:Sequence do
      if length(s) != 3 then WrongNumArgs(3) else

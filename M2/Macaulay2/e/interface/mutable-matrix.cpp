@@ -196,6 +196,50 @@ IM2_MutableMatrix_get_entry(const MutableMatrix *M, int r, int c)
   return RingElement::make_raw(M->get_ring(), result);
 }
 
+engine_RawRingElementArrayArrayOrNull
+IM2_MutableMatrix_get_entries(const MutableMatrix *M)
+{
+  try
+    {
+      int ncols = M->n_cols();
+      int nrows = M->n_rows();
+      if(nrows < 0 || ncols < 0)
+        {
+          ERROR("internal error: matrix has a negative size %d by %d",
+                nrows,
+                ncols);
+          return nullptr;
+        }
+      engine_RawRingElementArrayArray entries =
+          getmemarraytype(engine_RawRingElementArrayArray, nrows);
+      entries->len = nrows;
+      for(int r = 0; r < nrows; r++)
+        {
+          engine_RawRingElementArray currRow =
+              getmemarraytype(engine_RawRingElementArray, ncols);
+          currRow->len = ncols;
+          entries->array[r] = currRow;
+        }
+      for(int r = 0; r < nrows; r++)
+        {
+          for(int c = 0; c < ncols; c++)
+            {
+              ring_elem result;
+              M->get_entry(r, c, result);
+              entries->array[r]->array[c] =
+                  RingElement::make_raw(M->get_ring(), result);
+            }
+        }
+      return entries;
+    } catch (const exc::engine_error& e)
+    {
+      ERROR(e.what());
+      return nullptr;
+    }
+  return nullptr;
+}
+
+
 M2_bool IM2_MutableMatrix_set_entry(MutableMatrix *M,
                                     int r,
                                     int c,
