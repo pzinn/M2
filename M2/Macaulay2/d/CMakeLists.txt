@@ -51,7 +51,9 @@ set(DLIST
   errio.d
   parse.d
   expr.d
+  basic.d
   stdio.d
+  util.d
   stdiop.d
   err.d
   gmp1.d
@@ -60,9 +62,7 @@ set(DLIST
   lex.d
   parser.d
   binding.d
-  basic.d
   common.d
-  util.d
   convertr.d
   struct.d
   classes.dd
