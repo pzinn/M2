@@ -821,7 +821,7 @@ matchingFieldFromPermutationNoScaling(ZZ, ZZ, List) := opts -> (Lk, Ln, S) -> (
 -- 7) if not then d = d+1 and go back to step 2
 -- 8) reduce the matching field ideal gens modulo the full GB and check if the result is zero
 --
--- In the homgeneous case, it suffices to compute a GB up to degree limit d (step 1)
+-- In the homogeneous case, it suffices to compute a GB up to degree limit d (step 1)
 -- so we can forgo the while loop
 
 isToricDegeneration = method ()
@@ -868,9 +868,9 @@ NOBody = method()
 -- So, the lead terms can be simply scaled and the NO body is the convex hull of exponent vectors
 NOBody GrMatchingField := MF -> (
     if not MF.cache.?mfNOBody then (
-        -- compute the initial algbera of the Pluecker algebra wrt the weight term order
-        initialAlgberaGens := first entries leadTerm subalgebraBasis(plueckerAlgebra MF, AutoSubduce => false);
-        generatorExponents := apply(initialAlgberaGens, f -> (exponents(f))_0);
+        -- compute the initial algebra of the Pluecker algebra wrt the weight term order
+        initialAlgebraGens := first entries leadTerm subalgebraBasis(plueckerAlgebra MF, AutoSubduce => false);
+        generatorExponents := apply(initialAlgebraGens, f -> (exponents(f))_0);
         NOBodyVertices := apply(generatorExponents, v -> ((MF.tupleMaxSize) / sum(v))*v); -- normalize the vertices
         MF.cache.mfNOBody = convexHull transpose matrix NOBodyVertices;
         );
@@ -3250,7 +3250,7 @@ assert(zero I);
 ///
 
 -- non-coherent matching field ideal equals diagonal matching field ideal
-TEST ///which
+TEST ///
 S = subsets(1 .. 5, 3);
 S = {{2,1,3}} | delete({1,2,3}, S);
 L = grMatchingField(3, 5, S);
@@ -3260,6 +3260,12 @@ D = diagonalMatchingField(3, 5);
 I' = matchingFieldIdeal D;
 m = map(ring I, ring I', vars ring I);
 assert(m I' == I);
+///
+
+-- construct a FlMatchingField from permutation
+TEST ///
+L = matchingFieldFromPermutation({2,3}, 6, {2,4,3,6,5,1});
+assert(#getTuples L == 35);
 ///
 
 end --

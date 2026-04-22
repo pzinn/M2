@@ -108,6 +108,8 @@ promote = method(Dispatch => {Thing, Type, Type})
 Number _ Ring := promote
 
 isPromotable = method(TypicalValue => Boolean)
+isPromotable(RingFamily,RingFamily) :=
+isPromotable(RingFamily,Ring) :=
 isPromotable(Ring,Ring) := (R,S) -> lookup(promote,R,S) =!= null
 
 -- Local Variables:

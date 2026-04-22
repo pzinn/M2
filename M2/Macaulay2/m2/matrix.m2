@@ -3,6 +3,24 @@
 
 needs "modules.m2"
 
+notSameRing := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for the same ring")
+     else error("expected ",synonym X," and ",synonym Y," for the same ring"))
+sameRing = (M,N) -> if ring M === ring N then (M,N) else notSameRing(class M,class N)
+notToSameRing := (X,Y) -> (
+     if X === Y then error("expected ",pluralsynonym X, " for compatible rings")
+     else error("expected ",synonym X," and ",synonym Y," for compatible rings"))
+toSameRing = (M,N) -> (
+     R := ring M; S := ring N;
+     if R =!= S then (
+	 R' := if instance(R,InexactField) then ring R else R;
+	 S' := if instance(S,InexactField) then ring S else S;
+	 if isPromotable(R',S) then (promote(M,S),N)
+	 else if isPromotable(S',R) then (M,promote(N,R))
+	 else notToSameRing(class M,class N)
+	 )
+     else (M,N))
+
 oops := R -> error (
      if degreeLength R === 1
      then "expected degree to be an integer or list of integers of length 1"
@@ -79,22 +97,14 @@ InfiniteNumber * Matrix := (r,m) -> (map(target m, source m, matrix(r*(entries m
 Matrix * InfiniteNumber := (m,r) -> r*m
 Number * Matrix :=
 RingElement * Matrix := (r,m) -> (
-    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
+    (r,m) = toSameRing(r,m);
      map(target m, source m, reduce(target m, raw r * raw m)))
 Matrix * Number :=
 Matrix * RingElement := (m,r) -> (
-    if ring r =!= ring m then try r = promote(r,ring m) else m = promote(m,ring r);
+    (r,m) = toSameRing(r,m);
      map(target m, source m, reduce(target m, raw m * raw r)))
 Matrix / Number      :=
 Matrix / RingElement := (m,r) -> m * (1/r)
-
-toSameRing = (m,n) -> (
-     if ring m =!= ring n then (
-	  try (promote(m,ring n) , n) else
-	  try (m , promote(n,ring m))
-	  else error "expected compatible rings"
-	  )
-     else (m,n))
 
 Matrix _ Sequence := RingElement => (m,ind) -> (
     n := (raw m)_ind;
@@ -176,13 +186,8 @@ Matrix * Matrix := Matrix => (m,n) -> (
 	       q,
 	       Degree => degree m + if m.?RingMap then m.RingMap.cache.DegreeMap degree n else degree n))
      else (
-     	  R := ring m;
+	  (m,n) = toSameRing(m,n);
 	  S := ring target n;
-	  if R =!= S then ( -- use toSameRing?
-	       try (m = promote(m,S); R=S) else
-	       try (n = promote(n,R); S=R) else
-	       error "maps over incompatible rings";
-	       );
 	  M = target m;
 	  P := source m;
 	  N = source n;
@@ -288,7 +293,7 @@ ggConcatBlocks = (tar,src,mats) -> (
      then f = map(target f, source f, f, Degree => degree mats#0#0);
      f)
 
-sameringMatrices = mats -> (
+sameRingMatrices = mats -> (
      if same apply(mats, m -> (if m.?RingMap then m.RingMap,ring target m, ring source m))
      then mats
      else (
@@ -297,7 +302,7 @@ sameringMatrices = mats -> (
 
 directSum Matrix := f -> Matrix.directSum (1 : f)
 Matrix.directSum = args -> (
-     args = sameringMatrices args;
+     args = sameRingMatrices args;
      R := ring args#0;
      if not all(args, f -> ring f === R) then error "expected matrices all over the same ring";
      new Matrix from {
@@ -397,7 +402,7 @@ RingElement || RingElement := Matrix => (r,s) -> matrix {{r}} || matrix {{s}}
 concatCols = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     mats = sameringMatrices mats;
+     mats = sameRingMatrices mats;
      sources := apply(mats,source);
      -- if not all(sources, F -> isFreeModule F) then error "expected sources to be free modules";
      targets := apply(mats,target);
@@ -407,7 +412,7 @@ concatCols = mats -> (
 concatRows = mats -> (
      mats = nonnull toList mats;
      if # mats === 1 then return mats#0;
-     mats = sameringMatrices mats;
+     mats = sameRingMatrices mats;
      sources := apply(mats,source);
      -- if not same sources then error "expected matrices in the same column to have equal sources";
      targets := apply(mats,target);
@@ -516,7 +521,7 @@ bothFree := (f,g) -> (
      or not isFreeModule source g or not isFreeModule target g then error "expected a homomorphism between free modules"
      else (f,g))
 
-diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing 
+diff(Matrix, Matrix) := Matrix => ( (f,g) -> map(ring f, rawMatrixDiff(f.RawMatrix, g.RawMatrix)) ) @@ bothFree @@ toSameRing
 diff(RingElement, RingElement) := RingElement => (f,g) -> (diff(matrix{{f}},matrix{{g}}))_(0,0)
 diff(Matrix, RingElement) := (m,f) -> diff(m,matrix{{f}})
 diff(RingElement, Matrix) := (f,m) -> diff(matrix{{f}},m)
