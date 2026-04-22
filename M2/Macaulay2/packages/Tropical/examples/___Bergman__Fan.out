@@ -1,7 +1,7 @@
 -- -*- M2-comint -*- hash: 10480927928276198368
-i1 : 1:0M=uniformMatroid(2,3);
-i2 : 2:0T=BergmanFan(M);
-i3 : 3:0rays T
+i1 : M=uniformMatroid(2,3);
+i2 : T=BergmanFan(M);
+i3 : rays T
 
 o3 = $\left(\!\begin{array}{ccc}
 0&amp;0&amp;0\\
@@ -10,12 +10,12 @@
 \end{array}\!\right)$
 
 o3 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{3}$</span>
-i4 : 4:0maxCones T
+i4 : maxCones T
 
 o4 = $\{\{2\},\,\{0\},\,\{1\}\}$
 
 o4 : <samp class="token class-name">List</samp>
-i5 : 5:0linealitySpace T
+i5 : linealitySpace T
 
 o5 = $\left(\!\begin{array}{c}
 1\\
@@ -24,5 +24,4 @@
 \end{array}\!\right)$
 
 o5 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{1}$</span>
-i6 : 6:0
-
+i6 : 

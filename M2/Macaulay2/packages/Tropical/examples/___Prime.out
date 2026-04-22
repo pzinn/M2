@@ -1,15 +1,14 @@
 -- -*- M2-comint -*- hash: 9003283797531820781
-i1 : 1:0QQ[x,y,z];
-i2 : 2:0I=ideal(x^2+y^2-2*x*y);
+i1 : QQ[x,y,z];
+i2 : I=ideal(x^2+y^2-2*x*y);
 
 o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$</span>
-i3 : 3:0isPrime I
+i3 : isPrime I
 
 o3 = <samp class="token constant">false</samp>
-i4 : 4:0T=tropicalVariety(I,Prime=>false)
+i4 : T=tropicalVariety(I,Prime=>false)
 
 o4 = <samp class="token constant">T</samp>
 
 o4 : <samp class="token class-name">TropicalCycle</samp>
-i5 : 5:0
-
+i5 : 

@@ -16,7 +16,7 @@
 o5 : <samp class="token class-name">List</samp>
 i6 : 6:0topMinimalPrimesIP(I)
 
-o6 = $\{\,\}$
+o6 = $\{$<samp class="token function">monomialIdeal</samp>${}(y,\,z,\,w),\,$<samp class="token function">monomialIdeal</samp>${}(y,\,z,\,v)\}$
 
 o6 : <samp class="token class-name">List</samp>
 i7 : 7:0

@@ -1,5 +1,5 @@
 -- -*- M2-comint -*- hash: 7984992172877006531
-i1 : 1:0A=random(QQ^3,QQ^3)
+i1 : currentString:1:0A=random(QQ^3,QQ^3)
 
 o1 = $\left(\!\begin{array}{ccc}
 \frac{9}{2}&amp;\frac{7}{4}&amp;\frac{7}{10}\\
@@ -8,8 +8,8 @@
 \end{array}\!\right)$
 
 o1 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i2 : 2:0(perm,LR)=LRdecomposition(A,j->-j);
-i3 : 3:0LR
+i2 : currentString:2:0(perm,LR)=LRdecomposition(A,j->-j);
+i3 : currentString:3:0LR
 
 o3 = $\left(\!\begin{array}{ccc}
 \frac{9}{2}&amp;\frac{7}{4}&amp;\frac{7}{10}\\
@@ -18,7 +18,7 @@
 \end{array}\!\right)$
 
 o3 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i4 : 4:0P=transpose (id_(QQ^3))_perm
+i4 : currentString:4:0P=transpose (id_(QQ^3))_perm
 
 o4 = $\left(\!\begin{array}{ccc}
 1&amp;0&amp;0\\
@@ -27,7 +27,7 @@
 \end{array}\!\right)$
 
 o4 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i5 : 5:0R=extractRightUpper(LR)
+i5 : currentString:5:0R=extractRightUpper(LR)
 
 o5 = $\left(\!\begin{array}{ccc}
 \frac{9}{2}&amp;\frac{7}{4}&amp;\frac{7}{10}\\
@@ -36,7 +36,7 @@
 \end{array}\!\right)$
 
 o5 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i6 : 6:0L=extractLeftLower(LR)
+i6 : currentString:6:0L=extractLeftLower(LR)
 
 o6 = $\left(\!\begin{array}{ccc}
 1&amp;0&amp;0\\
@@ -45,13 +45,13 @@
 \end{array}\!\right)$
 
 o6 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i7 : 7:0L*R==P*A
+i7 : currentString:7:0L*R==P*A
 
 o7 = <samp class="token constant">true</samp>
-i8 : 8:0b=random(QQ^3,QQ^1);
+i8 : currentString:8:0b=random(QQ^3,QQ^1);
 
 o8 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{1}$</span>
-i9 : 9:0y=forwardSubstitution(LR,P*b)
+i9 : currentString:9:0y=forwardSubstitution(LR,P*b)
 
 o9 = $\left(\!\begin{array}{c}
 \frac{3}{7}\\
@@ -60,7 +60,7 @@
 \end{array}\!\right)$
 
 o9 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{1}$</span>
-i10 : 10:0x=backwardSubstitution(LR,y)
+i10 : currentString:10:0x=backwardSubstitution(LR,y)
 
 o10 = $\left(\!\begin{array}{c}
 -\frac{2\,192}{1\,141}\\
@@ -69,8 +69,7 @@
 \end{array}\!\right)$
 
 o10 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{1}$</span>
-i11 : 11:0inverse(A)*b==x
+i11 : currentString:11:0inverse(A)*b==x
 
 o11 = <samp class="token constant">true</samp>
-i12 : 12:0
-
+i12 : currentString:12:0

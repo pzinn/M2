@@ -4,6 +4,8 @@
 
 o2 : <span><samp class="token class-name">MonomialIdeal</samp> of $R$</span>
 i3 : 3:0codimensionIP(I)
+
+o3 = $2$
 i4 : 4:0ScipPrintLevel = 0;
 i5 : 5:0J = monomialIdeal(x*y^3*z^7, y^4*w*v, z^2*v^8, x*w^3*v^3, y^10, z^10)
 
@@ -11,5 +13,7 @@
 
 o5 : <span><samp class="token class-name">MonomialIdeal</samp> of $R$</span>
 i6 : 6:0codimensionIP(J)
+
+o6 = $3$
 i7 : 7:0
 

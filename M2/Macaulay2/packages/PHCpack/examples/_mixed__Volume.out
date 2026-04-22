@@ -1,35 +1,32 @@
 -- -*- M2-comint -*- hash: 10385799651477782049
-i1 : 1:0R = CC[x,y];
-i2 : 2:0f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-i3 : 3:0I=ideal f;
+i1 : R = CC[x,y];
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : I=ideal f;
 
 o3 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
-i4 : 4:0dim I
--- warning: experimental computation over inexact field begun
---          results not reliable (one warning given per session)
+i4 : dim I
 
 o4 = $0$
-i5 : 5:0degree I
+i5 : degree I
 
 o5 = $10$
-i6 : 6:0m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
+i6 : m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
 
 o6 = $8$
-i7 : 7:0(mv,sv) = mixedVolume(f,StableMixedVolume=>true)
+i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
 
 o7 = $(8,\,10)$
 
 o7 : <samp class="token class-name">Sequence</samp>
-i8 : 8:0(mv,q,qsols) = mixedVolume(f,StartSystem=>true);
-i9 : 9:0q --let's take a look at the start system:
+i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
+i9 : q --let's take a look at the start system:
 
-o9 = $\left\{\left(-{.205377}-{.978683}\,\mathbf{i}\right)x^{3}y^{5}+\left({.943327}-{.331864}\,\mathbf{i}\right)x^{2}y,\,\left({.673112}+{.739541}\,\mathbf{i}\right)x^{2}-{.911067}-{.412259}\,\mathbf{i}\right\}$
+o9 = $\left\{\left({.869684}+{.493608}\,\mathbf{i}\right)x^{3}y^{5}+\left({.741047}-{.671454}\,\mathbf{i}\right)x^{2}y+\left({.366645}-{.930361}\,\mathbf{i}\right)y^{2},\,\left(-{.859771}+{.51068}\,\mathbf{i}\right)x^{2}+\left({.365896}-{.930656}\,\mathbf{i}\right)x\,y-{.0800772}+{.996789}\,\mathbf{i}\right\}$
 
 o9 : <samp class="token class-name">List</samp>
-i10 : 10:0qsols --and its solutions:
+i10 : qsols --and its solutions:
 
-o10 = $\left\{\{{.979319}-{.202321}\,\mathbf{i},\,{.930645}-{.365923}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,{.916812}+{.399319}\,\mathbf{i}\},\,\{{.979319}-{.202321}\,\mathbf{i},\,{.365923}+{.930645}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,-{.399319}+{.916812}\,\mathbf{i}\},\,\{{.979319}-{.202321}\,\mathbf{i},\,-{.930645}+{.365923}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,-{.916812}-{.399319}\,\mathbf{i}\},\,\{{.979319}-{.202321}\,\mathbf{i},\,-{.365923}-{.930645}\,\mathbf{i}\},\,\{-{.979319}+{.202321}\,\mathbf{i},\,{.399319}-{.916812}\,\mathbf{i}\}\right\}$
+o10 = $\left\{\{{.446144}+{.624287}\,\mathbf{i},\,{.386955}-{.46786}\,\mathbf{i}\},\,\{-{.0983411}-{.864865}\,\mathbf{i},\,{.659789}+{.386606}\,\mathbf{i}\},\,\{{.888182}+{.463532}\,\mathbf{i},\,{1.13004}+{.212113}\,\mathbf{i}\},\,\{-{.707543}-{.338677}\,\mathbf{i},\,-{1.29182}+{.158977}\,\mathbf{i}\},\,\{-{.941325}-{1.08933}\,\mathbf{i},\,-{.357524}-{.802989}\,\mathbf{i}\},\,\{{.748875}+{1.39089}\,\mathbf{i},\,-{.136086}+{.937395}\,\mathbf{i}\},\,\{-{.229504}-{1.32305}\,\mathbf{i},\,{.721276}-{.446665}\,\mathbf{i}\},\,\{-{.106489}+{1.13721}\,\mathbf{i},\,-{1.11263}+{.0224227}\,\mathbf{i}\}\right\}$
 
 o10 : <samp class="token class-name">List</samp>
-i11 : 11:0
-
+i11 : 

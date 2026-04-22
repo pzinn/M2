@@ -716,11 +716,12 @@ matchingFieldFromPermutation(List, ZZ, List) := opts -> (LkList, Ln, S) -> (
     sortedLkList := sort LkList;
     grMatchingFields := for Lk in sortedLkList list matchingFieldFromPermutation(Lk, Ln, S, opts);
     lastGrMatchingField := grMatchingFields_(#sortedLkList - 1);
+    print (Ln,sortedLkList,grMatchingFields);
     new FlMatchingField from {
         tupleMaxValue => Ln,
         tupleSizeList => sortedLkList,
         tupleMaxSize => last sortedLkList,
-        tuples => flatten for grMF in grMatchingFields list grMF.tuples;
+        tuples => flatten for grMF in grMatchingFields list grMF.tuples,
         cache => new CacheTable from {
             grMatchingFieldList => grMatchingFields,
             weightMatrix => lastGrMatchingField.cache.weightMatrix,

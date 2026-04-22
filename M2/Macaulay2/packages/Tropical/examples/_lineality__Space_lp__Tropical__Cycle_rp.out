@@ -1,10 +1,10 @@
 -- -*- M2-comint -*- hash: 12046403087054853784
-i1 : 1:0QQ[x,y,z];
-i2 : 2:0I=ideal(x-y);
+i1 : QQ[x,y,z];
+i2 : I=ideal(x-y);
 
 o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$</span>
-i3 : 3:0T=tropicalVariety I;
-i4 : 4:0L=linealitySpace T
+i3 : T=tropicalVariety I;
+i4 : L=linealitySpace T
 
 o4 = $\left(\!\begin{array}{cc}
 1&amp;0\\
@@ -13,5 +13,4 @@
 \end{array}\!\right)$
 
 o4 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{2}$</span>
-i5 : 5:0
-
+i5 : 

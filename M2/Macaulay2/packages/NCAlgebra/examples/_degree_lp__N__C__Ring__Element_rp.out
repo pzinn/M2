@@ -1,30 +1,29 @@
 -- -*- M2-comint -*- hash: 13535224294236481967
-i1 : 1:0A = QQ{x,y,z,w}
+i1 : A = QQ{x,y,z,w}
 
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
-i2 : 2:0f = x^2+y^2+z^3
+i2 : f = x^2+y^2+z^3
 
-o2 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots ﻿1﻿\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{x,\,x\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{y,\,y\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1\})\}$
+o2 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{x,\,x\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{y,\,y\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1\})\}$
 
 o2 : $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
-i3 : 3:0degree f
+i3 : degree f
 
 o3 = $3$
-i4 : 4:0isHomogeneous f
+i4 : isHomogeneous f
 
 o4 = <samp class="token constant">false</samp>
-i5 : 5:0setWeights(A,{3,3,2,1})
+i5 : setWeights(A,{3,3,2,1})
 
 o5 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o5 : <samp class="token class-name">NCPolynomialRing</samp>
-i6 : 6:0degree f
+i6 : degree f
 
 o6 = $6$
-i7 : 7:0isHomogeneous f
+i7 : isHomogeneous f
 
 o7 = <samp class="token constant">true</samp>
-i8 : 8:0
-
+i8 : 

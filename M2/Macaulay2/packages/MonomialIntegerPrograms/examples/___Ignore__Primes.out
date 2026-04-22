@@ -6,12 +6,12 @@
 i3 : 3:0ScipPrintLevel = 0;
 i4 : 4:0L1 = topMinimalPrimesIP I
 
-o4 = $\{\,\}$
+o4 = $\{$<samp class="token function">monomialIdeal</samp>${}(y,\,z,\,w),\,$<samp class="token function">monomialIdeal</samp>${}(y,\,z,\,v)\}$
 
 o4 : <samp class="token class-name">List</samp>
 i5 : 5:0L2 = topMinimalPrimesIP(I, IgnorePrimes=>L1)
 
-o5 = $\{\,\}$
+o5 = $\{$<samp class="token function">monomialIdeal</samp>${}(x,\,y,\,w,\,v)\}$
 
 o5 : <samp class="token class-name">List</samp>
 i6 : 6:0minimalPrimes I

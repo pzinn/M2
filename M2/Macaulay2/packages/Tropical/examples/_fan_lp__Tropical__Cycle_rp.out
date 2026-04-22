@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: 17585299807246447056
-i1 : 1:0QQ[x,y,z]
+i1 : QQ[x,y,z]
 
 o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i2 : 2:0T=tropicalVariety (ideal(x+3*y+3));
-i3 : 3:0fan T
+i2 : T=tropicalVariety (ideal(x+3*y+3));
+i3 : fan T
 
-o3 = <samp class="token class-name">Fan</samp>$\{\ldots ﻿1﻿\ldots\}$
+o3 = <samp class="token class-name">Fan</samp>$\{\ldots 1\ldots\}$
 
 o3 : <samp class="token class-name">Fan</samp>
-i4 : 4:0peek o3#cache
+i4 : peek o3#cache
 
 o4 = <span><samp class="token class-name">CacheTable</samp>  <ul style="display:inline-table">
     <li><span>$\mathit{computedDimension}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$2$</span></li>
@@ -36,6 +36,5 @@
     <li><span>$\mathit{simplicial}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token constant">true</samp></span></li>
   </ul>
 </span>
-i5 : 5:0
-6:0
-
+i5 : 
+
