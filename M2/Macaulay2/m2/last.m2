@@ -97,6 +97,7 @@ run0 := run
 allowedRuns := {
     "4ti2",
     "M2",
+    "B_A",
     "bergman",
     "bertini",
     "checkregularity",
@@ -124,6 +125,7 @@ allowedRuns := {
     "points2triangs",
     "polymake",
     "scip",
+    "TOPCOM",
     "true",
     "type",
     "which"
