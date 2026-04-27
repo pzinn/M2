@@ -106,6 +106,7 @@ allowedRuns := {
     "checkregularity",
     "chiro2circuits",
     "chiro2cocircuits",
+    "command",
     "complg",
     "cp",
     "date",
@@ -149,10 +150,12 @@ allowedRuns := {
 
 secureRun := (runf, strf, x) -> (
     if debugLevel > 0 then printerr("running: ", x);
-    if any(allowedRuns, s -> match("^"|s|"|/"|s, strf x)) then runf x
-    else error "cannot run this command on Macaulay2Web")
+    if any(allowedRuns, s -> match("^\\s*"|s|"|/"|s, strf x)) then runf x
+    else error ("cannot run command \""|x|"\" on Macaulay2Web"))
 run = x -> secureRun(run0, identity, x)
-get = x -> (
+get = method()
+get File := get0
+get String := x -> (
     if x#?0 and x#0 == "!" then secureRun(get0, substring_1, x)
     else get0 x)
 
