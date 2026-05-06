@@ -228,15 +228,21 @@ flexibleOperators = sort flexibleOperators
 fixedOperators = sort fixedOperators
 allOperators = sort allOperators
 
-random List := opts -> s -> (
-     n := #s;
-     if n <= 1 then return s;
-     s = new MutableList from s;
-     for i from 1 to n-1 do (
-	  j := random (i+1);
-	  t := s#i ; s#i = s#j ; s#j = t;
-	  );
-     new List from s)
+randomElement = method()
+randomElement List := x -> (
+    if #x == 0 then error "expected a nonempty list";
+    x#(random(#x)))
+
+-- TODO: change to call randomElement instead (M2 1.26.11 or 1.27.05)
+seenRandomWarning := false;
+random List := opts -> (
+    x -> (
+	if not seenRandomWarning then (
+	    printerr(
+		"the behavior of random(List) will change soon; ",
+		"use shuffle(List) instead");
+	    seenRandomWarning = true);
+	shuffle x))
 
 randomSubset = method()
 -- Knuth Algorithm S, Art of Computer Programming, Section 3.4.2
@@ -255,6 +261,15 @@ randomSubset(VisibleList, ZZ) := (x, n) -> x_(randomSubset(#x, n))
 randomSubset VisibleList := x -> x_(randomSubset(#x))
 randomSubset(Set, ZZ) := (x, n) -> set randomSubset(toList x, n)
 randomSubset Set := x -> set randomSubset toList x
+
+shuffle = method()
+shuffle MutableList := s -> (
+    for i from 1 to #s-1 do (
+	j := random (i+1);
+	(s#i, s#j) = (s#j, s#i));
+    s)
+shuffle List := s -> toList shuffle new MutableList from s
+shuffle(List, ZZ) := shuffle @@ randomSubset
 
 -----------------------------------------------------------------------------
 -- sublists
