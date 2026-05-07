@@ -69,7 +69,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
      if ring m === (try coefficientRing R) and ring m === (try coefficientRing S)
      then (
 	  if numgens R != rank target m
-	  then error ("expected a matrix with ", toString numgens R, " rows");
+	  then error ("expected a matrix with ", numgens R, " rows");
 	  m = vars R * (m ** R);   -- handle a change of coordinates
 	  )
      else (
@@ -122,7 +122,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 		    m'_(0,n) = p A.PrimitiveElement;
 		    m = matrix m';
 		    ))
-	  else if r < n then error ("encountered values for ", toString r, " variables, but expected ", toString n)
+	  else if r < n then error ("encountered values for ", r, " variables, but expected ", n)
 	  else if r == n then (
 	       if numgens A > 0 then (
 		    if A === R or isPromotable(A, R) then (
@@ -146,7 +146,7 @@ map(Ring, Ring, Matrix)  := RingMap => opts -> (R, S, m) -> (
 	  n = n + numgens A;
 	  try A = coefficientRing A else break
 	  );
-     if n != numgens source m then error ("encountered values for ", toString numgens source m," variables");
+     if n != numgens source m then error ("encountered values for ", numgens source m," variables");
      zdeg  := toList ( degreeLength R : 0 );
      mE = map(R^{zdeg}, R^-mdegs, mE, Degree => zdeg);
      new RingMap from {
@@ -459,7 +459,7 @@ sub2 = (S,R,v) -> (				   -- S is the target ring or might be null, meaning targ
 	  if S === null
 	  then try commonzero = commonzero + 0_(ring y) else error "expected substitution values to be in compatible rings"
 	  else try y = promote(y,S) else error "expected to be able to promote value to target ring";
-	  try x_R else error( "expected ", toString x, " to be a generator of ", toString R );
+	  try x_R else error( "expected ", x, " to be a generator of ", R );
 	  for i in h#x do (
 	       if m#i =!= symbol dummy and m#i =!= y then error "multiple destinations specified for a generator";
 	       m#i = y;

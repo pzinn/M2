@@ -51,7 +51,7 @@ Grassmannian(ZZ,ZZ):= o -> (k,n) -> Schubert(k,n,n-k..n,o)
 Grassmannian(ZZ,ZZ,PolynomialRing) := o -> (k,n,R) -> (
      I := Grassmannian(k,n,o);
      S := ring I;
-     if numgens R < numgens S then error ("expected a ring with at least ",toString numgens S," generators");
+     if numgens R < numgens S then error ("expected a ring with at least ",numgens S," generators");
      f := map(R,S,apply(numgens S, i -> R_i));
      f I)
 

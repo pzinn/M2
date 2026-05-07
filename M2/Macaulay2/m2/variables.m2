@@ -62,7 +62,7 @@ installMethod(symbol <-, IndexedVariable, (xi,e) -> ((x,i) -> x_i = e) toSequenc
 
 installMethod(symbol <-, Sequence, (x,y) -> (
 	  if not instance(y,Sequence) then error "expected a sequence of values";
-	  if #x =!= #y then error ("expected ", toString (#x), " values, but encountered ", toString (#y));
+	  if #x =!= #y then error ("expected ", #x, " values, but encountered ", #y);
 	  scan(x,y,(i,j) -> i <- j);
 	  y))
 

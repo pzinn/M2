@@ -40,7 +40,7 @@ if topLevelMode =!= WebApp then (
 -- TODO: what is this for exactly?
 badClass := meth -> (i, args) -> (
      if i === -1 then error(meth,": expected an output class, but got: ", silentRobustString(45,3,args))
-     else error(meth,": expected argument ",toString (i+1)," to be a type, but it was: ", args#i))
+     else error(meth,": expected argument ",i+1," to be a type, but it was: ", args#i))
 
 -- TODO: handle this in the interpreter, the same way that it is handled for function closures
 chkopt0 := k -> if not ( instance(k, Symbol) ) then error "expected SYMBOL => VALUE"
@@ -414,7 +414,7 @@ toExternalString Nothing := simpleToString
 
 toExternalString Thing := x -> (
      if hasAttribute(x,ReverseDictionary) then return toString getAttribute(x,ReverseDictionary);
-     error("can't convert anonymous object of class ",toString class x," to external string"))
+     error("can't convert anonymous object of class ",class x," to external string"))
 
 setupMethods(Dispatch => Thing, {max,min,directSum,vars})
 net = method(Dispatch => Thing, TypicalValue => Net)

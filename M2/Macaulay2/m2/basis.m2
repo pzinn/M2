@@ -260,8 +260,8 @@ basisHelper = (opts, lo, hi, M) -> (
     if #lo != 0  and #lo > n
     or #hi != 0  and #hi > n then error "expected length of degree bound not to exceed that of ring";
     if lo =!= hi and #lo > 1 then error "degree rank > 1 and degree bounds differ";
-    if not all(lo, i -> instance(i, ZZ)) then error("expected a list of integers: ", toString lo);
-    if not all(hi, i -> instance(i, ZZ)) then error("expected a list of integers: ", toString hi);
+    if not all(lo, i -> instance(i, ZZ)) then error("expected a list of integers: ", lo);
+    if not all(hi, i -> instance(i, ZZ)) then error("expected a list of integers: ", hi);
 
     -- e.g., basis(4, 2, QQ[x])
     if #hi == 1 and #lo == 1 and hi - lo < {0}
@@ -275,9 +275,9 @@ basisHelper = (opts, lo, hi, M) -> (
     B := runHooks((basis, List, List, Module), (opts, lo, hi, M), Strategy => strategy);
 
     if B =!= null then liftBasis(M, phi, B, opts.Degree) else if strategy === null
-    then error("no applicable strategy for computing bases over ", toString R)
+    then error("no applicable strategy for computing bases over ", R)
     -- used to be: error "'basis' can't handle this type of ring";
-    else error("assumptions for basis strategy ", toString strategy, " are not met"))
+    else error("assumptions for basis strategy ", strategy, " are not met"))
 
 -----------------------------------------------------------------------------
 -- strategies for basis

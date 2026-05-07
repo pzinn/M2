@@ -326,7 +326,7 @@ lift(RingElement, RingElement) := opts -> (f, R) -> (
 	setupLift(a->fraction(lift(numerator a,R1),lift(denominator a,R1)),class f,R);
 	return lift(f,R,opts);
 	);
-    if opts.Verify then error ("cannot lift from "|toString class f|" to "|toString R)
+    if opts.Verify then error ("cannot lift from ",class f," to ", R)
     )
 
 factoryAlmostGood = R -> (
@@ -469,7 +469,7 @@ protect numallvars
 
 EngineRing _ ZZ := (R,i) -> (
      if R.?numallvars and i < 0 then i += R.numallvars;
-     if i < 0 or R.?numallvars and i >= R.numallvars then error("index ", toString i, " out of bounds 0 .. ", toString (R.numallvars-1));
+     if i < 0 or R.?numallvars and i >= R.numallvars then error("index ", i, " out of bounds 0 .. ", R.numallvars-1);
      new R from R.RawRing_i
      )
 

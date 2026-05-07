@@ -468,7 +468,7 @@ Expression Thing      := (x,y) -> x (expression y)
 Holder     / OneExpression :=
 Expression / OneExpression := (x,y) -> x
 Expression / Expression := Divide => (x,y) -> new Divide from {x,y}
-not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else -* UnaryOperation{symbol not, e} *- error ("negation of an equation with ", toString (#e), " parts")
+not Equation := e -> if #e == 2 then BinaryOperation { symbol !=, e#0, e#1 } else -* UnaryOperation{symbol not, e} *- error ("negation of an equation with ", #e, " parts")
 expression ZZ := i -> (
      if i === 0 then ZERO
      else if i === 1 then ONE

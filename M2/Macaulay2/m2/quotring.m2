@@ -225,7 +225,7 @@ Ring / RingElement := QuotientRing => (R,f) -> (
 
 Ring / Module := QuotientRing => (R,I) -> (
      if ambient I != R^1 or I.?relations
-     then error ("expected ", toString I, " to be an ideal of ", R);
+     then error ("expected ", I, " to be an ideal of ", R);
      R / ideal I)
 
 Ring / List := Ring / Sequence := QuotientRing => (R,f) -> R / promote(ideal f, R)

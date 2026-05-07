@@ -184,7 +184,7 @@ processWeights = (nvars,weights) -> (
      scan(weights, 
 	  wt -> (
 	       if # wt != nvars
-	       then error("Weights: expected weight vector of length ",toString nvars," but got ",toString (#wt))));
+	       then error("Weights: expected weight vector of length ", nvars," but got ",#wt)));
      weights);
 
 makeMonomialOrdering = (monsize,inverses,nvars,degs,weights,ordering) -> (

@@ -262,7 +262,7 @@ selmo = (v,mo) -> ( off = 0; apply(mo, x -> if instance(x,Option) and selop#?(x#
 ord := (v,nv) -> (
      n := -1;
      for i in v do (
-	  if not instance(i,ZZ) or i < 0 or i >= nv then error("selectVariables: expected an increasing list of numbers in the range 0..",toString(nv-1));
+	  if not instance(i,ZZ) or i < 0 or i >= nv then error("selectVariables: expected an increasing list of numbers in the range 0..",nv-1);
 	  if i <= n then error "selectVariables: expected a strictly increasing list";
 	  n = i;
 	  ))     

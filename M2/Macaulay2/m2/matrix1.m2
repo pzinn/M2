@@ -128,7 +128,7 @@ map(Module,Module,List) := Matrix => options -> (M,N,p) -> (
      else if all(p, o -> instance(o,List)) then (		    -- dense list of entries or blocks
 	  p = apply(splice p,splice);
 	  if #p != numgens M or #p > 0 and ( not isTable p or # p#0 != rankN )
-	  then error( "expected ", toString numgens M, " by ", toString rankN, " table");
+	  then error( "expected ", numgens M, " by ", rankN, " table");
 	  p = toSequence makeRawTable(R,p);
 	  h := (
 	       if instance(N,Module)

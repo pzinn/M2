@@ -73,7 +73,7 @@ code FilePosition := x -> (
 		    )
 	       );
 	  file = lines file;
-	  if #file < stop then error("line number ",toString stop, " not found in file ", filename);
+	  if #file < stop then error("line number ", stop, " not found in file ", filename);
 	  DIV splice { codeAddress(x), codeContent(start, stop, file) }
 	  ))
 code Symbol     :=
