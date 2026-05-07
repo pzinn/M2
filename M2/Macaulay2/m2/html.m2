@@ -191,6 +191,28 @@ html RingFamily :=
 html Ring :=
 html Thing := x -> "$" | htmlLiteral texMath0 x | "$" -- by default, we use math mode tex (as opposed to actual html)
 
+html Error := err -> (
+    errorPosition := locate err;
+    errorMessage := toSequence err;
+    s := shortMode; shortMode=false;
+    syms := new MutableHashTable;
+    recScan := x -> (
+    if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then x=apply(x,recScan);
+    if instance(x,Symbol) then (if not syms#?x and (l:=locate x) =!= null then syms#x=l; x)
+    else if class x === String or class x === Option or class x === OptionTable or instance(x,Hypertext) then x -- this is ridiculous
+    else Abbreviate {x}
+    );
+    msg:=recScan \ errorMessage;
+    html(SPAN((
+        "class"=>"M2Error",
+        if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
+        if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: ",
+	SPAN msg,
+        ) | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s))
+	)
+	)
+	)
+
 -----------------------------------------------------------------------------
 -- Viewing rendered html in a browser
 -----------------------------------------------------------------------------

@@ -202,6 +202,8 @@ net Type := X -> (
 	  );
      horizontalJoin ( net class X, " of ", net parent X))
 
+net Error := e -> horizontalJoin apply(toSequence e,net)
+
 -----------------------------------------------------------------------------
 
 netList = method(Options => {

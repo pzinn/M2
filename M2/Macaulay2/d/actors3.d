@@ -1446,6 +1446,8 @@ sqrt(a:Expr):Expr := (
 setupfun("sqrt",sqrt).Protected=false;
 
 export toSequence(e:Expr):Expr := (
+     iter := getIterator(e);
+     if iter == nullE then (
      when e
      is Sequence do e
      is b:List do (
@@ -1453,11 +1455,16 @@ export toSequence(e:Expr):Expr := (
 	  then Expr(new Sequence len length(b.v) do foreach i in b.v do provide i)
 	  else Expr(b.v)
 	  )
+     is s:SpecialExpr do toSequence(s.e)
+     is err:Error do (
+     when err.message
+     is s:Sequence do err.message
+     else Expr(Sequence(err.message))
+     )
      is s:stringCell do Expr(strtoseq(s))
-     else (
-	 iter := getIterator(e);
-	 if iter != nullE
-	 then (
+	 else WrongArg("a list, sequence, string, or iterable object")
+	 )
+	 else (
 	     nextfunc := getNextFunction(iter);
 	     if nextfunc != nullE
 	     then (
@@ -1483,7 +1490,7 @@ export toSequence(e:Expr):Expr := (
 		     else new Sequence len j do (
 			 foreach x in r do provide x)))
 	     else buildErrorPacket("no method for applying next to iterator"))
-	 else WrongArg("a list, sequence, string, or iterable object")));
+	     );
 setupfun("toSequence",toSequence);
 
 -- # typical value: apply, BasicList, BasicList, Function, BasicList
