@@ -86,7 +86,8 @@ toURL URL := first -- a way to provide exact URLs with no editing. should toURL 
 toURL FilePosition := p -> concatenate(
 	p#0,
 	"#L",toString p#1,":C",toString p#2,
-	if #p>=5 then ("-L",toString p#3,":C",toString p#4)
+	if #p>=5 then ("-L",toString p#3,":C",toString p#4),
+	if #p>=7 then ("_L",toString p#5,":C",toString p#6),
 	)
 
 -----------------------------------------------------------------------------
@@ -485,6 +486,20 @@ short Hypertext := x -> (
 short LITERAL:=identity
 
 unique Hypertext := x -> new class x from unique toList x
+
+hypertext Error := err -> (
+    errorPosition := locate err;
+    errorMessage := toSequence err;
+    (msg,syms) := processError errorMessage;
+    SPAN((
+	"class"=>"M2Error",
+	if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
+	if #errorMessage==0 or class errorMessage#0 =!= String or substring(errorMessage#0,0,2) =!= "--" then "error: ",
+	SPAN msg
+	) | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s))
+    )
+)
+
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

@@ -183,23 +183,21 @@ Thing#{Standard,Print} = x -> (
 
 -----------------------------------------------------------------------------
 print =  mode ( x -> (<< x << endl;) )
-processError = args -> try ( -- we don't want errors here
+errorPrint = mode ( x -> (stderr << x << endl << flush;) )
+-----------------------------------------------------------------------------
+processError = msg -> (
     syms := new MutableHashTable;
     recScan := x -> (
-	if instance(x,VisibleList) or instance(x,Expression) or instance(x,Hypertext) then scan(toList x,recScan)
-    	else if class x === Symbol and not syms#?x and (l:=locate x) =!= null then syms#x=l;
+	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then x=apply(x,recScan);
+	if instance(x,Symbol) then (if not syms#?x and (l:=locate x) =!= null then syms#x=l; x)
+	else if class x === String or class x === Option or class x === OptionTable or instance(x,Hypertext) then x -- this is ridiculous
+	else Abbreviate {x}
 	);
-    recScan args;
-    sequence args | join apply(toSequence pairs syms,(s,l) -> ("\n", l, ": here is the first use of ",s))
-    ) else sequence args
-errorPrint = mode ( (errorPosition,errorMessage) -> (
-    if errorPosition#1 > 0 then stderr << errorPosition << ": ";
-    msg := processError errorMessage;
-    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then stderr << "error: ";
-    stderr << (concatenate apply(msg, x -> if class x === String then x else if class x === Symbol then "'"|toString x|"'" else silentRobustString(40,3,x))) << endl;
-    stderr << flush;
-    ) )
+    msg=recScan \ msg;  -- we don't want errors here?
+    return (msg,syms)
+    )
 
+net Error := x -> robustNet hypertext x -- TODO net doesn't respect BRs
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

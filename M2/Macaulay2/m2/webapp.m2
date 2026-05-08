@@ -70,29 +70,12 @@ timelimit := (t,f) -> (alarm t; r := f(); alarm 0; r)
     << webAppHtmlTag | y | webAppEndTag << endl;
     )
 
-(modes errorPrint)#WebApp = (errorPosition,errorMessage) -> (
-    s := shortMode; shortMode=false;
-    syms := new MutableHashTable;
-    recScan := x -> (
-	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then x=apply(x,recScan);
-	if instance(x,Symbol) then (if not syms#?x and (l:=locate x) =!= null then syms#x=l; x)
-	else if class x === String or class x === Option or class x === OptionTable or instance(x,Hypertext) then x -- this is ridiculous
-	else Abbreviate {x}
-	);
-    msg:=recScan \ sequence errorMessage;
-    backupFlag := webAppPrintFlag;
-    webAppPrintFlag = true;
-    h := try html SPAN msg else try html net msg else try html toString msg else try html toExternalString msg;
-    webAppPrintFlag = backupFlag;
-    try print SPAN ((
-	    "class"=>"M2Error",
-	    if errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
-	    if class errorMessage =!= String or substring(errorMessage,0,2) =!= "--" then "error: ",
-	    LITERAL h,
-	    ) | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s))
-	) else stderr << endl << "--error in conversion of error output to html" << endl; -- should never happen
-    shortMode=s;
+(modes errorPrint)#WebApp = err -> (
+    s := shortMode; shortMode = false;
+    printFunc err; -- TODO better?
+    shortMode = s;
     )
+
 
 on := () -> concatenate(webAppPromptTag,interpreterDepth:"o", toString lineNumber,webAppEndTag)
 

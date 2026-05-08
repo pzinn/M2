@@ -143,20 +143,42 @@ export printMessage(position:Position,message:string):void := (
 	  );
      );
 
-export dummyprintExprMessage(position:Position,message:Expr):void := (
+export dummyprintExprMessage(err:Error):void := (
 nothing
 ); -- will be overwritten in evaluate.d
 export printExprMessage := dummyprintExprMessage;
 export printErrorMessage(position:Position,message:Expr):void := (
-     printExprMessage(position, message); -- TODO add error: ? don't think ever need
+     printExprMessage(Error(position, message, nullE, false, dummyFrame));
      );
 export printErrorMessage(position:Position,message:string):void := printErrorMessage(position, toExpr(message));
-export printWarningMessage(position:Position,message:Expr):void := printExprMessage(position, message); -- TODO add warning?
-
+export printWarningMessage(position:Position,message:Expr):void := ( -- TODO add warning?
+     printExprMessage(Error(position, message, nullE, false, dummyFrame));
+     );
 export printWarningMessage(position:Position,message:string):void := printWarningMessage(position,toExpr(message)); -- printMessage(position,"warning: "+message);
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
      printErrorMessage(Position(filename,line,column,line,column,line,column,ushort(0)), message);
      );
+export printErrorMessage(err:Error):void := (
+     printExprMessage(err);
+     err.printed = true;
+     );
+
+
+export printIfError(e:Expr):void := (
+     when e is err:Error do printErrorMessage(err)
+     else nothing;
+     );
+export printError(err:Error):Error := (
+     if !(err.printed && err.position.filename === "stdio")
+     then printErrorMessage(err.position, if err.printed then Expr(stringCell("--back trace--")) else err.message); -- TODO better
+     err.printed = true;
+     err);
+export printErrorMessage(t:Token,message:string):void := printErrorMessage(t.position,message);
+export printWarningMessage(t:Token,message:string):void := printWarningMessage(t.position,message);
+export printErrorMessage(t:Token,message:Expr):void := printErrorMessage(t.position,message);
+export printWarningMessage(t:Token,message:Expr):void := printWarningMessage(t.position,message);
+
+
 export (o:file) << (p:(null or Position)) : file := when p is null do o is w:Position do o << w;
 export (o:BasicFile) << (p:(null or Position)) : BasicFile := when p is null do o is w:Position do o << w;
 export copy(p:Position):Position := Position(
