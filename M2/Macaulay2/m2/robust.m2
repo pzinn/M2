@@ -132,7 +132,6 @@ if topLevelMode =!= WebApp then (
 			    error toString stack(line1,line2)));
 		    ))))
     ) else (
-	ofc := x -> (hold x," (of class ",class x,")");
 	scan(flexibleBinaryOperators, op -> (
 		if not Thing#?((op,symbol =),Thing,Thing) then (
 	    	    undocumented' ((op,symbol =),Thing,Thing);
@@ -140,7 +139,7 @@ if topLevelMode =!= WebApp then (
 		    	    "no method for assignment to ",
 			    if op === symbol SPACE then "adjacent objects:" else ("binary operator ",op," applied to objects:"),
 			    BR{},
-		    	    UL { LI ofc x, LI ofc y }
+		    	    UL { LI hold x, LI hold y }
 			    )));
 		if not Thing#?(op,Thing,Thing) then (
 	    	    undocumented' (op,Thing,Thing);
@@ -148,7 +147,7 @@ if topLevelMode =!= WebApp then (
 		    	    "no method for ",
 			    if op === symbol SPACE then "adjacent objects:" else ("binary operator ",op," applied to objects:"),
 			    BR{},
-		    	    UL { LI ofc x, LI ofc y }
+		    	    UL { LI hold x, LI hold y }
 			    )));
 		    ));
 	scan( {(flexiblePrefixOperators,"prefix"), (flexiblePostfixOperators,"postfix")}, (ops,type) ->
@@ -156,11 +155,11 @@ if topLevelMode =!= WebApp then (
 	    	    if not Thing#?(op,symbol =) then (
 			undocumented' ((op,symbol =), Thing);
 			installMethod((op,symbol =), Thing, (y,z) ->
-			    error ("no method for assignment to ", type, " operator ",op, " applied to objects:",BR{},UL LI ofc y)));
+			    error ("no method for assignment to ", type, " operator ",op, " applied to objects:",BR{},UL LI hold y)));
 		    if not Thing#?op and op =!= symbol ?? then (
 	    	    	undocumented' (op, Thing);
 			installMethod(op, Thing, (x) ->
-			    error ("no method for ", type, " operator ",op, " applied to objects:",BR{},UL LI ofc x)));
+			    error ("no method for ", type, " operator ",op, " applied to objects:",BR{},UL LI hold x)));
 	    	    )));
 	)
 Thing#{Standard,Print} = x -> (
@@ -185,17 +184,11 @@ Thing#{Standard,Print} = x -> (
 print =  mode ( x -> (<< x << endl;) )
 errorPrint = mode ( x -> (stderr << x << endl << flush;) )
 -----------------------------------------------------------------------------
-processError = msg -> (
-    syms := new MutableHashTable;
-    recScan := x -> (
-	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then x=apply(x,recScan);
-	if instance(x,Symbol) then (if not syms#?x and (l:=locate x) =!= null then syms#x=l; x)
-	else if class x === String or class x === Option or class x === OptionTable or instance(x,Hypertext) then x -- this is ridiculous
-	else Abbreviate {x}
-	);
-    msg=recScan \ msg;  -- we don't want errors here?
-    return (msg,syms)
-    )
+processError = x -> (
+	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then x=apply(x,processError);
+	if class x === String or class x === Option or class x === OptionTable or instance(x,Hypertext) or instance(x,Holder) then x -- this is ridiculous
+	else SPAN splice {Abbreviate {x}," (of class ", class x, if class x===Symbol and (l:=locate x) =!= null then (", first use: ",l),")"}
+	)
 
 net Error := x -> robustNet hypertext x
 
