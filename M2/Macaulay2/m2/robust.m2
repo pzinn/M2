@@ -197,7 +197,7 @@ processError = msg -> (
     return (msg,syms)
     )
 
-net Error := x -> robustNet hypertext x -- TODO net doesn't respect BRs
+net Error := x -> robustNet hypertext x
 
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/m2 "

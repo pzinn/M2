@@ -305,7 +305,7 @@ newError(e:Expr):Expr := (
 	    when a.0
 	    is T:HashTable do (
 		if ancestor(T, errorClass) then Expr(SpecialExpr(T,
-			Error(dummyPosition, processErrorArgs(a.1), T, false,
+			Error(dummyPosition, a.1, T, false,
 			    dummyFrame)))
 		else WrongArg(1, "a type of error"))
 	    else WrongArgHashTable(1))

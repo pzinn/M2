@@ -66,6 +66,14 @@ peek'(ZZ,Dictionary) := (depth,d) -> (
 	}
     )
 
+peek'(ZZ,Error) := (depth,e) -> if depth == 0 then SPAN e else SPAN(
+    class e,
+    {
+	peek'(depth-1,locate e),
+	peek'(depth-1,toSequence e)
+	}
+    )
+
 peek = s -> peek'(1,s)
 typicalValues#peek = Hypertext
 
