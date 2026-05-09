@@ -133,6 +133,7 @@ if firstTime then (
 
      TeXmacsBegin = ascii 2;
      TeXmacsEnd   = ascii 5;
+     webAppCellTag = ascii 19;
 
      close = new Manipulator from close;
      closeIn = new Manipulator from closeIn;
@@ -580,7 +581,8 @@ if firstTime then processCommandLineOptions 1
 srcversion = M2version()
 
 if firstTime and not nobanner then (
-     if topLevelMode === TeXmacs then << TeXmacsBegin << "verbatim:";
+     if topLevelMode === TeXmacs then << TeXmacsBegin << "verbatim:"
+     else if topLevelMode === WebApp then << webAppCellTag << webAppCellTag;
      << "Macaulay2, version " << srcversion << newline << flush;
      if topLevelMode === TeXmacs then << TeXmacsEnd << flush)
 

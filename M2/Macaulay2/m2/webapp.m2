@@ -145,7 +145,7 @@ if topLevelMode === WebApp then (
     texMath HashTable := col("constant",lookup(texMath,HashTable));
     -- t:=col("keyword",texVariable @@ toString);
     -- texMath Keyword := x -> t if keywordTexMath#?x then keywordTexMath#x else x
-    addEndFunction(()-> (if topLevelMode===WebApp then << webAppCellEndTag << webAppCellEndTag <<webAppCellTag << webAppCellTag;));
+    addEndFunction(()-> (if topLevelMode===WebApp then << webAppCellEndTag << webAppCellEndTag;));
     )
 
 -- show
