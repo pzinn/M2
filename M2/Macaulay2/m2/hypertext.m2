@@ -489,13 +489,15 @@ unique Hypertext := x -> new class x from unique toList x
 
 hypertext Error := err -> (
     errorPosition := locate err;
+    -- we modify slightly errorPosition to only include focus point, and loadDepth
+    if errorPosition =!= null and #errorPosition >= 8 then errorPosition = new FilePosition from { errorPosition#0, errorPosition#5, errorPosition#6, errorPosition#7 };
     errorMessage := toSequence err;
-    msg := processError \ errorMessage;
-    SPAN(
+    errorMessage = processError \ errorMessage;
+    SPAN splice(
 	"class"=>"M2Error",
 	if errorPosition=!=null and errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
 	if #errorMessage==0 or class errorMessage#0 =!= String or substring(errorMessage#0,0,2) =!= "--" then "error: ",
-	SPAN msg
+	errorMessage
 	)
 )
 

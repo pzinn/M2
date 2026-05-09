@@ -209,7 +209,8 @@ export locate(p:Position):Expr := (
 		    toExpr(verifyMinimizeFilename(p.filename)),
 		    toExpr(int(p.lineL)), toExpr(int(p.columnL)),
 		    toExpr(int(p.lineR)), toExpr(int(p.columnR)),
-		    toExpr(int(p.lineF)), toExpr(int(p.columnF))),
+		    toExpr(int(p.lineF)), toExpr(int(p.columnF)),
+		    toExpr(int(p.loadDepth))),
 		hash_t(0), false), false)));
 
 locate(e:Expr):Expr := (
