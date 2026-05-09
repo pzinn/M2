@@ -340,7 +340,7 @@ export robustPrintString(e:Expr):string := (
 
 KeyNotFound(object:string, key:Expr):Expr := (
     -- TODO: implement a similar trick to call synonym(object)
-    msg := seq(toExpr("key not found in " + object + ": "),key);
+    msg := Expr(Sequence(toExpr("key not found in " + object + ": "),key,toExpr(" (of class "),Expr(Class(key)),toExpr(")")));
     buildErrorPacket(msg));
 
 
