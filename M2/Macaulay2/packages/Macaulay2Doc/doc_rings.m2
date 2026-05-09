@@ -450,11 +450,6 @@ document { Key => RealField,
      PARA { "A real number ring is a ring whose elements are real numbers of variable precision." }
      }
 
-undocumented {
-     (NewOfFromMethod,ComplexField,Nothing,ZZ),
-     (NewOfFromMethod,RealField,Nothing,ZZ)
-     }
-
 document { Key => ComplexField,
      Headline => "the class of all complex fields",
      PARA { "A complex number ring is a ring whose elements are complex numbers of variable precision." }

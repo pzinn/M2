@@ -17,7 +17,7 @@
 newPackage("RInterface",
     Headline => "interface to R for statistical computing",
     Version => "0.2",
-    Date => "May 1, 2026",
+    Date => "May 7, 2026",
     Authors => {{
 	    Name => "Doug Torrance",
 	    Email => "dtorrance@piedmont.edu",
@@ -33,7 +33,7 @@ newPackage("RInterface",
 
 -*
 
-0.2 (2026-04-30, M2 1.26.05)
+0.2 (2026-05-07, M2 1.26.05)
 * Release under GPL
 * Add hash table <-> environment conversion
 * Add RValue, RQuote, RContext
@@ -174,7 +174,7 @@ toString RObject := x -> value (
     else if TYPEOF x == ENVSXP then environmentName x
     else RtoString x)
 net RObject := x -> (
-    if TYPEOF x == SYMSXP then CHAR PRINTNAME x
+    if TYPEOF x == SYMSXP then value CHAR PRINTNAME x
     else stack value captureOutput x)
 
 RObject.AfterPrint = x -> (RObject, " of type ", value type2char TYPEOF x)
@@ -226,13 +226,13 @@ new RObject from  Matrix := (RFunction "matrix") @@ ((T, x) -> (
 	"nrow" => numRows x,
 	"ncol" => numColumns x))
 
-NewEnv = foreignFunction(Rlib, "R_NewEnv", SEXP, {SEXP, int, int})
+NewEnv = RFunction "new.env"
 defineVar = foreignFunction(Rlib, "Rf_defineVar", void, {SEXP, SEXP, SEXP})
 new RObject from HashTable := (T, x) -> (
     if class x =!= HashTable then return x;
     if any(keys x, k -> not instance(k, String))
     then error "expected all keys to be strings";
-    env := PROTECT NewEnv(RBaseEnv, 0, 0);
+    env := PROTECT NewEnv(0, RBaseEnv, 0);
     scanPairs(x, (k, v) -> defineVar(RQuote k, RObject v, env));
     UNPROTECT 1;
     T env)

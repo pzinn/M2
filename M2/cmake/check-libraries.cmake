@@ -10,7 +10,7 @@
 # Others, like TBB::tbb, FFI::ffi, and Boost::regex, are linked as imported libraries in those files.
 # TODO: turn all these libraries into imported libraries and find incompatibilities another way.
 set(PKGLIB_LIST    FFLAS_FFPACK GIVARO)
-set(LIBRARIES_LIST MPSOLVE FROBBY NORMALIZ FACTORY FLINT NTL MPFI MPFR GMP BDWGC LAPACK)
+set(LIBRARIES_LIST MPSOLVE FROBBY NORMALIZ FACTORY FLINT NTL MPFI MPFR GMP GLPK BDWGC LAPACK)
 set(LIBRARY_LIST   READLINE HISTORY GDBM JANSSON)
 
 message(CHECK_START " Checking for existing libraries and programs")
@@ -44,7 +44,10 @@ endif()
 find_package(Threads	REQUIRED QUIET)
 find_package(LAPACK	REQUIRED QUIET)
 
-set(Boost_USE_STATIC_LIBS ON)
+if(STATIC_BOOST)
+  message(STATUS "Using static Boost, if Boost is installed but not found, try setting STATIC_BOOST to OFF")
+endif()
+set(Boost_USE_STATIC_LIBS ${STATIC_BOOST})
 if(UNIX)
   cmake_policy(SET CMP0167 OLD) # load CMake's FindBoost module
   find_package(Boost	REQUIRED QUIET COMPONENTS regex OPTIONAL_COMPONENTS stacktrace_addr2line)

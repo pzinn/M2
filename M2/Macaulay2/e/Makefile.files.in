@@ -10,6 +10,10 @@ INTERFACE2 = interrupted
 
 INTERFACE = \
 	myalloc \
+	cytools/computeGV \
+	cytools/lattice_points \
+	cytools/lattice-points-normaliz \
+	cytools/cone-interior-point \
 	BasicPoly \
 	BasicPolyList \
 	BasicPolyListParser \
@@ -82,11 +86,12 @@ INTERFACE = \
 	aring-zz-flint \
 	aring-qq-flint \
 	aring-zzp-flint \
-	aring-RRi \
 	aring-RR \
 	aring-CC \
 	aring-RRR \
 	aring-CCC \
+	aring-RRi \
+	aring-CCi \
 	aring-tower \
 	aring-gf-flint-big \
 	aring-gf-flint \
@@ -223,7 +228,7 @@ NAMES_H = \
 	f4/varpower-monomial \
 	res-a0-pair
 
-C_FILES = error table exptable complex # interface/m2-types interface/m2-mem
+C_FILES = error table exptable complex cytools/box_enum # interface/m2-types interface/m2-mem
 
 D_FILES = 
 DD_FILES = #test
