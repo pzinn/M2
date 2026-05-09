@@ -26,7 +26,7 @@ needs "nets.m2"
 -- of individual subtypes.
 setupRenderer = (parser, joiner, T) -> (
     parser T := node -> joiner apply(node,
-	subnode -> if class subnode =!= Option and class subnode =!= OptionTable then parser subnode))
+	subnode -> if class subnode =!= Option and class subnode =!= OptionTable and class subnode =!= Nothing then parser subnode))
 
 -- Default joiners: (TODO: move to string.m2?)
 -- concatenate

@@ -493,7 +493,7 @@ hypertext Error := err -> (
     (msg,syms) := processError errorMessage;
     SPAN((
 	"class"=>"M2Error",
-	if errorPosition=!=null and errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"} else "",
+	if errorPosition=!=null and errorPosition#1>0 then SPAN{errorPosition,": ","class"=>"M2ErrorLocation"},
 	if #errorMessage==0 or class errorMessage#0 =!= String or substring(errorMessage#0,0,2) =!= "--" then "error: ",
 	SPAN msg
 	) | join apply(toSequence pairs syms,(s,l) -> (BR{}, l, ": here is the first use of ",s))
