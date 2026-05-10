@@ -699,6 +699,44 @@ export present(x:string):string := (
 
 export format(s:string):string := "\"" + present(s) + "\"";
 
+webAppCompletionTag := char(30);
+webAppCompletionEndTag := char(31);
+
+webAppCompletionPrefixOK(s:string):bool := (
+     if length(s) == 0 || length(s) > 128 then return false;
+     foreach c in s do if !isalnum(c) then return false;
+     true);
+
+sendWebAppCompletionResponse(requestID:string,prefix:string):void := (
+     resp := string(webAppCompletionTag) + requestID;
+     if webAppCompletionPrefixOK(prefix) then (
+	  foreach s in completions(prefix) do resp = resp + "\t" + s;
+	  );
+     resp = resp + string(webAppCompletionEndTag);
+     write(STDOUT,resp);
+     );
+
+processWebAppCompletionRequests(o:file):bool := (
+     if o != stdIO then return false;
+     while o.insize > 0 && o.inbuffer.0 == webAppCompletionTag do (
+	  fin := 1;
+	  while fin < o.insize && o.inbuffer.fin != webAppCompletionEndTag do fin = fin + 1;
+	  if fin == o.insize then return true;
+	  payload := substr(o.inbuffer,1,fin-1);
+	  tab := index(payload,0,'\t');
+	  if tab > 0 then (
+	       requestID := substr(payload,0,tab);
+	       prefix := substr(payload,tab+1,length(payload)-tab-1);
+	       sendWebAppCompletionResponse(requestID,prefix);
+	       );
+	  rest := o.insize - fin - 1;
+	  for i from 0 to rest-1 do o.inbuffer.i = o.inbuffer.(fin+1+i);
+	  o.insize = rest;
+	  o.inindex = 0;
+	  o.echoindex = 0;
+	  );
+     o.insize == 0);
+
 export filbuf(o:file):int := (
 --      if o.fulllines then (
 -- 	  stdIO << flush;
@@ -745,7 +783,7 @@ export filbuf(o:file):int := (
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
 		    else (
 			ret := read(o.infd,o.inbuffer,n,o.insize);
-			if ret > 0 && o == stdIO
+			if ret > 0 && o == stdIO && o.inbuffer.(o.insize) != webAppCompletionTag
 			then addHistory(tocharstarn(o.inbuffer, ret - 1));
 			ret)));
 	  if r == ERROR then (
@@ -765,7 +803,8 @@ export filbuf(o:file):int := (
 	       oldsize := o.insize;
 	       newsize := o.insize + r;
 	       o.insize = newsize;
-	       if o.fulllines then (
+	       if !o.readline && processWebAppCompletionRequests(o) then r = 0
+	       else if o.fulllines then (
 		    for i from newsize-1 to oldsize by -1 do if o.inbuffer.i == '\n' then (
 			 if o.promptq then (
 			      o << o.reward();
