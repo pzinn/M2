@@ -148,6 +148,7 @@ documentableMethods = key -> select(methods key, isDocumentableMethod)
 
 subclasses = T -> keys fold(ancestors  T, showStructure(),      lookup)
 subobjects = T -> keys fold(ancestors' T, showClassStructure(), lookup)
+subobjects' = T -> if T === Package then { Core, User } else subobjects T
 descendants  = T -> flatten prepend(L := subclasses T, apply(L, descendants))
 descendants' = T -> flatten prepend(L := subobjects T, apply(L, descendants'))
 
@@ -165,7 +166,7 @@ documentationValue(Symbol, Type)  := (S, T) -> (
     -- functions on T
     c := smenu select(documentableMethods T, key -> not typicalValues#?key or typicalValues#key =!= T);
     -- objects of type T
-    e := smenu(toString \ subobjects T);
+    e := smenu(toString \ subobjects' T);
     DIV nonnull splice ( "class" => "waystouse",
 	if #b > 0 then ( SUBSECTION {"Types of ", if T.?synonym then T.synonym else TT toString T, ":"}, b),
 	if #a > 0 then ( SUBSECTION {"Functions and methods returning ",     indefinite synonym T, ":"}, a),
@@ -401,7 +402,10 @@ getOption := (rawdoc, tag) -> if rawdoc =!= null and rawdoc#?tag then rawdoc#tag
 
 headline = method(Dispatch => Thing)
 headline Thing := key -> getOption(fetchRawDocumentationNoLoad makeDocumentTag key, Headline)
-headline DocumentTag := tag -> getOption(fetchRawDocumentation getPrimaryTag tag, Headline)
+headline DocumentTag := tag -> (
+    -- TODO: how can we make sure readPackage loads the correct package?
+    if isPackageNode tag then (readPackage tag.Package).Headline
+    else getOption(fetchRawDocumentation getPrimaryTag tag, Headline))
 
 headlines = method()
 headlines List := L -> (
