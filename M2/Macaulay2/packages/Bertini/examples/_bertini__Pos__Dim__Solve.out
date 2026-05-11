@@ -1,70 +1,63 @@
 -- -*- M2-comint -*- hash: 1503209601929851452
-i1 : 1:0R = QQ[x,y,z]
+i1 : R = QQ[x,y,z]
 
 o1 = $R$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i2 : 2:0F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
+i2 : F = {(y^2+x^2+z^2-1)*x,(y^2+x^2+z^2-1)*y}
 
 o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : 3:0S = bertiniPosDimSolve F
+i3 : S = bertiniPosDimSolve F
 
 o3 = <samp class="token constant">S</samp>
 
 o3 : <samp class="token class-name">NumericalVariety</samp>
-i4 : 4:0S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
+i4 : S#1_0#Points -- 1_0 chooses the first witness set in dimension 1
 
 o4 = <ul style="display:inline-table">
-  <li>
-$\{{1.52343}\cdot 10^{-67}-{1.0663}\cdot 10^{-67}\,\mathbf{i},\,{1.49608}\cdot 10^{-67}-{1.2696}\cdot 10^{-67}\,\mathbf{i},\,{.188099}-{.366228}\,\mathbf{i}\}$  </li>
+  <li>$\{-{2.51629}\cdot 10^{-72}+{1.28344}\cdot 10^{-72}\,\mathbf{i},\,{3.71881}\cdot 10^{-73}+{2.74473}\cdot 10^{-72}\,\mathbf{i},\,{.0462861}+{.476205}\,\mathbf{i}\}$</li>
 </ul>
 
 
 o4 : <samp class="token class-name">VerticalList</samp>
-i5 : 5:0S#1 --first specify dimension
+i5 : S#1 --first specify dimension
 
 o5 = $\left\{<samp class="token string">(dim=1,deg=1)</samp>\right\}$
 
 o5 : <samp class="token class-name">List</samp>
-i6 : 6:0peek oo_0 --then list position
+i6 : peek oo_0 --then list position
 
 o6 = <span><samp class="token class-name">WitnessSet</samp>  <ul style="display:inline-table">
-    <li>
-<span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿3﻿\ldots\}$</span>    </li>
-    <li>
-<span>$\mathit{Equations}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$        <pre class="token net" style="vertical-align:-100%">{-3} | x3+xy2+xz2-x |
+    <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span></li>
+    <li><span>$\mathit{Equations}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$        <pre class="token net" style="vertical-align:-100%">{-3} | x3+xy2+xz2-x |
 {-3} | x2y+y3+yz2-y |<br></pre>
-$</span>    </li>
-    <li>
-<span>$\mathit{Points}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>        <ul style="display:inline-table">
-          <li>
-$\{{1.52343}\cdot 10^{-67}-{1.0663}\cdot 10^{-67}\,\mathbf{i},\,{1.49608}\cdot 10^{-67}-{1.2696}\cdot 10^{-67}\,\mathbf{i},\,{.188099}-{.366228}\,\mathbf{i}\}$          </li>
+$</span></li>
+    <li><span>$\mathit{Points}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>        <ul style="display:inline-table">
+          <li>$\{-{2.51629}\cdot 10^{-72}+{1.28344}\cdot 10^{-72}\,\mathbf{i},\,{3.71881}\cdot 10^{-73}+{2.74473}\cdot 10^{-72}\,\mathbf{i},\,{.0462861}+{.476205}\,\mathbf{i}\}$</li>
         </ul>
-</span>    </li>
-    <li>
-<span>$\mathit{Slice}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{cccc}
--{.533272}-{1.61436}\,\mathbf{i}&amp;{1.09167}+{1.38354}\,\mathbf{i}&amp;-{.754514}-{2.57896}\,\mathbf{i}&amp;{1.08641}+{.208774}\,\mathbf{i}
-\end{array}\!\right)$</span>    </li>
+</span></li>
+    <li><span>$\mathit{Slice}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\left(\!\begin{array}{cccc}
+-{4.62472}-{.605032}\,\mathbf{i}&amp;-{3.16731}+{2.9507}\,\mathbf{i}&amp;-{4.5426}+{5.64611}\,\mathbf{i}&amp;{2.89896}+{1.90187}\,\mathbf{i}
+\end{array}\!\right)$</span></li>
   </ul>
 </span>
-i7 : 7:0PD=primaryDecomposition( ideal F)
+i7 : PD=primaryDecomposition( ideal F)
 
 o7 = $\left\{<samp class="token function">ideal</samp>${}\left(x^{2}+y^{2}+z^{2}-1\right)$,\,<samp class="token function">ideal</samp>${}(y,\,x)$\right\}$
 
 o7 : <samp class="token class-name">List</samp>
-i8 : 8:0dim PD_0
+i8 : dim PD_0
 
 o8 = $2$
-i9 : 9:0degree PD_0
+i9 : degree PD_0
 
 o9 = $2$
-i10 : 10:0dim PD_1
+i10 : dim PD_1
 
 o10 = $1$
-i11 : 11:0degree PD_1
+i11 : degree PD_1
 
 o11 = $1$
-i12 : 12:0
-
+i12 : 

@@ -1,46 +1,43 @@
 -- -*- M2-comint -*- hash: 4423001283312120928
-i1 : 1:0R = CC[x,t]; -- include the path variable in the ring
-i2 : 2:0H = { (x^2-1)*t + (x^2-2)*(1-t)};
-i3 : 3:0sol1 = point {{1}};
-i4 : 4:0sol2 = point {{-1}};
-i5 : 5:0S1= { sol1, sol2  };--solutions to H when t=1
-i6 : 6:0S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
+i1 : R = CC[x,t]; -- include the path variable in the ring
+i2 : H = { (x^2-1)*t + (x^2-2)*(1-t)};
+i3 : sol1 = point {{1}};
+i4 : sol2 = point {{-1}};
+i5 : S1= { sol1, sol2  };--solutions to H when t=1
+i6 : S0 = bertiniTrackHomotopy (t, H, S1) --solutions to H when t=0
 
 o6 = $\left\{\{-{1.41421}\},\,\{{1.41421}\}\right\}$
 
 o6 : <samp class="token class-name">List</samp>
-i7 : 7:0peek S0_0
+i7 : peek S0_0
 
 o7 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
-    <li>
-<span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots ﻿9﻿\ldots\}$</span>    </li>
-    <li>
-<span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.41421}\}$</span>    </li>
+    <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 9\ldots\}$</span></li>
+    <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.41421}\}$</span></li>
   </ul>
 </span>
-i8 : 8:0R=CC[x,y,t]; -- include the path variable in the ring
-i9 : 9:0f1=(x^2-y^2);
-i10 : 10:0f2=(2*x^2-3*x*y+5*y^2);
-i11 : 11:0H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
-i12 : 12:0sol1=    point{{1,1}}--{{x,y}} coordinates
+i8 : R=CC[x,y,t]; -- include the path variable in the ring
+i9 : f1=(x^2-y^2);
+i10 : f2=(2*x^2-3*x*y+5*y^2);
+i11 : H = { f1*t + f2*(1-t)}; --H is a list of polynomials in x,y,t
+i12 : sol1=    point{{1,1}}--{{x,y}} coordinates
 
 o12 = $\{1,\,1\}$
 
 o12 : <samp class="token class-name">Point</samp>
-i13 : 13:0sol2=    point{{ -1,1}}
+i13 : sol2=    point{{ -1,1}}
 
 o13 = $\{-1,\,1\}$
 
 o13 : <samp class="token class-name">Point</samp>
-i14 : 14:0S1={sol1,sol2}--solutions to H when t=1
+i14 : S1={sol1,sol2}--solutions to H when t=1
 
 o14 = $\left\{\{1,\,1\},\,\{-1,\,1\}\right\}$
 
 o14 : <samp class="token class-name">List</samp>
-i15 : 15:0S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
+i15 : S0=bertiniTrackHomotopy(t, H, S1, IsProjective=>1) --solutions to H when t=0
 
-o15 = $\left\{\{-{.999451}-{2.19741}\,\mathbf{i},\,-{1.5233}-{.102751}\,\mathbf{i}\},\,\{{1.30609}+{.0982253}\,\mathbf{i},\,{.337138}+{.756669}\,\mathbf{i}\}\right\}$
+o15 = $\left\{\{{.490204}+{.341532}\,\mathbf{i},\,{.337218}-{.170475}\,\mathbf{i}\},\,\{{1.47539}+{.894642}\,\mathbf{i},\,-{.0554974}+{1.08986}\,\mathbf{i}\}\right\}$
 
 o15 : <samp class="token class-name">List</samp>
-i16 : 16:0
-
+i16 : 

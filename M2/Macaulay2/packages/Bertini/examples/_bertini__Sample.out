@@ -1,28 +1,27 @@
 -- -*- M2-comint -*- hash: 2266058223581986768
-i1 : 1:0R = CC[x,y,z]
+i1 : R = CC[x,y,z]
 
 o1 = $R$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i2 : 2:0F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
+i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
 
 o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : 3:0NV = bertiniPosDimSolve(F)
+i3 : NV = bertiniPosDimSolve(F)
 
 o3 = <samp class="token constant">NV</samp>
 
 o3 : <samp class="token class-name">NumericalVariety</samp>
-i4 : 4:0W = NV#1_0 --z-axis
+i4 : W = NV#1_0 --z-axis
 
 o4 = $<samp class="token string">W</samp>$
 
 o4 : <samp class="token class-name">WitnessSet</samp>
-i5 : 5:0bertiniSample(4, W)
+i5 : bertiniSample(4, W)
 
-o5 = $\left\{\{-{3.1946}\cdot 10^{-20}-{2.6783}\cdot 10^{-20}\,\mathbf{i},\,{1.82322}\cdot 10^{-20}+{2.54149}\cdot 10^{-20}\,\mathbf{i},\,{.0324924}-{.415937}\,\mathbf{i}\},\,\{-{1.40763}\cdot 10^{-20}+{2.69512}\cdot 10^{-20}\,\mathbf{i},\,-{1.35384}\cdot 10^{-319}-{3.09532}\cdot 10^{-320}\,\mathbf{i},\,{.348453}-{.476544}\,\mathbf{i}\},\,\{{2.55139}\cdot 10^{-20}-{1.03723}\cdot 10^{-20}\,\mathbf{i},\,{3.39654}\cdot 10^{-318}+{3.88912}\cdot 10^{-318}\,\mathbf{i},\,{.0284239}-{.285626}\,\mathbf{i}\},\,\{{1.5577}\cdot 10^{-20}-{5.35299}\cdot 10^{-20}\,\mathbf{i},\,0,\,{.293921}-{.173721}\,\mathbf{i}\}\right\}$
+o5 = $\left\{\{{1.51076}\cdot 10^{-265}+{6.37611}\cdot 10^{-266}\,\mathbf{i},\,-{2.41721}\cdot 10^{-264}-{1.02018}\cdot 10^{-264}\,\mathbf{i},\,-{.1557}-{.174999}\,\mathbf{i}\},\,\{-{3.20803}\cdot 10^{-129}-{2.82712}\cdot 10^{-129}\,\mathbf{i},\,0,\,-{.0661329}-{.194031}\,\mathbf{i}\},\,\{-{2.2116}\cdot 10^{-257}-{4.54888}\cdot 10^{-257}\,\mathbf{i},\,0,\,-{.0953463}-{.22981}\,\mathbf{i}\},\,\{{1.9773}\cdot 10^{-255}+{2.13716}\cdot 10^{-253}\,\mathbf{i},\,-{8.06404}\cdot 10^{-311}-{8.716}\cdot 10^{-309}\,\mathbf{i},\,-{.131151}-{.228254}\,\mathbf{i}\}\right\}$
 
 o5 : <samp class="token class-name">List</samp>
-i6 : 6:0
-
+i6 : 
