@@ -73,10 +73,13 @@ export tostring(c:Code):string := (
     --
     is x:forCode do concatenate(array(string)(
 	    "(for",
-	    " in: ",   tostring(x.inClause),
-	    " from: ", tostring(x.fromClause),
-	    " to: ",   tostring(x.toClause),
-	    " when: ", tostring(x.whenClause),
+	    " clauses: ", between(" ", new array(string) len length(x.clauses) do foreach c in x.clauses do provide concatenate(array(string)(
+		    "(clause",
+		    " in: ", tostring(c.inClause),
+		    " from: ", tostring(c.fromClause),
+		    " to: ", tostring(c.toClause),
+		    " when: ", tostring(c.whenClause),
+		    " frameindex: ", tostring(c.frameindex), ")"))),
 	    " list: ", tostring(x.listClause),
 	    " do: ",   tostring(x.doClause), ")"))
     --
@@ -152,10 +155,12 @@ export toList(c:Code):Expr := (
 	Expr(Sequence(
 		list(toExpr("framesize"), toExpr(x.framesize)),
 		list(toExpr("frameID"),   toExpr(x.frameID)),
-		list(toExpr("in"),        toExpr(x.inClause)),
-		list(toExpr("from"),      toExpr(x.fromClause)),
-		list(toExpr("to"),        toExpr(x.toClause)),
-		list(toExpr("when"),      toExpr(x.whenClause)),
+		list(toExpr("clauses"),   Expr(new Sequence len length(x.clauses) do foreach c in x.clauses do provide list(Sequence(
+		    list(toExpr("frameindex"), toExpr(c.frameindex)),
+		    list(toExpr("in"),         toExpr(c.inClause)),
+		    list(toExpr("from"),       toExpr(c.fromClause)),
+		    list(toExpr("to"),         toExpr(c.toClause)),
+		    list(toExpr("when"),       toExpr(c.whenClause)))))),
 		list(toExpr("list"),      toExpr(x.listClause)),
 		list(toExpr("do"),        toExpr(x.doClause)))))
     --
@@ -416,11 +421,13 @@ export toExpr(e:ParseTree):Expr := (
 	toExpr(w.listClause))
     is f:For do list(Sequence(
 	    toExpr("For"),
-	    toExpr(f.variable),
-	    toExpr(f.inClause),
-	    toExpr(f.fromClause),
-	    toExpr(f.toClause),
-	    toExpr(f.whenClause),
+	    Expr(new Sequence len length(f.clauses) do foreach c in f.clauses do provide list(Sequence(
+		toExpr("ForClause"),
+		toExpr(c.variable),
+		toExpr(c.inClause),
+		toExpr(c.fromClause),
+		toExpr(c.toClause),
+		toExpr(c.whenClause)))),
 	    toExpr(f.listClause),
 	    toExpr(f.doClause)))
     is n:New do list(

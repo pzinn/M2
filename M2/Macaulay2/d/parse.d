@@ -119,7 +119,9 @@ export Token := {+		-- a word, as encountered in the input
 -- ParseTree
 
 export Adjacent := {+lhs:ParseTree, rhs:ParseTree};
-export For := {+ forToken:Token, variable:ParseTree, inClause:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree, listClause:ParseTree, doClause:ParseTree, 
+export ForClause := {+ variable:ParseTree, inClause:ParseTree, fromClause:ParseTree, toClause:ParseTree, whenClause:ParseTree };
+export ForClauseSequence := tarray(ForClause);
+export For := {+ forToken:Token, clauses:ForClauseSequence, listClause:ParseTree, doClause:ParseTree,
      dictionary:Dictionary 					    -- filled in later
      };
 export WhileDo     := {+ whileToken:Token, predicate:ParseTree,                       doClause:ParseTree };
@@ -249,7 +251,9 @@ export arrayCode        := {+z:CodeSequence, position:Position};
 export angleBarListCode := {+t:CodeSequence, position:Position};
 export semiCode         := {+w:CodeSequence, position:Position};
 export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
-export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
+export forClauseCode    := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, frameindex:int, position:Position};
+export forClauseCodeSequence := tarray(forClauseCode);
+export forCode          := {+clauses:forClauseCodeSequence, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
 
 export functionDescription := {
      frameID:int,		    -- seqno of dictionary
@@ -520,4 +524,3 @@ export file := {+
 	};
 
 export PosFile := {+ file:file, lastchar:int, filename:string, line:ushort, column:ushort };
-

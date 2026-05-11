@@ -141,6 +141,7 @@ export ofW := Word("-*dummy word: of*-",TCnone,hash_t(0),newParseinfo());		  -- 
 export doW := Word("-*dummy word: do*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export listW := Word("-*dummy word: list*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export exceptW := Word("-*dummy word: except*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
+export commaW := Word("-*dummy word: comma*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export fromW := Word("-*dummy word: from*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export inW := Word("-*dummy word: in*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
 export toW := Word("-*dummy word: to*-",TCnone,hash_t(0),newParseinfo());		  -- filled in by binding.d
@@ -328,51 +329,64 @@ export unarywhile(whileToken:Token,file:TokenFile,prec:int,obeylines:bool):Parse
 
 --Handle parsing a file following a for token
 export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree := (
-     var := parse(file,forToken.word.parse.unaryStrength,false);
-     if var == errorTree then return errorTree;
-     inClause := dummyTree;
-     fromClause := dummyTree;
-     toClause := dummyTree;
-     whenClause := dummyTree;
      listClause := dummyTree;
      doClause := dummyTree;
-     --get the next token
-     token2 := gettoken(file,false);
-     --if there is an error, return
-     if token2 == errorToken then return errorTree;
-     --if it is an "in" token
-     if token2.word == inW then (
-          --parse the part following the in token to become the in clause
-	  inClause = parse(file,inW.parse.unaryStrength,false);
-	  --on error return
-	  if inClause == errorTree then return errorTree;
-	  --otherwise get the next token
+     clauses := new ForClauseSequence len 1 do provide ForClause(dummyTree,dummyTree,dummyTree,dummyTree,dummyTree);
+     nclauses := 0;
+     token2 := forToken;
+     while true do (
+	  var := parse(file,forToken.word.parse.unaryStrength,false);
+	  if var == errorTree then return errorTree;
+	  inClause := dummyTree;
+	  fromClause := dummyTree;
+	  toClause := dummyTree;
+	  whenClause := dummyTree;
+	  --get the next token
 	  token2 = gettoken(file,false);
-	  )
-     else (
-          --otherwise check to see if we have a from/to case
-	  if token2.word == fromW then (
-	       fromClause = parse(file,fromW.parse.unaryStrength,false);
-	       if fromClause == errorTree then return errorTree;
+	  --if there is an error, return
+	  if token2 == errorToken then return errorTree;
+	  --if it is an "in" token
+	  if token2.word == inW then (
+	       --parse the part following the in token to become the in clause
+	       inClause = parse(file,inW.parse.unaryStrength,false);
+	       --on error return
+	       if inClause == errorTree then return errorTree;
+	       --otherwise get the next token
+	       token2 = gettoken(file,false);
+	       )
+	  else (
+	       --otherwise check to see if we have a from/to case
+	       if token2.word == fromW then (
+		    fromClause = parse(file,fromW.parse.unaryStrength,false);
+		    if fromClause == errorTree then return errorTree;
+		    token2 = gettoken(file,false);
+		    );
+	       if token2.word == toW then (
+		    toClause = parse(file,toW.parse.unaryStrength,false);
+		    if toClause == errorTree then return errorTree;
+		    token2 = gettoken(file,false);
+		    );
+	       );
+	  --handle when clause
+	  if token2.word == whenW then (
+	       whenClause = parse(file,whenW.parse.unaryStrength,false);
+	       if whenClause == errorTree then return errorTree;
 	       token2 = gettoken(file,false);
 	       );
-	  if token2.word == toW then (
-	       toClause = parse(file,toW.parse.unaryStrength,false);
-	       if toClause == errorTree then return errorTree;
-	       token2 = gettoken(file,false);
-	       );
+	  if nclauses == length(clauses) then (
+	       clauses = new ForClauseSequence len 2*length(clauses) do (
+		    foreach c in clauses do provide c;
+		    while true do provide clauses.0));
+	  clauses.nclauses = ForClause(var, inClause, fromClause, toClause, whenClause);
+	  nclauses = nclauses + 1;
+	  if token2.word != commaW then break;
 	  );
-     --handle when clause
-     if token2.word == whenW then (
-	  whenClause = parse(file,whenW.parse.unaryStrength,false);
-	  if whenClause == errorTree then return errorTree;
-     	  token2 = gettoken(file,false);
-	  );
+     clauses = new ForClauseSequence len nclauses at i do provide clauses.i;
      --this part should be followed by either a do clause or a list and then a do clause
      if token2.word == doW then (
 	  doClause = parse(file,doW.parse.unaryStrength,obeylines);
 	  if doClause == errorTree then return errorTree;
-	  r := ParseTree(For( forToken, var, inClause, fromClause, toClause, whenClause, listClause,doClause, dummyDictionary ));
+	  r := ParseTree(For( forToken, clauses, listClause, doClause, dummyDictionary ));
 	  accumulate(r,file,prec,obeylines))
      else if token2.word == listW then (
 	  listClause = parse(file,listW.parse.unaryStrength,obeylines);
@@ -382,7 +396,7 @@ export unaryfor(forToken:Token,file:TokenFile,prec:int,obeylines:bool):ParseTree
 	       doClause = parse(file,doW.parse.unaryStrength,obeylines);
 	       if doClause == errorTree then return errorTree;
 	       );
-	  r := ParseTree(For(forToken, var, inClause, fromClause, toClause,whenClause, listClause, doClause, dummyDictionary));
+	  r := ParseTree(For(forToken, clauses, listClause, doClause, dummyDictionary));
 	  accumulate(r,file,prec,obeylines))
      --if there is no do clause then it is an error
      else (
@@ -561,6 +575,12 @@ export treePosition(e:ParseTree):Position := (
 
 size(x:Token):int := Ccode(int,"sizeof(*",x,")");
 size(x:functionDescription):int := Ccode(int,"sizeof(*",x,")");
+size(e:ParseTree):int;
+size(x:ForClause):int := Ccode(int,"sizeof(*",x,")") + size(x.variable) + size(x.inClause) + size(x.fromClause) + size(x.toClause) + size(x.whenClause);
+size(x:ForClauseSequence):int := (
+     total := Ccode(int,"sizeof(*",x,")");
+     foreach c in x do total = total + size(c);
+     total);
 export size(e:ParseTree):int := (
      Ccode(int,"sizeof(",e,")") +
      when e
@@ -586,7 +606,7 @@ export size(e:ParseTree):int := (
     is x:TryDo       do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary)                  + size(x.variable) + size(x.doClause)
     is x:TryThenDo   do Ccode(int,"sizeof(*",x,")") + size(x.tryToken) + size(x.primary) + size(x.sequel) + size(x.variable) + size(x.doClause)
      is x:Catch do Ccode(int,"sizeof(*",x,")") + size(x.catchToken) + size(x.primary)
-     is x:For do Ccode(int,"sizeof(*",x,")")+ size(x.forToken) + size(x.variable) + size(x.inClause) + size(x.fromClause) + size(x.toClause) + size(x.whenClause) + size(x.listClause) + size(x.doClause)
+     is x:For do Ccode(int,"sizeof(*",x,")")+ size(x.forToken) + size(x.clauses) + size(x.listClause) + size(x.doClause)
      is x:WhileDo do     Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.doClause)
      is x:WhileList do   Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate)                    + size(x.listClause)
      is x:WhileListDo do Ccode(int,"sizeof(*",x,")") + size(x.whileToken) + size(x.predicate) + size(x.doClause) + size(x.listClause)

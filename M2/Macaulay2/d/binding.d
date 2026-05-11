@@ -213,7 +213,7 @@ bumpPrecedence();
      export SemicolonS := makeKeyword(SemicolonW);
      NewlineW = nleftword("-*newline*-");
 bumpPrecedence();
-     export CommaW := nunarybinaryleft(","); export commaS := makeKeyword(CommaW);
+     export CommaW := nunarybinaryleft(","); commaW = CommaW; export commaS := makeKeyword(CommaW);
 bumpPrecedence();
      wide := prec;
      elseW = token("else"); makeKeyword(elseW);
@@ -885,12 +885,14 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(w.doClause,dictionary);
 	  )
      is w:For do (
-	  bind(w.inClause,dictionary);
-	  bind(w.fromClause,dictionary);
-	  bind(w.toClause,dictionary);
 	  newdict := newLocalDictionary(dictionary);
-	  bindSingleParm(w.variable,newdict);
-	  bind(w.whenClause,newdict);
+	  foreach clause in w.clauses do (
+	       bind(clause.inClause,newdict);
+	       bind(clause.fromClause,newdict);
+	       bind(clause.toClause,newdict);
+	       bindSingleParm(clause.variable,newdict);
+	       bind(clause.whenClause,newdict);
+	       );
 	  bind(w.listClause,newdict);
 	  bind(w.doClause,newdict);
 	  w.dictionary = newdict;

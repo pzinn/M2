@@ -58,6 +58,16 @@ makeCodeSequence(e:ParseTree,separator:Word):CodeSequence := (
      fillCodeSequence(e,v,length(v),separator);
      v);
 
+convertForClause(c:ForClause):forClauseCode := (
+    frameindex := 0;
+    when c.variable is t:Token do frameindex = t.entry.frameindex else nothing;
+    forClauseCode(
+	convert(c.inClause), convert(c.fromClause), convert(c.toClause), convert(c.whenClause),
+	frameindex, treePosition(c.variable)));
+
+convertForClauses(clauses:ForClauseSequence):forClauseCodeSequence := (
+    new forClauseCodeSequence len length(clauses) do foreach c in clauses do provide convertForClause(c));
+
 nestingDepth(frameID:int,d:Dictionary):int := (
      if frameID == 0 then return -1;
      n := 0;
@@ -310,8 +320,7 @@ export convert0(e:ParseTree):Code := (
     is w:WhileList   do Code(whileListCode(  convert(w.predicate), convert(w.listClause),                      pos))
     is f:For         do Code(
 	forCode(
-	    convert(f.inClause),   convert(f.fromClause), convert(f.toClause),
-	    convert(f.whenClause), convert(f.listClause), convert(f.doClause),
+	    convertForClauses(f.clauses), convert(f.listClause), convert(f.doClause),
 	    f.dictionary.frameID, f.dictionary.framesize, pos))
     is n:New do (
 	if n.newParent      == dummyTree then
