@@ -699,35 +699,50 @@ export present(x:string):string := (
 
 export format(s:string):string := "\"" + present(s) + "\"";
 
-webAppCompletionTag := char(30);
-webAppCompletionEndTag := char(31);
+completionControlRequestStart := char(27) + "]M2-COMPLETE-REQUEST;";
+completionControlResponseStart := char(27) + "]M2-COMPLETE-RESPONSE;";
+completionControlEnd := char(7);
 
-webAppCompletionPrefixOK(s:string):bool := (
+completionControlPrefixOK(s:string):bool := (
      if length(s) == 0 || length(s) > 128 then return false;
      foreach c in s do if !isalnum(c) then return false;
      true);
 
-sendWebAppCompletionResponse(requestID:string,prefix:string):void := (
-     resp := string(webAppCompletionTag) + requestID;
-     if webAppCompletionPrefixOK(prefix) then (
+sendCompletionControlResponse(requestID:string,prefix:string):void := (
+     resp := completionControlResponseStart + requestID;
+     if completionControlPrefixOK(prefix) then (
 	  foreach s in completions(prefix) do resp = resp + "\t" + s;
 	  );
-     resp = resp + string(webAppCompletionEndTag);
+     resp = resp + string(completionControlEnd);
      write(STDOUT,resp);
      );
 
-processWebAppCompletionRequests(o:file):bool := (
+completionControlPartialRequest(o:file):bool := (
+     n := if o.insize < length(completionControlRequestStart)
+	  then o.insize
+	  else length(completionControlRequestStart);
+     for i from 0 to n-1 do
+	  if o.inbuffer.i != completionControlRequestStart.i then return false;
+     true);
+
+completionControlInputInProgress(o:file):bool := (
      if o != stdIO then return false;
-     while o.insize > 0 && o.inbuffer.0 == webAppCompletionTag do (
-	  fin := 1;
-	  while fin < o.insize && o.inbuffer.fin != webAppCompletionEndTag do fin = fin + 1;
+     if o.insize > 0 && completionControlPartialRequest(o) then return true;
+     o.inbuffer.(o.insize) == completionControlRequestStart.0);
+
+processCompletionControlRequests(o:file):bool := (
+     if o != stdIO then return false;
+     while o.insize > 0 && completionControlPartialRequest(o) do (
+	  if o.insize < length(completionControlRequestStart) then return true;
+	  fin := length(completionControlRequestStart);
+	  while fin < o.insize && o.inbuffer.fin != completionControlEnd do fin = fin + 1;
 	  if fin == o.insize then return true;
-	  payload := substr(o.inbuffer,1,fin-1);
+	  payload := substr(o.inbuffer,length(completionControlRequestStart),fin-length(completionControlRequestStart));
 	  tab := index(payload,0,'\t');
 	  if tab > 0 then (
 	       requestID := substr(payload,0,tab);
 	       prefix := substr(payload,tab+1,length(payload)-tab-1);
-	       sendWebAppCompletionResponse(requestID,prefix);
+	       sendCompletionControlResponse(requestID,prefix);
 	       );
 	  rest := o.insize - fin - 1;
 	  for i from 0 to rest-1 do o.inbuffer.i = o.inbuffer.(fin+1+i);
@@ -783,7 +798,7 @@ export filbuf(o:file):int := (
 		    then 0 -- take care of "string files" made by stringTokenFile in interp.d
 		    else (
 			ret := read(o.infd,o.inbuffer,n,o.insize);
-			if ret > 0 && o == stdIO && o.inbuffer.(o.insize) != webAppCompletionTag
+			if ret > 0 && !completionControlInputInProgress(o)
 			then addHistory(tocharstarn(o.inbuffer, ret - 1));
 			ret)));
 	  if r == ERROR then (
@@ -803,7 +818,7 @@ export filbuf(o:file):int := (
 	       oldsize := o.insize;
 	       newsize := o.insize + r;
 	       o.insize = newsize;
-	       if !o.readline && processWebAppCompletionRequests(o) then r = 0
+	       if !o.readline && processCompletionControlRequests(o) then r = 0
 	       else if o.fulllines then (
 		    for i from newsize-1 to oldsize by -1 do if o.inbuffer.i == '\n' then (
 			 if o.promptq then (
