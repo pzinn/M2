@@ -311,7 +311,6 @@ export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
     foreach c in s.v do provide chars.(int(uchar(c)));
 
 forListAccumulator := { r:Sequence, i:int };
-forEvalResult := { done:bool, value:Expr };
 
 forListValue(acc:forListAccumulator):Expr := Expr(
     list(
@@ -319,40 +318,12 @@ forListValue(acc:forListAccumulator):Expr := Expr(
 	else if acc.i == length(acc.r) then acc.r
 	else new Sequence len acc.i do foreach x in acc.r do provide x));
 
-appendForList(acc:forListAccumulator, x:Expr):void := (
-    if acc.i == length(acc.r) then (
-	acc.r = new Sequence len 2*length(acc.r) do (
-	    foreach y in acc.r do provide y;
-	    while true do provide nullE));
-    acc.r.(acc.i) = x;
-    acc.i = acc.i + 1);
-
 forBreakValue(c:forCode, acc:forListAccumulator, err:Error):Expr := (
     if err.value == dummyExpr
     then if c.listClause == dummyCode then nullE else forListValue(acc)
     else err.value);
 
-evalForBody(c:forCode, acc:forListAccumulator):forEvalResult := (
-    if c.listClause != dummyCode then (
-	b := eval(c.listClause);
-	useb := true;
-	when b is err:Error
-	do if err.message == continueMessage then useb = false
-	else if err.message == continueMessageWithArg then b = err.value
-	else if err.message == breakMessage then return forEvalResult(true, forBreakValue(c, acc, err))
-	else return forEvalResult(true, b)
-	else nothing;
-	if useb then appendForList(acc, b));
-    if c.doClause != dummyCode then (
-	b := eval(c.doClause);
-	when b is err:Error do (
-	    if err.message != continueMessage then return forEvalResult(
-		true,
-		if err.message == breakMessage then forBreakValue(c, acc, err) else b))
-	else nothing);
-    forEvalResult(false, nullE));
-
-evalForClauses(c:forCode, depth:int, acc:forListAccumulator):forEvalResult := (
+evalForClauses(c:forCode, depth:int, acc:forListAccumulator):Expr := (
      clause := c.clauses.depth;
      j := 0;				    -- the value of the loop variable if it's an integer loop, else the index in the list if it's "for i in w ..."
      w := emptySequence;			    -- the list x when it's "for i in w ..."
@@ -365,7 +336,7 @@ evalForClauses(c:forCode, depth:int, acc:forListAccumulator):forEvalResult := (
      if clause.inClause != dummyCode then (
      	  listLoop = true;
 	  invalue := eval(clause.inClause);
-	  when invalue is Error do return forEvalResult(true, invalue)
+	  when invalue is Error do return invalue
 	  is ww:Sequence do w = ww
 	  is vv:List do w = vv.v
 	  else (
@@ -375,28 +346,28 @@ evalForClauses(c:forCode, depth:int, acc:forListAccumulator):forEvalResult := (
 		  nextfunc = getNextFunction(iter);
 		  if nextfunc != nullE
 		  then (listLoop = false; iterLoop = true)
-		  else return forEvalResult(true, printErrorMessageE(clause.inClause,
-		      "no method for applying next to iterator")))
-	      else return forEvalResult(true, printErrorMessageE(clause.inClause,
-		  "expected a list, sequence, or iterable object"))))
+		  else return printErrorMessageE(clause.inClause,
+		      "no method for applying next to iterator"))
+	      else return printErrorMessageE(clause.inClause,
+		  "expected a list, sequence, or iterable object")))
      else (
 	  if clause.fromClause != dummyCode then (
 	       fromvalue := eval(clause.fromClause);
 	       when fromvalue
-	       is Error do return forEvalResult(true, fromvalue)
+	       is Error do return fromvalue
 	       is f:ZZcell do (
 		    if isInt(f) then j = toInt(f)
-		    else return forEvalResult(true, printErrorMessageE(clause.fromClause,"expected a small integer")))
-	       else return forEvalResult(true, printErrorMessageE(clause.fromClause,"expected an integer")));
+		    else return printErrorMessageE(clause.fromClause,"expected a small integer"))
+	       else return printErrorMessageE(clause.fromClause,"expected an integer"));
 	  if clause.toClause != dummyCode then (
 	       toLimit = true;
 	       tovalue := eval(clause.toClause);
 	       when tovalue
-	       is Error do return forEvalResult(true, tovalue)
+	       is Error do return tovalue
 	       is f:ZZcell do (
 		    if isInt(f) then n = toInt(f)
-		    else return forEvalResult(true, printErrorMessageE(clause.toClause,"expected a small integer")))
-	       else return forEvalResult(true, printErrorMessageE(clause.toClause,"expected an integer")));
+		    else return printErrorMessageE(clause.toClause,"expected a small integer"))
+	       else return printErrorMessageE(clause.toClause,"expected an integer"));
 	  );
      while true do (
 	  if toLimit && j > n then break;
@@ -412,22 +383,45 @@ evalForClauses(c:forCode, depth:int, acc:forListAccumulator):forEvalResult := (
 	  if clause.whenClause != dummyCode then (
 	       p := eval(clause.whenClause);
 	       when p is err:Error do (
-		    return forEvalResult(true,
-			if err.message == breakMessage then forBreakValue(c, acc, err) else p))
+		    return if err.message == breakMessage then forBreakValue(c, acc, err) else p)
 	       else if p == False then break
 	       else if p != True then (
-		    return forEvalResult(true, printErrorMessageE(clause.whenClause,"expected true or false"))));
-	  result := if depth + 1 == length(c.clauses) then evalForBody(c, acc) else evalForClauses(c, depth + 1, acc);
-	  if result.done then return result;
+		    return printErrorMessageE(clause.whenClause,"expected true or false")));
+	  if depth + 1 == length(c.clauses) then (
+	      if c.listClause != dummyCode then (
+		  b := eval(c.listClause);
+		  useb := true;
+		  when b is err:Error
+		  do if err.message == continueMessage then useb = false
+		  else if err.message == continueMessageWithArg then b = err.value
+		  else if err.message == breakMessage then return forBreakValue(c, acc, err)
+		  else return b
+		  else nothing;
+		  if useb then (
+		      if acc.i == length(acc.r) then (
+			  acc.r = new Sequence len 2*length(acc.r) do (
+			      foreach x in acc.r do provide x;
+			      while true do provide nullE));
+		      acc.r.(acc.i) = b;
+		      acc.i = acc.i + 1));
+	      if c.doClause != dummyCode then (
+		  b := eval(c.doClause);
+		  when b is err:Error do (
+		      if err.message != continueMessage then return
+		      if err.message == breakMessage then forBreakValue(c, acc, err) else b)
+		  else nothing))
+	  else (
+	      result := evalForClauses(c, depth + 1, acc);
+	      if result != dummyExpr then return result);
 	  );
-     forEvalResult(false, nullE));
+     dummyExpr);
 
 evalForCode(c:forCode):Expr := (
      localFrame = Frame(localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
      acc := forListAccumulator(new Sequence len 1 do provide nullE, 0);
      result := evalForClauses(c, 0, acc);
      localFrame = localFrame.outerFrame;
-     if result.done then result.value
+     if result != dummyExpr then result
      else if c.listClause == dummyCode then nullE
      else forListValue(acc));
 
