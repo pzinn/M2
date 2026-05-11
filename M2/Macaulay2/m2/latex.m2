@@ -135,9 +135,9 @@ keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
 	symbol |>  => "\\rangle ",
 	symbol |   => "\\mid",
 	symbol ||  => "\\mid\\mid",
-	symbol ^** => "{}^{\\otimes}", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol _*  => "{}_*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
-	symbol ^*  => "{}^*", -- temporary solution to KaTeX issue https://github.com/KaTeX/KaTeX/issues/3576
+	symbol ^** => "^{\\otimes}",
+	symbol _*  => "_*",
+	symbol ^*  => "^*",
 	symbol ·   => "\\cdot",
 	symbol ⊠  => "\\boxtimes"
 	},symbolBody)
