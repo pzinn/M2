@@ -116,7 +116,7 @@ print =  mode ( x -> (<< x << endl;) )
 errorPrint = mode ( x -> (stderr << x << endl << flush;) )
 -----------------------------------------------------------------------------
 processError = x -> (
-	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Expression) then x=apply(x,processError);
+	if instance(x,VisibleList) or instance(x,Hypertext) or instance(x,Holder) then x=apply(x,processError);
 	if class x === String or class x === Option or class x === OptionTable or instance(x,Hypertext) or instance(x,Holder) then x -- this is ridiculous
 	else SPAN splice {Abbreviate {x}," (of class ", class x, if class x===Symbol and (l:=locate x) =!= null then (", first use: ",l),")"}
 	)
