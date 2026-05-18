@@ -942,7 +942,10 @@ smallintarrays0 := new array(Expr) len 20 at i do (
 smallintarrays1 := new array(Expr) len 20 at i do (
      provide Expr(new Sequence len i at k do provide toExpr(1+k)));
 
-zzRange(x:ZZ,y:ZZ,methodkey:SymbolClosure):Expr := (
+rangeTooLarge(rhs:Code,useCode:bool):Expr := (
+     if useCode then printErrorMessageE(rhs,"range too large") else buildErrorPacket("range too large"));
+
+zzRange(x:ZZ,y:ZZ,methodkey:SymbolClosure,rhs:Code,useCode:bool):Expr := (
      includeRight := methodkey === DotDotS;
      if isInt(x) && isInt(y) then (
 	  i := toInt(x);
@@ -964,21 +967,23 @@ zzRange(x:ZZ,y:ZZ,methodkey:SymbolClosure):Expr := (
 	       m := toInt(z);
 	       if !includeRight then m = m - 1;
 	       Expr(new Sequence len m+1 at k do provide toExpr(x+k)))
-	  else buildErrorPacket("range too large")));
+	  else rangeTooLarge(rhs,useCode)));
 
 sequenceRange(v:Sequence,w:Sequence,methodkey:SymbolClosure):Expr;
 
-dotDotValue(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := (
+dotDotValue(left:Expr,right:Expr,methodkey:SymbolClosure,rhs:Code,useCode:bool):Expr := (
      when left
      is xx:ZZcell do (
 	  when right
-	  is yy:ZZcell do zzRange(xx.v,yy.v,methodkey)
+	  is yy:ZZcell do zzRange(xx.v,yy.v,methodkey,rhs,useCode)
 	  else binarymethod(left,right,methodkey))
      is vv:Sequence do (
 	  when right
 	  is ww:Sequence do sequenceRange(vv,ww,methodkey)
 	  else binarymethod(left,right,methodkey))
      else binarymethod(left,right,methodkey));
+
+dotDotValue(left:Expr,right:Expr,methodkey:SymbolClosure):Expr := dotDotValue(left,right,methodkey,dummyCode,false);
 
 export sequenceRange(v:Sequence,w:Sequence,methodkey:SymbolClosure):Expr := (
      n := length(v);
@@ -1019,7 +1024,7 @@ dotDotFun(methodkey:SymbolClosure,lhs:Code,rhs:Code):Expr := (
 	  right := eval(rhs);
 	  when right
 	  is Error do right
-	  else dotDotValue(left,right,methodkey)));
+	  else dotDotValue(left,right,methodkey,rhs,true)));
 
 -- # typical value: symbol .., ZZ, ZZ, Sequence
 -- # typical value: symbol .., Sequence, Sequence, Sequence
