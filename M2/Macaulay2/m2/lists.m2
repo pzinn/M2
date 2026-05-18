@@ -36,22 +36,7 @@ List  % RingElement := List  % Number := List => (v,b) -> apply(v,x->x  % b)
 VisibleList _ List := VisibleList => (L, ind) -> (
     new class L from apply(splice ind, i -> L#i))
 
-Sequence .. Sequence := Sequence => (v,w) -> (
-     n := #v;
-     if n =!= #w then error "expected sequences of equal length";
-     if n === 0 
-     then 1 : v
-     else if n === 1 
-     then apply(first v .. first w, t -> 1:t)
-     else splice table(first v .. first w, drop(v,1) .. drop(w,1), prepend))
-Sequence ..< Sequence := Sequence => (v,w) -> (
-     n := #v;
-     if n =!= #w then error "expected sequences of equal length";
-     if n === 0 
-     then 1 : v
-     else if n === 1 
-     then apply(first v ..< first w, t -> 1:t)
-     else splice table(first v ..< first w, drop(v,1) ..< drop(w,1), prepend))
+-- Sequence .. Sequence and Sequence ..< Sequence are implemented in actors.d
 
 chk := (v,w) -> (
      if #v =!= #w then error "expected lists of equal length";

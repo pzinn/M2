@@ -941,6 +941,87 @@ smallintarrays0 := new array(Expr) len 20 at i do (
      provide Expr(new Sequence len i+1 at k do provide toExpr(k)));
 smallintarrays1 := new array(Expr) len 20 at i do (
      provide Expr(new Sequence len i at k do provide toExpr(1+k)));
+
+zzRange(x:ZZ,y:ZZ,methodkey:SymbolClosure):Expr := (
+     if methodkey === DotDotS then (
+	  if isInt(x) && isInt(y) then (
+	       i := toInt(x);
+	       j := toInt(y);
+	       if i>j then emptySequenceE
+	       else if i==0 && j<length(smallintarrays0)
+	       then smallintarrays0.j
+	       else if i==1 && j<length(smallintarrays1)
+	       then smallintarrays1.j
+	       else Expr(new Sequence len j-i+1 at k do provide toExpr(i+k)))
+	  else (
+	       z := y-x;
+	       if z <= 0 then emptySequenceE
+	       else if isInt(z) then (
+		    m := toInt(z);
+		    Expr(new Sequence len m+1 at k do provide toExpr(x+k)))
+	       else buildErrorPacket("range too large")))
+     else (
+	  if isInt(x) && isInt(y) then (
+	       i := toInt(x);
+	       j := toInt(y) - 1;
+	       if i>j then emptySequenceE
+	       else if i==0 && j<length(smallintarrays0)
+	       then smallintarrays0.j
+	       else if i==1 && j<length(smallintarrays1)
+	       then smallintarrays1.j
+	       else (
+		    if j-i+1 > 100000
+		    then buildErrorPacket("ZZ .. ZZ: very long sequence requested")
+		    else Expr(new Sequence len j-i+1 at k do provide toExpr(i+k))))
+	  else (
+	       z := y-x;
+	       if z <= 0 then emptySequenceE
+	       else if isInt(z) then (
+		    m := toInt(z)-1;
+		    Expr(new Sequence len m+1 at k do provide toExpr(x+k)))
+	       else buildErrorPacket("range too large"))));
+
+sequenceRange(v:Sequence,w:Sequence,methodkey:SymbolClosure):Expr := (
+     n := length(v);
+     if n != length(w) then return buildErrorPacket("expected sequences of equal length");
+     if n == 0 then return Expr(Sequence(emptySequenceE));
+     ranges := new array(Sequence) len n do provide emptySequence;
+     lengths := new array(int) len n do provide 0;
+     total := 1;
+     maxint := Ccode(int,"INT_MAX");
+     for i from 0 to n-1 do (
+	  r :=
+	       when v.i
+	       is xx:ZZcell do (
+		    when w.i
+		    is yy:ZZcell do zzRange(xx.v,yy.v,methodkey)
+		    else binarymethod(v.i,w.i,methodkey))
+	       is vv:Sequence do (
+		    when w.i
+		    is ww:Sequence do sequenceRange(vv,ww,methodkey)
+		    else binarymethod(v.i,w.i,methodkey))
+	       else binarymethod(v.i,w.i,methodkey);
+	  when r
+	  is Error do return r
+	  is s:Sequence do (
+	       ranges.i = s;
+	       lengths.i = length(s);
+	       if lengths.i == 0 then return emptySequenceE;
+	       if total > maxint / lengths.i then return buildErrorPacket("Sequence .. Sequence: very long sequence requested");
+	       total = total * lengths.i)
+	  else return buildErrorPacket("expected sequence range component to be a sequence"));
+     indexes := new array(int) len n do provide 0;
+     Expr(new Sequence len total do (
+	  for outputIndex from 0 to total-1 do (
+	       provide Expr(new Sequence len n at i do provide ranges.i.(indexes.i));
+	       j := n-1;
+	       while j >= 0 do (
+		    indexes.j = indexes.j + 1;
+		    if indexes.j < lengths.j then break;
+		    indexes.j = 0;
+		    j = j-1);
+	       ))));
+
 DotDotfun(lhs:Code,rhs:Code):Expr := (
      left := eval(lhs);
      when left
@@ -969,6 +1050,12 @@ DotDotfun(lhs:Code,rhs:Code):Expr := (
 			 m := toInt(z);
 			 Expr(new Sequence len m+1 at k do provide toExpr(x+k)))
 		    else printErrorMessageE(rhs,"range too large")))
+	  else binarymethod(left,right,DotDotS))
+     is vv:Sequence do (
+	  right := eval(rhs);
+	  when right
+	  is Error do right
+	  is ww:Sequence do sequenceRange(vv,ww,DotDotS) -- # typical value: symbol .., Sequence, Sequence, Sequence
 	  else binarymethod(left,right,DotDotS))
      else binarymethod(left,rhs,DotDotS));
 setup(DotDotS,DotDotfun);
@@ -1004,6 +1091,12 @@ DotDotLessFun(lhs:Code,rhs:Code):Expr := (
 			 m := toInt(z)-1;
 			 Expr(new Sequence len m+1 at k do provide toExpr(x+k)))
 		    else printErrorMessageE(rhs,"range too large")))
+	  else binarymethod(left,right,DotDotLessS))
+     is vv:Sequence do (
+	  right := eval(rhs);
+	  when right
+	  is Error do right
+	  is ww:Sequence do sequenceRange(vv,ww,DotDotLessS) -- # typical value: symbol ..<, Sequence, Sequence, Sequence
 	  else binarymethod(left,right,DotDotLessS))
      else binarymethod(left,rhs,DotDotLessS));
 setup(DotDotLessS,DotDotLessFun);
