@@ -85,13 +85,17 @@ Thing#{WebApp,Print} = x -> (
     try timelimit(printingTimeLimit, fun) else (
 	alarm 0; -- in case it's another error that triggered try
 	global debugError <- fun;
-	stderr << "--error or time limit reached in conversion of output to html: type " | webAppHtmlTag | "<code data-m2code>debugError()</code>" | webAppEndTag |" to run it again; will try conversion to net" << endl;
-	try timelimit(printingTimeLimit, () -> (
---		<< flush << net x << flush << endl; -- not quite right
-		printFunc net x;
-		)) else (
+	<< webAppHtmlTag << ///<span class="M2Error">
+	error or time limit reached in conversion of output to html:
+	type <code data-m2code>debugError()</code> to run it again; will try conversion to net</span>///
+	<< webAppEndTag << endl;
+	fun = () -> ( printFunc net x; );
+	try timelimit(printingTimeLimit, fun) else (
 	    alarm 0;
-	    error "time limit/error reached in conversion of output to net";
+	    << webAppHtmlTag << ///<span class="M2Error">
+	    error or time limit reached in conversion of output to net</span>///
+	    << webAppEndTag << endl;
+	    printFunc simpleToString x; -- should never fail
 	    )
 	);
     )
