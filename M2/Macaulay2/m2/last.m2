@@ -139,6 +139,7 @@ allowedRuns := {
     "rm",
     "scip",
     "stat",
+    "surf",
     "tail",
     "time",
     "TOPCOM",
