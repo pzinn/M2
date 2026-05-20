@@ -33,18 +33,7 @@ noopts := x -> select(x,e -> class e =!= Option and class e =!= OptionTable)
 texLiteralEncode := c -> concatenate apply(ascii c,i->("\\char",toString i))
 texLiteralPairs := splice {
     apply(0..8|11..12|14..31|127..255|toSequence ascii "\\{}$&#^_%~|<>\"", c -> ascii c => texLiteralEncode ascii c),
-    "`"  => "{`}", -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
-    -- various unicode symbols -- TODO probably remove
-    "←" => "\\(\\leftarrow\\)",
-    "↑" => "\\(\\uparrow\\)",
-    "→" => "\\(\\rightarrow\\)",
-    "↓" => "\\(\\downarrow\\)",
-    "↔" => "\\(\\leftrightarrow\\)",
-    "↕" => "\\(\\updownarrow\\)",
-    "↖" => "\\(\\nwarrow\\)",
-    "↗" => "\\(\\nearrow\\)",
-    "↘" => "\\(\\searrow\\)",
-    "↙" => "\\(\\swarrow\\)"
+    "`"  => "{`}" -- break ligatures ?` and !` in font \tt. See page 381 of TeX Book.
     }
 texLiteralTable := hashTable texLiteralPairs
 texLiteral1 := t -> s -> (
