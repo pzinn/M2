@@ -91,6 +91,9 @@ sectionType = sectionNumber -> (
 
 -----------------------------------------------------------------------------
 keywordTexMath = applyKeys(hashTable { -- both unary and binary keywords
+	symbol ==   => "=\\!=",
+	symbol ===  => "=\\!=\\!=",
+	symbol =!=  => "=\\!\\ne\\!=",
 	symbol |-   => "\\vdash ",
 	symbol ..   => "\\,{.}{.}\\,",
 	symbol ..<  => "\\,{.}{.}{<}\\,",
