@@ -46,7 +46,7 @@ runmethod(methodname:Expr,g:Expr):Expr := (
 endInput := makeProtectedSymbolClosure("end");
 
 emitWebAppControl(file:TokenFile,printout:bool,tag:string):void := (
-     if printout && file.posFile.file == stdIO && webAppControlsEnabled && tag != "" then (
+     if printout && webAppControlsEnabled then (
 	  stdIO << tag << flush;
 	  );
      );

@@ -911,7 +911,7 @@ export getc(o:file):int := (
      	       e != '\n'
 	       )
 	  do nothing;
-	  if echoedNewline && o == stdIO && webAppControlsEnabled && webAppInputEndTag != "" then stdIO << webAppInputEndTag;
+	  if echoedNewline && webAppControlsEnabled then stdIO << webAppInputEndTag;
 	  stdIO << flush;
 	  );
      if c == nl then (
