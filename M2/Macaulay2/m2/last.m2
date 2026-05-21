@@ -114,6 +114,7 @@ allowedRuns := {
     "echo",
     "false",
     "gfan",
+    "head",
     "less",
     "ln",
     "ls",
@@ -145,6 +146,8 @@ allowedRuns := {
     "TOPCOM",
     "true",
     "type",
+    "ulimit",
+    "uname",
     "which",
     "whoami"
     }
