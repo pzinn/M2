@@ -190,11 +190,11 @@ init():void := (
 	       stdIO.readline = false; -- don't go thru readline
 	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
 	       stdIO.outisatty = true; -- not so important?
-	       STDERR = 1;
 	       webAppControlsEnabled = true;
 	       webAppInputEndTag = string(char(22));
 	       webAppEvaluationEndTag = string(char(23));
 	       webAppInputDiscardedTag = string(char(31));
+	       STDERR = 1;
 	       rmfile(stdError);
 	       stdError = newFile(
 	         "stderr", 0,
@@ -902,16 +902,14 @@ export getc(o:file):int := (
      c := o.inbuffer.(o.inindex);
      o.inindex = o.inindex + 1;
      if o.echo && o.echoindex < o.inindex then (
-	  echoedNewline := false;
 	  while o.echoindex < o.insize && (
 	       e := o.inbuffer.(o.echoindex);
 	       stdIO << e; 
 	       o.echoindex = o.echoindex + 1;
-	       if e == '\n' then echoedNewline = true;
+	       if e == '\n' && webAppControlsEnabled then stdIO << webAppInputEndTag;
      	       e != '\n'
 	       )
 	  do nothing;
-	  if echoedNewline && webAppControlsEnabled then stdIO << webAppInputEndTag;
 	  stdIO << flush;
 	  );
      if c == nl then (
