@@ -6,14 +6,16 @@ needs "monideal.m2"
 
 -- topLevelMode=WebApp definitions
 -- tags are required to help the browser app distinguish html from text
-webAppTags = apply((17,18,19,20,28,29,30,14,21),ascii);
+webAppTags = apply((17,18,19,20,22,28,29,30,31,14,21),ascii);
     (	webAppHtmlTag,        -- indicates what follows is HTML ~ <span class='M2Html'>
 	webAppEndTag,         -- closing tag ~ </span>
 	webAppCellTag,        -- start of cell (bundled input + output) ~ <p>
 	webAppCellEndTag,     -- closing tag for cell ~ </p>
+	webAppInputEndTag,    -- explicit end of input text
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppLiteralTag,     -- used internally to keep track of encoding
+	webAppInputDiscardedTag, -- remaining buffered input was discarded; evaluation is complete
 	webAppPromptTag,      -- input/output prompt
 	webAppPositionTag     -- code position (row:col)
 	)=webAppTags;
@@ -119,5 +121,6 @@ if topLevelMode === WebApp then (
     scan(methods hypertext, (f,T) -> (
 	    texMath T := x -> webAppLiteralTag|webAppHtmlTag|html x|webAppEndTag|webAppLiteralTag;
 	    )
-	)
+        )
     )
+addEndFunction(()-> (if topLevelMode===WebApp then << webAppCellEndTag << webAppCellEndTag;));

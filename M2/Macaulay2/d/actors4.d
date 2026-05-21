@@ -850,12 +850,18 @@ readE(f:file):Expr := (
 readIO(msg:string):Expr := (
      readprompt = msg;
      oldprompt := stdIO.prompt;
+     oldecho := stdIO.echo;
      stdIO.prompt = readpromptfun;
+     if webAppControlsEnabled then stdIO.echo = false;
      r := getLine(stdIO);
+     if webAppControlsEnabled then stdIO.echoindex = stdIO.inindex;
      stdIO.prompt = oldprompt;
+     stdIO.echo = oldecho;
      when r
      is e:errmsg do buildErrorPacket(e.message)
-     is s:stringCell do Expr(s)
+     is s:stringCell do (
+	  if webAppControlsEnabled then stdIO << webAppInputTag << s.v << newline << webAppInputEndTag << flush;
+	  Expr(s))
 );
 
 readfun(e:Expr):Expr := (

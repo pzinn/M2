@@ -45,6 +45,12 @@ runmethod(methodname:Expr,g:Expr):Expr := (
 
 endInput := makeProtectedSymbolClosure("end");
 
+emitWebAppControl(file:TokenFile,printout:bool,tag:string):void := (
+     if printout && webAppControlsEnabled then (
+	  stdIO << tag << flush;
+	  );
+     );
+
 -- PrintOut(g:Expr,semi:bool,f:Code):Expr := (
 --      methodname := if semi then NoPrint else Print;
 --      method := lookup(Class(g),methodname);
@@ -140,9 +146,11 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      determineExceptionFlag();
 			      promptWanted = true;
 			      -- issuePrompt = true;
+			      emitWebAppControl(file,printout,webAppInputDiscardedTag);
 			      )
 			 else (
 		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
+			      emitWebAppControl(file,printout,webAppInputDiscardedTag);
 			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
 			      file.posFile.line = file.posFile.line + 1;
@@ -166,6 +174,7 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			 then (
 			      msg := "syntax error: unmatched " + s.word.name;
 			      printErrorMessage(s,msg);
+			      emitWebAppControl(file,printout,webAppInputDiscardedTag);
 			      if stopIfError || returnIfError then return Expr(Error(s.position,msg,nullE,false,dummyFrame));
 			      )
 			 else (

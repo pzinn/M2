@@ -143,6 +143,10 @@ export stdIO  := newFile("stdio",  0,
 
 export interpreterDepth := 0;
 export lineNumber := 0;
+export webAppControlsEnabled := false;
+export webAppInputTag := "";
+export webAppInputEndTag := "";
+export webAppInputDiscardedTag := "";
 texmacsprompt():string := (
      s := "";
      for i from 1 to interpreterDepth do s = s + "i";
@@ -200,6 +204,10 @@ init():void := (
 	       stdIO.readline = false; -- don't go thru readline
 	       stdIO.inisatty = true; -- otherwise hangs after first syntax error
 	       stdIO.outisatty = true; -- not so important?
+	       webAppControlsEnabled = true;
+	       webAppInputTag = string(char(28));
+	       webAppInputEndTag = string(char(22));
+	       webAppInputDiscardedTag = string(char(31));
 	       STDERR = 1;
 	       rmfile(stdError);
 	       stdError = newFile(
@@ -859,6 +867,7 @@ export getc(o:file):int := (
 	       e := o.inbuffer.(o.echoindex);
 	       stdIO << e; 
 	       o.echoindex = o.echoindex + 1;
+	       if e == '\n' && webAppControlsEnabled then stdIO << webAppInputEndTag;
      	       e != '\n'
 	       )
 	  do nothing;
