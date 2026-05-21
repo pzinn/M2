@@ -147,12 +147,10 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      promptWanted = true;
 			      -- issuePrompt = true;
 			      emitWebAppControl(file,printout,webAppInputDiscardedTag);
-			      emitWebAppControl(file,printout,webAppEvaluationEndTag);
 			      )
 			 else (
 		    	      if debugLevel == 123 then stderr <<  "-- error during parsing" << endl;
 			      emitWebAppControl(file,printout,webAppInputDiscardedTag);
-			      emitWebAppControl(file,printout,webAppEvaluationEndTag);
 			      if fileError(file) then return buildErrorPacket(fileErrorMessage(file));
 			      if stopIfError || returnIfError then return buildErrorPacket("--backtrace: parse error--");
 			      file.posFile.line = file.posFile.line + 1;
@@ -177,7 +175,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 			      msg := "syntax error: unmatched " + s.word.name;
 			      printErrorMessage(s,msg);
 			      emitWebAppControl(file,printout,webAppInputDiscardedTag);
-			      emitWebAppControl(file,printout,webAppEvaluationEndTag);
 			      if stopIfError || returnIfError then return Expr(Error(s.position,toExpr(msg),nullE,false,dummyFrame));
 			      )
 			 else (

@@ -16,7 +16,7 @@ webAppTags = apply((17,18,19,20,22,23,28,29,30,31,14,21),ascii);
 	webAppInputTag,       -- it's text but it's input ~ <span class='M2Input'>
 	webAppInputContdTag,  -- text, continuation of input
 	webAppLiteralTag,     -- used internally to keep track of encoding
-	webAppInputDiscardedTag, -- remaining buffered input was discarded
+	webAppInputDiscardedTag, -- remaining buffered input was discarded; evaluation is complete
 	webAppPromptTag,      -- input/output prompt
 	webAppPositionTag     -- code position (row:col)
 	)=webAppTags;
