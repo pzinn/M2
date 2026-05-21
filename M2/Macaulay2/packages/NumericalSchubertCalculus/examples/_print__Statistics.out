@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: 4420568397496153600
 i1 : k = 3;
-i2 : n = 6;
-i3 : SchPblm = {
-    ({2,1}, random(CC^6,CC^6)),
-    ({2,1}, random(CC^6,CC^6)),
-    ({2,1}, random(CC^6,CC^6))
-    };
-i4 : resetStatistics()
-i5 : solveSchubertProblem(SchPblm, k,n)
-
+i2 : n = 6;
+i3 : SchPblm = {
+    ({2,1}, random(CC^6,CC^6)),
+    ({2,1}, random(CC^6,CC^6)),
+    ({2,1}, random(CC^6,CC^6))
+    };
+i4 : resetStatistics()
+i5 : solveSchubertProblem(SchPblm, k,n)
+
 o5 = $\left\{\left(\!\begin{array}{ccc}
 -{.973546}-{.443329}\,\mathbf{i}&amp;-{.193482}-{.957391}\,\mathbf{i}&amp;-{.460977}-{.267623}\,\mathbf{i}\\
 {.153343}-{.291038}\,\mathbf{i}&amp;{.339479}-{1.30008}\,\mathbf{i}&amp;-{.577303}-{.171329}\,\mathbf{i}\\
@@ -26,8 +26,8 @@
 \end{array}\!\right)\right\}$
 
 o5 : <samp class="token class-name">List</samp>
-i6 : printStatistics()
-# moves of type {} = 2
+i6 : printStatistics()
+# moves of type {} = 2
 # moves of type {0, 0, 0} = 3
 # moves of type {0, 1, 0} = 2
 # moves of type {0, 2, 0} = 10
@@ -38,5 +38,5 @@
 # moves of type {2, 0, 0} = 3
 # moves of type {2, 1, 0} = 1
 # moves of type {2, 2, 0} = 12
-tracking time = .138293
-i7 : 
+tracking time = .106146
+i7 : 

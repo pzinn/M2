@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: 189144728989167395
 i1 : QQ[x,y,z,w]
-
+
 o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,w]$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i2 : I=ideal(x^2-y*z+w^2,w^3-y^3*x+z^3);
-
+i2 : I=ideal(x^2-y*z+w^2,w^3-y^3*x+z^3);
+
 o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,w]$</span>
-i3 : T=tropicalVariety I;
-i4 : dim T
-
+i3 : T=tropicalVariety I;
+i4 : dim T
+
 o4 = $2$
-i5 : 
+i5 : 

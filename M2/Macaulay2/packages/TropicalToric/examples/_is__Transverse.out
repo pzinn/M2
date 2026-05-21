@@ -1,38 +1,38 @@
 -- -*- M2-comint -*- hash: 12304955485749569065
 i1 : rayList={{1,0},{0,1},{-1,-1},{0,-1}}
-
+
 o1 = $\{\{1,\,0\},\,\{0,\,1\},\,\{-1,\,-1\},\,\{0,\,-1\}\}$
 
 o1 : <samp class="token class-name">List</samp>
-i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
-
+i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+
 o2 = $\{\{0,\,1\},\,\{1,\,2\},\,\{2,\,3\},\,\{3,\,0\}\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : X = normalToricVariety(rayList,coneList)
-
+i3 : X = normalToricVariety(rayList,coneList)
+
 o3 = $X$
 
 o3 : <samp class="token class-name">NormalToricVariety</samp>
-i4 : D = X_3
-
+i4 : D = X_3
+
 o4 = <samp class="token class-name">ToricDivisor</samp>$\{0\ \Rightarrow \ 0,\,1\ \Rightarrow \ 0,\,2\ \Rightarrow \ 0,\,3\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{variety}\ \Rightarrow \ X\}$
 
 o4 : <samp class="token class-name">ToricDivisor</samp>
-i5 : E = {0,3}
-
+i5 : E = {0,3}
+
 o5 = $\{0,\,3\}$
 
 o5 : <samp class="token class-name">List</samp>
-i6 : F = {1,2}
-
+i6 : F = {1,2}
+
 o6 = $\{1,\,2\}$
 
 o6 : <samp class="token class-name">List</samp>
-i7 : isTransverse(D,E)
-
+i7 : isTransverse(D,E)
+
 o7 = <samp class="token constant">false</samp>
-i8 : isTransverse(D,F)
-
+i8 : isTransverse(D,F)
+
 o8 = <samp class="token constant">true</samp>
-i9 : 
+i9 : 

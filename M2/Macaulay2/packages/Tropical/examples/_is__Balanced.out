@@ -1,28 +1,28 @@
 -- -*- M2-comint -*- hash: 8680144405152974406
 i1 : QQ[x,y,z]
-
+
 o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i2 : V = tropicalVariety(ideal(x+y+z))
-
+i2 : V = tropicalVariety(ideal(x+y+z))
+
 o2 = <samp class="token constant">V</samp>
 
 o2 : <samp class="token class-name">TropicalCycle</samp>
-i3 : isBalanced V
-
+i3 : isBalanced V
+
 o3 = <samp class="token constant">true</samp>
-i4 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
-
+i4 : F = fan {posHull matrix {{1},{0},{0}}, posHull matrix {{0},{1},{0}}, posHull matrix {{0},{0},{1}}, posHull matrix {{-1},{-1},{-1}}}
+
 o4 = <samp class="token constant">F</samp>
 
 o4 : <samp class="token class-name">Fan</samp>
-i5 : mult = {1,2,-3,1}
-
+i5 : mult = {1,2,-3,1}
+
 o5 = $\{1,\,2,\,-3,\,1\}$
 
 o5 : <samp class="token class-name">List</samp>
-i6 : isBalanced (tropicalCycle(F, mult))
-
+i6 : isBalanced (tropicalCycle(F, mult))
+
 o6 = <samp class="token constant">false</samp>
-i7 : 
+i7 : 

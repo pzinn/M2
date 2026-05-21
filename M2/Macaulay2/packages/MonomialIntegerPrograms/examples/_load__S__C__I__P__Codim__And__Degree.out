@@ -1,22 +1,22 @@
 -- -*- M2-comint -*- hash: 7820116602721895117
 i1 : 1:0R = QQ[a,b,c];
-i2 : 2:0ScipPrintLevel = 1;
-i3 : 3:0loadBuiltinCodimAndDegree();
-i4 : 4:0codim(monomialIdeal(a^2, b*a, c*b))
-
+i2 : 2:0ScipPrintLevel = 1;
+i3 : 3:0loadBuiltinCodimAndDegree();
+i4 : 4:0codim(monomialIdeal(a^2, b*a, c*b))
+
 o4 = $2$
-i5 : 5:0degree(monomialIdeal(a^2, b*a, c*b))
-
+i5 : 5:0degree(monomialIdeal(a^2, b*a, c*b))
+
 o5 = $3$
-i6 : 6:0loadSCIPCodimAndDegree();
-i7 : 7:0codim(monomialIdeal(a^2, b*a, c*b))
-<samp class="token string">Codim files saved in directory: /tmp/M2-988361-0/0</samp>
+i6 : 6:0loadSCIPCodimAndDegree();
+i7 : 7:0codim(monomialIdeal(a^2, b*a, c*b))
+<samp class="token string">Codim files saved in directory: /tmp/M2-143798-0/0</samp>
 
 o7 = $2$
-i8 : 8:0degree(monomialIdeal(a^2, b*a, c*b))
-<samp class="token string">Codim files saved in directory: /tmp/M2-988361-0/1</samp>
-<samp class="token string">Degree files saved in directory: /tmp/M2-988361-0/2</samp>
+i8 : 8:0degree(monomialIdeal(a^2, b*a, c*b))
+<samp class="token string">Codim files saved in directory: /tmp/M2-143798-0/1</samp>
+<samp class="token string">Degree files saved in directory: /tmp/M2-143798-0/2</samp>
 
 o8 = $3$
-i9 : 9:0
-
+i9 : 9:0
+

@@ -1,13 +1,13 @@
 -- -*- M2-comint -*- hash: 13298095477002488442
 i1 : QQ[x,y,z]
-
+
 o1 = $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z]$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i2 : V = tropicalVariety(ideal(x+y+z));
-i3 : multiplicities V
-
+i2 : V = tropicalVariety(ideal(x+y+z));
+i3 : multiplicities V
+
 o3 = $\{1,\,1,\,1\}$
 
 o3 : <samp class="token class-name">List</samp>
-i4 : 
+i4 : 

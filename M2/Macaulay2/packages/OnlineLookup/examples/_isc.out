@@ -1,8 +1,8 @@
 -- -*- M2-comint -*- hash: 1332114534705
 i1 : isc (sqrt 2*pi)
---warning: failed to fetch from the web
+--warning: failed to fetch from the web
 
 o1 = $\{\,\}$
 
 o1 : <samp class="token class-name">List</samp>
-i2 : 
+i2 : 

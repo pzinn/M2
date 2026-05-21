@@ -1,27 +1,27 @@
 -- -*- M2-comint -*- hash: 1462883842830477294
 i1 : R=CC[x11,x22,x21,x12,x23,x13,x14,x24];
-i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
-i3 : V=numericalIrreducibleDecomposition(system)
- -- setting random seed to 8
-found 7 irreducible factors 
+i2 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
+i3 : V=numericalIrreducibleDecomposition(system)
+ -- setting random seed to 8
+found 6 irreducible factors 
 
 o3 = <samp class="token constant">V</samp>
 
 o3 : <samp class="token class-name">NumericalVariety</samp>
-i4 : WitSets=V#5; --witness sets are accessed by dimension
-i5 : w=first WitSets;
-i6 : w.cache.IsIrreducible
-
+i4 : WitSets=V#5; --witness sets are accessed by dimension
+i5 : w=first WitSets;
+i6 : w.cache.IsIrreducible
+
 o6 = <samp class="token constant">true</samp>
-i7 : R=QQ[x11,x22,x21,x12,x23,x13,x14,x24];
-i8 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
-i9 : PD=primaryDecomposition(ideal(system))
-
+i7 : R=QQ[x11,x22,x21,x12,x23,x13,x14,x24];
+i8 : system={x11*x22-x21*x12,x12*x23-x22*x13,x13*x24-x23*x14};
+i9 : PD=primaryDecomposition(ideal(system))
+
 o9 = $\{$<samp class="token function">ideal</samp>${}(\mathit{x13},\,\mathit{x23},\,\mathit{x11}\,\mathit{x22}-\mathit{x21}\,\mathit{x12}),\,$<samp class="token function">ideal</samp>${}(\mathit{x12},\,\mathit{x22},\,\mathit{x23}\,\mathit{x14}-\mathit{x13}\,\mathit{x24}),\,$<samp class="token function">ideal</samp>${}(\mathit{x23}\,\mathit{x14}-\mathit{x13}\,\mathit{x24},\,\mathit{x21}\,\mathit{x14}-\mathit{x11}\,\mathit{x24},\,\mathit{x22}\,\mathit{x14}-\mathit{x12}\,\mathit{x24},\,\mathit{x12}\,\mathit{x23}-\mathit{x22}\,\mathit{x13},\,\mathit{x11}\,\mathit{x23}-\mathit{x21}\,\mathit{x13},\,\mathit{x11}\,\mathit{x22}-\mathit{x21}\,\mathit{x12})\}$
 
 o9 : <samp class="token class-name">List</samp>
-i10 : for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)
-<samp class="token string">dim =5  degree=2</samp>
+i10 : for i from 0 to 2 do print ("dim =" | dim PD_i | "  " | "degree=" | degree PD_i)
+<samp class="token string">dim =5  degree=2</samp>
 <samp class="token string">dim =5  degree=2</samp>
 <samp class="token string">dim =5  degree=4</samp>
-i11 : 
+i11 : 

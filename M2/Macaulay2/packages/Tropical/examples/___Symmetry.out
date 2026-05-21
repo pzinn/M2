@@ -1,11 +1,11 @@
 -- -*- M2-comint -*- hash: 7679271322316421514
 i1 : QQ[x_0,x_1,x_2];
-i2 : I=ideal(x_0+x_1+x_2+1);
-
+i2 : I=ideal(x_0+x_1+x_2+1);
+
 o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}\left[x_{0}\,{.}{.}\,x_{2}\right]$</span>
-i3 : T=tropicalVariety (I,Symmetry=>{{1,0,2}, {2,1,0} })
-
+i3 : T=tropicalVariety (I,Symmetry=>{{1,0,2}, {2,1,0} })
+
 o3 = <samp class="token constant">T</samp>
 
 o3 : <samp class="token class-name">TropicalCycle</samp>
-i4 : 
+i4 : 

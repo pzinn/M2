@@ -1,15 +1,15 @@
 -- -*- M2-comint -*- hash: 18208456570503543567
 i1 : A = QQ{x,y,z,w}
-
+
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
-i2 : f = x^2+y^2+z^3
-
+i2 : f = x^2+y^2+z^3
+
 o2 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{x,\,x\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{y,\,y\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{z,\,z,\,z\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1\})\}$
 
 o2 : $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
-i3 : toString f
-
+i3 : toString f
+
 o3 = <samp class="token string">z^3+y^2+x^2</samp>
-i4 : 
+i4 : 

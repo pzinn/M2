@@ -1,10 +1,10 @@
 -- -*- M2-comint -*- hash: 18352662131295104583
 i1 : k=3; n=6;
-i3 : l1={2,1};
-i4 : l2={2,1};
-i5 : l3={2,1};
-i6 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
-
+i3 : l1={2,1};
+i4 : l2={2,1};
+i5 : l3={2,1};
+i6 : F = {(l1, id_(CC^n)), (l2, rsort id_(CC^n)), (l3,random(CC^n,CC^n))}
+
 o6 = $\left\{\left(\{2,\,1\},\,\left(\!\begin{array}{cccccc}
 1&amp;0&amp;0&amp;0&amp;0&amp;0\\
 0&amp;1&amp;0&amp;0&amp;0&amp;0\\
@@ -29,12 +29,12 @@
 \end{array}\!\right)\right)\right\}$
 
 o6 : <samp class="token class-name">List</samp>
-i7 : G = randomSchubertProblemInstance({l1,l2,l3},k,n);
-i8 : S = solveSchubertProblem(F,k,n);
-i9 : FlagsF = F/last;
-i10 : FlagsG = G/last;
-i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
- -- used 1.87722s (cpu); 1.87722s (thread); 0s (gc)
+i7 : G = randomSchubertProblemInstance({l1,l2,l3},k,n);
+i8 : S = solveSchubertProblem(F,k,n);
+i9 : FlagsF = F/last;
+i10 : FlagsG = G/last;
+i11 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG))
+ -- used 3.64187s (cpu); 3.64187s (thread); 0s (gc)
 
 o11 = $\left\{\left(\!\begin{array}{ccc}
 {.124063}-{.286284}\,\mathbf{i}&amp;{.167867}-{.0639299}\,\mathbf{i}&amp;{.295488}-{.366109}\,\mathbf{i}\\
@@ -53,9 +53,9 @@
 \end{array}\!\right)\right\}$
 
 o11 : <samp class="token class-name">List</samp>
-i12 : assert all(S', s-> checkIncidenceSolution(s,G))
-i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
- -- used 0.683508s (cpu); 0.683508s (thread); 0s (gc)
+i12 : assert all(S', s-> checkIncidenceSolution(s,G))
+i13 : time S' = changeFlags(S,({l1,l2,l3},FlagsF,FlagsG), OneHomotopy=>false)
+ -- used 1.36758s (cpu); 1.36758s (thread); 0s (gc)
 
 o13 = $\left\{\left(\!\begin{array}{ccc}
 -{.226702}-{.119043}\,\mathbf{i}&amp;-{.326452}-{.119841}\,\mathbf{i}&amp;{.0929953}-{.230085}\,\mathbf{i}\\
@@ -74,5 +74,5 @@
 \end{array}\!\right)\right\}$
 
 o13 : <samp class="token class-name">List</samp>
-i14 : assert all(S', s-> checkIncidenceSolution(s,G))
-i15 : 
+i14 : assert all(S', s-> checkIncidenceSolution(s,G))
+i15 : 

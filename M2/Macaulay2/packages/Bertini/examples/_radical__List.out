@@ -1,17 +1,17 @@
 -- -*- M2-comint -*- hash: 1437360351269936102
 i1 : radicalList({2.000,1.999})
-
+
 o1 = $\{{2},\,{1.999}\}$
 
 o1 : <samp class="token class-name">List</samp>
-i2 : radicalList({2.000,1.999},1e-10)
-
+i2 : radicalList({2.000,1.999},1e-10)
+
 o2 = $\{{2},\,{1.999}\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : radicalList({2.000,1.999},1e-2)
-
+i3 : radicalList({2.000,1.999},1e-2)
+
 o3 = $\{{2}\}$
 
 o3 : <samp class="token class-name">List</samp>
-i4 : 
+i4 : 

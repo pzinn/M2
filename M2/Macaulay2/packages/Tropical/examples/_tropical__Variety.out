@@ -1,50 +1,50 @@
 -- -*- M2-comint -*- hash: 3004202635849571771
 i1 : QQ[x,y];
-i2 : I=ideal(x+y+1);
-
+i2 : I=ideal(x+y+1);
+
 o2 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,y]$</span>
-i3 : T=tropicalVariety(I);
-i4 : rays(T)
-
+i3 : T=tropicalVariety(I);
+i4 : rays(T)
+
 o4 = $\left(\!\begin{array}{ccc}
 1&amp;-1&amp;0\\
 0&amp;-1&amp;1
 \end{array}\!\right)$
 
 o4 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{3}$</span>
-i5 : maxCones(T)
-
+i5 : maxCones(T)
+
 o5 = $\{\{1\},\,\{0\},\,\{2\}\}$
 
 o5 : <samp class="token class-name">List</samp>
-i6 : linealitySpace T
-
+i6 : linealitySpace T
+
 o6 = $0$
 
 o6 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{2}\,\longleftarrow \,0$</span>
-i7 : Polyhedra$fVector fan T
-
+i7 : Polyhedra$fVector fan T
+
 o7 = $\{1,\,3\}$
 
 o7 : <samp class="token class-name">List</samp>
-i8 : multiplicities(T)
-
+i8 : multiplicities(T)
+
 o8 = $\{1,\,1,\,1\}$
 
 o8 : <samp class="token class-name">List</samp>
-i9 : QQ[x,y,z,w];
-i10 : I = ideal(w+x+y+z)
-
+i9 : QQ[x,y,z,w];
+i10 : I = ideal(w+x+y+z)
+
 o10 = <samp class="token function">ideal</samp>${}(x+y+z+w)$
 
 o10 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,w]$</span>
-i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
-
+i11 : T = tropicalVariety(I, IsHomogeneous=>true, Symmetry=>{{1,0,2,3},{2,1,0,3},{3,1,2,0}})
+
 o11 = <samp class="token constant">T</samp>
 
 o11 : <samp class="token class-name">TropicalCycle</samp>
-i12 : rays(T)
-
+i12 : rays(T)
+
 o12 = $\left(\!\begin{array}{cccc}
 3&amp;-1&amp;-1&amp;-1\\
 -1&amp;3&amp;-1&amp;-1\\
@@ -53,17 +53,17 @@
 \end{array}\!\right)$
 
 o12 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{4}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{4}$</span>
-i13 : maxCones(T)
-
+i13 : maxCones(T)
+
 o13 = $\{\{0,\,1\},\,\{0,\,2\},\,\{0,\,3\},\,\{1,\,2\},\,\{1,\,3\},\,\{2,\,3\}\}$
 
 o13 : <samp class="token class-name">List</samp>
-i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
-
+i14 : I=intersect(ideal(x+y+z+w),ideal(x-y,y-z));
+
 o14 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,w]$</span>
-i15 : T= tropicalVariety(I,Prime=>false);
-i16 : rays(T)
-
+i15 : T= tropicalVariety(I,Prime=>false);
+i16 : rays(T)
+
 o16 = $\left(\!\begin{array}{cccccccc}
 1&amp;3&amp;1&amp;-1&amp;1&amp;-1&amp;-1&amp;-1\\
 1&amp;-1&amp;1&amp;3&amp;-1&amp;1&amp;-1&amp;-1\\
@@ -72,18 +72,18 @@
 \end{array}\!\right)$
 
 o16 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{4}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{8}$</span>
-i17 : maxCones(T)
-
+i17 : maxCones(T)
+
 o17 = $\{\{0\},\,\{1,\,2\},\,\{1,\,4\},\,\{1,\,7\},\,\{2,\,3\},\,\{4,\,6\},\,\{3,\,5\},\,\{3,\,7\},\,\{5,\,6\},\,\{6,\,7\}\}$
 
 o17 : <samp class="token class-name">List</samp>
-i18 : multiplicities(T)
-
+i18 : multiplicities(T)
+
 o18 = $\{1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1,\,1\}$
 
 o18 : <samp class="token class-name">List</samp>
-i19 : linealitySpace T
-
+i19 : linealitySpace T
+
 o19 = $\left(\!\begin{array}{c}
 1\\
 1\\
@@ -92,13 +92,13 @@
 \end{array}\!\right)$
 
 o19 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{4}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{1}$</span>
-i20 : QQ[x,y,z,w];
-i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
-
+i20 : QQ[x,y,z,w];
+i21 : I=intersect(ideal(x+y+z+1),ideal(x^2-y*z));
+
 o21 : <span><samp class="token class-name">Ideal</samp> of $\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,w]$</span>
-i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
-i23 : rays(T)
-
+i22 : T= tropicalVariety(I,Prime=>false,ComputeMultiplicities=>false);
+i23 : rays(T)
+
 o23 = $\left(\!\begin{array}{cccccc}
 -4&amp;4&amp;0&amp;0&amp;4&amp;4\\
 -4&amp;0&amp;4&amp;0&amp;8&amp;0\\
@@ -107,13 +107,13 @@
 \end{array}\!\right)$
 
 o23 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{4}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{6}$</span>
-i24 : maxCones(T)
-
+i24 : maxCones(T)
+
 o24 = $\{\{0,\,1\},\,\{0,\,2\},\,\{0,\,3\},\,\{0,\,4\},\,\{0,\,5\},\,\{2,\,3\},\,\{1,\,4\},\,\{1,\,5\},\,\{2,\,4\},\,\{3,\,5\},\,\{4,\,5\}\}$
 
 o24 : <samp class="token class-name">List</samp>
-i25 : linealitySpace T
-
+i25 : linealitySpace T
+
 o25 = $\left(\!\begin{array}{c}
 0\\
 0\\
@@ -122,9 +122,9 @@
 \end{array}\!\right)$
 
 o25 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{4}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{1}$</span>
-i26 : multiplicities(T)
-
+i26 : multiplicities(T)
+
 o26 = $\{\{\,\},\,\{\,\},\,\{\,\},\,\{\,\},\,\{\,\},\,\{\,\},\,\{\,\},\,\{\,\},\,\{\,\},\,\{\,\},\,\{\,\}\}$
 
 o26 : <samp class="token class-name">List</samp>
-i27 : 
+i27 : 

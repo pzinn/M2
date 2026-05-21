@@ -1,9 +1,9 @@
 -- -*- M2-comint -*- hash: 16579433549050780347
 i1 : R := ZZ;
-i2 : n := 6;
-i3 : m := matrix{{3, 2, 4, 6}};
-
+i2 : n := 6;
+i3 : m := matrix{{3, 2, 4, 6}};
+
 o3 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Z}}^{1}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Z}}^{4}$</span>
-i4 : t := LRtriple(n,m);
-i5 : w := wrapTriplet(t);
-i6 : 
+i4 : t := LRtriple(n,m);
+i5 : w := wrapTriplet(t);
+i6 : 

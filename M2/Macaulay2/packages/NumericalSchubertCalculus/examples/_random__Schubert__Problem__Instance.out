@@ -1,6 +1,6 @@
 -- -*- M2-comint -*- hash: 1730182147537631100
 i1 : randomSchubertProblemInstance({{1},{1},{1},{1}},2,4)
-
+
 o1 = $\left\{\left(\{1\},\,\left(\!\begin{array}{cccc}
 {.781262}-{.624203}\,\mathbf{i}&amp;-{.462954}-{.886382}\,\mathbf{i}&amp;-{.272832}+{.962062}\,\mathbf{i}&amp;-{.670948}-{.741504}\,\mathbf{i}\\
 {.9868}+{.161945}\,\mathbf{i}&amp;-{.219207}-{.975678}\,\mathbf{i}&amp;{.778029}-{.628229}\,\mathbf{i}&amp;{.118767}+{.992922}\,\mathbf{i}\\
@@ -24,8 +24,8 @@
 \end{array}\!\right)\right)\right\}$
 
 o1 : <samp class="token class-name">List</samp>
-i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
-
+i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
+
 o2 = $\left\{\left(\{2,\,4\},\,\left(\!\begin{array}{cccc}
 {.996754}-{.0805092}\,\mathbf{i}&amp;-{.909393}-{.415938}\,\mathbf{i}&amp;{.398424}+{.917201}\,\mathbf{i}&amp;-{.688353}+{.725376}\,\mathbf{i}\\
 -{.531694}+{.846937}\,\mathbf{i}&amp;{.92457}+{.381011}\,\mathbf{i}&amp;-{.976915}+{.213627}\,\mathbf{i}&amp;-{.81898}+{.573823}\,\mathbf{i}\\
@@ -49,4 +49,4 @@
 \end{array}\!\right)\right)\right\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : 
+i3 : 

@@ -1,11 +1,11 @@
 -- -*- M2-comint -*- hash: 14658019932774412443
 i1 : R = QQ[a,b];
-i2 : I = ideal(a^2+b^2,a*b);
-
+i2 : I = ideal(a^2+b^2,a*b);
+
 o2 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
-i3 : initialIdeals(I)  
-
+i3 : initialIdeals(I)  
+
 o3 = $\left\{\left\{a\,b,\,a^{2},\,b^{3}\right\},\,\left\{a^{3},\,a\,b,\,b^{2}\right\}\right\}$
 
 o3 : <samp class="token class-name">List</samp>
-i4 : 
+i4 : 

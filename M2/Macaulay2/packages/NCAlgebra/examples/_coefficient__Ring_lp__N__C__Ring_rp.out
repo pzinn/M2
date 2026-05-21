@@ -1,27 +1,27 @@
 -- -*- M2-comint -*- hash: 2885872287679105600
 i1 : A = QQ{x,y,z}
-
+
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
-i2 : coefficientRing A
-
+i2 : coefficientRing A
+
 o2 = $\htmlClass{token class-name}{{\mathbb Q}}$
 
 o2 : <samp class="token class-name">Ring</samp>
-i3 : R = ZZ/101[a,b,c,d]/(ideal(a^2-b^2))
-
+i3 : R = ZZ/101[a,b,c,d]/(ideal(a^2-b^2))
+
 o3 = $R$
 
 o3 : <samp class="token class-name">QuotientRing</samp>
-i4 : B = R{x,y,z}
-
+i4 : B = R{x,y,z}
+
 o4 = $\htmlClass{token class-name}{<samp class="token string">B</samp>}$
 
 o4 : <samp class="token class-name">NCPolynomialRing</samp>
-i5 : coefficientRing B
-
+i5 : coefficientRing B
+
 o5 = $R$
 
 o5 : <samp class="token class-name">QuotientRing</samp>
-i6 : 
+i6 : 

@@ -1,24 +1,24 @@
 -- -*- M2-comint -*- hash: 1600150751227294297
 i1 : R=CC[a,b,c,d];
-i2 : M=matrix for i to 2 list for j to 3 list random(1,R)+random(0,R);
-
+i2 : M=matrix for i to 2 list for j to 3 list random(1,R)+random(0,R);
+
 o2 : <span><samp class="token class-name">Matrix</samp> $R^{3}\,\longleftarrow \,R^{4}$</span>
-i3 : I=minors(3,M);
-
+i3 : I=minors(3,M);
+
 o3 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
-i4 : f=flatten entries gens I;
-i5 : (w,ns) = topWitnessSet(f,2);
-i6 : slcmat = matrix applyTable (entries w.Slice, x->1_CC*realPart x);
-
-o6 : <span><samp class="token class-name">Matrix</samp> ${\mathbb C}_{53}^{2}\,\longleftarrow \,{\mathbb C}_{53}^{7}$</span>
-i7 : Rtwo = ring w.Equations;
-i8 : X = transpose matrix {gens Rtwo | {1_CC}};
-
+i4 : f=flatten entries gens I;
+i5 : (w,ns) = topWitnessSet(f,2);
+i6 : slcmat = matrix applyTable (entries w.Slice, x->1_CC*realPart x);
+
+o6 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb C}}_{53}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb C}}_{53}^{7}$</span>
+i7 : Rtwo = ring w.Equations;
+i8 : X = transpose matrix {gens Rtwo | {1_CC}};
+
 o8 : <span><samp class="token class-name">Matrix</samp> $\mathit{Rtwo}^{7}\,\longleftarrow \,\mathit{Rtwo}^{1}$</span>
-i9 : slcRR = flatten entries (promote(slcmat,Rtwo) * X);
-i10 : fsols = intersectSlice(w,slcRR)
-
-o10 = $\left\{\{{.17664}-{.240451}\,\mathbf{i},\,-{.174556}+{.0349582}\,\mathbf{i},\,{2.00768}-{.363448}\,\mathbf{i},\,{.93425}-{.129462}\,\mathbf{i},\,{7.05421}\cdot 10^{-16}+{3.73253}\cdot 10^{-15}\,\mathbf{i},\,{1.4802}\cdot 10^{-15}-{1.05525}\cdot 10^{-15}\,\mathbf{i}\},\,\{{.103993}-{1.04015}\,\mathbf{i},\,-{.324421}+{.299233}\,\mathbf{i},\,{.450555}-{.23691}\,\mathbf{i},\,-{1.45872}+{1.61164}\,\mathbf{i},\,-{4.07178}\cdot 10^{-15}-{2.59778}\cdot 10^{-15}\,\mathbf{i},\,-{5.46992}\cdot 10^{-15}+{1.41292}\cdot 10^{-14}\,\mathbf{i}\},\,\{-{.48436}+{.491183}\,\mathbf{i},\,-{.152555}-{.139649}\,\mathbf{i},\,{.340066}+{.126819}\,\mathbf{i},\,-{.508854}-{.736752}\,\mathbf{i},\,-{8.05394}\cdot 10^{-16}+{1.48795}\cdot 10^{-15}\,\mathbf{i},\,-{1.12966}\cdot 10^{-15}+{1.87305}\cdot 10^{-15}\,\mathbf{i}\},\,\{-{.866009}-{.149352}\,\mathbf{i},\,-{.0533324}+{.0253231}\,\mathbf{i},\,{.157763}-{.193186}\,\mathbf{i},\,-{.0726286}-{.0274542}\,\mathbf{i},\,{7.40736}\cdot 10^{-16}-{1.01952}\cdot 10^{-16}\,\mathbf{i},\,{4.08548}\cdot 10^{-16}+{7.24436}\cdot 10^{-16}\,\mathbf{i}\},\,\{{1.84704}-{.754771}\,\mathbf{i},\,-{.539297}+{.178151}\,\mathbf{i},\,{3.4329}-{.523613}\,\mathbf{i},\,{.0452195}+{.597477}\,\mathbf{i},\,{5.04559}\cdot 10^{-14}-{2.74007}\cdot 10^{-14}\,\mathbf{i},\,{6.9116}\cdot 10^{-15}-{2.10701}\cdot 10^{-14}\,\mathbf{i}\},\,\{-{1.01544}-{.248951}\,\mathbf{i},\,-{.0673577}+{.0487168}\,\mathbf{i},\,-{.390625}-{.26332}\,\mathbf{i},\,-{.677622}+{.0497002}\,\mathbf{i},\,{2.37953}\cdot 10^{-16}-{4.54366}\cdot 10^{-16}\,\mathbf{i},\,{3.23804}\cdot 10^{-16}+{5.21707}\cdot 10^{-16}\,\mathbf{i}\}\right\}$
+i9 : slcRR = flatten entries (promote(slcmat,Rtwo) * X);
+i10 : fsols = intersectSlice(w,slcRR)
+
+o10 = $\left\{\{-{.733526}+{.298421}\,\mathbf{i},\,-{.220764}+{1.17617}\,\mathbf{i},\,{1.15366}-{1.06387}\,\mathbf{i},\,-{.141494}+{.153134}\,\mathbf{i},\,{8.16205}\cdot 10^{-15}+{1.38233}\cdot 10^{-14}\,\mathbf{i},\,-{8.64974}\cdot 10^{-16}+{6.19165}\cdot 10^{-15}\,\mathbf{i}\},\,\{{2.31608}+{1.23107}\,\mathbf{i},\,{18.6995}+{3.02378}\,\mathbf{i},\,-{12.9819}-{3.52404}\,\mathbf{i},\,{6.26358}-{.650625}\,\mathbf{i},\,-{2.69643}\cdot 10^{-13}+{2.38462}\cdot 10^{-11}\,\mathbf{i},\,{1.17414}\cdot 10^{-11}-{5.20754}\cdot 10^{-12}\,\mathbf{i}\},\,\{{1.43368}-{.623577}\,\mathbf{i},\,{2.7488}-{1.2804}\,\mathbf{i},\,-{3.937}+{1.66621}\,\mathbf{i},\,-{2.93767}+{.505782}\,\mathbf{i},\,-{4.54519}\cdot 10^{-14}-{5.45873}\cdot 10^{-14}\,\mathbf{i},\,-{1.2778}\cdot 10^{-13}+{1.6799}\cdot 10^{-13}\,\mathbf{i}\},\,\{-{.129584}-{.162277}\,\mathbf{i},\,{.457358}-{.453712}\,\mathbf{i},\,-{.194297}+{.490602}\,\mathbf{i},\,-{1.02551}+{.0470998}\,\mathbf{i},\,-{1.08628}\cdot 10^{-15}+{9.17123}\cdot 10^{-16}\,\mathbf{i},\,{2.74216}\cdot 10^{-15}+{1.93899}\cdot 10^{-16}\,\mathbf{i}\},\,\{-{1.08376}-{.281366}\,\mathbf{i},\,-{1.34362}-{1.40899}\,\mathbf{i},\,{2.28044}+{1.14497}\,\mathbf{i},\,-{.140577}-{.354829}\,\mathbf{i},\,{6.40281}\cdot 10^{-14}-{2.61855}\cdot 10^{-14}\,\mathbf{i},\,-{2.27492}\cdot 10^{-15}-{3.125}\cdot 10^{-14}\,\mathbf{i}\},\,\{-{.237266}-{.0972239}\,\mathbf{i},\,{.497696}+{.764459}\,\mathbf{i},\,-{.0302216}-{.196193}\,\mathbf{i},\,-{.754796}+{.755072}\,\mathbf{i},\,{1.36137}\cdot 10^{-15}-{1.38965}\cdot 10^{-15}\,\mathbf{i},\,{3.1005}\cdot 10^{-15}+{1.86782}\cdot 10^{-15}\,\mathbf{i}\}\right\}$
 
 o10 : <samp class="token class-name">List</samp>
-i11 : 
+i11 : 
