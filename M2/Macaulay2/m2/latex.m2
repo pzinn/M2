@@ -151,8 +151,8 @@ texMathLiteralTable := merge(texLiteralTable,
 	},last)
 texMathLiteral = texLiteral1 texMathLiteralTable
 -- TODO: expand and document this behavior
-suffixes := {"bar","tilde","hat","vec","dot","ddot","check","acute","grave","breve"};
-suffixesRegExp := "(\\S+)\\s*("|demark("|",suffixes)|")$";
+suffixes := {"bar","tilde","hat","vec","ddot","dot","check","acute","grave","breve"};
+suffixesRegExp := "(\\S+?)\\s*("|demark("|",suffixes)|")$";
 texVariable = x -> (
     if x === "" then return "";
     if #x === 2 and x#0 === x#1 and bbLetters#?(x#0) then return "{\\mathbb " | x#0 | "}";
