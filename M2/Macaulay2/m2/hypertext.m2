@@ -454,7 +454,11 @@ hypertext VerticalList         := x -> if #x==0 then SPAN{"{}"} else UL append(a
 hypertext NumberedVerticalList := x -> if #x==0 then SPAN{"{}"} else OL append(apply(x, y -> new LI from hold y),"style"=>"display:inline-table")
 hypertext RawObject := hypertext @@ net
 -- what's below is for fixup purposes
-hypertext Thing := x -> try toExternalString x else format toString x -- TEMP? maybe just for Symbol, use toString?
+hypertext Holder := x -> hypertext x#0
+hypertext Thing := tex
+-- used to be
+-- hypertext Thing := x -> try toExternalString x else format toString x -- TEMP? maybe just for Symbol, use toString?
+-- since "tex" will fail badly in Standard mode: net will produce the tex inside of just net output
 
 -- what's below may be too much for PR
 toString MarkUpType := X -> (
