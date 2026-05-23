@@ -381,11 +381,10 @@ getTechnical := (S, s) -> DIV nonnull ( "class" => "waystouse",
     getOperator S)
 
 getLocation := tag -> if tag =!= null then (
-    pkg := package tag;
     docpos := locate tag;
     linepos := ":" | docpos#1 | ":" | docpos#2;
     docfile := toAbsolutePath docpos#0;
-    filename := replace(pkg#"source directory", "", docfile);
+    filename := replace(getpkgsrcdir tag.Package, "", docfile);
     HR{},
     DIV ( "class" => "waystouse",
 	fixup PARA (
@@ -453,7 +452,8 @@ getDefaultOptions := (nkey, opt) -> DIV (
 getDescription := (key, tag, rawdoc) -> (
     desc := getOption(rawdoc, Description);
     if desc =!= null and #desc > 0 then (
-	desc = processExamples(package' tag, format tag, desc);
+	pkg := getpkgNoLoad tag.Package ?? tag.Package;
+	desc = processExamples(pkg, tag.Format, desc);
 	if instance(key, String) -- overview key
 	or instance(key, Package) then DIV { desc }
 	else DIV { SUBSECTION "Description", desc })
