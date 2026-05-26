@@ -47,6 +47,7 @@ export unwindMessage := Expr(stringCell("unhandled unwind command"));
 export interruptMessage := Expr(stringCell("interrupted"));
 export alarmMessage := Expr(stringCell("alarm occurred"));
 export steppingMessage := Expr(stringCell("--stepping limit reached"));
+export finishMessage := Expr(stringCell("unhandled finish command"));
 --export buildErrorPacket(message:string):Expr := Expr(Error(dummyPosition,message,nullE,false,dummyFrame));
 --export buildErrorPacket(pos:Position,message:string):Expr := Expr(Error(pos,message,nullE,false,dummyFrame));
 --export buildErrorPacketErrno(msg:string,errnum:int):Expr := buildErrorPacket( msg + ": " + strerror(errnum) );
