@@ -536,6 +536,7 @@ export {
 	"cache",
 	"cacheValue",
 	"cancelTask",
+    "canUseHilbertHint",
 	"capture",
 	"catch",
 	"ceiling",

@@ -1,11 +1,10 @@
 // Copyright 1996  Michael E. Stillman
 
 #include "ringmap.hpp"
-#include "matrix.hpp"
-#include "matrix-con.hpp"
-#include "polyring.hpp"
-#include "relem.hpp"
-#include "exceptions.hpp"
+#include "matrices/matrix.hpp"
+#include "matrices/matrix-con.hpp"
+#include "rings/polyring.hpp"
+#include "ring-elements/ring-element.hpp"
 
 #include <iostream>
 RingMap::RingMap(const Matrix *m) : R(m->get_ring())
@@ -148,10 +147,7 @@ ring_elem RingMap::eval_term(const Ring *sourceK,  // source coeff ring
     {
       int v = first_var + i.var();
       if (v >= nvars || _elem[v].is_zero)
-        {
-          if (i.exponent() < 0) throw exc::division_by_zero_error();
-          return R->from_long(0);  // The result is zero.
-        }
+        return R->from_long(0);  // The result is zero.
     }
 
   // If K is a coeff ring of R, AND map is an identity on K,
