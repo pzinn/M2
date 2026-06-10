@@ -20,7 +20,7 @@ export threadLocal engineDebugLevel := 0;
 --Current function depth
 threadLocal export recursionDepth := 0;
 --Maximum function depth before triggering errors
-threadLocal export recursionLimit := 300;
+threadLocal export recursionLimit := 1000;
 
 header "_Atomic uint64_t HashCounter = 1000004;";
 
