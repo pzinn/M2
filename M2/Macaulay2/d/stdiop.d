@@ -151,10 +151,10 @@ export printErrorMessage(position:Position,message:Expr):void := (
      printExprMessage(Error(position, message, nullE, false, dummyFrame));
      );
 export printErrorMessage(position:Position,message:string):void := printErrorMessage(position, toExpr(message));
-export printWarningMessage(position:Position,message:Expr):void := ( -- TODO add warning?
+export printWarningMessage(position:Position,message:Expr):void := (
      printExprMessage(Error(position, message, nullE, false, dummyFrame));
      );
-export printWarningMessage(position:Position,message:string):void := printWarningMessage(position,toExpr(message)); -- printMessage(position,"warning: "+message);
+export printWarningMessage(position:Position,message:string):void := printWarningMessage(position,toExpr("-- warning: "+message)); -- temporary fix
 export printErrorMessage(filename:string,line:ushort,column:ushort,message:string):void := (
      printErrorMessage(Position(filename,line,column,line,column,line,column,ushort(0)), message);
      );
