@@ -1,38 +1,38 @@
 -- -*- M2-comint -*- hash: 11311135210444308504
 i1 : R = CC[x,y,z];
-i2 : L = { z*(x+y), z*(x-y) };
-i3 : WitSets = cascade(L)
+i2 : L = { z*(x+y), z*(x-y) };
+i3 : WitSets = cascade(L)
 
 o3 = <samp class="token constant">WitSets</samp>
 
 o3 : <samp class="token class-name">NumericalVariety</samp>
-i4 : W=first WitSets#2
+i4 : W=first WitSets#2
 
 o4 = $<samp class="token string">W</samp>$
 
 o4 : <samp class="token class-name">WitnessSet</samp>
-i5 : W#Equations
+i5 : W#Equations
 
-o5 = $<pre class="token net" style="vertical-align:-200%">{-2} | (.00972891-.999953ii)zz1+(-.923391+.383862ii)zz2-xz-yz |
-{-2} | (-.152987+.988228ii)zz1+(-.584882-.811118ii)zz2-xz+yz  |
-{-1} | -zz1+(-.656943-.75394ii)zz2                            |<br></pre>
+o5 = $<pre class="token net" style="vertical-align:-200%">{-2} | (.669905+.742447ii)zz1+(-.630982-.775797ii)zz2-xz-yz |
+{-2} | (.619636+.78489ii)zz1+(.104646-.99451ii)zz2-xz+yz    |
+{-1} | -zz1+(.412809+.910818ii)zz2                          |<br></pre>
 $
 
 o5 : <samp class="token class-name">PolySystem</samp>
-i6 : W#Points
+i6 : W#Points
 
 o6 = <ul style="display:inline-table">
-  <li>$\{{.395885}+{.950751}\,\mathbf{i},\,-{.0630801}-{1.91297}\,\mathbf{i},\,0,\,0,\,0\}$</li>
+  <li>$\{{1.42241}-{.0414271}\,\mathbf{i},\,{2.14791}-{1.03086}\,\mathbf{i},\,0,\,0,\,0\}$</li>
 </ul>
 
 
 o6 : <samp class="token class-name">VerticalList</samp>
-i7 : W#Slice
+i7 : W#Slice
 
 o7 = $\left(\!\begin{array}{cccccc}
--{.132108}-{.991235}\,\mathbf{i}&amp;{.159058}+{.987269}\,\mathbf{i}&amp;-{.517665}+{.855583}\,\mathbf{i}&amp;-{.981376}+{.192099}\,\mathbf{i}&amp;-{.994466}+{.105063}\,\mathbf{i}&amp;-{.988462}-{.151468}\,\mathbf{i}\\
--{.667185}+{.744892}\,\mathbf{i}&amp;{.03447}-{.999406}\,\mathbf{i}&amp;{.898972}+{.438007}\,\mathbf{i}&amp;-{.98528}+{.170951}\,\mathbf{i}&amp;{.97457}-{.224085}\,\mathbf{i}&amp;{.94167}-{.336538}\,\mathbf{i}
+{.453881}+{.891062}\,\mathbf{i}&amp;{.204536}+{.978859}\,\mathbf{i}&amp;{.945861}+{.324572}\,\mathbf{i}&amp;-{.0390973}-{.999235}\,\mathbf{i}&amp;{.989621}-{.143702}\,\mathbf{i}&amp;-{.765869}-{.642997}\,\mathbf{i}\\
+-{.189192}-{.98194}\,\mathbf{i}&amp;{.372069}-{.928205}\,\mathbf{i}&amp;-{.773237}-{.634117}\,\mathbf{i}&amp;{.985146}+{.171719}\,\mathbf{i}&amp;-{.718471}-{.695557}\,\mathbf{i}&amp;-{.152111}+{.988363}\,\mathbf{i}
 \end{array}\!\right)$
 
 o7 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb C}}_{53}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb C}}_{53}^{6}$</span>
-i8 : 
+i8 : 

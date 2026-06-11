@@ -1,26 +1,26 @@
 -- -*- M2-comint -*- hash: 7920468485111445591
 i1 : R=QQ[x,y]
-
+
 o1 = $R$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : makeB'InputFile(storeBM2Files,
-    AffVariableGroup=>{{x,y}},
-    B'Polynomials=>{x^2-1,y^3-1});
-i3 : runBertini(storeBM2Files)
-i4 : importSolutionsFile(storeBM2Files)
-
-o4 = $\{\{1,\,{1}-{6.66134}\cdot 10^{-16}\,\mathbf{i}\},\,\{1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{{1},\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-1,\,1\},\,\{-{1},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-1,\,-{.5}-{.866025}\,\mathbf{i}\}\}$
+    AffVariableGroup=>{{x,y}},
+    B'Polynomials=>{x^2-1,y^3-1});
+i3 : runBertini(storeBM2Files)
+i4 : importSolutionsFile(storeBM2Files)
+
+o4 = $\{\{{1},\,{1}+{1.16573}\cdot 10^{-15}\,\mathbf{i}\},\,\{1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1,\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-1,\,1-{2.22045}\cdot 10^{-16}\,\mathbf{i}\},\,\{-1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-{1},\,-{.5}-{.866025}\,\mathbf{i}\}\}$
 
 o4 : <samp class="token class-name">List</samp>
 i5 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>"real_finite_solutions")
-
-o5 = $\{\{1,\,{1}-{6.66134}\cdot 10^{-16}\,\mathbf{i}\},\,\{-1,\,1\}\}$
+
+o5 = $\{\{{1},\,{1}+{1.16573}\cdot 10^{-15}\,\mathbf{i}\},\,\{-1,\,1-{2.22045}\cdot 10^{-16}\,\mathbf{i}\}\}$
 
 o5 : <samp class="token class-name">List</samp>
 i6 : importSolutionsFile(storeBM2Files,NameSolutionsFile=>0)
-
-o6 = $\{\{1,\,{1}-{6.66134}\cdot 10^{-16}\,\mathbf{i}\},\,\{1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{{1},\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-1,\,1\},\,\{-{1},\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-1,\,-{.5}-{.866025}\,\mathbf{i}\}\}$
+
+o6 = $\{\{{1},\,{1}+{1.16573}\cdot 10^{-15}\,\mathbf{i}\},\,\{1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{1,\,-{.5}-{.866025}\,\mathbf{i}\},\,\{-1,\,1-{2.22045}\cdot 10^{-16}\,\mathbf{i}\},\,\{-1,\,-{.5}+{.866025}\,\mathbf{i}\},\,\{-{1},\,-{.5}-{.866025}\,\mathbf{i}\}\}$
 
 o6 : <samp class="token class-name">List</samp>
 i7 : 

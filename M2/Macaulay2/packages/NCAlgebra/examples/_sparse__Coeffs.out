@@ -4,8 +4,8 @@
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
-i2 : F = a^2+b^2+c^2+d^2+e^2+f^2+g^2+h^2;
-i3 : sparseCoeffs(F)
+i2 : F = a^2+b^2+c^2+d^2+e^2+f^2+g^2+h^2;
+i3 : sparseCoeffs(F)
 
 o3 = $\left(\!\begin{array}{c}
 1\\
@@ -19,11 +19,11 @@
 \end{array}\!\right)$
 
 o3 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{8}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{1}$</span>
-i4 : bas = flatten entries basis(2,A);
-i5 : #bas
+i4 : bas = flatten entries basis(2,A);
+i5 : #bas
 
 o5 = $64$
-i6 : sparseCoeffs(F,Monomials=>bas)
+i6 : sparseCoeffs(F,Monomials=>bas)
 
 o6 = $\left(\!\begin{array}{c}
 1\\
@@ -93,7 +93,7 @@
 \end{array}\!\right)$
 
 o6 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{64}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{1}$</span>
-i7 : sparseCoeffs(toList (10:F),Monomials=>bas)
+i7 : sparseCoeffs(toList (10:F),Monomials=>bas)
 
 o7 = $\left(\!\begin{array}{cccccccccc}
 1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
@@ -163,4 +163,4 @@
 \end{array}\!\right)$
 
 o7 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{64}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{10}$</span>
-i8 : 
+i8 : 

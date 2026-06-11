@@ -1,15 +1,10 @@
 -- -*- M2-comint -*- hash: 15222729530691853413
+i1 : R = QQ[x,y];
+i2 : F = G = {x^2 + y^2 - 1};
+i3 : sampleGen = () -> apply(#gens R, i -> random(RR));
+i4 : aED = averageNumericEDDegree(F, G, 10, SampleGenerator => sampleGen)
+
+o4 = ${1.8}$
 
-i1 : R = QQ[x,y];
-
-i2 : F = G = {x^2 + y^2 - 1};
-
-i3 : sampleGen = () -> apply(#gens R, i -> random(RR));
-
-i4 : aED = averageNumericEDDegree(F, G, 10, SampleGenerator => sampleGen)
-
-o4 = 1.9
-
-o4 : RR (of precision 53)
-
-i5 : 
+o4 : <span>$\htmlClass{token class-name}{{\mathbb R}}$ (of precision $53$)</span>
+i5 : 

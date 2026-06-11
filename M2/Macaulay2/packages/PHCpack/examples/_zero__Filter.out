@@ -1,8 +1,8 @@
 -- -*- M2-comint -*- hash: 7773851618984362309
 i1 : R = CC[x,y];
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-i3 : fSols = solveSystem(f, randomSeed=>3);
-i4 : fSols/print
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : fSols = solveSystem(f, randomSeed=>3);
+i4 : fSols/print
 $\{-1,\,0\}$
 $\{1,\,0\}$
 $\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\}$
@@ -17,29 +17,29 @@
 o4 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
 o4 : <samp class="token class-name">List</samp>
-i5 : zeroSols = zeroFilter(fSols,1,1.0e-10);
-i6 : zeroSols / print
+i5 : zeroSols = zeroFilter(fSols,1,1.0e-10);
+i6 : zeroSols / print
 $\{-1,\,0\}$
 $\{1,\,0\}$
 
 o6 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
 o6 : <samp class="token class-name">List</samp>
-i7 : f = {x^2+y^2,y*x+x};
-i8 : fSols = solveSystem(f);
-i9 : fSols/print
-$\{-{7.70372}\cdot 10^{-34}-{9.62965}\cdot 10^{-34}\,\mathbf{i},\,{1.10889}\cdot 10^{-31}-{2.10775}\cdot 10^{-32}\,\mathbf{i}\}$
+i7 : f = {x^2+y^2,y*x+x};
+i8 : fSols = solveSystem(f);
+i9 : fSols/print
+$\{{3.37038}\cdot 10^{-34}+{2.88889}\cdot 10^{-34}\,\mathbf{i},\,{9.44383}\cdot 10^{-34}+{3.79708}\cdot 10^{-33}\,\mathbf{i}\}$
 $\{-\mathbf{i},\,-1\}$
 $\{\mathbf{i},\,-1\}$
 
 o9 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
 o9 : <samp class="token class-name">List</samp>
-i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
-i11 : zeroSols/print
-$\{-{7.70372}\cdot 10^{-34}-{9.62965}\cdot 10^{-34}\,\mathbf{i},\,{1.10889}\cdot 10^{-31}-{2.10775}\cdot 10^{-32}\,\mathbf{i}\}$
+i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
+i11 : zeroSols/print
+$\{{3.37038}\cdot 10^{-34}+{2.88889}\cdot 10^{-34}\,\mathbf{i},\,{9.44383}\cdot 10^{-34}+{3.79708}\cdot 10^{-33}\,\mathbf{i}\}$
 
 o11 = $\{$<samp class="token constant">null</samp>$\}$
 
 o11 : <samp class="token class-name">List</samp>
-i12 : 
+i12 : 

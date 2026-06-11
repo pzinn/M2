@@ -4,41 +4,41 @@
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
-i2 : w=x^3-y^2
+i2 : w=x^3-y^2
 
 o2 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{x,\,x,\,x\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{y,\,y\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ -1\})\}$
 
 o2 : $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
-i3 : isHomogeneous w
+i3 : isHomogeneous w
 
 o3 = <samp class="token constant">false</samp>
-i4 : setWeights(A, {2,3,1})
+i4 : setWeights(A, {2,3,1})
 
 o4 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o4 : <samp class="token class-name">NCPolynomialRing</samp>
-i5 : isHomogeneous w
+i5 : isHomogeneous w
 
 o5 = <samp class="token constant">true</samp>
-i6 : C = QQ{a,b,c}
+i6 : C = QQ{a,b,c}
 
 o6 = $\htmlClass{token class-name}{<samp class="token string">C</samp>}$
 
 o6 : <samp class="token class-name">NCPolynomialRing</samp>
-i7 : g = ncMap(C,A,{a^3,b^2,a+b,a-b})
+i7 : g = ncMap(C,A,{a^3,b^2,a+b,a-b})
 
 o7 = <samp class="token class-name">NCRingMap</samp>$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{Derivation}\ \Rightarrow \ $<samp class="token constant">false</samp>$,\,\mathit{functionHash}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{x\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">C</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{a,\,a,\,a\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1\})\}),\,y\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">C</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{b,\,b\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1\})\}),\,z\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">C</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{a\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1,\,($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{b\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\})\ \Rightarrow \ 1\})\})\}),\,\mathit{source}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{target}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">C</samp>}\}$
 
 o7 : <samp class="token class-name">NCRingMap</samp>
-i8 : isHomogeneous g
+i8 : isHomogeneous g
 
 o8 = <samp class="token constant">false</samp>
-i9 : setWeights(A,{3,2,1,1})
+i9 : setWeights(A,{3,2,1,1})
 
 o9 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o9 : <samp class="token class-name">NCPolynomialRing</samp>
-i10 : isHomogeneous g
+i10 : isHomogeneous g
 
 o10 = <samp class="token constant">true</samp>
-i11 : 
+i11 : 

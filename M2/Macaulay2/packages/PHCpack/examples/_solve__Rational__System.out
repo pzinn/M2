@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: 13403141987176670211
 i1 : R = QQ[x,y,z];
-i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
-i3 : sols = solveRationalSystem(system)
+i2 : system = {y-x^2, z-x^3, (x+y+z-1)/x};
+i3 : sols = solveRationalSystem(system)
 
-o3 = $\left\{\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\},\,\{{.543689},\,{.295598},\,{.160713}\},\,\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\}\right\}$
+o3 = $\left\{\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\},\,\{-{.771845}+{1.11514}\,\mathbf{i},\,-{.647799}-{1.72143}\,\mathbf{i},\,{2.41964}+{.606291}\,\mathbf{i}\},\,\{{.543689},\,{.295598},\,{.160713}\}\right\}$
 
 o3 : <samp class="token class-name">List</samp>
-i4 : peek first sols
+i4 : peek first sols
 
 o4 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span></li>
     <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{.771845}-{1.11514}\,\mathbf{i},\,-{.647799}+{1.72143}\,\mathbf{i},\,{2.41964}-{.606291}\,\mathbf{i}\}$</span></li>
   </ul>
 </span>
-i5 : 
+i5 : 

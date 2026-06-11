@@ -1,27 +1,27 @@
 -- -*- M2-comint -*- hash: 2266058223581986768
 i1 : R = CC[x,y,z]
-
+
 o1 = $R$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
 i2 : F = { (y^2+x^2+z^2-1)*x, (y^2+x^2+z^2-1)*y }
-
+
 o2 = $\left\{x^{3}+x\,y^{2}+x\,z^{2}-x,\,x^{2}y+y^{3}+y\,z^{2}-y\right\}$
 
 o2 : <samp class="token class-name">List</samp>
 i3 : NV = bertiniPosDimSolve(F)
-
+
 o3 = <samp class="token constant">NV</samp>
 
 o3 : <samp class="token class-name">NumericalVariety</samp>
 i4 : W = NV#1_0 --z-axis
-
+
 o4 = $<samp class="token string">W</samp>$
 
 o4 : <samp class="token class-name">WitnessSet</samp>
 i5 : bertiniSample(4, W)
-
-o5 = $\left\{\{{1.51076}\cdot 10^{-265}+{6.37611}\cdot 10^{-266}\,\mathbf{i},\,-{2.41721}\cdot 10^{-264}-{1.02018}\cdot 10^{-264}\,\mathbf{i},\,-{.1557}-{.174999}\,\mathbf{i}\},\,\{-{3.20803}\cdot 10^{-129}-{2.82712}\cdot 10^{-129}\,\mathbf{i},\,0,\,-{.0661329}-{.194031}\,\mathbf{i}\},\,\{-{2.2116}\cdot 10^{-257}-{4.54888}\cdot 10^{-257}\,\mathbf{i},\,0,\,-{.0953463}-{.22981}\,\mathbf{i}\},\,\{{1.9773}\cdot 10^{-255}+{2.13716}\cdot 10^{-253}\,\mathbf{i},\,-{8.06404}\cdot 10^{-311}-{8.716}\cdot 10^{-309}\,\mathbf{i},\,-{.131151}-{.228254}\,\mathbf{i}\}\right\}$
+
+o5 = $\left\{\{{5.1728}\cdot 10^{-20}+{1.74065}\cdot 10^{-20}\,\mathbf{i},\,-{1.31265}\cdot 10^{-21}+{6.82048}\cdot 10^{-20}\,\mathbf{i},\,{1.00856}+{.603852}\,\mathbf{i}\},\,\{{5.33361}\cdot 10^{-22}-{3.69789}\cdot 10^{-22}\,\mathbf{i},\,{1.148}\cdot 10^{-19}+{2.29862}\cdot 10^{-20}\,\mathbf{i},\,{.26297}+{.834964}\,\mathbf{i}\},\,\{-{2.86142}\cdot 10^{-20}+{2.23293}\cdot 10^{-21}\,\mathbf{i},\,{4.0352}\cdot 10^{-21}+{3.8827}\cdot 10^{-20}\,\mathbf{i},\,{.384054}-{.186918}\,\mathbf{i}\},\,\{{7.53795}\cdot 10^{-20}-{2.85084}\cdot 10^{-20}\,\mathbf{i},\,{3.78965}\cdot 10^{-20}-{8.48362}\cdot 10^{-20}\,\mathbf{i},\,{1.06784}+{.281022}\,\mathbf{i}\}\right\}$
 
 o5 : <samp class="token class-name">List</samp>
 i6 : 

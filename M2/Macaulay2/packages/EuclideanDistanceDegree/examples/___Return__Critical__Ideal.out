@@ -1,16 +1,10 @@
 -- -*- M2-comint -*- hash: 17266523904631417738
+i1 : R = QQ[x,y];
+i2 : F = {x^2 + y^2 - 1};
+i3 : (U,W) = ({12, 23}, {15, 331});
+i4 : ICP = symbolicWeightEDDegree(F, U, W, ReturnCriticalIdeal => true)
+
+o4 = <samp class="token function">ideal</samp>${}\left(316\,x\,y-7\,613\,x+180\,y,\,x^{2}+y^{2}-1\right)$
 
-i1 : R = QQ[x,y];
-
-i2 : F = {x^2 + y^2 - 1};
-
-i3 : (U,W) = ({12, 23}, {15, 331});
-
-i4 : ICP = symbolicWeightEDDegree(F, U, W, ReturnCriticalIdeal => true)
-
-                                    2    2
-o4 = ideal (316x*y - 7613x + 180y, x  + y  - 1)
-
-o4 : Ideal of R
-
-i5 : 
+o4 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
+i5 : 

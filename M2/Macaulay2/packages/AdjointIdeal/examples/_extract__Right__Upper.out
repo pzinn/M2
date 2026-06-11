@@ -8,8 +8,8 @@
 \end{array}\!\right)$
 
 o1 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i2 : (perm,LR)=LRdecomposition(A,j->-j);
-i3 : LR
+i2 : (perm,LR)=LRdecomposition(A,j->-j);
+i3 : LR
 
 o3 = $\left(\!\begin{array}{ccc}
 \frac{9}{2}&amp;\frac{7}{4}&amp;\frac{7}{10}\\
@@ -18,7 +18,7 @@
 \end{array}\!\right)$
 
 o3 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i4 : P=transpose (id_(QQ^3))_perm
+i4 : P=transpose (id_(QQ^3))_perm
 
 o4 = $\left(\!\begin{array}{ccc}
 1&amp;0&amp;0\\
@@ -27,7 +27,7 @@
 \end{array}\!\right)$
 
 o4 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i5 : R=extractRightUpper(LR)
+i5 : R=extractRightUpper(LR)
 
 o5 = $\left(\!\begin{array}{ccc}
 \frac{9}{2}&amp;\frac{7}{4}&amp;\frac{7}{10}\\
@@ -36,7 +36,7 @@
 \end{array}\!\right)$
 
 o5 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i6 : L=extractLeftLower(LR)
+i6 : L=extractLeftLower(LR)
 
 o6 = $\left(\!\begin{array}{ccc}
 1&amp;0&amp;0\\
@@ -45,7 +45,7 @@
 \end{array}\!\right)$
 
 o6 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb Q}}^{3}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb Q}}^{3}$</span>
-i7 : L*R==P*A
+i7 : L*R==P*A
 
 o7 = <samp class="token constant">true</samp>
-i8 : 
+i8 : 

@@ -6,8 +6,8 @@
   <li><a href="https://oeis.org/A094579">A094579</a> Duplicate of A029729.</li>
 </ol>
 
-i2 : L = apply(5,n->n!);
-i3 : oeis (L,Limit=>5)
+i2 : L = apply(5,n->n!);
+i3 : oeis (L,Limit=>5)
 
 o3 = <ol start="0">
   <li><a href="https://oeis.org/A000142">A000142</a> Factorial numbers: n! = 1*2*3*4*...*n (order of symmetric group S_n, number of permutations of n letters).</li>
@@ -17,10 +17,10 @@
   <li><a href="https://oeis.org/A263777">A263777</a> Number of inversion sequences avoiding pattern 201 (or 210).</li>
 </ol>
 
-i4 : oeis (L,Limit=>1,Position=>2)
+i4 : oeis (L,Limit=>1,Position=>2)
 
 o4 = <ol start="0">
   <li><a href="https://oeis.org/A061602">A061602</a> Sum of factorials of the digits of n.</li>
 </ol>
 
-i5 : 
+i5 : 

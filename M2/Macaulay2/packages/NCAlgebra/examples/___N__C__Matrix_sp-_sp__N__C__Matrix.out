@@ -4,29 +4,29 @@
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
-i2 : M = ncMatrix {{x, y, z}}
+i2 : M = ncMatrix {{x, y, z}}
 
 o2 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
 o2 : <samp class="token class-name">NCMatrix</samp>
-i3 : sigma = ncMap(A,A,{y,z,x})
+i3 : sigma = ncMap(A,A,{y,z,x})
 
 o3 = <samp class="token class-name">NCRingMap</samp>$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{Derivation}\ \Rightarrow \ $<samp class="token constant">false</samp>$,\,\mathit{functionHash}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{x\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{y\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1\})\}),\,y\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{z\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1\})\}),\,z\ \Rightarrow \ (\htmlClass{token class-name}{<samp class="token string">A</samp>}$$\{\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\ldots 1\ldots\}),\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{terms}\ \Rightarrow \ ($<samp class="token class-name">HashTable</samp>$\{($<samp class="token class-name">NCMonomial</samp>$\{\mathit{monList}\ \Rightarrow \ \{x\},\,\mathit{ring}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\})\ \Rightarrow \ 1\})\})\}),\,\mathit{source}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>},\,\mathit{target}\ \Rightarrow \ \htmlClass{token class-name}{<samp class="token string">A</samp>}\}$
 
 o3 : <samp class="token class-name">NCRingMap</samp>
-i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
+i4 : N = ncMatrix {{M},{sigma M}, {sigma sigma M}}
 
 o4 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
 o4 : <samp class="token class-name">NCMatrix</samp>
-i5 : N' = ncMatrix {{sigma sigma M}, {sigma M}, {M}}
+i5 : N' = ncMatrix {{sigma sigma M}, {sigma M}, {M}}
 
 o5 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
 o5 : <samp class="token class-name">NCMatrix</samp>
-i6 : N - N'
+i6 : N - N'
 
 o6 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
 o6 : <samp class="token class-name">NCMatrix</samp>
-i7 : 
+i7 : 

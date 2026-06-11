@@ -1,20 +1,20 @@
 -- -*- M2-comint -*- hash: 11456565689027762409
 i1 : QQ[x,y,z];
-i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
-i3 : describe ring ideal sys
+i2 : sys = {y-x^2, z-x^3, (x+y+z-1)/x};
+i3 : describe ring ideal sys
 
 o3 = <samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[x\,{.}{.}\,z,\,\mathit{Degrees}\ \Rightarrow \ \{3:1\},\,\mathit{Heft}\ \Rightarrow \ \{1\}])$
-i4 : convertedSys = toLaurentPolynomial(sys,w);
-i5 : printWidth = 300;
-i6 : toString convertedSys
+i4 : convertedSys = toLaurentPolynomial(sys,w);
+i5 : printWidth = 300;
+i6 : toString convertedSys
 
 o6 = <samp class="token string">{y-x^2, z-x^3, -w_0^(-1)+z*w_0^(-1)+y*w_0^(-1)+x*w_0^(-1), w_0-x}</samp>
-i7 : ring ideal convertedSys
+i7 : ring ideal convertedSys
 
 o7 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\,z,\,w_{0}\right\}$
 
 o7 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i8 : describe oo
+i8 : describe oo
 
 o8 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\,z,\,w_{0},\,\mathit{Degrees}\ \Rightarrow \ \{4:1\},\,$\mathit{MonomialOrder}\ \Rightarrow \ $<ul style="display:inline-table">
   <li>$\mathit{Weights}\ \Rightarrow \ \{4:-1\}$</li>
@@ -23,18 +23,18 @@
   <li>$\mathit{Position}\ \Rightarrow \ \mathit{Up}$</li>
 </ul>
 ,\,$\mathit{Inverses}\ \Rightarrow \ $<samp class="token constant">true</samp>,\,$\mathit{Local}\ \Rightarrow \ $<samp class="token constant">true</samp>,\,$\mathit{Global}\ \Rightarrow \ $<samp class="token constant">false</samp>\right\}$
-i9 : P = QQ[x,y,z];
-i10 : f = (x*y + z^2*y) / y
+i9 : P = QQ[x,y,z];
+i10 : f = (x*y + z^2*y) / y
 
 o10 = $z^{2}+x$
 
 o10 : <samp class="token function">frac</samp>$\ P$
-i11 : liftable(f,P)
+i11 : liftable(f,P)
 
 o11 = <samp class="token constant">true</samp>
-i12 : lift(f,P)
+i12 : lift(f,P)
 
 o12 = $z^{2}+x$
 
 o12 : $P$
-i13 : 
+i13 : 

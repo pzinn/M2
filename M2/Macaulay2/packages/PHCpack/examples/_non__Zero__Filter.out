@@ -1,8 +1,8 @@
 -- -*- M2-comint -*- hash: 8728907246204485556
 i1 : R = CC[x,y];
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-i3 : fSols = solveSystem(f, randomSeed=>3);
-i4 : fSols/print
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : fSols = solveSystem(f, randomSeed=>3);
+i4 : fSols/print
 $\{-1,\,0\}$
 $\{1,\,0\}$
 $\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\}$
@@ -17,8 +17,8 @@
 o4 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
 o4 : <samp class="token class-name">List</samp>
-i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
-i6 : nonZeroSols / print
+i5 : nonZeroSols = nonZeroFilter(fSols,1,1.0e-10);
+i6 : nonZeroSols / print
 $\{-{.894935}+{.624334}\,\mathbf{i},\,{.143333}-{1.14868}\,\mathbf{i}\}$
 $\{-{.764107},\,-{.544612}\}$
 $\{{.742585}+{.425943}\,\mathbf{i},\,{.270685}-{1.00715}\,\mathbf{i}\}$
@@ -31,21 +31,21 @@
 o6 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
 o6 : <samp class="token class-name">List</samp>
-i7 : f = {x^2+y^2,y*x+x};
-i8 : fSols = solveSystem(f);
-i9 : fSols/print
-$\{{1.07852}\cdot 10^{-32}-{3.85186}\cdot 10^{-33}\,\mathbf{i},\,{2.51976}\cdot 10^{-33}-{2.8431}\cdot 10^{-34}\,\mathbf{i}\}$
+i7 : f = {x^2+y^2,y*x+x};
+i8 : fSols = solveSystem(f);
+i9 : fSols/print
+$\{{1.54074}\cdot 10^{-32}+{1.69482}\cdot 10^{-32}\,\mathbf{i},\,-{6.64746}\cdot 10^{-32}-{6.38927}\cdot 10^{-32}\,\mathbf{i}\}$
 $\{-\mathbf{i},\,-1\}$
 $\{\mathbf{i},\,-1\}$
 
 o9 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
 o9 : <samp class="token class-name">List</samp>
-i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
-i11 : zeroSols/print
-$\{{1.07852}\cdot 10^{-32}-{3.85186}\cdot 10^{-33}\,\mathbf{i},\,{2.51976}\cdot 10^{-33}-{2.8431}\cdot 10^{-34}\,\mathbf{i}\}$
+i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
+i11 : zeroSols/print
+$\{{1.54074}\cdot 10^{-32}+{1.69482}\cdot 10^{-32}\,\mathbf{i},\,-{6.64746}\cdot 10^{-32}-{6.38927}\cdot 10^{-32}\,\mathbf{i}\}$
 
 o11 = $\{$<samp class="token constant">null</samp>$\}$
 
 o11 : <samp class="token class-name">List</samp>
-i12 : 
+i12 : 

@@ -1,32 +1,32 @@
 -- -*- M2-comint -*- hash: 10385799651477782049
 i1 : R = CC[x,y];
-i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
-i3 : I=ideal f;
+i2 : f = { x^3*y^5 + y^2 + x^2*y, x*y + x^2 - 1};
+i3 : I=ideal f;
 
 o3 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
-i4 : dim I
+i4 : dim I
 
 o4 = $0$
-i5 : degree I
+i5 : degree I
 
 o5 = $10$
-i6 : m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
+i6 : m = mixedVolume(f) -- counts the number of complex roots in the torus (without zero components)
 
 o6 = $8$
-i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
+i7 : (mv,sv) = mixedVolume(f,StableMixedVolume=>true)
 
 o7 = $(8,\,10)$
 
 o7 : <samp class="token class-name">Sequence</samp>
-i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
-i9 : q --let's take a look at the start system:
+i8 : (mv,q,qsols) = mixedVolume(f,StartSystem=>true);
+i9 : q --let's take a look at the start system:
 
-o9 = $\left\{\left({.601576}-{.798816}\,\mathbf{i}\right)x^{3}y^{5}+\left({.506529}-{.862223}\,\mathbf{i}\right)x^{2}y+\left({.960074}+{.279745}\,\mathbf{i}\right)y^{2},\,\left(-{.863327}+{.504644}\,\mathbf{i}\right)x^{2}+\left(-{.952023}-{.306027}\,\mathbf{i}\right)x\,y-{.942422}+{.334425}\,\mathbf{i}\right\}$
+o9 = $\left\{\left({.685965}+{.727634}\,\mathbf{i}\right)x^{3}y^{5}+\left(-{.299714}-{.954029}\,\mathbf{i}\right)x^{2}y+\left({.989312}+{.145817}\,\mathbf{i}\right)y^{2},\,\left(-{.936032}+{.351915}\,\mathbf{i}\right)x^{2}-{.938564}-{.345106}\,\mathbf{i}\right\}$
 
 o9 : <samp class="token class-name">List</samp>
-i10 : qsols --and its solutions:
+i10 : qsols --and its solutions:
 
-o10 = $\left\{\{-{.0759885}-{.784731}\,\mathbf{i},\,-{.0338282}-{.610481}\,\mathbf{i}\},\,\{-{.340758}+{.746474}\,\mathbf{i},\,{.746549}-{.17787}\,\mathbf{i}\},\,\{{.281387}-{1.53637}\,\mathbf{i},\,{.482408}+{.80443}\,\mathbf{i}\},\,\{{.0704621}+{1.50706}\,\mathbf{i},\,-{.792096}-{.408394}\,\mathbf{i}\},\,\{-{.58584}+{1.06985}\,\mathbf{i},\,{.343707}-{.817687}\,\mathbf{i}\},\,\{{.661327}-{.730827}\,\mathbf{i},\,-{.89481}+{.795353}\,\mathbf{i}\},\,\{-{.474612}-{1.07541}\,\mathbf{i},\,{.918346}-{.462658}\,\mathbf{i}\},\,\{{.464023}+{.803957}\,\mathbf{i},\,-{.770277}+{.877306}\,\mathbf{i}\}\right\}$
+o10 = $\left\{\{{.348513}-{.937304}\,\mathbf{i},\,{.253667}-{.683539}\,\mathbf{i}\},\,\{-{.348513}+{.937304}\,\mathbf{i},\,-{.118844}-{.79362}\,\mathbf{i}\},\,\{-{.348513}+{.937304}\,\mathbf{i},\,{.71699}-{.530391}\,\mathbf{i}\},\,\{{.348513}-{.937304}\,\mathbf{i},\,-{.520824}+{1.10249}\,\mathbf{i}\},\,\{-{.348513}+{.937304}\,\mathbf{i},\,{.540662}+{1.06805}\,\mathbf{i}\},\,\{{.348513}-{.937304}\,\mathbf{i},\,-{.805842}-{.637166}\,\mathbf{i}\},\,\{{.348513}-{.937304}\,\mathbf{i},\,{1.073}+{.218212}\,\mathbf{i}\},\,\{-{.348513}+{.937304}\,\mathbf{i},\,-{1.13881}+{.255959}\,\mathbf{i}\}\right\}$
 
 o10 : <samp class="token class-name">List</samp>
-i11 : 
+i11 : 

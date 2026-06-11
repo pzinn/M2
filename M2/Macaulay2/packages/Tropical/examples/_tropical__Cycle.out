@@ -4,14 +4,14 @@
 o1 = <samp class="token constant">F</samp>
 
 o1 : <samp class="token class-name">Fan</samp>
-i2 : mult = {1,2,-3,1}
+i2 : mult = {1,2,-3,1}
 
 o2 = $\{1,\,2,\,-3,\,1\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : tropicalCycle(F, mult)
+i3 : tropicalCycle(F, mult)
 
 o3 = <samp class="token class-name">TropicalCycle</samp>$\{\ldots 2\ldots\}$
 
 o3 : <samp class="token class-name">TropicalCycle</samp>
-i4 : 
+i4 : 

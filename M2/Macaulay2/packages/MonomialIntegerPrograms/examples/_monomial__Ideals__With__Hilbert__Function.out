@@ -1,9 +1,9 @@
 -- -*- M2-comint -*- hash: 14176752623471836682
 i1 : R = QQ[x,y,z]; L = {1, 3, 6, 5, 4, 4};
-i3 : M = monomialIdealsWithHilbertFunction(L, R); #M
-
+i3 : M = monomialIdealsWithHilbertFunction(L, R); #M
+
 o4 = $306$
-i5 : netList take(M, 5)
+i5 : netList take(M, 5)
 
 o5 = <pre class="token net" style="vertical-align:-1300%">+-------------------------------------------------+
 |                2      2   2      2     2        |
@@ -22,10 +22,10 @@
 |monomialIdeal (x y, x*y , x*z , y*z , z )        |
 +-------------------------------------------------+<br></pre>
 
-i6 : M = monomialIdealsWithHilbertFunction(L, R, BoundGenerators => 3); #M
-
+i6 : M = monomialIdealsWithHilbertFunction(L, R, BoundGenerators => 3); #M
+
 o7 = $57$
-i8 : netList take(M, 5)
+i8 : netList take(M, 5)
 
 o8 = <pre class="token net" style="vertical-align:-1300%">+----------------------------------------+
 |                3     2   3   2         |
@@ -44,42 +44,42 @@
 |monomialIdeal (x , x y, y , x*y*z, y z) |
 +----------------------------------------+<br></pre>
 
-i9 : S = QQ[a..f]
+i9 : S = QQ[a..f]
 
 o9 = $S$
 
 o9 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i10 : I = monomialIdealsWithHilbertFunction({1, 6, 19, 45, 84}, S, SquareFree => true); #I
-
+i10 : I = monomialIdealsWithHilbertFunction({1, 6, 19, 45, 84}, S, SquareFree => true); #I
+
 o11 = $60$
-i12 : first random I
+i12 : first random I
  -- the behavior of random(List) will change soon; use shuffle(List) instead
 
 o12 = <samp class="token function">monomialIdeal</samp>${}(b\,d,\,a\,b\,c\,e,\,d\,e,\,a\,b\,c\,f,\,a\,c\,d\,f,\,a\,b\,e\,f,\,a\,c\,e\,f,\,b\,c\,e\,f)$
 
 o12 : <span><samp class="token class-name">MonomialIdeal</samp> of $S$</span>
-i13 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 5)
+i13 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 5)
 
 o13 = $57$
-i14 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 6)
+i14 : #monomialIdealsWithHilbertFunction({1, 3, 6, 5, 4, 4}, R, FirstBetti => 6)
 
 o14 = $174$
-i15 : #monomialIdealsWithHilbertFunction({1, 3, 4, 2, 1}, R, GradedBettis => {0, 0, 2, 2, 1})
+i15 : #monomialIdealsWithHilbertFunction({1, 3, 4, 2, 1}, R, GradedBettis => {0, 0, 2, 2, 1})
 
 o15 = $30$
-i16 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5)
+i16 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 5)
 
 o16 = $654$
-i17 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 4)
+i17 : #monomialIdealsWithHilbertFunction({1, 3, 6, 7, 6, 5, 4, 4, 4}, R, FirstBetti => 6, BoundGenerators => 4)
 
 o17 = $60$
-i18 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
+i18 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, FirstBetti => 5)
 
 o18 = $240$
-i19 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, BoundGenerators => 3)
+i19 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, BoundGenerators => 3)
 
 o19 = $300$
-i20 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
+i20 : #monomialIdealsWithHilbertFunction({1, 4, 7, 10, 13}, S, SquareFree => true, GradedBettis => {0, 2, 3, 1, 0})
 
 o20 = $60$
-i21 : 
+i21 : 

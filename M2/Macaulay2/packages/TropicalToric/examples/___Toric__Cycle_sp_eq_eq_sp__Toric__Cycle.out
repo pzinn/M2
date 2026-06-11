@@ -4,28 +4,28 @@
 o1 = $\{\{1,\,0\},\,\{0,\,1\},\,\{-1,\,-1\},\,\{0,\,-1\}\}$
 
 o1 : <samp class="token class-name">List</samp>
-i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
+i2 : coneList={{0,1},{1,2},{2,3},{3,0}}
 
 o2 = $\{\{0,\,1\},\,\{1,\,2\},\,\{2,\,3\},\,\{3,\,0\}\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : X = normalToricVariety(rayList,coneList)
+i3 : X = normalToricVariety(rayList,coneList)
 
 o3 = $X$
 
 o3 : <samp class="token class-name">NormalToricVariety</samp>
-i4 : D = X_3
+i4 : D = X_3
 
 o4 = <samp class="token class-name">ToricDivisor</samp>$\{0\ \Rightarrow \ 0,\,1\ \Rightarrow \ 0,\,2\ \Rightarrow \ 0,\,3\ \Rightarrow \ 1,\,\mathit{cache}\ \Rightarrow \ ($<samp class="token class-name">CacheTable</samp>$\{\,\}),\,\mathit{variety}\ \Rightarrow \ X\}$
 
 o4 : <samp class="token class-name">ToricDivisor</samp>
-i5 : D*{2} == toricCycle({{2,3} => 1},X)
+i5 : D*{2} == toricCycle({{2,3} => 1},X)
 
 o5 = <samp class="token constant">true</samp>
-i6 : D*{1} == toricCycle({},X)
+i6 : D*{1} == toricCycle({},X)
 
 o6 = <samp class="token constant">true</samp>
-i7 : D*{0} == toricCycle({{0,3} => 1},X)
+i7 : D*{0} == toricCycle({{0,3} => 1},X)
 
 o7 = <samp class="token constant">true</samp>
-i8 : 
+i8 : 

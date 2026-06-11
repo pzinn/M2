@@ -1,39 +1,39 @@
 -- -*- M2-comint -*- hash: 15610208045328487784
 i1 : R = CC[x,y,z];
-i2 : f = { x^2 - y, x^3 - z };
-i3 : (w,ns) = topWitnessSet(f,1)
+i2 : f = { x^2 - y, x^3 - z };
+i3 : (w,ns) = topWitnessSet(f,1)
 
 o3 = $\left(<samp class="token string">w</samp>,\,\{\,\}\right)$
 
 o3 : <samp class="token class-name">Sequence</samp>
-i4 : dim(w)
+i4 : dim(w)
 
 o4 = $1$
-i5 : degree(w)
+i5 : degree(w)
 
 o5 = $3$
-i6 : toString equations(w)
+i6 : toString equations(w)
 
-o6 = <samp class="token string">{x^2-y+(-.431365+.902178*ii)*zz1, x^3-z+(.165031-.986288*ii)*zz1, zz1}</samp>
-i7 : toString slice(w)
+o6 = <samp class="token string">{x^2-y+(-.742661+.669668*ii)*zz1, x^3-z+(-.00482189-.999988*ii)*zz1, zz1}</samp>
+i7 : toString slice(w)
 
-o7 = <samp class="token string">{(.756807-.653638*ii)*x+(-.924131+.382077*ii)*y+(.421619-.906773*ii)*z+(-.957636+.287982*ii)*zz1-.147266-.989097*ii}</samp>
-i8 : toString points(w)
+o7 = <samp class="token string">{(-.770196-.637807*ii)*x+(-.811423-.584459*ii)*y+(.195746+.980655*ii)*z+(-.0405247-.999179*ii)*zz1-.964202+.265168*ii}</samp>
+i8 : toString points(w)
 
-o8 = <samp class="token string">VerticalList{new Point from {Coordinates => {.64885+1.28196*ii, -1.22241+1.66359*ii, -2.92581-.487651*ii, -1.11498e-32+2.90564e-32*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {-.48946+.370745*ii, .10212-.36293*ii, .0845704+.2155*ii, 4.0952e-33-8.25198e-33*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {.576699-.975815*ii, -.619634-1.1255*ii, -1.45562-.044427*ii, 4.23533e-32+2.91956e-32*ii}, cache => CacheTable{...3...}}}</samp>
-i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
-
+o8 = <samp class="token string">VerticalList{new Point from {Coordinates => {-.012911+.6272*ii, -.393213-.0161957*ii, .0152348-.246414*ii, 6.51545e-33-4.72208e-33*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {-.798533-.38367*ii, .490452+.612747*ii, -.15655-.677471*ii, -6.16298e-33+2.46519e-32*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {1.54343-.92485*ii, 1.52683-2.85488*ii, -.283788-5.8184*ii, -4.81178e-33-6.91093e-33*ii}, cache => CacheTable{...3...}}}</samp>
+i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
+
 o10 = $\left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\,x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\,x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}$
 
 o10 : <samp class="token class-name">List</samp>
-i11 : (w,ns) = topWitnessSet(f,1);
-i12 : dim(w)
+i11 : (w,ns) = topWitnessSet(f,1);
+i12 : dim(w)
 
 o12 = $1$
-i13 : degree(w)
+i13 : degree(w)
 
 o13 = $3$
-i14 : #ns
+i14 : #ns
 
 o14 = $10$
-i15 : 
+i15 : 

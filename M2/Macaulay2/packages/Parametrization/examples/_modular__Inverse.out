@@ -2,13 +2,13 @@
 i1 : modularInverse(5,7)
 
 o1 = $3$
-i2 : modularInverse(5,16)
+i2 : modularInverse(5,16)
 
 o2 = $13$
-i3 : modularInverse(4,16)
+i3 : modularInverse(4,16)
 
 o3 = <samp class="token constant">false</samp>
-i4 : modularInverse(1234567,12345678)
+i4 : modularInverse(1234567,12345678)
 
 o4 = $10\,802\,467$
-i5 : 
+i5 : 

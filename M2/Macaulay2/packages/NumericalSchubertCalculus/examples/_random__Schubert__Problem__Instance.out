@@ -24,7 +24,7 @@
 \end{array}\!\right)\right)\right\}$
 
 o1 : <samp class="token class-name">List</samp>
-i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
+i2 : randomSchubertProblemInstance({{2,4},{2,4},{2,4},{2,4}},2,4)
 
 o2 = $\left\{\left(\{2,\,4\},\,\left(\!\begin{array}{cccc}
 {.996754}-{.0805092}\,\mathbf{i}&amp;-{.909393}-{.415938}\,\mathbf{i}&amp;{.398424}+{.917201}\,\mathbf{i}&amp;-{.688353}+{.725376}\,\mathbf{i}\\
@@ -49,4 +49,4 @@
 \end{array}\!\right)\right)\right\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : 
+i3 : 

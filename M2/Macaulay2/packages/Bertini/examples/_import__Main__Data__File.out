@@ -1,16 +1,16 @@
 -- -*- M2-comint -*- hash: 13875702623998209363
 i1 : makeB'InputFile(storeBM2Files,
-  AffVariableGroup=>{x,y,z},
-  BertiniInputConfiguration=>{{TrackType,1}},
-  B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
-i2 : runBertini(storeBM2Files)
-i3 : thePoints=importMainDataFile(storeBM2Files)
-
-o3 = $\left\{\{-{.0656514}-{.0338958}\,\mathbf{i},\,-{1.58003}\cdot 10^{-17}+{1.00871}\cdot 10^{-17}\,\mathbf{i},\,{.999766}-{.0769854}\,\mathbf{i}\},\,\{-{.116569}-{.311521}\,\mathbf{i},\,-{.263508}-{.0989911}\,\mathbf{i},\,{1.01371}-{.0615546}\,\mathbf{i}\},\,\{{.127134}+{.441738}\,\mathbf{i},\,{.505636}+{.0793461}\,\mathbf{i},\,{.96926}-{.0993335}\,\mathbf{i}\}\right\}$
+  AffVariableGroup=>{x,y,z},
+  BertiniInputConfiguration=>{{TrackType,1}},
+  B'Polynomials=>{"(x^2+y^2+z^2-1)*y"});
+i2 : runBertini(storeBM2Files)
+i3 : thePoints=importMainDataFile(storeBM2Files)
+
+o3 = $\left\{\{{.012789}-{.123249}\,\mathbf{i},\,-{5.8594}\cdot 10^{-19}-{4.95263}\cdot 10^{-17}\,\mathbf{i},\,-{.928853}+{.390623}\,\mathbf{i}\},\,\{-{.505036}-{.67667}\,\mathbf{i},\,-{.735036}-{.159539}\,\mathbf{i},\,-{.957916}+{.479175}\,\mathbf{i}\},\,\{{.386299}+{.401239}\,\mathbf{i},\,{.6009}+{.217365}\,\mathbf{i},\,-{.894378}+{.319342}\,\mathbf{i}\}\right\}$
 
 o3 : <samp class="token class-name">List</samp>
 i4 : witnessPointsDim1= importMainDataFile(storeBM2Files,SpecifyDim=>1)--We can choose which dimension we import points from. There are no witness points in dimension 1.
-<samp class="token string">1</samp>
+<samp class="token string">1</samp>
 <samp class="token string">1</samp>
 <samp class="token string">1</samp>
 
@@ -18,8 +18,8 @@
 
 o4 : <samp class="token class-name">List</samp>
 i5 : sortMainDataComponents(thePoints)
-
-o5 = $\left\{\left\{\{-{.0656514}-{.0338958}\,\mathbf{i},\,-{1.58003}\cdot 10^{-17}+{1.00871}\cdot 10^{-17}\,\mathbf{i},\,{.999766}-{.0769854}\,\mathbf{i}\}\right\},\,\left\{\{-{.116569}-{.311521}\,\mathbf{i},\,-{.263508}-{.0989911}\,\mathbf{i},\,{1.01371}-{.0615546}\,\mathbf{i}\},\,\{{.127134}+{.441738}\,\mathbf{i},\,{.505636}+{.0793461}\,\mathbf{i},\,{.96926}-{.0993335}\,\mathbf{i}\}\right\}\right\}$
+
+o5 = $\left\{\left\{\{{.012789}-{.123249}\,\mathbf{i},\,-{5.8594}\cdot 10^{-19}-{4.95263}\cdot 10^{-17}\,\mathbf{i},\,-{.928853}+{.390623}\,\mathbf{i}\}\right\},\,\left\{\{-{.505036}-{.67667}\,\mathbf{i},\,-{.735036}-{.159539}\,\mathbf{i},\,-{.957916}+{.479175}\,\mathbf{i}\},\,\{{.386299}+{.401239}\,\mathbf{i},\,{.6009}+{.217365}\,\mathbf{i},\,-{.894378}+{.319342}\,\mathbf{i}\}\right\}\right\}$
 
 o5 : <samp class="token class-name">List</samp>
 i6 : 

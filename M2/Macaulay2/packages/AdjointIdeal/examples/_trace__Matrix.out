@@ -4,22 +4,22 @@
 o1 = $\htmlClass{token class-name}{{\mathbb Q}}$
 
 o1 : <samp class="token class-name">Ring</samp>
-i2 : R=K[v,u,z]
+i2 : R=K[v,u,z]
 
 o2 = $R$
 
 o2 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i3 : I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
+i3 : I=ideal(v^4-2*u^3*z+3*u^2*z^2-2*v^2*z^2)
 
 o3 = <samp class="token function">ideal</samp>${}\left(v^{4}-2\,u^{3}z-2\,v^{2}z^{2}+3\,u^{2}z^{2}\right)$
 
 o3 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
-i4 : Rvu=K[v,u];
-i5 : QR=frac(Rvu);
-i6 : ib=matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
+i4 : Rvu=K[v,u];
+i5 : QR=frac(Rvu);
+i6 : ib=matrix {{1, v, (-1+v^2)/(-1+u), 1/(-1+u)/u*v^3+(-2+u)/(-1+u)/u*v}};
 
 o6 : <span><samp class="token class-name">Matrix</samp> $\mathit{QR}^{1}\,\longleftarrow \,\mathit{QR}^{4}$</span>
-i7 : traceMatrix(I,ib)
+i7 : traceMatrix(I,ib)
 
 o7 = $\left(\!\begin{array}{cccc}
 4&amp;0&amp;0&amp;0\\
@@ -29,19 +29,19 @@
 \end{array}\!\right)$
 
 o7 : <span><samp class="token class-name">Matrix</samp> $\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{4}\,\longleftarrow \,\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{4}$</span>
-i8 : K=QQ;
-i9 : R=K[v,u,z];
-i10 : I=ideal(v^3-u^2*z)
+i8 : K=QQ;
+i9 : R=K[v,u,z];
+i10 : I=ideal(v^3-u^2*z)
 
 o10 = <samp class="token function">ideal</samp>${}\left(v^{3}-u^{2}z\right)$
 
 o10 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
-i11 : Rvu=K[v,u];
-i12 : QR=frac(Rvu);
-i13 : ib=matrix({{1,v,v^2/u}});
+i11 : Rvu=K[v,u];
+i12 : QR=frac(Rvu);
+i13 : ib=matrix({{1,v,v^2/u}});
 
 o13 : <span><samp class="token class-name">Matrix</samp> $\mathit{QR}^{1}\,\longleftarrow \,\mathit{QR}^{3}$</span>
-i14 : traceMatrix(I,ib)
+i14 : traceMatrix(I,ib)
 
 o14 = $\left(\!\begin{array}{ccc}
 3&amp;0&amp;0\\
@@ -50,17 +50,17 @@
 \end{array}\!\right)$
 
 o14 : <span><samp class="token class-name">Matrix</samp> $\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{3}\,\longleftarrow \,\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{3}$</span>
-i15 : K=QQ;
-i16 : R=K[v,u,z];
-i17 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
+i15 : K=QQ;
+i16 : R=K[v,u,z];
+i17 : I=ideal(v^6+(7/5)*v^2*u^4+(6/5)*u^6+(21/5)*v^2*u^3*z+(12/5)*u^5*z+(21/5)*v^2*u^2*z^2+(6/5)*u^4*z^2+(7/5)*v^2*u*z^3);
 
 o17 : <span><samp class="token class-name">Ideal</samp> of $R$</span>
-i18 : Rvu=K[v,u];
-i19 : QR=frac(Rvu);
-i20 : ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
+i18 : Rvu=K[v,u];
+i19 : QR=frac(Rvu);
+i20 : ib=matrix({{1,v,v^2,v^3/(u+1),1/u/(u+1)*v^4,1/u^2/(u+1)*v^5-7/5*(u-1)/u*v}});
 
 o20 : <span><samp class="token class-name">Matrix</samp> $\mathit{QR}^{1}\,\longleftarrow \,\mathit{QR}^{6}$</span>
-i21 : traceMatrix(I,ib)
+i21 : traceMatrix(I,ib)
 
 o21 = $\left(\!\begin{array}{cccccc}
 6&amp;0&amp;0&amp;0&amp;\frac{-28\,u^{2}-56\,u-28}{5}&amp;0\\
@@ -72,4 +72,4 @@
 \end{array}\!\right)$
 
 o21 : <span><samp class="token class-name">Matrix</samp> $\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{6}\,\longleftarrow \,\left(<samp class="token function">frac</samp>${}(\htmlClass{token class-name}{{\mathbb Q}}\mathopen{}[u])$\right)^{6}$</span>
-i22 : 
+i22 : 

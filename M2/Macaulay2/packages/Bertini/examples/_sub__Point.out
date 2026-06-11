@@ -4,40 +4,40 @@
 o1 = $R$
 
 o1 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i2 : f=z*x+y
+i2 : f=z*x+y
 
 o2 = $x\,z+y$
 
 o2 : $R$
-i3 : subPoint(f,{x,y},{.1,.2})
+i3 : subPoint(f,{x,y},{.1,.2})
 
 o3 = ${.1}\,z+{.2}$
 
 o3 : $R$
-i4 : subPoint(f,{x,y,z},{.1,.2,.3},SpecifyVariables=>{y})
+i4 : subPoint(f,{x,y,z},{.1,.2,.3},SpecifyVariables=>{y})
 
 o4 = $x\,z+{.2}$
 
 o4 : $R$
-i5 : R=CC_200[x,y,z]
+i5 : R=CC_200[x,y,z]
 
 o5 = $R$
 
 o5 : <span><samp class="token class-name">PolynomialRing</samp></span>
-i6 : f=z*x+y
+i6 : f=z*x+y
 
 o6 = $x\,z+y$
 
 o6 : $R$
-i7 : subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
+i7 : subPoint(f,{x,y,z},{.1,.2,.3},SubIntoCC=>true)
 
 o7 = ${.23}$
 
 o7 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $53$)</span>
-i8 : subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
+i8 : subPoint(f,{x,y,z},{.1234567890123456789012345678901234567890p200,
         0,1},SubIntoCC=>true,M2Precision=>200)
 
 o8 = ${.123456789012345678901234567890123456789}$
 
 o8 : <span>$\htmlClass{token class-name}{{\mathbb C}}$ (of precision $200$)</span>
-i9 : 
+i9 : 

@@ -29,7 +29,7 @@
 \end{array}\!\right)\right)\right\}$
 
 o1 : <samp class="token class-name">List</samp>
-i2 : S = solveSchubertProblem(Pblm, 3,6)
+i2 : S = solveSchubertProblem(Pblm, 3,6)
 
 o2 = $\left\{\left(\!\begin{array}{ccc}
 {.362674}-{2.42965}\cdot 10^{-16}\,\mathbf{i}&amp;{5.87881}-{1.26015}\cdot 10^{-13}\,\mathbf{i}&amp;{.067722}+{2.45389}\cdot 10^{-16}\,\mathbf{i}\\
@@ -48,7 +48,7 @@
 \end{array}\!\right)\right\}$
 
 o2 : <samp class="token class-name">List</samp>
-i3 : solutionsToAffineCoords S
+i3 : solutionsToAffineCoords S
 
 o3 = $\left\{\left(\!\begin{array}{ccc}
 {1.17594}&amp;-{.247384}&amp;-{1.04186}\\
@@ -67,4 +67,4 @@
 \end{array}\!\right)\right\}$
 
 o3 : <samp class="token class-name">List</samp>
-i4 : 
+i4 : 

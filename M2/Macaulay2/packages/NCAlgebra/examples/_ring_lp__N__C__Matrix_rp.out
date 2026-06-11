@@ -4,14 +4,14 @@
 o1 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o1 : <samp class="token class-name">NCPolynomialRing</samp>
-i2 : M = ncMatrix {{a,b,c,d},{b,c,d,a}}
+i2 : M = ncMatrix {{a,b,c,d},{b,c,d,a}}
 
 o2 = <samp class="token class-name">NCMatrix</samp>$\{\ldots 6\ldots\}$
 
 o2 : <samp class="token class-name">NCMatrix</samp>
-i3 : ring M
+i3 : ring M
 
 o3 = $\htmlClass{token class-name}{<samp class="token string">A</samp>}$
 
 o3 : <samp class="token class-name">NCPolynomialRing</samp>
-i4 : 
+i4 : 

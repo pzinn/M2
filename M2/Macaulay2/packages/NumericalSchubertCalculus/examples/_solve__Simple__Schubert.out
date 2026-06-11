@@ -1,14 +1,14 @@
 -- -*- M2-comint -*- hash: 11225657016436253843
 i1 : k = 3;
-i2 : n = 6;
-i3 : SchPblm = {
+i2 : n = 6;
+i3 : SchPblm = {
     ({2,1}, random(CC^6,CC^6)),
     ({2,1}, random(CC^6,CC^6)),
     ({1}, random(CC^6,CC^6)),
     ({1}, random(CC^6,CC^6)),
     ({1}, random(CC^6,CC^6))
     };
-i4 : solveSimpleSchubert(SchPblm, k,n)
+i4 : solveSimpleSchubert(SchPblm, k,n)
 
 o4 = $\left\{\left(\!\begin{array}{ccc}
 {.426402}+{.387024}\,\mathbf{i}&amp;-{.767149}+{.88679}\,\mathbf{i}&amp;-{.299645}+{.514617}\,\mathbf{i}\\
@@ -55,4 +55,4 @@
 \end{array}\!\right)\right\}$
 
 o4 : <samp class="token class-name">List</samp>
-i5 : 
+i5 : 

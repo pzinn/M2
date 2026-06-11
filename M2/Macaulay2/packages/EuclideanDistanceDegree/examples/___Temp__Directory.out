@@ -1,14 +1,10 @@
 -- -*- M2-comint -*- hash: 17265651732443607604
+i1 : 1:0R = QQ[x,y];
+i2 : 2:0F = {x^2 + y^2 - 1};
+i3 : 3:0dir = temporaryFileName();
+i4 : 4:0GED = leftKernelGenericEDDegree(F, TempDirectory => dir)
+<samp class="token string">Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.</samp>
 
-i1 : R = QQ[x,y];
-
-i2 : F = {x^2 + y^2 - 1};
-
-i3 : dir = temporaryFileName();
-
-i4 : GED = leftKernelGenericEDDegree(F, TempDirectory => dir)
-Warning: The HomVariableGroup is written first and then the AffVariableGroup is written second.
-
-o4 = 4
-
-i5 : 
+o4 = $4$
+i5 : 5:0
+

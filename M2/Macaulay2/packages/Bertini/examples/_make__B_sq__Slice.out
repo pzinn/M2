@@ -1,21 +1,21 @@
 -- -*- M2-comint -*- hash: 3879697425701981702
 i1 : sliceType={1,1}
-
+
 o1 = $\{1,\,1\}$
 
 o1 : <samp class="token class-name">List</samp>
 i2 : variableGroups={{x0,x1},{y0,y1,y2}}
-
+
 o2 = $\{\{\mathit{x0},\,\mathit{x1}\},\,\{\mathit{y0},\,\mathit{y1},\,\mathit{y2}\}\}$
 
 o2 : <samp class="token class-name">List</samp>
 i3 : xySlice=makeB'Slice(sliceType,variableGroups)
-
+
 o3 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
 o3 : <samp class="token class-name">B'Slice</samp>
 i4 : peek xySlice
-
+
 o4 = <span><samp class="token class-name">B'Slice</samp>  <ul style="display:inline-table">
     <li><span>$B'NumberCoefficients$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{\{{1.49144}+{.713846}\,\mathbf{i},\,-{.840113}+{1.1986}\,\mathbf{i}\},\,\{{.014842}+{1.23548}\,\mathbf{i},\,-{.214468}+{.911293}\,\mathbf{i},\,-{.486176}+{.400577}\,\mathbf{i}\}\}$</span></li>
     <li><span>$B'SectionString$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{$<samp class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</samp>$,\,$<samp class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</samp>$\}$</span></li>
@@ -24,60 +24,60 @@
   </ul>
 </span>
 i5 : for i in  xySlice#B'SectionString do print i
-<samp class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</samp>
+<samp class="token string">(1.49144+.713846*ii)*(x0)+(-.840113+1.1986*ii)*(x1)</samp>
 <samp class="token string">(.014842+1.23548*ii)*(y0)+(-.214468+.911293*ii)*(y1)+(-.486176+.400577*ii)*(y2)</samp>
 i6 : aSlice=makeB'Slice(3,{x,y,z,1},NameB'Slice=>"f");
-i7 : aSlice#NameB'Slice
-
+i7 : aSlice#NameB'Slice
+
 o7 = $\{$<samp class="token string">f0</samp>$,\,$<samp class="token string">f1</samp>$,\,$<samp class="token string">f2</samp>$\}$
 
 o7 : <samp class="token class-name">List</samp>
 i8 : makeB'InputFile(storeBM2Files,AffVariableGroup=>{x,y,z},B'Functions=>{aSlice},NamePolynomials=>{"f0","f1","f2"});
-i9 : f1="x0*y0+x1*y0+x2*y2"
-
+i9 : f1="x0*y0+x1*y0+x2*y2"
+
 o9 = <samp class="token string">x0*y0+x1*y0+x2*y2</samp>
 i10 : f2="x0*y0^2+x1*y1*y2+x2*y0*y2"
-
+
 o10 = <samp class="token string">x0*y0^2+x1*y1*y2+x2*y0*y2</samp>
 i11 : variableGroups={{x0,x1,x2},{y0,y1,y2}}
-
+
 o11 = $\{\{\mathit{x0},\,\mathit{x1},\,\mathit{x2}\},\,\{\mathit{y0},\,\mathit{y1},\,\mathit{y2}\}\}$
 
 o11 : <samp class="token class-name">List</samp>
 i12 : xxSlice=makeB'Slice({2,0},variableGroups)
-
+
 o12 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
 o12 : <samp class="token class-name">B'Slice</samp>
 i13 : xySlice=makeB'Slice({1,1},variableGroups)
-
+
 o13 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
 o13 : <samp class="token class-name">B'Slice</samp>
 i14 : yySlice=makeB'Slice({0,2},variableGroups)
-
+
 o14 = <samp class="token class-name">B'Slice</samp>$\{\ldots 4\ldots\}$
 
 o14 : <samp class="token class-name">B'Slice</samp>
 i15 : makeB'InputFile(storeBM2Files,
-    HomVariableGroup=>variableGroups,
-    B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections);
-i16 : runBertini(storeBM2Files)
-i17 : xxDegree=#importSolutionsFile(storeBM2Files)
-
+    HomVariableGroup=>variableGroups,
+    B'Polynomials=>{f1,f2}|xxSlice#ListB'Sections);
+i16 : runBertini(storeBM2Files)
+i17 : xxDegree=#importSolutionsFile(storeBM2Files)
+
 o17 = $2$
 i18 : makeB'InputFile(storeBM2Files,
-    HomVariableGroup=>variableGroups,
-    B'Polynomials=>{f1,f2}|xySlice#ListB'Sections);
-i19 : runBertini(storeBM2Files)
-i20 : xyDegree=#importSolutionsFile(storeBM2Files)
-
+    HomVariableGroup=>variableGroups,
+    B'Polynomials=>{f1,f2}|xySlice#ListB'Sections);
+i19 : runBertini(storeBM2Files)
+i20 : xyDegree=#importSolutionsFile(storeBM2Files)
+
 o20 = $3$
 i21 : makeB'InputFile(storeBM2Files,
-    HomVariableGroup=>variableGroups,
-    B'Polynomials=>{f1,f2}|yySlice#ListB'Sections);
-i22 : runBertini(storeBM2Files)
-i23 : yyDegree=#importSolutionsFile(storeBM2Files)
-
+    HomVariableGroup=>variableGroups,
+    B'Polynomials=>{f1,f2}|yySlice#ListB'Sections);
+i22 : runBertini(storeBM2Files)
+i23 : yyDegree=#importSolutionsFile(storeBM2Files)
+
 o23 = $1$
 i24 : 
