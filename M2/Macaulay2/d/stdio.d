@@ -145,7 +145,6 @@ export interpreterDepth := 0;
 export lineNumber := 0;
 export webAppControlsEnabled := false;
 export webAppInputEndTag := "";
-export webAppEvaluationEndTag := "";
 export webAppInputDiscardedTag := "";
 texmacsprompt():string := (
      s := "";
@@ -206,7 +205,6 @@ init():void := (
 	       stdIO.outisatty = true; -- not so important?
 	       webAppControlsEnabled = true;
 	       webAppInputEndTag = string(char(22));
-	       webAppEvaluationEndTag = string(char(23));
 	       webAppInputDiscardedTag = string(char(31));
 	       STDERR = 1;
 	       rmfile(stdError);

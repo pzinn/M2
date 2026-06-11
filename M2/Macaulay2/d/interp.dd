@@ -192,7 +192,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 				   else nothing;
 				   lastvalue = evalexcept(f);	  -- run it
 				   if lastvalue == endInput then (
-					emitWebAppControl(file,printout,webAppEvaluationEndTag);
 					return nullE;
 					);
 				   when lastvalue is err:Error do (
@@ -211,7 +210,6 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 					     if stopIfError || returnIfError then return lastvalue;
 					     );
 					lasterrmsg = err;
-					emitWebAppControl(file,printout,webAppEvaluationEndTag);
 					)
 				   else (
 					if printout then (
@@ -260,12 +258,10 @@ readeval4(file:TokenFile,printout:bool,dictionary:Dictionary,returnLastvalue:boo
 						  )
 					     else nothing;
 					     );
-					emitWebAppControl(file,printout,webAppEvaluationEndTag);
 					)
 				   )
 			      else (
 				   -- an error occurred in localBind
-				   emitWebAppControl(file,printout,webAppEvaluationEndTag);
 				   if isatty(file) 
 				   then flushToken(file)
 				   else return (
