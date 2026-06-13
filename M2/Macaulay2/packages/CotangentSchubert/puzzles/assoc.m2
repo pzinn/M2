@@ -115,4 +115,3 @@ doublePuzzle = puzzleOpts >> o -> (a,b,c,d) -> (
     flatten apply(P,p->apply(puzzle(c,d,reverse bottom p,o),q->DoublePuzzle(p,q)))
     )
 
--- if topLevelMode === WebApp then print STYLE get (puzzleDir|"assoc.css")
