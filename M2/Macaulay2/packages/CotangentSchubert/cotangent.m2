@@ -258,9 +258,9 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	BB := defineB(FF,n,curCotOpts.Ktheory,curCotOpts.Equivariant);
 	x := getSymbol "x";
 	-- Chern classes
-	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i)));
-	v := (j,i) -> x_(j,toList(dims#i+1..dims#(i+1))); -- variable name
-	e := (j,i) -> elem(j,apply(dims#i..dims#(i+1)-1,k->BB_k)); -- expression in terms of Chern roots
+	inds := splice apply(d+1, i -> apply(1..dimdiffs#i,j->(j,i+1)));
+	v := (j,i) -> x_(j,toList(dims#(i-1)+1..dims#i)); -- variable name
+	e := (j,i) -> elem(j,apply(dims#(i-1)..dims#i-1,k->BB_k)); -- expression in terms of Chern roots
 	args := v\inds;
 	if curCotOpts.Ktheory then (
 	    args = append(args,DegreeRank=>0);
@@ -283,12 +283,16 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	    b = sub(b,AB);
 	    -- scan(d+1,i->b=expandElem(b,toList(AB_(dims#i)..AB_(dims#(i+1)-1)),toList(AB_(n+dims#i)..AB_(n+dims#(i+1)-1))));
 	    -- fails because of https://github.com/Macaulay2/M2/issues/2020
-	    v := seq -> apply(toList seq, j -> AB_j);
-	    scan(d+1,i->b=expandElem(b,v(dims#i..dims#(i+1)-1),v(n+dims#i..n+dims#(i+1)-1)));
+	    vv := seq -> apply(toList seq, j -> AB_j);
+	    scan(d+1,i->b=expandElem(b,vv(dims#i..dims#(i+1)-1),vv(n+dims#i..n+dims#(i+1)-1)));
 	    sub(b,AA)
 	    ),BB,AA);
 	--
-	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> if o.Partial then AA_(dims#i+j-1) else e (j,i);
+	tautoClass (ZZ,ZZ,AA) := { Partial => true} >> o -> (j,i,AA) -> ( -- j^th Chern class of i^th tautological bundle
+            if i<1 or i>d+1 then error ("second index outside the range 1.."|toString(d+1));
+            if j<0 or j>dimdiffs#(i-1) then error ("first index outside the range 0.."|toString(dimdiffs#(i-1)));
+            if o.Partial then AA_(dims#(i-1)+j-1) else e (j,i)
+            );
 	zeroSection AA := { Partial => true} >> o -> (cacheValue (zeroSection,o.Partial)) (if o.Partial then AA -> lift(zeroSection(AA,Partial=>false),AA)
 	    else if curCotOpts.Ktheory then
 	    AA -> product(n,j->product(n,k->if ω0#j<ω0#k then 1-FF_0^2*BB_j*BB_k^(-1) else 1))
@@ -553,7 +557,11 @@ setupCotangent = cotOpts >> curCotOpts -> dims0 -> (
 	installMethod(zeroSection,{}>>o->()->zeroSection D);
 	installMethod(dualZeroSection,{}>>o->()->dualZeroSection D);
 	-- Chern classes of tautological bundles
-	tautoClass (ZZ,ZZ,D) := {} >> o -> (j,i,AA) -> D apply(I,s->elem(j,apply((subs s)#i,k->FF_(k+1))));
+	tautoClass (ZZ,ZZ,D) := {} >> o -> (j,i,AA) -> (
+            if i<1 or i>d+1 then error ("second index outside the range 1.."|toString(d+1));
+            if j<0 or j>dimdiffs#(i-1) then error ("first index outside the range 0.."|toString(dimdiffs#(i-1)));
+            D apply(I,s->elem(j,apply((subs s)#(i-1),k->FF_(k+1))))
+            );
 	tautoClass (ZZ,ZZ) := {} >> o -> (j,i) -> tautoClass(j,i,D);
 	-- pushforward to point
 	pushforwardToPoint D := pushforwardToPoint Vector := m -> ((weights D)*m)_0;
