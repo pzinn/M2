@@ -77,7 +77,7 @@ zeroModule LieAlgebra := g -> new LieAlgebraModule from (g,{})
 
 
 LieAlgebraModule ^** ZZ := (M, n) -> M.cache#(symbol ^**, n) ??= (
-	if n<0 then "error nonnegative powers only";
+	if n<0 then error "nonnegative powers only";
     	if n==0 then trivialModule M#"LieAlgebra"
     	else if n==1 then M
     	else M**(M^**(n-1)) -- order matters for speed purposes
