@@ -1277,7 +1277,7 @@ shortStringLength := 3*shortLength
 shortMode = false
 -- used e.g. in chaincomplexes.m2
 short = method(Dispatch => Thing, TypicalValue => Expression)
-short Thing := short @@ expression -- should this be the default? or identity?
+short Thing := 
 short Holder := identity -- to avoid infinite loops
 short MatrixExpression :=
 short Table := x ->  (
@@ -1288,30 +1288,30 @@ short Table := x ->  (
 	    else m,shortRow)
     )
 shortList := short VisibleList :=
-short Expression := x -> hold apply(if #x>shortLength then new class x from {
+short Expression := x -> apply(if #x>shortLength then new class x from {
 	first x,
 	if instance(x,VectorExpression) or instance(x,VerticalList) then vdots else if instance(x,VisibleList) then ldots else cdots,
 	last x
 	}
     else x,short)
--- tentative -- potentially dangerous for custom classes
-short BasicList := x -> (
-    l := lookup(expression,class x);
-    if l === hold then shortList x else short expression x
-    )
 short BinaryOperation := b -> BinaryOperation {b#0,short b#1,short b#2}
 short String := s -> if #s > shortStringLength then substring(s,0,shortStringLength-3) | "..." | last s else s -- too radical, keep shortLength chars
 short Net := n -> (if #n > shortLength then stack (apply(shortLength,i->short n#i) | {".",".",".",short last n}) else stack apply(unstack n,short))^(height n-1) -- same
 -- tentative -- potentially dangerous for custom classes
+short BasicList := x -> (
+    e := expression x;
+    if instance(e,Holder) then shortList x else short e
+    )
+-- tentative -- potentially dangerous for custom classes
 short HashTable := H -> (
-    l := lookup(expression,class H);
-    if l =!= hold then short expression H else hold (
+    e := expression H;
+    if not instance(e,Holder) then short e else (
 	if #H <= shortLength then applyPairs(H,(k,v)->(short k,short v)) else (
 	    s := -* sortByName *- pairs H; -- sorting may be slow
     	    new class H from append(applyTable(take(s,shortLength),short),short s#shortLength#0=>cdots)
     	    ))
     )
-short Set := H -> hold ( if #H <= shortLength then applyKeys(H,short) else (
+short Set := H -> ( if #H <= shortLength then applyKeys(H,short) else (
 	new class H from append(apply(take(keys H,shortLength),short),ldots)
 	))
 -- a few types shouldn't be affected by short
