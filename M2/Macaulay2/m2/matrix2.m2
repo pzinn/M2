@@ -204,6 +204,12 @@ mingens Module := Matrix => opts -> M -> M.cache.mingens ??= if isFreeModule M t
 	zr := f -> if f === null or f == 0 then null else f;
 	F := ambient M;
 	epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
+	minimizeAgain := g -> (
+	    while numColumns g < numColumns M.generators do (
+		h := mingens(image g, opts);
+		if numColumns h >= numColumns g then break;
+		g = h);
+	    g);
 	if M.?generators then (
 	    if M.?relations then (
 		if opts.Strategy === Complement and isHomogeneous M and isAffineRing ring M then (
@@ -213,10 +219,10 @@ mingens Module := Matrix => opts -> M -> M.cache.mingens ??= if isFreeModule M t
 		    tot := mingb fullgens M;
 		    rel := mingb(M.relations);
 		    mingens mingb (mingens tot % rel)))
-	    else if opts.Strategy === Complement then mingens mingb M.generators
+	    else if opts.Strategy === Complement then minimizeAgain mingens mingb M.generators
 	    else if opts.Strategy === Inhomogeneous then (
 		tot' := mingb M.generators;
-		if epi raw tot' then id_F else mingens tot')
+		if epi raw tot' then id_F else minimizeAgain mingens tot')
 	    else error "mingens: unrecognized Strategy option")
 	else if M.?relations then (
 	    if opts.Strategy === Complement and isHomogeneous M.relations then complement M.relations

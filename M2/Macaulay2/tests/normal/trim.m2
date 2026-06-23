@@ -49,6 +49,19 @@ assert(K == I)
 assert(ideal G == I)
 assert(ideal H == I)
 
+-- https://github.com/Macaulay2/M2/issues/3622
+R = QQ[x,y,X,Y,Z]
+I = ideal(y*X-x*Z,x*Y-y*Z,x^2,y^2,x*y,Z-1,X*Y-Z^2,X-1,Y-1)
+J = trim I
+assert(numgens J == 5)
+assert(trim J === J)
+
+R = QQ[x,y,X,Y,Z, Degrees=>{1,1,0,0,0}]
+I = ideal(y*X-x*Z,x*Y-y*Z,x^2,y^2,x*y,Z-1,X*Y-Z^2,X-1,Y-1)
+J = trim I
+assert(numgens J == 5)
+assert(trim J === J)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test trim.out"
 -- End:
