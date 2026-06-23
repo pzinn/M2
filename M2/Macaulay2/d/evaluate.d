@@ -356,12 +356,15 @@ fillForLoopIndexBounds(value:Expr, source:Code, bounds:array(int)):Expr := (
      is s:Sequence do fillForLoopIndexBoundsFromSequence(s,source,bounds)
      is l:List do fillForLoopIndexBoundsFromSequence(l.v,source,bounds)
      else printErrorMessageE(source,"expected a sequence or list of integers"));
-advanceForLoopIndexes(indexes:array(int), lengths:array(int)):bool := (
+advanceForLoopIndexes(indexes:array(int), lengths:array(int), starts:array(int), values:array(Expr)):bool := (
      k := length(indexes)-1;
      while k >= 0 do (
 	  indexes.k = indexes.k + 1;
-	  if indexes.k < lengths.k then return true;
+	  if indexes.k < lengths.k then (
+	       values.k = toExpr(starts.k + indexes.k);
+	       return true);
 	  indexes.k = 0;
+	  values.k = toExpr(starts.k);
 	  k = k - 1);
      false);
 
@@ -374,6 +377,7 @@ evalForCode(c:forCode):Expr := (
      starts := new array(int) len 0 do provide 0;
      lengths := new array(int) len 0 do provide 0;
      indexes := new array(int) len 0 do provide 0;
+     indexValues := new array(Expr) len 0 do provide nullE;
      iter := nullE;                         -- iterator
      nextfunc := nullE;                     -- next function for iterator
      listLoop := false;
@@ -424,6 +428,8 @@ evalForCode(c:forCode):Expr := (
 	       multiIndexDimension = dimension;
 	       if hasToClause && forLoopIndexSequenceLength(tovalue) != dimension then return printErrorMessageE(
 		    c.toClause, "expected sequence or list of length " + tostring(dimension));
+	       if !singleLoopVariable && length(variableFrameIndices) != dimension then return printErrorMessageE(
+		    c.variablePosition, "expected loop variable list of length " + tostring(dimension));
 	       starts = new array(int) len dimension do provide 0;
 	       finishes := new array(int) len dimension do provide 0;
 	       lengths = new array(int) len dimension do provide 0;
@@ -436,7 +442,8 @@ evalForCode(c:forCode):Expr := (
 	       multiIndexActive = true;
 	       for k from 0 to dimension-1 do (
 		    lengths.k = finishes.k - starts.k + 1;
-		    if lengths.k <= 0 then multiIndexActive = false))
+		    if lengths.k <= 0 then multiIndexActive = false);
+	       indexValues = new array(Expr) len dimension at k do provide toExpr(starts.k))
 	  else (
 	       if hasFromClause then (
 		    when fromvalue
@@ -456,15 +463,10 @@ evalForCode(c:forCode):Expr := (
      while true do (
 	  if multiIndexLoop then (
 	       if !multiIndexActive then break;
-	       value := Expr(new Sequence len multiIndexDimension at k do provide toExpr(starts.k + indexes.k));
-	       multiIndexActive = advanceForLoopIndexes(indexes,lengths);
-	       if singleLoopVariable then localFrame.values.(singleFrameIndex) = value
-	       else (
-		    variableAssignment := assignForLoopVariables(variableFrameIndices,c.variablePosition,value);
-		    when variableAssignment is Error do (
-			 localFrame = localFrame.outerFrame;
-			 return variableAssignment)
-		    else nothing))
+	       if singleLoopVariable then localFrame.values.(singleFrameIndex) = Expr(
+		    new Sequence len multiIndexDimension at k do provide indexValues.k)
+	       else for k from 0 to multiIndexDimension-1 do localFrame.values.(variableFrameIndices.k) = indexValues.k;
+	       multiIndexActive = advanceForLoopIndexes(indexes,lengths,starts,indexValues))
 	  else (
 	       if toLimit && j > n then break;
 	       if listLoop && j >= length(w) then break;
