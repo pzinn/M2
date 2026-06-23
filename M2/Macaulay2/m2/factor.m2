@@ -142,7 +142,7 @@ algorithms#(factor, RingElement) = new MutableHashTable from {
 	R := coefficientRing(RM := ring f);
 	if not instance(R, FractionField)
 	then return null;
-	RM' := (baseRing R) RM.monoid;
+	RM' := (baseRing R) monoid RM;
 	toRM := map(RM, RM', generators RM);
 	toRM' := map(RM', RM, generators RM');
 	denom := lcm apply(listForm f, t -> denominator t_1);
@@ -229,8 +229,9 @@ roots RingElement := {Precision => -1, Unique => false} >> o -> p -> (
     if numgens R > 1 then (
 	p = f p;
 	exps := positions(transpose exponents p, x -> any(x,y->y=!=0));
-	if #exps != 1 then error "expected a univariate polynomial ring";
-	return roots(substitute(p,(baseRing R)(monoid[R_(exps#0)])));
+        if #exps == 0 then return {}
+	else if #exps > 1 then error "expected a univariate polynomial ring";
+	p = substitute(p,(baseRing R)(monoid[R_(exps#0)]));
 	);
     toList apply(rawRoots(raw p, o.Precision, o.Unique), r -> new CC from r)
   )
