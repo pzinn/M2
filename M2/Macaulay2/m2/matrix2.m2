@@ -191,30 +191,37 @@ complement Matrix := Matrix => (f) -> (
 
 -- the method is declared in gb.m2
 -- TODO: the strategies should be separated
+useInhomogeneousMinimize = M -> (
+     R := ring M;
+     instance(R, PolynomialRing) and not isField coefficientRing R and not isHomogeneous M)
+
 mingens Ideal  := Matrix => opts -> I -> mingens(module I, opts)
 mingens Module := Matrix => opts -> M -> M.cache.mingens ??= if isFreeModule M then generators M else tryHooks(
     (mingens, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
- 	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
-	  zr := f -> if f === null or f == 0 then null else f;
-	  F := ambient M;
-	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
-	  if M.?generators then (
-	       if M.?relations then (
-		    if opts.Strategy === Complement and isHomogeneous M and isAffineRing ring M then (
-			 c := mingens mingb fullgens M;
-			 c * complement(M.relations // c))
-		    else (
-			 tot := mingb fullgens M;
-		    	 rel := mingb(M.relations);
-		    	 mingens mingb (mingens tot % rel)))
-	       else mingens mingb M.generators)
-	  else (
-	       if M.?relations then (
-		    if opts.Strategy === Complement and isHomogeneous M.relations then (
-			 complement M.relations)
-		    else mingens mingb (id_F % mingb(M.relations)))
-	       else id_F)))
+	if opts.Strategy === Complement and useInhomogeneousMinimize M then opts = opts ++ { Strategy => Inhomogeneous };
+	mingb := m -> gb (m, StopWithMinimalGenerators=>opts.Strategy =!= Inhomogeneous, Syzygies=>false, ChangeMatrix=>false);
+	zr := f -> if f === null or f == 0 then null else f;
+	F := ambient M;
+	epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));
+	if M.?generators then (
+	    if M.?relations then (
+		if opts.Strategy === Complement and isHomogeneous M and isAffineRing ring M then (
+		    c := mingens mingb fullgens M;
+		    c * complement(M.relations // c))
+		else (
+		    tot := mingb fullgens M;
+		    rel := mingb(M.relations);
+		    mingens mingb (mingens tot % rel)))
+	    else if opts.Strategy === Complement then mingens mingb M.generators
+	    else if opts.Strategy === Inhomogeneous then (
+		tot' := mingb M.generators;
+		if epi raw tot' then id_F else mingens tot')
+	    else error "mingens: unrecognized Strategy option")
+	else if M.?relations then (
+	    if opts.Strategy === Complement and isHomogeneous M.relations then complement M.relations
+	    else mingens mingb (id_F % mingb(M.relations)))
+	else id_F))
 
 trim = method (Options => { Strategy => null -* TODO: add DegreeLimit => {} *-})
 trim Ring         := Ring => o -> identity
@@ -225,10 +232,11 @@ trim Ideal  := Ideal  => opts -> I -> ideal trim(module I, opts)
 trim Module := Module => opts -> M -> M.cache#(symbol trim => opts) ??= if isFreeModule M then M else tryHooks(
     (trim, Module), (opts, M), (opts, M) -> (
 	if opts.Strategy === null then opts = opts ++ { Strategy => Complement };
+	if opts.Strategy === Complement and useInhomogeneousMinimize M then opts = opts ++ { Strategy => Inhomogeneous };
 	  -- we preserve the ambient free module of which M is subquotient and try to minimize the generators and relations
 	  --   without computing an entire gb
 	  -- does using "complement" as in "mingens Module" above offer a benefit?
- 	  mingb := m -> gb (m, StopWithMinimalGenerators=>true, Syzygies=>false, ChangeMatrix=>false);
+	  mingb := m -> gb (m, StopWithMinimalGenerators=>opts.Strategy =!= Inhomogeneous, Syzygies=>false, ChangeMatrix=>false);
 	  zr := f -> if f === null or f == 0 then null else f;
 	  F := ambient M;
 	  epi := g -> -1 === rawGBContains(g, rawIdentity(raw F,0));

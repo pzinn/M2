@@ -35,7 +35,20 @@ I' = ideal(x^3-1, x^2+1)
 J' = trim I'
 assert(J'_* == {1})
 
+-- inhomogeneous trim over ZZ[x] should not stop at a premature
+-- minimal generator before detecting a unit in the ideal
+R = ZZ[x]
+I = ideal(x^2+x+1, x^4+x^3+x^2+x+1)
+J = trim I
+K = trim(I, Strategy=>Complement)
+G = mingens I
+H = mingens(I, Strategy=>Complement)
+assert(I == ideal 1_R)
+assert(J == I)
+assert(K == I)
+assert(ideal G == I)
+assert(ideal H == I)
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/packages/Macaulay2Doc/test trim.out"
 -- End:
-
