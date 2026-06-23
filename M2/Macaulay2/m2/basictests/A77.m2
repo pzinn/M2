@@ -101,6 +101,21 @@ assert( realpath "." == currentDirectory () )
 assert( realpath ".." == toAbsolutePath "../" )
 assert( realpath "/" == "/" )
 
+assert( (for (a,b) in {(1,2),(3,4)} list a+b) == {3,7} )
+assert( (for (a,b) in {(1,2),(3,4)} list a) == {1,3} )
+assert( (for (a,b,c) in {(1,2,3),(4,5,6)} list a*b+c) == {5,26} )
+
+s = 0
+for (a,b) in {(1,2),(3,4)} do s = s + 10*a + b
+assert( s == 46 )
+
+assert( (for (a,b) from (0,0) to (1,2) list a+b) == {0,1,2,1,2,3} )
+assert( (for (a,b) from (0,1) to (1,2) list (a,b)) == {(0,1),(0,2),(1,1),(1,2)} )
+assert( (for (a,b,c) from (0,0,0) to (0,1,1) list (a,b,c)) == {(0,0,0),(0,0,1),(0,1,0),(0,1,1)} )
+assert( (for (a,b) from (0,0) to (1,2) when a == 0 list b) == {0,1,2} )
+assert( (for (a,b) from (1,0) to (0,1) list a+b) == {} )
+assert( (for ab from (0,0) to (1,1) list ab) == {(0,0),(0,1),(1,0),(1,1)} )
+
 -- Local Variables:
 -- compile-command: "make -C $M2BUILDDIR/Macaulay2/basictests A77.okay"
 -- End:

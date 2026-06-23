@@ -58,6 +58,33 @@ makeCodeSequence(e:ParseTree,separator:Word):CodeSequence := (
      fillCodeSequence(e,v,length(v),separator);
      v);
 
+loopVariableCount(e:ParseTree):int := (
+     when e
+     is p:Parentheses do loopVariableCount(p.contents)
+     is b:Binary do (
+	  if b.Operator.word == CommaW
+	  then loopVariableCount(b.lhs) + 1
+	  else 1)
+     else 1);
+loopVariableFrameIndex(e:ParseTree):int := (
+     when e
+     is t:Token do t.entry.frameindex
+     is p:Parentheses do loopVariableFrameIndex(p.contents)
+     else 0);
+fillLoopVariableFrameIndices(e:ParseTree,v:array(int),m:int):int := (
+     while true do
+     when e
+     is p:Parentheses do e = p.contents
+     is b:Binary do (
+	  if b.Operator.word == CommaW
+	  then (m=fillLoopVariableFrameIndices(b.rhs,v,m); e=b.lhs)
+	  else (m=m-1; v.m=loopVariableFrameIndex(e); return m))
+     else (m=m-1; v.m=loopVariableFrameIndex(e); return m));
+loopVariableFrameIndices(e:ParseTree):array(int) := (
+     v := new array(int) len loopVariableCount(e) do provide 0;
+     fillLoopVariableFrameIndices(e,v,length(v));
+     v);
+
 nestingDepth(frameID:int,d:Dictionary):int := (
      if frameID == 0 then return -1;
      n := 0;
@@ -312,6 +339,7 @@ export convert0(e:ParseTree):Code := (
 	forCode(
 	    convert(f.inClause),   convert(f.fromClause), convert(f.toClause),
 	    convert(f.whenClause), convert(f.listClause), convert(f.doClause),
+	    loopVariableFrameIndices(f.variable), treePosition(f.variable),
 	    f.dictionary.frameID, f.dictionary.framesize, pos))
     is n:New do (
 	if n.newParent      == dummyTree then
