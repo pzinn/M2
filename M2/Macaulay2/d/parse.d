@@ -249,7 +249,7 @@ export arrayCode        := {+z:CodeSequence, position:Position};
 export angleBarListCode := {+t:CodeSequence, position:Position};
 export semiCode         := {+w:CodeSequence, position:Position};
 export multaryCode      := {+f:multop, args:CodeSequence, position:Position};
-export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, frameID:int, framesize:int, position:Position} ;
+export forCode          := {+inClause:Code, fromClause:Code, toClause:Code, whenClause:Code, listClause:Code, doClause:Code, variableFrameIndices:array(int), variablePosition:Position, frameID:int, framesize:int, position:Position} ;
 
 export functionDescription := {
      frameID:int,		    -- seqno of dictionary
@@ -520,4 +520,3 @@ export file := {+
 	};
 
 export PosFile := {+ file:file, lastchar:int, filename:string, line:ushort, column:ushort };
-

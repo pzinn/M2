@@ -314,17 +314,77 @@ export getNextFunction(e:Expr):Expr := (
 export strtoseq(s:stringCell):Sequence := new Sequence len length(s.v) do
     foreach c in s.v do provide chars.(int(uchar(c)));
 
+assignForLoopVariables(indices:array(int), variablePosition:Position, value:Expr):Expr := (
+     n := length(indices);
+     if n == 1 then (
+	  localFrame.values.(indices.0) = value;
+	  nullE)
+     else (
+	  values := emptySequence;
+	  when value
+	  is s:Sequence do values = s
+	  is l:List do values = l.v
+	  else return printErrorMessageE(variablePosition,"expected a sequence or list for loop variable list");
+	  if length(values) != n then return printErrorMessageE(
+	       variablePosition,
+	       "expected sequence or list of length " + tostring(n) + " for loop variable list");
+	  for k from 0 to n-1 do localFrame.values.(indices.k) = values.k;
+	  nullE));
+
+isForLoopIndexSequence(e:Expr):bool := (
+     when e
+     is s:Sequence do true
+     is l:List do true
+     else false);
+forLoopIndexSequenceLength(e:Expr):int := (
+     when e
+     is s:Sequence do length(s)
+     is l:List do length(l.v)
+     else 0);
+fillForLoopIndexBoundsFromSequence(values:Sequence, source:Code, bounds:array(int)):Expr := (
+     if length(values) != length(bounds) then return printErrorMessageE(
+	  source, "expected sequence or list of length " + tostring(length(bounds)));
+     for k from 0 to length(bounds)-1 do (
+	  when values.k
+	  is f:ZZcell do (
+	       if isInt(f) then bounds.k = toInt(f)
+	       else return printErrorMessageE(source,"expected a sequence or list of small integers"))
+	  else return printErrorMessageE(source,"expected a sequence or list of integers"));
+     nullE);
+fillForLoopIndexBounds(value:Expr, source:Code, bounds:array(int)):Expr := (
+     when value
+     is s:Sequence do fillForLoopIndexBoundsFromSequence(s,source,bounds)
+     is l:List do fillForLoopIndexBoundsFromSequence(l.v,source,bounds)
+     else printErrorMessageE(source,"expected a sequence or list of integers"));
+advanceForLoopIndexes(indexes:array(int), lengths:array(int)):bool := (
+     k := length(indexes)-1;
+     while k >= 0 do (
+	  indexes.k = indexes.k + 1;
+	  if indexes.k < lengths.k then return true;
+	  indexes.k = 0;
+	  k = k - 1);
+     false);
+
 evalForCode(c:forCode):Expr := (
      r := if c.listClause == dummyCode then emptySequence else new Sequence len 1 do provide nullE;
      i := 0;				    -- index in r
      j := 0;				    -- the value of the loop variable if it's an integer loop, else the index in the list if it's "for i in w ..."
      w := emptySequence;				    -- the list x when it's "for i in w ..."
      n := 0;				    -- the upper bound on j, if there is a toClause.
+     starts := new array(int) len 0 do provide 0;
+     lengths := new array(int) len 0 do provide 0;
+     indexes := new array(int) len 0 do provide 0;
      iter := nullE;                         -- iterator
      nextfunc := nullE;                     -- next function for iterator
      listLoop := false;
      toLimit := false;
      iterLoop := false;
+     multiIndexLoop := false;
+     multiIndexActive := false;
+     multiIndexDimension := 0;
+     variableFrameIndices := c.variableFrameIndices;
+     singleLoopVariable := length(variableFrameIndices) == 1;
+     singleFrameIndex := if singleLoopVariable then variableFrameIndices.0 else 0;
      if c.inClause != dummyCode then (
      	  listLoop = true;
 	  invalue := eval(c.inClause);
@@ -343,36 +403,92 @@ evalForCode(c:forCode):Expr := (
 	      else return printErrorMessageE(c.inClause,
 		  "expected a list, sequence, or iterable object")))
      else (
-	  if c.fromClause != dummyCode then (
-	       fromvalue := eval(c.fromClause);
+	  hasFromClause := c.fromClause != dummyCode;
+	  hasToClause := c.toClause != dummyCode;
+	  fromvalue := nullE;
+	  tovalue := nullE;
+	  if hasFromClause then (
+	       fromvalue = eval(c.fromClause);
 	       when fromvalue 
 	       is Error do return fromvalue
-	       is f:ZZcell do (
+	       else nothing);
+	  if hasToClause then (
+	       tovalue = eval(c.toClause);
+	       when tovalue
+	       is Error do return tovalue
+	       else nothing);
+	  if ((hasFromClause && isForLoopIndexSequence(fromvalue)) || (hasToClause && isForLoopIndexSequence(tovalue))) then (
+	       multiIndexLoop = true;
+	       if !hasToClause then return printErrorMessageE(c.fromClause,"expected 'to' clause for sequence index loop");
+	       dimension := if hasFromClause then forLoopIndexSequenceLength(fromvalue) else forLoopIndexSequenceLength(tovalue);
+	       multiIndexDimension = dimension;
+	       if hasToClause && forLoopIndexSequenceLength(tovalue) != dimension then return printErrorMessageE(
+		    c.toClause, "expected sequence or list of length " + tostring(dimension));
+	       starts = new array(int) len dimension do provide 0;
+	       finishes := new array(int) len dimension do provide 0;
+	       lengths = new array(int) len dimension do provide 0;
+	       indexes = new array(int) len dimension do provide 0;
+	       if hasFromClause then (
+		    e := fillForLoopIndexBounds(fromvalue,c.fromClause,starts);
+		    when e is Error do return e else nothing);
+	       e := fillForLoopIndexBounds(tovalue,c.toClause,finishes);
+	       when e is Error do return e else nothing;
+	       multiIndexActive = true;
+	       for k from 0 to dimension-1 do (
+		    lengths.k = finishes.k - starts.k + 1;
+		    if lengths.k <= 0 then multiIndexActive = false))
+	  else (
+	       if hasFromClause then (
+		    when fromvalue
+		    is f:ZZcell do (
 		    if isInt(f) then j = toInt(f)
 		    else return printErrorMessageE(c.fromClause,"expected a small integer"))
-	       else return printErrorMessageE(c.fromClause,"expected an integer"));
-	  if c.toClause != dummyCode then (
-	       toLimit = true;
-	       tovalue := eval(c.toClause);
-	       when tovalue 
-	       is Error do return tovalue
-	       is f:ZZcell do (
+		    else return printErrorMessageE(c.fromClause,"expected an integer"));
+	       if hasToClause then (
+		    toLimit = true;
+		    when tovalue
+		    is f:ZZcell do (
 		    if isInt(f) then n = toInt(f)
 		    else return printErrorMessageE(c.toClause,"expected a small integer"))
-	       else return printErrorMessageE(c.toClause,"expected an integer"));
+		    else return printErrorMessageE(c.toClause,"expected an integer")));
 	  );
      localFrame = Frame(localFrame,c.frameID,c.framesize,false,new Sequence len c.framesize do provide nullE);
      while true do (
-	  if toLimit && j > n then break;
-	  if listLoop && j >= length(w) then break;
-	  localFrame.values.0 = ( -- should be the frame spot for the loop var
-	      if listLoop then w.j
-	      else if iterLoop then(
-		  tmp := applyEE(nextfunc, iter);
-		  if tmp == StopIterationE then break;
-		  tmp)
-	      else Expr(ZZcell(toInteger(j))));
-	  j = j+1;
+	  if multiIndexLoop then (
+	       if !multiIndexActive then break;
+	       value := Expr(new Sequence len multiIndexDimension at k do provide toExpr(starts.k + indexes.k));
+	       multiIndexActive = advanceForLoopIndexes(indexes,lengths);
+	       if singleLoopVariable then localFrame.values.(singleFrameIndex) = value
+	       else (
+		    variableAssignment := assignForLoopVariables(variableFrameIndices,c.variablePosition,value);
+		    when variableAssignment is Error do (
+			 localFrame = localFrame.outerFrame;
+			 return variableAssignment)
+		    else nothing))
+	  else (
+	       if toLimit && j > n then break;
+	       if listLoop && j >= length(w) then break;
+	       if singleLoopVariable then localFrame.values.(singleFrameIndex) = (
+		    if listLoop then w.j
+		    else if iterLoop then (
+			 tmp := applyEE(nextfunc, iter);
+			 if tmp == StopIterationE then break;
+			 tmp)
+		    else Expr(ZZcell(toInteger(j))))
+	       else (
+		    value := (
+			 if listLoop then w.j
+			 else if iterLoop then (
+			      tmp := applyEE(nextfunc, iter);
+			      if tmp == StopIterationE then break;
+			      tmp)
+			 else Expr(ZZcell(toInteger(j))));
+		    variableAssignment := assignForLoopVariables(variableFrameIndices,c.variablePosition,value);
+		    when variableAssignment is Error do (
+			 localFrame = localFrame.outerFrame;
+			 return variableAssignment)
+		    else nothing);
+	       j = j+1);
 	  if c.whenClause != dummyCode then (
 	       p := eval(c.whenClause);
 	       when p is err:Error do (

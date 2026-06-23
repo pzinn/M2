@@ -639,6 +639,30 @@ bindSingleParm(e:ParseTree,dictionary:Dictionary):void := (
 	  else makeErrorTree(t,"expected symbol")
 	  )
      else makeErrorTree(e,"expected symbol"));
+bindLoopVariableItem(e:ParseTree,dictionary:Dictionary):void := (
+     when e
+     is t:Token do (
+	  if t.word.typecode != TCid then makeErrorTree(t,"expected symbol")
+	  else (
+	       when lookup(t.word, dictionary.symboltable)
+	       is Symbol do makeErrorTree(t,"duplicate symbol in loop variable list: " + t.word.name)
+	       else nothing;
+	       makeSymbol(e,dictionary)))
+     else makeErrorTree(e,"expected symbol"));
+bindLoopVariableList(e:ParseTree,dictionary:Dictionary):void := (
+     when e
+     is binary:Binary do (
+	  if binary.Operator.word == CommaW
+	  then (
+	       bindLoopVariableList(binary.lhs,dictionary);
+	       bindop(binary.Operator,dictionary);
+	       bindLoopVariableItem(binary.rhs,dictionary);)
+	  else makeErrorTree(e,"syntax error: expected loop variable list"))
+     else bindLoopVariableItem(e,dictionary));
+bindLoopVariables(e:ParseTree,dictionary:Dictionary):void := (
+     when e
+     is p:Parentheses do bindLoopVariableList(p.contents,dictionary)
+     else bindLoopVariableItem(e,dictionary));
 bindParenParmList(e:ParseTree,dictionary:Dictionary,desc:functionDescription):void := (
      when e 
      is t:Token do (
@@ -890,7 +914,7 @@ export bind(e:ParseTree,dictionary:Dictionary):void := (
 	  bind(w.fromClause,dictionary);
 	  bind(w.toClause,dictionary);
 	  newdict := newLocalDictionary(dictionary);
-	  bindSingleParm(w.variable,newdict);
+	  bindLoopVariables(w.variable,newdict);
 	  bind(w.whenClause,newdict);
 	  bind(w.listClause,newdict);
 	  bind(w.doClause,newdict);
