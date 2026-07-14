@@ -203,9 +203,16 @@ frac FactoredPolynomialRing := R -> if R.?frac then R.frac else (
 	F = new FractionField from F1;
 	commonEngineRingInitializations F;
 	F.baseRings=append(F.baseRings,R);
-	value F := a -> (f value numerator a) / (f value denominator a);
-	raw F := a -> rawFraction(F.RawRing,raw f value numerator a, raw f value denominator a); -- bit messy
-	new F from R := (A,a) -> fraction(numerator a,denominator a);
+	value F := a -> (
+            n := value numerator a;
+            d := value denominator a;
+            (f (numerator n * denominator d))/(f (numerator d * denominator n)) -- bit messy
+        );
+	raw F := a -> (
+            v := value a;
+            rawFraction(F.RawRing, raw numerator v, raw denominator v)
+            );
+        new F from R := (A,a) -> fraction(numerator a,denominator a);
 	new F from RawRingElement := (A,a) -> fraction(new R from g new R1 from rawNumerator a, new R from g new R1 from rawDenominator a);
 	);
     promote(R,F) := (x,F) -> new F from x;
@@ -223,9 +230,15 @@ frac FactoredPolynomialRing := R -> if R.?frac then R.frac else (
 	    );
         if s === 0_R then error "division by 0";
         g:=gcd(r,s);
-        if isField coefficientRing R then g=g*s#0 -- no constant in the denominator
---        else if coefficientRing R === ZZ and lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
-        else try if lift(s#0,ZZ)<0 then g=-g; -- no sign in the denominator
+        rr := leadCoefficient r#0; -- constant in front
+        ss := leadCoefficient s#0; -- constant in front
+        if isField coefficientRing R then try (
+            r *= denominator rr;
+            rr = numerator rr;
+            s *= denominator ss;
+            ss = numerator ss;
+            );
+        if ss<0 then g=-g; -- no sign in the denominator
         new F from {r//g, s//g}
         );
     fraction(F,F) := F / F := F // F := (x,y) -> fraction(numerator x*denominator y,denominator x*numerator y);
