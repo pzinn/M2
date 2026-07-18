@@ -215,10 +215,13 @@ frac FactoredPolynomialRing := R -> if R.?frac then R.frac else (
         new F from R := (A,a) -> fraction(numerator a,denominator a);
 	new F from RawRingElement := (A,a) -> fraction(new R from g new R1 from rawNumerator a, new R from g new R1 from rawDenominator a);
 	);
-    promote(R,F) := (x,F) -> new F from x;
-    promote(R0,F) := (x,F) -> new F from new R from x;
---    lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
-    lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^-1 else error "cannot lift given ring element";
+    --promote(R,F) := (x,F) -> new F from x;
+    --promote(R0,F) := (x,F) -> new F from new R from x;
+    setupPromote(x->new F from x,R,F);
+    setupPromote(x->new F from new R from x,R0,F);
+    --lift(F,R) := opts -> (f,R) -> if denominator f === 1_R then numerator f else error "cannot lift given ring element";
+    --lift(F,R) := opts -> (f,R) -> if isUnit denominator f then numerator f*(denominator f)^-1 else error "cannot lift given ring element";
+    setupLift(f->if isUnit denominator f then numerator f*(denominator f)^-1 else error "cannot lift given ring element",F,R);
     numerator F := a -> a#0;
     denominator F := a -> a#1;
     fraction(R,R) := (r,s) -> (
