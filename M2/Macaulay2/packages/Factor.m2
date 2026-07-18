@@ -47,6 +47,7 @@ leadCoeff := x -> ( -- iterated leadCoefficient
 factor PolynomialRing := opts -> R -> (
     if R.?factor then return R.factor;
     Rf:=new FactoredPolynomialRing of RingElement from R; -- not of R from R for subtle reasons: each such R gets its own addition law etc, cf enginering.m2
+    Rf.cache = new CacheTable;
     -- TODO FactoredRingElement?
     R.factor=Rf; -- careful that this is symbol factor, not method factor
     Rf.baseRings=append(R.baseRings,R);
