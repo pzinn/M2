@@ -7,7 +7,7 @@ newPackage(
             Email => "pzinn@unimelb.edu.au",
             HomePage => "http://blogs.unimelb.edu.au/paul-zinn-justin/"}},
     Headline => "Cotangent Schubert calculus",
-    Keywords => {"Intersection Theory", "Flag varieties"},
+    Keywords => {"Intersection Theory", "Flag Varieties", "Equivariant Cohomology"},
     PackageImports => {"VectorGraphics"},
     AuxiliaryFiles => true,
     DebuggingMode => false,

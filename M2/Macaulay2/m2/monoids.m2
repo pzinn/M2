@@ -161,7 +161,7 @@ coefficient(RingElement, RingElement) := (m, f) -> (
     R := ring f;
     k := coefficientRing R;
     -- TODO: audit this code and how it is used in towers and inexact fields
-    if size m === 1 and leadCoefficient m == 1
+    if instance(m, R) and size m === 1 and leadCoefficient m == 1
     then promote(rawCoefficient(raw k, raw f, rawLeadMonomialR m), k)
     else error "coefficient: expected a monomial from the same ring")
 
@@ -317,7 +317,7 @@ monoidParts = M -> (
     D := runLengthEncode if opts.DegreeRank === 0 then opts.Degrees else if opts.DegreeRank === 1 then flatten opts.Degrees else opts.Degrees / vector;
     L := nonnull splice ( G, if not isDefault(opts, Degrees) then Degrees => D,
 	apply(( DegreeGroup, Heft, Join, MonomialOrder, WeylAlgebra, SkewCommutative, Inverses, Local, Global ),
-	    key -> if opts#?key and not isDefault(opts, key) then key => runLengthEncode opts#key)))
+	    key -> if opts#?key and not isDefault(opts, key) then key => runLengthEncode expression opts#key)))
 
 expressionMonoid = M -> (
     T := if (options M).Local === true then List else Array;
