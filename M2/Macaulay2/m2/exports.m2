@@ -879,6 +879,7 @@ export {
 	"leadMonomial",
 	"leadTerm",
 	"left",
+	"legendreSymbol",
 	"length",
 	"lift",
 	"liftable",
