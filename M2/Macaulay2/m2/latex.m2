@@ -205,10 +205,13 @@ texMath HashTable := H -> (
     )
 
 texMath MutableHashTable := H -> (
-    if H.?texMath then H.texMath -- used by some rings, e.g., ZZ, QQ, RR
-    else if hasAttribute(H, ReverseDictionary)
+    if hasAttribute(H, ReverseDictionary)
     then texMath toString getAttribute(H, ReverseDictionary)
     else texMathMutable H)
+
+texMath Ring := R -> (
+    if R.?texMath then R.texMath -- used by some rings, e.g., ZZ, QQ, RR
+    else texMathMutable R)
 
 texMath Function := f -> texMath toString f
 
