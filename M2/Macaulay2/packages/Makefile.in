@@ -77,7 +77,7 @@ unmark-$1: ; rm -rf  @pre_libm2dir@/$1/.installed
 	$(MKDIR_P) $1-temporary
 	@echo "make: Entering directory \`$(shell pwd)/$1-temporary'"
 	cd $1-temporary && @pre_bindir@/M2 $(M2DIRS) \
-	    -q $(STOP) \
+	    --webapp -q $(STOP) \
 	    --no-preload \
 	    -e errorDepth=$(errorDepth) \
 	    -e debugLevel=$(debugLevel) \
