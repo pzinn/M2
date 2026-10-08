@@ -90,6 +90,7 @@ undocumented' = x -> error "late use of function undocumented'"
 
 unexportedSymbols = () -> hashTable apply(pairs Core#"private dictionary", (n,s) -> if not Core.Dictionary#?n then (s => class value s => value s))
 
+-*
 -- prevent running arbitrary code on Macaulay2Web
 run0 := run
 get0 := get
@@ -161,6 +162,7 @@ get File := get0
 get String := x -> (
     if x#?0 and x#0 == "!" then secureRun(get0, substring_1, x)
     else get0 x)
+*-
 
 Function.GlobalReleaseHook = (X,x) -> (
      if dictionary X =!= User#"private dictionary" then warningMessage(X," redefined");
