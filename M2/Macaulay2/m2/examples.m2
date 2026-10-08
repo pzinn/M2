@@ -17,10 +17,13 @@ needs "document.m2" -- for DocumentTag
 -- local utilities
 -----------------------------------------------------------------------------
 
-M2outputRE       = "\n+(?=i+[1-9][0-9]* : )"
+standardM2outputRE := "\n+(?=i+[1-9][0-9]* : )"
+M2outputRE       = standardM2outputRE
 M2outputHash     = "-- -*- M2-comint -*- hash: "
 separateM2output = str -> (
-    L := separate(M2outputRE, "\n" | replace("\n+\\Z", "", str));
+    normalized := "\n" | replace("\n+\\Z", "", str);
+    L := separate(M2outputRE, normalized);
+    if #L == 1 then L = separate(standardM2outputRE, normalized);
     if #L == 0 then L else
     if #L == 1 then {substring(1, L#0)} else drop(L,1))
 
