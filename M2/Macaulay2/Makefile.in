@@ -3,8 +3,9 @@
 VPATH = @srcdir@
 include ../include/config.Makefile
 all: @pre_docdir@/COPYING-GPL-2 @pre_docdir@/COPYING-GPL-3 @pre_docdir@/LAYOUT
+CHECK_HTML_LINKS ?= true
 SUBDIRS = e c d system bin m2 man packages editors \
-	$(if $(filter html, @DOCUMENTATION@), html-check-links) tests
+	$(if $(filter true, $(CHECK_HTML_LINKS)),$(if $(filter html, @DOCUMENTATION@), html-check-links)) tests
 
 all-in-d: all-in-c
 all-in-bin: all-in-e all-in-d all-in-system

@@ -19,7 +19,7 @@ jobs:
           cd M2/BUILD/build
           ../../autogen.sh
           ../../configure --with-system-libs --with-fplll
-          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
+          make -j$(nproc 2>/dev/null || sysctl -n hw.logicalcpu) CHECK_HTML_LINKS=false
       - name: Make distribution tarballs
         run: |
           cd M2/BUILD/build
