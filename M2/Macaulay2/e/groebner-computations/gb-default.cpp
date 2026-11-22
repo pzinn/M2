@@ -2688,9 +2688,8 @@ Computation /* or null */ *gbA::set_hilbert_function(const RingElement *hf)
       hf_diff = RingElement::make_raw(hf->get_ring(), ZERO_RINGELEM);
       use_hilb = true;
       hilb_new_elems = true;
-      // A computation stopped mid-degree must first finish auto-reduction and
-      // create pairs for its new elements.  Those phases naturally lead to
-      // STATE_HILB; only a computation at a degree boundary must be redirected.
+      // only recompute Hilbert information if at a degree boundary
+      // (otherwise need to finish current degree and rely on normal workflow to reach STATE_HILB)
       if (state == STATE_NEWDEGREE) state = STATE_HILB;
     }
 
