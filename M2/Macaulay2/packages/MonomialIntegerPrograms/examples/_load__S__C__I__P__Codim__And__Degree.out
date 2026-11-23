@@ -10,12 +10,12 @@
 o5 = $3$
 i6 : 6:0loadSCIPCodimAndDegree();
 i7 : 7:0codim(monomialIdeal(a^2, b*a, c*b))
-<samp class="token string">Codim files saved in directory: /tmp/M2-2212401-0/0</samp>
+<samp class="token string">Codim files saved in directory: /tmp/M2-241855-0/0</samp>
 
 o7 = $2$
 i8 : 8:0degree(monomialIdeal(a^2, b*a, c*b))
-<samp class="token string">Codim files saved in directory: /tmp/M2-2212401-0/1</samp>
-<samp class="token string">Degree files saved in directory: /tmp/M2-2212401-0/2</samp>
+<samp class="token string">Codim files saved in directory: /tmp/M2-241855-0/1</samp>
+<samp class="token string">Degree files saved in directory: /tmp/M2-241855-0/2</samp>
 
 o8 = $3$
 i9 : 9:0

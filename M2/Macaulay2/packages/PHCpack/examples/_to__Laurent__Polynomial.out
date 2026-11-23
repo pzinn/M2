@@ -17,7 +17,7 @@
 i8 : describe oo
 
 o8 = $\htmlClass{token class-name}{{\mathbb Q}}{}\left\{x\,{.}{.}\,z,\,w_{0},\,\mathit{Degrees}\ \Rightarrow \ \{4:1\},\,$\mathit{MonomialOrder}\ \Rightarrow \ $<ul style="display:inline-table">
-  <li>$\mathit{Weights}\ \Rightarrow \ \{4:-1\}$</li>
+  <li>$\mathit{Weights}\ \Rightarrow \ \{-1,\,-1,\,-1,\,-1\}$</li>
   <li>$\mathit{MonomialSize}\ \Rightarrow \ 32$</li>
   <li>$\mathit{GroupRevLex}\ \Rightarrow \ 4$</li>
   <li>$\mathit{Position}\ \Rightarrow \ \mathit{Up}$</li>

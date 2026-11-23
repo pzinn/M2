@@ -2,13 +2,13 @@
 i1 : (f, p, s) = LRtriple(6,matrix{{3, 2, 4, 6}});
 i2 : (R, pols, sols, fixedFlags, movedFlag, solutionPlanes) = parseTriplet(f, p, s)
 
-o2 = $\left(R,\,\{\left({.107672}-{.233096}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left({.0680858}+{.140066}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left(-{.139111}-{.251156}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left(-{.147469}-{.331792}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left(-{.311435}+{.235574}\,\mathbf{i}\right)\mathit{x11}+\left(-{.117513}+{.162194}\,\mathbf{i}\right)\mathit{x32}+\left(-{.293111}-{.319814}\,\mathbf{i}\right)\mathit{x53}-{.647669}+{.375117}\,\mathbf{i},\,\left(-{.566528}-{.056313}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.0127507}-{.0000645311}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left(-{.034286}-{.582314}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left(-{.52862}+{.0461567}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left({.196696}-{.104807}\,\mathbf{i}\right)\mathit{x11}+\left(-{.0153385}+{.092913}\,\mathbf{i}\right)\mathit{x32}+\left({.120625}-{.677899}\,\mathbf{i}\right)\mathit{x53}+{.251313}-{.105469}\,\mathbf{i},\,\left({.579181}-{.878851}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left({.870099}-{.183062}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left({.350529}-{.737735}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left({.323884}+{.034917}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left({.939218}-{.367294}\,\mathbf{i}\right)\mathit{x11}+\left({.316194}+{.390733}\,\mathbf{i}\right)\mathit{x32}+\left({.260866}-{.217239}\,\mathbf{i}\right)\mathit{x53}+{.4815}-{.0217202}\,\mathbf{i},\,\left(-{1.24944}-{.0601693}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.945799}+{.51358}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left(-{.676487}-{.0684529}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left(-{.756308}-{.284682}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left(-{.0971877}+{.213387}\,\mathbf{i}\right)\mathit{x11}+\left(-{.705224}+{.091609}\,\mathbf{i}\right)\mathit{x32}+\left(-{.438879}-{.10165}\,\mathbf{i}\right)\mathit{x53}-{.124962}+{.0616246}\,\mathbf{i},\,\left({.933743}+{.0867458}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left({.695064}-{.360443}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left({.705387}-{.0782782}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left({.533531}+{.0403358}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left({.728391}-{.143542}\,\mathbf{i}\right)\mathit{x11}+\left({.441104}-{.19947}\,\mathbf{i}\right)\mathit{x32}+\left({.592826}-{.0286761}\,\mathbf{i}\right)\mathit{x53}+{.483164}+{.0921989}\,\mathbf{i},\,\left({.0166022}+{.106457}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.0949185}-{.501409}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left({.0635972}-{.185152}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left(-{.615163}+{.0900489}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left({.390514}-{.735336}\,\mathbf{i}\right)\mathit{x11}+\left(-{.311284}+{.00664935}\,\mathbf{i}\right)\mathit{x32}+\left(-{.186828}-{.178034}\,\mathbf{i}\right)\mathit{x53}+{.268778}-{.419968}\,\mathbf{i}\},\,\left\{\{-{1.33008}-{.115495}\,\mathbf{i},\,-{.519952}+{.00295896}\,\mathbf{i},\,-{.786622}-{2.72551}\,\mathbf{i}\},\,\{-{.425849}-{.32155}\,\mathbf{i},\,-{.021936}-{2.03323}\,\mathbf{i},\,-{.521078}+{.445823}\,\mathbf{i}\}\right\},\,\left\{\left(\!\begin{array}{cccccc}
--{.408248}&amp;{.259515}-{.130014}\,\mathbf{i}&amp;-{.0952445}-{.507553}\,\mathbf{i}&amp;{.498725}+{.121925}\,\mathbf{i}&amp;{.0779647}+{.0970562}\,\mathbf{i}&amp;-{.161079}-{.421144}\,\mathbf{i}\\
--{.360879}+{.190875}\,\mathbf{i}&amp;-{.523224}-{.0684923}\,\mathbf{i}&amp;-{.0286549}+{.117496}\,\mathbf{i}&amp;-{.086009}+{.111937}\,\mathbf{i}&amp;{.449983}-{.3383}\,\mathbf{i}&amp;{.349922}-{.284514}\,\mathbf{i}\\
-{.093319}-{.39744}\,\mathbf{i}&amp;-{.357384}-{.379954}\,\mathbf{i}&amp;-{.132174}+{.0819673}\,\mathbf{i}&amp;{.36989}-{.0223457}\,\mathbf{i}&amp;-{.547626}-{.259761}\,\mathbf{i}&amp;{.170576}-{.0572074}\,\mathbf{i}\\
-{.276557}-{.300305}\,\mathbf{i}&amp;-{.351899}-{.149793}\,\mathbf{i}&amp;-{.125915}-{.24632}\,\mathbf{i}&amp;-{.428244}+{.22411}\,\mathbf{i}&amp;{.114552}+{.1191}\,\mathbf{i}&amp;-{.499914}-{.315744}\,\mathbf{i}\\
--{.264521}+{.310959}\,\mathbf{i}&amp;-{.25099}-{.270776}\,\mathbf{i}&amp;{.486132}-{.405338}\,\mathbf{i}&amp;-{.151291}+{.0837777}\,\mathbf{i}&amp;-{.260965}-{.0753539}\,\mathbf{i}&amp;-{.165451}+{.40661}\,\mathbf{i}\\
--{.394897}+{.103552}\,\mathbf{i}&amp;{.279663}-{.0663953}\,\mathbf{i}&amp;-{.462429}+{.0592507}\,\mathbf{i}&amp;-{.520664}+{.211055}\,\mathbf{i}&amp;-{.439065}-{.0795917}\,\mathbf{i}&amp;{.105417}-{.0866119}\,\mathbf{i}
+o2 = $\left(R,\,\{\left(-{.14892}-{.16694}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.122959}+{.237027}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left(-{.302494}+{.473439}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left(-{.245322}-{.316542}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left({.145943}+{.894992}\,\mathbf{i}\right)\mathit{x11}+\left(-{.30702}+{.316691}\,\mathbf{i}\right)\mathit{x32}+\left(-{.221451}+{.405183}\,\mathbf{i}\right)\mathit{x53}+{.161917}+{.876727}\,\mathbf{i},\,\left(-{.225819}+{.153177}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.292085}-{.0153434}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left({.340769}-{.174678}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left(-{.179737}-{.00458838}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left({.203311}-{.631879}\,\mathbf{i}\right)\mathit{x11}+\left(-{.598355}+{.109053}\,\mathbf{i}\right)\mathit{x32}+\left({.152555}-{.299844}\,\mathbf{i}\right)\mathit{x53}-{.1684}-{.568649}\,\mathbf{i},\,\left({.284192}+{.0525228}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.622021}+{.257844}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left({.19613}+{.0334798}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left({.172182}-{.208474}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left(-{.313411}+{.335841}\,\mathbf{i}\right)\mathit{x11}+\left(-{.271943}+{.125856}\,\mathbf{i}\right)\mathit{x32}+\left({.0666296}-{.0917187}\,\mathbf{i}\right)\mathit{x53}-{.154797}+{.172569}\,\mathbf{i},\,\left({1.65763}+{.546169}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left({.740665}+{.56942}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left({.912049}-{.0489129}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left({.712686}+{.226364}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left({.471243}+{.187001}\,\mathbf{i}\right)\mathit{x11}+\left({.364973}+{.265457}\,\mathbf{i}\right)\mathit{x32}+\left({.374704}-{.0837842}\,\mathbf{i}\right)\mathit{x53}+{.271655}+{.0911581}\,\mathbf{i},\,\left(-{.241058}-{.0145978}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.512268}+{.981634}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left(-{.195069}+{.124286}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left({.164023}+{.159107}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left(-{.222924}+{.466906}\,\mathbf{i}\right)\mathit{x11}+\left(-{.001608}+{.619059}\,\mathbf{i}\right)\mathit{x32}+\left({.0559303}+{.0774494}\,\mathbf{i}\right)\mathit{x53}+{.0497675}+{.170929}\,\mathbf{i},\,\left({.528513}-{.804524}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}\,\mathit{x53}+\left(-{.184945}-{.470065}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x32}+\left({.0460467}-{.345879}\,\mathbf{i}\right)\mathit{x11}\,\mathit{x53}+\left({.195742}-{.812725}\,\mathbf{i}\right)\mathit{x32}\,\mathit{x53}+\left(-{.380037}-{.221306}\,\mathbf{i}\right)\mathit{x11}+\left(-{.143078}-{.360291}\,\mathbf{i}\right)\mathit{x32}+\left(-{.0672944}-{.294498}\,\mathbf{i}\right)\mathit{x53}-{.307478}-{.107052}\,\mathbf{i}\},\,\left\{\{-{.865619}+{.189957}\,\mathbf{i},\,-{.53164}+{.153881}\,\mathbf{i},\,-{.569804}-{1.03313}\,\mathbf{i}\},\,\{-{.435835}+{.197757}\,\mathbf{i},\,-{.236626}+{.0472715}\,\mathbf{i},\,-{1.61393}+{1.0271}\,\mathbf{i}\}\right\},\,\left\{\left(\!\begin{array}{cccccc}
+-{.408248}&amp;-{.074951}-{.426825}\,\mathbf{i}&amp;{.0140273}-{.281519}\,\mathbf{i}&amp;{.137711}+{.149417}\,\mathbf{i}&amp;{.420691}+{.0448595}\,\mathbf{i}&amp;-{.572502}+{.134332}\,\mathbf{i}\\
+{.152352}-{.378755}\,\mathbf{i}&amp;-{.374774}+{.0260176}\,\mathbf{i}&amp;{.174686}-{.289815}\,\mathbf{i}&amp;{.0364063}-{.368208}\,\mathbf{i}&amp;{.545722}+{.00708496}\,\mathbf{i}&amp;{.34664}-{.150892}\,\mathbf{i}\\
+-{.401057}+{.076287}\,\mathbf{i}&amp;{.33286}-{.171348}\,\mathbf{i}&amp;-{.401241}+{.00431939}\,\mathbf{i}&amp;{.231254}-{.608452}\,\mathbf{i}&amp;-{.0534062}+{.231477}\,\mathbf{i}&amp;{.218732}-{.0647605}\,\mathbf{i}\\
+-{.344913}+{.218407}\,\mathbf{i}&amp;{.0148084}-{.398599}\,\mathbf{i}&amp;{.342064}-{.260967}\,\mathbf{i}&amp;-{.0512147}+{.266945}\,\mathbf{i}&amp;-{.175896}-{.239194}\,\mathbf{i}&amp;{.553246}-{.14493}\,\mathbf{i}\\
+{.0323417}-{.406965}\,\mathbf{i}&amp;-{.282404}-{.317853}\,\mathbf{i}&amp;-{.119786}-{.258937}\,\mathbf{i}&amp;-{.397084}-{.174717}\,\mathbf{i}&amp;-{.533678}+{.128152}\,\mathbf{i}&amp;-{.0838351}+{.273292}\,\mathbf{i}\\
+-{.229755}-{.33746}\,\mathbf{i}&amp;-{.392946}-{.191376}\,\mathbf{i}&amp;{.0500549}+{.613201}\,\mathbf{i}&amp;{.368813}-{.00262135}\,\mathbf{i}&amp;-{.173405}-{.217377}\,\mathbf{i}&amp;-{.0501315}-{.218896}\,\mathbf{i}
 \end{array}\!\right)\right\},\,\left(\!\begin{array}{cccccc}
 1&amp;1&amp;1&amp;1&amp;1&amp;1\\
 -1&amp;-1&amp;-1&amp;-1&amp;-1&amp;0\\
@@ -17,18 +17,18 @@
 1&amp;1&amp;0&amp;0&amp;0&amp;0\\
 -1&amp;0&amp;0&amp;0&amp;0&amp;0
 \end{array}\!\right),\,\left\{\left(\!\begin{array}{ccc}
--{1.33008}-{.115495}\,\mathbf{i}&amp;0&amp;0\\
+-{.865619}+{.189957}\,\mathbf{i}&amp;0&amp;0\\
 1&amp;0&amp;0\\
-0&amp;-{.519952}+{.00295896}\,\mathbf{i}&amp;0\\
+0&amp;-{.53164}+{.153881}\,\mathbf{i}&amp;0\\
 0&amp;1&amp;0\\
-0&amp;0&amp;-{.786622}-{2.72551}\,\mathbf{i}\\
+0&amp;0&amp;-{.569804}-{1.03313}\,\mathbf{i}\\
 0&amp;0&amp;1
 \end{array}\!\right),\,\left(\!\begin{array}{ccc}
--{.425849}-{.32155}\,\mathbf{i}&amp;0&amp;0\\
+-{.435835}+{.197757}\,\mathbf{i}&amp;0&amp;0\\
 1&amp;0&amp;0\\
-0&amp;-{.021936}-{2.03323}\,\mathbf{i}&amp;0\\
+0&amp;-{.236626}+{.0472715}\,\mathbf{i}&amp;0\\
 0&amp;1&amp;0\\
-0&amp;0&amp;-{.521078}+{.445823}\,\mathbf{i}\\
+0&amp;0&amp;-{1.61393}+{1.0271}\,\mathbf{i}\\
 0&amp;0&amp;1
 \end{array}\!\right)\right\}\right)$
 
@@ -44,23 +44,23 @@
 
 o4 = <span>$\left\{<span><samp class="token class-name">Point</samp>    <ul style="display:inline-table">
       <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span></li>
-      <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{1.33008}-{.115495}\,\mathbf{i},\,-{.519952}+{.00295896}\,\mathbf{i},\,-{.786622}-{2.72551}\,\mathbf{i}\}$</span></li>
+      <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{.865619}+{.189957}\,\mathbf{i},\,-{.53164}+{.153881}\,\mathbf{i},\,-{.569804}-{1.03313}\,\mathbf{i}\}$</span></li>
     </ul>
 </span>,\,<span><samp class="token class-name">Point</samp>    <ul style="display:inline-table">
       <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span></li>
-      <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{.425849}-{.32155}\,\mathbf{i},\,-{.021936}-{2.03323}\,\mathbf{i},\,-{.521078}+{.445823}\,\mathbf{i}\}$</span></li>
+      <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{-{.435835}+{.197757}\,\mathbf{i},\,-{.236626}+{.0472715}\,\mathbf{i},\,-{1.61393}+{1.0271}\,\mathbf{i}\}$</span></li>
     </ul>
 </span>\right\}$</span>
 i5 : peek solutionPlanes
 
 o5 = <span>$\left\{<span><samp class="token class-name">Matrix</samp>    <ul style="display:inline-table">
       <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\,\}$</span></li>
-      <li><span>$\mathit{RawMatrix}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>          <pre class="token net" style="vertical-align:-600%">-1.33008-0.115495i 0                     0                  
-1                  0                     0                  
-0                  -0.519952+0.00295896i 0                  
-0                  1                     0                  
-0                  0                     -0.786622-2.72551i 
-0                  0                     1                  
+      <li><span>$\mathit{RawMatrix}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>          <pre class="token net" style="vertical-align:-600%">-0.865619+0.189957i 0                  0                  
+1                   0                  0                  
+0                   -0.53164+0.153881i 0                  
+0                   1                  0                  
+0                   0                  -0.569804-1.03313i 
+0                   0                  1                  
 <br></pre>
 </span></li>
       <li><span>$\mathit{ring}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\htmlClass{token class-name}{{\mathbb C}}_{53}$</span></li>
@@ -69,12 +69,12 @@
     </ul>
 </span>,\,<span><samp class="token class-name">Matrix</samp>    <ul style="display:inline-table">
       <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\,\}$</span></li>
-      <li><span>$\mathit{RawMatrix}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>          <pre class="token net" style="vertical-align:-600%">-0.425849-0.32155i 0                  0                   
-1                  0                  0                   
-0                  -0.021936-2.03323i 0                   
-0                  1                  0                   
-0                  0                  -0.521078+0.445823i 
-0                  0                  1                   
+      <li><span>$\mathit{RawMatrix}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>          <pre class="token net" style="vertical-align:-600%">-0.435835+0.197757i 0                    0                
+1                   0                    0                
+0                   -0.236626+0.0472715i 0                
+0                   1                    0                
+0                   0                    -1.61393+1.0271i 
+0                   0                    1                
 <br></pre>
 </span></li>
       <li><span>$\mathit{ring}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\htmlClass{token class-name}{{\mathbb C}}_{53}$</span></li>

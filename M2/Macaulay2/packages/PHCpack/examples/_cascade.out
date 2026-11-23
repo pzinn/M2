@@ -13,16 +13,16 @@
 o4 : <samp class="token class-name">WitnessSet</samp>
 i5 : W#Equations
 
-o5 = $<pre class="token net" style="vertical-align:-200%">{-2} | (.669905+.742447ii)zz1+(-.630982-.775797ii)zz2-xz-yz |
-{-2} | (.619636+.78489ii)zz1+(.104646-.99451ii)zz2-xz+yz    |
-{-1} | -zz1+(.412809+.910818ii)zz2                          |<br></pre>
+o5 = $<pre class="token net" style="vertical-align:-200%">{-2} | (-.939936-.34135ii)zz1+(-.999635+.0270051ii)zz2-xz-yz  |
+{-2} | (-.392778+.919633ii)zz1+(-.0306035+.999532ii)zz2-xz+yz |
+{-1} | -zz1+(.709032+.705176ii)zz2                            |<br></pre>
 $
 
 o5 : <samp class="token class-name">PolySystem</samp>
 i6 : W#Points
 
 o6 = <ul style="display:inline-table">
-  <li>$\{{1.42241}-{.0414271}\,\mathbf{i},\,{2.14791}-{1.03086}\,\mathbf{i},\,0,\,0,\,0\}$</li>
+  <li>$\{-{.445075}+{1.84763}\,\mathbf{i},\,-{2.42821}-{1.32676}\,\mathbf{i},\,0,\,0,\,0\}$</li>
 </ul>
 
 
@@ -30,8 +30,8 @@
 i7 : W#Slice
 
 o7 = $\left(\!\begin{array}{cccccc}
-{.453881}+{.891062}\,\mathbf{i}&amp;{.204536}+{.978859}\,\mathbf{i}&amp;{.945861}+{.324572}\,\mathbf{i}&amp;-{.0390973}-{.999235}\,\mathbf{i}&amp;{.989621}-{.143702}\,\mathbf{i}&amp;-{.765869}-{.642997}\,\mathbf{i}\\
--{.189192}-{.98194}\,\mathbf{i}&amp;{.372069}-{.928205}\,\mathbf{i}&amp;-{.773237}-{.634117}\,\mathbf{i}&amp;{.985146}+{.171719}\,\mathbf{i}&amp;-{.718471}-{.695557}\,\mathbf{i}&amp;-{.152111}+{.988363}\,\mathbf{i}
+-{.96529}+{.26118}\,\mathbf{i}&amp;{.304927}+{.952376}\,\mathbf{i}&amp;{.498369}+{.866965}\,\mathbf{i}&amp;{.787451}-{.616378}\,\mathbf{i}&amp;{.868706}+{.495329}\,\mathbf{i}&amp;-{.576083}+{.817391}\,\mathbf{i}\\
+-{.998701}+{.0509479}\,\mathbf{i}&amp;{.507879}+{.861428}\,\mathbf{i}&amp;-{.538178}-{.842831}\,\mathbf{i}&amp;{.10099}-{.994887}\,\mathbf{i}&amp;{.587697}-{.809081}\,\mathbf{i}&amp;{.440695}+{.897657}\,\mathbf{i}
 \end{array}\!\right)$
 
 o7 : <span><samp class="token class-name">Matrix</samp> $\htmlClass{token class-name}{{\mathbb C}}_{53}^{2}\,\longleftarrow \,\htmlClass{token class-name}{{\mathbb C}}_{53}^{6}$</span>

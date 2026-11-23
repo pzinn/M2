@@ -34,7 +34,7 @@
 i7 : f = {x^2+y^2,y*x+x};
 i8 : fSols = solveSystem(f);
 i9 : fSols/print
-$\{{1.54074}\cdot 10^{-32}+{1.69482}\cdot 10^{-32}\,\mathbf{i},\,-{6.64746}\cdot 10^{-32}-{6.38927}\cdot 10^{-32}\,\mathbf{i}\}$
+$\{-{5.47382}\cdot 10^{-48},\,-{5.47382}\cdot 10^{-48}\}$
 $\{-\mathbf{i},\,-1\}$
 $\{\mathbf{i},\,-1\}$
 
@@ -43,7 +43,7 @@
 o9 : <samp class="token class-name">List</samp>
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 i11 : zeroSols/print
-$\{{1.54074}\cdot 10^{-32}+{1.69482}\cdot 10^{-32}\,\mathbf{i},\,-{6.64746}\cdot 10^{-32}-{6.38927}\cdot 10^{-32}\,\mathbf{i}\}$
+$\{-{5.47382}\cdot 10^{-48},\,-{5.47382}\cdot 10^{-48}\}$
 
 o11 = $\{$<samp class="token constant">null</samp>$\}$
 

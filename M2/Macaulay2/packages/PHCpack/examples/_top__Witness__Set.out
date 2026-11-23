@@ -14,13 +14,13 @@
 o5 = $3$
 i6 : toString equations(w)
 
-o6 = <samp class="token string">{x^2-y+(-.742661+.669668*ii)*zz1, x^3-z+(-.00482189-.999988*ii)*zz1, zz1}</samp>
+o6 = <samp class="token string">{x^2-y+(.95807-.286534*ii)*zz1, x^3-z+(-.59151-.806298*ii)*zz1, zz1}</samp>
 i7 : toString slice(w)
 
-o7 = <samp class="token string">{(-.770196-.637807*ii)*x+(-.811423-.584459*ii)*y+(.195746+.980655*ii)*z+(-.0405247-.999179*ii)*zz1-.964202+.265168*ii}</samp>
+o7 = <samp class="token string">{(.984049-.177895*ii)*x+(-.814033-.580819*ii)*y+(.0830327+.996547*ii)*z+(-.763812+.645439*ii)*zz1+.899091-.437763*ii}</samp>
 i8 : toString points(w)
 
-o8 = <samp class="token string">VerticalList{new Point from {Coordinates => {-.012911+.6272*ii, -.393213-.0161957*ii, .0152348-.246414*ii, 6.51545e-33-4.72208e-33*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {-.798533-.38367*ii, .490452+.612747*ii, -.15655-.677471*ii, -6.16298e-33+2.46519e-32*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {1.54343-.92485*ii, 1.52683-2.85488*ii, -.283788-5.8184*ii, -4.81178e-33-6.91093e-33*ii}, cache => CacheTable{...3...}}}</samp>
+o8 = <samp class="token string">VerticalList{new Point from {Coordinates => {1.30373+.313028*ii, 1.60173+.816208*ii, 1.83273+1.5655*ii, -2.67799e-32-4.20257e-32*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {-.491815+.257373*ii, .175641-.253159*ii, -.0212262+.169713*ii, -3.28276e-35+2.36835e-34*ii}, cache => CacheTable{...3...}}, new Point from {Coordinates => {-.165513-1.3334*ii, -1.75055+.441389*ii, .878286+2.26112*ii, 7.77291e-32-7.80686e-33*ii}, cache => CacheTable{...3...}}}</samp>
 i9 : R = CC[x,y,z]; f = { (x^2-y)*(x-2), (x^3 - z)*(y-2), (x*y - z)*(z-2) }
 
 o10 = $\left\{x^{3}-{2}\,x^{2}-x\,y+{2}\,y,\,x^{3}y-{2}\,x^{3}-y\,z+{2}\,z,\,x\,y\,z-{2}\,x\,y-z^{2}+{2}\,z\right\}$

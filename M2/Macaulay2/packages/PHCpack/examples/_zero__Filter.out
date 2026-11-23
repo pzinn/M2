@@ -28,16 +28,16 @@
 i7 : f = {x^2+y^2,y*x+x};
 i8 : fSols = solveSystem(f);
 i9 : fSols/print
-$\{{3.37038}\cdot 10^{-34}+{2.88889}\cdot 10^{-34}\,\mathbf{i},\,{9.44383}\cdot 10^{-34}+{3.79708}\cdot 10^{-33}\,\mathbf{i}\}$
-$\{-\mathbf{i},\,-1\}$
+$\{{2.31112}\cdot 10^{-33}+{1.46371}\cdot 10^{-32}\,\mathbf{i},\,-{3.95108}\cdot 10^{-34}+{4.60242}\cdot 10^{-33}\,\mathbf{i}\}$
 $\{\mathbf{i},\,-1\}$
+$\{-\mathbf{i},\,-1\}$
 
 o9 = $\{$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$,\,$<samp class="token constant">null</samp>$\}$
 
 o9 : <samp class="token class-name">List</samp>
 i10 : zeroSols = zeroFilter(fSols,0,1.0e-10);
 i11 : zeroSols/print
-$\{{3.37038}\cdot 10^{-34}+{2.88889}\cdot 10^{-34}\,\mathbf{i},\,{9.44383}\cdot 10^{-34}+{3.79708}\cdot 10^{-33}\,\mathbf{i}\}$
+$\{{2.31112}\cdot 10^{-33}+{1.46371}\cdot 10^{-32}\,\mathbf{i},\,-{3.95108}\cdot 10^{-34}+{4.60242}\cdot 10^{-33}\,\mathbf{i}\}$
 
 o11 = $\{$<samp class="token constant">null</samp>$\}$
 

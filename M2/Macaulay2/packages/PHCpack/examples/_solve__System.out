@@ -11,19 +11,19 @@
 o2 : <samp class="token class-name">List</samp>
 i3 : L = solveSystem(S)
 
-o3 = $\left\{\{1+\mathbf{i},\,1-\mathbf{i},\,-1\},\,\{1-\mathbf{i},\,1+\mathbf{i},\,-1\}\right\}$
+o3 = $\left\{\{1-\mathbf{i},\,1+\mathbf{i},\,-1\},\,\{1+\mathbf{i},\,1-\mathbf{i},\,-1\}\right\}$
 
 o3 : <samp class="token class-name">List</samp>
 i4 : oneSoln = L_0
 
-o4 = $\{1+\mathbf{i},\,1-\mathbf{i},\,-1\}$
+o4 = $\{1-\mathbf{i},\,1+\mathbf{i},\,-1\}$
 
 o4 : <samp class="token class-name">Point</samp>
 i5 : peek oneSoln
 
 o5 = <span><samp class="token class-name">Point</samp>  <ul style="display:inline-table">
     <li><span>$\mathit{cache}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span><samp class="token class-name">CacheTable</samp>$\{\ldots 3\ldots\}$</span></li>
-    <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{1+\mathbf{i},\,1-\mathbf{i},\,-1\}$</span></li>
+    <li><span>$\mathit{Coordinates}$</span><samp class="token string"> </samp>$\Rightarrow $<samp class="token string"> </samp><span>$\{1-\mathbf{i},\,1+\mathbf{i},\,-1\}$</span></li>
   </ul>
 </span>
 i6 : system = {y-x^2, z-x^3, x+y+z-1, x+y+ x^3 -1}
