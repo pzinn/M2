@@ -5,11 +5,11 @@ newPackage(
     	Version => "0.7",
     	Date => "April 24, 2013",
 	Authors => {
-	     {Name => "Daniel R. Grayson", Email => "dan@math.uiuc.edu", HomePage => "http://www.math.uiuc.edu/~dan/"},
-	     {Name => "Michael E. Stillman", Email => "mike@math.cornell.edu", HomePage => "http://www.math.cornell.edu/People/Faculty/stillman.html"},
-	     {Name => "Stein A. Strømme", Email => "stromme@math.uib.no", HomePage => "http://stromme.uib.no/home/" },
-	     {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-	     {Name => "Charley Crissman", Email => "charleyc@math.berkeley.edu", HomePage => "http://math.berkeley.edu/~charleyc/"}
+	     {Name => "Daniel R. Grayson", HomePage => "https://www.graysonfamily.org/dan/"},
+	     {Name => "Michael E. Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
+	     {Name => "Stein A. Strømme" },
+	     {Name => "David Eisenbud", Email => "de@math.berkeley.edu", HomePage => "https://eisenbud.github.io"},
+	     {Name => "Charley Crissman"}
 	     },
 	HomePage => "https://macaulay2.com/",
     	Headline => "characteristic classes for varieties without equations",
@@ -1090,7 +1090,9 @@ blowup(AbstractVarietyMap) :=
      Ndual := dual N;
      PN := projectiveBundle'(Ndual, VariableNames => {,{x}}); -- x = chern(1,OO_PN(1))
      C := intersectionRing PN;
-     (BasAModule, bas, iLowerMod2) := pushFwd iupper;     
+     BasAModule := pushFwd(iupper);
+     bas := pushFwdGens(BasAModule);
+     iLowerMod2 := (b) -> pushforward(BasAModule, b);
      -- iLowerMod(element b of B) = one column matrix over A whose product with bas is b
      iLowerMod := zz -> matrix(iLowerMod2(zz));
      n := numgens BasAModule;
@@ -1225,7 +1227,9 @@ extensionAlgebra(RingMap, RingElement) := opts -> (f, c) -> (
 	  if not (r == opts.Codimension) then error "Given codimension conflicts with degree of c";
 	  );
           
-     (BasAModule, Bbasis, fLowerMod2) := pushFwd f;
+     BasAModule := pushFwd(f);
+     Bbasis := pushFwdGens(BasAModule);
+     fLowerMod2 := (b) -> pushforward(BasAModule, b);
      fLowerMod := zz -> matrix(fLowerMod2(zz));
      n := numgens BasAModule;
      

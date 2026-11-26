@@ -3,8 +3,8 @@ newPackage(
     Version => "1.11", 
     Date => "5 Jun 2026",
     Authors => {
-        {Name => "David Eisenbud", Email => "de@msri.org", HomePage => "http://www.msri.org/~de/"},
-        {Name => "Mike Stillman", Email => "mike@math.cornell.edu", HomePage => "https://mikestillman.github.io"},
+        {Name => "David Eisenbud", Email => "de@math.berkeley.edu", HomePage => "https://eisenbud.github.io"},
+        {Name => "Mike Stillman", Email => "mikestillman1@gmail.com", HomePage => "https://mikestillman.github.io"},
         {Name => "Amelia Taylor", Email => "originalbrickhouse@gmail.com"}
         },
     Headline => "integral closure",
@@ -680,9 +680,9 @@ isNormal(Ring) := Boolean => (R) -> (
 conductor = method()
 conductor RingMap := Ideal => phi -> (
     -- 3/25/26 TODO: do we want to cache the results?
-    pf := pushFwd phi;
-    assert(pf#1_(0,0) == 1);
-    pmod := pf_0_{0};
+    M := pushFwd phi;
+    assert((pushFwdGens M)_0 == 1);
+    pmod := M_{0};
     ann coker pmod
     )
 conductor Ring := Ideal => R -> conductor icMap R

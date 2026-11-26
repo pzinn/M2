@@ -101,14 +101,18 @@ ring_elem FractionField::set_non_unit_frac(ring_elem top) const
 
 bool FractionField::simplify_unit_denominator(frac_elem *f) const
 {
+  // If the denominator of f is a unit of R_ (as far as R_->invert can tell),
+  // rewrite f in place as numer * denom^-1 / 1; otherwise leave f unchanged.
+  // Returns true exactly when the denominator of f is 1 on exit.
+
   if (R_->is_equal(f->denom, R_->one())) return true;
 
   ring_elem denom_inverse;
+  // TODO uniformise behaviour of invert for noninvertible elements
   if (R_->is_quotient_ring())
     {
-      // Quotient-ring is_unit calls invert internally, so call invert only once.
-      denom_inverse = R_->invert(f->denom);
-      if (R_->is_zero(denom_inverse)) return false;
+      denom_inverse = R_->invert(f->denom); // for quotient rings, don't call is_unit since it calls invert internally
+      if (R_->is_zero(denom_inverse)) return false; // for non invertible elements, returns zero
     }
   else
     {
