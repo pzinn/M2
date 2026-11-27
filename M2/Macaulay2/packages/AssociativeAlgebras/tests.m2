@@ -38,11 +38,12 @@ TEST ///
   -- describe
   R = QQ<|a,b, x_1..x_3, c, y_1..y_4|>
   isWellDefined R
-  unstack describe R === {"QQ<|a, b, x , x , x , c, y , y , y , y |>", 
-                            "           1   2   3      1   2   3   4"}
+  expectedVars = {symbol a, symbol b, symbol x_1, symbol x_2, symbol x_3,
+                  symbol c, symbol y_1, symbol y_2, symbol y_3, symbol y_4};
+  expected = Describe (expression QQ) (new AngleBarList from (expectedVars / expression));
+  assert(describe R === expected)
   assert(net R === "R")
   assert(net R == net expression R)
-  assert((depth describe R, height describe R, width describe R) == (1,1,41))
   assert(toString R === "R")
   assert(toExternalString R === "QQ<|a, b, x_1, x_2, x_3, c, y_1, y_2, y_3, y_4|>")
 ///
