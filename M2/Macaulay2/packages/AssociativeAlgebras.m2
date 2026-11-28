@@ -161,13 +161,13 @@ net FreeAlgebra := R -> (
      if hasAttribute(R,ReverseDictionary) then toString getAttribute(R,ReverseDictionary)
      else net expression R)
 describe FreeAlgebra := R -> (
-     k := last R.baseRings;
-     Describe (expression k) (new AngleBarList from R#generatorExpressions)
-     )
-toExternalString FreeAlgebra := R -> (
-    --toString describe R
-     k := last R.baseRings;
-     toString (getNameIfAny k) | toString(new AngleBarList from R#generatorSymbols)
+     G := toList runLengthEncode R#generatorExpressions;
+     D := runLengthEncode if degreeLength R === 1 then flatten degrees R else degrees R / vector;
+     -- The last weight vector is derived from the degrees by the constructor.
+     W := drop(R.Weights, -1);
+     opts := {Degrees => D, Heft => R.Heft};
+     if W =!= {} then opts = append(opts, Weights => runLengthEncode expression W);
+     Describe (expression coefficientRing R) (new AngleBarList from apply(G | opts, expression))
      )
 toString FreeAlgebra := R -> (
     toString expression R
